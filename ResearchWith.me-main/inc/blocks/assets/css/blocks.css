@@ -1,0 +1,102 @@
+/**
+ * ReMe Custom Blocks - Frontend Styles
+ *
+ * @package ReMe
+ */
+
+/* Post List */
+.reme-post-list {
+	font-size: 0.95rem;
+}
+
+.reme-post-list-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 24px;
+}
+
+.reme-post-list-item {
+	border: 1px solid var(--rm-c-1, rgba(0, 0, 0, 0.1));
+	border-radius: 8px;
+	padding: 20px;
+	background: var(--rm-site-bg, #fff);
+}
+
+.reme-post-list-title {
+	margin: 0 0 8px 0;
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.reme-post-list-title a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.reme-post-list-title a:hover {
+	text-decoration: underline;
+}
+
+.reme-post-list-authors,
+.reme-post-list-date {
+	margin: 0 0 8px 0;
+	font-size: 0.85rem;
+	color: var(--rm-c-2, rgba(0, 0, 0, 0.6));
+}
+
+.reme-post-list-excerpt {
+	margin: 0 0 12px 0;
+	font-size: 0.9rem;
+	color: var(--rm-text-color, #000);
+}
+
+.reme-post-list-link {
+	display: inline-block;
+	padding: 6px 14px;
+	border: 1px solid var(--reme-link-color, #0073aa);
+	background: var(--reme-link-color, #0073aa);
+	color: #fff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+
+.reme-post-list-link:hover {
+	background: var(--rm-secondary-accent, #0073aa);
+}
+
+/* File Embed */
+.reme-file-embed {
+	width: 100%;
+	border: 1px solid var(--rm-c-1, rgba(0, 0, 0, 0.1));
+	border-radius: 8px;
+	overflow: hidden;
+	background: #fff;
+}
+
+.reme-file-embed iframe {
+	display: block;
+	width: 100%;
+}
+
+.reme-file-download-link {
+	margin-top: 12px;
+	text-align: center;
+}
+
+.reme-file-download-link a {
+	display: inline-block;
+	padding: 8px 16px;
+	border: 1px solid var(--rm-c-2, rgba(0, 0, 0, 0.4));
+	background: transparent;
+	color: var(--rm-text-color, #000);
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 0.9rem;
+}
+
+.reme-file-download-link a:hover {
+	background: var(--rm-light-bg, #f8f9fa);
+	border-color: var(--rm-text-color, #000);
+}

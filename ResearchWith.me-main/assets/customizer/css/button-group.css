@@ -1,0 +1,82 @@
+.rm-button-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.rm-button-group label.button {
+    border-radius: 0;
+    flex: 1 1 0;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    height: 27px;
+    opacity: .6;
+}
+
+.rm-button-group input {
+    display: none;
+}
+
+.rm-button-group input:checked + label,
+.rm-button-group input:checked + label:hover {
+    background: #fff;
+    color: #13aff0;
+    opacity: 1;
+}
+
+.rm-button-group label:first-of-type {
+    border-right: none;
+    border-bottom-left-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
+.rm-button-group label:last-of-type {
+    border-left: none;
+    border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px;
+}
+
+.rm-button-group-header {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.rm-button-group-header i {
+    margin-bottom: 4px;
+    margin-left: 4px;
+    cursor: pointer;
+}
+
+.rm-button-group-header i:hover {
+    opacity: .75;
+}
+
+.rm-button-group-header input {
+    display: none;
+}
+
+.rm-radio-description-info input{
+    display: none;
+}
+
+.rm-radio-hidden-info {
+    width: 100%;
+    padding: 0 10px;
+    border-radius: 5px;
+    margin-bottom: 7px;
+    max-height: 0;
+    border: none;
+    overflow: hidden;
+    background-color: #fff;
+    transition: all .3s ease;
+}
+
+.rm-button-group-header input:checked + .rm-radio-hidden-info {
+    padding: 7px 10px;
+    max-height: 200px;
+}

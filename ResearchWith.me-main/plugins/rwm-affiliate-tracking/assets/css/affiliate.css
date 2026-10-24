@@ -1,0 +1,121 @@
+/**
+ * ReMe Affiliate Tracking - Frontend Styles
+ *
+ * @package RWM_Affiliate_Tracking
+ */
+
+.reme-affiliate-link {
+	display: inline-block;
+	text-decoration: none;
+	border-bottom: 1px dotted var(--rm-c-2, rgba(0, 0, 0, 0.4));
+}
+
+.reme-affiliate-link:hover {
+	border-bottom-style: solid;
+}
+
+.reme-affiliate-product {
+	border: 1px solid var(--rm-c-1, rgba(0, 0, 0, 0.1));
+	border-radius: 8px;
+	padding: 20px;
+	background: var(--rm-site-bg, #fff);
+	margin-bottom: 24px;
+}
+
+.reme-affiliate-product-thumb {
+	text-align: center;
+	margin-bottom: 12px;
+}
+
+.reme-affiliate-product-thumb img {
+	max-width: 100%;
+	height: auto;
+	border-radius: 4px;
+}
+
+.reme-affiliate-product-title {
+	margin: 0 0 8px 0;
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.reme-affiliate-product-excerpt {
+	margin: 0 0 12px 0;
+	font-size: 0.9rem;
+	color: var(--rm-c-2, rgba(0, 0, 0, 0.6));
+}
+
+.reme-affiliate-product-price {
+	margin: 0 0 12px 0;
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.reme-affiliate-product-currency {
+	font-size: 0.85rem;
+	opacity: 0.8;
+}
+
+.reme-affiliate-product-button {
+	display: inline-block;
+	padding: 10px 20px;
+	border: 1px solid var(--reme-link-color, #0073aa);
+	background: var(--reme-link-color, #0073aa);
+	color: #fff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.reme-affiliate-product-button:hover {
+	background: var(--rm-secondary-accent, #0073aa);
+}
+
+.reme-affiliate-product-vendor {
+	margin: 0;
+	font-size: 0.85rem;
+	color: var(--rm-c-2, rgba(0, 0, 0, 0.6));
+}
+
+.reme-affiliate-comparison {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 24px;
+}
+
+.reme-affiliate-comparison th,
+.reme-affiliate-comparison td {
+	border: 1px solid var(--rm-c-1, rgba(0, 0, 0, 0.1));
+	padding: 10px;
+	text-align: left;
+}
+
+.reme-affiliate-comparison th {
+	background: var(--rm-light-bg, #f8f9fa);
+	font-weight: 600;
+}
+
+.reme-affiliate-disclosure {
+	font-size: 0.85rem;
+	color: var(--rm-c-2, rgba(0, 0, 0, 0.6));
+	border-top: 1px solid var(--rm-c-1, rgba(0, 0, 0, 0.1));
+	border-bottom: 1px solid var(--rm-c-1, rgba(0, 0, 0, 0.1));
+	padding: 12px 0;
+	margin: 24px 0;
+}
+
+.reme-affiliate-disclosure-page {
+	max-width: 800px;
+	margin: 40px auto;
+	padding: 0 24px;
+}
+
+.reme-affiliate-disclosure-page h1 {
+	font-size: 2rem;
+	margin-bottom: 20px;
+}
+
+.reme-affiliate-disclosure-page p {
+	margin-bottom: 16px;
+	line-height: 1.7;
+}

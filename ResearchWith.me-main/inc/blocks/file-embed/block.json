@@ -1,0 +1,53 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "reme/file-embed",
+	"title": "File Embed",
+	"category": "media",
+	"description": "Embeds a document with a download fallback.",
+	"keywords": [ "file", "embed", "document", "download" ],
+	"attributes": {
+		"fileUrl": {
+			"type": "string",
+			"default": ""
+		},
+		"width": {
+			"type": "string",
+			"default": "100%"
+		},
+		"height": {
+			"type": "string",
+			"default": "600px"
+		},
+		"showDownload": {
+			"type": "boolean",
+			"default": true
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ],
+		"spacing": {
+			"padding": true,
+			"margin": true
+		},
+		"border": {
+			"radius": true,
+			"width": true,
+			"style": true,
+			"color": true
+		},
+		"color": {
+			"background": true,
+			"text": true
+		},
+		"typography": {
+			"fontSize": true
+		}
+	},
+	"textdomain": "reme",
+	"editorScript": "reme-blocks-editor",
+	"editorStyle": "reme-blocks-editor",
+	"style": "reme-blocks",
+	"viewContext": [ "embed", "widget" ]
+}
