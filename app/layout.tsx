@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import Providers from '@/components/Providers';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </div>
         </Providers>
+        <SpeedInsights />
       </body>
     </html>
   );
