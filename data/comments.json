@@ -1,0 +1,56 @@
+[
+  {
+    "postId": "post-1",
+    "authorName": "Elena K.",
+    "authorRole": "HPC Engineer",
+    "avatar": "EK",
+    "text": "Tested this on 8x H100 SXM nodes. The p99 queue latency dropped from 140ms to 28ms under 60 concurrent streams.",
+    "id": "comm-1792851684896",
+    "timestamp": "Just now"
+  },
+  {
+    "id": "comm-1",
+    "postId": "post-1",
+    "authorName": "David K., Systems Eng",
+    "authorRole": "Platform Team",
+    "avatar": "DK",
+    "timestamp": "2 days ago",
+    "text": "Brilliant breakdown. The section explaining how contiguous KV cache allocation blocked concurrent requests was eye-opening. We observed the exact same memory exhaustion pattern on our internal vLLM cluster."
+  },
+  {
+    "id": "comm-2",
+    "postId": "post-1",
+    "authorName": "Prof. Li Wei",
+    "authorRole": "Academic Researcher",
+    "avatar": "LW",
+    "timestamp": "1 day ago",
+    "text": "Great synthesis of the empirical trade-offs. Would love to see a follow-up benchmarking chunked prefill vs speculative decoding under varying context windows."
+  },
+  {
+    "id": "comm-3",
+    "postId": "post-2",
+    "authorName": "Aria Sterling",
+    "authorRole": "ML Alignment Researcher",
+    "avatar": "AS",
+    "timestamp": "3 days ago",
+    "text": "The finding that chain-of-thought length expands purely from reinforcement learning rewards without human demonstrations is one of the most consequential shifts of the year."
+  },
+  {
+    "id": "comm-4",
+    "postId": "post-3",
+    "authorName": "Dr. Robert Mendez",
+    "authorRole": "Cardiologist",
+    "avatar": "RM",
+    "timestamp": "4 days ago",
+    "text": "The anti-inflammatory endothelial protection observed within 8 weeks prior to significant weight reduction aligns perfectly with clinical biomarkers we track in post-infarction cohorts."
+  },
+  {
+    "id": "comm-5",
+    "postId": "post-5",
+    "authorName": "Tariq Hassan",
+    "authorRole": "DevOps Lead",
+    "avatar": "TH",
+    "timestamp": "5 days ago",
+    "text": "Can corroborate this 100%. Migrated from 3 EKS clusters to Nomad on bare metal Hetzner nodes last year. Reduced monthly cloud bill by 78% and haven’t had a single CNI outage."
+  }
+]
