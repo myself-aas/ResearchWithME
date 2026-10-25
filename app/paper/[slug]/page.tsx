@@ -15,6 +15,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const paper = PUBLICATIONS_DATA.find((item) => item.slug === slug);
+  if (!paper) notFound();
   return pageMetadata({
     title: paper?.title ?? 'Research Paper',
     description: paper?.abstract ?? 'Read the full structured publication, methods, findings, references, and citation metadata.',

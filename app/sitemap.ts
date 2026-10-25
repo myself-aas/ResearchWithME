@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { AUTHORS, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { getPublishedCmsPosts } from '@/lib/cms/read';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
 import { toDate } from '@/lib/seo';
 import persistedArticles from '@/data/articles.json';
@@ -20,13 +21,19 @@ const staticRoutes = [
   { path: '/write', priority: 0.5, changeFrequency: 'monthly' },
 ] as const;
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const articleSlugs = new Map<string, Date>();
   for (const article of INITIAL_BLOG_POSTS) {
     articleSlugs.set(article.slug, toDate(article.publishedAt) ?? FALLBACK_DATE);
   }
   for (const article of persistedArticles as Array<{ slug?: string; publishedAt?: string }>) {
     if (article.slug) articleSlugs.set(article.slug, toDate(article.publishedAt) ?? FALLBACK_DATE);
+  }
+
+  // Published CMS articles join the same canonical URLs as the bundled catalogue.
+  const cmsPosts = await getPublishedCmsPosts();
+  for (const post of cmsPosts) {
+    articleSlugs.set(post.slug, toDate(post.publishedAt ?? post.insertedAt) ?? FALLBACK_DATE);
   }
 
   return [

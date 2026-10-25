@@ -1,5 +1,26 @@
 import type { NextConfig } from 'next';
 
+/**
+ * Supabase Storage serves article images from the project's public bucket.
+ * The hostname is derived from the public URL so the optimizer only ever trusts
+ * the project actually configured for this deployment.
+ */
+function supabaseImagePattern() {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim();
+  if (!url) return null;
+  try {
+    return {
+      protocol: new URL(url).protocol.replace(':', '') as 'https' | 'http',
+      hostname: new URL(url).hostname,
+      pathname: '/storage/v1/object/public/**',
+    };
+  } catch {
+    return null;
+  }
+}
+
+const supabaseImages = supabaseImagePattern();
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
@@ -22,6 +43,7 @@ const nextConfig: NextConfig = {
         pathname: '/images/**',
       },
     ],
+    remotePatterns: supabaseImages ? [supabaseImages] : [],
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],

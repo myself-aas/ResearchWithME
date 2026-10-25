@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { addArticle, getArticles } from '@/lib/db';
-import { AUTHORS, BlogCategory, BlogPost, CATEGORIES } from '@/lib/blog-data';
+import { addArticle } from '@/lib/db';
+import { AUTHORS, BlogCategory, type BlogPost, CATEGORIES } from '@/lib/blog-data';
 import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
+import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { isSameOrigin } from '@/lib/cms/http';
+import { isLocalCmsMode } from '@/lib/cms/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,17 +16,24 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const format = searchParams.get('format');
     const search = searchParams.get('search');
+    const author = searchParams.get('author')?.trim().toLowerCase().slice(0, 120);
     const limitParam = Number.parseInt(searchParams.get('limit') ?? '', 10);
     const limit = Number.isFinite(limitParam) ? Math.min(Math.max(limitParam, 1), 100) : 100;
     const full = searchParams.get('full') === '1';
 
-    let articles = getArticles();
+    // Live CMS posts lead the feed; bundled and local articles follow.
+    let articles = await getArticleCatalogue();
 
     if (category && category !== 'All') {
       articles = articles.filter((article) => article.category === category);
     }
     if (format && format !== 'All') {
       articles = articles.filter((article) => article.format === format);
+    }
+    if (author) {
+      articles = articles.filter(
+        (article) => article.author.id.toLowerCase() === author || article.author.name.toLowerCase() === author,
+      );
     }
     if (search?.trim()) {
       const query = search.trim().toLowerCase().slice(0, 120);
@@ -44,7 +54,7 @@ export async function GET(request: NextRequest) {
     const page = articles.slice(0, limit);
     const payload = full
       ? page
-      : page.map(({ content: _content, ...article }) => article);
+      : page.map(({ content: _content, bodyMarkdown: _bodyMarkdown, ...article }) => article);
 
     return NextResponse.json(
       { articles: payload, count: articles.length },
@@ -57,6 +67,20 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: 'Cross-site requests are not allowed.' }, { status: 403 });
+  }
+
+  if (!isLocalCmsMode()) {
+    return NextResponse.json(
+      {
+        error:
+          'This deployment publishes through the Supabase editorial studio. Open /dashboard to write, review, and publish.',
+      },
+      { status: 403 },
+    );
+  }
+
   const limit = rateLimit(clientKey(request, 'articles'), 10, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
@@ -156,7 +180,7 @@ export async function POST(request: NextRequest) {
     commentsCount: 0,
   };
 
-  const existing = getArticles().find((candidate) => candidate.slug === slug);
+  const existing = (await getArticleCatalogue()).find((candidate) => candidate.slug === slug);
   if (existing) {
     return NextResponse.json({ error: 'An article with this URL already exists. Change the title.' }, { status: 409 });
   }

@@ -42,6 +42,7 @@ const secondaryNav = [
   { href: '/submit', label: 'Submit a manuscript', icon: UploadCloud },
   { href: '/editorial-board', label: 'Editorial board', icon: Users },
   { href: '/verify', label: 'Verification prototype', icon: ShieldCheck },
+  { href: '/dashboard', label: 'Editorial studio', icon: PenSquare },
 ];
 
 export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {

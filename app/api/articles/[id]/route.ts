@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cmsPostToArticle } from '@/lib/cms/mapping';
+import { getPublishedCmsPostById } from '@/lib/cms/read';
+import { fromPublicPostId } from '@/lib/cms/schema';
+import { getPublicCmsStore } from '@/lib/cms/store';
 import { getArticleById, getArticleBySlug, incrementLikes } from '@/lib/db';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
@@ -14,6 +18,16 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ id: 
     const { id } = await props.params;
     const key = normalizeId(id);
     if (!key) return NextResponse.json({ error: 'An article id is required.' }, { status: 400 });
+
+    const cmsPostId = fromPublicPostId(key);
+    if (cmsPostId) {
+      const post = await getPublishedCmsPostById(cmsPostId);
+      if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
+      return NextResponse.json(
+        { article: cmsPostToArticle(post) },
+        { headers: { 'Cache-Control': 'public, max-age=30, stale-while-revalidate=300' } },
+      );
+    }
 
     const article = getArticleBySlug(key) ?? getArticleById(key);
     if (!article) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
@@ -41,6 +55,16 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
     const { id } = await props.params;
     const key = normalizeId(id);
     if (!key) return NextResponse.json({ error: 'An article id is required.' }, { status: 400 });
+
+    const cmsPostId = fromPublicPostId(key);
+    if (cmsPostId) {
+      const post = await getPublishedCmsPostById(cmsPostId);
+      if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
+
+      const store = await getPublicCmsStore();
+      const likes = await store.incrementLikes(cmsPostId);
+      return NextResponse.json({ success: true, likes });
+    }
 
     const article = getArticleBySlug(key) ?? getArticleById(key);
     if (!article) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });

@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,35 +10,35 @@ import AuthorProfileCard from '@/components/AuthorProfileCard';
 import ArticleInteractions from '@/components/ArticleInteractions';
 import ArticleDiscussion from '@/components/ArticleDiscussion';
 import ReadingProgress from '@/components/ReadingProgress';
-import { INITIAL_BLOG_POSTS, type BlogPost } from '@/lib/blog-data';
-import { getArticles } from '@/lib/db';
+import MarkdownBody from '@/components/MarkdownBody';
+import { AUTHORS } from '@/lib/blog-data';
+import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
 
+// The reader mixes bundled articles with live CMS posts, so the route cannot be
+// limited to build-time slugs. It still uses ISR: the first request renders and
+// later requests are served from the route cache for 30 seconds. Removing
+// generateStaticParams also makes an unknown slug a real HTTP 404 instead of a
+// cached 200 fallback shell.
 export const revalidate = 30;
-export const dynamicParams = true;
 
-function catalogue(): BlogPost[] {
-  const merged = new Map<string, BlogPost>();
-  for (const article of [...INITIAL_BLOG_POSTS, ...getArticles()]) {
-    if (article?.slug) merged.set(article.slug, article);
-  }
-  return [...merged.values()];
-}
+// React cache dedupes the CMS read across generateMetadata and the page body.
+const catalogue = cache(getArticleCatalogue);
 
-function findArticle(slug: string) {
-  return catalogue().find((article) => article.slug === slug || article.id === slug);
-}
-
-export function generateStaticParams() {
-  return INITIAL_BLOG_POSTS.map((article) => ({ slug: article.slug }));
+async function findArticle(slug: string) {
+  const articles = await catalogue();
+  return articles.find((article) => article.slug === slug || article.id === slug);
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const article = findArticle(slug);
+  const article = await findArticle(slug);
+  // Resolve the miss before the page starts streaming; otherwise the 404 UI is
+  // served with a 200 status (a soft 404) once headers have been flushed.
+  if (!article) notFound();
   return pageMetadata({
-    title: article?.title ?? 'Research Article',
-    description: article?.summary ?? 'Read the full long-form analysis, key takeaways, author credentials, and peer discussion.',
+    title: article.title,
+    description: article.summary,
     path: `/post/${slug}`,
     type: 'article',
   });
@@ -45,13 +46,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const article = findArticle(slug);
+  const article = await findArticle(slug);
 
   if (!article) {
     notFound();
   }
 
-  const related = catalogue()
+  const authorProfile = AUTHORS[article.author.id];
+  const related = (await catalogue())
     .filter((candidate) => candidate.slug !== article.slug)
     .map((candidate) => ({
       article: candidate,
@@ -103,7 +105,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <span aria-hidden="true">·</span>
                 <span>{article.format}</span>
                 <span aria-hidden="true">·</span>
-                <time dateTime={article.publishedAt}>{article.publishedAt}</time>
+                <time dateTime={article.dateISO ?? article.publishedAt}>{article.publishedAt}</time>
                 <span aria-hidden="true">·</span>
                 <span>{article.readTime}</span>
               </p>
@@ -115,21 +117,36 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <p className="mt-4 max-w-prose break-words font-serif text-xl leading-relaxed text-stone-700">{article.subtitle}</p>
 
               <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <Link
-                  href={`/author/${article.author.id}`}
-                  className="flex min-w-0 items-center gap-3 text-sm hover:text-amber-900"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
+                {authorProfile ? (
+                  <Link
+                    href={`/author/${article.author.id}`}
+                    className="flex min-w-0 items-center gap-3 text-sm hover:text-amber-900"
                   >
-                    {article.author.avatar}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate font-semibold text-stone-900">{article.author.name}</span>
-                    <span className="block truncate text-stone-600">{article.author.role}</span>
-                  </span>
-                </Link>
+                    <span
+                      aria-hidden="true"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
+                    >
+                      {article.author.avatar}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-semibold text-stone-900">{article.author.name}</span>
+                      <span className="block truncate text-stone-600">{article.author.role}</span>
+                    </span>
+                  </Link>
+                ) : (
+                  <div className="flex min-w-0 items-center gap-3 text-sm">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
+                    >
+                      {article.author.avatar}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-semibold text-stone-900">{article.author.name}</span>
+                      <span className="block truncate text-stone-600">{article.author.role}</span>
+                    </span>
+                  </div>
+                )}
 
                 <ArticleInteractions
                   postId={article.id}
@@ -169,13 +186,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </ul>
             </section>
 
-            <div className="mt-10 space-y-6">
-              {paragraphs.map((paragraph, index) => (
-                <p key={`${index}-${paragraph.slice(0, 24)}`} className="max-w-prose break-words text-lg leading-relaxed text-stone-800">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+            {article.bodyMarkdown ? (
+              <div className="mt-10">
+                <MarkdownBody markdown={article.bodyMarkdown} />
+              </div>
+            ) : (
+              <div className="mt-10 space-y-6">
+                {paragraphs.map((paragraph, index) => (
+                  <p key={`${index}-${paragraph.slice(0, 24)}`} className="max-w-prose break-words text-lg leading-relaxed text-stone-800">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            )}
 
             {article.reviewedArtifact && (
               <section aria-labelledby="artifact-heading" className="mt-10 rounded-lg border border-stone-200 bg-white p-5">

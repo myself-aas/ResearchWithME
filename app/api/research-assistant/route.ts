@@ -1,6 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from 'next/server';
-import { INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 import { cleanText } from '@/lib/validation';
 
@@ -15,7 +15,7 @@ const STOP_WORDS = new Set([
   'which', 'while', 'does', 'did', 'can', 'could', 'should', 'would', 'you', 'your', 'our', 'per',
 ]);
 
-function matchingPosts(query: string) {
+async function matchingPosts(query: string) {
   const terms = query
     .toLowerCase()
     .split(/[^a-z0-9.+-]+/)
@@ -24,7 +24,9 @@ function matchingPosts(query: string) {
 
   if (terms.length === 0) return [];
 
-  return INITIAL_BLOG_POSTS.map((post) => {
+  const archive = await getArticleCatalogue();
+
+  return archive.map((post) => {
     const title = post.title.toLowerCase();
     const summary = post.summary.toLowerCase();
     const category = post.category.toLowerCase();
@@ -46,8 +48,8 @@ function matchingPosts(query: string) {
     .map((entry) => entry.post);
 }
 
-function fallbackAnswer(query: string) {
-  const matches = matchingPosts(query);
+async function fallbackAnswer(query: string) {
+  const matches = await matchingPosts(query);
 
   if (matches.length > 0) {
     return {
@@ -107,7 +109,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Ask a question to search the archive.' }, { status: 400 });
   }
 
-  const fallback = fallbackAnswer(query);
+  const fallback = await fallbackAnswer(query);
   const citations = fallback.citations.map((post) => ({
     id: post.id,
     title: post.title,
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
     });
   }
 
-  const corpus = fallback.citations.length > 0 ? fallback.citations : INITIAL_BLOG_POSTS.slice(0, 4);
+  const corpus = fallback.citations.length > 0 ? fallback.citations : (await getArticleCatalogue()).slice(0, 4);
   const systemPrompt = [
     'You are the ResearchWithMe editorial assistant.',
     'Answer only from the article records supplied below. Do not invent sources, DOI values, or findings.',

@@ -1,14 +1,5 @@
 [
   {
-    "postId": "post-1",
-    "authorName": "Elena K.",
-    "authorRole": "HPC Engineer",
-    "avatar": "EK",
-    "text": "Tested this on 8x H100 SXM nodes. The p99 queue latency dropped from 140ms to 28ms under 60 concurrent streams.",
-    "id": "comm-1792851684896",
-    "timestamp": "Just now"
-  },
-  {
     "id": "comm-1",
     "postId": "post-1",
     "authorName": "David K., Systems Eng",
