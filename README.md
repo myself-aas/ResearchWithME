@@ -1,6 +1,6 @@
 # ResearchWithMe
 
-An open-access scholarly publication: long-form reviews of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4.
+An open-access scholarly publication: long-form reviews of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
 
 The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) and uses the [Impeccable](https://impeccable.style) workflow and detector. Product context lives in [`PRODUCT.md`](./PRODUCT.md); per-route briefs live in [`.impeccable/surfaces/`](./.impeccable/surfaces).
 
@@ -30,16 +30,21 @@ Node 20.9 or newer. `next.config.ts` sets `output: 'standalone'`, so a productio
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
 | `/submit` | Operate | Manuscript intake with validation and failure recovery |
 | `/verify` | Operate | Prototype contributor identity and permission model |
-| `/write` | Operate | Draft autosave, validation, preview, publish |
+| `/write` | Operate | Prototype draft autosave, validation, preview, publish (local archive) |
+| `/login` | Operate | Editor sign-in: password or magic link (Supabase), setup guide in demo mode |
+| `/dashboard` | Operate | Studio: new article with Markdown editor, cover library, takeaways |
+| `/dashboard/manage` | Operate | Search, filter, publish/revert, delete, live status |
+| `/dashboard/edit/[id]` | Operate | Edit a draft or published article |
+| `/dashboard/comments` | Operate | Comment moderation with realtime updates |
 
-Unknown routes, render failures, and loading states have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`, `app/loading.tsx`).
+Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
 ## Quality checks
 
 ```bash
 npm run lint        # ESLint (Next core-web-vitals + TypeScript + jsx-a11y)
 npm run typecheck   # tsc --noEmit
-npm test            # Vitest: validation, slugging, ORCID checksum, citation formats
+npm test            # Vitest: validation, CMS schema/mapping, both storage adapters, ORCID, citations
 npm run build       # production build, types enforced
 npm run impeccable:source   # Impeccable source detector over app/ and components/
 npm run impeccable:url      # rendered detector against a running server
@@ -52,33 +57,51 @@ For a rendered audit (requires a Chromium-based browser):
 npx impeccable detect --viewport 390x844 http://localhost:3000
 ```
 
-The current state is clean: 0 Impeccable findings in source and rendered scans at 1280×800, 390×844, and 320×720; 0 axe WCAG 2.1 A/AA violations on all 14 routes; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
+The publication surfaces are clean: 0 Impeccable findings in source and rendered scans at 1280×800, 390×844, and 320×720; 0 axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
+
+## Editorial CMS
+
+The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, which keeps the project runnable for review without cloud credentials.
+
+- **Database, RLS, storage, realtime:** `supabase/migrations/` (idempotent SQL) with published-only public reads, authenticated editorial writes, append-only comments, a 5 MB public image bucket, and realtime replication.
+- **One canonical reader:** published CMS articles are merged into `/`, `/post/[slug]`, the sitemap, and the author record. There is no duplicate `/blog` route.
+- **Writes are server-mediated:** `/api/cms/*` validates, rate-limits, checks the request origin, and lets RLS enforce access a second time. No service-role key ships with the app.
+- **Cache invalidation:** studio writes revalidate `/` and `/post/[slug]`; an optional Supabase webhook hits `/api/revalidate` with a timing-safe shared secret.
+- **Auth:** Supabase email/password and magic links. Magic links return to `/login` to exchange the PKCE code. Accounts are created by an administrator; there is no public sign-up.
+
+Full setup, the blueprint-to-code map, the data model, and the security notes are in [`docs/supabase-cms.md`](./docs/supabase-cms.md).
 
 ## Data and prototype behavior
 
-- Article, comment, and submission records are JSON files under `data/`. Writes are atomic and fall back to bundled content when the filesystem is read-only.
-- Contributor verification is a **local prototype**: it validates ORCID checksums, GitHub handle syntax, and academic email domains in the browser, then stores a session in `localStorage`. No credentials are sent to ORCID, GitHub, an institution, or Google.
-- Newsletter preferences and reading lists are stored in the browser only; no email is sent.
+- Bundled catalogue, browser reading list, newsletter preference, and submission receipt data remain local JSON or `localStorage`.
+- Contributor verification on `/verify` is a **local prototype**: it validates ORCID checksums, GitHub handle syntax, and academic email domains in the browser, then stores a session in `localStorage`. No credentials are sent to ORCID, GitHub, an institution, or Google. Studio authentication is separate and real when Supabase is configured.
 - The research assistant answers from the local catalog. With `GEMINI_API_KEY` set it asks Gemini to summarize the same records; without a key it returns a deterministic cited answer.
 
 Environment variables:
 
 | Variable | Purpose |
 | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Optional. Project URL; enables the Supabase CMS, auth, storage, and realtime. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Optional. Public anon key; RLS protects every table. |
+| `REVALIDATE_SECRET` | Optional. Shared secret for the `/api/revalidate` webhook. |
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-2.5-flash`. |
-| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, and robots. Defaults to `https://researchwith.me`. |
+| `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
 
 ## Project layout
 
 ```
 app/           routes, metadata files (sitemap, robots, manifest, OG image), API handlers
-components/    shared UI: header/footer, feed, article islands, states
-lib/           data, auth prototype, validation, citations, storage, rate limiting, SEO
-data/          seed JSON records (runtime state for the prototype)
+components/    shared UI, studio shell, Markdown editor, auth form
+lib/           data access, CMS adapters, Supabase clients, validation, citations, SEO
+lib/cms/       schema, mapping, local + Supabase stores, client hooks
+lib/supabase/  config, browser/server/public clients, storage upload
+supabase/      SQL migrations and setup notes
+middleware.ts  session refresh and studio route protection
+data/          seed JSON records (runtime state for the local adapters)
 .impeccable/   detector config, surface briefs
 .agents/       Impeccable skill and its launcher
-docs/          audit report and project notes
+docs/          audit report, CMS guide, project notes
 ```
 
 `ResearchWith.me-main/` is a legacy WordPress theme kept for reference only; it is excluded from builds and linting.

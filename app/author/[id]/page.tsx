@@ -1,6 +1,6 @@
 'use client';
 
-import { use, useMemo, useState } from 'react';
+import { use, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Bookmark, ChevronRight, FileText, MessageSquare, Quote, Search } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
@@ -27,11 +27,35 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
   const [sortBy, setSortBy] = useState<SortKey>('newest');
   const [savedIds, setSavedIds] = useState<string[]>([]);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [livePosts, setLivePosts] = useState<BlogPost[] | null>(null);
 
-  const articles = useMemo(
-    () => (author ? INITIAL_BLOG_POSTS.filter((post) => post.author.id === author.id || post.author.name === author.name) : []),
-    [author],
-  );
+  // Bundled posts render immediately; the archive is then refreshed from the
+  // publication API so editor-published CMS articles appear on the profile.
+  useEffect(() => {
+    if (!author) return;
+    const controller = new AbortController();
+    async function loadArchive() {
+      try {
+        const res = await fetch(`/api/articles?limit=100&author=${encodeURIComponent(author.id)}`, {
+          headers: { accept: 'application/json' },
+          signal: controller.signal,
+        });
+        if (!res.ok) return;
+        const data: { articles?: BlogPost[] } = await res.json();
+        if (Array.isArray(data.articles)) setLivePosts(data.articles);
+      } catch {
+        // Keep the bundled archive when the API is unreachable.
+      }
+    }
+    loadArchive();
+    return () => controller.abort();
+  }, [author]);
+
+  const articles = useMemo(() => {
+    if (!author) return [];
+    const source = livePosts ?? INITIAL_BLOG_POSTS;
+    return source.filter((post) => post.author.id === author.id || post.author.name === author.name);
+  }, [author, livePosts]);
 
   const categories = useMemo(() => [...new Set(articles.map((post) => post.category))], [articles]);
   const formats = useMemo(() => [...new Set(articles.map((post) => post.format))], [articles]);

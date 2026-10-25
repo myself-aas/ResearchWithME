@@ -56,7 +56,11 @@ export interface BlogPost {
   featured: boolean;
   reviewedArtifact?: ReviewedArtifact;
   summary: string;
-  content: string[]; // Markdown/rich paragraphs
+  content: string[]; // Plain-text paragraphs (fallback for legacy articles)
+  /** Markdown source for CMS-authored articles; rendered by MarkdownBody. */
+  bodyMarkdown?: string;
+  /** ISO publication date for <time dateTime> and structured data. */
+  dateISO?: string;
   keyTakeaways: string[];
   tags: string[];
   likes: number;

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { cmsCommentToRecord } from '@/lib/cms/mapping';
+import { getPublishedCmsPostById } from '@/lib/cms/read';
+import { fromPublicPostId, normalizeCommentInput } from '@/lib/cms/schema';
+import { getPublicCmsStore } from '@/lib/cms/store';
 import { addComment, getArticleById, getArticleBySlug, getComments } from '@/lib/db';
-import { cleanText, LIMITS } from '@/lib/validation';
+import { isSameOrigin } from '@/lib/cms/http';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -9,6 +13,17 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
   try {
     const postId = request.nextUrl.searchParams.get('postId')?.slice(0, 120);
+    const cmsPostId = postId ? fromPublicPostId(postId) : null;
+
+    if (cmsPostId) {
+      const store = await getPublicCmsStore();
+      const comments = await store.listCommentsForPost(cmsPostId);
+      return NextResponse.json(
+        { comments: comments.map(cmsCommentToRecord) },
+        { headers: { 'Cache-Control': 'public, max-age=15, stale-while-revalidate=60' } },
+      );
+    }
+
     const comments = getComments(postId || undefined).slice(0, 200);
     return NextResponse.json(
       { comments },
@@ -21,6 +36,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!isSameOrigin(request)) {
+    return NextResponse.json({ error: 'Cross-site requests are not allowed.' }, { status: 403 });
+  }
+
   const limit = rateLimit(clientKey(request, 'comments'), 8, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
@@ -40,21 +59,46 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'The comment body could not be read.' }, { status: 400 });
   }
 
-  const postId = cleanText(body.postId, 120);
-  const text = cleanText(body.text, LIMITS.comment);
-  const authorName = cleanText(body.authorName, LIMITS.name) || 'Reader';
-  const authorRole = cleanText(body.authorRole, 80) || 'Reader';
-
+  const postId = typeof body.postId === 'string' ? body.postId.slice(0, 120) : '';
   if (!postId) return NextResponse.json({ error: 'A post id is required.' }, { status: 400 });
-  if (text.length < 2) return NextResponse.json({ error: 'Write at least a short sentence.' }, { status: 400 });
-  if (text.length > LIMITS.comment) {
-    return NextResponse.json({ error: `Comments are limited to ${LIMITS.comment} characters.` }, { status: 400 });
+
+  const parsed = normalizeCommentInput({
+    authorName: body.authorName,
+    authorRole: body.authorRole,
+    content: body.text,
+  });
+  if (!parsed.ok) {
+    return NextResponse.json(
+      { error: parsed.message, fieldErrors: parsed.fieldErrors },
+      { status: 400 },
+    );
+  }
+
+  // CMS articles live in Supabase (or the local CMS archive in demo mode).
+  const cmsPostId = fromPublicPostId(postId);
+  if (cmsPostId) {
+    try {
+      const post = await getPublishedCmsPostById(cmsPostId);
+      if (!post) {
+        return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
+      }
+
+      const store = await getPublicCmsStore();
+      const comment = await store.createComment(cmsPostId, parsed.value);
+      return NextResponse.json({ success: true, comment: cmsCommentToRecord(comment) }, { status: 201 });
+    } catch (error) {
+      console.error('Error saving a CMS comment:', error);
+      return NextResponse.json(
+        { error: 'The comment could not be saved. Your text is still in the form.' },
+        { status: 503 },
+      );
+    }
   }
 
   const article = getArticleById(postId) ?? getArticleBySlug(postId);
   if (!article) return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
 
-  const initials = authorName
+  const initials = parsed.value.authorName
     .split(/\s+/)
     .map((part) => part[0])
     .slice(0, 2)
@@ -64,10 +108,10 @@ export async function POST(request: NextRequest) {
   try {
     const comment = addComment({
       postId: article.id,
-      authorName,
-      authorRole,
+      authorName: parsed.value.authorName,
+      authorRole: parsed.value.authorRole,
       avatar: initials || 'RD',
-      text,
+      text: parsed.value.content,
     });
     return NextResponse.json({ success: true, comment }, { status: 201 });
   } catch (error) {

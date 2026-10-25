@@ -125,7 +125,7 @@ The active interface is the root Next.js application. Fonts are self-hosted vari
 - **Copy**: Controls name their action. Errors name the problem and the recovery. Loading and empty states state the current state and the next useful step.
 
 ## Layout
-- **Modes**: The homepage is Persuade; article and paper readers are Read; searchable archives, forms, verification, citation, assistant, and writer surfaces are Operate. Each route has a brief under `.impeccable/surfaces/`.
+- **Modes**: The homepage is Persuade; article and paper readers are Read; searchable archives, forms, verification, citation, assistant, writer, and studio surfaces are Operate. Each route has a brief under `.impeccable/surfaces/`.
 - **Reading column**: Article and paper bodies stay at 65–75ch. Global paragraph rules constrain prose to 65ch and small copy to 58ch to prevent 100-character lines.
 - **Grouping**: Related controls sit tight; distinct groups get generous separation. Sections use rules, spacing, and typography instead of nesting bordered cards inside bordered cards.
 - **Responsive navigation**: Desktop uses a single compact nav; mobile uses a disclosure menu, not a horizontally scrolling strip. Layouts reflow to 320px without horizontal page scroll.
@@ -149,6 +149,15 @@ The active interface is the root Next.js application. Fonts are self-hosted vari
 - **Newsletter**: Inline footer subscription only, with confirmation and error states; no reading-flow popup.
 - **Verification and assistant**: Standard controls and status panels; no terminal costume, pulsing decorative dot, or cyan-on-dark AI styling.
 - **Status surfaces**: Shared loading, empty, error, and 404 states use semantic `main`, an announced live region, and explicit recovery actions.
+
+## Editorial studio
+- **Shell:** A white utility header with the wordmark, the studio label, an account control, and a single "View journal" exit. Navigation is a left rail on desktop and a horizontal strip that wraps rather than hiding items on narrow screens. No fixed sidebar, no overlay drawer.
+- **Panels:** The editor is one bordered white surface divided by horizontal rules. Inputs and the Markdown editor are the only nested borders; previews are content, not cards.
+- **Status:** Draft and published are always a dot plus a word, with amber/emerald borders and text that meet AA. Live-update status uses the same dot-and-label pattern; no pulsing.
+- **Forms:** Visible labels on every control, hints tied with `aria-describedby`, inline errors marked `role="alert"`, and an error summary that links to the first invalid field. Submitting never clears input.
+- **Destructive actions:** Delete uses an inline two-step confirmation with initial focus on the confirm button and an explicit Cancel. No modal.
+- **Editor:** Markdown source in monospace, a formatting group with named icon buttons, write/preview as a pressed-state pair, and an inline insert panel for links and images. Raw HTML is never rendered.
+- **Sign-in:** A reading-room invitation rather than a generic SaaS card: one editorial column, one focused form, password and magic link, and a demo-mode panel that explains the local archive instead of pretending accounts exist.
 
 ## Motion & States
 - One restrained page-settle entrance is applied to `main`: 360ms, exponential ease-out, transform and opacity only.

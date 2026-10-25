@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { cleanText, LIMITS } from '@/lib/validation';
-import { safeInitials } from '@/lib/format';
+import { formatDate, safeInitials } from '@/lib/format';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 interface Comment {
   id: string;
@@ -44,6 +45,70 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
     };
   }, [postId]);
 
+  // Realtime is available once the discussion is backed by Supabase. It is a
+  // progressive enhancement: the initial fetch and manual posting still work.
+  useEffect(() => {
+    if (!isSupabaseConfigured || !postId.startsWith('cms-')) return;
+    const numericId = postId.slice(4);
+    if (!/^\d{1,19}$/.test(numericId)) return;
+
+    let disposed = false;
+    let cleanup: (() => void) | null = null;
+
+    (async () => {
+      try {
+        const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
+        const supabase = getSupabaseBrowserClient();
+        const channel = supabase
+          .channel(`post-${numericId}-comments`)
+          .on(
+            'postgres_changes',
+            { event: 'INSERT', schema: 'public', table: 'comments', filter: `post_id=eq.${numericId}` },
+            (payload) => {
+              if (disposed) return;
+              const row = payload.new as {
+                id: number | string;
+                author_name?: string;
+                author_role?: string;
+                content?: string;
+                inserted_at?: string;
+              };
+              const id = `cms-comment-${row.id}`;
+              const authorName = row.author_name ?? 'Reader';
+              setComments((current) =>
+                current.some((comment) => comment.id === id)
+                  ? current
+                  : [
+                      {
+                        id,
+                        authorName,
+                        authorRole: row.author_role ?? 'Reader',
+                        avatar: safeInitials(authorName, 'RD'),
+                        timestamp: row.inserted_at ? formatDate(row.inserted_at) : 'Just now',
+                        text: row.content ?? '',
+                      },
+                      ...current,
+                    ],
+              );
+            },
+          )
+          .subscribe();
+
+        cleanup = () => {
+          disposed = true;
+          void supabase.removeChannel(channel);
+        };
+      } catch {
+        // Realtime is optional; the rest of the discussion keeps working.
+      }
+    })();
+
+    return () => {
+      disposed = true;
+      cleanup?.();
+    };
+  }, [postId]);
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
@@ -76,7 +141,12 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
       });
       if (!res.ok) throw new Error('The comment could not be saved.');
       const data: { comment?: Comment } = await res.json();
-      if (data.comment) setComments((current) => [data.comment as Comment, ...current]);
+      if (data.comment) {
+        const posted = data.comment as Comment;
+        setComments((current) =>
+          current.some((comment) => comment.id === posted.id) ? current : [posted, ...current],
+        );
+      }
       setNameText('');
       setStatus('Comment posted. It is visible below for this session.');
     } catch {
@@ -99,7 +169,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
       </div>
 
       <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-        Comments are public and stored with this prototype. Critique the method, reproduce a result, or ask a precise question.
+        Comments are public. Critique the method, reproduce a result, or ask a precise question.
       </p>
 
       <form onSubmit={submit} className="mt-6 space-y-4 rounded-lg border border-stone-200 bg-white p-5">

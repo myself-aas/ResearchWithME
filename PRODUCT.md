@@ -44,10 +44,12 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 
 ## Implementation Status
 - The active product is the root Next.js App Router application. `ResearchWith.me-main/` is a legacy WordPress theme archive and is outside the active build.
-- Article and comment data are stored in local JSON for this prototype; writes are best-effort and fall back to immutable bundled data on read-only deployments.
-- Contributor verification is a clearly labeled local prototype, not production OAuth. No credentials are sent to ORCID, GitHub, an institution, or Google.
+- The editorial studio (`/login`, `/dashboard`) is backed by Supabase when credentials are configured: posts, comments, an image bucket, RLS, and realtime. Without credentials it writes to local JSON so the project stays runnable for review. See `docs/supabase-cms.md`.
+- Reader accounts are Supabase accounts created by an administrator; there is no public sign-up. Studio writes require an authenticated session when Supabase is connected.
+- Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
+- Contributor verification on `/verify` remains a clearly labeled local prototype, not production OAuth. No credentials are sent to ORCID, GitHub, an institution, or Google.
 - The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
-- Newsletter and identity preferences are stored locally in the browser. No email is sent and no behavioral tracking is used.
+- Newsletter and reading-list preferences are stored locally in the browser. No email is sent and no behavioral tracking is used.
 
 ## Accessibility & Inclusion
 - Strict adherence to WCAG 2.1 AA contrast ratios (>= 4.5:1 for body text, >= 3:1 for large display text).

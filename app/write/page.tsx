@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, CheckCircle2, Eye, Lock, PenSquare, Plus, Save, Send, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
@@ -11,6 +12,7 @@ import { useAuth } from '@/lib/auth-context';
 import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
 import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
 import { formatDate, readingTimeFromText } from '@/lib/format';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 const FORMATS: ArticleFormat[] = ['Paper Review', 'Repo Teardown', 'Deep-Dive Essay', 'Field Notes', 'Case Study'];
 const DRAFT_KEY = 'rwm_writer_draft';
@@ -305,6 +307,19 @@ export default function WritePage() {
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+        {isSupabaseConfigured && (
+          <div className="mb-6 border-l-2 border-amber-700 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+            <p className="font-semibold">Publishing now happens in the editorial studio</p>
+            <p className="mt-1 max-w-2xl">
+              This prototype form still autosaves a draft in your browser, but publication is disabled because the site
+              is connected to Supabase.{' '}
+              <Link href="/dashboard" className="font-semibold underline underline-offset-4">
+                Open the studio
+              </Link>{' '}
+              to write and publish with the live database.
+            </p>
+          </div>
+        )}
         <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Writer studio</h1>
@@ -718,7 +733,9 @@ export default function WritePage() {
             <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
               <span>
-                Publication writes to the local JSON archive in this prototype. In a read-only deployment the save will fail without losing your draft.
+                {isSupabaseConfigured
+                  ? 'Publishing is disabled on this prototype form while the Supabase studio is active. Your draft stays in this browser.'
+                  : 'Publication writes to the local JSON archive in this prototype. In a read-only deployment the save will fail without losing your draft.'}
               </span>
             </p>
           </form>

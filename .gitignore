@@ -17,3 +17,7 @@ dist/
 .impeccable/detect-source.json
 .impeccable/review/
 .impeccable/live/
+
+# Local CMS runtime archive (demo mode); seeded content stays tracked.
+data/cms-posts.json
+data/cms-comments.json
