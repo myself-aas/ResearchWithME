@@ -1,232 +1,360 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
+import { CheckCircle2, Send } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import { 
-  UploadCloud, 
-  CheckCircle2, 
-  ArrowLeft, 
-  ShieldCheck, 
-  FileText, 
-  Send,
-  HelpCircle
-} from 'lucide-react';
-import { CATEGORIES, BlogCategory } from '@/lib/blog-data';
+import { BlogCategory, CATEGORIES } from '@/lib/blog-data';
+import { LIMITS, cleanText, isValidEmail } from '@/lib/validation';
+
+const inputClass =
+  'h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600';
+
+interface FormState {
+  title: string;
+  authorName: string;
+  email: string;
+  category: BlogCategory;
+  abstract: string;
+  artifact: string;
+  dataUrl: string;
+  consent: boolean;
+}
+
+const initialState: FormState = {
+  title: '',
+  authorName: '',
+  email: '',
+  category: 'Research Reviews',
+  abstract: '',
+  artifact: '',
+  dataUrl: '',
+  consent: false,
+};
 
 export default function SubmitPage() {
-  const [title, setTitle] = useState('');
-  const [authorName, setAuthorName] = useState('');
-  const [email, setEmail] = useState('');
-  const [category, setCategory] = useState<BlogCategory>('Research Reviews');
-  const [abstract, setAbstract] = useState('');
-  const [repoOrDoi, setRepoOrDoi] = useState('');
-  const [dataAvailability, setDataAvailability] = useState('');
-  const [agreed, setAgreed] = useState(true);
-  const [submittedId, setSubmittedId] = useState<string | null>(null);
+  const [form, setForm] = useState<FormState>(initialState);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [receipt, setReceipt] = useState<{ id: string; title: string } | null>(null);
+  const submittedRef = useRef(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !authorName.trim() || !abstract.trim()) return;
+  function update<K extends keyof FormState>(key: K, value: FormState[K]) {
+    setForm((previous) => ({ ...previous, [key]: value }));
+    setFieldErrors((previous) => ({ ...previous, [key]: undefined }));
+  }
 
-    const id = 'RWM-REV-' + Math.floor(100000 + Math.random() * 900000);
-    setSubmittedId(id);
-  };
+  const fieldErrorsRef = useRef<Partial<Record<keyof FormState, string>>>({});
+
+  function validate() {
+    const errors: Partial<Record<keyof FormState, string>> = {};
+    if (cleanText(form.title, LIMITS.title).length < 8) errors.title = 'Use a title of at least 8 characters.';
+    if (cleanText(form.authorName, LIMITS.name).length < 2) errors.authorName = 'Add the submitting author name.';
+    if (!isValidEmail(form.email)) errors.email = 'Enter a complete email, including an @ and a domain.';
+    if (cleanText(form.abstract, LIMITS.summary).length < 80) {
+      errors.abstract = 'Write at least 80 characters so editors can assess the submission.';
+    }
+    if (form.dataUrl && !/^https?:\/\//i.test(form.dataUrl.trim())) {
+      errors.dataUrl = 'Use a full http:// or https:// link.';
+    }
+    if (!form.consent) errors.consent = 'Confirm the citation and conflict-of-interest statement.';
+    fieldErrorsRef.current = errors;
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (submitting || submittedRef.current) return;
+    setSubmitError(null);
+    if (!validate()) {
+      setSubmitError('Some fields need attention. Your draft is preserved below.');
+      const order: Array<[keyof FormState, string]> = [
+        ['title', 'submit-title'],
+        ['authorName', 'submit-author'],
+        ['email', 'submit-email'],
+        ['abstract', 'submit-abstract'],
+        ['dataUrl', 'submit-data'],
+        ['consent', 'submit-consent'],
+      ];
+      const first = order.find(([key]) => key in fieldErrorsRef.current);
+      if (first) document.getElementById(first[1])?.focus();
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/submissions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: form.title,
+          authorName: form.authorName,
+          email: form.email,
+          category: form.category,
+          abstract: form.abstract,
+          artifact: form.artifact,
+          dataUrl: form.dataUrl,
+          consent: form.consent,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'The submission could not be recorded.');
+      submittedRef.current = false;
+      setReceipt({ id: data.submission?.id ?? 'Received', title: form.title });
+      setForm(initialState);
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? `${error.message} Your draft is still in the form.`
+          : 'The submission could not be recorded. Your draft is still in the form.',
+      );
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
-    <div className="min-h-screen bg-white text-stone-900 flex flex-col font-sans antialiased selection:bg-amber-900 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-stone-500 mb-6 font-sans">
-          <Link href="/" className="hover:text-stone-900 flex items-center gap-1">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Feed</span>
-          </Link>
-          <span aria-hidden="true">/</span>
-          <span className="font-semibold text-amber-900">Submissions & Guest Reviews</span>
-        </div>
-
-        {/* Header */}
-        <div className="border-b border-stone-200 pb-6 mb-8">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-900 mb-1">
-            <UploadCloud className="w-4 h-4" />
-            <span>Peer Review & Editorial Intake</span>
-          </div>
-          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 tracking-tight">
-            Submit a Review or Manuscript
+      <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+        <header className="border-b border-stone-200 pb-8">
+          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+            Submit a review or manuscript
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 font-sans mt-1">
-            We welcome domain-expert breakdowns of published research papers, in-depth open-source repo teardowns, and analytical essays across STEM, health, and sociology.
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-stone-700">
+            Send a paper breakdown, repository teardown, or analytical essay. The editorial desk checks that claims point to a public artifact and that funding conflicts are disclosed.
           </p>
-        </div>
+        </header>
 
-        {submittedId ? (
-          <div className="p-8 sm:p-12 text-center bg-stone-50 border border-stone-200 rounded-2xl space-y-4">
-            <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
-            <h2 className="font-serif text-2xl font-bold text-stone-900">
-              Manuscript Successfully Logged
+        {receipt ? (
+          <section role="status" aria-labelledby="receipt-heading" className="mt-8 border border-stone-200 bg-white p-8 sm:p-10">
+            <CheckCircle2 className="h-10 w-10 text-emerald-700" aria-hidden="true" />
+            <h2 id="receipt-heading" className="mt-4 font-serif text-2xl font-bold text-stone-900">
+              Submission received
             </h2>
-            <p className="text-sm text-stone-600 max-w-md mx-auto leading-relaxed">
-              Your submission &ldquo;<strong className="text-stone-900">{title}</strong>&rdquo; has been assigned tracking ID:
+            <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
+              &ldquo;{receipt.title}&rdquo; was recorded in this prototype archive with tracking ID{' '}
+              <span className="break-all font-mono font-semibold text-stone-900">{receipt.id}</span>.
             </p>
-            <div className="p-3 bg-white border border-stone-200 rounded-lg font-mono text-sm font-bold text-stone-900 inline-block shadow-xs">
-              {submittedId}
-            </div>
-            <p className="text-xs text-stone-500 max-w-md mx-auto">
-              Our editorial desk reviews submissions for empirical rigor, code reproducibility, and conflict-of-interest transparency. You will receive reviewer notes within 5 business days.
+            <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
+              No reviewer has been assigned and no email has been sent. A production desk would contact you at the address you supplied.
             </p>
-            <div className="pt-4 flex justify-center gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => setReceipt(null)}
+                className="inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+              >
+                Submit another manuscript
+              </button>
               <Link
                 href="/"
-                className="bg-stone-900 hover:bg-stone-800 text-white px-5 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-colors"
+                className="inline-flex min-h-11 items-center rounded-md border border-stone-300 px-5 py-2.5 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400"
               >
-                Return to Feed
+                Return to the journal
               </Link>
-              <button
-                onClick={() => setSubmittedId(null)}
-                className="bg-white border border-stone-300 hover:bg-stone-100 text-stone-800 px-4 py-2.5 rounded-lg text-xs font-medium"
-              >
-                Submit Another Review
-              </button>
             </div>
-          </div>
+          </section>
         ) : (
-          <form onSubmit={handleSubmit} className="bg-stone-50 border border-stone-200 rounded-2xl p-6 sm:p-8 space-y-6 text-xs">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-8">
+            <fieldset className="space-y-4">
+              <legend className="font-serif text-xl font-semibold text-stone-900">Manuscript details</legend>
+
               <div>
-                <label className="block font-semibold text-stone-800 mb-1">
-                  Manuscript / Review Title *
+                <label htmlFor="submit-title" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Title <span className="text-stone-600">(required)</span>
                 </label>
                 <input
+                  id="submit-title"
                   type="text"
-                  required
-                  placeholder="e.g. Architectural Review of the Astral uv Python Package Manager"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-white border border-stone-300 rounded-lg px-3.5 py-2 text-xs text-stone-900"
+                  value={form.title}
+                  onChange={(event) => update('title', event.target.value)}
+                  maxLength={LIMITS.title}
+                  aria-invalid={fieldErrors.title ? true : undefined}
+                  aria-describedby={fieldErrors.title ? 'submit-title-error' : undefined}
+                  placeholder="Architectural review of the Astral uv package manager"
+                  className={inputClass}
                 />
+                {fieldErrors.title && (
+                  <p id="submit-title-error" className="mt-1 text-sm text-red-800">{fieldErrors.title}</p>
+                )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block font-semibold text-stone-800 mb-1">
-                    Author / Reviewer Name *
+                  <label htmlFor="submit-author" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Submitting author <span className="text-stone-600">(required)</span>
                   </label>
                   <input
+                    id="submit-author"
                     type="text"
-                    required
-                    placeholder="e.g. Dr. Jordan Rivera"
-                    value={authorName}
-                    onChange={(e) => setAuthorName(e.target.value)}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3.5 py-2 text-xs text-stone-900"
+                    autoComplete="name"
+                    value={form.authorName}
+                    onChange={(event) => update('authorName', event.target.value)}
+                    maxLength={LIMITS.name}
+                    aria-invalid={fieldErrors.authorName ? true : undefined}
+                    aria-describedby={fieldErrors.authorName ? 'submit-author-error' : undefined}
+                    placeholder="Dr. Jordan Rivera"
+                    className={inputClass}
                   />
+                  {fieldErrors.authorName && (
+                    <p id="submit-author-error" className="mt-1 text-sm text-red-800">{fieldErrors.authorName}</p>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-stone-800 mb-1">
-                    Contact Email *
+                  <label htmlFor="submit-email" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Contact email <span className="text-stone-600">(required)</span>
                   </label>
                   <input
+                    id="submit-email"
                     type="email"
-                    required
+                    inputMode="email"
+                    autoComplete="email"
+                    value={form.email}
+                    onChange={(event) => update('email', event.target.value)}
+                    maxLength={LIMITS.email}
+                    aria-invalid={fieldErrors.email ? true : undefined}
+                    aria-describedby={fieldErrors.email ? 'submit-email-error' : 'submit-email-hint'}
                     placeholder="author@institution.org"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3.5 py-2 text-xs text-stone-900"
+                    className={inputClass}
                   />
+                  {fieldErrors.email ? (
+                    <p id="submit-email-error" className="mt-1 text-sm text-red-800">{fieldErrors.email}</p>
+                  ) : (
+                    <p id="submit-email-hint" className="mt-1 text-sm text-stone-600">
+                      Used only to contact you about this submission.
+                    </p>
+                  )}
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block font-semibold text-stone-800 mb-1">
-                    Primary Domain / Column
+                  <label htmlFor="submit-category" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Editorial column
                   </label>
                   <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value as BlogCategory)}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-stone-900"
+                    id="submit-category"
+                    value={form.category}
+                    onChange={(event) => update('category', event.target.value as BlogCategory)}
+                    className={inputClass}
                   >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                    {CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-stone-800 mb-1">
-                    Reviewed Repo or Paper DOI (Optional)
+                  <label htmlFor="submit-artifact" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Reviewed artifact <span className="text-stone-600">(optional)</span>
                   </label>
                   <input
+                    id="submit-artifact"
                     type="text"
-                    placeholder="e.g. github.com/astral-sh/uv or 10.1038/s41587"
-                    value={repoOrDoi}
-                    onChange={(e) => setRepoOrDoi(e.target.value)}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3.5 py-2 text-xs text-stone-900 font-mono"
+                    value={form.artifact}
+                    onChange={(event) => update('artifact', event.target.value)}
+                    maxLength={240}
+                    placeholder="github.com/astral-sh/uv or 10.1038/s41587"
+                    className={`${inputClass} font-mono`}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-800 mb-1">
-                  Structured Abstract / Review Summary *
+                <label htmlFor="submit-abstract" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Abstract <span className="text-stone-600">(required, at least 80 characters)</span>
                 </label>
                 <textarea
-                  required
-                  rows={4}
-                  placeholder="Summarize the core analytical thesis, benchmark results, or clinical findings..."
-                  value={abstract}
-                  onChange={(e) => setAbstract(e.target.value)}
-                  className="w-full bg-white border border-stone-300 rounded-lg p-3 text-xs text-stone-900 font-serif leading-relaxed"
+                  id="submit-abstract"
+                  rows={5}
+                  value={form.abstract}
+                  onChange={(event) => update('abstract', event.target.value)}
+                  maxLength={LIMITS.summary}
+                  aria-invalid={fieldErrors.abstract ? true : undefined}
+                  aria-describedby={fieldErrors.abstract ? 'submit-abstract-error' : 'submit-abstract-hint'}
+                  placeholder="State the question, the artifact you examined, the method, and the result a reader should take away."
+                  className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
                 />
+                {fieldErrors.abstract ? (
+                  <p id="submit-abstract-error" className="mt-1 text-sm text-red-800">{fieldErrors.abstract}</p>
+                ) : (
+                  <p id="submit-abstract-hint" className="mt-1 text-sm text-stone-600">
+                    {form.abstract.length} of {LIMITS.summary} characters
+                  </p>
+                )}
               </div>
 
               <div>
-                <label className="block font-semibold text-stone-800 mb-1">
-                  Open Data / Code Benchmark Repository
+                <label htmlFor="submit-data" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Data or code repository <span className="text-stone-600">(optional)</span>
                 </label>
                 <input
+                  id="submit-data"
                   type="url"
-                  placeholder="https://github.com/... or https://zenodo.org/..."
-                  value={dataAvailability}
-                  onChange={(e) => setDataAvailability(e.target.value)}
-                  className="w-full bg-white border border-stone-300 rounded-lg px-3.5 py-2 text-xs text-stone-900 font-mono"
+                  value={form.dataUrl}
+                  onChange={(event) => update('dataUrl', event.target.value)}
+                  aria-invalid={fieldErrors.dataUrl ? true : undefined}
+                  aria-describedby={fieldErrors.dataUrl ? 'submit-data-error' : undefined}
+                  placeholder="https://github.com/… or https://zenodo.org/…"
+                  className={`${inputClass} font-mono`}
                 />
+                {fieldErrors.dataUrl && (
+                  <p id="submit-data-error" className="mt-1 text-sm text-red-800">{fieldErrors.dataUrl}</p>
+                )}
               </div>
+            </fieldset>
 
-              <div className="flex items-start gap-2 pt-2">
+            <fieldset className="space-y-3 border-t border-stone-200 pt-6">
+              <legend className="font-serif text-xl font-semibold text-stone-900">Declaration</legend>
+              <div className="flex items-start gap-3">
                 <input
+                  id="submit-consent"
                   type="checkbox"
-                  id="agree"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-0.5 rounded text-amber-800"
+                  checked={form.consent}
+                  onChange={(event) => update('consent', event.target.checked)}
+                  aria-invalid={fieldErrors.consent ? true : undefined}
+                  aria-describedby={fieldErrors.consent ? 'submit-consent-error' : undefined}
+                  className="mt-1 h-5 w-5 rounded border-stone-400 text-amber-800"
                 />
-                <label htmlFor="agree" className="text-stone-600 leading-relaxed cursor-pointer">
-                  I confirm that all empirical claims cite verified artifacts and that I have disclosed any relevant corporate or funding conflicts of interest. Upon publication, the article will be released under <strong className="text-stone-800">CC BY 4.0</strong>.
+                <label htmlFor="submit-consent" className="text-base leading-relaxed text-stone-700">
+                  I confirm that empirical claims cite a public artifact, that I have disclosed relevant funding or corporate conflicts, and that accepted work may be published under CC BY 4.0.
                 </label>
               </div>
-            </div>
+              {fieldErrors.consent && (
+                <p id="submit-consent-error" className="text-sm text-red-800">{fieldErrors.consent}</p>
+              )}
+            </fieldset>
 
-            <div className="pt-4 border-t border-stone-200 flex items-center justify-between">
-              <span className="text-stone-500">Zero publication or article processing fees.</span>
+            {submitError && (
+              <div role="alert" className="border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+                {submitError}
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
+              <p className="text-sm text-stone-600">No publication or article processing fees.</p>
               <button
                 type="submit"
-                disabled={!agreed}
-                className="bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-semibold flex items-center gap-1.5 shadow-xs"
+                disabled={submitting}
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-60"
               >
-                <Send className="w-3.5 h-3.5" />
-                <span>Submit for Editorial Review</span>
+                <Send className="h-4 w-4" aria-hidden="true" />
+                <span>{submitting ? 'Submitting…' : 'Submit for editorial review'}</span>
               </button>
             </div>
           </form>
         )}
       </main>
 
-      <BlogFooter onCategorySelect={() => {}} onOpenWriteModal={() => {}} />
+      <BlogFooter />
     </div>
   );
 }

@@ -1,16 +1,6 @@
 'use client';
 
-import React from 'react';
-import { 
-  Search, 
-  GitBranch, 
-  FileText, 
-  Sparkles, 
-  TrendingUp, 
-  Award,
-  BookOpen,
-  Filter
-} from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { ArticleFormat } from '@/lib/blog-data';
 
 interface BlogHeroProps {
@@ -21,6 +11,15 @@ interface BlogHeroProps {
   totalArticles: number;
 }
 
+const formats: Array<'All' | ArticleFormat> = [
+  'All',
+  'Paper Review',
+  'Repo Teardown',
+  'Deep-Dive Essay',
+  'Field Notes',
+  'Case Study',
+];
+
 export default function BlogHero({
   searchQuery,
   setSearchQuery,
@@ -28,102 +27,107 @@ export default function BlogHero({
   setSelectedFormat,
   totalArticles,
 }: BlogHeroProps) {
-  const formats: ('All' | ArticleFormat)[] = [
-    'All',
-    'Paper Review',
-    'Repo Teardown',
-    'Deep-Dive Essay',
-    'Field Notes',
-  ];
-
   return (
-    <section className="bg-stone-50 border-b border-stone-200 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Eyebrow */}
-        <div className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-amber-900 font-sans">
-          <span className="w-2 h-2 rounded-full bg-amber-700"></span>
-          <span>Independent Scholarly & Technical Blogging · Research Reviews & Code Teardowns</span>
-        </div>
-
-        {/* Hero Title & Subtitle */}
-        <div className="max-w-4xl space-y-3">
-          <h1 className="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-stone-900 leading-[1.15]">
-            Where domain experts review published research, deconstruct code, and dissect modern culture.
-          </h1>
-          <p className="text-base sm:text-lg text-stone-700 leading-relaxed font-sans max-w-3xl">
-            Original long-form essays, GitHub repository teardowns, and analytical breakdowns of peer-reviewed literature across STEM, medicine, sociology, and open infrastructure. No paywalls, no clickbait—just writing worth your time.
-          </p>
-        </div>
-
-        {/* Search Bar & Live Format Switcher */}
-        <div className="pt-2 max-w-3xl space-y-3">
-          <div className="relative flex items-center shadow-xs">
-            <Search className="w-5 h-5 text-stone-400 absolute left-3.5 pointer-events-none" />
-            <input
-              type="text"
-              placeholder="Search across all blog posts, authors, reviewed GitHub repos, or paper DOIs..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-stone-300 rounded-xl pl-11 pr-24 py-3 text-sm text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-800/30 focus:border-amber-800 transition-all font-sans"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-20 text-xs text-stone-500 hover:text-stone-800 px-2 py-1 font-sans"
-              >
-                Clear
-              </button>
-            )}
-            <button
-              onClick={() => {
-                const el = document.getElementById('articles-feed');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="absolute right-1.5 bg-stone-900 hover:bg-stone-800 text-stone-50 px-4 py-2 rounded-lg text-xs font-medium transition-colors font-sans"
+    <section className="border-b border-stone-200 bg-stone-50" aria-labelledby="journal-title">
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
+          <div>
+            <h1
+              id="journal-title"
+              className="max-w-3xl font-serif text-4xl font-bold leading-[1.08] tracking-tight text-stone-900 sm:text-5xl lg:text-6xl"
             >
-              Search
-            </button>
+              Research you can read, check, and reuse.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-700">
+              Long-form reviews of published papers and open repositories, written by verified domain specialists. Every claim carries a citation, every artifact has a home, and nothing sits behind a paywall.
+            </p>
+
+            <div className="mt-8 max-w-2xl">
+              <label htmlFor="catalog-search" className="mb-2 block text-sm font-medium text-stone-800">
+                Search the catalog
+              </label>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="relative flex-1">
+                  <Search
+                    className="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-stone-600"
+                    aria-hidden="true"
+                  />
+                  <input
+                    id="catalog-search"
+                    type="search"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    placeholder="Title, author, DOI, or repository"
+                    className="h-12 w-full rounded-lg border border-stone-300 bg-white pl-11 pr-10 text-base text-stone-900 placeholder:text-stone-600"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-1.5 top-1/2 inline-flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-md text-stone-600 transition-colors hover:bg-stone-100 hover:text-stone-900"
+                    >
+                      <X className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Clear search</span>
+                    </button>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('articles-feed')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+                  className="inline-flex min-h-12 items-center justify-center rounded-lg bg-stone-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-stone-800"
+                >
+                  Browse results
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <p id="format-label" className="mb-2 text-sm font-medium text-stone-800">
+                Format
+              </p>
+              <div role="group" aria-labelledby="format-label" className="flex flex-wrap gap-2">
+                {formats.map((format) => (
+                  <button
+                    key={format}
+                    type="button"
+                    aria-pressed={selectedFormat === format}
+                    onClick={() => setSelectedFormat(format)}
+                    className={`min-h-10 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
+                      selectedFormat === format
+                        ? 'border-amber-900 bg-amber-900 text-white'
+                        : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400 hover:text-stone-900'
+                    }`}
+                  >
+                    {format === 'All' ? 'All formats' : format}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
-          {/* Format Filter Bar (Button controls) */}
-          <div className="flex items-center gap-1.5 flex-wrap pt-1 font-sans text-xs">
-            <span className="text-stone-500 font-medium mr-1.5 flex items-center gap-1">
-              <Filter className="w-3.5 h-3.5" />
-              <span>Format:</span>
-            </span>
-            {formats.map((fmt) => (
-              <button
-                key={fmt}
-                onClick={() => setSelectedFormat(fmt)}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                  selectedFormat === fmt
-                    ? 'bg-amber-900 text-white shadow-xs'
-                    : 'bg-white border border-stone-200 text-stone-600 hover:text-stone-900 hover:border-stone-300'
-                }`}
-              >
-                {fmt === 'All' ? 'All Formats' : fmt}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Highlights Bar (Zero-pill, clean typographic dividers) */}
-        <div className="pt-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-stone-600 font-sans border-t border-stone-200/80">
-          <div>
-            <strong className="text-stone-900 font-serif font-bold text-sm mr-1">{totalArticles}</strong> Articles Published
-          </div>
-          <span aria-hidden="true" className="text-stone-300">·</span>
-          <div>
-            <strong className="text-stone-900 font-serif font-bold text-sm mr-1">6</strong> Domain Specialists
-          </div>
-          <span aria-hidden="true" className="text-stone-300">·</span>
-          <div>
-            <strong className="text-stone-900 font-serif font-bold text-sm mr-1">100%</strong> Independent & Non-commercial
-          </div>
-          <span aria-hidden="true" className="text-stone-300">·</span>
-          <div>
-            Open Access under <strong className="text-stone-800">CC BY 4.0</strong>
-          </div>
+          <aside aria-label="Publication summary" className="border-t border-stone-300 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-1">
+              <div>
+                <dt className="text-sm text-stone-600">Published reviews</dt>
+                <dd className="font-serif text-3xl font-semibold text-stone-900">{totalArticles}</dd>
+              </div>
+              <div>
+                <dt className="text-sm text-stone-600">Verified specialists</dt>
+                <dd className="font-serif text-3xl font-semibold text-stone-900">6</dd>
+              </div>
+              <div>
+                <dt className="text-sm text-stone-600">Access model</dt>
+                <dd className="text-base font-semibold text-stone-900">Diamond open access</dd>
+              </div>
+              <div>
+                <dt className="text-sm text-stone-600">License</dt>
+                <dd className="text-base font-semibold text-stone-900">CC BY 4.0</dd>
+              </div>
+            </dl>
+            <p className="mt-6 max-w-xs text-sm leading-relaxed text-stone-600">
+              No paywalls, advertising trackers, or reading-flow pop-ups. The archive is the product.
+            </p>
+          </aside>
         </div>
       </div>
     </section>

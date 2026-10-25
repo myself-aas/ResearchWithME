@@ -1,0 +1,58 @@
+import type { MetadataRoute } from 'next';
+import { AUTHORS, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { PUBLICATIONS_DATA } from '@/lib/research-data';
+import { toDate } from '@/lib/seo';
+import persistedArticles from '@/data/articles.json';
+
+const FALLBACK_DATE = new Date('2026-10-25T00:00:00.000Z');
+
+const staticRoutes = [
+  { path: '/', priority: 1, changeFrequency: 'daily' },
+  { path: '/papers', priority: 0.9, changeFrequency: 'weekly' },
+  { path: '/authors', priority: 0.8, changeFrequency: 'weekly' },
+  { path: '/editions', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/editorial-board', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/assistant', priority: 0.7, changeFrequency: 'weekly' },
+  { path: '/bookmarks', priority: 0.5, changeFrequency: 'weekly' },
+  { path: '/cite', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/submit', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/verify', priority: 0.5, changeFrequency: 'monthly' },
+  { path: '/write', priority: 0.5, changeFrequency: 'monthly' },
+] as const;
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const articleSlugs = new Map<string, Date>();
+  for (const article of INITIAL_BLOG_POSTS) {
+    articleSlugs.set(article.slug, toDate(article.publishedAt) ?? FALLBACK_DATE);
+  }
+  for (const article of persistedArticles as Array<{ slug?: string; publishedAt?: string }>) {
+    if (article.slug) articleSlugs.set(article.slug, toDate(article.publishedAt) ?? FALLBACK_DATE);
+  }
+
+  return [
+    ...staticRoutes.map(({ path, priority, changeFrequency }) => ({
+      url: new URL(path, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      lastModified: FALLBACK_DATE,
+      changeFrequency,
+      priority,
+    })),
+    ...[...articleSlugs].map(([slug, lastModified]) => ({
+      url: new URL(`/post/${slug}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+    ...PUBLICATIONS_DATA.map((paper) => ({
+      url: new URL(`/paper/${paper.slug}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      lastModified: toDate(paper.publishedDate) ?? FALLBACK_DATE,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+    ...Object.keys(AUTHORS).map((id) => ({
+      url: new URL(`/author/${id}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      lastModified: FALLBACK_DATE,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  ];
+}

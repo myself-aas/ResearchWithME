@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">ResearchWithMe monogram</title>
+  <rect width="64" height="64" rx="12" fill="#1c1917"/>
+  <path d="M12 12h26c8.3 0 13.5 4.4 13.5 11.4 0 5-2.8 8.7-7.5 10.4L53 52h-9.4l-8-16.8h-8.2V52H12V12Zm15.4 7.8v8.6h10c3.2 0 5.2-1.6 5.2-4.4s-2-4.2-5.2-4.2h-10Z" fill="#fafaf9"/>
+  <rect x="12" y="56" width="40" height="3" fill="#b45309"/>
+</svg>

@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { getAuthorById, getArticlesByAuthor } from '@/lib/db';
 
 export async function GET(
@@ -18,7 +20,8 @@ export async function GET(
 
     const articles = getArticlesByAuthor(id);
 
-    return NextResponse.json({
+    return NextResponse.json(
+      {
       author,
       articles,
       metrics: {
@@ -27,8 +30,10 @@ export async function GET(
         totalComments: articles.reduce((acc, curr) => acc + (curr.commentsCount || 0), 0),
         domains: Array.from(new Set(articles.map((a) => a.category))),
         reviewedArtifactsCount: articles.filter((a) => a.reviewedArtifact).length,
+        },
       },
-    });
+      { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=600' } },
+    );
   } catch (err) {
     console.error('Failed to fetch author profile:', err);
     return NextResponse.json(

@@ -1,4 +1,5 @@
 {
+  "description": "Impeccable design detector: full-rule checks after UI edits and a deep pass when the turn ends.",
   "hooks": {
     "PostToolUse": [
       {
@@ -8,7 +9,7 @@
             "type": "command",
             "command": "\".agents/skills/impeccable/scripts/impeccable\" hook",
             "commandWindows": "cmd /c if exist \".agents\\skills\\impeccable\\scripts\\impeccable.cmd\" \".agents\\skills\\impeccable\\scripts\\impeccable.cmd\" hook",
-            "timeout": 5,
+            "timeout": 10,
             "statusMessage": "Checking UI changes"
           }
         ]

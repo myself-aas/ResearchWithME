@@ -1,10 +1,40 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { BlogPost, INITIAL_BLOG_POSTS, Author, AUTHORS } from './blog-data';
+import { cleanText, slugify } from './validation';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ARTICLES_FILE = path.join(DATA_DIR, 'articles.json');
 const COMMENTS_FILE = path.join(DATA_DIR, 'comments.json');
+
+function writeJsonAtomic(file: string, value: unknown): boolean {
+  const temporary = `${file}.${process.pid}.${Date.now()}.tmp`;
+  try {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(temporary, JSON.stringify(value, null, 2), 'utf8');
+    fs.renameSync(temporary, file);
+    return true;
+  } catch (error) {
+    console.error(`Failed to write ${path.basename(file)}:`, error);
+    try {
+      fs.rmSync(temporary, { force: true });
+    } catch {
+      // Best effort cleanup only.
+    }
+    return false;
+  }
+}
+
+function readJsonArray<T>(file: string, fallback: T[]): T[] {
+  try {
+    if (!fs.existsSync(file)) return fallback;
+    const parsed: unknown = JSON.parse(fs.readFileSync(file, 'utf8'));
+    return Array.isArray(parsed) ? (parsed as T[]) : fallback;
+  } catch (error) {
+    console.error(`Failed to read ${path.basename(file)}:`, error);
+    return fallback;
+  }
+}
 
 export interface CommentRecord {
   id: string;
@@ -71,10 +101,10 @@ function ensureFiles() {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
     if (!fs.existsSync(ARTICLES_FILE)) {
-      fs.writeFileSync(ARTICLES_FILE, JSON.stringify(INITIAL_BLOG_POSTS, null, 2), 'utf8');
+      writeJsonAtomic(ARTICLES_FILE, INITIAL_BLOG_POSTS);
     }
     if (!fs.existsSync(COMMENTS_FILE)) {
-      fs.writeFileSync(COMMENTS_FILE, JSON.stringify(DEFAULT_COMMENTS, null, 2), 'utf8');
+      writeJsonAtomic(COMMENTS_FILE, DEFAULT_COMMENTS);
     }
   } catch (err) {
     console.error('Failed to ensure data files:', err);
@@ -82,27 +112,19 @@ function ensureFiles() {
 }
 
 export function getArticles(): BlogPost[] {
-  ensureFiles();
-  try {
-    if (fs.existsSync(ARTICLES_FILE)) {
-      const data = fs.readFileSync(ARTICLES_FILE, 'utf8');
-      return JSON.parse(data);
+  const articles = readJsonArray<BlogPost>(ARTICLES_FILE, INITIAL_BLOG_POSTS);
+  const bySlug = new Map<string, BlogPost>();
+  for (const article of [...INITIAL_BLOG_POSTS, ...articles]) {
+    if (article && typeof article.slug === 'string' && article.slug.length > 0) {
+      bySlug.set(article.slug, article);
     }
-  } catch (err) {
-    console.error('Error reading articles:', err);
   }
-  return INITIAL_BLOG_POSTS;
+  return [...bySlug.values()];
 }
 
 export function saveArticles(articles: BlogPost[]): boolean {
   ensureFiles();
-  try {
-    fs.writeFileSync(ARTICLES_FILE, JSON.stringify(articles, null, 2), 'utf8');
-    return true;
-  } catch (err) {
-    console.error('Error saving articles:', err);
-    return false;
-  }
+  return writeJsonAtomic(ARTICLES_FILE, articles);
 }
 
 export function getArticleBySlug(slug: string): BlogPost | undefined {
@@ -153,10 +175,17 @@ export function getArticlesByAuthor(authorIdOrName: string): BlogPost[] {
 
 export function addArticle(newArticle: BlogPost): BlogPost {
   const articles = getArticles();
-  // prepend to list
-  const updated = [newArticle, ...articles.filter((a) => a.id !== newArticle.id && a.slug !== newArticle.slug)];
+  const safeSlug = slugify(newArticle.slug || newArticle.title).slice(0, 96) || `review-${Date.now()}`;
+  const savedArticle: BlogPost = {
+    ...newArticle,
+    slug: safeSlug,
+    title: cleanText(newArticle.title, 180) || 'Untitled review',
+    summary: cleanText(newArticle.summary, 1200),
+    subtitle: cleanText(newArticle.subtitle, 400),
+  };
+  const updated = [savedArticle, ...articles.filter((a) => a.id !== savedArticle.id && a.slug !== savedArticle.slug)];
   saveArticles(updated);
-  return newArticle;
+  return savedArticle;
 }
 
 export function incrementLikes(id: string): number {
@@ -174,20 +203,9 @@ export function incrementLikes(id: string): number {
 }
 
 export function getComments(postId?: string): CommentRecord[] {
-  ensureFiles();
-  try {
-    if (fs.existsSync(COMMENTS_FILE)) {
-      const data = fs.readFileSync(COMMENTS_FILE, 'utf8');
-      const allComments: CommentRecord[] = JSON.parse(data);
-      if (postId) {
-        return allComments.filter((c) => c.postId === postId);
-      }
-      return allComments;
-    }
-  } catch (err) {
-    console.error('Error reading comments:', err);
-  }
-  return postId ? DEFAULT_COMMENTS.filter((c) => c.postId === postId) : DEFAULT_COMMENTS;
+  const allComments = readJsonArray<CommentRecord>(COMMENTS_FILE, DEFAULT_COMMENTS);
+  const comments = allComments.length > 0 ? allComments : DEFAULT_COMMENTS;
+  return postId ? comments.filter((comment) => comment.postId === postId) : comments;
 }
 
 export function addComment(comment: Omit<CommentRecord, 'id' | 'timestamp'>): CommentRecord {
@@ -199,20 +217,16 @@ export function addComment(comment: Omit<CommentRecord, 'id' | 'timestamp'>): Co
     timestamp: 'Just now',
   };
   const updated = [newRecord, ...allComments];
-  try {
-    fs.writeFileSync(COMMENTS_FILE, JSON.stringify(updated, null, 2), 'utf8');
-    
-    // Also update comment count on the article
-    const articles = getArticles();
-    const updatedArticles = articles.map((a) => {
-      if (a.id === comment.postId || a.slug === comment.postId) {
-        return { ...a, commentsCount: (a.commentsCount || 0) + 1 };
-      }
-      return a;
-    });
-    saveArticles(updatedArticles);
-  } catch (err) {
-    console.error('Error saving comment:', err);
-  }
+  writeJsonAtomic(COMMENTS_FILE, updated);
+
+  const articles = getArticles();
+  const updatedArticles = articles.map((article) => {
+    if (article.id === comment.postId || article.slug === comment.postId) {
+      return { ...article, commentsCount: (article.commentsCount || 0) + 1 };
+    }
+    return article;
+  });
+  saveArticles(updatedArticles);
+
   return newRecord;
 }

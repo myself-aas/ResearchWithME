@@ -1,153 +1,127 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
-import { BookOpen, Rss, Github, Mail, ShieldCheck, PenSquare } from 'lucide-react';
+import { ArrowUpRight, PenSquare, ShieldCheck } from 'lucide-react';
 import { CATEGORIES } from '@/lib/blog-data';
 import NewsletterSignup from '@/components/NewsletterSignup';
 
-interface BlogFooterProps {
-  onCategorySelect?: (category: string) => void;
-  onOpenWriteModal?: () => void;
-}
+const portalLinks = [
+  { href: '/papers', label: 'Paper archive' },
+  { href: '/authors', label: 'Authors and specialists' },
+  { href: '/editions', label: 'PDF editions' },
+  { href: '/editorial-board', label: 'Editorial board' },
+  { href: '/assistant', label: 'Research assistant' },
+  { href: '/cite', label: 'Citation builder' },
+  { href: '/bookmarks', label: 'Reading list' },
+  { href: '/submit', label: 'Submissions' },
+  { href: '/write', label: 'Writer studio' },
+];
 
-export default function BlogFooter({ onCategorySelect, onOpenWriteModal }: BlogFooterProps) {
+export default function BlogFooter() {
   return (
-    <footer className="bg-stone-900 text-stone-300 border-t border-stone-800 font-sans mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Weekly Research Digest Newsletter Signup Banner */}
+    <footer className="dark-surface mt-16 bg-stone-900 text-stone-200">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <NewsletterSignup />
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 pt-6">
-          {/* Brand Info */}
-          <div className="md:col-span-2 space-y-4">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-8 h-8 rounded-md bg-stone-100 text-stone-900 flex items-center justify-center font-serif text-lg font-bold group-hover:bg-amber-400 transition-colors">
+        <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="lg:col-span-2">
+            <Link href="/" className="inline-flex items-center gap-2.5 rounded-md">
+              <span
+                aria-hidden="true"
+                className="flex h-9 w-9 items-center justify-center rounded-md bg-stone-100 font-serif text-lg font-bold text-stone-900"
+              >
                 R
-              </div>
-              <span className="font-serif text-xl font-bold text-white tracking-tight">
-                ResearchWith<span className="text-amber-500">.me</span>
+              </span>
+              <span className="font-serif text-xl font-bold tracking-tight text-white">
+                ResearchWith<span className="text-amber-400">.me</span>
               </span>
             </Link>
 
-            <p className="text-xs text-stone-400 max-w-md leading-relaxed font-sans">
-              An independent scholarly and technical blogging publication. We publish domain-expert essays, teardowns of open-source GitHub repositories, and analytical breakdowns of peer-reviewed literature across STEM, health, sociology, and economics.
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-stone-300">
+              An independent, open-access publication of expert essays, reproducible paper reviews, and repository teardowns across STEM, health, sociology, and research policy.
             </p>
 
-            <div className="text-xs text-stone-500 space-y-1 font-mono">
-              <div>ISSN 2994-0821 (Digital Publication) · Creative Commons CC BY 4.0</div>
-              <div>No paywalls · No behavioral ad trackers · Community & reader funded</div>
-            </div>
+            <dl className="mt-5 space-y-1.5 text-sm text-stone-300">
+              <div>
+                <dt className="sr-only">Identifier</dt>
+                <dd>ISSN 2994-0821 (digital) · DOI prefix 10.5555/rwm</dd>
+              </div>
+              <div>
+                <dt className="sr-only">License</dt>
+                <dd>Creative Commons Attribution 4.0 International (CC BY 4.0)</dd>
+              </div>
+              <div>
+                <dt className="sr-only">Funding model</dt>
+                <dd>No paywalls · no behavioural ad trackers · community funded</dd>
+              </div>
+            </dl>
 
-            <div className="pt-2 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/write"
-                className="inline-flex items-center gap-1.5 bg-amber-800 hover:bg-amber-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors shadow-xs"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600"
               >
-                <PenSquare className="w-3.5 h-3.5" />
-                <span>Publish a Review</span>
+                <PenSquare className="h-4 w-4" aria-hidden="true" />
+                <span>Write a review</span>
               </Link>
-
               <Link
-                href="/assistant"
-                className="inline-flex items-center gap-1.5 bg-stone-800 hover:bg-stone-700 text-stone-200 text-xs font-semibold px-4 py-2 rounded-lg transition-colors border border-stone-700"
+                href="/verify"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-600 px-4 py-2 text-sm font-semibold text-stone-100 transition-colors hover:border-stone-500 hover:bg-stone-800"
               >
-                <span>AI Synthesizer</span>
+                <ShieldCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+                <span>Verification prototype</span>
               </Link>
             </div>
           </div>
 
-          {/* Categories taxonomy */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-200">
-              Domains & Columns
-            </h4>
-            <ul className="space-y-2 text-xs text-stone-400">
-              {CATEGORIES.map((cat) => (
-                <li key={cat}>
+          <nav aria-labelledby="footer-domains">
+            <h2 id="footer-domains" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
+              Domains
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              {CATEGORIES.map((category) => (
+                <li key={category}>
                   <Link
-                    href={`/?category=${encodeURIComponent(cat)}`}
-                    className="hover:text-amber-400 transition-colors text-left block"
+                    href={`/?category=${encodeURIComponent(category)}`}
+                    className="text-stone-300 underline-offset-4 transition-colors hover:text-white hover:underline"
                   >
-                    {cat}
+                    {category}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          {/* Dedicated Page Directory */}
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-stone-200">
-              Publication Portals
-            </h4>
-            <ul className="space-y-2 text-xs text-stone-400">
-              <li>
-                <Link href="/write" className="hover:text-amber-400 transition-colors">
-                  Writer & Reviewer Studio
-                </Link>
-              </li>
-              <li>
-                <Link href="/papers" className="hover:text-amber-400 transition-colors">
-                  Research Papers Archive
-                </Link>
-              </li>
-              <li>
-                <Link href="/authors" className="hover:text-amber-400 transition-colors">
-                  Authors & Specialists Directory
-                </Link>
-              </li>
-              <li>
-                <Link href="/editions" className="hover:text-amber-400 transition-colors">
-                  PDF Compendiums & Volumes
-                </Link>
-              </li>
-              <li>
-                <Link href="/editorial-board" className="hover:text-amber-400 transition-colors">
-                  Editorial Board & Standards
-                </Link>
-              </li>
-              <li>
-                <Link href="/assistant" className="hover:text-amber-400 transition-colors">
-                  Literature AI Synthesizer
-                </Link>
-              </li>
-              <li>
-                <Link href="/bookmarks" className="hover:text-amber-400 transition-colors">
-                  Reading Queue & Bookmarks
-                </Link>
-              </li>
-              <li>
-                <Link href="/cite" className="hover:text-amber-400 transition-colors">
-                  Citation & BibTeX Formatter
-                </Link>
-              </li>
-              <li>
-                <Link href="/submit" className="hover:text-amber-400 transition-colors">
-                  Manuscript & Guest Submissions
-                </Link>
-              </li>
-              <li>
-                <Link href="/verify" className="hover:text-emerald-400 text-stone-300 transition-colors flex items-center gap-1 font-medium">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>Domain OAuth Verification</span>
-                </Link>
-              </li>
+          <nav aria-labelledby="footer-portals">
+            <h2 id="footer-portals" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
+              Publication portals
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm">
+              {portalLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-stone-300 underline-offset-4 transition-colors hover:text-white hover:underline"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
         </div>
 
-        {/* Bottom Attribution */}
-        <div className="border-t border-stone-800/80 mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
-          <div>
-            &copy; 2026 ResearchWithMe Publication. Written and curated with independence.
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/submit" className="hover:text-stone-400 transition-colors">Editorial Guidelines</Link>
-            <span>·</span>
-            <Link href="/cite" className="hover:text-stone-400 transition-colors">Citation Export</Link>
-            <span>·</span>
-            <Link href="/assistant" className="hover:text-stone-400 transition-colors">MCP Protocol</Link>
+        <div className="mt-12 flex flex-col gap-4 border-t border-stone-700 pt-6 text-sm text-stone-300 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 ResearchWithMe Publication Collective. Research published under open access.</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <Link href="/submit" className="underline-offset-4 hover:text-white hover:underline">
+              Editorial guidelines
+            </Link>
+            <Link href="/cite" className="underline-offset-4 hover:text-white hover:underline">
+              Citation export
+            </Link>
+            <Link href="/assistant" className="inline-flex items-center gap-1 underline-offset-4 hover:text-white hover:underline">
+              <span>Assistant</span>
+              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
           </div>
         </div>
       </div>

@@ -2,20 +2,42 @@
   "hook": {
     "enabled": true,
     "limits": {
-      "maxFindings": 5,
-      "maxChars": 8000
-    }
+      "maxFindings": 8,
+      "maxChars": 10000
+    },
+    "quiet": false,
+    "perEditRules": "all"
   },
   "detector": {
     "ignoreRules": [],
-    "ignoreFiles": [],
+    "ignoreFiles": [
+      "ResearchWith.me-main/**",
+      ".next/**",
+      "node_modules/**",
+      "public/assets/**",
+      "coverage/**",
+      "data/**"
+    ],
     "ignoreValues": [
       {
         "rule": "overused-font",
         "value": "inter",
         "createdAt": "2026-10-25T09:58:42.583Z",
         "reason": "Brand font"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          "app/opengraph-image.tsx"
+        ],
+        "createdAt": "2026-10-25T11:42:44.046Z",
+        "reason": "Generated social image: ImageResponse renders with system fallback faces because custom fonts are not loaded in the OG renderer"
       }
-    ]
-  }
+    ],
+    "designSystem": {
+      "enabled": true
+    }
+  },
+  "buildPath": "code"
 }

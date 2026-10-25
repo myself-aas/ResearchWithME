@@ -1,213 +1,192 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import { ArrowRight, Building2, CheckCircle2, GitBranch, GraduationCap, Search, Users } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import { 
-  Users, 
-  Search, 
-  GraduationCap, 
-  GitBranch, 
-  Building2, 
-  CheckCircle2, 
-  ArrowRight, 
-  ArrowLeft,
-  ExternalLink,
-  ShieldCheck,
-  BookOpen
-} from 'lucide-react';
 import { AUTHORS, Author } from '@/lib/blog-data';
+
+type CredentialFilter = 'All' | Author['verifiedVia'];
+
+const FILTERS: Array<{ value: CredentialFilter; label: string; icon: typeof Users }> = [
+  { value: 'All', label: 'All contributors', icon: Users },
+  { value: 'orcid', label: 'ORCID verified', icon: GraduationCap },
+  { value: 'github', label: 'GitHub verified', icon: GitBranch },
+  { value: 'institution', label: 'Institutional', icon: Building2 },
+];
+
+function credentialIcon(author: Author) {
+  switch (author.verifiedVia) {
+    case 'orcid':
+      return <GraduationCap className="h-4 w-4" aria-hidden="true" />;
+    case 'github':
+      return <GitBranch className="h-4 w-4" aria-hidden="true" />;
+    default:
+      return <Building2 className="h-4 w-4" aria-hidden="true" />;
+  }
+}
 
 export default function AuthorsDirectoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [credentialFilter, setCredentialFilter] = useState<'All' | 'orcid' | 'github' | 'institution'>('All');
-
-  const authorsList = Object.values(AUTHORS);
+  const [credentialFilter, setCredentialFilter] = useState<CredentialFilter>('All');
+  const authors = Object.values(AUTHORS);
 
   const filteredAuthors = useMemo(() => {
-    return authorsList.filter((author) => {
-      if (credentialFilter !== 'All' && author.verifiedVia !== credentialFilter) {
-        return false;
-      }
-      if (!searchQuery.trim()) return true;
-
-      const q = searchQuery.toLowerCase();
-      return (
-        author.name.toLowerCase().includes(q) ||
-        author.role.toLowerCase().includes(q) ||
-        author.domain.toLowerCase().includes(q) ||
-        (author.institution && author.institution.toLowerCase().includes(q)) ||
-        author.bio.toLowerCase().includes(q)
-      );
+    const query = searchQuery.trim().toLowerCase();
+    return authors.filter((author) => {
+      if (credentialFilter !== 'All' && author.verifiedVia !== credentialFilter) return false;
+      if (!query) return true;
+      return [
+        author.name,
+        author.role,
+        author.domain,
+        author.institution ?? '',
+        author.bio,
+      ].some((value) => value.toLowerCase().includes(query));
     });
-  }, [authorsList, credentialFilter, searchQuery]);
-
-  const getVerificationIcon = (author: Author) => {
-    switch (author.verifiedVia) {
-      case 'orcid':
-        return <GraduationCap className="w-3.5 h-3.5 text-emerald-700" />;
-      case 'github':
-        return <GitBranch className="w-3.5 h-3.5 text-stone-800" />;
-      case 'institution':
-      default:
-        return <Building2 className="w-3.5 h-3.5 text-sky-800" />;
-    }
-  };
+  }, [authors, credentialFilter, searchQuery]);
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans antialiased selection:bg-amber-900 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-8">
-        {/* Navigation Breadcrumb */}
-        <div className="flex items-center justify-between text-xs text-stone-500 font-sans">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 hover:text-stone-900 transition-colors font-medium"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Home</span>
-          </Link>
-          <span className="font-mono text-stone-400">Contributing Authors Collective</span>
-        </div>
-
-        {/* Hero Section */}
-        <div className="border-b border-stone-200 pb-6 space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-900">
-            <Users className="w-4 h-4 text-amber-900" />
-            <span>Verified Domain Contributors</span>
-          </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
-            Contributing Writers & Technical Reviewers
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+        <header className="border-b border-stone-200 pb-8">
+          <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+            The reviewers behind the archive
           </h1>
-          <p className="text-sm sm:text-base text-stone-600 font-serif max-w-3xl leading-relaxed">
-            Every writer on ResearchWithMe has validated their identity and domain expertise via ORCID, GitHub repository maintenance, or an accredited university email (.edu).
+          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
+            Each contributor publishes under a verified scholarly identity. Profiles list their credentials, research domain, and complete publication record so you can judge the expertise behind a review.
           </p>
-        </div>
+        </header>
 
-        {/* Search & Credential Filters */}
-        <div className="bg-white border border-stone-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by author name, institution, or domain specialization..."
-              className="w-full bg-stone-50 border border-stone-200 rounded-xl pl-9 pr-4 py-2 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white transition-all"
-            />
-            <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <section aria-labelledby="author-filters" className="border-b border-stone-200 py-8">
+          <h2 id="author-filters" className="sr-only">
+            Search and filter contributors
+          </h2>
+          <div className="grid gap-4 md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-end">
+            <div>
+              <label htmlFor="author-search" className="mb-1.5 block text-sm font-medium text-stone-800">
+                Search contributors
+              </label>
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-600" aria-hidden="true" />
+                <input
+                  id="author-search"
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Name, institution, or domain"
+                  className="h-11 w-full rounded-md border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 placeholder:text-stone-600"
+                />
+              </div>
+            </div>
+
+            <div>
+              <p id="credential-label" className="mb-1.5 text-sm font-medium text-stone-800">
+                Credential
+              </p>
+              <div role="group" aria-labelledby="credential-label" className="flex flex-wrap gap-2">
+                {FILTERS.map((filter) => (
+                  <button
+                    key={filter.value}
+                    type="button"
+                    onClick={() => setCredentialFilter(filter.value)}
+                    aria-pressed={credentialFilter === filter.value}
+                    className={`inline-flex min-h-11 items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+                      credentialFilter === filter.value
+                        ? 'border-stone-900 bg-stone-900 text-white'
+                        : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
+                    }`}
+                  >
+                    <filter.icon className="h-4 w-4" aria-hidden="true" />
+                    <span>{filter.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto text-xs no-scrollbar">
-            <button
-              onClick={() => setCredentialFilter('All')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                credentialFilter === 'All'
-                  ? 'bg-stone-900 text-white font-semibold'
-                  : 'bg-stone-100 text-stone-600 hover:text-stone-900 hover:bg-stone-200'
-              }`}
-            >
-              All Contributors ({authorsList.length})
-            </button>
+          <p className="mt-4 text-sm text-stone-600">
+            {filteredAuthors.length} {filteredAuthors.length === 1 ? 'contributor' : 'contributors'} shown
+            {searchQuery ? ` for “${searchQuery}”` : ''}
+          </p>
+        </section>
 
+        {filteredAuthors.length === 0 ? (
+          <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">
+            <h2 className="font-serif text-2xl font-semibold text-stone-900">No contributors match those filters</h2>
+            <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
+              Try a different name or clear the credential filter to see the full directory.
+            </p>
             <button
-              onClick={() => setCredentialFilter('orcid')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-                credentialFilter === 'orcid'
-                  ? 'bg-emerald-800 text-white font-semibold'
-                  : 'bg-emerald-50 text-emerald-900 border border-emerald-200 hover:bg-emerald-100'
-              }`}
+              type="button"
+              onClick={() => {
+                setSearchQuery('');
+                setCredentialFilter('All');
+              }}
+              className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
             >
-              <GraduationCap className="w-3.5 h-3.5" />
-              <span>ORCID Verified</span>
-            </button>
-
-            <button
-              onClick={() => setCredentialFilter('github')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-                credentialFilter === 'github'
-                  ? 'bg-stone-900 text-white font-semibold'
-                  : 'bg-stone-100 text-stone-800 border border-stone-300 hover:bg-stone-200'
-              }`}
-            >
-              <GitBranch className="w-3.5 h-3.5" />
-              <span>GitHub Verified</span>
-            </button>
-
-            <button
-              onClick={() => setCredentialFilter('institution')}
-              className={`px-3 py-1.5 rounded-lg font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-                credentialFilter === 'institution'
-                  ? 'bg-sky-900 text-white font-semibold'
-                  : 'bg-sky-50 text-sky-900 border border-sky-200 hover:bg-sky-100'
-              }`}
-            >
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Institutional (.edu)</span>
+              Clear filters
             </button>
           </div>
-        </div>
-
-        {/* Authors Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAuthors.map((author) => (
-            <Link
-              key={author.id}
-              href={`/author/${author.id}`}
-              className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs hover:border-stone-300 hover:shadow-sm transition-all flex flex-col justify-between group space-y-4 block"
-            >
-              <div className="space-y-3.5">
-                <div className="flex items-start justify-between">
-                  <div className="relative">
-                    <div className="w-14 h-14 rounded-2xl bg-stone-900 text-stone-100 flex items-center justify-center font-serif text-lg font-bold group-hover:bg-amber-900 transition-colors shadow-2xs">
-                      {author.avatar}
+        ) : (
+          <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {filteredAuthors.map((author) => (
+              <li key={author.id} className="flex">
+                <article className="flex w-full flex-col justify-between rounded-lg border border-stone-200 bg-white p-6">
+                  <div>
+                    <div className="flex items-start justify-between gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-14 w-14 items-center justify-center rounded-lg bg-stone-900 font-serif text-lg font-bold text-stone-50"
+                      >
+                        {author.avatar}
+                      </span>
+                      <span className="rounded border border-stone-300 bg-stone-100 px-2 py-1 text-sm text-stone-700">
+                        {author.articleCount} articles
+                      </span>
                     </div>
-                    <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-1 shadow-2xs border border-stone-200">
-                      {getVerificationIcon(author)}
-                    </div>
-                  </div>
 
-                  <span className="text-[11px] font-mono text-stone-400 bg-stone-100 px-2 py-0.5 rounded">
-                    {author.articleCount} Articles
-                  </span>
-                </div>
-
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <h2 className="font-serif text-lg font-bold text-stone-900 group-hover:text-amber-900 transition-colors">
-                      {author.name}
+                    <h2 className="mt-4 font-serif text-xl font-semibold text-stone-900">
+                      <Link href={`/author/${author.id}`} className="hover:text-amber-900">
+                        {author.name}
+                      </Link>
                     </h2>
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                  </div>
-                  <div className="text-xs text-amber-900 font-medium">
-                    {author.role}
-                  </div>
-                  {author.institution && (
-                    <div className="text-[11px] text-stone-500 flex items-center gap-1 mt-0.5 line-clamp-1">
-                      <Building2 className="w-3 h-3 text-stone-400 shrink-0" />
-                      <span>{author.institution}</span>
-                    </div>
-                  )}
-                </div>
+                    <p className="mt-1 text-sm font-medium text-amber-900">{author.role}</p>
+                    {author.institution && (
+                      <p className="mt-1 flex items-start gap-1.5 text-sm text-stone-600">
+                        <Building2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                        <span>{author.institution}</span>
+                      </p>
+                    )}
 
-                <p className="text-xs text-stone-600 font-serif leading-relaxed line-clamp-3">
-                  {author.bio}
-                </p>
-              </div>
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-stone-700">{author.bio}</p>
+                  </div>
 
-              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs font-medium text-stone-700 group-hover:text-amber-900">
-                <span className="font-mono text-[11px] text-stone-500">
-                  {author.verifiedTitle}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span>Dossier</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
+                  <div className="mt-5 border-t border-stone-200 pt-4">
+                    <p className="flex items-center gap-1.5 text-sm font-medium text-emerald-900">
+                      <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+                      <span>{author.verifiedTitle}</span>
+                    </p>
+                    <p className="mt-1 flex items-center gap-1.5 text-sm text-stone-600">
+                      {credentialIcon(author)}
+                      <span className="break-all font-mono">{author.verifiedIdentifier}</span>
+                    </p>
+                    <Link
+                      href={`/author/${author.id}`}
+                      className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-amber-900 underline-offset-4 hover:underline"
+                    >
+                      <span>View profile and archive</span>
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </div>
+                </article>
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
 
       <BlogFooter />

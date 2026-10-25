@@ -42,7 +42,16 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 3. Accessible precision: Typography and color choices optimize sustained reading comfort and WCAG AA contrast compliance.
 4. Cohesive fullstack experience: Dedicated URLs for every major user intent and task.
 
+## Implementation Status
+- The active product is the root Next.js App Router application. `ResearchWith.me-main/` is a legacy WordPress theme archive and is outside the active build.
+- Article and comment data are stored in local JSON for this prototype; writes are best-effort and fall back to immutable bundled data on read-only deployments.
+- Contributor verification is a clearly labeled local prototype, not production OAuth. No credentials are sent to ORCID, GitHub, an institution, or Google.
+- The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
+- Newsletter and identity preferences are stored locally in the browser. No email is sent and no behavioral tracking is used.
+
 ## Accessibility & Inclusion
 - Strict adherence to WCAG 2.1 AA contrast ratios (>= 4.5:1 for body text, >= 3:1 for large display text).
 - Full keyboard navigation with visible focus rings and semantic landmarks.
 - Responsive reflow without horizontal scrolling down to 320px viewports.
+- Reduced-motion preferences preserve state feedback while removing travel and transform motion.
+- All form controls have accessible names; loading, empty, disabled, and error states are announced where they matter.

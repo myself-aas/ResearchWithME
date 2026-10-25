@@ -1,29 +1,23 @@
 'use client';
 
-import React, { useState, useEffect, Suspense, use } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { ArrowLeft, Check, Copy, Download, Quote } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import { 
-  Quote, 
-  Copy, 
-  Check, 
-  Download, 
-  ArrowLeft, 
-  BookOpen, 
-  FileCode, 
-  ExternalLink,
-  PlusCircle
-} from 'lucide-react';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { CITATION_FORMATS, CitationFormat, buildCitation, citationFileExtension } from '@/lib/citations';
+import { cleanText, safeExternalUrl, slugify } from '@/lib/validation';
 
-function CitationBuilderContent({ initialArticleSlug }: { initialArticleSlug?: string }) {
+const inputClass =
+  'w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 transition-colors focus:border-amber-800';
+
+export default function CitePage() {
   const [articles, setArticles] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
-  const [selectedSlug, setSelectedSlug] = useState<string>(initialArticleSlug || 'inside-vllm-and-paged-attention');
-  const [format, setFormat] = useState<'apa' | 'chicago' | 'mla' | 'bibtex' | 'ris' | 'ieee'>('apa');
+  const [selectedSlug, setSelectedSlug] = useState<string>(INITIAL_BLOG_POSTS[0]?.slug ?? '');
+  const [format, setFormat] = useState<CitationFormat>('apa');
   const [copied, setCopied] = useState(false);
-
-  // Custom article fields (if user wants to cite an external research paper)
+  const [copyError, setCopyError] = useState<string | null>(null);
   const [isCustomPaper, setIsCustomPaper] = useState(false);
   const [customTitle, setCustomTitle] = useState('');
   const [customAuthor, setCustomAuthor] = useState('');
@@ -32,259 +26,347 @@ function CitationBuilderContent({ initialArticleSlug }: { initialArticleSlug?: s
   const [customJournal, setCustomJournal] = useState('ResearchWithMe Studies');
 
   useEffect(() => {
+    let active = true;
     async function load() {
       try {
-        const res = await fetch('/api/articles');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.articles) {
-            setArticles(data.articles);
-            if (initialArticleSlug) {
-              setSelectedSlug(initialArticleSlug);
-            } else if (data.articles.length > 0) {
-              setSelectedSlug(data.articles[0].slug);
-            }
-          }
+        const res = await fetch('/api/articles', { headers: { accept: 'application/json' } });
+        if (!res.ok) return;
+        const data: { articles?: BlogPost[] } = await res.json();
+        if (active && Array.isArray(data.articles) && data.articles.length > 0) {
+          setArticles(data.articles);
         }
-      } catch (e) {
-        console.warn(e);
+      } catch {
+        // The bundled catalog remains available when the API cannot be reached.
       }
     }
     load();
-  }, [initialArticleSlug]);
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const currentArticle = articles.find((a) => a.slug === selectedSlug || a.id === selectedSlug) || articles[0];
+  const currentArticle = articles.find((article) => article.slug === selectedSlug) ?? articles[0];
 
-  const title = isCustomPaper && customTitle ? customTitle : currentArticle?.title || 'Untitled Article';
-  const author = isCustomPaper && customAuthor ? customAuthor : currentArticle?.author.name || 'Author';
-  const year = isCustomPaper ? customYear : '2026';
-  const journal = isCustomPaper && customJournal ? customJournal : 'ResearchWithMe Technical Reviews';
-  const doi = isCustomPaper && customDoi ? customDoi : (currentArticle?.reviewedArtifact?.identifier || '10.5555/rwm.2026.0401');
+  const source = useMemo(() => {
+    const fallbackYear = '2026';
+    const articleDoi = currentArticle?.reviewedArtifact?.identifier ?? '';
+    return {
+      title: isCustomPaper && customTitle ? cleanText(customTitle, 240) : currentArticle?.title ?? 'Untitled article',
+      author: isCustomPaper && customAuthor ? cleanText(customAuthor, 120) : currentArticle?.author.name ?? 'ResearchWithMe Editors',
+      year: isCustomPaper ? cleanText(customYear, 4) || fallbackYear : fallbackYear,
+      journal: isCustomPaper && customJournal ? cleanText(customJournal, 160) : 'ResearchWithMe Technical Reviews',
+      doi: isCustomPaper ? cleanText(customDoi, 120) : articleDoi,
+      url: currentArticle?.slug ? `https://researchwith.me/post/${currentArticle.slug}` : 'https://researchwith.me',
+    };
+  }, [currentArticle, customAuthor, customDoi, customJournal, customTitle, customYear, isCustomPaper]);
 
-  const leadAuthorLast = author.split(' ').pop() || 'Author';
-  const leadAuthorInitial = author.split(' ')[0][0] || 'A';
+  const citationText = useMemo(() => buildCitation(format, source), [format, source]);
+  const citationEmpty = isCustomPaper && !source.title.trim();
 
-  const citations: Record<string, string> = {
-    apa: `${leadAuthorLast}, ${leadAuthorInitial}. (${year}). ${title}. ${journal}. https://doi.org/${doi}`,
-    mla: `${leadAuthorLast}, ${author.split(' ')[0]}. "${title}." ${journal}, ${year}, https://doi.org/${doi}.`,
-    chicago: `${leadAuthorLast}, ${author.split(' ')[0]}. "${title}." ${journal} (${year}). https://doi.org/${doi}.`,
-    ieee: `[1] ${leadAuthorInitial}. ${leadAuthorLast}, "${title}," ${journal}, ${year}. doi: ${doi}.`,
-    bibtex: `@article{${leadAuthorLast.toLowerCase()}${year},
-  title = {${title}},
-  author = {${author}},
-  journal = {${journal}},
-  year = {${year}},
-  doi = {${doi}},
-  url = {https://researchwith.me/post/${currentArticle?.slug || 'review'}},
-  publisher = {ResearchWithMe Press}
-}`,
-    ris: `TY  - JOUR
-TI  - ${title}
-AU  - ${author}
-JO  - ${journal}
-PY  - ${year}
-DO  - ${doi}
-UR  - https://researchwith.me/post/${currentArticle?.slug || 'review'}
-ER  - `,
-  };
+  async function handleCopy() {
+    setCopyError(null);
+    try {
+      await navigator.clipboard.writeText(citationText);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2200);
+    } catch {
+      setCopied(false);
+      setCopyError('Your browser blocked clipboard access. Select the citation text and copy it manually.');
+    }
+  }
 
-  const citationText = citations[format] || citations['apa'];
+  function handleDownloadFile() {
+    const extension = citationFileExtension(format);
+    const blob = new Blob([citationText], { type: 'text/plain;charset=utf-8' });
+    const objectUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = objectUrl;
+    anchor.download = `citation-${slugify(source.author) || 'research'}.${extension}`;
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(objectUrl);
+  }
 
-  const handleCopy = () => {
-    navigator.clipboard.writeText(citationText);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleDownloadFile = () => {
-    const ext = format === 'ris' ? 'ris' : 'bib';
-    const blob = new Blob([citationText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `citation-${leadAuthorLast.toLowerCase()}.${ext}`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
+  const doiLink = safeExternalUrl(`https://doi.org/${source.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')}`);
 
   return (
-    <div className="min-h-screen bg-white text-stone-900 flex flex-col font-sans antialiased selection:bg-amber-900 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-xs text-stone-500 mb-6 font-sans">
-          <Link href="/" className="hover:text-stone-900 flex items-center gap-1">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Feed</span>
+      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">
+          <Link href="/" className="inline-flex items-center gap-1.5 hover:text-stone-900 hover:underline">
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            <span>Journal</span>
           </Link>
-          <span aria-hidden="true">/</span>
-          <span className="font-semibold text-amber-900">Citation Generator</span>
-        </div>
+          <span aria-hidden="true" className="text-stone-400">/</span>
+          <span className="font-medium text-amber-900">Citation builder</span>
+        </nav>
 
-        {/* Header */}
-        <div className="border-b border-stone-200 pb-6 mb-8">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-900 mb-1">
-            <Quote className="w-4 h-4" />
-            <span>Bibliographic Standards & Citation Formatter</span>
-          </div>
-          <h1 className="font-serif text-2xl sm:text-4xl font-bold text-stone-900 tracking-tight">
-            Scholarly Citation & BibTeX Exporter
+        <header className="border-b border-stone-200 pb-8">
+          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+            Build a citation that travels
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 font-sans mt-1">
-            Generate standardized citations for peer-reviewed research papers, technical teardowns, and essays in 6 academic styles.
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
+            Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same verified metadata.
           </p>
-        </div>
+        </header>
 
-        <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 sm:p-8 space-y-6">
-          {/* Article Selector */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-stone-800">
-                Select Article from Catalog:
-              </label>
-              <button
-                onClick={() => setIsCustomPaper(!isCustomPaper)}
-                className="text-xs text-amber-900 hover:underline font-medium"
-              >
-                {isCustomPaper ? '← Select from published catalog' : '+ Cite an external paper / DOI'}
-              </button>
-            </div>
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+          <form className="space-y-8" onSubmit={(event) => event.preventDefault()}>
+            <fieldset className="space-y-3">
+              <legend className="text-sm font-semibold text-stone-900">1. Choose the source</legend>
 
-            {!isCustomPaper ? (
-              <select
-                value={selectedSlug}
-                onChange={(e) => setSelectedSlug(e.target.value)}
-                className="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-2.5 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400"
-              >
-                {articles.map((a) => (
-                  <option key={a.id} value={a.slug}>
-                    {a.title} — {a.author.name} ({a.category})
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs">
-                <div className="sm:col-span-2">
-                  <input
-                    type="text"
-                    placeholder="Paper Title"
-                    value={customTitle}
-                    onChange={(e) => setCustomTitle(e.target.value)}
-                    className="w-full bg-white border border-stone-300 rounded-lg p-2"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Author (e.g. Dr. Jane Doe)"
-                    value={customAuthor}
-                    onChange={(e) => setCustomAuthor(e.target.value)}
-                    className="w-full bg-white border border-stone-300 rounded-lg p-2"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="DOI or arXiv (e.g. 10.1038/s41587)"
-                    value={customDoi}
-                    onChange={(e) => setCustomDoi(e.target.value)}
-                    className="w-full bg-white border border-stone-300 rounded-lg p-2"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Format Tabs (Interactive button controls) */}
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-stone-700 block">
-              Citation Style Format:
-            </label>
-            <div className="flex items-center gap-1.5 p-1 bg-stone-200/80 rounded-xl overflow-x-auto text-xs">
-              {(['apa', 'mla', 'chicago', 'ieee', 'bibtex', 'ris'] as const).map((fmt) => (
+              <div className="flex flex-wrap gap-2">
                 <button
-                  key={fmt}
-                  onClick={() => setFormat(fmt)}
-                  className={`px-3.5 py-1.5 rounded-lg font-semibold uppercase transition-all whitespace-nowrap ${
-                    format === fmt
-                      ? 'bg-white text-stone-900 shadow-xs'
-                      : 'text-stone-600 hover:text-stone-900'
+                  type="button"
+                  onClick={() => setIsCustomPaper(false)}
+                  aria-pressed={!isCustomPaper}
+                  className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+                    !isCustomPaper
+                      ? 'border-stone-900 bg-stone-900 text-white'
+                      : 'border-stone-300 bg-white text-stone-800 hover:border-stone-400'
                   }`}
                 >
-                  {fmt}
+                  Published in ResearchWithMe
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Formatted Citation Output Box */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs text-stone-500">
-              <span className="font-semibold uppercase text-stone-700">{format} Standard</span>
-              <span className="font-mono text-[11px]">UTF-8 Encoded</span>
-            </div>
-
-            <textarea
-              readOnly
-              value={citationText}
-              rows={format === 'bibtex' || format === 'ris' ? 9 : 4}
-              className="w-full bg-white border border-stone-300 rounded-xl p-4 text-xs font-mono text-stone-900 leading-relaxed focus:outline-none shadow-xs"
-            />
-          </div>
-
-          {/* Action Toolbar */}
-          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-stone-200">
-            <div className="text-xs text-stone-500">
-              Open Access · Ready for LaTeX, Overleaf, Zotero, Mendeley & EndNote
-            </div>
-
-            <div className="flex items-center gap-2">
-              {(format === 'bibtex' || format === 'ris') && (
                 <button
-                  onClick={handleDownloadFile}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-100 hover:bg-stone-200 border border-stone-300 text-stone-800 rounded-lg text-xs font-semibold transition-colors"
+                  type="button"
+                  onClick={() => setIsCustomPaper(true)}
+                  aria-pressed={isCustomPaper}
+                  className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+                    isCustomPaper
+                      ? 'border-stone-900 bg-stone-900 text-white'
+                      : 'border-stone-300 bg-white text-stone-800 hover:border-stone-400'
+                  }`}
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download .{format === 'ris' ? 'ris' : 'bib'}</span>
+                  External paper or DOI
                 </button>
+              </div>
+
+              {!isCustomPaper ? (
+                <div>
+                  <label htmlFor="citation-source" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Publication
+                  </label>
+                  <select
+                    id="citation-source"
+                    value={selectedSlug}
+                    onChange={(event) => setSelectedSlug(event.target.value)}
+                    className={inputClass}
+                  >
+                    {articles.map((article) => (
+                      <option key={article.id} value={article.slug}>
+                        {article.title} — {article.author.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-2 max-w-xl text-sm text-stone-600">
+                    {currentArticle?.category ?? 'Research'} · {currentArticle?.publishedAt ?? 'Published'} · {currentArticle?.readTime ?? 'Reading time available on the article'}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label htmlFor="custom-title" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Paper title <span className="text-stone-600">(required)</span>
+                    </label>
+                    <input
+                      id="custom-title"
+                      type="text"
+                      value={customTitle}
+                      onChange={(event) => setCustomTitle(event.target.value)}
+                      required
+                      autoComplete="off"
+                      placeholder="A reproducible benchmark for open sensor networks"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="custom-author" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Author
+                    </label>
+                    <input
+                      id="custom-author"
+                      type="text"
+                      value={customAuthor}
+                      onChange={(event) => setCustomAuthor(event.target.value)}
+                      autoComplete="off"
+                      placeholder="Dr. Jane Doe"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="custom-year" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Year
+                    </label>
+                    <input
+                      id="custom-year"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={4}
+                      value={customYear}
+                      onChange={(event) => setCustomYear(event.target.value.replace(/[^0-9]/g, ''))}
+                      placeholder="2026"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="custom-journal" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Journal or venue
+                    </label>
+                    <input
+                      id="custom-journal"
+                      type="text"
+                      value={customJournal}
+                      onChange={(event) => setCustomJournal(event.target.value)}
+                      autoComplete="off"
+                      className={inputClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="custom-doi" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      DOI or arXiv identifier
+                    </label>
+                    <input
+                      id="custom-doi"
+                      type="text"
+                      value={customDoi}
+                      onChange={(event) => setCustomDoi(event.target.value)}
+                      autoComplete="off"
+                      placeholder="10.1038/s41587-026-01234-5"
+                      className={inputClass}
+                    />
+                  </div>
+                </div>
+              )}
+            </fieldset>
+
+            <fieldset className="space-y-3">
+              <legend className="text-sm font-semibold text-stone-900">2. Choose a style</legend>
+              <div className="flex flex-wrap gap-2">
+                {CITATION_FORMATS.map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() => setFormat(item)}
+                    aria-pressed={format === item}
+                    className={`min-h-11 rounded-md border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
+                      format === item
+                        ? 'border-amber-900 bg-amber-900 text-white'
+                        : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
+                    }`}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <label htmlFor="citation-output" className="text-sm font-semibold text-stone-900">
+                  3. Review and copy
+                </label>
+                <span className="font-mono text-sm text-stone-600">{format.toUpperCase()} · UTF-8</span>
+              </div>
+              <textarea
+                id="citation-output"
+                readOnly
+                rows={format === 'bibtex' || format === 'ris' ? 10 : 5}
+                value={citationEmpty ? '' : citationText}
+                aria-describedby="citation-hint"
+                className="w-full resize-y rounded-lg border border-stone-300 bg-white p-4 font-mono text-sm leading-relaxed text-stone-900"
+              />
+              <p id="citation-hint" className="text-sm text-stone-600">
+                {citationEmpty
+                  ? 'Add a paper title to generate a citation.'
+                  : 'Always confirm the DOI and page numbers against the publisher record before submitting.'}
+              </p>
+
+              {copyError && (
+                <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+                  {copyError}
+                </p>
               )}
 
-              <button
-                onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-white px-5 py-2 rounded-lg text-xs font-semibold tracking-wide transition-colors shadow-xs"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Copied Citation!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Citation</span>
-                  </>
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleCopy}
+                  disabled={citationEmpty}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-50"
+                >
+                  {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+                  <span>{copied ? 'Copied to clipboard' : 'Copy citation'}</span>
+                </button>
+
+                {(format === 'bibtex' || format === 'ris') && (
+                  <button
+                    type="button"
+                    onClick={handleDownloadFile}
+                    disabled={citationEmpty}
+                    className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 disabled:opacity-50"
+                  >
+                    <Download className="h-4 w-4" aria-hidden="true" />
+                    <span>Download .{citationFileExtension(format)}</span>
+                  </button>
                 )}
-              </button>
+
+                {currentArticle && !isCustomPaper && (
+                  <Link
+                    href={`/post/${currentArticle.slug}`}
+                    className="inline-flex min-h-11 items-center text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+                  >
+                    Read the cited article
+                  </Link>
+                )}
+              </div>
             </div>
-          </div>
+          </form>
+
+          <aside aria-label="Citation details" className="h-fit space-y-4 rounded-lg border border-stone-200 bg-white p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold text-stone-900">
+              <Quote className="h-4 w-4 text-amber-800" aria-hidden="true" />
+              <span>Record details</span>
+            </div>
+            <dl className="space-y-3 text-sm">
+              <div>
+                <dt className="text-stone-600">Author</dt>
+                <dd className="font-medium text-stone-900">{source.author}</dd>
+              </div>
+              <div>
+                <dt className="text-stone-600">Year</dt>
+                <dd className="font-medium text-stone-900">{source.year}</dd>
+              </div>
+              <div>
+                <dt className="text-stone-600">Venue</dt>
+                <dd className="font-medium text-stone-900">{source.journal}</dd>
+              </div>
+              <div>
+                <dt className="text-stone-600">DOI</dt>
+                <dd className="break-words font-mono text-stone-900">{source.doi || 'Not assigned'}</dd>
+              </div>
+            </dl>
+            {doiLink && (
+              <a
+                href={doiLink}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+              >
+                Resolve DOI at doi.org
+              </a>
+            )}
+            <p className="border-t border-stone-200 pt-4 text-sm leading-relaxed text-stone-600">
+              Prefer reusable metadata? Choose BibTeX or RIS and download the file for your reference manager.
+            </p>
+          </aside>
         </div>
       </main>
 
-      <BlogFooter onCategorySelect={() => {}} onOpenWriteModal={() => {}} />
+      <BlogFooter />
     </div>
-  );
-}
-
-export default function CitePage(props: {
-  searchParams?: Promise<{ article?: string }>;
-}) {
-  const searchParams = props.searchParams ? React.use(props.searchParams) : undefined;
-  const initialArticleSlug = typeof searchParams?.article === 'string' ? searchParams.article : undefined;
-
-  return (
-    <Suspense fallback={<div className="p-12 text-center text-xs text-stone-500">Loading citation tool...</div>}>
-      <CitationBuilderContent initialArticleSlug={initialArticleSlug} />
-    </Suspense>
   );
 }

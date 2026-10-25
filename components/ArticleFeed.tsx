@@ -1,133 +1,80 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { 
-  GitBranch, 
-  FileText, 
-  Bookmark, 
-  Heart, 
-  MessageSquare, 
+import {
+  Activity,
   ArrowRight,
+  BarChart3,
+  Bookmark,
   BookOpen,
   Cpu,
-  Activity,
+  FileText,
+  GitBranch,
   Globe,
-  BarChart3,
-  Sparkles,
-  Layers,
-  Filter,
-  Check
+  Heart,
+  MessageSquare,
 } from 'lucide-react';
-import { BlogPost, BlogCategory } from '@/lib/blog-data';
+import type { ReactNode } from 'react';
+import { BlogCategory, BlogPost } from '@/lib/blog-data';
 
-export interface CategoryHeaderConfig {
-  id: string;
-  name: BlogCategory;
-  title: string;
-  badge: string;
+interface CategoryMeta {
   thumbnail: string;
   description: string;
   tags: string[];
-  gradient: string;
-  accentColor: string;
-  badgeColor: string;
 }
 
-export const CATEGORY_HEADER_DATA: Record<BlogCategory, CategoryHeaderConfig> = {
+export const CATEGORY_META: Record<BlogCategory, CategoryMeta> = {
   'Research Reviews': {
-    id: 'research-reviews',
-    name: 'Research Reviews',
-    title: 'Research Reviews & Literature Breakdowns',
-    badge: 'Peer Literature',
-    thumbnail: 'https://picsum.photos/seed/research-reviews-banner/800/400',
-    description: 'Analytical audits of primary literature, peer-review critiques, and empirical replication notes across computer science, AI safety, and quantitative economics.',
-    tags: ['Methodology Audits', 'Empirical Replication', 'Meta-Analyses'],
-    gradient: 'from-amber-950/90 via-stone-900/90 to-stone-950',
-    accentColor: 'text-amber-400 border-amber-500/30',
-    badgeColor: 'bg-amber-900/90 text-amber-200 border-amber-700/50',
+    thumbnail: '/images/folio-process.jpeg',
+    description: 'Methodology audits, replication notes, and critiques of primary literature.',
+    tags: ['Methodology', 'Replication', 'Meta-analysis'],
   },
   'GitHub Repo Teardowns': {
-    id: 'github-repo-teardowns',
-    name: 'GitHub Repo Teardowns',
-    title: 'GitHub Repo Teardowns & Systems Code Audits',
-    badge: 'Code & Infrastructure',
-    thumbnail: 'https://picsum.photos/seed/github-teardown-banner/800/400',
-    description: 'Deep codebase architecture inspections, KV cache memory profiling, and high-performance C++/Rust runtime teardowns.',
-    tags: ['vLLM Architecture', 'Distributed Consensus', 'GPU Profiling'],
-    gradient: 'from-slate-950/90 via-stone-900/90 to-stone-950',
-    accentColor: 'text-sky-400 border-sky-500/30',
-    badgeColor: 'bg-sky-950/90 text-sky-200 border-sky-700/50',
+    thumbnail: '/images/folio-code.jpeg',
+    description: 'Architecture inspections, memory profiling, and runtime teardowns of open repositories.',
+    tags: ['Architecture', 'Performance', 'Tooling'],
   },
   'STEM & Tech': {
-    id: 'stem-tech',
-    name: 'STEM & Tech',
-    title: 'STEM & Applied Engineering Column',
-    badge: 'Applied Engineering',
-    thumbnail: 'https://picsum.photos/seed/stem-tech-banner/800/400',
-    description: 'Hardware architecture breakdowns, semiconductor lithography, quantum computing runtimes, and robotics engineering.',
-    tags: ['EUV Lithography', 'Quantum Runtimes', 'Robotics Hardware'],
-    gradient: 'from-emerald-950/90 via-stone-900/90 to-stone-950',
-    accentColor: 'text-emerald-400 border-emerald-500/30',
-    badgeColor: 'bg-emerald-950/90 text-emerald-200 border-emerald-700/50',
+    thumbnail: '/images/folio-dashboard.jpeg',
+    description: 'Hardware, semiconductor lithography, quantum runtimes, and engineering systems.',
+    tags: ['Hardware', 'Quantum', 'Robotics'],
   },
   'Health & Medicine': {
-    id: 'health-medicine',
-    name: 'Health & Medicine',
-    title: 'Health & Medical Science Analyses',
-    badge: 'Biomedical Science',
-    thumbnail: 'https://picsum.photos/seed/health-medicine-banner/800/400',
-    description: 'Clinical trial audits, GLP-1 receptor agonist pathways, CRISPR gene editing, and biotherapeutic delivery vectors.',
-    tags: ['GLP-1 Pathways', 'CRISPR Cas12f', 'Oncology Trials'],
-    gradient: 'from-rose-950/90 via-stone-900/90 to-stone-950',
-    accentColor: 'text-rose-400 border-rose-500/30',
-    badgeColor: 'bg-rose-950/90 text-rose-200 border-rose-700/50',
+    thumbnail: '/images/folio-hero.jpeg',
+    description: 'Clinical trial audits, pharmacology, gene editing, and biomedical delivery.',
+    tags: ['Trials', 'Pharmacology', 'Genomics'],
   },
   'Sociology & Culture': {
-    id: 'sociology-culture',
-    name: 'Sociology & Culture',
-    title: 'Sociology & Academic Publishing Economics',
-    badge: 'Human Systems',
-    thumbnail: 'https://picsum.photos/seed/sociology-culture-banner/800/400',
-    description: 'Empirical studies on scientific publishing economics, Diamond Open Access models, and digital labor dynamics.',
-    tags: ['Open Access Economics', 'Peer-Review Incentives', 'Digital Labor'],
-    gradient: 'from-purple-950/90 via-stone-900/90 to-stone-950',
-    accentColor: 'text-purple-400 border-purple-500/30',
-    badgeColor: 'bg-purple-950/90 text-purple-200 border-purple-700/50',
+    thumbnail: '/images/folio-design.jpeg',
+    description: 'Publication economics, peer-review incentives, and digital labour.',
+    tags: ['Open access', 'Digital labour', 'Governance'],
   },
   'Data & Policy': {
-    id: 'data-policy',
-    name: 'Data & Policy',
-    title: 'Data Science & Public Technology Policy',
-    badge: 'Governance & Data',
-    thumbnail: 'https://picsum.photos/seed/data-policy-banner/800/400',
-    description: 'In-depth research bridging quantitative data science, algorithmic accountability, EU AI Act compliance, and synthetic data rights.',
-    tags: ['AI Act Governance', 'Synthetic Data Rights', 'Differential Privacy'],
-    gradient: 'from-blue-950/90 via-stone-900/90 to-stone-950',
-    accentColor: 'text-blue-400 border-blue-500/30',
-    badgeColor: 'bg-blue-950/90 text-blue-200 border-blue-700/50',
+    thumbnail: '/images/folio-design.jpeg',
+    description: 'Quantitative data science, algorithmic accountability, and technology policy.',
+    tags: ['Privacy', 'AI policy', 'Data rights'],
   },
 };
 
-export const getCategoryIcon = (category: string) => {
+function categoryIcon(category: string): ReactNode {
   switch (category) {
     case 'Research Reviews':
-      return <BookOpen className="w-4 h-4" />;
+      return <BookOpen className="h-4 w-4" aria-hidden="true" />;
     case 'GitHub Repo Teardowns':
-      return <GitBranch className="w-4 h-4" />;
+      return <GitBranch className="h-4 w-4" aria-hidden="true" />;
     case 'STEM & Tech':
-      return <Cpu className="w-4 h-4" />;
+      return <Cpu className="h-4 w-4" aria-hidden="true" />;
     case 'Health & Medicine':
-      return <Activity className="w-4 h-4" />;
+      return <Activity className="h-4 w-4" aria-hidden="true" />;
     case 'Sociology & Culture':
-      return <Globe className="w-4 h-4" />;
+      return <Globe className="h-4 w-4" aria-hidden="true" />;
     case 'Data & Policy':
-      return <BarChart3 className="w-4 h-4" />;
+      return <BarChart3 className="h-4 w-4" aria-hidden="true" />;
     default:
-      return <FileText className="w-4 h-4" />;
+      return <FileText className="h-4 w-4" aria-hidden="true" />;
   }
-};
+}
 
 interface ArticleFeedProps {
   posts: BlogPost[];
@@ -152,318 +99,247 @@ export default function ArticleFeed({
   onClearFilters,
   onSelectCategory,
 }: ArticleFeedProps) {
-  const activeCategoryMeta = selectedCategory !== 'All' && selectedCategory in CATEGORY_HEADER_DATA
-    ? CATEGORY_HEADER_DATA[selectedCategory as BlogCategory]
-    : null;
+  const showCategoryGrid = selectedCategory === 'All' && !searchQuery;
+  const activeCategory = selectedCategory !== 'All' ? (selectedCategory as BlogCategory) : null;
+  const activeMeta = activeCategory ? CATEGORY_META[activeCategory] : null;
+  const hasFilters = selectedCategory !== 'All' || selectedFormat !== 'All' || Boolean(searchQuery);
 
   return (
-    <section id="articles-feed" className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-8">
-      {/* Category Header Showcase Cards Grid (when viewing 'All' and no active search) */}
-      {selectedCategory === 'All' && !searchQuery && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <span className="text-[11px] font-mono uppercase tracking-widest text-amber-900 font-semibold flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-amber-800" />
-                <span>Topic Domains & Section Portals</span>
-              </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
-                Explore Specialized Research Columns
-              </h2>
-            </div>
-            <span className="text-xs text-stone-500 font-mono hidden sm:inline">
-              Select category section to filter
-            </span>
+    <section id="articles-feed" aria-labelledby="catalogue-title" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {showCategoryGrid && (
+        <div className="mb-14">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
+            <h2 id="catalogue-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+              Browse by field
+            </h2>
+            <p className="max-w-md text-sm leading-relaxed text-stone-600">
+              Six editorial columns, each defined by the evidence its reviewers work with.
+            </p>
           </div>
 
-          {/* 6 Category Header Thumbnail Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Object.entries(CATEGORY_HEADER_DATA).map(([catName, meta]) => {
-              const categoryPostCount = posts.filter((p) => p.category === catName).length;
-
+          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {Object.entries(CATEGORY_META).map(([category, meta]) => {
+              const count = posts.filter((post) => post.category === category).length;
               return (
-                <div
-                  key={catName}
-                  onClick={() => onSelectCategory && onSelectCategory(catName)}
-                  className="group relative rounded-xl overflow-hidden border border-stone-200/80 bg-stone-900 cursor-pointer shadow-2xs hover:shadow-md hover:border-amber-400/50 transition-all flex flex-col justify-between h-48"
-                >
-                  {/* Category Unique Header Thumbnail Background Image */}
-                  <div className="absolute inset-0 z-0">
+                <li key={category}>
+                  <button
+                    type="button"
+                    onClick={() => onSelectCategory?.(category)}
+                    className="group relative flex h-48 w-full flex-col justify-end overflow-hidden rounded-lg border border-stone-200 bg-stone-900 text-left transition-colors hover:border-amber-700"
+                  >
                     <Image
                       src={meta.thumbnail}
-                      alt={meta.name}
+                      alt=""
+                      aria-hidden="true"
                       fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-60"
-                      referrerPolicy="no-referrer"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover opacity-45 transition-opacity group-hover:opacity-55"
                     />
-                    <div className={`absolute inset-0 bg-gradient-to-t ${meta.gradient}`} />
-                  </div>
-
-                  {/* Top Bar: Icon & Badge */}
-                  <div className="relative z-10 p-4 flex items-center justify-between">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold border backdrop-blur-md font-mono ${meta.badgeColor}`}>
-                      {getCategoryIcon(catName)}
-                      <span>{meta.badge}</span>
+                    <span className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/50 to-stone-900/20" />
+                    <span className="relative z-10 flex flex-col gap-1 p-5">
+                      <span className="flex items-center gap-2 text-sm font-medium text-amber-200">
+                        {categoryIcon(category)}
+                        <span>{count} {count === 1 ? 'review' : 'reviews'}</span>
+                      </span>
+                      <span className="font-serif text-xl font-semibold text-white group-hover:text-amber-200">
+                        {category}
+                      </span>
+                      <span className="line-clamp-2 max-w-sm text-sm leading-snug text-stone-200">
+                        {meta.description}
+                      </span>
                     </span>
-
-                    <span className="text-[11px] font-mono text-stone-300 bg-black/60 px-2 py-0.5 rounded backdrop-blur-xs font-semibold">
-                      {categoryPostCount} {categoryPostCount === 1 ? 'Article' : 'Articles'}
-                    </span>
-                  </div>
-
-                  {/* Bottom Bar: Title & Tags */}
-                  <div className="relative z-10 p-4 space-y-1.5 font-sans">
-                    <h3 className="font-serif text-lg font-bold text-white group-hover:text-amber-300 transition-colors flex items-center justify-between">
-                      <span>{meta.name}</span>
-                      <ArrowRight className="w-4 h-4 text-stone-400 group-hover:text-amber-300 group-hover:translate-x-1 transition-all" />
-                    </h3>
-                    <p className="text-xs text-stone-300 line-clamp-2 leading-relaxed">
-                      {meta.description}
-                    </p>
-                  </div>
-                </div>
+                  </button>
+                </li>
               );
             })}
+          </ul>
+        </div>
+      )}
+
+      {activeMeta && activeCategory && (
+        <div className="mb-10 border-y border-stone-200 py-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h2 className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl">{activeCategory}</h2>
+              <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">{activeMeta.description}</p>
+              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-stone-600">
+                {activeMeta.tags.map((tag) => (
+                  <li key={tag}>#{tag}</li>
+                ))}
+              </ul>
+            </div>
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
+            >
+              All fields
+            </button>
           </div>
         </div>
       )}
 
-      {/* Focused Category Section Header Banner (when a specific category is selected) */}
-      {activeCategoryMeta && (
-        <div className="relative rounded-2xl overflow-hidden border border-stone-800 bg-stone-900 shadow-md">
-          {/* Header Unique Background Thumbnail */}
-          <div className="absolute inset-0 z-0">
-            <Image
-              src={activeCategoryMeta.thumbnail}
-              alt={activeCategoryMeta.name}
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover opacity-40"
-              referrerPolicy="no-referrer"
-            />
-            <div className={`absolute inset-0 bg-gradient-to-r ${activeCategoryMeta.gradient}`} />
-          </div>
-
-          <div className="relative z-10 p-6 sm:p-8 space-y-4 text-stone-100">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800/80 pb-4">
-              <div className="flex items-center gap-2">
-                <span className={`p-2 rounded-lg border backdrop-blur-md bg-stone-950/80 ${activeCategoryMeta.accentColor}`}>
-                  {getCategoryIcon(activeCategoryMeta.name)}
-                </span>
-                <div>
-                  <span className="text-[11px] font-mono uppercase tracking-widest text-amber-400 font-semibold block">
-                    Category Section Focus
-                  </span>
-                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">
-                    {activeCategoryMeta.title}
-                  </h2>
-                </div>
-              </div>
-
-              <button
-                onClick={onClearFilters}
-                className="self-start sm:self-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-800/80 hover:bg-stone-700 text-stone-200 border border-stone-700 text-xs font-medium transition-colors"
-              >
-                <span>View All Categories</span>
-              </button>
-            </div>
-
-            <p className="text-xs sm:text-sm text-stone-300 font-serif leading-relaxed max-w-3xl">
-              {activeCategoryMeta.description}
-            </p>
-
-            <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px]">
-              <span className="text-stone-400">Section Scope:</span>
-              {activeCategoryMeta.tags.map((tag) => (
-                <span key={tag} className="bg-stone-800/90 text-stone-200 px-2.5 py-0.5 rounded border border-stone-700">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Feed Sub-Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-stone-200">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
         <div>
-          <h3 className="font-serif text-xl sm:text-2xl font-bold text-stone-900 tracking-tight flex items-center gap-2">
-            <span>{selectedCategory === 'All' ? 'Complete Article Catalogue' : `${selectedCategory} Articles`}</span>
-          </h3>
-          <p className="text-xs sm:text-sm text-stone-500 font-sans mt-0.5">
-            {posts.length} {posts.length === 1 ? 'article' : 'articles'} found
-            {selectedFormat !== 'All' ? ` in ${selectedFormat}` : ''}
-            {searchQuery ? ` matching "${searchQuery}"` : ''}
+          <h2 id="catalogue-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+            {activeCategory ? `${activeCategory} reviews` : 'Latest reviews'}
+          </h2>
+          <p className="mt-2 text-sm text-stone-600">
+            {posts.length} {posts.length === 1 ? 'article' : 'articles'}
+            {selectedFormat !== 'All' ? ` · ${selectedFormat}` : ''}
+            {searchQuery ? ` · matching “${searchQuery}”` : ''}
           </p>
         </div>
 
-        {(selectedCategory !== 'All' || selectedFormat !== 'All' || searchQuery) && (
+        {hasFilters && (
           <button
+            type="button"
             onClick={onClearFilters}
-            className="text-xs text-amber-900 hover:text-amber-950 font-medium underline underline-offset-4"
+            className="min-h-11 text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
           >
             Clear all filters
           </button>
         )}
       </div>
 
-      {/* Empty State */}
       {posts.length === 0 ? (
-        <div className="text-center py-20 bg-stone-50 border border-stone-200 rounded-2xl">
-          <BookOpen className="w-12 h-12 text-stone-400 mx-auto mb-3" />
-          <h3 className="font-serif text-lg font-bold text-stone-900">
-            No articles match this criteria
-          </h3>
-          <p className="text-xs text-stone-500 font-sans mt-1 max-w-sm mx-auto leading-relaxed">
-            Try resetting your search query or selecting &quot;All Articles&quot; to see our complete technical and scholarly catalogue.
+        <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">
+          <h3 className="font-serif text-2xl font-semibold text-stone-900">No articles match those filters</h3>
+          <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
+            Nothing in the archive matches this combination of search text, field, and format. Clear the filters to see the full catalogue.
           </p>
           <button
+            type="button"
             onClick={onClearFilters}
-            className="mt-4 bg-stone-900 hover:bg-stone-800 text-stone-50 px-4 py-2 rounded-lg text-xs font-semibold tracking-wide transition-colors"
+            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
           >
-            Reset Filters
+            Reset filters
           </button>
         </div>
       ) : (
-        /* Articles Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => {
             const isSaved = savedPostIds.includes(post.id) || savedPostIds.includes(post.slug);
-            const meta = CATEGORY_HEADER_DATA[post.category as BlogCategory];
+            const meta = CATEGORY_META[post.category as BlogCategory] ?? CATEGORY_META['Research Reviews'];
 
             return (
-              <article
-                key={post.id}
-                className="bg-white border border-stone-200 rounded-2xl overflow-hidden shadow-xs hover:border-stone-300 hover:shadow-md transition-all flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Article Card Top Thumbnail with Category Overlay Badge */}
-                  <Link href={`/post/${post.slug}`} className="relative h-44 w-full bg-stone-900 overflow-hidden block">
+              <li key={post.id} className="flex min-w-0">
+                <article className="group flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-stone-200 bg-white transition-colors hover:border-stone-300">
+                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-stone-900">
                     <Image
-                      src={post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : (meta?.thumbnail || '/images/folio-hero.jpeg')}
-                      alt={post.title}
+                      src={post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : meta.thumbnail}
+                      alt=""
                       fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90"
-                      referrerPolicy="no-referrer"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.03]"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/80 via-transparent to-transparent" />
-                    
-                    {/* Format Pill */}
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                      <span className="bg-stone-900/90 text-stone-100 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md backdrop-blur-xs font-sans border border-stone-700/50">
-                        {post.format}
-                      </span>
-                    </div>
-
-                    {/* Bookmark quick button */}
+                    <span className="absolute left-3 top-3 rounded bg-stone-950/90 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-stone-100">
+                      {post.format}
+                    </span>
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        onToggleSave(post.id);
-                      }}
-                      className={`absolute top-3 right-3 p-1.5 rounded-md backdrop-blur-xs transition-colors z-10 ${
+                      type="button"
+                      onClick={() => onToggleSave(post.id)}
+                      aria-pressed={isSaved}
+                      className={`absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors ${
                         isSaved
                           ? 'bg-amber-900 text-white'
-                          : 'bg-stone-900/60 text-stone-300 hover:text-white hover:bg-stone-900/80'
+                          : 'bg-stone-950/80 text-stone-200 hover:bg-stone-950 hover:text-white'
                       }`}
-                      title={isSaved ? 'Saved' : 'Save article'}
                     >
-                      <Bookmark className="w-3.5 h-3.5 fill-current" />
-                    </button>
-
-                    {/* Reviewed Artifact Tag */}
-                    {post.reviewedArtifact && (
-                      <div className="absolute bottom-2.5 left-3 right-3 flex items-center gap-1.5 text-amber-300 font-mono text-[11px] truncate">
-                        {post.reviewedArtifact.type === 'github' ? (
-                          <GitBranch className="w-3.5 h-3.5 shrink-0" />
-                        ) : (
-                          <FileText className="w-3.5 h-3.5 shrink-0" />
-                        )}
-                        <span className="truncate">{post.reviewedArtifact.identifier}</span>
-                      </div>
-                    )}
-                  </Link>
-
-                  {/* Body Content */}
-                  <div className="p-5 space-y-3 font-sans">
-                    {/* Category & Date Metadata */}
-                    <div className="flex items-center gap-2 text-xs text-stone-500">
-                      <span 
-                        onClick={() => onSelectCategory && onSelectCategory(post.category)}
-                        className="font-semibold text-amber-900 hover:underline cursor-pointer flex items-center gap-1"
-                      >
-                        {getCategoryIcon(post.category)}
-                        <span>{post.category}</span>
+                      <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
+                      <span className="sr-only">
+                        {isSaved ? `Remove ${post.title} from reading list` : `Save ${post.title} to reading list`}
                       </span>
+                    </button>
+                  </div>
+
+                  <div className="flex flex-1 flex-col gap-3 p-5">
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
+                      <button
+                        type="button"
+                        onClick={() => onSelectCategory?.(post.category)}
+                        className="inline-flex items-center gap-1 font-medium text-amber-900 underline-offset-4 hover:underline"
+                      >
+                        {categoryIcon(post.category)}
+                        <span>{post.category}</span>
+                      </button>
                       <span aria-hidden="true">·</span>
                       <span>{post.publishedAt}</span>
                       <span aria-hidden="true">·</span>
                       <span>{post.readTime}</span>
                     </div>
 
-                    {/* Title */}
-                    <Link href={`/post/${post.slug}`} className="block">
-                      <h3 className="font-serif text-lg font-bold text-stone-900 group-hover:text-amber-900 transition-colors leading-snug line-clamp-2">
+                    <h3 className="break-words font-serif text-xl font-semibold leading-snug text-stone-900">
+                      <Link href={`/post/${post.slug}`} className="hover:text-amber-900">
                         {post.title}
-                      </h3>
-                    </Link>
+                      </Link>
+                    </h3>
 
-                    {/* Summary */}
-                    <p className="text-xs text-stone-600 line-clamp-3 leading-relaxed">
-                      {post.summary}
-                    </p>
+                    <p className="line-clamp-3 break-words text-sm leading-relaxed text-stone-700">{post.summary}</p>
+
+                    {post.reviewedArtifact && (
+                      <p className="mt-auto flex min-w-0 max-w-full items-center gap-1.5 overflow-hidden font-mono text-sm text-stone-600">
+                        {post.reviewedArtifact.type === 'github' ? (
+                          <GitBranch className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        ) : (
+                          <FileText className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        )}
+                        <span className="truncate">{post.reviewedArtifact.identifier}</span>
+                      </p>
+                    )}
                   </div>
-                </div>
 
-                {/* Footer Toolbar */}
-                <div className="px-5 py-4 border-t border-stone-100 flex items-center justify-between font-sans text-xs">
-                  {/* Author */}
-                  <Link 
-                    href={`/author/${post.author.id}`}
-                    className="flex items-center gap-2 group/author hover:opacity-90 transition-opacity"
-                    title={`View ${post.author.name}'s bio and publication history`}
-                  >
-                    <div className="w-7 h-7 rounded-full bg-stone-900 text-stone-100 flex items-center justify-center font-serif text-[10px] font-bold group-hover/author:bg-amber-900 transition-colors">
-                      {post.author.avatar}
-                    </div>
-                    <span className="font-medium text-stone-800 text-xs group-hover/author:text-amber-900 transition-colors">
-                      {post.author.name}
-                    </span>
-                  </Link>
-
-                  {/* Reactions & Direct Link */}
-                  <div className="flex items-center gap-3 text-stone-500">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onLikePost(post.id);
-                      }}
-                      className="flex items-center gap-1 hover:text-red-700 transition-colors"
-                      title="Like / Clap"
-                    >
-                      <Heart className="w-3.5 h-3.5" />
-                      <span className="text-[11px]">{post.likes}</span>
-                    </button>
-
+                  <div className="flex items-center justify-between gap-3 border-t border-stone-200 px-5 py-3">
                     <Link
-                      href={`/post/${post.slug}#discussion`}
-                      className="flex items-center gap-1 text-stone-500 hover:text-stone-900 transition-colors"
-                      title="View discussion"
+                      href={`/author/${post.author.id}`}
+                      className="flex min-w-0 items-center gap-2 text-sm text-stone-800 hover:text-amber-900"
                     >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      <span className="text-[11px]">{post.commentsCount}</span>
+                      <span
+                        aria-hidden="true"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-xs font-bold text-stone-50"
+                      >
+                        {post.author.avatar}
+                      </span>
+                      <span className="truncate font-medium">{post.author.name}</span>
                     </Link>
+
+                    <div className="flex shrink-0 items-center gap-2 text-sm text-stone-600">
+                      <button
+                        type="button"
+                        onClick={() => onLikePost(post.id)}
+                        className="inline-flex min-h-10 items-center gap-1 rounded px-1.5 transition-colors hover:text-red-800"
+                      >
+                        <Heart className="h-4 w-4" aria-hidden="true" />
+                        <span>{post.likes}</span>
+                        <span className="sr-only">likes. Add a like to {post.title}</span>
+                      </button>
+                      <Link
+                        href={`/post/${post.slug}#discussion`}
+                        className="inline-flex min-h-10 items-center gap-1 rounded px-1.5 transition-colors hover:text-stone-900"
+                      >
+                        <MessageSquare className="h-4 w-4" aria-hidden="true" />
+                        <span>{post.commentsCount}</span>
+                        <span className="sr-only">comments on {post.title}</span>
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </article>
+              </li>
             );
           })}
-        </div>
+        </ul>
       )}
+
+      <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
+        <p className="text-sm text-stone-600">Every review is open access under CC BY 4.0.</p>
+        <Link
+          href="/papers"
+          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"
+        >
+          <span>Browse the paper archive</span>
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+        </Link>
+      </div>
     </section>
   );
 }

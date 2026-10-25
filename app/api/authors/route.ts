@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { getAllAuthors, getArticles } from '@/lib/db';
 
 export async function GET() {
@@ -18,7 +20,10 @@ export async function GET() {
       };
     });
 
-    return NextResponse.json({ authors: authorsWithCounts });
+    return NextResponse.json(
+      { authors: authorsWithCounts },
+      { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=600' } },
+    );
   } catch (err) {
     console.error('Failed to fetch authors:', err);
     return NextResponse.json(

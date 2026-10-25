@@ -1,368 +1,282 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  BookOpen, 
-  Search, 
-  PenSquare, 
-  Bookmark, 
-  Sparkles, 
-  GitBranch, 
+import {
+  Bookmark,
+  BookOpen,
+  ChevronDown,
   FileText,
+  Menu,
+  PenSquare,
   Quote,
-  UploadCloud,
+  Search,
   ShieldCheck,
-  CheckCircle2,
-  Lock,
+  Sparkles,
+  UploadCloud,
   User,
-  GraduationCap
+  Users,
+  X,
 } from 'lucide-react';
-import { BlogCategory } from '@/lib/blog-data';
 import { useAuth } from '@/lib/auth-context';
+import { readStringArray } from '@/lib/storage';
 
 interface BlogHeaderProps {
-  selectedCategory?: string;
-  setSelectedCategory?: (cat: string) => void;
   searchQuery?: string;
   setSearchQuery?: (query: string) => void;
   savedCount?: number;
 }
 
-export default function BlogHeader({
-  selectedCategory = 'All',
-  setSelectedCategory,
-  searchQuery = '',
-  setSearchQuery,
-  savedCount = 0,
-}: BlogHeaderProps) {
-  const pathname = usePathname();
-  const { user, hasAuthorPermissions, switchRoleForTesting } = useAuth();
+const primaryNav = [
+  { href: '/', label: 'Articles', icon: BookOpen, match: (path: string) => path === '/' },
+  { href: '/papers', label: 'Papers', icon: FileText, match: (path: string) => path.startsWith('/paper') },
+  { href: '/authors', label: 'Authors', icon: Users, match: (path: string) => path.startsWith('/author') },
+  { href: '/editions', label: 'Editions', icon: BookOpen, match: (path: string) => path.startsWith('/editions') },
+  { href: '/assistant', label: 'Assistant', icon: Sparkles, match: (path: string) => path.startsWith('/assistant') },
+];
+
+const secondaryNav = [
+  { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
+  { href: '/cite', label: 'Citation builder', icon: Quote },
+  { href: '/submit', label: 'Submit a manuscript', icon: UploadCloud },
+  { href: '/editorial-board', label: 'Editorial board', icon: Users },
+  { href: '/verify', label: 'Verification prototype', icon: ShieldCheck },
+];
+
+export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {
+  const pathname = usePathname() || '/';
+  const { user, hasAuthorPermissions } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [savedOnDevice, setSavedOnDevice] = useState(0);
+  const menuId = useId();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMenuOpen(false);
+    setSavedOnDevice(readStringArray('rwm_saved_posts').length);
+  }, [pathname]);
+
+  useEffect(() => {
+    function sync() {
+      setSavedOnDevice(readStringArray('rwm_saved_posts').length);
+    }
+    window.addEventListener('storage', sync);
+    window.addEventListener('rwm:reading-list-changed', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('rwm:reading-list-changed', sync);
+    };
+  }, []);
+
+  const savedTotal = savedCount ?? savedOnDevice;
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [menuOpen]);
+
+  const navLinkClass = (active: boolean) =>
+    `inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+      active
+        ? 'bg-stone-900 text-white'
+        : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900'
+    }`;
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-18">
-          {/* Logo & Platform Tagline */}
-          <div className="flex items-center gap-3">
-            <Link
-              href="/"
-              className="flex items-center gap-2.5 text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-400 rounded-md"
+    <header className="sticky top-0 z-40 border-b border-stone-200 bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex min-h-16 items-center justify-between gap-4">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 rounded-md focus-visible:outline-none"
+          >
+            <span
+              aria-hidden="true"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-900 font-serif text-lg font-bold text-stone-50 sm:h-10 sm:w-10 sm:text-xl"
             >
-              <div className="w-10 h-10 rounded-lg bg-stone-900 text-stone-100 flex items-center justify-center font-serif text-xl font-bold tracking-tight shadow-xs group-hover:bg-amber-900 transition-colors">
-                R
-              </div>
-              <div>
-                <span className="font-serif text-xl font-bold tracking-tight text-stone-900 block leading-tight">
-                  ResearchWith<span className="text-amber-800">.me</span>
-                </span>
-                <span className="text-xs text-stone-600 font-sans tracking-wide block">
-                  Expert Essays, Research Reviews & Repo Teardowns
-                </span>
-              </div>
-            </Link>
-          </div>
+              R
+            </span>
+            <span className="flex flex-col leading-tight">
+              <span className="font-serif text-lg font-bold tracking-tight text-stone-900 sm:text-xl">
+                ResearchWith<span className="text-amber-800">.me</span>
+              </span>
+              <span className="hidden text-xs text-stone-600 sm:block">Open scholarly publishing</span>
+            </span>
+          </Link>
 
-          {/* Primary Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1 font-sans text-xs font-medium">
-            <Link
-              href="/"
-              className={`px-2.5 py-1.5 rounded-md transition-colors ${
-                pathname === '/' && selectedCategory === 'All'
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              Articles
-            </Link>
-
-            <Link
-              href="/papers"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/papers') || pathname.startsWith('/paper')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-stone-500" />
-              <span>Papers</span>
-            </Link>
-
-            <Link
-              href="/authors"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/authors') || (pathname.startsWith('/author') && !pathname.includes('maya-lin'))
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <User className="w-3.5 h-3.5 text-stone-500" />
-              <span>Authors</span>
-            </Link>
-
-            <Link
-              href="/editions"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/editions')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <FileText className="w-3.5 h-3.5 text-stone-500" />
-              <span>Compendiums</span>
-            </Link>
-
-            <Link
-              href="/assistant"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/assistant')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-              <span>AI Synthesizer</span>
-            </Link>
-
-            <Link
-              href="/bookmarks"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/bookmarks')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <Bookmark className="w-3.5 h-3.5" />
-              <span>Reading List</span>
-              {savedCount > 0 && (
-                <span className="bg-amber-900 text-white text-[10px] px-1.5 py-0.2 rounded-full font-bold">
-                  {savedCount}
-                </span>
-              )}
-            </Link>
-
-            <Link
-              href="/cite"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/cite')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <Quote className="w-3.5 h-3.5" />
-              <span>Citations</span>
-            </Link>
-
-            <Link
-              href="/submit"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/submit')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <UploadCloud className="w-3.5 h-3.5" />
-              <span>Submit</span>
-            </Link>
-
-            <Link
-              href="/verify"
-              className={`px-2.5 py-1.5 rounded-md transition-colors flex items-center gap-1 ${
-                pathname.startsWith('/verify')
-                  ? 'bg-stone-900 text-white font-semibold shadow-xs'
-                  : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Verify ID</span>
-            </Link>
+          <nav aria-label="Primary" className="hidden lg:block">
+            <ul className="flex items-center gap-1">
+              {primaryNav.map((item) => {
+                const active = item.match(pathname);
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={active ? 'page' : undefined}
+                      className={navLinkClass(active)}
+                    >
+                      <item.icon className="h-4 w-4" aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </nav>
 
-          {/* Right Action Tools */}
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Search Input (when on root page) */}
+          <div className="flex items-center gap-2">
             {setSearchQuery && (
-              <div className="relative hidden xl:block w-44">
-                <input
-                  type="text"
-                  placeholder="Search articles, repos..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-stone-50 border border-stone-200 rounded-lg pl-8 pr-3 py-1.5 text-xs text-stone-900 placeholder-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white transition-all font-sans"
+              <div className="relative hidden 2xl:block">
+                <label htmlFor="header-search" className="sr-only">
+                  Search articles and repositories
+                </label>
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-600"
+                  aria-hidden="true"
                 />
-                <Search className="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  id="header-search"
+                  type="search"
+                  value={searchQuery ?? ''}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Search articles"
+                  className="h-10 w-52 rounded-md border border-stone-300 bg-stone-50 pl-9 pr-3 text-sm text-stone-900 placeholder:text-stone-600 focus:bg-white"
+                />
               </div>
             )}
 
-            {/* User Identity & OAuth Status Badge - Links to dedicated /verify page */}
-            <div className="flex items-center gap-1.5">
-              <Link
-                href="/verify"
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${
-                  hasAuthorPermissions
-                    ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950 hover:bg-emerald-100'
-                    : 'bg-stone-100 border-stone-300 text-stone-800 hover:bg-stone-200'
-                }`}
-                title="Manage domain expertise & OAuth verification on dedicated page"
-              >
-                {hasAuthorPermissions ? (
-                  <>
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                    <span className="hidden sm:inline font-semibold">{user?.name || 'Verified Author'}</span>
-                    <span className="sm:hidden font-semibold">Author</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-3.5 h-3.5 text-stone-500 shrink-0" />
-                    <span className="hidden sm:inline">Reader (Gmail)</span>
-                    <span className="sm:hidden">Reader</span>
-                  </>
-                )}
-              </Link>
-
-              {/* Quick Author Profile Link if logged in as Author */}
-              {hasAuthorPermissions && user?.authorProfileId && (
-                <Link
-                  href={`/author/${user.authorProfileId}`}
-                  className="hidden md:inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-100 transition-colors"
-                  title="View your public author profile & publication archive"
-                >
-                  <User className="w-3.5 h-3.5 text-stone-500" />
-                  <span>My Profile</span>
-                </Link>
-              )}
-            </div>
-
-            {/* Mobile Bookmarks Link */}
             <Link
               href="/bookmarks"
-              className="lg:hidden p-2 rounded-lg border border-stone-200 text-stone-700 hover:bg-stone-50 transition-colors relative"
-              title="Saved Articles"
+              className="relative hidden min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50 sm:inline-flex"
             >
-              <Bookmark className="w-4 h-4" />
-              {savedCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-amber-900 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
-                  {savedCount}
+              <Bookmark className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden xl:inline">Reading list</span>
+              <span className="sr-only xl:hidden">Reading list</span>
+              {savedTotal > 0 && (
+                <span className="rounded-full bg-amber-900 px-1.5 py-0.5 text-xs font-bold text-white">
+                  {savedTotal}
                 </span>
               )}
             </Link>
 
-            {/* Write an Article button -> Dedicated /write page */}
             <Link
-              href="/write"
-              className={`inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-lg text-xs font-medium tracking-wide transition-colors shadow-xs ${
-                pathname === '/write'
-                  ? 'bg-amber-900 text-white'
-                  : 'bg-stone-900 hover:bg-stone-800 text-white'
-              }`}
+              href={hasAuthorPermissions ? '/write' : '/verify'}
+              aria-label={hasAuthorPermissions ? 'Write a review in the writer studio' : 'Verify a contributor identity'}
+              className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-md bg-amber-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800 sm:px-4"
             >
-              <PenSquare className="w-3.5 h-3.5" />
-              <span>Write & Review</span>
+              <PenSquare className="h-4 w-4" aria-hidden="true" />
+              <span aria-hidden="true" className="hidden min-[430px]:inline">
+                {hasAuthorPermissions ? 'Write' : 'Verify'}
+              </span>
             </Link>
+
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={menuOpen}
+              aria-controls={menuId}
+              className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-md border border-stone-300 text-stone-800 transition-colors hover:bg-stone-50 lg:hidden"
+            >
+              {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+              <span className="sr-only">{menuOpen ? 'Close navigation menu' : 'Open navigation menu'}</span>
+            </button>
           </div>
         </div>
 
-        {/* Mobile Horizontal Navigation Bar */}
-        <div className="flex lg:hidden items-center gap-2 border-t border-stone-100 py-2.5 overflow-x-auto text-xs no-scrollbar">
-          <Link
-            href="/"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname === '/'
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
+        {menuOpen && (
+          <div
+            ref={menuRef}
+            id={menuId}
+            className="mb-4 rounded-lg border border-stone-200 bg-white p-4 shadow-sm lg:hidden"
           >
-            All Articles
-          </Link>
-          <Link
-            href="/papers"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname.startsWith('/paper')
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Papers Archive
-          </Link>
-          <Link
-            href="/authors"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname.startsWith('/author')
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Authors Directory
-          </Link>
-          <Link
-            href="/editions"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname.startsWith('/editions')
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Compendiums
-          </Link>
-          <Link
-            href="/editorial-board"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname.startsWith('/editorial')
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Editorial Board
-          </Link>
-          <Link
-            href="/assistant"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium flex items-center gap-1 ${
-              pathname === '/assistant'
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            <Sparkles className="w-3 h-3 text-amber-600" />
-            <span>AI Synthesizer</span>
-          </Link>
-          <Link
-            href="/bookmarks"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname === '/bookmarks'
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Reading List ({savedCount})
-          </Link>
-          <Link
-            href="/cite"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname === '/cite'
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Citations
-          </Link>
-          <Link
-            href="/submit"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium ${
-              pathname === '/submit'
-                ? 'bg-stone-900 text-white font-semibold'
-                : 'text-stone-600 hover:text-stone-900 bg-stone-50 border border-stone-200'
-            }`}
-          >
-            Submissions
-          </Link>
-          <Link
-            href="/verify"
-            className={`px-3 py-1 rounded-md whitespace-nowrap transition-colors font-medium text-emerald-800 bg-emerald-50 border border-emerald-200`}
-          >
-            Verify Domain ID
-          </Link>
-        </div>
+            {setSearchQuery && (
+              <div className="mb-4">
+                <label htmlFor="mobile-search" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Search articles
+                </label>
+                <input
+                  id="mobile-search"
+                  type="search"
+                  value={searchQuery ?? ''}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Title, author, DOI, or repository"
+                  className="h-11 w-full rounded-md border border-stone-300 bg-stone-50 px-3 text-sm text-stone-900 placeholder:text-stone-600 focus:bg-white"
+                />
+              </div>
+            )}
+
+            <nav aria-label="Mobile primary">
+              <ul className="grid gap-1">
+                {primaryNav.map((item) => {
+                  const active = item.match(pathname);
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? 'page' : undefined}
+                        className={`flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-base font-medium transition-colors ${
+                          active ? 'bg-stone-900 text-white' : 'text-stone-800 hover:bg-stone-100'
+                        }`}
+                      >
+                        <item.icon className="h-4 w-4" aria-hidden="true" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+
+            <nav aria-label="Research tools" className="mt-4 border-t border-stone-200 pt-4">
+              <p className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-stone-900">
+                <ChevronDown className="h-4 w-4 text-stone-600" aria-hidden="true" />
+                Research tools
+              </p>
+              <ul className="grid gap-1">
+                {secondaryNav.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
+                      className="flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-base text-stone-800 transition-colors hover:bg-stone-100"
+                    >
+                      <item.icon className="h-4 w-4 text-stone-600" aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link
+                    href="/write"
+                    className="flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-base text-stone-800 transition-colors hover:bg-stone-100"
+                  >
+                    <PenSquare className="h-4 w-4 text-stone-600" aria-hidden="true" />
+                    <span>Writer studio</span>
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+
+            <p className="mt-4 flex items-start gap-2 border-t border-stone-200 pt-4 text-sm text-stone-600">
+              <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>
+                {hasAuthorPermissions
+                  ? `Signed in as ${user?.name ?? 'a verified author'}. Publishing permissions are active.`
+                  : 'Reader mode. Verify a scholarly identity to publish reviews.'}
+              </span>
+            </p>
+          </div>
+        )}
       </div>
     </header>
   );

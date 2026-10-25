@@ -1,975 +1,731 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { AlertCircle, CheckCircle2, Eye, Lock, PenSquare, Plus, Save, Send, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import { 
-  PenSquare, 
-  Eye, 
-  Edit3, 
-  GitBranch, 
-  FileText, 
-  Send, 
-  ArrowLeft, 
-  Plus, 
-  Trash2, 
-  CheckCircle, 
-  AlertCircle,
-  Sparkles,
-  Save,
-  HelpCircle,
-  ShieldCheck,
-  GraduationCap,
-  Building2,
-  Lock,
-  User,
-  ExternalLink,
-  CheckCircle2,
-  Mail
-} from 'lucide-react';
-import { BlogCategory, ArticleFormat, CATEGORIES, AUTHORS, Author, BlogPost } from '@/lib/blog-data';
+import PageState from '@/components/PageState';
+import { ArticleFormat, AUTHORS, BlogCategory, BlogPost, CATEGORIES } from '@/lib/blog-data';
 import { useAuth } from '@/lib/auth-context';
+import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
+import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
+import { formatDate, readingTimeFromText } from '@/lib/format';
+
+const FORMATS: ArticleFormat[] = ['Paper Review', 'Repo Teardown', 'Deep-Dive Essay', 'Field Notes', 'Case Study'];
+const DRAFT_KEY = 'rwm_writer_draft';
+
+interface Draft {
+  title: string;
+  subtitle: string;
+  category: BlogCategory;
+  format: ArticleFormat;
+  summary: string;
+  content: string;
+  takeaways: string[];
+  tags: string;
+  artifactType: 'github' | 'paper' | 'dataset';
+  artifactIdentifier: string;
+  artifactTitle: string;
+  artifactUrl: string;
+  artifactMeta: string;
+  hasArtifact: boolean;
+  updatedAt: string;
+}
+
+const emptyDraft: Draft = {
+  title: '',
+  subtitle: '',
+  category: 'Research Reviews',
+  format: 'Paper Review',
+  summary: '',
+  content: '',
+  takeaways: [''],
+  tags: '',
+  artifactType: 'paper',
+  artifactIdentifier: '',
+  artifactTitle: '',
+  artifactUrl: '',
+  artifactMeta: '',
+  hasArtifact: true,
+  updatedAt: '',
+};
+
+const fieldClass =
+  'h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600';
 
 export default function WritePage() {
   const router = useRouter();
-  const { 
-    user, 
-    hasAuthorPermissions, 
-    verifyWithOrcid, 
-    verifyWithGithub, 
-    verifyWithInstitution, 
-    loginWithGmail,
-    switchRoleForTesting 
-  } = useAuth();
+  const { user, hydrated, hasAuthorPermissions } = useAuth();
+  const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [tab, setTab] = useState<'editor' | 'preview'>('editor');
+  const [hydratedDraft, setHydratedDraft] = useState(false);
+  const [saveStatus, setSaveStatus] = useState('Draft not saved yet');
+  const [error, setError] = useState<string | null>(null);
+  const [errorField, setErrorField] = useState<string | null>(null);
+  const [publishing, setPublishing] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const timeoutRef = useRef<number | null>(null);
 
-  // Mode: Editor or Live Preview
-  const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
-
-  // Form states
-  const [title, setTitle] = useState('');
-  const [subtitle, setSubtitle] = useState('');
-  const [category, setCategory] = useState<BlogCategory>('GitHub Repo Teardowns');
-  const [format, setFormat] = useState<ArticleFormat>('Repo Teardown');
-  const [selectedAuthorKey, setSelectedAuthorKey] = useState<string>('maya-lin');
-
-  // Custom author state
-  const [isCustomAuthor, setIsCustomAuthor] = useState(false);
-  const [customAuthorName, setCustomAuthorName] = useState('');
-  const [customAuthorRole, setCustomAuthorRole] = useState('');
-  const [customAuthorDomain, setCustomAuthorDomain] = useState('');
-
-  // Reviewed Artifact states
-  const [hasReviewedArtifact, setHasReviewedArtifact] = useState(true);
-  const [artifactType, setArtifactType] = useState<'github' | 'paper'>('github');
-  const [artifactIdentifier, setArtifactIdentifier] = useState('');
-  const [artifactTitle, setArtifactTitle] = useState('');
-  const [artifactUrl, setArtifactUrl] = useState('');
-  const [artifactMeta, setArtifactMeta] = useState('');
-
-  // Content
-  const [summary, setSummary] = useState('');
-  const [takeaways, setTakeaways] = useState<string[]>([
-    'First critical engineering or empirical insight...',
-    'Key performance benchmark or replication note...',
-  ]);
-  const [fullContent, setFullContent] = useState('');
-  const [tags, setTags] = useState('Systems, Open Source, Performance');
-
-  // Status & Validation
-  const [isPublishing, setIsPublishing] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [autoSaveStatus, setAutoSaveStatus] = useState<string>('Draft loaded');
-
-  // Auto-save draft in localStorage
   useEffect(() => {
-    try {
-      const savedDraft = localStorage.getItem('rwm_writer_draft');
-      if (savedDraft) {
-        const parsed = JSON.parse(savedDraft);
-        if (parsed.title) setTitle(parsed.title);
-        if (parsed.subtitle) setSubtitle(parsed.subtitle);
-        if (parsed.category) setCategory(parsed.category);
-        if (parsed.format) setFormat(parsed.format);
-        if (parsed.summary) setSummary(parsed.summary);
-        if (parsed.fullContent) setFullContent(parsed.fullContent);
-        if (parsed.artifactIdentifier) setArtifactIdentifier(parsed.artifactIdentifier);
-        if (parsed.artifactTitle) setArtifactTitle(parsed.artifactTitle);
-        if (parsed.artifactMeta) setArtifactMeta(parsed.artifactMeta);
-        if (parsed.artifactUrl) setArtifactUrl(parsed.artifactUrl);
-        if (parsed.takeaways && Array.isArray(parsed.takeaways)) setTakeaways(parsed.takeaways);
-        setAutoSaveStatus('Draft restored from local session');
-      }
-    } catch (e) {
-      console.warn('Draft load failed:', e);
+    const stored = readLocal<Partial<Draft> | null>(DRAFT_KEY, null);
+    if (stored && typeof stored === 'object') {
+      setDraft((previous) => ({
+        ...previous,
+        ...stored,
+        takeaways: Array.isArray(stored.takeaways) && stored.takeaways.length > 0 ? stored.takeaways : [''],
+      }));
+      setRestored(true);
+      setSaveStatus(
+        stored.updatedAt ? `Draft from ${new Date(stored.updatedAt).toLocaleString()}` : 'Draft restored from this browser',
+      );
     }
+    setHydratedDraft(true);
   }, []);
 
-  const triggerAutoSave = () => {
-    try {
-      const draftObj = {
-        title,
-        subtitle,
-        category,
-        format,
-        summary,
-        fullContent,
-        artifactIdentifier,
-        artifactTitle,
-        artifactMeta,
-        artifactUrl,
-        takeaways,
-        updatedAt: new Date().toISOString(),
-      };
-      localStorage.setItem('rwm_writer_draft', JSON.stringify(draftObj));
-      setAutoSaveStatus(`Saved at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
-    } catch (e) {
-      console.warn('Auto-save error:', e);
+  useEffect(() => {
+    if (!hydratedDraft) return;
+    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    timeoutRef.current = window.setTimeout(() => {
+      const next = { ...draft, updatedAt: new Date().toISOString() };
+      const saved = writeLocal(DRAFT_KEY, next);
+      setSaveStatus(
+        saved
+          ? `Saved locally at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+          : 'Autosave is blocked by this browser. Copy your text before leaving.',
+      );
+    }, 700);
+    return () => {
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    };
+  }, [draft, hydratedDraft]);
+
+  function update<K extends keyof Draft>(key: K, value: Draft[K]) {
+    setDraft((previous) => ({ ...previous, [key]: value }));
+    setErrorField(null);
+  }
+
+  function fail(message: string, fieldId?: string) {
+    setError(message);
+    setErrorField(fieldId ?? null);
+    if (fieldId) {
+      const field = document.getElementById(fieldId);
+      field?.focus();
+      field?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
-  };
+  }
 
-  const handleFormatChange = (newFormat: ArticleFormat) => {
-    setFormat(newFormat);
-    if (newFormat === 'Repo Teardown') {
-      setHasReviewedArtifact(true);
-      setArtifactType('github');
-    } else if (newFormat === 'Paper Review') {
-      setHasReviewedArtifact(true);
-      setArtifactType('paper');
-    }
-    triggerAutoSave();
-  };
-
-  // Quick repo auto-fill presets for easy writing
-  const handleQuickPreset = (presetName: string) => {
-    if (presetName === 'vllm') {
-      setArtifactType('github');
-      setArtifactIdentifier('vllm-project/vllm');
-      setArtifactTitle('vLLM: Easy, Fast, and Cheap LLM Serving with PagedAttention');
-      setArtifactUrl('https://github.com/vllm-project/vllm');
-      setArtifactMeta('44.8k Stars · Python / C++ · Apache-2.0');
-      setTitle('Inside vLLM: Deconstructing PagedAttention and CUDA Kernels');
-      setCategory('GitHub Repo Teardowns');
-    } else if (presetName === 'deepseek') {
-      setArtifactType('paper');
-      setArtifactIdentifier('arXiv:2501.12948');
-      setArtifactTitle('DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning');
-      setArtifactUrl('https://arxiv.org/abs/2501.12948');
-      setArtifactMeta('DeepSeek-AI · 32-page preprint · Jan 2026');
-      setTitle('Reviewing DeepSeek-R1: Why Pure RL Emerged Without Human SFT');
-      setCategory('Research Reviews');
-    } else if (presetName === 'uv') {
-      setArtifactType('github');
-      setArtifactIdentifier('astral-sh/uv');
-      setArtifactTitle('uv: An extremely fast Python package and project manager written in Rust');
-      setArtifactUrl('https://github.com/astral-sh/uv');
-      setArtifactMeta('32.4k Stars · Rust · Apache-2.0');
-      setTitle('How Astral Built uv in Rust: Replacing pip, pip-tools, and virtualenv');
-      setCategory('GitHub Repo Teardowns');
-    }
-    triggerAutoSave();
-  };
-
-  const handleAddTakeaway = () => {
-    setTakeaways((prev) => [...prev, '']);
-  };
-
-  const handleTakeawayChange = (index: number, val: string) => {
-    setTakeaways((prev) => {
-      const next = [...prev];
-      next[index] = val;
-      return next;
+  function updateTakeaway(index: number, value: string) {
+    setDraft((previous) => {
+      const takeaways = [...previous.takeaways];
+      takeaways[index] = value;
+      return { ...previous, takeaways };
     });
-    triggerAutoSave();
-  };
+  }
 
-  const handleRemoveTakeaway = (index: number) => {
-    setTakeaways((prev) => prev.filter((_, i) => i !== index));
-    triggerAutoSave();
-  };
+  function addTakeaway() {
+    setDraft((previous) => ({ ...previous, takeaways: [...previous.takeaways, ''] }));
+  }
 
-  const handlePublish = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg(null);
+  function removeTakeaway(index: number) {
+    setDraft((previous) => ({
+      ...previous,
+      takeaways: previous.takeaways.length > 1 ? previous.takeaways.filter((_, i) => i !== index) : [''],
+    }));
+  }
 
-    if (!title.trim()) {
-      setErrorMsg('Please provide an article title.');
-      return;
-    }
-    if (!summary.trim()) {
-      setErrorMsg('Please provide an executive summary.');
-      return;
-    }
-    if (!fullContent.trim()) {
-      setErrorMsg('Please write the article content body.');
-      return;
-    }
+  function discardDraft() {
+    setDraft(emptyDraft);
+    removeLocal(DRAFT_KEY);
+    setSaveStatus('Draft cleared');
+    setRestored(false);
+    setError(null);
+  }
 
-    if (!hasAuthorPermissions) {
-      setErrorMsg('Publishing Permission Denied: An author must validate domain expertise via ORCID, GitHub, or Institutional email (.edu) to publish blog posts. Redirecting to verification...');
-      setIsPublishing(false);
+  const parsedTags = useMemo(() => parseTags(draft.tags), [draft.tags]);
+  const readTime = useMemo(() => readingTimeFromText(`${draft.summary} ${draft.content}`), [draft.summary, draft.content]);
+  const previewParagraphs = useMemo(
+    () => draft.content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean),
+    [draft.content],
+  );
+
+  async function publish(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (publishing) return;
+    setError(null);
+
+    if (!hasAuthorPermissions || !user) {
       router.push('/verify?redirect=/write&error=unverified');
       return;
     }
-
-    setIsPublishing(true);
-
-    try {
-      let author: Author;
-      if (user?.authorProfileId && AUTHORS[user.authorProfileId]) {
-        author = AUTHORS[user.authorProfileId];
-      } else if (user && hasAuthorPermissions) {
-        author = {
-          id: user.authorProfileId || user.id,
-          name: user.name,
-          avatar: user.avatar,
-          role: user.verifiedTitle || 'Domain Specialist',
-          domain: category,
-          institution: user.institution || 'Verified Independent Lab',
-          verifiedVia: (user.authProvider === 'orcid' || user.authProvider === 'github' || user.authProvider === 'institution') ? user.authProvider : 'institution',
-          verifiedIdentifier: user.verifiedIdentifier || user.email,
-          verifiedTitle: user.verifiedTitle || 'Verified Contributor',
-          joinedDate: 'October 2026',
-          articleCount: 1,
-          bio: `${user.name} writes and reviews technical works on ResearchWithMe, with verified credentials via ${user.authProvider}.`,
-        };
-      } else {
-        author = AUTHORS[selectedAuthorKey] || AUTHORS['maya-lin'];
+    if (cleanText(draft.title, LIMITS.title).length < 8) {
+      fail('Add a title of at least 8 characters before publishing.', 'write-title');
+      return;
+    }
+    if (cleanText(draft.summary, LIMITS.summary).length < 40) {
+      fail('The executive summary needs at least 40 characters so readers can judge the article from the feed.', 'write-summary');
+      return;
+    }
+    if (cleanText(draft.content, LIMITS.body).length < 200) {
+      fail('The article body needs at least 200 characters.', 'write-content');
+      return;
+    }
+    const takeaways = draft.takeaways.map((item) => cleanText(item, 300)).filter(Boolean);
+    if (takeaways.length === 0) {
+      fail('Add at least one key takeaway.', 'takeaway-0');
+      return;
+    }
+    if (draft.hasArtifact) {
+      if (!cleanText(draft.artifactIdentifier, LIMITS.identifier)) {
+        fail('Add the identifier of the artifact you reviewed, or turn the artifact block off.', 'write-artifact-identifier');
+        return;
       }
+      if (draft.artifactUrl && !/^https?:\/\//i.test(draft.artifactUrl.trim())) {
+        fail('The artifact URL must start with http:// or https://.', 'write-artifact-url');
+        return;
+      }
+    }
 
-      const slug = title
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '');
-
-      const newArticle: BlogPost = {
-        id: 'post-' + Date.now(),
-        slug,
-        title: title.trim(),
-        subtitle: subtitle.trim() || summary.slice(0, 140),
-        category,
-        format,
-        author,
-        publishedAt: 'October 24, 2026',
-        readTime: `${Math.max(3, Math.ceil(fullContent.split(/\s+/).length / 200))} min read`,
-        coverImage: artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg',
-        featured: false,
-        reviewedArtifact: hasReviewedArtifact && artifactIdentifier.trim() ? {
-          type: artifactType,
-          title: artifactTitle.trim() || artifactIdentifier.trim(),
-          identifier: artifactIdentifier.trim(),
-          url: artifactUrl.trim() || 'https://github.com',
-          meta: artifactMeta.trim() || (artifactType === 'github' ? 'GitHub Open Source' : 'Verified Literature'),
-        } : undefined,
-        summary: summary.trim(),
-        content: fullContent
-          .split('\n\n')
-          .map((p) => p.trim())
-          .filter((p) => p.length > 0),
-        keyTakeaways: takeaways.map((t) => t.trim()).filter((t) => t.length > 0),
-        tags: tags.split(',').map((t) => t.trim()).filter((t) => t.length > 0),
-        likes: 1,
-        commentsCount: 0,
+    const knownAuthor = user.authorProfileId ? AUTHORS[user.authorProfileId] : undefined;
+    const author =
+      knownAuthor ?? {
+        id: slugify(user.name) || user.id,
+        name: user.name,
+        avatar: user.avatar,
+        role: user.verifiedTitle ?? 'Verified contributor',
+        domain: draft.category,
+        institution: user.institution ?? 'Independent researcher',
+        verifiedVia:
+          user.authProvider === 'orcid' || user.authProvider === 'github' || user.authProvider === 'institution'
+            ? user.authProvider
+            : 'institution',
+        verifiedIdentifier: user.verifiedIdentifier ?? user.email,
+        verifiedTitle: user.verifiedTitle ?? 'Contributor identity on file',
+        joinedDate: formatDate(new Date(), { day: undefined, month: 'long', year: 'numeric' }),
+        articleCount: 1,
+        bio: `${user.name} reviews work in ${draft.category.toLowerCase()} on ResearchWithME.`,
       };
 
+    const slug = slugify(draft.title);
+    if (!slug) {
+      fail('The title needs at least one letter or number to build a URL.', 'write-title');
+      return;
+    }
+
+    const article: BlogPost = {
+      id: `post-${Date.now()}`,
+      slug,
+      title: cleanText(draft.title, LIMITS.title),
+      subtitle: cleanText(draft.subtitle, 400) || cleanText(draft.summary, 140),
+      category: draft.category,
+      format: draft.format,
+      author,
+      publishedAt: new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()),
+      readTime: `${readTime} min read`,
+      coverImage: draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg',
+      featured: false,
+      reviewedArtifact: draft.hasArtifact
+        ? {
+            type: draft.artifactType,
+            title: cleanText(draft.artifactTitle, 200) || cleanText(draft.artifactIdentifier, LIMITS.identifier),
+            identifier: cleanText(draft.artifactIdentifier, LIMITS.identifier),
+            url: draft.artifactUrl.trim() || (draft.artifactType === 'github' ? 'https://github.com' : 'https://doi.org'),
+            meta: cleanText(draft.artifactMeta, 160) || 'Metadata supplied by the author',
+          }
+        : undefined,
+      summary: cleanText(draft.summary, LIMITS.summary),
+      content: draft.content
+        .split(/\n{2,}/)
+        .map((paragraph) => cleanText(paragraph, 40_000))
+        .filter(Boolean),
+      keyTakeaways: takeaways,
+      tags: parsedTags,
+      likes: 0,
+      commentsCount: 0,
+    };
+
+    setPublishing(true);
+    try {
       const res = await fetch('/api/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newArticle),
+        body: JSON.stringify(article),
       });
-
-      if (!res.ok) {
-        throw new Error('Failed to save article to database');
-      }
-
-      // Clear draft
-      localStorage.removeItem('rwm_writer_draft');
-
-      // Navigate to dedicated article URL!
-      router.push(`/post/${newArticle.slug}`);
-    } catch (err: unknown) {
-      console.error('Publication error:', err);
-      setErrorMsg(err instanceof Error ? err.message : 'Failed to publish article');
-      setIsPublishing(false);
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(payload.error || 'The publication could not be saved.');
+      removeLocal(DRAFT_KEY);
+      const savedSlug = payload.article?.slug ?? slug;
+      router.push(`/post/${savedSlug}`);
+    } catch (publishError) {
+      setError(
+        `${publishError instanceof Error ? publishError.message : 'The publication could not be saved.'} Your draft is preserved in this browser.`,
+      );
+      setPublishing(false);
     }
-  };
+  }
+
+  if (!hydrated) {
+    return (
+      <div className="min-h-screen bg-stone-50">
+        <BlogHeader />
+        <PageState
+          role="status"
+          code="Loading"
+          title="Opening the writer studio"
+          description="Checking the contributor session stored in this browser."
+          primaryAction={{ href: '/', label: 'Return to the journal' }}
+        />
+      </div>
+    );
+  }
+
+  if (!hasAuthorPermissions) {
+    return (
+      <div className="flex min-h-screen flex-col bg-stone-50">
+        <BlogHeader />
+        <PageState
+          code="Contributor access"
+          title="The writer studio needs a contributor identity"
+          description="Publishing is restricted to contributors who have recorded a scholarly identity. You can still read, save, and cite every article without an account."
+          primaryAction={{ href: '/verify?redirect=/write', label: 'Record an identity' }}
+          secondaryAction={{ href: '/', label: 'Browse the journal' }}
+        >
+          <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+            <Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>Verification here is a local prototype; no credentials are sent anywhere.</span>
+          </p>
+        </PageState>
+        <BlogFooter />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-white text-stone-900 flex flex-col font-sans antialiased selection:bg-amber-900 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
-        {/* Top Control Bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-stone-200 mb-8">
+      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+        <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="flex items-center gap-2 text-xs text-stone-500 mb-1">
-              <Link href="/" className="hover:text-stone-900 flex items-center gap-1">
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>Return to Feed</span>
-              </Link>
-              <span>·</span>
-              <span className="font-mono text-stone-400">{autoSaveStatus}</span>
-            </div>
-            <h1 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
-              Writer & Reviewer Studio
-            </h1>
+            <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Writer studio</h1>
+            <p className="mt-2 text-base text-stone-700">
+              Signed in as <span className="font-medium text-stone-900">{user?.name}</span>. {saveStatus}
+            </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Tab: Editor vs Preview */}
-            <div className="flex items-center p-1 bg-stone-100 rounded-lg text-xs font-medium">
+          <div className="flex flex-wrap items-center gap-2">
+            <div role="group" aria-label="Editor mode" className="flex rounded-md border border-stone-300 bg-white p-1">
               <button
                 type="button"
-                onClick={() => setActiveTab('editor')}
-                className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${
-                  activeTab === 'editor'
-                    ? 'bg-white text-stone-900 shadow-xs font-semibold'
-                    : 'text-stone-600 hover:text-stone-900'
+                onClick={() => setTab('editor')}
+                aria-pressed={tab === 'editor'}
+                className={`inline-flex min-h-9 items-center gap-1.5 rounded px-3 text-sm font-medium ${
+                  tab === 'editor' ? 'bg-stone-900 text-white' : 'text-stone-700 hover:bg-stone-100'
                 }`}
               >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>Editor</span>
+                <PenSquare className="h-4 w-4" aria-hidden="true" />
+                <span>Write</span>
               </button>
               <button
                 type="button"
-                onClick={() => setActiveTab('preview')}
-                className={`px-3 py-1.5 rounded-md transition-colors flex items-center gap-1.5 ${
-                  activeTab === 'preview'
-                    ? 'bg-white text-stone-900 shadow-xs font-semibold'
-                    : 'text-stone-600 hover:text-stone-900'
+                onClick={() => setTab('preview')}
+                aria-pressed={tab === 'preview'}
+                className={`inline-flex min-h-9 items-center gap-1.5 rounded px-3 text-sm font-medium ${
+                  tab === 'preview' ? 'bg-stone-900 text-white' : 'text-stone-700 hover:bg-stone-100'
                 }`}
               >
-                <Eye className="w-3.5 h-3.5" />
+                <Eye className="h-4 w-4" aria-hidden="true" />
                 <span>Preview</span>
               </button>
             </div>
 
-            {/* Publish Button */}
-            <button
-              onClick={handlePublish}
-              disabled={isPublishing}
-              className="bg-stone-900 hover:bg-stone-800 disabled:opacity-50 text-white px-5 py-2 rounded-lg text-xs font-semibold tracking-wide flex items-center gap-1.5 transition-colors shadow-xs"
-            >
-              <Send className="w-3.5 h-3.5" />
-              <span>{isPublishing ? 'Publishing...' : 'Publish Article'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Identity & Domain Authentication Status Banner */}
-        <div className="mb-6 bg-stone-50 border border-stone-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2.5">
-            {hasAuthorPermissions ? (
-              <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-900 shrink-0">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-            ) : (
-              <div className="p-1.5 rounded-lg bg-amber-100 text-amber-900 shrink-0">
-                <Lock className="w-4 h-4" />
-              </div>
-            )}
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-semibold text-stone-900">
-                  {user ? user.name : 'Guest User'}
-                </span>
-                <span className="text-stone-400">·</span>
-                <span className={`px-2 py-0.5 rounded text-[11px] font-mono font-medium ${
-                  hasAuthorPermissions
-                    ? 'bg-emerald-100 text-emerald-900'
-                    : 'bg-amber-100 text-amber-900'
-                }`}>
-                  {hasAuthorPermissions ? `Verified Author (${user?.authProvider?.toUpperCase()})` : 'Reader (Gmail OAuth)'}
-                </span>
-              </div>
-              <p className="text-[11px] text-stone-500 mt-0.5">
-                {hasAuthorPermissions 
-                  ? `${user?.verifiedTitle || 'Verified Contributor'} · ${user?.verifiedIdentifier || 'Attested'}`
-                  : 'Writing permissions locked. Must authenticate via ORCID, GitHub, or Institutional Email to publish.'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {hasAuthorPermissions && user?.authorProfileId && (
-              <Link
-                href={`/author/${user.authorProfileId}`}
-                className="px-3 py-1.5 rounded-lg border border-stone-200 text-stone-700 hover:bg-white transition-colors font-medium flex items-center gap-1 text-xs"
-              >
-                <User className="w-3.5 h-3.5 text-stone-500" />
-                <span>My Profile</span>
-              </Link>
-            )}
-
-            <Link
-              href="/verify?redirect=/write"
-              className="px-3 py-1.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-medium transition-colors text-xs flex items-center gap-1.5"
-            >
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-              <span>{hasAuthorPermissions ? 'Identity Details' : 'Authenticate Domain'}</span>
-            </Link>
-
-            {/* Role switch toggle for testing */}
-            <button
-              type="button"
-              onClick={() => switchRoleForTesting(hasAuthorPermissions ? 'reader' : 'author')}
-              className="px-2.5 py-1.5 rounded-lg border border-dashed border-stone-300 text-stone-600 hover:bg-stone-200 transition-colors font-mono text-[11px]"
-              title="Click to toggle between Reader and Author to test the permission gate"
-            >
-              Test as: {hasAuthorPermissions ? 'Reader' : 'Author'}
-            </button>
-          </div>
-        </div>
-
-        {/* DOMAIN VALIDATION GATE: Displayed when the user does not have author permissions */}
-        {!hasAuthorPermissions ? (
-          <div className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-10 text-center space-y-6 shadow-xs my-6">
-            <div className="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 flex items-center justify-center mx-auto shadow-2xs">
-              <Lock className="w-8 h-8 text-amber-800" />
-            </div>
-
-            <div className="max-w-xl mx-auto space-y-2">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-amber-900 font-semibold bg-amber-100/70 px-2.5 py-1 rounded">
-                Editorial Integrity Gate
-              </span>
-              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900">
-                Domain Expertise Validation Required
-              </h2>
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed font-sans">
-                ResearchWithMe is a publication of expert essays, scientific paper reviews, and systems engineering teardowns. To prevent unvetted speculative posts, writing and publishing permissions are restricted to contributors who validate their identity and credentials through at least one of three recognized authorities.
-              </p>
-              <p className="text-xs text-stone-500 font-sans italic">
-                Users authenticated via Gmail or standard social logins remain as readers with full access to read, bookmark, and comment on articles.
-              </p>
-            </div>
-
-            {/* 3 OAuth Options Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-4xl mx-auto pt-2">
-              {/* Option 1: ORCID */}
-              <div className="p-5 rounded-xl border border-emerald-200 bg-emerald-50/50 flex flex-col justify-between space-y-3">
-                <div className="space-y-2">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                    <GraduationCap className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-serif font-bold text-sm text-emerald-950">
-                    ORCID OAuth
-                  </h3>
-                  <p className="text-xs text-stone-600 leading-relaxed">
-                    For academic, clinical, and scientific researchers. Validates peer-reviewed publication records and scholar identity.
-                  </p>
-                </div>
-                <Link
-                  href="/verify?method=orcid&redirect=/write"
-                  className="w-full py-2 px-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <GraduationCap className="w-3.5 h-3.5" />
-                  <span>Connect ORCID</span>
-                </Link>
-              </div>
-
-              {/* Option 2: GitHub */}
-              <div className="p-5 rounded-xl border border-stone-300 bg-stone-50 flex flex-col justify-between space-y-3">
-                <div className="space-y-2">
-                  <div className="w-8 h-8 rounded-lg bg-stone-200 text-stone-900 flex items-center justify-center">
-                    <GitBranch className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-serif font-bold text-sm text-stone-950">
-                    GitHub OAuth
-                  </h3>
-                  <p className="text-xs text-stone-600 leading-relaxed">
-                    For software engineers, distributed systems builders, and open-source maintainers. Validates repository ownership and commit history.
-                  </p>
-                </div>
-                <Link
-                  href="/verify?method=github&redirect=/write"
-                  className="w-full py-2 px-3 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <GitBranch className="w-3.5 h-3.5" />
-                  <span>Connect GitHub</span>
-                </Link>
-              </div>
-
-              {/* Option 3: Institutional Email */}
-              <div className="p-5 rounded-xl border border-sky-200 bg-sky-50/50 flex flex-col justify-between space-y-3">
-                <div className="space-y-2">
-                  <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-900 flex items-center justify-center">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <h3 className="font-serif font-bold text-sm text-sky-950">
-                    Institutional / .edu
-                  </h3>
-                  <p className="text-xs text-stone-600 leading-relaxed">
-                    For university faculty, postdocs, and accredited research laboratory fellows. Validates accredited academic institution email domain.
-                  </p>
-                </div>
-                <Link
-                  href="/verify?method=institution&redirect=/write"
-                  className="w-full py-2 px-3 bg-sky-900 hover:bg-sky-950 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
-                >
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span>Verify .edu Domain</span>
-                </Link>
-              </div>
-            </div>
-
-            <div className="pt-2 text-xs text-stone-500">
-              Already verified an author profile?{' '}
+            {restored && (
               <button
                 type="button"
-                onClick={() => switchRoleForTesting('author')}
-                className="text-amber-900 font-semibold hover:underline"
+                onClick={discardDraft}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-red-300 hover:text-red-800"
               >
-                Restore Verified Author Session
+                <Trash2 className="h-4 w-4" aria-hidden="true" />
+                <span>Discard draft</span>
               </button>
-            </div>
+            )}
           </div>
-        ) : (
-          <>
-            {errorMsg && (
-              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{errorMsg}</span>
-              </div>
+        </div>
+
+        {error && (
+          <div role="alert" className="mt-6 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+            <p className="flex items-start gap-2">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{error}</span>
+            </p>
+          </div>
+        )}
+
+        {tab === 'preview' ? (
+          <article aria-labelledby="preview-title" className="mt-8 max-w-3xl">
+            <p className="text-sm text-stone-600">
+              {draft.category} · {draft.format} · {readTime} min read
+            </p>
+            <h2 id="preview-title" className="mt-2 font-serif text-3xl font-bold leading-tight text-stone-900 sm:text-4xl">
+              {draft.title || 'Untitled review'}
+            </h2>
+            {draft.subtitle && <p className="mt-3 font-serif text-xl leading-relaxed text-stone-700">{draft.subtitle}</p>}
+            <p className="mt-4 text-sm text-stone-600">By {user?.name}</p>
+
+            {draft.summary && (
+              <section aria-labelledby="preview-summary" className="mt-8 border-y border-stone-200 py-5">
+                <h3 id="preview-summary" className="font-serif text-xl font-semibold text-stone-900">
+                  Summary
+                </h3>
+                <p className="mt-2 text-lg leading-relaxed text-stone-800">{draft.summary}</p>
+              </section>
             )}
 
-            {/* Studio Body */}
-            {activeTab === 'editor' ? (
-              <form onSubmit={handlePublish} className="space-y-8">
-            {/* Section 1: Core Article Metadata */}
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 space-y-4">
-              <h2 className="font-serif text-base font-bold text-stone-900">
-                1. Article Scope & Classification
-              </h2>
+            {draft.takeaways.filter(Boolean).length > 0 && (
+              <section aria-labelledby="preview-takeaways" className="mt-8">
+                <h3 id="preview-takeaways" className="font-serif text-xl font-semibold text-stone-900">
+                  Key takeaways
+                </h3>
+                <ul className="mt-2 space-y-2">
+                  {draft.takeaways.filter(Boolean).map((takeaway, index) => (
+                    <li key={`${takeaway}-${index}`} className="flex gap-2 text-base leading-relaxed text-stone-800">
+                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-800" />
+                      <span>{takeaway}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+            <div className="mt-8 space-y-4">
+              {previewParagraphs.length > 0 ? (
+                previewParagraphs.map((paragraph, index) => (
+                  <p key={`${index}-${paragraph.slice(0, 20)}`} className="max-w-prose text-lg leading-relaxed text-stone-800">
+                    {paragraph}
+                  </p>
+                ))
+              ) : (
+                <p className="text-base text-stone-600">The article body will appear here as you write.</p>
+              )}
+            </div>
+
+            {parsedTags.length > 0 && (
+              <ul className="mt-8 flex flex-wrap gap-2">
+                {parsedTags.map((tag) => (
+                  <li key={tag} className="rounded border border-stone-300 bg-white px-2 py-1 font-mono text-sm text-stone-700">
+                    #{tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </article>
+        ) : (
+          <form onSubmit={publish} noValidate className="mt-8 space-y-10">
+            <fieldset className="space-y-4">
+              <legend className="font-serif text-xl font-semibold text-stone-900">Article</legend>
+
+              <div>
+                <label htmlFor="write-title" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Title <span className="text-stone-600">(required)</span>
+                </label>
+                <input
+                  id="write-title"
+                  type="text"
+                  value={draft.title}
+                  onChange={(event) => update('title', event.target.value)}
+                  maxLength={LIMITS.title}
+                  aria-invalid={errorField === 'write-title' ? true : undefined}
+                  placeholder="Inside vLLM: how paged attention changed inference"
+                  className={fieldClass}
+                />
+              </div>
+
+              <div>
+                <label htmlFor="write-subtitle" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Subtitle <span className="text-stone-600">(optional)</span>
+                </label>
+                <input
+                  id="write-subtitle"
+                  type="text"
+                  value={draft.subtitle}
+                  onChange={(event) => update('subtitle', event.target.value)}
+                  maxLength={400}
+                  placeholder="One sentence that states the argument"
+                  className={fieldClass}
+                />
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="block font-semibold text-stone-700 mb-1">
-                    Primary Domain / Category *
+                  <label htmlFor="write-category" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Editorial column
                   </label>
                   <select
-                    value={category}
-                    onChange={(e) => {
-                      setCategory(e.target.value as BlogCategory);
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400"
+                    id="write-category"
+                    value={draft.category}
+                    onChange={(event) => update('category', event.target.value as BlogCategory)}
+                    className={fieldClass}
                   >
-                    {CATEGORIES.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                    {CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-stone-700 mb-1">
-                    Article Format *
+                  <label htmlFor="write-format" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Format
                   </label>
                   <select
-                    value={format}
-                    onChange={(e) => handleFormatChange(e.target.value as ArticleFormat)}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400"
+                    id="write-format"
+                    value={draft.format}
+                    onChange={(event) => {
+                      const nextFormat = event.target.value as ArticleFormat;
+                      update('format', nextFormat);
+                      if (nextFormat === 'Deep-Dive Essay' || nextFormat === 'Field Notes') {
+                        update('hasArtifact', false);
+                      }
+                    }}
+                    className={fieldClass}
                   >
-                    <option value="Repo Teardown">GitHub Repo Teardown</option>
-                    <option value="Paper Review">Research Paper Review</option>
-                    <option value="Deep-Dive Essay">Deep-Dive Essay</option>
-                    <option value="Field Notes">Field Notes</option>
-                    <option value="Case Study">Case Study</option>
+                    {FORMATS.map((format) => (
+                      <option key={format} value={format}>
+                        {format}
+                      </option>
+                    ))}
                   </select>
                 </div>
-
-                <div>
-                  <label className="block font-semibold text-stone-700 mb-1">
-                    Author Persona
-                  </label>
-                  {!isCustomAuthor ? (
-                    <div className="space-y-1">
-                      <select
-                        value={selectedAuthorKey}
-                        onChange={(e) => {
-                          setSelectedAuthorKey(e.target.value);
-                          triggerAutoSave();
-                        }}
-                        className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400"
-                      >
-                        {Object.values(AUTHORS).map((a) => (
-                          <option key={a.id} value={a.id}>
-                            {a.name} ({a.domain.split(',')[0]})
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        type="button"
-                        onClick={() => setIsCustomAuthor(true)}
-                        className="text-[11px] text-amber-900 hover:underline"
-                      >
-                        + Use Custom Byline
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5">
-                      <input
-                        type="text"
-                        placeholder="Your Name (e.g. Dr. Alex Rivera)"
-                        value={customAuthorName}
-                        onChange={(e) => setCustomAuthorName(e.target.value)}
-                        className="w-full bg-white border border-stone-300 rounded-lg px-2.5 py-1.5 text-xs text-stone-900"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setIsCustomAuthor(false)}
-                        className="text-[11px] text-stone-500 hover:underline"
-                      >
-                        Use platform author
-                      </button>
-                    </div>
-                  )}
-                </div>
               </div>
-
-              {/* Title & Subtitle */}
-              <div className="space-y-3 pt-2">
-                <div>
-                  <label className="block font-semibold text-stone-800 text-xs mb-1">
-                    Article Title *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Inside vLLM & PagedAttention: Why Memory Fragmentation Was Killing Inference"
-                    value={title}
-                    onChange={(e) => {
-                      setTitle(e.target.value);
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm sm:text-base text-stone-900 font-serif font-bold placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-stone-800 text-xs mb-1">
-                    Subtitle & Analytical Premise
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="A deep architectural code teardown of how virtual memory paging solved KV cache bloat..."
-                    value={subtitle}
-                    onChange={(e) => {
-                      setSubtitle(e.target.value);
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-xl px-4 py-2 text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Section 2: Reviewed Artifact (GitHub Repo or Paper DOI) */}
-            <div className="bg-amber-50/40 border border-amber-900/15 rounded-2xl p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-serif font-bold text-base text-stone-900">
-                    2. Reviewed Artifact & Source Verification
-                  </span>
-                  <span className="text-[11px] text-amber-900 font-mono">
-                    (Optional for general essays)
-                  </span>
-                </div>
-
-                {/* Quick Auto-fill Presets */}
-                <div className="flex items-center gap-1.5 text-[11px]">
-                  <span className="text-stone-500 font-medium">Quick Presets:</span>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickPreset('vllm')}
-                    className="px-2 py-1 bg-white border border-amber-200 rounded text-amber-900 hover:bg-amber-100"
-                  >
-                    vLLM Repo
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickPreset('deepseek')}
-                    className="px-2 py-1 bg-white border border-amber-200 rounded text-amber-900 hover:bg-amber-100"
-                  >
-                    DeepSeek Paper
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickPreset('uv')}
-                    className="px-2 py-1 bg-white border border-amber-200 rounded text-amber-900 hover:bg-amber-100"
-                  >
-                    uv Rust Repo
-                  </button>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-                <div>
-                  <label className="block text-stone-700 font-semibold mb-1">
-                    Artifact Type
-                  </label>
-                  <select
-                    value={artifactType}
-                    onChange={(e) => {
-                      setArtifactType(e.target.value as 'github' | 'paper');
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-stone-900"
-                  >
-                    <option value="github">GitHub Repository</option>
-                    <option value="paper">Published Academic Paper</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-stone-700 font-semibold mb-1">
-                    Identifier / Repo Handle
-                  </label>
-                  <input
-                    type="text"
-                    placeholder={artifactType === 'github' ? 'vllm-project/vllm' : 'arXiv:2501.12948'}
-                    value={artifactIdentifier}
-                    onChange={(e) => {
-                      setArtifactIdentifier(e.target.value);
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-stone-900 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-stone-700 font-semibold mb-1">
-                    Source URL
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://github.com/..."
-                    value={artifactUrl}
-                    onChange={(e) => {
-                      setArtifactUrl(e.target.value);
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-stone-900 font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-stone-700 font-semibold mb-1">
-                    Metadata (Stars, Language, DOI)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 44.8k Stars · Python / C++ · Apache-2.0"
-                    value={artifactMeta}
-                    onChange={(e) => {
-                      setArtifactMeta(e.target.value);
-                      triggerAutoSave();
-                    }}
-                    className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-stone-900"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Section 3: Summary & Key Takeaways */}
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 space-y-4 text-xs">
-              <h2 className="font-serif text-base font-bold text-stone-900">
-                3. Summary & Core Empirical Arguments
-              </h2>
 
               <div>
-                <label className="block font-semibold text-stone-800 mb-1">
-                  Executive Summary / Abstract (Shown in feed previews) *
+                <label htmlFor="write-summary" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Executive summary <span className="text-stone-600">(required)</span>
                 </label>
                 <textarea
-                  required
+                  id="write-summary"
                   rows={3}
-                  placeholder="Summarize the core engineering finding or scientific paper takeaway in 2-3 sentences..."
-                  value={summary}
-                  onChange={(e) => {
-                    setSummary(e.target.value);
-                    triggerAutoSave();
-                  }}
-                  className="w-full bg-white border border-stone-300 rounded-xl p-3.5 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400 leading-relaxed font-sans"
+                  value={draft.summary}
+                  onChange={(event) => update('summary', event.target.value)}
+                  maxLength={LIMITS.summary}
+                  aria-invalid={errorField === 'write-summary' ? true : undefined}
+                  placeholder="State the question, evidence, and result in two or three sentences."
+                  className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
                 />
+                <p className="mt-1 text-sm text-stone-600">
+                  {draft.summary.length} of {LIMITS.summary} characters
+                </p>
+              </div>
+            </fieldset>
+
+            <fieldset className="space-y-4 border-t border-stone-200 pt-8">
+              <legend className="font-serif text-xl font-semibold text-stone-900">Reviewed artifact</legend>
+
+              <label className="flex items-start gap-3 text-base text-stone-800">
+                <input
+                  type="checkbox"
+                  checked={draft.hasArtifact}
+                  onChange={(event) => update('hasArtifact', event.target.checked)}
+                  className="mt-1 h-5 w-5 rounded border-stone-400 text-amber-800"
+                />
+                <span>This article reviews a paper, repository, or dataset.</span>
+              </label>
+
+              {draft.hasArtifact && (
+                <div className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
+                  <div>
+                    <label htmlFor="write-artifact-type" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Artifact type
+                    </label>
+                    <select
+                      id="write-artifact-type"
+                      value={draft.artifactType}
+                      onChange={(event) => update('artifactType', event.target.value as Draft['artifactType'])}
+                      className={fieldClass}
+                    >
+                      <option value="paper">Paper or preprint</option>
+                      <option value="github">GitHub repository</option>
+                      <option value="dataset">Dataset</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="write-artifact-identifier" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Identifier <span className="text-stone-600">(required when the block is on)</span>
+                    </label>
+                    <input
+                      id="write-artifact-identifier"
+                      type="text"
+                      value={draft.artifactIdentifier}
+                      onChange={(event) => update('artifactIdentifier', event.target.value)}
+                      maxLength={LIMITS.identifier}
+                      aria-invalid={errorField === 'write-artifact-identifier' ? true : undefined}
+                      placeholder="vllm-project/vllm or arXiv:2501.12948"
+                      className={`${fieldClass} font-mono`}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="write-artifact-title" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Artifact title
+                    </label>
+                    <input
+                      id="write-artifact-title"
+                      type="text"
+                      value={draft.artifactTitle}
+                      onChange={(event) => update('artifactTitle', event.target.value)}
+                      maxLength={200}
+                      placeholder="The published title of the work you reviewed"
+                      className={fieldClass}
+                    />
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="write-artifact-url" className="mb-1.5 block text-sm font-medium text-stone-800">
+                        Source URL
+                      </label>
+                      <input
+                        id="write-artifact-url"
+                        type="url"
+                        aria-invalid={errorField === 'write-artifact-url' ? true : undefined}
+                        value={draft.artifactUrl}
+                        onChange={(event) => update('artifactUrl', event.target.value)}
+                        placeholder="https://github.com/…"
+                        className={`${fieldClass} font-mono`}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="write-artifact-meta" className="mb-1.5 block text-sm font-medium text-stone-800">
+                        Version or metadata
+                      </label>
+                      <input
+                        id="write-artifact-meta"
+                        type="text"
+                        value={draft.artifactMeta}
+                        onChange={(event) => update('artifactMeta', event.target.value)}
+                        maxLength={160}
+                        placeholder="Commit abc1234 · released 12 March 2026"
+                        className={fieldClass}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </fieldset>
+
+            <fieldset className="space-y-4 border-t border-stone-200 pt-8">
+              <legend className="font-serif text-xl font-semibold text-stone-900">Body</legend>
+
+              <div>
+                <label htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Article body <span className="text-stone-600">(required)</span>
+                </label>
+                <textarea
+                  id="write-content"
+                  rows={16}
+                  value={draft.content}
+                  onChange={(event) => update('content', event.target.value)}
+                  maxLength={LIMITS.body}
+                  aria-invalid={errorField === 'write-content' ? true : undefined}
+                  placeholder="Write the analysis. Separate paragraphs with an empty line."
+                  className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base leading-relaxed text-stone-900 placeholder:text-stone-600"
+                />
+                <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-stone-600">
+                  <span>Separate paragraphs with an empty line. Estimated reading time: {readTime} min.</span>
+                  <span>
+                    {draft.content.length} of {LIMITS.body} characters
+                  </span>
+                </p>
               </div>
 
-              {/* Key takeaways list builder */}
-              <div className="space-y-2 pt-1">
-                <div className="flex items-center justify-between">
-                  <label className="font-semibold text-stone-800">
-                    Key Takeaways (Bullet points)
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleAddTakeaway}
-                    className="text-amber-900 font-semibold text-xs flex items-center gap-1 hover:underline"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Point</span>
-                  </button>
-                </div>
-
-                {takeaways.map((takeaway, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="font-mono text-amber-900 font-bold shrink-0">
-                      0{i + 1}.
-                    </span>
-                    <input
-                      type="text"
-                      placeholder={`Key takeaway point #${i + 1}...`}
-                      value={takeaway}
-                      onChange={(e) => handleTakeawayChange(i, e.target.value)}
-                      className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-stone-900"
-                    />
-                    {takeaways.length > 1 && (
+              <div>
+                <p id="takeaway-label" className="mb-1.5 text-sm font-medium text-stone-800">
+                  Key takeaways <span className="text-stone-600">(at least one)</span>
+                </p>
+                <ul aria-labelledby="takeaway-label" className="space-y-3">
+                  {draft.takeaways.map((takeaway, index) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="mt-3 font-mono text-sm text-stone-600">{String(index + 1).padStart(2, '0')}</span>
+                      <div className="flex-1">
+                        <label htmlFor={`takeaway-${index}`} className="sr-only">
+                          Key takeaway {index + 1}
+                        </label>
+                        <input
+                          id={`takeaway-${index}`}
+                          type="text"
+                          value={takeaway}
+                          onChange={(event) => updateTakeaway(index, event.target.value)}
+                          maxLength={300}
+                          aria-invalid={errorField === `takeaway-${index}` ? true : undefined}
+                          placeholder="The one result a reader should remember"
+                          className={fieldClass}
+                        />
+                      </div>
                       <button
                         type="button"
-                        onClick={() => handleRemoveTakeaway(i)}
-                        className="p-1.5 text-stone-400 hover:text-red-700 transition-colors"
-                        title="Remove point"
+                        onClick={() => removeTakeaway(index)}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-stone-300 bg-white text-stone-600 transition-colors hover:border-red-300 hover:text-red-800"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                        <span className="sr-only">Remove takeaway {index + 1}</span>
                       </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Section 4: Full Article Body */}
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 space-y-4 text-xs">
-              <div className="flex items-center justify-between">
-                <h2 className="font-serif text-base font-bold text-stone-900">
-                  4. Full Article Narrative & Technical Body *
-                </h2>
-                <span className="text-stone-500 font-mono text-[11px]">
-                  Separate paragraphs with an empty line
-                </span>
-              </div>
-
-              <textarea
-                required
-                rows={12}
-                placeholder="Write your in-depth analysis, benchmark comparisons, code teardowns, and sociological reflections here..."
-                value={fullContent}
-                onChange={(e) => {
-                  setFullContent(e.target.value);
-                  triggerAutoSave();
-                }}
-                className="w-full bg-white border border-stone-300 rounded-xl p-4 text-sm font-serif text-stone-900 leading-relaxed focus:outline-none focus:ring-2 focus:ring-stone-400"
-              />
-
-              {/* Tags */}
-              <div>
-                <label className="block font-semibold text-stone-800 mb-1">
-                  Tags & Taxonomy (Comma separated)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Distributed Systems, CUDA, High-Throughput, Rust"
-                  value={tags}
-                  onChange={(e) => {
-                    setTags(e.target.value);
-                    triggerAutoSave();
-                  }}
-                  className="w-full bg-white border border-stone-300 rounded-lg px-3 py-2 text-xs text-stone-900 font-mono"
-                />
-              </div>
-            </div>
-
-            {/* Bottom Publishing Bar */}
-            <div className="p-6 bg-white border border-stone-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="text-xs text-stone-500">
-                Articles are published immediately into the open scholarly stream under <strong className="text-stone-800">CC BY 4.0</strong>.
-              </div>
-
-              <div className="flex items-center gap-3">
+                    </li>
+                  ))}
+                </ul>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('preview')}
-                  className="px-4 py-2 border border-stone-200 hover:bg-stone-50 rounded-lg text-xs font-medium text-stone-700"
+                  onClick={addTakeaway}
+                  className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
                 >
-                  Preview Layout
-                </button>
-                <button
-                  type="submit"
-                  disabled={isPublishing}
-                  className="bg-stone-900 hover:bg-stone-800 text-white px-6 py-2.5 rounded-lg text-xs font-semibold tracking-wide flex items-center gap-2 shadow-xs transition-colors"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>{isPublishing ? 'Publishing...' : 'Publish Article'}</span>
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  <span>Add a takeaway</span>
                 </button>
               </div>
-            </div>
-          </form>
-        ) : (
-          /* Live Preview Mode */
-          <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 sm:p-12 space-y-8 font-sans">
-            <div className="border-b border-stone-200 pb-6 space-y-3">
-              <div className="text-xs text-stone-500 font-sans">
-                <span className="font-semibold text-amber-900 uppercase tracking-wider">{format}</span> · {category} · Published by {isCustomAuthor && customAuthorName ? customAuthorName : AUTHORS[selectedAuthorKey]?.name}
+
+              <div>
+                <label htmlFor="write-tags" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Tags <span className="text-stone-600">(comma separated, up to eight)</span>
+                </label>
+                <input
+                  id="write-tags"
+                  type="text"
+                  value={draft.tags}
+                  onChange={(event) => update('tags', event.target.value)}
+                  maxLength={LIMITS.tags}
+                  placeholder="distributed systems, GPU, inference"
+                  className={fieldClass}
+                />
               </div>
+            </fieldset>
 
-              <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 leading-tight">
-                {title || 'Untitled Article'}
-              </h1>
-
-              <p className="text-base sm:text-lg text-stone-600 font-serif italic">
-                {subtitle || 'Your subtitle and hook will render here.'}
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
+              <p className="flex items-center gap-2 text-sm text-stone-600">
+                <Save className="h-4 w-4" aria-hidden="true" />
+                <span>{saveStatus}</span>
               </p>
-            </div>
-
-            {hasReviewedArtifact && artifactIdentifier && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs space-y-1">
-                <div className="font-bold text-amber-900 flex items-center gap-1.5">
-                  {artifactType === 'github' ? <GitBranch className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
-                  <span>Reviewed Artifact: {artifactIdentifier}</span>
-                </div>
-                <div className="text-stone-600 font-mono">{artifactTitle || artifactIdentifier} · {artifactMeta}</div>
-              </div>
-            )}
-
-            <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-2 text-xs">
-              <span className="font-serif font-bold text-stone-900 text-sm block">
-                Key Takeaways
-              </span>
-              <ul className="space-y-1.5 text-stone-700">
-                {takeaways.filter(t => t.trim().length > 0).map((t, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-amber-800 font-bold font-mono">0{i + 1}.</span>
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="space-y-4 font-serif text-stone-800 text-base sm:text-lg leading-relaxed">
-              {fullContent ? (
-                fullContent.split('\n\n').map((p, i) => (
-                  <p key={i}>{p}</p>
-                ))
-              ) : (
-                <p className="text-stone-400 italic">No article body written yet.</p>
-              )}
-            </div>
-
-            <div className="pt-6 border-t border-stone-200 flex justify-end gap-3">
               <button
-                type="button"
-                onClick={() => setActiveTab('editor')}
-                className="px-4 py-2 bg-stone-900 text-white rounded-lg text-xs font-semibold"
+                type="submit"
+                disabled={publishing}
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-60"
               >
-                Back to Editing
+                <Send className="h-4 w-4" aria-hidden="true" />
+                <span>{publishing ? 'Publishing…' : 'Publish review'}</span>
               </button>
             </div>
-            </div>
-          )}
-        </>
-      )}
+
+            <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
+              <span>
+                Publication writes to the local JSON archive in this prototype. In a read-only deployment the save will fail without losing your draft.
+              </span>
+            </p>
+          </form>
+        )}
       </main>
 
-      <BlogFooter onCategorySelect={() => router.push('/')} onOpenWriteModal={() => {}} />
+      <BlogFooter />
     </div>
   );
 }
