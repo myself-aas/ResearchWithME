@@ -1,5 +1,7 @@
 # Product
 
+> Canonical context lives in `/PRODUCT.md`. This embedded copy describes the same product; implementation claims are clarified there.
+
 <!-- impeccable:product-schema 1 -->
 
 ## Platform
@@ -28,7 +30,7 @@ Unlike superficial tech newsletters or gated academic journals charging commerci
 ## Capabilities and Constraints
 
 - Dedicated full-page portals with unique URLs: `/write`, `/verify`, `/bookmarks`, `/cite`, `/assistant`, `/submit`, `/authors`, `/editions`.
-- Real OAuth and Domain Verification flow (ORCID, GitHub, Institutional Email, Gmail reader).
+- Prototype identity flow for ORCID, GitHub, Institutional Email, and Gmail reader roles; it is local and not production OAuth.
 - Interactive reading features: reading list bookmarking, comment discourse, citation copying, social sharing (X/Twitter, LinkedIn, and native mobile share sheets).
 - Zero pop-up discipline: all workflows live on dedicated pages or non-intrusive floating toasts.
 - Fast Next.js 15 App Router architecture with Tailwind CSS.

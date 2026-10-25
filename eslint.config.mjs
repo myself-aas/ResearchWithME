@@ -1,19 +1,33 @@
-import { defineConfig } from "eslint/config";
-import next from "eslint-config-next";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { FlatCompat } from '@eslint/eslintrc';
+import { defineConfig, globalIgnores } from 'eslint/config';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const compat = new FlatCompat({ baseDirectory: __dirname });
 
 export default defineConfig([
+  globalIgnores(['.next/**', 'node_modules/**', 'ResearchWith.me-main/**', 'data/**', 'coverage/**']),
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
-    ignores: ["ResearchWith.me-main/**", "data/**"],
+    files: ['next-env.d.ts'],
+    rules: { '@typescript-eslint/triple-slash-reference': 'off' },
   },
   {
-    extends: [...next],
     rules: {
-      "react-hooks/set-state-in-effect": "off",
+      'react-hooks/set-state-in-effect': 'off',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+      ],
+      'react/jsx-no-target-blank': 'error',
+      'jsx-a11y/alt-text': 'error',
+      'jsx-a11y/aria-props': 'error',
+      'jsx-a11y/label-has-associated-control': [
+        'error',
+        { assert: 'either', depth: 3 },
+      ],
     },
   },
 ]);

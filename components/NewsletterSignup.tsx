@@ -1,204 +1,165 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Mail, Check, Send, Sparkles, ShieldCheck, CheckCircle2, Rss } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { CheckCircle2, Mail, Send } from 'lucide-react';
+import { isValidEmail } from '@/lib/validation';
+import { readLocalString, removeLocal, writeLocalString } from '@/lib/storage';
+
+const TOPICS = [
+  { key: 'teardowns', label: 'Repository teardowns' },
+  { key: 'papers', label: 'Paper reviews' },
+  { key: 'clinical', label: 'Clinical and health' },
+  { key: 'policy', label: 'Data and policy' },
+] as const;
+
+type TopicKey = (typeof TOPICS)[number]['key'];
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-
-  // Digest topic preferences
-  const [preferences, setPreferences] = useState({
+  const [error, setError] = useState<string | null>(null);
+  const [topics, setTopics] = useState<Record<TopicKey, boolean>>({
     teardowns: true,
     papers: true,
     clinical: false,
     policy: false,
   });
+  const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('rwm_newsletter_subscribed');
-      if (stored === 'true') {
-        setIsSubscribed(true);
-      }
-    } catch (e) {
-      console.warn(e);
-    }
+    setIsSubscribed(readLocalString('rwm_newsletter_subscribed') === 'true');
+    return () => {
+      if (timerRef.current) window.clearTimeout(timerRef.current);
+    };
   }, []);
 
-  const handleTogglePref = (key: keyof typeof preferences) => {
-    setPreferences((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (isSubmitting) return;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !email.includes('@')) {
-      setErrorMsg('Please enter a valid academic or professional email address.');
+    if (!email.trim()) {
+      setError('Enter an email address to subscribe.');
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setError('Enter a complete email address, including an @ and a domain.');
       return;
     }
 
-    setErrorMsg(null);
+    setError(null);
     setIsSubmitting(true);
 
-    // Simulate API registration delay
-    setTimeout(() => {
+    timerRef.current = window.setTimeout(() => {
+      // This prototype stores the preference locally; it does not send the address anywhere.
+      const stored = writeLocalString('rwm_newsletter_subscribed', 'true');
+      writeLocalString('rwm_newsletter_email', email.trim());
       setIsSubmitting(false);
-      setIsSubscribed(true);
-      try {
-        localStorage.setItem('rwm_newsletter_subscribed', 'true');
-        localStorage.setItem('rwm_newsletter_email', email);
-      } catch (e) {
-        console.warn(e);
+      if (!stored) {
+        setError('Your browser blocked local storage, so this subscription was not saved. Enable site data and try again.');
+        return;
       }
-    }, 600);
-  };
+      setIsSubscribed(true);
+    }, 450);
+  }
 
-  const handleReset = () => {
+  function handleReset() {
     setIsSubscribed(false);
-    try {
-      localStorage.removeItem('rwm_newsletter_subscribed');
-    } catch (e) {
-      console.warn(e);
-    }
-  };
+    setEmail('');
+    removeLocal('rwm_newsletter_subscribed');
+    removeLocal('rwm_newsletter_email');
+  }
 
   return (
-    <div className="bg-stone-950/80 border border-stone-800/90 rounded-2xl p-6 sm:p-8 space-y-5 my-10 shadow-lg text-stone-200 font-sans">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
-        {/* Left Copy Header */}
-        <div className="space-y-2 max-w-xl">
-          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-amber-950/60 border border-amber-800/40 text-amber-300 font-mono text-[11px]">
-            <Rss className="w-3.5 h-3.5 text-amber-400" />
-            <span>Weekly Research & Architecture Digest</span>
+    <section aria-labelledby="newsletter-title" className="dark-surface border-b border-stone-800 pb-12">
+      <div className="rounded-lg border border-stone-700 bg-stone-950 p-6 sm:p-8">
+        <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
+          <div>
+            <h2 id="newsletter-title" className="font-serif text-2xl font-bold text-white sm:text-3xl">
+              The weekly research digest
+            </h2>
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-stone-300">
+              One Tuesday email with the newest reviews, reproducible notebooks, and corrections. No advertising, no tracking pixels.
+            </p>
+            <p className="mt-3 text-sm text-stone-300">
+              This is a prototype: the address is saved in this browser only and no email is sent.
+            </p>
           </div>
 
-          <h3 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight">
-            Subscribe to Weekly Peer Critiques & Code Teardowns
-          </h3>
+          {isSubscribed ? (
+            <div role="status" className="rounded-md border border-emerald-700 bg-emerald-950 p-5">
+              <p className="flex items-center gap-2 font-semibold text-emerald-100">
+                <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+                Saved in this browser
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-emerald-100">
+                The digest preference is stored locally on this device. You can remove it at any time.
+              </p>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="mt-4 min-h-11 text-sm font-medium text-emerald-100 underline underline-offset-4 hover:text-white"
+              >
+                Remove this preference
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              <div>
+                <label htmlFor="newsletter-email" className="mb-1.5 block text-sm font-medium text-stone-100">
+                  Email address
+                </label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-300" aria-hidden="true" />
+                  <input
+                    id="newsletter-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    aria-invalid={error ? true : undefined}
+                    aria-describedby={error ? 'newsletter-error' : undefined}
+                    placeholder="researcher@university.edu"
+                    className="h-11 w-full rounded-md border border-stone-600 bg-stone-900 pl-10 pr-3 text-sm text-stone-100 placeholder:text-stone-300"
+                  />
+                </div>
+                {error && (
+                  <p id="newsletter-error" role="alert" className="mt-2 text-sm text-red-200">
+                    {error}
+                  </p>
+                )}
+              </div>
 
-          <p className="text-xs sm:text-sm text-stone-400 leading-relaxed">
-            Delivered every Tuesday morning. Curated literature breakdowns, GPU runtime memory profiling, and open-science replication notes. No ads, no tracking.
-          </p>
-        </div>
+              <fieldset>
+                <legend className="mb-2 text-sm font-medium text-stone-100">Topics</legend>
+                <div className="grid gap-2">
+                  {TOPICS.map((topic) => (
+                    <label key={topic.key} className="flex min-h-9 items-center gap-2 text-sm text-stone-200">
+                      <input
+                        type="checkbox"
+                        checked={topics[topic.key]}
+                        onChange={() => setTopics((prev) => ({ ...prev, [topic.key]: !prev[topic.key] }))}
+                        className="h-4 w-4 rounded border-stone-500 bg-stone-900 text-amber-600"
+                      />
+                      <span>{topic.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
 
-        {/* Right Assurance Badge */}
-        <div className="shrink-0 flex items-center gap-2 text-stone-400 text-xs font-mono bg-stone-900/80 px-3 py-2 rounded-xl border border-stone-800/80 self-start">
-          <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
-          <span>CC BY 4.0 · Unsubscribe anytime</span>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600 disabled:opacity-60"
+              >
+                <Send className="h-4 w-4" aria-hidden="true" />
+                <span>{isSubmitting ? 'Saving preference…' : 'Subscribe to the digest'}</span>
+              </button>
+            </form>
+          )}
         </div>
       </div>
-
-      {/* Form or Success State */}
-      {isSubscribed ? (
-        <div className="p-5 rounded-xl bg-emerald-950/50 border border-emerald-800/60 text-emerald-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in duration-300">
-          <div className="flex items-start gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <h4 className="font-bold text-sm text-white">
-                Subscribed! Welcome to the ResearchWithMe Weekly Digest
-              </h4>
-              <p className="text-xs text-emerald-300/90 leading-relaxed font-sans">
-                You are registered for weekly dispatches. Your first edition will arrive next Tuesday.
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={handleReset}
-            className="text-xs text-stone-400 hover:text-stone-200 underline font-mono shrink-0 self-end sm:self-center"
-          >
-            Manage Email
-          </button>
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email Input & Submit Button */}
-          <div className="flex flex-col sm:flex-row items-stretch gap-2.5">
-            <div className="relative flex-1">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email (e.g. researcher@jhu.edu or dev@engineer.io)"
-                required
-                className="w-full bg-stone-900 border border-stone-700/80 rounded-xl pl-10 pr-4 py-3 text-xs sm:text-sm text-stone-100 placeholder-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-700 focus:border-amber-700 transition-all font-sans"
-              />
-              <Mail className="w-4 h-4 text-stone-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-amber-800 hover:bg-amber-700 disabled:opacity-50 text-white rounded-xl text-xs sm:text-sm font-semibold tracking-wide transition-colors shadow-xs shrink-0"
-            >
-              {isSubmitting ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Subscribing...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 text-amber-200" />
-                  <span>Subscribe to Digest</span>
-                </>
-              )}
-            </button>
-          </div>
-
-          {errorMsg && (
-            <p className="text-xs text-rose-400 font-sans">{errorMsg}</p>
-          )}
-
-          {/* Topic Preference Selectors */}
-          <div className="pt-2 border-t border-stone-800/60 flex flex-wrap items-center gap-3 text-xs text-stone-400">
-            <span className="font-semibold text-stone-300 font-mono text-[11px]">
-              Customize Topics:
-            </span>
-
-            <label className="inline-flex items-center gap-1.5 cursor-pointer hover:text-stone-200 transition-colors">
-              <input
-                type="checkbox"
-                checked={preferences.teardowns}
-                onChange={() => handleTogglePref('teardowns')}
-                className="rounded border-stone-700 bg-stone-900 text-amber-800 focus:ring-amber-700 focus:ring-offset-stone-950"
-              />
-              <span>GitHub Repo Teardowns</span>
-            </label>
-
-            <label className="inline-flex items-center gap-1.5 cursor-pointer hover:text-stone-200 transition-colors">
-              <input
-                type="checkbox"
-                checked={preferences.papers}
-                onChange={() => handleTogglePref('papers')}
-                className="rounded border-stone-700 bg-stone-900 text-amber-800 focus:ring-amber-700 focus:ring-offset-stone-950"
-              />
-              <span>Peer Paper Reviews</span>
-            </label>
-
-            <label className="inline-flex items-center gap-1.5 cursor-pointer hover:text-stone-200 transition-colors">
-              <input
-                type="checkbox"
-                checked={preferences.clinical}
-                onChange={() => handleTogglePref('clinical')}
-                className="rounded border-stone-700 bg-stone-900 text-amber-800 focus:ring-amber-700 focus:ring-offset-stone-950"
-              />
-              <span>Clinical & Health</span>
-            </label>
-
-            <label className="inline-flex items-center gap-1.5 cursor-pointer hover:text-stone-200 transition-colors">
-              <input
-                type="checkbox"
-                checked={preferences.policy}
-                onChange={() => handleTogglePref('policy')}
-                className="rounded border-stone-700 bg-stone-900 text-amber-800 focus:ring-amber-700 focus:ring-offset-stone-950"
-              />
-              <span>Data Science & Policy</span>
-            </label>
-          </div>
-        </form>
-      )}
-    </div>
+    </section>
   );
 }

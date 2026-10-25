@@ -1,7 +1,19 @@
 node_modules/
 .next/
 coverage/
+out/
+build/
+dist/
+*.tsbuildinfo
 .DS_Store
 *.log
 .env*
 !.env.example
+
+# Impeccable local/runtime state (shared config is committed intentionally).
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/hook.ndjson
+.impeccable/detect-source.json
+.impeccable/review/
+.impeccable/live/

@@ -1,0 +1,57 @@
+import { describe, expect, it } from 'vitest';
+import { buildCitation, citationFileExtension, type CitationSource } from '@/lib/citations';
+
+const source: CitationSource = {
+  title: 'Inside vLLM and PagedAttention',
+  author: 'Maya Lin',
+  year: '2026',
+  journal: 'ResearchWithMe Technical Reviews',
+  doi: '10.5555/rwm.2026.0401',
+  url: 'https://researchwith.me/post/inside-vllm-and-paged-attention',
+};
+
+describe('buildCitation', () => {
+  it('builds APA with the family name first', () => {
+    expect(buildCitation('apa', source)).toContain('Lin, M. (2026).');
+    expect(buildCitation('apa', source)).toContain('https://doi.org/10.5555/rwm.2026.0401');
+  });
+
+  it('builds MLA with a quoted title', () => {
+    expect(buildCitation('mla', source)).toContain('"Inside vLLM and PagedAttention."');
+  });
+
+  it('builds IEEE with a bracketed citation number', () => {
+    expect(buildCitation('ieee', source).startsWith('[1] M. Lin')).toBe(true);
+  });
+
+  it('builds valid BibTeX keys and strips DOI prefixes', () => {
+    const bibtex = buildCitation('bibtex', { ...source, doi: 'https://doi.org/10.5555/rwm.2026.0401' });
+    expect(bibtex.startsWith('@article{lin2026,')).toBe(true);
+    expect(bibtex).toContain('doi = {10.5555/rwm.2026.0401}');
+    expect(bibtex).not.toContain('https://doi.org/https://doi.org');
+  });
+
+  it('builds RIS with typed fields', () => {
+    const ris = buildCitation('ris', source);
+    expect(ris).toContain('TY  - JOUR');
+    expect(ris).toContain('ER  - ');
+  });
+
+  it('handles missing values without crashing', () => {
+    const minimal = buildCitation('apa', { title: '', author: '', year: '', journal: '', doi: '' });
+    expect(minimal).toContain('Untitled');
+    expect(minimal).toContain('n.d.');
+  });
+
+  it('handles a single-word author name', () => {
+    expect(buildCitation('apa', { ...source, author: 'Plato' })).toContain('Plato, P.');
+  });
+});
+
+describe('citationFileExtension', () => {
+  it('maps formats to file extensions', () => {
+    expect(citationFileExtension('ris')).toBe('ris');
+    expect(citationFileExtension('bibtex')).toBe('bib');
+    expect(citationFileExtension('apa')).toBe('txt');
+  });
+});

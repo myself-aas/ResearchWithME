@@ -16,7 +16,7 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-2">
-          <span className="text-[11px] font-mono uppercase tracking-widest text-amber-900 font-semibold bg-amber-100/80 px-2.5 py-1 rounded">
+          <span className="text-xs font-mono uppercase tracking-widest text-amber-900 font-semibold bg-amber-100/80 px-2.5 py-1 rounded">
             404 — Page Not Found
           </span>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">

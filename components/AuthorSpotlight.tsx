@@ -1,99 +1,89 @@
-'use client';
-
-import React from 'react';
 import Link from 'next/link';
-import { Users, ArrowRight, GitBranch, GraduationCap, Building2, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Building2, CheckCircle2, GitBranch, GraduationCap } from 'lucide-react';
 import { AUTHORS, Author } from '@/lib/blog-data';
 
-interface AuthorSpotlightProps {
-  onSelectAuthor?: (authorName: string) => void;
+function VerificationIcon({ author }: { author: Author }) {
+  const shared = { className: 'h-3.5 w-3.5', 'aria-hidden': true as const };
+  switch (author.verifiedVia) {
+    case 'orcid':
+      return <GraduationCap {...shared} />;
+    case 'github':
+      return <GitBranch {...shared} />;
+    default:
+      return <Building2 {...shared} />;
+  }
 }
 
-export default function AuthorSpotlight({ onSelectAuthor }: AuthorSpotlightProps) {
-  const authorList = Object.values(AUTHORS);
-
-  const getVerificationIcon = (author: Author) => {
-    switch (author.verifiedVia) {
-      case 'orcid':
-        return <GraduationCap className="w-3 h-3 text-emerald-600" />;
-      case 'github':
-        return <GitBranch className="w-3 h-3 text-stone-700" />;
-      case 'institution':
-      default:
-        return <Building2 className="w-3 h-3 text-sky-700" />;
-    }
-  };
+export default function AuthorSpotlight() {
+  const authors = Object.values(AUTHORS);
 
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-stone-200">
-      <div className="flex items-center justify-between pb-6 mb-6">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-900 mb-1">
-            <Users className="w-4 h-4" />
-            <span>Our Contributing Writers & Domain Specialists</span>
+    <section aria-labelledby="contributors-title" className="border-t border-stone-200 bg-white">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 id="contributors-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+              The people behind the reviews
+            </h2>
+            <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
+              Contributors verify their scholarly identity before publishing. Their profile records what they study and what they have reviewed.
+            </p>
           </div>
-          <h2 className="font-serif text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
-            Practitioners Writing from the Frontlines
-          </h2>
-          <p className="text-xs text-stone-500 mt-1 font-sans">
-            Every author must validate identity via ORCID, GitHub, or Institutional OAuth to publish peer essays and teardowns.
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-sans">
-        {authorList.map((author) => (
           <Link
-            key={author.id}
-            href={`/author/${author.id}`}
-            className="p-5 bg-white border border-stone-200 rounded-xl shadow-xs hover:border-stone-300 hover:shadow-sm transition-all flex flex-col justify-between group space-y-4 block"
+            href="/authors"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"
           >
-            <div className="space-y-3">
-              <div className="flex items-start justify-between">
-                <div className="relative">
-                  <div className="w-11 h-11 rounded-full bg-stone-900 text-stone-100 flex items-center justify-center font-serif text-sm font-bold group-hover:bg-amber-900 transition-colors">
-                    {author.avatar}
-                  </div>
-                  <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-2xs">
-                    {getVerificationIcon(author)}
-                  </div>
-                </div>
-                <span className="text-[11px] text-stone-400 font-mono">
-                  {author.articleCount} Articles
-                </span>
-              </div>
-
-              <div>
-                <div className="flex items-center gap-1.5">
-                  <h3 className="font-serif text-base font-bold text-stone-900 group-hover:text-amber-900 transition-colors">
-                    {author.name}
-                  </h3>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                </div>
-                <span className="text-xs text-amber-900 font-medium block">
-                  {author.role}
-                </span>
-                <span className="text-[11px] text-stone-500 block mt-0.5 line-clamp-1">
-                  {author.domain}
-                </span>
-              </div>
-
-              <p className="text-xs text-stone-600 leading-relaxed line-clamp-3">
-                {author.bio}
-              </p>
-            </div>
-
-            <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-xs font-medium text-stone-700 group-hover:text-amber-900">
-              <span className="flex items-center gap-1.5 font-mono text-[11px] text-stone-500">
-                <span>{author.verifiedTitle.split(' ')[0]} Verified</span>
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <span>View Complete Bio & Archive</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </div>
+            <span>All authors</span>
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
-        ))}
+        </div>
+
+        <ul className="divide-y divide-stone-200">
+          {authors.map((author) => (
+            <li key={author.id}>
+              <Link
+                href={`/author/${author.id}`}
+                className="group grid gap-4 py-6 transition-colors hover:bg-stone-50 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start sm:gap-6"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-stone-900 font-serif text-base font-bold text-stone-50 transition-colors group-hover:bg-amber-900"
+                >
+                  {author.avatar}
+                </span>
+
+                <span className="min-w-0">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-serif text-xl font-semibold text-stone-900 group-hover:text-amber-900">
+                      {author.name}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-900">
+                      <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      <span>Verified</span>
+                    </span>
+                  </span>
+                  <span className="mt-1 block text-sm font-medium text-amber-900">{author.role}</span>
+                  <span className="mt-1 block text-sm text-stone-600">
+                    {author.institution ?? author.domain}
+                  </span>
+                  <span className="mt-3 block max-w-2xl text-sm leading-relaxed text-stone-700">
+                    {author.bio}
+                  </span>
+                </span>
+
+                <span className="flex shrink-0 flex-col gap-1 text-sm text-stone-600 sm:items-end">
+                  <span className="inline-flex items-center gap-1.5 font-medium text-stone-800">
+                    <VerificationIcon author={author} />
+                    <span>{author.verifiedTitle}</span>
+                  </span>
+                  <span>
+                    {author.articleCount} articles · {author.totalReads ?? 'New'} reads
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

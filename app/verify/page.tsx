@@ -1,737 +1,439 @@
 'use client';
 
-import React, { useState, use } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import { AlertCircle, ArrowRight, Building2, Check, CheckCircle2, GitBranch, GraduationCap, Lock, LogOut, Mail, ShieldCheck } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import { 
-  ShieldCheck, 
-  GraduationCap, 
-  GitBranch, 
-  Building2, 
-  Mail, 
-  CheckCircle2, 
-  Lock, 
-  ArrowLeft, 
-  ArrowRight, 
-  ExternalLink, 
-  Check, 
-  AlertCircle, 
-  KeyRound, 
-  FileCheck2, 
-  RefreshCw, 
-  LogOut, 
-  UserCheck 
-} from 'lucide-react';
-import { useAuth, AuthProviderType } from '@/lib/auth-context';
+import PageState from '@/components/PageState';
+import { AuthProviderType, useAuth } from '@/lib/auth-context';
 
-export default function VerifyPage(props: {
-  searchParams?: Promise<{ method?: string; redirect?: string; error?: string }>;
-}) {
-  const router = useRouter();
-  const searchParams = props.searchParams ? use(props.searchParams) : undefined;
-  const initialMethod = (searchParams?.method as AuthProviderType) || undefined;
-  const redirectTarget = searchParams?.redirect || '';
-  const errorParam = searchParams?.error || '';
+const methods: Array<{ id: Exclude<AuthProviderType, 'guest'>; label: string; description: string; icon: typeof GraduationCap; role: string }> = [
+  { id: 'orcid', label: 'ORCID', description: 'Researchers with an ORCID iD', icon: GraduationCap, role: 'Publishing access' },
+  { id: 'github', label: 'GitHub', description: 'Maintainers of public repositories', icon: GitBranch, role: 'Publishing access' },
+  { id: 'institution', label: 'Institutional', description: 'Academic .edu or .ac address', icon: Building2, role: 'Publishing access' },
+  { id: 'gmail', label: 'Email reader', description: 'Reading, citing, and saving', icon: Mail, role: 'Read-only' },
+];
 
-  const { 
-    user, 
-    hasAuthorPermissions, 
-    verifyWithOrcid, 
-    verifyWithGithub, 
-    verifyWithInstitution, 
-    loginWithGmail, 
-    logout, 
-    switchRoleForTesting 
+const fieldClass =
+  'h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600';
+
+function VerifyContent() {
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get('redirect') ?? '';
+  const unverified = searchParams.get('error') === 'unverified';
+  const requestedMethod = searchParams.get('method');
+  const {
+    user,
+    hydrated,
+    hasAuthorPermissions,
+    verifyWithOrcid,
+    verifyWithGithub,
+    verifyWithInstitution,
+    loginWithGmail,
+    logout,
+    switchRoleForTesting,
   } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<AuthProviderType>(
-    initialMethod && ['orcid', 'github', 'institution', 'gmail'].includes(initialMethod)
-      ? initialMethod
-      : user?.authProvider || 'orcid'
+  const [method, setMethod] = useState<Exclude<AuthProviderType, 'guest'>>(
+    methods.some((item) => item.id === requestedMethod) ? (requestedMethod as Exclude<AuthProviderType, 'guest'>) : 'orcid',
   );
+  const [name, setName] = useState('');
+  const [orcid, setOrcid] = useState('');
+  const [handle, setHandle] = useState('');
+  const [email, setEmail] = useState('');
+  const [institution, setInstitution] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  // Input states
-  const [orcidId, setOrcidId] = useState('0000-0002-1825-0097');
-  const [orcidName, setOrcidName] = useState('Dr. Elena Rostova');
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setStatus(null);
+    setBusy(true);
 
-  const [githubHandle, setGithubHandle] = useState('mayalin-sys');
-  const [githubName, setGithubName] = useState('Maya Lin');
+    const result =
+      method === 'orcid'
+        ? verifyWithOrcid(orcid, name)
+        : method === 'github'
+          ? verifyWithGithub(handle, name)
+          : method === 'institution'
+            ? verifyWithInstitution(email, institution, name)
+            : loginWithGmail(email, name);
 
-  const [instEmail, setInstEmail] = useState('schen@jhu.edu');
-  const [instName, setInstName] = useState('Johns Hopkins Bloomberg School of Public Health');
-  const [instDoctorName, setInstDoctorName] = useState('Dr. Sarah Chen, MD');
+    setBusy(false);
+    if (!result.ok) {
+      setError(result.error);
+      return;
+    }
+    setStatus(
+      method === 'gmail'
+        ? 'Reader account saved in this browser. You can now save articles and build citations.'
+        : 'Scholarly identity recorded in this prototype. Publishing tools are now available.',
+    );
+  }
 
-  const [gmailEmail, setGmailEmail] = useState('reader@gmail.com');
-  const [gmailName, setGmailName] = useState('Alex Taylor');
-
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-
-  const handleOrcidAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsVerifying(true);
-    setStatusMessage(null);
-    setTimeout(() => {
-      verifyWithOrcid(orcidId, orcidName);
-      setIsVerifying(false);
-      setStatusMessage('ORCID identity successfully validated! Author publishing rights activated.');
-    }, 600);
-  };
-
-  const handleGithubAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsVerifying(true);
-    setStatusMessage(null);
-    setTimeout(() => {
-      verifyWithGithub(githubHandle, githubName);
-      setIsVerifying(false);
-      setStatusMessage('GitHub maintainer identity validated! Author publishing rights activated.');
-    }, 600);
-  };
-
-  const handleInstitutionAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsVerifying(true);
-    setStatusMessage(null);
-    setTimeout(() => {
-      verifyWithInstitution(instEmail, instName, instDoctorName);
-      setIsVerifying(false);
-      setStatusMessage('Institutional affiliation validated! Author publishing rights activated.');
-    }, 600);
-  };
-
-  const handleGmailAuth = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsVerifying(true);
-    setStatusMessage(null);
-    setTimeout(() => {
-      loginWithGmail(gmailEmail, gmailName);
-      setIsVerifying(false);
-      setStatusMessage('Signed in via Gmail OAuth. Reader permissions active.');
-    }, 400);
-  };
+  function resetForm() {
+    setName('');
+    setOrcid('');
+    setHandle('');
+    setEmail('');
+    setInstitution('');
+    setError(null);
+  }
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans antialiased selection:bg-amber-900 selection:text-white">
+    <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 w-full space-y-8">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center justify-between">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-stone-600 hover:text-stone-900 transition-colors"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Return to Publications Feed</span>
-          </Link>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-stone-500">Editorial Protocol:</span>
-            <span className="text-[11px] font-mono bg-stone-200/70 text-stone-800 px-2 py-0.5 rounded">
-              RFC-04 Domain Attestation
-            </span>
-          </div>
-        </div>
-
-        {/* Hero Section */}
-        <div className="border-b border-stone-200 pb-6 space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-amber-900">
-            <ShieldCheck className="w-4 h-4 text-amber-900" />
-            <span>Identity & Domain Expertise Gateway</span>
-          </div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
-            Author Authentication & Access Control
+      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+        <header className="border-b border-stone-200 pb-8">
+          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+            Contributor identity, without the theatre
           </h1>
-          <p className="text-sm sm:text-base text-stone-600 font-serif max-w-3xl leading-relaxed">
-            ResearchWithMe is an independent publication dedicated to rigorous analysis, scientific paper breakdowns, and open-source software teardowns. To protect our readership from unverified content and maintain editorial integrity, publishing permissions require verified domain credentials via <strong>ORCID</strong>, <strong>GitHub</strong>, or an accredited <strong>Institutional Email</strong>.
+          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
+            Publishing tools are reserved for contributors with a checkable scholarly identity. This page records a prototype attestation in your browser. It does not contact ORCID, GitHub, or your institution.
           </p>
-        </div>
+          <p className="mt-3 max-w-[60ch] border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+            No credentials leave this device, and no external OAuth exchange takes place. Treat the resulting session as a demonstration of the permission model, not proof of identity.
+          </p>
+        </header>
 
-        {/* Unverified Redirect Alert */}
-        {errorParam === 'unverified' && !hasAuthorPermissions && (
-          <div className="p-4 sm:p-5 rounded-xl bg-amber-50 border border-amber-300 text-stone-900 flex items-start gap-3.5 shadow-2xs">
-            <AlertCircle className="w-5 h-5 text-amber-800 shrink-0 mt-0.5" />
-            <div className="space-y-1 text-xs">
-              <div className="font-bold text-sm text-amber-950">
-                Author Domain Verification Required to Publish
-              </div>
-              <p className="text-stone-700 leading-relaxed font-sans">
-                You were directed here because attempting to publish or draft reviewed articles requires domain credential validation. Choose one of the three accredited options below (ORCID, GitHub, or Institutional .edu) to activate your verified author privileges.
-              </p>
-            </div>
-          </div>
+        {unverified && !hasAuthorPermissions && (
+          <section role="alert" className="mt-6 border-l-2 border-amber-800 bg-amber-50 px-4 py-4 text-sm text-amber-950">
+            <p className="flex items-center gap-2 font-semibold">
+              <AlertCircle className="h-4 w-4" aria-hidden="true" />
+              <span>Publishing requires a contributor identity</span>
+            </p>
+            <p className="mt-1 leading-relaxed">
+              The writer studio redirected here because the current session is read-only. Record an identity below to continue, or keep reading without publishing.
+            </p>
+          </section>
         )}
 
-        {/* Redirect Proceed Alert */}
-        {redirectTarget && hasAuthorPermissions && (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-              <span className="font-semibold text-xs sm:text-sm">
-                Domain credentials confirmed! You now have author publishing rights.
-              </span>
-            </div>
-            <Link
-              href={redirectTarget}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-stone-900 hover:bg-stone-800 text-white rounded-lg text-xs font-semibold transition-colors shrink-0"
-            >
-              <span>Return to {redirectTarget === '/write' ? 'Writer Studio' : 'Previous Page'}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        )}
-
-        {/* Status Alert if triggered */}
-        {statusMessage && (
-          <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-950 flex items-center justify-between gap-3 animate-in fade-in duration-200">
-            <div className="flex items-center gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span className="font-medium">{statusMessage}</span>
-            </div>
-            {hasAuthorPermissions ? (
+        {status && (
+          <p role="status" className="mt-6 flex flex-wrap items-center gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+            <span>{status}</span>
+            {hasAuthorPermissions && (
               <Link
                 href={redirectTarget || '/write'}
-                className="px-3 py-1 bg-emerald-800 hover:bg-emerald-900 text-white rounded-md text-xs font-semibold flex items-center gap-1 transition-colors shrink-0"
+                className="inline-flex min-h-9 items-center gap-1 font-semibold underline underline-offset-4"
               >
-                <span>{redirectTarget ? 'Proceed' : 'Launch Studio'}</span>
-                <ArrowRight className="w-3 h-3" />
+                <span>{redirectTarget ? 'Continue' : 'Open the writer studio'}</span>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
-            ) : null}
-          </div>
+            )}
+          </p>
         )}
 
-        {/* Current Identity & Session Dashboard */}
-        <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-xs space-y-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-100 pb-4">
-            <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-xl bg-stone-900 text-white flex items-center justify-center font-serif text-base font-bold shadow-xs">
-                {user?.avatar || 'GU'}
-              </div>
+        <section aria-labelledby="session-heading" className="mt-8 rounded-lg border border-stone-200 bg-white p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <span
+                aria-hidden="true"
+                className="flex h-12 w-12 items-center justify-center rounded-lg bg-stone-900 font-serif text-base font-bold text-stone-50"
+              >
+                {user?.avatar ?? 'GU'}
+              </span>
               <div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="font-serif text-lg font-bold text-stone-900">
-                    {user?.name || 'Guest / Unauthenticated'}
-                  </h2>
-                  <span className={`px-2 py-0.5 rounded text-[11px] font-mono font-medium ${
-                    hasAuthorPermissions 
-                      ? 'bg-emerald-100 text-emerald-900' 
-                      : 'bg-amber-100 text-amber-900'
-                  }`}>
-                    {hasAuthorPermissions ? 'Verified Author' : 'Reader (Read-Only)'}
+                <h2 id="session-heading" className="font-serif text-xl font-semibold text-stone-900">
+                  {hydrated ? user?.name ?? 'Guest session' : 'Checking this browser…'}
+                </h2>
+                <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-stone-600">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium ${
+                      hasAuthorPermissions ? 'bg-emerald-50 text-emerald-900' : 'bg-stone-100 text-stone-800'
+                    }`}
+                  >
+                    {hasAuthorPermissions ? <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" /> : <Lock className="h-3.5 w-3.5" aria-hidden="true" />}
+                    <span>{hasAuthorPermissions ? 'Contributor' : 'Reader'}</span>
                   </span>
-                </div>
-                <p className="text-xs text-stone-500 font-mono mt-0.5">
-                  {user?.email || 'No active session'} · Provider: <strong className="uppercase">{user?.authProvider || 'None'}</strong>
+                  {user?.authProvider && user.authProvider !== 'guest' && <span>via {user.authProvider}</span>}
+                  {user?.verifiedIdentifier && <span className="break-all font-mono">{user.verifiedIdentifier}</span>}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              {hasAuthorPermissions && user?.authorProfileId && (
+            <div className="flex flex-wrap gap-2">
+              {user?.authorProfileId && (
                 <Link
                   href={`/author/${user.authorProfileId}`}
-                  className="px-3 py-1.5 rounded-lg border border-stone-200 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors flex items-center gap-1"
+                  className="inline-flex min-h-11 items-center rounded-md border border-stone-300 px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
                 >
-                  <ExternalLink className="w-3 h-3 text-stone-500" />
-                  <span>View Author Dossier</span>
+                  View profile
                 </Link>
               )}
-
-              {user && (
+              {user ? (
                 <button
+                  type="button"
                   onClick={() => {
                     logout();
-                    setStatusMessage('Session terminated. You are now browsing as a guest.');
+                    setStatus('Session cleared from this browser.');
                   }}
-                  className="px-3 py-1.5 rounded-lg border border-red-200 text-xs font-medium text-red-700 hover:bg-red-50 transition-colors flex items-center gap-1"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-red-300 hover:text-red-800"
                 >
-                  <LogOut className="w-3 h-3" />
-                  <span>Sign Out</span>
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
+                  <span>Sign out</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => {
+                    switchRoleForTesting('author');
+                    setStatus('Demonstration contributor session started.');
+                  }}
+                  className="inline-flex min-h-11 items-center rounded-md border border-dashed border-stone-400 px-4 py-2 text-sm font-medium text-stone-700 transition-colors hover:bg-stone-50"
+                >
+                  Use a demo contributor
                 </button>
               )}
-
-              {/* Developer Test Switcher */}
-              <button
-                onClick={() => switchRoleForTesting(hasAuthorPermissions ? 'reader' : 'author')}
-                className="px-2.5 py-1.5 rounded-lg border border-dashed border-stone-300 text-[11px] font-mono text-stone-600 hover:bg-stone-100 transition-colors"
-                title="Toggle role immediately to test permissions"
-              >
-                Switch Role to {hasAuthorPermissions ? 'Reader' : 'Author'}
-              </button>
             </div>
           </div>
 
-          {/* Capabilities Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <span className="text-[11px] text-stone-500 font-medium block">Explore & Read</span>
-              <span className="font-semibold text-emerald-700 flex items-center gap-1 mt-1">
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Granted (All users)</span>
-              </span>
+          <dl className="mt-6 grid gap-4 border-t border-stone-200 pt-5 text-sm sm:grid-cols-4">
+            <div>
+              <dt className="text-stone-600">Read articles</dt>
+              <dd className="mt-1 font-medium text-emerald-900">All visitors</dd>
             </div>
-
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <span className="text-[11px] text-stone-500 font-medium block">Bookmarks & Citations</span>
-              <span className="font-semibold text-emerald-700 flex items-center gap-1 mt-1">
-                <Check className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Granted (All users)</span>
-              </span>
+            <div>
+              <dt className="text-stone-600">Save and cite</dt>
+              <dd className="mt-1 font-medium text-emerald-900">All visitors</dd>
             </div>
-
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <span className="text-[11px] text-stone-500 font-medium block">Write & Draft Articles</span>
-              <span className={`font-semibold flex items-center gap-1 mt-1 ${
-                hasAuthorPermissions ? 'text-emerald-700' : 'text-amber-800'
-              }`}>
-                {hasAuthorPermissions ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Unlocked</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-3.5 h-3.5 text-amber-700" />
-                    <span>Domain Auth Required</span>
-                  </>
-                )}
-              </span>
+            <div>
+              <dt className="text-stone-600">Draft in the studio</dt>
+              <dd className={`mt-1 font-medium ${hasAuthorPermissions ? 'text-emerald-900' : 'text-stone-700'}`}>
+                {hasAuthorPermissions ? 'Contributor' : 'Sign-in required'}
+              </dd>
             </div>
-
-            <div className="p-3 bg-stone-50 rounded-xl border border-stone-100">
-              <span className="text-[11px] text-stone-500 font-medium block">Publish & Review Repos</span>
-              <span className={`font-semibold flex items-center gap-1 mt-1 ${
-                hasAuthorPermissions ? 'text-emerald-700' : 'text-amber-800'
-              }`}>
-                {hasAuthorPermissions ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>Approved</span>
-                  </>
-                ) : (
-                  <>
-                    <Lock className="w-3.5 h-3.5 text-amber-700" />
-                    <span>Restricted</span>
-                  </>
-                )}
-              </span>
+            <div>
+              <dt className="text-stone-600">Publish a review</dt>
+              <dd className={`mt-1 font-medium ${hasAuthorPermissions ? 'text-emerald-900' : 'text-stone-700'}`}>
+                {hasAuthorPermissions ? 'Contributor' : 'Sign-in required'}
+              </dd>
             </div>
-          </div>
-        </div>
+          </dl>
+        </section>
 
-        {/* OAuth Authentication Providers Selection */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-serif text-xl font-bold text-stone-900">
-              Select Your Authentication Authority
-            </h2>
-            <span className="text-xs text-stone-500">
-              Pick your credential provider below
-            </span>
-          </div>
-
-          {/* Provider Tabs */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <button
-              onClick={() => setActiveTab('orcid')}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                activeTab === 'orcid'
-                  ? 'border-emerald-600 bg-emerald-50/70 shadow-xs ring-1 ring-emerald-500'
-                  : 'border-stone-200 bg-white hover:border-stone-300'
-              }`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center mb-2">
-                <GraduationCap className="w-4 h-4" />
-              </div>
-              <h3 className="font-serif font-bold text-sm text-stone-900">ORCID</h3>
-              <p className="text-[11px] text-stone-500 mt-0.5">Researchers & Scientists</p>
-              <span className="inline-block mt-2 text-[10px] font-mono text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded">
-                Author Status: Yes
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('github')}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                activeTab === 'github'
-                  ? 'border-stone-900 bg-stone-100 shadow-xs ring-1 ring-stone-900'
-                  : 'border-stone-200 bg-white hover:border-stone-300'
-              }`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-stone-200 text-stone-900 flex items-center justify-center mb-2">
-                <GitBranch className="w-4 h-4" />
-              </div>
-              <h3 className="font-serif font-bold text-sm text-stone-900">GitHub</h3>
-              <p className="text-[11px] text-stone-500 mt-0.5">Systems & Code Authors</p>
-              <span className="inline-block mt-2 text-[10px] font-mono text-stone-900 bg-stone-200 px-1.5 py-0.5 rounded">
-                Author Status: Yes
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('institution')}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                activeTab === 'institution'
-                  ? 'border-sky-600 bg-sky-50/70 shadow-xs ring-1 ring-sky-500'
-                  : 'border-stone-200 bg-white hover:border-stone-300'
-              }`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-sky-100 text-sky-900 flex items-center justify-center mb-2">
-                <Building2 className="w-4 h-4" />
-              </div>
-              <h3 className="font-serif font-bold text-sm text-stone-900">Institutional</h3>
-              <p className="text-[11px] text-stone-500 mt-0.5">University / .edu email</p>
-              <span className="inline-block mt-2 text-[10px] font-mono text-sky-900 bg-sky-100 px-1.5 py-0.5 rounded">
-                Author Status: Yes
-              </span>
-            </button>
-
-            <button
-              onClick={() => setActiveTab('gmail')}
-              className={`p-4 rounded-xl border text-left transition-all ${
-                activeTab === 'gmail'
-                  ? 'border-amber-700 bg-amber-50/70 shadow-xs ring-1 ring-amber-600'
-                  : 'border-stone-200 bg-white hover:border-stone-300'
-              }`}
-            >
-              <div className="w-8 h-8 rounded-lg bg-amber-100 text-amber-900 flex items-center justify-center mb-2">
-                <Mail className="w-4 h-4" />
-              </div>
-              <h3 className="font-serif font-bold text-sm text-stone-900">Google / Gmail</h3>
-              <p className="text-[11px] text-stone-500 mt-0.5">General Readers & Students</p>
-              <span className="inline-block mt-2 text-[10px] font-mono text-stone-600 bg-stone-200 px-1.5 py-0.5 rounded">
-                Reader Status: Read-Only
-              </span>
-            </button>
-          </div>
-
-          {/* Verification Form Card */}
-          <div className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 shadow-xs">
-            {activeTab === 'orcid' && (
-              <form onSubmit={handleOrcidAuth} className="space-y-5">
-                <div className="border-b border-stone-100 pb-4">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-emerald-700" />
-                    <h3 className="font-serif text-lg font-bold text-stone-900">
-                      ORCID Academic OAuth Gateway
-                    </h3>
-                  </div>
-                  <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                    Connecting your ORCID iD proves your authorship of peer-reviewed literature, grants you instant author credentials, and automatically formats your bibliography across ResearchWithMe.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Researcher Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={orcidName}
-                      onChange={(e) => setOrcidName(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="Dr. Elena Rostova"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      ORCID Identifier (16 digits) *
-                    </label>
-                    <input
-                      type="text"
-                      value={orcidId}
-                      onChange={(e) => setOrcidId(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 font-mono focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="0000-0002-1825-0097"
-                    />
-                  </div>
-                </div>
-
-                <div className="p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-center justify-between">
-                  <span>Grants permissions: Write essays, review arXiv preprints, mint DOIs.</span>
-                  <span className="font-mono text-[11px] font-semibold text-emerald-800">OAuth 2.0 PKCE</span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isVerifying}
-                  className="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-xs"
-                >
-                  {isVerifying ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <GraduationCap className="w-4 h-4" />
-                      <span>Authenticate with ORCID & Activate Author Permissions</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-
-            {activeTab === 'github' && (
-              <form onSubmit={handleGithubAuth} className="space-y-5">
-                <div className="border-b border-stone-100 pb-4">
-                  <div className="flex items-center gap-2">
-                    <GitBranch className="w-5 h-5 text-stone-900" />
-                    <h3 className="font-serif text-lg font-bold text-stone-900">
-                      GitHub Developer & Maintainer OAuth Gateway
-                    </h3>
-                  </div>
-                  <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                    Connecting your GitHub account attests to your software architecture experience, repository maintenance, and open-source contributions to author high-impact repo teardowns.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Developer / Architect Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={githubName}
-                      onChange={(e) => setGithubName(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="Maya Lin"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      GitHub Handle *
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-stone-400 font-mono">@</span>
-                      <input
-                        type="text"
-                        value={githubHandle}
-                        onChange={(e) => setGithubHandle(e.target.value)}
-                        required
-                        className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 font-mono focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                        placeholder="mayalin-sys"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-3 bg-stone-100 border border-stone-200 rounded-xl text-xs text-stone-800 flex items-center justify-between">
-                  <span>Grants permissions: Write codebase teardowns, analyze kernels, critique distributed systems.</span>
-                  <span className="font-mono text-[11px] font-semibold text-stone-700">OAuth 2.0 Token</span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isVerifying}
-                  className="w-full py-3 bg-stone-900 hover:bg-stone-800 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-xs"
-                >
-                  {isVerifying ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <GitBranch className="w-4 h-4" />
-                      <span>Authenticate with GitHub & Activate Author Permissions</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-
-            {activeTab === 'institution' && (
-              <form onSubmit={handleInstitutionAuth} className="space-y-5">
-                <div className="border-b border-stone-100 pb-4">
-                  <div className="flex items-center gap-2">
-                    <Building2 className="w-5 h-5 text-sky-800" />
-                    <h3 className="font-serif text-lg font-bold text-stone-900">
-                      Institutional Faculty & Laboratory Validation
-                    </h3>
-                  </div>
-                  <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                    Verify faculty, postdoctoral, or research fellow credentials through your accredited university or research laboratory email domain (.edu, .ac.uk, or registered research institute).
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Faculty Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={instDoctorName}
-                      onChange={(e) => setInstDoctorName(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="Dr. Sarah Chen, MD"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Institutional Email (.edu domain) *
-                    </label>
-                    <input
-                      type="email"
-                      value={instEmail}
-                      onChange={(e) => setInstEmail(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 font-mono focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="schen@jhu.edu"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      University / Institute *
-                    </label>
-                    <input
-                      type="text"
-                      value={instName}
-                      onChange={(e) => setInstName(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="Johns Hopkins University"
-                    />
-                  </div>
-                </div>
-
-                <div className="p-3 bg-sky-50/70 border border-sky-200 rounded-xl text-xs text-sky-950 flex items-center justify-between">
-                  <span>Grants permissions: Author clinical reviews, public policy analyses, and STEM essays.</span>
-                  <span className="font-mono text-[11px] font-semibold text-sky-800">Domain SPF/DKIM</span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isVerifying}
-                  className="w-full py-3 bg-sky-900 hover:bg-sky-950 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-xs"
-                >
-                  {isVerifying ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <Building2 className="w-4 h-4" />
-                      <span>Verify Institutional Email & Activate Author Permissions</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-
-            {activeTab === 'gmail' && (
-              <form onSubmit={handleGmailAuth} className="space-y-5">
-                <div className="border-b border-stone-100 pb-4">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-5 h-5 text-amber-800" />
-                    <h3 className="font-serif text-lg font-bold text-stone-900">
-                      Google / Gmail OAuth (Reader Status)
-                    </h3>
-                  </div>
-                  <p className="text-xs text-stone-600 mt-1 leading-relaxed">
-                    Standard sign-in for readers, graduate students, and independent learners. Allows you to participate in moderated peer discussions, save articles to reading lists, and generate citations.
-                  </p>
-                </div>
-
-                <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-900 flex items-start gap-2.5">
-                  <AlertCircle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-                  <p className="leading-relaxed">
-                    <strong>Editorial Gate Policy:</strong> Gmail authentication grants <strong>Reader</strong> permissions only. To be approved as an author with rights to write and publish articles, you must authenticate through at least one of the three verified domain providers above (ORCID, GitHub, or Institutional Email).
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={gmailName}
-                      onChange={(e) => setGmailName(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="Alex Taylor"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-stone-700 mb-1">
-                      Gmail Address *
-                    </label>
-                    <input
-                      type="email"
-                      value={gmailEmail}
-                      onChange={(e) => setGmailEmail(e.target.value)}
-                      required
-                      className="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2 text-xs text-stone-900 font-mono focus:outline-none focus:ring-1 focus:ring-stone-400 focus:bg-white"
-                      placeholder="alex.taylor@gmail.com"
-                    />
-                  </div>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={isVerifying}
-                  className="w-full py-3 bg-stone-800 hover:bg-stone-900 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-xs"
-                >
-                  {isVerifying ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  ) : (
-                    <>
-                      <Mail className="w-4 h-4" />
-                      <span>Sign in with Google OAuth (Reader Permissions Only)</span>
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-
-        {/* Access Control & Standards FAQ */}
-        <div className="bg-white border border-stone-200 rounded-2xl p-6 sm:p-8 space-y-4">
-          <h2 className="font-serif text-lg font-bold text-stone-900">
-            Frequently Asked Questions: Domain Verification
+        <section aria-labelledby="method-heading" className="mt-10">
+          <h2 id="method-heading" className="font-serif text-2xl font-bold text-stone-900">
+            Record an identity
           </h2>
-          <div className="space-y-3 text-xs text-stone-600 font-sans divide-y divide-stone-100">
-            <div className="pt-2">
-              <span className="font-semibold text-stone-900 block mb-1">
-                Why does ResearchWithMe require domain verification to write articles?
-              </span>
-              <p className="leading-relaxed">
-                To guarantee high scientific and technical standards, we restrict author accounts to domain practitioners. By authenticating via ORCID, GitHub, or institutional emails, we ensure every published essay, paper review, or repo teardown is written by someone with demonstrable expertise in the field.
-              </p>
-            </div>
 
-            <div className="pt-3">
-              <span className="font-semibold text-stone-900 block mb-1">
-                What can I do if I only authenticate via standard Gmail?
-              </span>
-              <p className="leading-relaxed">
-                As a standard user, you enjoy full, unmetered access to explore our entire publications catalog, save articles to custom reading queues, participate in moderated peer comment threads, and generate formatted academic citations.
-              </p>
-            </div>
-
-            <div className="pt-3">
-              <span className="font-semibold text-stone-900 block mb-1">
-                Can I upgrade my reader account to an author account later?
-              </span>
-              <p className="leading-relaxed">
-                Yes. You can visit this page anytime to connect your ORCID, GitHub, or institutional email, which immediately upgrades your account to verified author status.
-              </p>
-            </div>
+          <div role="tablist" aria-label="Verification method" className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {methods.map((item) => {
+              const selected = method === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-controls={`panel-${item.id}`}
+                  id={`tab-${item.id}`}
+                  onClick={() => {
+                    setMethod(item.id);
+                    resetForm();
+                  }}
+                  className={`min-h-24 rounded-md border p-4 text-left transition-colors ${
+                    selected ? 'border-amber-900 bg-amber-50' : 'border-stone-300 bg-white hover:border-stone-400'
+                  }`}
+                >
+                  <item.icon className={`h-5 w-5 ${selected ? 'text-amber-900' : 'text-stone-600'}`} aria-hidden="true" />
+                  <span className="mt-2 block font-serif text-base font-semibold text-stone-900">{item.label}</span>
+                  <span className="mt-0.5 block text-sm text-stone-600">{item.description}</span>
+                  <span className="mt-1 block text-sm font-medium text-stone-700">{item.role}</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
+
+          <div
+            role="tabpanel"
+            id={`panel-${method}`}
+            aria-labelledby={`tab-${method}`}
+            className="mt-6 rounded-lg border border-stone-200 bg-white p-6"
+          >
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
+              <div>
+                <label htmlFor="verify-name" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  Name for this session
+                </label>
+                <input
+                  id="verify-name"
+                  type="text"
+                  autoComplete="name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Dr. Elena Rostova"
+                  className={fieldClass}
+                />
+              </div>
+
+              {method === 'orcid' && (
+                <div>
+                  <label htmlFor="verify-orcid" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    ORCID iD
+                  </label>
+                  <input
+                    id="verify-orcid"
+                    type="text"
+                    inputMode="numeric"
+                    value={orcid}
+                    onChange={(event) => setOrcid(event.target.value)}
+                    placeholder="0000-0002-1825-0097"
+                    aria-describedby="verify-orcid-hint"
+                    className={`${fieldClass} font-mono`}
+                  />
+                  <p id="verify-orcid-hint" className="mt-1 text-sm text-stone-600">
+                    16 digits, usually written in four groups of four. The checksum is validated locally.
+                  </p>
+                </div>
+              )}
+
+              {method === 'github' && (
+                <div>
+                  <label htmlFor="verify-github" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    GitHub handle
+                  </label>
+                  <input
+                    id="verify-github"
+                    type="text"
+                    autoComplete="username"
+                    value={handle}
+                    onChange={(event) => setHandle(event.target.value)}
+                    placeholder="mayalin-sys"
+                    aria-describedby="verify-github-hint"
+                    className={`${fieldClass} font-mono`}
+                  />
+                  <p id="verify-github-hint" className="mt-1 text-sm text-stone-600">
+                    Letters, numbers, and single hyphens. The handle is recorded, not authenticated.
+                  </p>
+                </div>
+              )}
+
+              {method === 'institution' && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="verify-institution" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Institution
+                    </label>
+                    <input
+                      id="verify-institution"
+                      type="text"
+                      value={institution}
+                      onChange={(event) => setInstitution(event.target.value)}
+                      placeholder="Johns Hopkins University"
+                      className={fieldClass}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="verify-email" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      Institutional email
+                    </label>
+                    <input
+                      id="verify-email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      value={email}
+                      onChange={(event) => setEmail(event.target.value)}
+                      placeholder="name@university.edu"
+                      className={fieldClass}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {method === 'gmail' && (
+                <div>
+                  <label htmlFor="verify-reader-email" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Email address
+                  </label>
+                  <input
+                    id="verify-reader-email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="reader@example.com"
+                    className={fieldClass}
+                  />
+                </div>
+              )}
+
+              {error && (
+                <p role="alert" className="border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+                  {error}
+                </p>
+              )}
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="submit"
+                  disabled={busy}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-60"
+                >
+                  <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                  <span>
+                    {method === 'gmail' ? 'Save reader account' : 'Record contributor identity'}
+                  </span>
+                </button>
+                <p className="text-sm text-stone-600">Stored in this browser only.</p>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section aria-labelledby="verify-limits" className="mt-10 border-t border-stone-200 pt-8">
+          <h2 id="verify-limits" className="font-serif text-xl font-semibold text-stone-900">
+            What this does not do
+          </h2>
+          <ul className="mt-3 grid gap-3 text-base leading-relaxed text-stone-700 sm:grid-cols-2">
+            <li className="flex gap-2">
+              <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
+              <span>It does not verify that an ORCID iD or GitHub handle belongs to you.</span>
+            </li>
+            <li className="flex gap-2">
+              <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
+              <span>It does not send an email or confirm an institutional address.</span>
+            </li>
+            <li className="flex gap-2">
+              <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
+              <span>It does not grant access to any server-side action beyond this demonstration.</span>
+            </li>
+            <li className="flex gap-2">
+              <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
+              <span>It can be cleared at any time with “Sign out” above.</span>
+            </li>
+          </ul>
+        </section>
       </main>
 
       <BlogFooter />
     </div>
+  );
+}
+
+export default function VerifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-stone-50">
+          <PageState
+            role="status"
+            code="Loading"
+            title="Opening the verification record"
+            description="Reading the current session from this browser."
+            primaryAction={{ href: '/', label: 'Return to the journal' }}
+          />
+        </div>
+      }
+    >
+      <VerifyContent />
+    </Suspense>
   );
 }

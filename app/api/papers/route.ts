@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { PUBLICATIONS_DATA, Publication } from '@/lib/research-data';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const topic = searchParams.get('topic');
-    const search = searchParams.get('q');
+    const search = searchParams.get('q')?.slice(0, 120);
     const sort = searchParams.get('sort') || 'date';
 
     let papers: Publication[] = [...PUBLICATIONS_DATA];
@@ -35,10 +37,10 @@ export async function GET(request: Request) {
       papers.sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
     }
 
-    return NextResponse.json({
-      papers,
-      total: papers.length,
-    });
+    return NextResponse.json(
+      { papers, total: papers.length },
+      { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=600' } },
+    );
   } catch (err) {
     console.error('Papers API error:', err);
     return NextResponse.json({ error: 'Internal server error fetching papers' }, { status: 500 });

@@ -1,1 +1,321 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --font-sans: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: var(--font-newsreader), Newsreader, Georgia, Cambria, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  --color-paper: var(--color-stone-50);
+  --color-surface: var(--color-white);
+  --color-surface-subtle: var(--color-stone-100);
+  --color-ink: var(--color-stone-900);
+  --color-ink-muted: var(--color-stone-600);
+  --color-line: var(--color-stone-200);
+  --color-brand: var(--color-amber-900);
+  --color-brand-hover: var(--color-amber-800);
+  --color-verified: var(--color-emerald-700);
+  --color-focus: var(--color-amber-800);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: var(--color-stone-50);
+    color: var(--color-stone-900);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.65;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-synthesis-weight: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-serif);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p,
+  li,
+  blockquote,
+  dd {
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+
+  p {
+    max-width: min(100%, 65ch);
+  }
+
+  p[class*="text-xs"],
+  p[class*="text-sm"],
+  p[class*="text-\[1"],
+  li[class*="text-xs"] {
+    max-width: min(100%, 58ch);
+  }
+
+  p[class*="text-center"],
+  h1[class*="text-center"],
+  h2[class*="text-center"],
+  h3[class*="text-center"] {
+    margin-inline: auto;
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 0.08em;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  pre,
+  code,
+  kbd,
+  samp,
+  time,
+  .font-mono,
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-amber-900);
+    color: var(--color-white);
+  }
+
+  ::placeholder {
+    opacity: 1;
+  }
+
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: var(--color-amber-900);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-stone-400) var(--color-stone-100);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--color-stone-100);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-stone-400);
+    border: 2px solid var(--color-stone-100);
+    border-radius: 999px;
+  }
+}
+
+/* Accessible minimums applied before Tailwind's utility layer. */
+html .text-\[9px\],
+html .text-\[10px\],
+html .text-\[11px\] {
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+html .py-0\.5 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+html .px-1\.5 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Neutral colors on light surfaces must stay AA-legible. */
+html .text-stone-400,
+html .text-stone-500,
+html .placeholder-stone-400,
+html .placeholder-stone-500 {
+  color: var(--color-stone-600);
+}
+
+html .dark-surface .text-stone-400,
+html .dark-surface .text-stone-500,
+html .dark-surface .text-stone-600,
+html .dark-surface .text-stone-700,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-400,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-500,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-600,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-700 {
+  color: var(--color-stone-200);
+}
+
+html :where(input, textarea)::placeholder {
+  color: var(--color-stone-600) !important;
+  opacity: 1;
+}
+
+html :where(input, textarea)[class*="bg-stone-9"]::placeholder,
+html :where(input, textarea)[class*="bg-slate-9"]::placeholder,
+html :where(input, textarea)[class*="bg-zinc-9"]::placeholder,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(input, textarea)::placeholder {
+  color: var(--color-stone-300) !important;
+}
+
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(a, button, input, select, textarea, summary):focus-visible {
+  outline-color: var(--color-amber-400);
+}
+
+html .shadow-xs,
+html .shadow-2xs {
+  --tw-shadow: 0 1px 2px 0 rgb(28 25 23 / 0.05);
+}
+
+/* One restrained entrance for each route; all state feedback stays visible. */
+@keyframes rwm-page-settle {
+  from {
+    opacity: 0.96;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  main {
+    animation: rwm-page-settle 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  main,
+  .animate-in,
+  [class*="animate-"] {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 120ms !important;
+    transition-property: color, background-color, border-color, opacity, box-shadow !important;
+  }
+}
+
+@media (pointer: coarse) {
+  :where(button, select, summary, input[type="checkbox"], input[type="radio"]) {
+    min-height: 44px;
+  }
+}
+
+/* Print: the reading surface only, no navigation, chrome, or controls. */
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    color: #1c1917 !important;
+    font-size: 11.5pt;
+  }
+
+  header,
+  footer,
+  nav[aria-label="Breadcrumb"],
+  [role="progressbar"],
+  form,
+  .dark-surface {
+    display: none !important;
+  }
+
+  main {
+    animation: none !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  main > div,
+  main article,
+  main section {
+    display: block !important;
+    border: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  a {
+    color: #1c1917 !important;
+    text-decoration: underline;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    overflow-wrap: anywhere;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  figure,
+  pre,
+  blockquote,
+  li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

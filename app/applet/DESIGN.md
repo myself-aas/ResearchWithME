@@ -1,5 +1,7 @@
 # Design System
 
+> Canonical design tokens live in `/DESIGN.md`. The accessible minimum type size is 12px; all secondary text must meet WCAG AA.
+
 <!-- impeccable:design-schema 1 -->
 
 ## Visual World
