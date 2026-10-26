@@ -1,8 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
+import { Playfair_Display } from 'next/font/google';
 import './globals.css';
 import Providers from '@/components/Providers';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair',
+  display: 'swap',
+});
 
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
@@ -74,7 +81,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
+    <html lang="en" className={`${inter.variable} ${newsreader.variable} ${playfair.variable}`}>
       <body className="bg-stone-50 font-sans text-stone-900 antialiased selection:bg-amber-900 selection:text-white" suppressHydrationWarning>
         <a
           href="#main-content"

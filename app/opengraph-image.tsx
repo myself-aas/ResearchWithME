@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'ResearchWithMe — open-access scholarly publishing';
+export const alt = 'reme — open-access scholarly publishing & research reviews';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -21,23 +21,25 @@ export default function OpengraphImage() {
           fontFamily: 'Georgia, serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, fontFamily: 'Arial, sans-serif', fontSize: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, fontFamily: 'Georgia, serif', fontSize: 42 }}>
           <div
             style={{
-              width: 64,
-              height: 64,
-              borderRadius: 12,
-              background: '#1c1917',
-              color: '#fafaf9',
+              width: 68,
+              height: 68,
+              borderRadius: 16,
+              background: '#0f172a',
+              color: '#f59e0b',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 700,
+              fontSize: 44,
+              fontFamily: 'Georgia, serif',
             }}
           >
-            R
+            π
           </div>
-          <span style={{ fontWeight: 700 }}>ResearchWithMe</span>
+          <span style={{ fontWeight: 400, color: '#0f172a' }}>reme</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 940 }}>

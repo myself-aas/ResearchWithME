@@ -1,6 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
-  <title id="title">ResearchWithMe monogram</title>
-  <rect width="64" height="64" rx="12" fill="#1c1917"/>
-  <path d="M12 12h26c8.3 0 13.5 4.4 13.5 11.4 0 5-2.8 8.7-7.5 10.4L53 52h-9.4l-8-16.8h-8.2V52H12V12Zm15.4 7.8v8.6h10c3.2 0 5.2-1.6 5.2-4.4s-2-4.2-5.2-4.2h-10Z" fill="#fafaf9"/>
-  <rect x="12" y="56" width="40" height="3" fill="#b45309"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="pi-favicon-title">
+  <title id="pi-favicon-title">reme (π) Brand Favicon</title>
+  <defs>
+    <linearGradient id="pi-amber-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Dark Container -->
+  <rect width="64" height="64" rx="16" fill="#0f172a" />
+  <rect x="0.5" y="0.5" width="63" height="63" rx="15.5" stroke="#334155" stroke-opacity="0.6" fill="none" />
+
+  <!-- Mathematical Pi (π) Symbol -->
+  <text
+    x="32"
+    y="45"
+    font-family="Playfair Display, Alice, Georgia, serif"
+    font-weight="700"
+    font-size="40"
+    fill="url(#pi-amber-grad)"
+    text-anchor="middle"
+  >π</text>
 </svg>

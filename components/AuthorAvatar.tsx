@@ -47,7 +47,7 @@ export default function AuthorAvatar({
       const data = await res.json();
       if (data.svg) {
         setSvgContent(data.svg);
-        setSourceInfo(data.source === 'gemini-2.5-flash' ? 'Gemini 2.5 Flash' : 'Domain Synthesis');
+        setSourceInfo(data.source && data.source.includes('gemini') ? 'Gemini 3.8 Flash' : 'Domain Synthesis');
       }
     } catch (err) {
       console.error('Error generating AI avatar:', err);

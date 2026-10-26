@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { readStringArray } from '@/lib/storage';
+import BrandLogo from './BrandLogo';
 
 interface BlogHeaderProps {
   searchQuery?: string;
@@ -99,20 +100,10 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         <div className="flex min-h-16 items-center justify-between gap-4">
           <Link
             href="/"
-            className="flex items-center gap-2.5 rounded-md focus-visible:outline-none"
+            className="flex items-center gap-2 rounded-md focus-visible:outline-none"
+            aria-label="ResearchWithMe journal home"
           >
-            <span
-              aria-hidden="true"
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-900 font-serif text-lg font-bold text-stone-50 sm:h-10 sm:w-10 sm:text-xl"
-            >
-              R
-            </span>
-            <span className="flex flex-col leading-tight">
-              <span className="font-serif text-lg font-bold tracking-tight text-stone-900 sm:text-xl">
-                ResearchWith<span className="text-amber-800">.me</span>
-              </span>
-              <span className="hidden text-xs text-stone-600 sm:block">Open scholarly publishing</span>
-            </span>
+            <BrandLogo size="md" showText={true} />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">

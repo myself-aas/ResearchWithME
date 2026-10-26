@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowUpRight, PenSquare, ShieldCheck } from 'lucide-react';
 import { CATEGORIES } from '@/lib/blog-data';
 import NewsletterSignup from '@/components/NewsletterSignup';
+import BrandLogo from '@/components/BrandLogo';
 
 const portalLinks = [
   { href: '/papers', label: 'Paper archive' },
@@ -23,16 +24,8 @@ export default function BlogFooter() {
 
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2.5 rounded-md">
-              <span
-                aria-hidden="true"
-                className="flex h-9 w-9 items-center justify-center rounded-md bg-stone-100 font-serif text-lg font-bold text-stone-900"
-              >
-                R
-              </span>
-              <span className="font-serif text-xl font-bold tracking-tight text-white">
-                ResearchWith<span className="text-amber-400">.me</span>
-              </span>
+            <Link href="/" className="inline-flex items-center gap-2 rounded-md" aria-label="ResearchWithMe home">
+              <BrandLogo variant="light" size="md" showText={true} />
             </Link>
 
             <p className="mt-4 max-w-md text-sm leading-relaxed text-stone-300">

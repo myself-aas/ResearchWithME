@@ -102,7 +102,7 @@ Design Rules:
 - High visual quality, vector accuracy, valid SVG tags only.`;
 
         const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
           contents: prompt,
         });
 
@@ -117,7 +117,7 @@ Design Rules:
           return NextResponse.json({
             svg: cleanSvg,
             authorId,
-            source: 'gemini-2.5-flash',
+            source: 'gemini-3.8-flash',
           });
         }
       } catch (geminiError) {
