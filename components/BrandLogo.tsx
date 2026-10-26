@@ -20,8 +20,10 @@ export default function BrandLogo({
     xl: 'text-4xl',
   }[size];
 
+  const textColor = variant === 'light' ? 'text-white' : 'text-stone-900';
+
   return (
-    <div className={`inline-flex items-center gap-1.5 ${className}`}>
+    <div className={`inline-flex items-center gap-2 ${className}`}>
       <span
         className={`${iconSizes} shrink-0 font-serif font-semibold leading-none text-amber-900`}
         aria-hidden="true"
@@ -31,9 +33,7 @@ export default function BrandLogo({
 
       {showText && (
         <span
-          className={`font-sans text-xl font-semibold leading-none tracking-tight ${
-            variant === 'light' ? 'text-white' : 'text-stone-900'
-          }`}
+          className={`font-serif text-2xl font-semibold leading-[0.9] tracking-[-0.035em] sm:text-[1.7rem] ${textColor}`}
         >
           reme
         </span>
