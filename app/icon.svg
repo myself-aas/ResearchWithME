@@ -1,24 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="pi-favicon-title">
-  <title id="pi-favicon-title">reme (π) Brand Favicon</title>
-  <defs>
-    <linearGradient id="pi-amber-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#b45309" />
-    </linearGradient>
-  </defs>
-
-  <!-- Outer Dark Container -->
-  <rect width="64" height="64" rx="16" fill="#0f172a" />
-  <rect x="0.5" y="0.5" width="63" height="63" rx="15.5" stroke="#334155" stroke-opacity="0.6" fill="none" />
-
-  <!-- Mathematical Pi (π) Symbol -->
-  <text
-    x="32"
-    y="45"
-    font-family="Playfair Display, Alice, Georgia, serif"
-    font-weight="700"
-    font-size="40"
-    fill="url(#pi-amber-grad)"
-    text-anchor="middle"
-  >π</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="π">
+  <rect width="64" height="64" fill="#fafaf9"/>
+  <text x="32" y="47" text-anchor="middle" font-family="Georgia, serif" font-size="48" font-weight="700" fill="#78350f">π</text>
 </svg>
