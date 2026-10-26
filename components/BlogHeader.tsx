@@ -103,7 +103,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             className="flex items-center gap-2 rounded-md focus-visible:outline-none"
             aria-label="ResearchWithMe journal home"
           >
-            <BrandLogo size="md" showText={true} />
+            <BrandLogo size="xl" showText={true} />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
