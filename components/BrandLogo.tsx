@@ -31,7 +31,7 @@ export default function BrandLogo({
 
       {showText && (
         <span
-          className={`font-sans text-sm font-semibold leading-none tracking-tight ${
+          className={`font-sans text-xl font-semibold leading-none tracking-tight ${
             variant === 'light' ? 'text-white' : 'text-stone-900'
           }`}
         >
