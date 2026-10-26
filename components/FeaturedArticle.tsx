@@ -14,14 +14,25 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
     <section aria-labelledby="featured-heading" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div className="grid gap-0 overflow-hidden rounded-lg border border-stone-200 bg-white lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div className="relative min-h-64 bg-stone-900 lg:min-h-full">
-          <Image
-            src={post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : '/images/folio-hero.jpeg'}
-            alt=""
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw, 42vw"
-            className="object-cover opacity-90"
-          />
+          {post.coverImage && post.coverImage.startsWith('data:') ? (
+            <picture className="h-full w-full">
+              <source srcSet={post.coverImage} type="image/avif" />
+              <img
+                src={post.coverImage}
+                alt=""
+                className="h-full w-full object-cover opacity-90"
+              />
+            </picture>
+          ) : (
+            <Image
+              src={post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : '/images/folio-hero.jpeg'}
+              alt=""
+              fill
+              priority
+              sizes="(max-width: 1024px) 100vw, 42vw"
+              className="object-cover opacity-90"
+            />
+          )}
           <span className="absolute left-4 top-4 rounded bg-amber-900 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
             Featured review
           </span>

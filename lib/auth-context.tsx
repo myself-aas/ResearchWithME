@@ -6,6 +6,7 @@ import { safeInitials } from './format';
 import { readLocal, removeLocal, writeLocal } from './storage';
 import {
   cleanText,
+  getInstitutionalRegionDetails,
   isInstitutionalEmail,
   isValidEmail,
   normalizeGithubHandle,
@@ -26,6 +27,8 @@ export interface AuthUser {
   verifiedTitle?: string;
   verifiedIdentifier?: string;
   institution?: string;
+  countryCode?: string;
+  regionLabel?: string;
   authorProfileId?: string;
 }
 
@@ -39,6 +42,7 @@ interface AuthContextType {
   verifyWithOrcid: (orcidId: string, name: string) => AuthResult;
   verifyWithGithub: (handle: string, name: string) => AuthResult;
   verifyWithInstitution: (workEmail: string, institutionName: string, name: string) => AuthResult;
+  setSessionUser: (user: AuthUser) => void;
   logout: () => void;
   switchRoleForTesting: (role: UserRole) => void;
 }
@@ -150,6 +154,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     if (!cleanInstitution) return { ok: false, error: 'Add the institution that issued the address.' };
 
+    const regionInfo = getInstitutionalRegionDetails(cleanEmail);
+
     saveSession({
       id: `author-institution-${Date.now()}`,
       name: cleanName,
@@ -157,9 +163,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       avatar: safeInitials(cleanName, 'IN'),
       role: 'author',
       authProvider: 'institution',
-      verifiedTitle: 'Institutional affiliation recorded (prototype)',
-      verifiedIdentifier: `${cleanEmail} (${cleanInstitution})`,
+      verifiedTitle: `Verified Academic (${regionInfo.regionLabel})`,
+      verifiedIdentifier: `${cleanEmail} (${cleanInstitution} · ${regionInfo.countryCode})`,
       institution: cleanInstitution,
+      countryCode: regionInfo.countryCode,
+      regionLabel: regionInfo.regionLabel,
       authorProfileId: matchAuthorProfile(cleanName),
     });
     return { ok: true };
@@ -207,6 +215,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         verifyWithOrcid,
         verifyWithGithub,
         verifyWithInstitution,
+        setSessionUser: saveSession,
         logout,
         switchRoleForTesting,
       }}

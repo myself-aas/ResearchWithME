@@ -38,6 +38,7 @@ const primaryNav = [
 
 const secondaryNav = [
   { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
+  { href: '/auth/providers', label: 'OAuth & Writer Access', icon: ShieldCheck },
   { href: '/cite', label: 'Citation builder', icon: Quote },
   { href: '/submit', label: 'Submit a manuscript', icon: UploadCloud },
   { href: '/editorial-board', label: 'Editorial board', icon: Users },
@@ -167,6 +168,17 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   {savedTotal}
                 </span>
               )}
+            </Link>
+
+            <Link
+              href="/auth/providers"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
+              title={user ? `Signed in as ${user.name} (${user.role})` : 'Authentication & Writer Verification'}
+            >
+              <ShieldCheck className="h-4 w-4 text-amber-900" aria-hidden="true" />
+              <span className="hidden sm:inline">
+                {user ? (hasAuthorPermissions ? 'Writer' : 'Reader') : 'Sign In'}
+              </span>
             </Link>
 
             <Link

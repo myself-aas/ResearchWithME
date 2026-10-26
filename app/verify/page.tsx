@@ -101,6 +101,40 @@ function VerifyContent() {
           </p>
         </header>
 
+        <div className="mt-8 rounded-lg border border-amber-300 bg-amber-50/70 p-5">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
+                Dedicated OAuth Authentication Portals
+              </span>
+              <p className="mt-0.5 text-xs text-amber-950">
+                Authenticate via dedicated portals with unique URLs for GitHub, ORCID, .edu / .edu.bd regional SSO, or Google.
+              </p>
+            </div>
+            <Link
+              href="/auth/providers"
+              className="inline-flex min-h-9 items-center gap-1.5 rounded-md bg-amber-900 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-800 transition-colors shrink-0"
+            >
+              <span>View All OAuth Portals</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs">
+            <Link href="/auth/github" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
+              /auth/github (GitHub)
+            </Link>
+            <Link href="/auth/orcid" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
+              /auth/orcid (ORCID)
+            </Link>
+            <Link href="/auth/academic" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
+              /auth/academic (.edu / .edu.bd)
+            </Link>
+            <Link href="/auth/google" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
+              /auth/google (Gmail)
+            </Link>
+          </div>
+        </div>
+
         {unverified && !hasAuthorPermissions && (
           <section role="alert" className="mt-6 border-l-2 border-amber-800 bg-amber-50 px-4 py-4 text-sm text-amber-950">
             <p className="flex items-center gap-2 font-semibold">

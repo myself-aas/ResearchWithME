@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, CheckCircle2, Eye, Lock, PenSquare, Plus, Save, Send, Trash2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, Lock, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import PageState from '@/components/PageState';
+import QwenCoverGenerator from '@/components/cms/QwenCoverGenerator';
 import { ArticleFormat, AUTHORS, BlogCategory, BlogPost, CATEGORIES } from '@/lib/blog-data';
 import { useAuth } from '@/lib/auth-context';
 import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
@@ -32,6 +33,7 @@ interface Draft {
   artifactUrl: string;
   artifactMeta: string;
   hasArtifact: boolean;
+  coverImage?: string;
   updatedAt: string;
 }
 
@@ -50,6 +52,7 @@ const emptyDraft: Draft = {
   artifactUrl: '',
   artifactMeta: '',
   hasArtifact: true,
+  coverImage: '',
   updatedAt: '',
 };
 
@@ -67,6 +70,7 @@ export default function WritePage() {
   const [errorField, setErrorField] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
   const [restored, setRestored] = useState(false);
+  const [showAiCover, setShowAiCover] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -224,7 +228,7 @@ export default function WritePage() {
       author,
       publishedAt: new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()),
       readTime: `${readTime} min read`,
-      coverImage: draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg',
+      coverImage: draft.coverImage?.trim() || (draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg'),
       featured: false,
       reviewedArtifact: draft.hasArtifact
         ? {
@@ -386,6 +390,19 @@ export default function WritePage() {
             </h2>
             {draft.subtitle && <p className="mt-3 font-serif text-xl leading-relaxed text-stone-700">{draft.subtitle}</p>}
             <p className="mt-4 text-sm text-stone-600">By {user?.name}</p>
+
+            {draft.coverImage && (
+              <div className="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-stone-900">
+                <picture>
+                  <source srcSet={draft.coverImage} type="image/avif" />
+                  <img
+                    src={draft.coverImage}
+                    alt={draft.title || 'Article cover preview'}
+                    className="h-auto max-h-[380px] w-full object-cover"
+                  />
+                </picture>
+              </div>
+            )}
 
             {draft.summary && (
               <section aria-labelledby="preview-summary" className="mt-8 border-y border-stone-200 py-5">
@@ -626,6 +643,70 @@ export default function WritePage() {
                       />
                     </div>
                   </div>
+                </div>
+              )}
+            </fieldset>
+
+            <fieldset className="space-y-4 border-t border-stone-200 pt-8">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <legend className="font-serif text-xl font-semibold text-stone-900">Cover image</legend>
+                  <p className="mt-1 text-sm text-stone-600">
+                    Editorial 16:9 header image. Generate artwork with your Qwen 2.1 Hugging Face Space (AVIF) or select presets.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowAiCover(!showAiCover)}
+                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                >
+                  <Sparkles className="h-4 w-4" aria-hidden="true" />
+                  <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate Cover with Qwen 2.1 (AVIF)'}</span>
+                </button>
+              </div>
+
+              {draft.coverImage ? (
+                <div className="rounded-lg border border-stone-200 bg-white p-4">
+                  <div className="overflow-hidden rounded-md border border-stone-200 bg-stone-900">
+                    <picture>
+                      <source srcSet={draft.coverImage} type="image/avif" />
+                      <img
+                        src={draft.coverImage}
+                        alt="Article cover"
+                        className="h-44 w-full object-cover"
+                      />
+                    </picture>
+                  </div>
+                  <div className="mt-2.5 flex items-center justify-between">
+                    <span className="font-mono text-xs text-stone-600">
+                      {draft.coverImage.startsWith('data:') ? 'AVIF Base64 Data Stream' : draft.coverImage}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => update('coverImage', '')}
+                      className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      <span>Remove cover</span>
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+                  No custom cover image applied yet. The journal will use default editorial photography if published without one.
+                </p>
+              )}
+
+              {showAiCover && (
+                <div className="pt-2">
+                  <QwenCoverGenerator
+                    currentCover={draft.coverImage}
+                    articleTitle={draft.title}
+                    articleSubtitle={draft.subtitle}
+                    articleCategory={draft.category}
+                    onApplyCover={(imageUri) => update('coverImage', imageUri)}
+                  />
                 </div>
               )}
             </fieldset>

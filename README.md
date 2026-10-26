@@ -86,6 +86,8 @@ Environment variables:
 | `REVALIDATE_SECRET` | Optional. Shared secret for the `/api/revalidate` webhook. |
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-2.5-flash`. |
+| `HF_SPACE_NAME` | Optional. Private Hugging Face ZeroGPU Space serving Qwen 2.1 AVIF diffusion. |
+| `HF_TOKEN` | Optional. Hugging Face user access token for private Space authorization. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
 
 ## Project layout

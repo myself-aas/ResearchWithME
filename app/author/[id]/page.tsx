@@ -10,6 +10,8 @@ import PageState from '@/components/PageState';
 import { AUTHORS, INITIAL_BLOG_POSTS, type BlogPost } from '@/lib/blog-data';
 import { readStringArray, writeLocal } from '@/lib/storage';
 
+import AuthorImpactRadarChart from '@/components/AuthorImpactRadarChart';
+
 type SortKey = 'newest' | 'likes' | 'readTime';
 
 export default function AuthorDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -141,6 +143,13 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
         </nav>
 
         <AuthorProfileCard author={author} metrics={metrics} headingLevel="h1" />
+
+        <AuthorImpactRadarChart
+          author={author}
+          articleCount={metrics.totalArticles}
+          totalLikes={metrics.totalLikes}
+          totalComments={metrics.totalComments}
+        />
 
         <section aria-labelledby="author-archive" className="mt-10">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">

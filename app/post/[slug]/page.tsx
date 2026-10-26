@@ -158,14 +158,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             <figure className="mt-8">
               <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-stone-900">
-                <Image
-                  src={article.coverImage && article.coverImage.trim() !== '' ? article.coverImage : '/images/folio-hero.jpeg'}
-                  alt=""
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 66vw"
-                  className="object-cover"
-                />
+                {article.coverImage && article.coverImage.startsWith('data:') ? (
+                  <picture className="h-full w-full">
+                    <source srcSet={article.coverImage} type="image/avif" />
+                    <img
+                      src={article.coverImage}
+                      alt={article.title}
+                      className="h-full w-full object-cover"
+                    />
+                  </picture>
+                ) : (
+                  <Image
+                    src={article.coverImage && article.coverImage.trim() !== '' ? article.coverImage : '/images/folio-hero.jpeg'}
+                    alt=""
+                    fill
+                    priority
+                    sizes="(max-width: 1024px) 100vw, 66vw"
+                    className="object-cover"
+                  />
+                )}
               </div>
               <figcaption className="mt-2 text-sm text-stone-600">
                 Editorial imagery for this review. Reviewed artifacts are linked in the record below.

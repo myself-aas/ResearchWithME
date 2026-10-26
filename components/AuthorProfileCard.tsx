@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { Author } from '@/lib/blog-data';
 
+import AuthorAvatar from '@/components/AuthorAvatar';
+
 interface AuthorProfileCardProps {
   author: Author;
   metrics?: {
@@ -105,12 +107,7 @@ export default function AuthorProfileCard({
     return (
       <section aria-labelledby="author-compact-heading" className="rounded-lg border border-stone-200 bg-white p-5">
         <div className="flex items-start gap-3">
-          <span
-            aria-hidden="true"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
-          >
-            {author.avatar}
-          </span>
+          <AuthorAvatar author={author} size="md" showControls={false} />
           <div className="min-w-0">
             <Heading id="author-compact-heading" className="font-serif text-lg font-semibold text-stone-900">
               <Link href={`/author/${author.id}`} className="hover:text-amber-900">
@@ -147,12 +144,7 @@ export default function AuthorProfileCard({
     <section aria-labelledby="author-profile-heading" className="rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
-          <span
-            aria-hidden="true"
-            className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-stone-900 font-serif text-2xl font-bold text-stone-50"
-          >
-            {author.avatar}
-          </span>
+          <AuthorAvatar author={author} size="xl" showControls={true} />
           <div className="min-w-0">
             <Heading id="author-profile-heading" className="font-serif text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
               {author.name}

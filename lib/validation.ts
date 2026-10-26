@@ -64,10 +64,143 @@ export function normalizeGithubHandle(value: string) {
   return handle;
 }
 
+export interface InstitutionalRegionInfo {
+  isAcademic: boolean;
+  countryCode: string;
+  countryName: string;
+  regionLabel: string;
+  domain: string;
+}
+
+export function getInstitutionalRegionDetails(emailOrDomain: string): InstitutionalRegionInfo {
+  const domain = (emailOrDomain.includes('@') ? emailOrDomain.split('@')[1] : emailOrDomain).toLowerCase().trim();
+
+  // Region and country code resolvers
+  if (domain.endsWith('.edu.bd') || domain.endsWith('.ac.bd')) {
+    return {
+      isAcademic: true,
+      countryCode: 'BD',
+      countryName: 'Bangladesh',
+      regionLabel: 'Bangladesh Academic Network (.edu.bd / .ac.bd)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.ac.uk') || domain.endsWith('.edu.uk')) {
+    return {
+      isAcademic: true,
+      countryCode: 'GB',
+      countryName: 'United Kingdom',
+      regionLabel: 'UK Academic Network (.ac.uk)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu.au') || domain.endsWith('.ac.au')) {
+    return {
+      isAcademic: true,
+      countryCode: 'AU',
+      countryName: 'Australia',
+      regionLabel: 'Australian Tertiary Education (.edu.au)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.ac.in') || domain.endsWith('.edu.in')) {
+    return {
+      isAcademic: true,
+      countryCode: 'IN',
+      countryName: 'India',
+      regionLabel: 'Indian Academic Institutions (.ac.in / .edu.in)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.ac.jp') || domain.endsWith('.ed.jp')) {
+    return {
+      isAcademic: true,
+      countryCode: 'JP',
+      countryName: 'Japan',
+      regionLabel: 'Japan Academic Domain (.ac.jp)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu.sg') || domain.endsWith('.ac.sg')) {
+    return {
+      isAcademic: true,
+      countryCode: 'SG',
+      countryName: 'Singapore',
+      regionLabel: 'Singapore Academic Domain (.edu.sg)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu.pk') || domain.endsWith('.ac.pk')) {
+    return {
+      isAcademic: true,
+      countryCode: 'PK',
+      countryName: 'Pakistan',
+      regionLabel: 'Pakistan Higher Education (.edu.pk)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu.my') || domain.endsWith('.ac.my')) {
+    return {
+      isAcademic: true,
+      countryCode: 'MY',
+      countryName: 'Malaysia',
+      regionLabel: 'Malaysia Higher Education (.edu.my)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu.de') || domain.includes('.uni-') || domain.endsWith('-uni.de') || domain.endsWith('.tu-berlin.de')) {
+    return {
+      isAcademic: true,
+      countryCode: 'DE',
+      countryName: 'Germany',
+      regionLabel: 'German Higher Education (Hochschulen / DFN)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu.ca') || domain.endsWith('.ac.ca')) {
+    return {
+      isAcademic: true,
+      countryCode: 'CA',
+      countryName: 'Canada',
+      regionLabel: 'Canadian Post-Secondary (.edu.ca)',
+      domain,
+    };
+  }
+  if (domain.endsWith('.edu')) {
+    return {
+      isAcademic: true,
+      countryCode: 'US',
+      countryName: 'United States & Global Higher Ed',
+      regionLabel: 'Accredited Higher Education (.edu)',
+      domain,
+    };
+  }
+
+  // Any other country-code academic TLD: .edu.[cc] or .ac.[cc]
+  const ccMatch = domain.match(/\.(edu|ac)\.([a-z]{2})$/);
+  if (ccMatch) {
+    const cc = ccMatch[2].toUpperCase();
+    return {
+      isAcademic: true,
+      countryCode: cc,
+      countryName: `Regional Academic (${cc})`,
+      regionLabel: `Academic Domain (.${ccMatch[1]}.${ccMatch[2]})`,
+      domain,
+    };
+  }
+
+  return {
+    isAcademic: false,
+    countryCode: 'GLOBAL',
+    countryName: 'Public or Non-Academic Domain',
+    regionLabel: 'Standard Web Domain',
+    domain,
+  };
+}
+
 export function isInstitutionalEmail(value: string) {
   if (!isValidEmail(value)) return false;
-  const domain = value.split('@')[1]?.toLowerCase() ?? '';
-  return domain.endsWith('.edu') || domain.endsWith('.ac.uk') || domain.endsWith('.edu.au') || domain.includes('.edu.') || domain.endsWith('.ac.jp');
+  return getInstitutionalRegionDetails(value).isAcademic;
 }
 
 export function safeExternalUrl(value: string) {
