@@ -21,25 +21,9 @@ export default function OpengraphImage() {
           fontFamily: 'Georgia, serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, fontFamily: 'Georgia, serif', fontSize: 42 }}>
-          <div
-            style={{
-              width: 68,
-              height: 68,
-              borderRadius: 16,
-              background: '#0f172a',
-              color: '#f59e0b',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 700,
-              fontSize: 44,
-              fontFamily: 'Georgia, serif',
-            }}
-          >
-            π
-          </div>
-          <span style={{ fontWeight: 400, color: '#0f172a' }}>reme</span>
+        <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'Georgia, serif', fontSize: 54, letterSpacing: '-0.04em' }}>
+          <span style={{ fontWeight: 700, color: '#78350f' }}>π</span>
+          <span style={{ fontWeight: 400, color: '#0f172a' }}>eme</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 940 }}>

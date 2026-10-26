@@ -13,7 +13,7 @@ export default function BrandLogo({
   variant = 'dark',
   className = '',
 }: BrandLogoProps) {
-  const iconSizes = {
+  const wordmarkSizes = {
     sm: 'text-xl',
     md: 'text-2xl',
     lg: 'text-3xl',
@@ -23,21 +23,13 @@ export default function BrandLogo({
   const textColor = variant === 'light' ? 'text-white' : 'text-stone-900';
 
   return (
-    <div className={`inline-flex items-center gap-2 ${className}`}>
+    <div className={`inline-flex items-center ${className}`}>
       <span
-        className={`${iconSizes} shrink-0 font-serif font-semibold leading-none text-amber-900`}
-        aria-hidden="true"
+        className={`${wordmarkSizes} font-serif font-semibold leading-none tracking-[-0.04em] ${textColor}`}
+        aria-label={showText ? 'πeme' : 'π'}
       >
-        π
+        {showText ? 'πeme' : 'π'}
       </span>
-
-      {showText && (
-        <span
-          className={`font-serif text-2xl font-semibold leading-[0.9] tracking-[-0.035em] sm:text-[1.7rem] ${textColor}`}
-        >
-          reme
-        </span>
-      )}
     </div>
   );
 }
