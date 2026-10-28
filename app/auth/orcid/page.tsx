@@ -15,6 +15,8 @@ import {
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { useAuth } from '@/lib/auth-context';
+import { hasSupabaseBrowserConfig } from '@/lib/supabase/client';
+import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import { normalizeOrcid, orcidChecksumIsValid } from '@/lib/validation';
 
 export default function OrcidOAuthPage() {
@@ -27,31 +29,23 @@ export default function OrcidOAuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Initiates standard ORCID OAuth flow
+  // Full-page redirect through Supabase Auth; /auth/callback sets the session.
   async function startOrcidOAuth() {
     setLoading(true);
     setError(null);
+    if (!hasSupabaseBrowserConfig()) {
+      setError('ORCID sign-in needs Supabase credentials on this deployment. Use the form below in the meantime.');
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await fetch('/api/auth/oauth-url?provider=orcid');
-      const data = await res.json();
-      if (data.url) {
-        const width = 600;
-        const height = 700;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
-        const popup = window.open(
-          data.url,
-          'orcid-oauth',
-          `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`
-        );
-
-        if (!popup || popup.closed) {
-          setError('Browser popup was blocked. You can complete verification directly below using your 16-digit ORCID iD.');
-        }
+      const result = await startOAuthSignIn('orcid', '/');
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
       }
     } catch {
-      setError('Could not connect to ORCID OAuth endpoint. You can authenticate using your ORCID iD below.');
-    } finally {
+      setError('Could not reach the sign-in service. Check your connection and try again.');
       setLoading(false);
     }
   }
@@ -170,7 +164,7 @@ export default function OrcidOAuthPage() {
               {loading ? (
                 <>
                   <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>Connecting to ORCID.org...</span>
+                  <span>Opening ORCID…</span>
                 </>
               ) : (
                 <>
@@ -181,7 +175,7 @@ export default function OrcidOAuthPage() {
               )}
             </button>
             <p className="text-center font-mono text-xs text-stone-500">
-              Provider: orcid.org/oauth/authorize · Scope: /authenticate
+              Scope: openid · Signed in through Supabase Auth
             </p>
           </div>
 

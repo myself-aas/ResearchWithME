@@ -6,7 +6,7 @@ The CMS has two adapters behind one interface:
 
 | Mode | When | Storage | Auth |
 | --- | --- | --- | --- |
-| **Supabase** | `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are set at build time | `posts` and `comments` tables, `blog-images` bucket | Supabase email/password and magic links; RLS on every table |
+| **Supabase** | `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`) are set at build time | `posts` and `comments` tables, `blog-images` bucket | Supabase email/password and magic links; RLS on every table |
 | **Local demo** | Either variable is missing | `data/cms-posts.json`, `data/cms-comments.json` (atomic writes) | No accounts; the studio is open on the server it runs on |
 
 Local demo mode exists so the app builds, runs, and can be reviewed without cloud credentials. It is not a production configuration.
@@ -27,7 +27,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 | 3.2 Dashboard layout | `app/dashboard/layout.tsx`, `components/cms/DashboardShell.tsx` | Rebuilt in the publication's design language. Responsive nav instead of a fixed 16rem sidebar, no modal, explicit sign-out states. |
 | 4.1 Editor styles | `components/cms/styles.ts`, `app/globals.css` | No `@apply` overrides for a third-party editor. Tokens come from the design system. |
 | 4.2 Rich editor | `components/cms/MarkdownEditor.tsx` | Markdown toolbar, write/preview tabs, link and image inserters, image upload, character and reading-time feedback. Raw HTML is not rendered. |
-| 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Google, GitHub, password, and magic-link sign-in. Every redirect returns to `/auth/callback` (`app/auth/callback/route.ts`), which exchanges the PKCE code server-side and sends the user to `next`. Signed-in accounts without editor access see an explanation instead of the studio. |
+| 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Google, GitHub, ORCID, password, and magic-link sign-in. Every redirect returns to `/auth/callback` (`app/auth/callback/route.ts`), which exchanges the PKCE code server-side and sends the user to `next`. Signed-in accounts without editor access see an explanation instead of the studio. |
 | 4.4 New article | `app/dashboard/page.tsx`, `components/cms/PostEditor.tsx` | Shared create/edit form with server-side validation, inline field errors, focus management, unsaved-change warning, cover library, takeaways, and draft/publish states. |
 | 5.1 Manage articles | `app/dashboard/manage/page.tsx`, `lib/cms/use-cms.ts` | Search and status filters, counts, publish/revert, delete, realtime refetch when Supabase is configured. |
 | 5.2 Edit article | `app/dashboard/edit/[id]/page.tsx` | Loads through the API, then reuses `PostEditor`. Status changes are explicit; un-publishing takes a published article off the journal. |
@@ -75,7 +75,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
    ```env
    NEXT_PUBLIC_SITE_URL="http://localhost:3000"   # your real origin in production
    NEXT_PUBLIC_SUPABASE_URL="https://<project>.supabase.co"
-   NEXT_PUBLIC_SUPABASE_ANON_KEY="<anon key>"
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="<sb_publishable_… key>"   # or legacy NEXT_PUBLIC_SUPABASE_ANON_KEY
    REVALIDATE_SECRET="<openssl rand -hex 32>"
    ```
 
@@ -88,7 +88,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 
    Or paste each file in `supabase/migrations/` into the SQL editor in order. The storage migration creates the `blog-images` bucket and its policies.
 
-4. **Enable sign-in providers.** Authentication → Sign In / Providers: Email, Google, and GitHub. Open sign-up is safe because an account alone grants no studio access (see step 5). For each OAuth app, the provider's callback URL is the one Supabase shows (`https://<project-ref>.supabase.co/auth/v1/callback`), not this site.
+4. **Enable sign-in providers.** Authentication → Sign In / Providers: Email, Google, GitHub, and ORCID. ORCID is a custom OIDC provider: add it under Custom providers with the identifier `orcid` (the app calls it as `custom:orcid`), issuer `https://orcid.org`, scope `openid`, and the client ID and secret from an ORCID Public API app. Open sign-up is safe because an account alone grants no studio access (see step 5). For each OAuth app, the provider's callback URL is the one Supabase shows (`https://<project-ref>.supabase.co/auth/v1/callback`), not this site.
 5. **Grant editor access.** The `20261028000100_editor_allowlist.sql` migration gates every studio write, draft read, comment moderation, and image upload on `public.editors`. After an editor has signed in once, add them in the SQL editor:
    ```sql
    insert into public.editors (user_id, note)

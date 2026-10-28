@@ -78,7 +78,7 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 
 ## Editorial CMS
 
-The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, which keeps the project runnable for review without cloud credentials.
+The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, which keeps the project runnable for review without cloud credentials.
 
 - **Database, RLS, storage, realtime:** `supabase/migrations/` (idempotent SQL) with published-only public reads, authenticated editorial writes, append-only comments, a 5 MB public image bucket, and realtime replication.
 - **One canonical reader:** published CMS articles are merged into `/`, `/post/[slug]`, the sitemap, and the author record. There is no duplicate `/blog` route.
@@ -99,7 +99,7 @@ Environment variables:
 | Variable | Purpose |
 | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL` | Optional. Project URL; enables the Supabase CMS, auth, storage, and realtime. |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Optional. Public anon key; RLS protects every table. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Optional. Publishable key (`sb_publishable_…`); RLS protects every table. The legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY` is still accepted. |
 | `REVALIDATE_SECRET` | Optional. Shared secret for the `/api/revalidate` webhook. |
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-3.8-flash`. |

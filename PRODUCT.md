@@ -45,7 +45,7 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 ## Implementation Status
 - The active product is the root Next.js App Router application. `ResearchWith.me-main/` is a legacy WordPress theme archive and is outside the active build.
 - The editorial studio (`/login`, `/dashboard`) is backed by Supabase when credentials are configured: posts, comments, an image bucket, RLS, and realtime. Without credentials it writes to local JSON so the project stays runnable for review. See `docs/supabase-cms.md`.
-- Readers sign in through Supabase Auth with Google, GitHub, or email (password or magic link). Studio access requires an administrator to add the account to `public.editors`; signing in alone grants reader access only. ORCID sign-in is planned.
+- Readers sign in through Supabase Auth with Google, GitHub, ORCID, or email (password or magic link). Studio access requires an administrator to add the account to `public.editors`; signing in alone grants reader access only.
 - Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
 - Contributor verification on `/verify` remains a clearly labeled local prototype, not production OAuth. No credentials are sent to ORCID, GitHub, an institution, or Google.
 - The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.

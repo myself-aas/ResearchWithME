@@ -235,7 +235,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-stone-700">
             <li>
               Add <code className="font-mono">NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
-              <code className="font-mono">NEXT_PUBLIC_SUPABASE_ANON_KEY</code> to{' '}
+              <code className="font-mono">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> to{' '}
               <code className="font-mono">.env.local</code>.
             </li>
             <li>
@@ -350,7 +350,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
         Sign in
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-stone-600">
-        Sign in with Google, GitHub, or email. Studio access is granted to editor accounts by an administrator.
+        Sign in with Google, GitHub, ORCID, or email. Studio access is granted to editor accounts by an administrator.
       </p>
 
       {error && (
@@ -385,6 +385,14 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
           className={cn(secondaryButtonClass, 'w-full')}
         >
           {pending === 'github' ? 'Opening GitHub…' : 'Continue with GitHub'}
+        </button>
+        <button
+          type="button"
+          onClick={() => signInWithProvider('orcid')}
+          disabled={pending !== null}
+          className={cn(secondaryButtonClass, 'w-full sm:col-span-2')}
+        >
+          {pending === 'orcid' ? 'Opening ORCID…' : 'Continue with ORCID'}
         </button>
       </div>
 

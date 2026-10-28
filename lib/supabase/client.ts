@@ -12,7 +12,7 @@ let browserClient: SupabaseClient | null = null;
  */
 export function getSupabaseBrowserClient(): SupabaseClient {
   if (!isSupabaseConfigured) {
-    throw new Error('Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.');
+    throw new Error('Supabase is not configured. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.');
   }
   if (!browserClient) {
     browserClient = createBrowserClient(SUPABASE_URL, SUPABASE_ANON_KEY, { isSingleton: true });

@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-const SUPABASE_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim();
-const SUPABASE_ANON_KEY = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '').trim();
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from '@/lib/supabase/config';
 
 /**
  * Protects the editorial studio and refreshes the Supabase session cookie.
