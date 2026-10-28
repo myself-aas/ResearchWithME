@@ -27,7 +27,8 @@ import { uploadBlogImage, validateImageFile } from '@/lib/supabase/storage';
 import { slugify } from '@/lib/validation';
 import { cn } from '@/lib/utils';
 import ConfirmDelete from './ConfirmDelete';
-import MarkdownEditor from './MarkdownEditor';
+import dynamic from 'next/dynamic';
+const MarkdownEditor = dynamic(() => import('./MarkdownEditor'), { ssr: false });
 import StatusBadge from './StatusBadge';
 import {
   fieldClass,

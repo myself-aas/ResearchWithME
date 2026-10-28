@@ -14,6 +14,11 @@ import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
 import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
 import { formatDate, readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import dynamic from 'next/dynamic';
+
+const MarkdownEditor = dynamic(() => import('@/components/cms/MarkdownEditor'), {
+  ssr: false,
+});
 
 const FORMATS: ArticleFormat[] = ['Paper Review', 'Repo Teardown', 'Deep-Dive Essay', 'Field Notes', 'Case Study'];
 const DRAFT_KEY = 'rwm_writer_draft';
@@ -718,16 +723,14 @@ export default function WritePage() {
                 <label htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-stone-800">
                   Article body <span className="text-stone-600">(required)</span>
                 </label>
-                <textarea
-                  id="write-content"
-                  rows={16}
-                  value={draft.content}
-                  onChange={(event) => update('content', event.target.value)}
-                  maxLength={LIMITS.body}
-                  aria-invalid={errorField === 'write-content' ? true : undefined}
-                  placeholder="Write the analysis. Separate paragraphs with an empty line."
-                  className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base leading-relaxed text-stone-900 placeholder:text-stone-600"
-                />
+                <div className="mt-1">
+                  <MarkdownEditor
+                    id="write-content"
+                    value={draft.content}
+                    onChange={(value) => update('content', value)}
+                    error={errorField === 'write-content' ? (error ?? undefined) : undefined}
+                  />
+                </div>
                 <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-stone-600">
                   <span>Separate paragraphs with an empty line. Estimated reading time: {readTime} min.</span>
                   <span>
