@@ -59,6 +59,23 @@ npx impeccable detect --viewport 390x844 http://localhost:3000
 
 The publication surfaces are clean: 0 Impeccable findings in source and rendered scans at 1280×800, 390×844, and 320×720; 0 axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
 
+## Deploy (Cloudflare Workers)
+
+Production runs on Cloudflare Workers through the [OpenNext adapter](https://opennext.js.org/cloudflare). The app needs a server (middleware, API routes, the OAuth callback), so it can't be served as a static Cloudflare Pages export.
+
+```bash
+npm run preview     # OpenNext build, then serve the Worker locally in workerd (:8787)
+npm run deploy      # OpenNext build, then deploy with wrangler.jsonc
+npm run upload      # OpenNext build, then upload a new version without promoting it
+npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
+```
+
+- Runs on the Workers free plan. One KV namespace (`researchwithme-opennext-cache`) backs both the incremental cache and the tag cache, so studio `revalidatePath` calls refresh static routes such as `/sitemap.xml` without a redeploy. KV is eventually consistent, so a revalidation can take up to about 60 s to show. Each deploy writes about 33 cache entries, well within KV's free 1,000 writes a day. `next/image` serves original files because there is no Images binding.
+- The namespace ID is set on both `kv_namespaces` entries in `wrangler.jsonc`. To move to another account, create a new namespace with `npx wrangler kv namespace create researchwithme-opennext-cache` and replace both IDs.
+- `NEXT_PUBLIC_*` values are compiled into the build, so they must be set as **build** variables. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**.
+- The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
+- OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
+
 ## Editorial CMS
 
 The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, which keeps the project runnable for review without cloud credentials.

@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
 /**
  * Supabase Storage serves article images from the project's public bucket.
@@ -69,3 +70,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Exposes Cloudflare bindings to `next dev` via getCloudflareContext().
+initOpenNextCloudflareForDev();

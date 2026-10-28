@@ -1,0 +1,29 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"main": ".open-next/worker.js",
+	"name": "researchwithme",
+	"compatibility_date": "2026-10-23",
+	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	"assets": {
+		"directory": ".open-next/assets",
+		"binding": "ASSETS"
+	},
+	"services": [
+		{
+			// Self-reference used by OpenNext's cache; must match "name" above.
+			// See https://opennext.js.org/cloudflare/caching
+			"binding": "WORKER_SELF_REFERENCE",
+			"service": "researchwithme"
+		}
+	],
+	// Free-plan setup: no R2 or Images bindings, so next/image serves originals.
+	// One KV namespace (researchwithme-opennext-cache) backs both OpenNext
+	// caches; their key prefixes don't overlap (see open-next.config.ts).
+	"kv_namespaces": [
+		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
+		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+	],
+	"observability": {
+		"enabled": true
+	}
+}

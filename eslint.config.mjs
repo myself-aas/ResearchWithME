@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
 export default defineConfig([
-  globalIgnores(['.next/**', 'node_modules/**', 'ResearchWith.me-main/**', 'data/**', 'coverage/**']),
+  globalIgnores(['.next/**', 'node_modules/**', 'ResearchWith.me-main/**', 'data/**', 'coverage/**', '.open-next/**', '.wrangler/**', 'cloudflare-env.d.ts']),
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     files: ['next-env.d.ts'],
