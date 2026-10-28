@@ -1,0 +1,162 @@
+<template>
+  <style>
+    #scene-problem {
+      position: absolute;
+      inset: 0;
+      background: #fafaf9;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+    }
+    #p-label {
+      font-family: Inter, sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #78716c;
+      margin-bottom: 56px;
+    }
+    #p-columns {
+      display: flex;
+      gap: 80px;
+      align-items: stretch;
+      width: 1440px;
+    }
+    .p-col {
+      flex: 1;
+      border-radius: 12px;
+      padding: 56px 60px;
+    }
+    #p-col-old {
+      background: #f5f5f4;
+      border: 2px solid #e7e5e4;
+    }
+    #p-col-new {
+      background: #78350f;
+      border: 2px solid #92400e;
+    }
+    .p-col-tag {
+      font-family: Inter, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    #p-col-old  .p-col-tag { color: #78716c; }
+    #p-col-new  .p-col-tag { color: #fbbf24; }
+    .p-col-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 32px;
+    }
+    #p-col-old  .p-col-title { color: #1c1917; }
+    #p-col-new  .p-col-title { color: #fafaf9; }
+    .p-col-detail {
+      font-family: Inter, sans-serif;
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+    #p-col-old  .p-col-detail { color: #57534e; }
+    #p-col-new  .p-col-detail { color: #d6d3d1; }
+    .p-col-stat {
+      margin-top: 36px;
+      font-family: Inter, sans-serif;
+      font-size: 52px;
+      font-weight: 700;
+    }
+    #p-col-old  .p-col-stat { color: #78350f; }
+    #p-col-new  .p-col-stat { color: #fbbf24; }
+    .p-col-stat-label {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      margin-top: 4px;
+    }
+    #p-col-old  .p-col-stat-label { color: #78716c; }
+    #p-col-new  .p-col-stat-label { color: #a8a29e; }
+    #p-divider {
+      width: 2px;
+      align-self: stretch;
+      background: linear-gradient(to bottom, transparent, #e7e5e4 20%, #e7e5e4 80%, transparent);
+      flex-shrink: 0;
+    }
+    #p-arrow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      background: #fafaf9;
+      border: 2px solid #e7e5e4;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #p-arrow svg { color: #78350f; }
+  </style>
+  <div id="scene-problem" data-composition-id="scene-problem" data-width="1920" data-height="1080">
+    <div id="p-label" class="clip" data-start="0.3" data-duration="14.7" data-track-index="1">The Breakthrough</div>
+    <div id="p-columns" class="clip" data-start="0.6" data-duration="14.4" data-track-index="2">
+      <div id="p-col-old" class="p-col">
+        <div class="p-col-tag" id="p-old-tag">Before</div>
+        <div class="p-col-title" id="p-old-title">Supervised chain-of-thought training</div>
+        <div class="p-col-detail" id="p-old-detail">Curate tens of thousands of<br>human-annotated reasoning traces.<br>Expensive. Brittle. Hard to scale.</div>
+        <div class="p-col-stat" id="p-old-stat">~50k</div>
+        <div class="p-col-stat-label" id="p-old-stat-label">annotated demonstrations needed</div>
+      </div>
+      <div id="p-divider"></div>
+      <div id="p-col-new" class="p-col">
+        <div class="p-col-tag" id="p-new-tag">After · DeepSeek-R1</div>
+        <div class="p-col-title" id="p-new-title">Pure reinforcement learning</div>
+        <div class="p-col-detail" id="p-new-detail">Rule-based reward signals.<br>No annotated chain-of-thought.<br>Reasoning emerges spontaneously.</div>
+        <div class="p-col-stat" id="p-new-stat">Zero</div>
+        <div class="p-col-stat-label" id="p-new-stat-label">human demonstrations required</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#p-label",
+      { opacity: 0, y: -8 },
+      { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
+      0.3
+    );
+    tl.fromTo("#p-col-old",
+      { opacity: 0, x: -30 },
+      { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" },
+      0.6
+    );
+    tl.fromTo("#p-col-new",
+      { opacity: 0, x: 30 },
+      { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" },
+      0.85
+    );
+
+    // Old stat count-up from 0 to 50000
+    const oldStatEl = document.querySelector("#p-old-stat");
+    const oldCounter = { val: 0 };
+    tl.fromTo(oldCounter,
+      { val: 0 },
+      { val: 50000, duration: 1.4, ease: "power2.out",
+        onUpdate: function() { oldStatEl.textContent = "~" + Math.round(oldCounter.val / 1000) + "k"; } },
+      2.2
+    );
+
+    // Exits at 14.0
+    tl.to("#p-col-old",  { opacity: 0, x: -20, duration: 0.28, ease: "power2.in" }, 14.0);
+    tl.to("#p-col-new",  { opacity: 0, x: 20,  duration: 0.28, ease: "power2.in" }, 14.0);
+    tl.to("#p-label",    { opacity: 0, duration: 0.25, ease: "power2.in" }, 14.0);
+
+    window.__timelines["scene-problem"] = tl;
+  </script>
+</template>

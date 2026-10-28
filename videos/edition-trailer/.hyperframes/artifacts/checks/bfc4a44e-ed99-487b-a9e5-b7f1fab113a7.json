@@ -1,0 +1,524 @@
+{
+  "ok": true,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 8,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "timeline_track_too_dense",
+        "severity": "warning",
+        "message": "Track 1 has 6 timed elements in this HTML file. Smaller sub-compositions keep timelines easier to read, iterate on, and diff.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move coherent scene groups into separate .html files under compositions/ and mount them from the parent with data-composition-src so the timeline stays easier to inspect, revise, and validate."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-c1\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-c1",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-c1\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-c2\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-c2",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-c2\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-c3\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-c3",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-c3\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-c4\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-c4",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-c4\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-c5\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-c5",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-c5\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-c6\"> is a timeline element that contains nested <div>. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-c6",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-c6\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"et-end\"> is a timeline element that contains nested <div id=\"et-end-label\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#et-end",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"et-end\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 36,
+    "samples": [
+      2,
+      6,
+      10,
+      14,
+      18,
+      22,
+      26,
+      30,
+      34
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      2,
+      10,
+      18,
+      26,
+      34
+    ],
+    "checked": 20,
+    "passed": 20
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 9,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "first_frame_empty",
+        "severity": "warning",
+        "message": "Frame 0 shows only the background, and the first frame is the thumbnail on social players: have the title or key image already on screen at 0 s instead of entering from nothing; see references/review.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      },
+      {
+        "code": "film_silent",
+        "severity": "warning",
+        "message": "This 36 s film has no sound source (no <audio>, no <video> with sound): add a music bed and sounds on the visible actions unless the person asked for silence; see references/sound.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 15 text elements stay under it for 0.5 s or more, the smallest \"Article 01\" at 15 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Article 01",
+        "selector": "#et-c1 > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 180,
+          "y": 422.94,
+          "width": 106.61,
+          "height": 19
+        },
+        "time": 0.625,
+        "times": [
+          0.625,
+          0.625,
+          0.625,
+          5.25,
+          5.25,
+          9.875,
+          9.875,
+          14.375,
+          14.375,
+          19,
+          19,
+          23.625,
+          23.625,
+          28.5,
+          30.875
+        ],
+        "fontPx": 15,
+        "floorPx": 28,
+        "seconds": 4.125,
+        "elements": [
+          {
+            "selector": "#et-c1 > div:nth-of-type(1)",
+            "text": "Article 01",
+            "fontPx": 15,
+            "time": 0.625,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c2 > div:nth-of-type(1)",
+            "text": "Article 02",
+            "fontPx": 15,
+            "time": 5.25,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c3 > div:nth-of-type(1)",
+            "text": "Article 03",
+            "fontPx": 15,
+            "time": 9.875,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c4 > div:nth-of-type(1)",
+            "text": "Article 04",
+            "fontPx": 15,
+            "time": 14.375,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c5 > div:nth-of-type(1)",
+            "text": "Article 05",
+            "fontPx": 15,
+            "time": 19,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c6 > div:nth-of-type(1)",
+            "text": "Article 06",
+            "fontPx": 15,
+            "time": 23.625,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-corner",
+            "text": "Quarterly Edition · Special Issue",
+            "fontPx": 18,
+            "time": 0.625,
+            "seconds": 27.5
+          },
+          {
+            "selector": "#et-end-label",
+            "text": "Special Edition · Quarter 3, 2026",
+            "fontPx": 18,
+            "time": 28.5,
+            "seconds": 7.5
+          },
+          {
+            "selector": "#et-end-cta",
+            "text": "researchwith.me/editions →",
+            "fontPx": 22,
+            "time": 30.875,
+            "seconds": 5.125
+          },
+          {
+            "selector": "#et-c1 > div:nth-of-type(4)",
+            "text": "Sustaining public digital utilities beyond launch grants",
+            "fontPx": 26,
+            "time": 0.625,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c2 > div:nth-of-type(4)",
+            "text": "Eliminating opaque replication gaps with containerised execution",
+            "fontPx": 26,
+            "time": 5.25,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c3 > div:nth-of-type(4)",
+            "text": "High-resolution microclimate data sovereignty via LoRaWAN",
+            "fontPx": 26,
+            "time": 9.875,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c4 > div:nth-of-type(4)",
+            "text": "150 community-owned journals — zero author-facing fees",
+            "fontPx": 26,
+            "time": 14.375,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c5 > div:nth-of-type(4)",
+            "text": "Tamper-evident lineage for genomics and physical simulations",
+            "fontPx": 26,
+            "time": 19,
+            "seconds": 4.125
+          },
+          {
+            "selector": "#et-c6 > div:nth-of-type(4)",
+            "text": "Grounded machine synthesis with zero hallucination",
+            "fontPx": 26,
+            "time": 23.625,
+            "seconds": 4.125
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.50 s (1.00–4.50 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 1,
+        "seconds": 3.5,
+        "floorSeconds": 3,
+        "until": 4.5
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.50 s (5.63–9.13 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 5.625,
+        "seconds": 3.5,
+        "floorSeconds": 3,
+        "until": 9.125
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.38 s (10.25–13.63 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 10.25,
+        "seconds": 3.375,
+        "floorSeconds": 3,
+        "until": 13.625
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.50 s (14.75–18.25 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 14.75,
+        "seconds": 3.5,
+        "floorSeconds": 3,
+        "until": 18.25
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.50 s (19.38–22.88 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 19.375,
+        "seconds": 3.5,
+        "floorSeconds": 3,
+        "until": 22.875
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 3.50 s (24.00–27.50 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 24,
+        "seconds": 3.5,
+        "floorSeconds": 3,
+        "until": 27.5
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 288
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 1,
+    "findings": [
+      {
+        "code": "audio_none",
+        "severity": "info",
+        "message": "The film has no sound: no clip in it plays audio.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      }
+    ]
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

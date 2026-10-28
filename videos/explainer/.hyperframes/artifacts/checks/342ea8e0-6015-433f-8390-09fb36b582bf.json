@@ -1,0 +1,738 @@
+{
+  "ok": true,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "filesScanned": 6
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "duration": 75,
+    "samples": [
+      4.167,
+      12.5,
+      20.833,
+      29.167,
+      37.5,
+      45.833,
+      54.167,
+      62.5,
+      70.833
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 0,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 5,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 4.4:1; WCAG AA requires 4.5:1.",
+        "text": "Before",
+        "fg": "rgb(120,113,108)",
+        "bg": "rgb(245,245,244)",
+        "ratio": 4.4,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(118,111,106)",
+        "large": false,
+        "selector": "#p-old-tag",
+        "dataAttributes": {},
+        "sourceFile": "compositions/problem.html",
+        "bbox": {
+          "x": 302,
+          "y": 371.328125,
+          "width": 515,
+          "height": 21
+        },
+        "time": 20.833,
+        "times": [
+          20.833
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 4.4:1; WCAG AA requires 4.5:1.",
+        "text": "annotated demonstrations needed",
+        "fg": "rgb(120,113,108)",
+        "bg": "rgb(245,245,244)",
+        "ratio": 4.4,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(118,111,106)",
+        "large": false,
+        "selector": "#p-old-stat-label",
+        "dataAttributes": {},
+        "sourceFile": "compositions/problem.html",
+        "bbox": {
+          "x": 302,
+          "y": 767.671875,
+          "width": 515,
+          "height": 21
+        },
+        "time": 20.833,
+        "times": [
+          20.833
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 3.6:1; WCAG AA requires 4.5:1.",
+        "text": "human demonstrations required",
+        "fg": "rgb(168,162,158)",
+        "bg": "rgb(120,53,15)",
+        "ratio": 3.6,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(186,182,179)",
+        "large": false,
+        "selector": "#p-new-stat-label",
+        "dataAttributes": {},
+        "sourceFile": "compositions/problem.html",
+        "bbox": {
+          "x": 1103,
+          "y": 767.671875,
+          "width": 515,
+          "height": 21
+        },
+        "time": 20.833,
+        "times": [
+          20.833
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 3.65:1; WCAG AA requires 4.5:1.",
+        "text": "Key Finding",
+        "fg": "rgb(120,113,108)",
+        "bg": "rgb(28,25,23)",
+        "ratio": 3.65,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(135,129,124)",
+        "large": false,
+        "selector": "#f-eyebrow",
+        "dataAttributes": {
+          "data-start": "0.3",
+          "data-duration": "17.7",
+          "data-track-index": "1"
+        },
+        "sourceFile": "compositions/finding.html",
+        "bbox": {
+          "x": 884.9375,
+          "y": 407,
+          "width": 150.109375,
+          "height": 24
+        },
+        "time": 37.5,
+        "times": [
+          37.5
+        ]
+      },
+      {
+        "code": "contrast_aa_failure",
+        "severity": "warning",
+        "message": "Contrast is 1.7:1; WCAG AA requires 4.5:1.",
+        "text": "DeepSeek-R1, 2025 · arXiv:2501.12948",
+        "fg": "rgb(68,64,60)",
+        "bg": "rgb(28,25,23)",
+        "ratio": 1.7,
+        "requiredRatio": 4.5,
+        "suggestedColor": "rgb(132,129,127)",
+        "large": false,
+        "selector": "#f-source",
+        "dataAttributes": {
+          "data-start": "0.6",
+          "data-duration": "17.1",
+          "data-track-index": "4"
+        },
+        "sourceFile": "compositions/finding.html",
+        "bbox": {
+          "x": 1548.140625,
+          "y": 1012,
+          "width": 291.859375,
+          "height": 20
+        },
+        "time": 37.5,
+        "times": [
+          37.5
+        ]
+      }
+    ],
+    "enabled": true,
+    "samples": [
+      4.167,
+      20.833,
+      37.5,
+      54.167,
+      70.833
+    ],
+    "checked": 40,
+    "passed": 35
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 15,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "first_frame_empty",
+        "severity": "warning",
+        "message": "Frame 0 shows only the background, and the first frame is the thumbnail on social players: have the title or key image already on screen at 0 s instead of entering from nothing; see references/review.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      },
+      {
+        "code": "film_silent",
+        "severity": "warning",
+        "message": "This 75 s film has no sound source (no <audio>, no <video> with sound): add a music bed and sounds on the visible actions unless the person asked for silence; see references/sound.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 2 text elements stay under it for 0.5 s or more, the smallest \"Paper Review\" at 22 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Paper Review",
+        "selector": "#t-badge",
+        "dataAttributes": {},
+        "sourceFile": "compositions/title.html",
+        "bbox": {
+          "x": 160,
+          "y": 513,
+          "width": 193.06,
+          "height": 26
+        },
+        "time": 0.501,
+        "times": [
+          0.501,
+          2.755
+        ],
+        "fontPx": 22,
+        "floorPx": 28,
+        "seconds": 8.138,
+        "elements": [
+          {
+            "selector": "#t-badge",
+            "text": "Paper Review",
+            "fontPx": 22,
+            "time": 0.501,
+            "seconds": 8.138
+          },
+          {
+            "selector": "#t-sub",
+            "text": "Prof. Marcus Vance · University of Cambridge",
+            "fontPx": 26,
+            "time": 2.755,
+            "seconds": 5.884
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 5.26 s (3.13–8.39 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 3.13,
+        "seconds": 5.259,
+        "floorSeconds": 3,
+        "until": 8.389
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"Before\" at 18 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Before",
+        "selector": "#p-old-tag",
+        "dataAttributes": {},
+        "sourceFile": "compositions/problem.html",
+        "bbox": {
+          "x": 292.12,
+          "y": 371.33,
+          "width": 78.67,
+          "height": 21
+        },
+        "time": 9.766,
+        "times": [
+          9.391,
+          9.766,
+          9.766,
+          9.766,
+          10.017,
+          10.017,
+          10.017
+        ],
+        "fontPx": 18,
+        "floorPx": 28,
+        "seconds": 13.523,
+        "elements": [
+          {
+            "selector": "#p-old-tag",
+            "text": "Before",
+            "fontPx": 18,
+            "time": 9.766,
+            "seconds": 13.523
+          },
+          {
+            "selector": "#p-old-stat-label",
+            "text": "annotated demonstrations needed",
+            "fontPx": 18,
+            "time": 9.766,
+            "seconds": 13.523
+          },
+          {
+            "selector": "#p-new-tag",
+            "text": "After · DeepSeek-R1",
+            "fontPx": 18,
+            "time": 10.017,
+            "seconds": 13.272
+          },
+          {
+            "selector": "#p-new-stat-label",
+            "text": "human demonstrations required",
+            "fontPx": 18,
+            "time": 10.017,
+            "seconds": 13.272
+          },
+          {
+            "selector": "#p-label",
+            "text": "The Breakthrough",
+            "fontPx": 20,
+            "time": 9.391,
+            "seconds": 13.898
+          },
+          {
+            "selector": "#p-old-detail",
+            "text": "Curate tens of thousands ofhuman-annotated reasoning traces.Expensive. Brittle. Hard to scale.",
+            "fontPx": 24,
+            "time": 9.766,
+            "seconds": 13.523
+          },
+          {
+            "selector": "#p-new-detail",
+            "text": "Rule-based reward signals.No annotated chain-of-thought.Reasoning emerges spontaneously.",
+            "fontPx": 24,
+            "time": 10.017,
+            "seconds": 13.272
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 10.52 s (12.40–22.91 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 12.396,
+        "seconds": 10.517,
+        "floorSeconds": 3,
+        "until": 22.913
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 5 text elements stay under it for 0.5 s or more, the smallest \"DeepSeek-R1, 2025 · arXiv:2501.12948\" at 16 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "DeepSeek-R1, 2025 · arXiv:2501.12948",
+        "selector": "#f-source",
+        "dataAttributes": {},
+        "sourceFile": "compositions/finding.html",
+        "bbox": {
+          "x": 1548.14,
+          "y": 1012,
+          "width": 291.86,
+          "height": 20
+        },
+        "time": 24.666,
+        "times": [
+          24.416,
+          24.666,
+          24.791,
+          25.668,
+          26.544
+        ],
+        "fontPx": 16,
+        "floorPx": 28,
+        "seconds": 17.153,
+        "elements": [
+          {
+            "selector": "#f-source",
+            "text": "DeepSeek-R1, 2025 · arXiv:2501.12948",
+            "fontPx": 16,
+            "time": 24.666,
+            "seconds": 17.153
+          },
+          {
+            "selector": "#f-eyebrow",
+            "text": "Key Finding",
+            "fontPx": 20,
+            "time": 24.416,
+            "seconds": 17.153
+          },
+          {
+            "selector": "#f-box-base > div:nth-of-type(3)",
+            "text": "Pretrained language model,no reasoning fine-tuning",
+            "fontPx": 20,
+            "time": 24.791,
+            "seconds": 11.895
+          },
+          {
+            "selector": "#f-box-rl > div:nth-of-type(3)",
+            "text": "Rule-based rewards only.Zero human demonstrations.",
+            "fontPx": 20,
+            "time": 25.668,
+            "seconds": 11.018
+          },
+          {
+            "selector": "#f-box-result > div:nth-of-type(3)",
+            "text": "Chain-of-thought appearsspontaneously",
+            "fontPx": 20,
+            "time": 26.544,
+            "seconds": 10.142
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 9.64 s (26.92–36.56 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 26.92,
+        "seconds": 9.641,
+        "floorSeconds": 3,
+        "until": 36.561
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 4.01 s (37.31–41.32 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 37.312,
+        "seconds": 4.007,
+        "floorSeconds": 3,
+        "until": 41.319
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 7 text elements stay under it for 0.5 s or more, the smallest \"How It Works\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "How It Works",
+        "selector": "#m-eyebrow",
+        "dataAttributes": {},
+        "sourceFile": "compositions/method.html",
+        "bbox": {
+          "x": 870.72,
+          "y": 502.42,
+          "width": 178.55,
+          "height": 24
+        },
+        "time": 42.446,
+        "times": [
+          42.446,
+          42.821,
+          45.2,
+          47.579,
+          49.958,
+          53.214,
+          53.214
+        ],
+        "fontPx": 20,
+        "floorPx": 28,
+        "seconds": 14.023,
+        "elements": [
+          {
+            "selector": "#m-eyebrow",
+            "text": "How It Works",
+            "fontPx": 20,
+            "time": 42.446,
+            "seconds": 14.023
+          },
+          {
+            "selector": "#m-step-1 > div:nth-of-type(3)",
+            "text": "The LLM attemptsto solve a problem",
+            "fontPx": 20,
+            "time": 42.821,
+            "seconds": 13.022
+          },
+          {
+            "selector": "#m-step-2 > div:nth-of-type(3)",
+            "text": "Correct answer = +1Wrong answer = 0No human judgement",
+            "fontPx": 20,
+            "time": 45.2,
+            "seconds": 10.643
+          },
+          {
+            "selector": "#m-step-3 > div:nth-of-type(3)",
+            "text": "GRPO optimizerreinforces successfulreasoning paths",
+            "fontPx": 20,
+            "time": 47.579,
+            "seconds": 8.264
+          },
+          {
+            "selector": "#m-step-4 > div:nth-of-type(3)",
+            "text": "The model learnsto think step by stepwithout being taught to",
+            "fontPx": 20,
+            "time": 49.958,
+            "seconds": 5.885
+          },
+          {
+            "selector": "#m-footer",
+            "text": "The loop repeats over 2 million steps.",
+            "fontPx": 22,
+            "time": 53.214,
+            "seconds": 3.255
+          },
+          {
+            "selector": "#m-footer > strong:nth-of-type(1)",
+            "text": "Reasoning ability is not programmed — it is discovered.",
+            "fontPx": 22,
+            "time": 53.214,
+            "seconds": 3.255
+          }
+        ]
+      },
+      {
+        "code": "line_unread",
+        "severity": "warning",
+        "message": "\"The loop repeats over 2 million steps. Reasoning ability ...\" (15 words) is on screen 3.37 s (±0.01 s), under its 3.75 s floor: hold it about 0.5 s + 0.3 s a word (5.00 s here) before it leaves or changes; see references/motion.md.",
+        "text": "The loop repeats over 2 million steps. Reasoning ability is not programmed — it is discovered.",
+        "selector": "#m-footer",
+        "dataAttributes": {},
+        "sourceFile": "compositions/method.html",
+        "bbox": {
+          "x": 665.8,
+          "y": 712.09,
+          "width": 588.3900000000001,
+          "height": 60.10000000000002
+        },
+        "time": 53.104,
+        "words": 15,
+        "seconds": 3.365,
+        "floorSeconds": 3.75
+      },
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 4 text elements stay under it for 0.5 s or more, the smallest \"Key Takeaways\" at 20 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Key Takeaways",
+        "selector": "#tk-eyebrow",
+        "dataAttributes": {},
+        "sourceFile": "compositions/takeaways.html",
+        "bbox": {
+          "x": 200,
+          "y": 499.07,
+          "width": 196.22,
+          "height": 24
+        },
+        "time": 57.471,
+        "times": [
+          57.471,
+          57.972,
+          62.604,
+          67.112
+        ],
+        "fontPx": 20,
+        "floorPx": 28,
+        "seconds": 17.529,
+        "elements": [
+          {
+            "selector": "#tk-eyebrow",
+            "text": "Key Takeaways",
+            "fontPx": 20,
+            "time": 57.471,
+            "seconds": 17.529
+          },
+          {
+            "selector": "#tk-1 > div:nth-of-type(1)",
+            "text": "01",
+            "fontPx": 20,
+            "time": 57.972,
+            "seconds": 17.028
+          },
+          {
+            "selector": "#tk-2 > div:nth-of-type(1)",
+            "text": "02",
+            "fontPx": 20,
+            "time": 62.604,
+            "seconds": 12.396
+          },
+          {
+            "selector": "#tk-3 > div:nth-of-type(1)",
+            "text": "03",
+            "fontPx": 20,
+            "time": 67.112,
+            "seconds": 7.888
+          }
+        ]
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 4.13 s (58.35–62.48 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 58.347,
+        "seconds": 4.132,
+        "floorSeconds": 3,
+        "until": 62.479
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 4.01 s (62.98–66.99 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 62.98,
+        "seconds": 4.007,
+        "floorSeconds": 3,
+        "until": 66.987
+      },
+      {
+        "code": "dead_stretch",
+        "severity": "warning",
+        "message": "Nothing on screen changes for 4.01 s (67.49–71.49 s): start the next move within 3 s, or put data-hold on the element whose stillness is deliberate; see references/motion.md.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 67.487,
+        "seconds": 4.007,
+        "floorSeconds": 3,
+        "until": 71.494
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 599
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 1,
+    "findings": [
+      {
+        "code": "audio_none",
+        "severity": "info",
+        "message": "The film has no sound: no clip in it plays audio.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      }
+    ]
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

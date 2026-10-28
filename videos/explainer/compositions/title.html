@@ -1,0 +1,86 @@
+<template>
+  <style>
+    #scene-title {
+      position: absolute;
+      inset: 0;
+      background: #78350f;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 160px;
+    }
+    #t-badge {
+      font-family: Inter, sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fbbf24;
+      margin-bottom: 28px;
+    }
+    #t-rule {
+      width: 80px;
+      height: 4px;
+      background: #fbbf24;
+      border-radius: 2px;
+      margin-bottom: 40px;
+      transform-origin: left center;
+    }
+    #t-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: 92px;
+      font-weight: 700;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: #fafaf9;
+      max-width: 1400px;
+    }
+    #t-sub {
+      font-family: Inter, sans-serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: #a8a29e;
+      margin-top: 48px;
+    }
+  </style>
+  <div id="scene-title" data-composition-id="scene-title" data-width="1920" data-height="1080">
+    <div id="t-badge" class="clip" data-start="0.3" data-duration="8.7" data-track-index="1">Paper Review</div>
+    <div id="t-rule"  class="clip" data-start="0.7" data-duration="8.3" data-track-index="2"></div>
+    <h1  id="t-headline" class="clip" data-start="0.9" data-duration="8.1" data-track-index="3">
+      Deconstructing DeepSeek-R1:<br>How Pure RL Unlocked<br>Emergent Reasoning
+    </h1>
+    <p   id="t-sub" class="clip" data-start="2.6" data-duration="6.4" data-track-index="4">Prof. Marcus Vance · University of Cambridge</p>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    tl.fromTo("#t-badge",
+      { opacity: 0 },
+      { opacity: 1, duration: 0.45, ease: "power3.out" },
+      0.3
+    );
+    tl.fromTo("#t-rule",
+      { scaleX: 0 },
+      { scaleX: 1, duration: 0.45, ease: "power3.out" },
+      0.7
+    );
+    tl.fromTo("#t-headline",
+      { opacity: 0, filter: "blur(12px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power4.out" },
+      0.9
+    );
+    tl.fromTo("#t-sub",
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+      2.6
+    );
+
+    // Exit: blur out at 8.4s
+    tl.to("#t-headline", { opacity: 0, filter: "blur(8px)", duration: 0.3, ease: "power2.in" }, 8.4);
+    tl.to("#t-badge",    { opacity: 0, duration: 0.25, ease: "power2.in" }, 8.4);
+    tl.to("#t-sub",      { opacity: 0, duration: 0.25, ease: "power2.in" }, 8.4);
+    tl.to("#t-rule",     { scaleX: 0, duration: 0.3, ease: "power2.in" }, 8.4);
+
+    window.__timelines["scene-title"] = tl;
+  </script>
+</template>

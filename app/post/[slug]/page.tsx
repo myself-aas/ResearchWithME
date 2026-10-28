@@ -14,6 +14,7 @@ import MarkdownBody from '@/components/MarkdownBody';
 import { AUTHORS } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
+import VideoEmbed from '@/components/VideoEmbed';
 
 // The reader mixes bundled articles with live CMS posts, so the route cannot be
 // limited to build-time slugs. It still uses ISR: the first request renders and
@@ -182,6 +183,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 Editorial imagery for this review. Reviewed artifacts are linked in the record below.
               </figcaption>
             </figure>
+
+            {/* HyperFrames explainer video — rendered per article slug */}
+            <section aria-labelledby="explainer-video-heading" className="mt-8">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
+                  Visual explainer
+                </span>
+              </div>
+              <VideoEmbed
+                src={`/videos/explainer-${slug}.mp4`}
+                label={`Animated explainer for: ${article.title}`}
+              />
+            </section>
 
             <section aria-labelledby="takeaways-heading" className="mt-10 border-y border-stone-200 py-6">
               <h2 id="takeaways-heading" className="font-serif text-xl font-semibold text-stone-900">

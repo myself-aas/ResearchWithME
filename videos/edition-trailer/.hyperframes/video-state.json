@@ -1,0 +1,147 @@
+{
+  "version": 1,
+  "historyId": "864d9556-3b31-4026-89c0-96238798cb33",
+  "currentRevision": "ce303da7-14c5-492f-85d5-b94384f0d250",
+  "pendingChanges": false,
+  "files": {
+    "AGENTS.md": {
+      "hash": "1b36171117cb7c18f4100a0db6a3782ff2e096115995733200445cc2e80a4060",
+      "content": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\1b\\1b36171117cb7c18f4100a0db6a3782ff2e096115995733200445cc2e80a4060"
+    },
+    "CLAUDE.md": {
+      "hash": "1b36171117cb7c18f4100a0db6a3782ff2e096115995733200445cc2e80a4060",
+      "content": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\1b\\1b36171117cb7c18f4100a0db6a3782ff2e096115995733200445cc2e80a4060"
+    },
+    "hyperframes.json": {
+      "hash": "53dbce1e19aa713cbb12ee0bc4d206143b45ab15e6ffbfcaa8f69572d4d24d50",
+      "content": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\53\\53dbce1e19aa713cbb12ee0bc4d206143b45ab15e6ffbfcaa8f69572d4d24d50"
+    },
+    "index.html": {
+      "hash": "463f38aeed50c1f5586bfe6467d5c2f35c4519160db3f27c6e1921036fbdf559",
+      "content": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\46\\463f38aeed50c1f5586bfe6467d5c2f35c4519160db3f27c6e1921036fbdf559"
+    },
+    "meta.json": {
+      "hash": "7fb596da101a2669eee0972cb309d282065c30b72e56193fe23cc270e054d3ea",
+      "content": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\7f\\7fb596da101a2669eee0972cb309d282065c30b72e56193fe23cc270e054d3ea"
+    },
+    "package.json": {
+      "hash": "a66530ad79c88f4e3c0a8c0f9ce23b0bfafdde80550fdbf430132e83bad79a08",
+      "content": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\a6\\a66530ad79c88f4e3c0a8c0f9ce23b0bfafdde80550fdbf430132e83bad79a08"
+    }
+  },
+  "revisions": {
+    "ce303da7-14c5-492f-85d5-b94384f0d250": {
+      "actor": {
+        "kind": "outside",
+        "name": "Outside"
+      },
+      "label": "Changed outside the app",
+      "startedAt": 1793163696627,
+      "endedAt": 1793163696632,
+      "files": {
+        "index.html": {
+          "before": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\09\\09af6778de24049592a056401d07ffb2bc1db29503a2387b0c29cc3e210b0cd5",
+          "after": "C:\\Users\\AshifAhmedShuvo\\.cache\\hyperframes\\history\\864d9556-3b31-4026-89c0-96238798cb33\\blobs\\46\\463f38aeed50c1f5586bfe6467d5c2f35c4519160db3f27c6e1921036fbdf559"
+        }
+      }
+    }
+  },
+  "checks": {
+    "latest": {
+      "revision": "ce303da7-14c5-492f-85d5-b94384f0d250",
+      "id": "eb9c7adf-09fb-4a98-aa5c-e263b154a890"
+    },
+    "revisions": {
+      "ce303da7-14c5-492f-85d5-b94384f0d250": [
+        {
+          "id": "bfc4a44e-ed99-487b-a9e5-b7f1fab113a7",
+          "scope": "project",
+          "report": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\.hyperframes\\artifacts\\checks\\bfc4a44e-ed99-487b-a9e5-b7f1fab113a7.json",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 10000,
+              "contrast": true,
+              "strict": false,
+              "snapshots": false,
+              "browserGpuMode": "auto"
+            }
+          },
+          "createdAt": 1793165841242,
+          "contentHash": "8e914c057496661b1ea627fb749f9617a6da3f2e5ddd3b9539adb4142f1e4db2",
+          "revision": "ce303da7-14c5-492f-85d5-b94384f0d250",
+          "inputFingerprint": "3b8f7123b51cc1cba1f5bd21a98966c9cf6b0757b44a90ccac545ecb92bf2612",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        },
+        {
+          "id": "eb9c7adf-09fb-4a98-aa5c-e263b154a890",
+          "scope": "project",
+          "report": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\.hyperframes\\artifacts\\checks\\eb9c7adf-09fb-4a98-aa5c-e263b154a890.json",
+          "metadata": {
+            "ok": true,
+            "browserSkipped": false,
+            "options": {
+              "samples": 9,
+              "atTransitions": false,
+              "maxIssues": 80,
+              "collapseStatic": true,
+              "tolerance": 2,
+              "timeout": 10000,
+              "contrast": true,
+              "strict": false,
+              "snapshots": false,
+              "browserGpuMode": "auto"
+            }
+          },
+          "createdAt": 1793165966092,
+          "contentHash": "8e914c057496661b1ea627fb749f9617a6da3f2e5ddd3b9539adb4142f1e4db2",
+          "revision": "ce303da7-14c5-492f-85d5-b94384f0d250",
+          "inputFingerprint": "3b8f7123b51cc1cba1f5bd21a98966c9cf6b0757b44a90ccac545ecb92bf2612",
+          "inputScope": "local-project-files",
+          "attribution": "recorded-revision"
+        }
+      ]
+    },
+    "unversioned": [
+      {
+        "id": "cd20aba2-f327-4f9b-b5f5-403098c6c4fb",
+        "scope": "project",
+        "report": "G:\\Github\\ResearchWithME\\videos\\edition-trailer\\.hyperframes\\artifacts\\checks\\cd20aba2-f327-4f9b-b5f5-403098c6c4fb.json",
+        "metadata": {
+          "ok": false,
+          "browserSkipped": true,
+          "options": {
+            "samples": 9,
+            "atTransitions": false,
+            "maxIssues": 80,
+            "collapseStatic": true,
+            "tolerance": 2,
+            "timeout": 10000,
+            "contrast": true,
+            "strict": false,
+            "snapshots": false,
+            "browserGpuMode": "auto"
+          }
+        },
+        "createdAt": 1793163579078,
+        "contentHash": "9ddff510aa0c1487e511b1c50f21cff4ef93151f617cfe68dbadba162ec8bf6c",
+        "revision": null,
+        "inputFingerprint": "78b54ee51361fecda5a47e00815bbb70e3db7cc2b023d198c8898c10415abf3a",
+        "inputScope": "local-project-files",
+        "attribution": "unversioned"
+      }
+    ]
+  },
+  "snapshots": {
+    "latest": null,
+    "revisions": {},
+    "unversioned": []
+  }
+}

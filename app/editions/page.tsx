@@ -3,6 +3,7 @@ import { ArrowRight, FileText } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import PrintButton from '@/components/PrintButton';
+import VideoEmbed from '@/components/VideoEmbed';
 import { PDF_EDITIONS_DATA, PUBLICATIONS_DATA } from '@/lib/research-data';
 
 export default function EditionsArchivePage() {
@@ -25,7 +26,7 @@ export default function EditionsArchivePage() {
         </p>
 
         <ul className="mt-8 grid gap-8 lg:grid-cols-2">
-          {PDF_EDITIONS_DATA.map((edition) => {
+          {PDF_EDITIONS_DATA.map((edition, editionIndex) => {
             const featuredPapers = PUBLICATIONS_DATA.filter((paper) =>
               edition.featuredArticleIds.includes(paper.id),
             );
@@ -51,6 +52,18 @@ export default function EditionsArchivePage() {
                     </h2>
                     <p className="mt-2 text-sm font-medium text-amber-900">{edition.theme}</p>
                     <p className="mt-3 max-w-prose text-base leading-relaxed text-stone-700">{edition.description}</p>
+
+                    {editionIndex === 0 && (
+                      <div className="mt-5">
+                        <span className="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900 mb-3">
+                          Edition trailer
+                        </span>
+                        <VideoEmbed
+                          src="/videos/edition-trailer.mp4"
+                          label={`Trailer for ${edition.title}`}
+                        />
+                      </div>
+                    )}
 
                     <dl className="mt-6 grid grid-cols-2 gap-4 border-y border-stone-200 py-4 text-sm sm:grid-cols-4">
                       <div>

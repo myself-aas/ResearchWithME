@@ -1,0 +1,339 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 2,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"rc-chart\"> is a timeline element that contains nested <svg id=\"rc-svg\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#rc-chart",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\radar-chart\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"rc-chart\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"rc-panel\"> is a timeline element that contains nested <div id=\"rc-author-name\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#rc-panel",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\radar-chart\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"rc-panel\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "page_error",
+        "severity": "error",
+        "message": "Uncaught TypeError: Cannot create property 'parent' on number '0.7'",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {
+          "data-composition-id": "main",
+          "data-start": "0",
+          "data-duration": "6",
+          "data-width": "1920",
+          "data-height": "1080"
+        },
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 1920,
+          "height": 1080
+        },
+        "time": 0
+      }
+    ]
+  },
+  "layout": {
+    "ok": false,
+    "errorCount": 1,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "sweep_static",
+        "severity": "error",
+        "time": 0,
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "rect": {
+          "left": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "width": 0,
+          "height": 0
+        },
+        "message": "Timeline did not advance under seek; every green verdict on this run is unreliable.",
+        "fixHint": "An animation on the page never moved under seek. Build it on the paused GSAP timeline registered in `window.__timelines[compositionId]`, or as a CSS animation, so the seek drives it.",
+        "firstSeen": 0,
+        "lastSeen": 0,
+        "occurrences": 1,
+        "heldMs": 0,
+        "times": [
+          0
+        ]
+      },
+      {
+        "code": "container_overflow",
+        "severity": "warning",
+        "time": 0.333,
+        "selector": "#rc-labels",
+        "message": "Element extends outside a clipping layout container.",
+        "rect": {
+          "left": 143.42,
+          "top": 269,
+          "right": 834.2,
+          "bottom": 818,
+          "width": 690.78,
+          "height": 549
+        },
+        "containerSelector": "#rc-svg",
+        "fixHint": "Resize/reposition the child or container, or mark intentional overflow with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 160,
+          "top": 190,
+          "right": 860,
+          "bottom": 890,
+          "width": 700,
+          "height": 700
+        },
+        "overflow": {
+          "left": 16.58
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 143.42,
+          "y": 269,
+          "width": 690.78,
+          "height": 549
+        },
+        "firstSeen": 0.333,
+        "lastSeen": 5.667,
+        "occurrences": 9,
+        "heldMs": 5334,
+        "times": [
+          0.333,
+          1,
+          1.667,
+          2.333,
+          3,
+          3.667,
+          4.333,
+          5,
+          5.667
+        ]
+      }
+    ],
+    "duration": 6,
+    "samples": [
+      0.333,
+      1,
+      1.667,
+      2.333,
+      3,
+      3.667,
+      4.333,
+      5,
+      5.667
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 2,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      0.333,
+      1.667,
+      3,
+      4.333,
+      5.667
+    ],
+    "checked": 40,
+    "passed": 40
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 8 text elements stay under it for 0.5 s or more, the smallest \"Community\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Community",
+        "selector": "#rc-m1 > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1120,
+          "y": 534.4,
+          "width": 93.59,
+          "height": 20
+        },
+        "time": 0,
+        "times": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 6,
+        "elements": [
+          {
+            "selector": "#rc-m1 > div:nth-of-type(1)",
+            "text": "Community",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-val-1",
+            "text": "0",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-m2 > div:nth-of-type(1)",
+            "text": "Methodology Rigor",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-val-2",
+            "text": "0",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-m3 > div:nth-of-type(1)",
+            "text": "Citation Impact",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-val-3",
+            "text": "0",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-m4 > div:nth-of-type(1)",
+            "text": "Open Transparency",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          },
+          {
+            "selector": "#rc-val-4",
+            "text": "0",
+            "fontPx": 17,
+            "time": 0,
+            "seconds": 6
+          }
+        ]
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 48
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 1,
+    "findings": [
+      {
+        "code": "audio_none",
+        "severity": "info",
+        "message": "The film has no sound: no clip in it plays audio.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      }
+    ]
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}

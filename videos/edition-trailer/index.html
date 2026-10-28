@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --amber:     #78350f;
+        --amber-mid: #92400e;
+        --gold:      #b45309;
+        --parchment: #fafaf9;
+        --stone-100: #f5f5f4;
+        --ink:       #1c1917;
+        --muted:     #78716c;
+        --border:    #e7e5e4;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--parchment);
+      }
+      #root {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        font-family: Inter, sans-serif;
+      }
+
+      /* Persistent ground */
+      #et-bg {
+        position: absolute;
+        inset: 0;
+        background: var(--parchment);
+      }
+
+      /* Edition label pinned bottom-left throughout */
+      #et-corner {
+        position: absolute;
+        left: 80px;
+        bottom: 64px;
+        font-family: Inter, sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* Article title cards */
+      .et-card {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 180px;
+      }
+      .et-card-num {
+        font-family: Inter, sans-serif;
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--amber);
+        margin-bottom: 24px;
+      }
+      .et-card-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 76px;
+        font-weight: 700;
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        max-width: 1320px;
+      }
+      .et-card-sub {
+        font-family: Inter, sans-serif;
+        font-size: 26px;
+        font-weight: 400;
+        color: var(--muted);
+        margin-top: 32px;
+        max-width: 1100px;
+        line-height: 1.5;
+      }
+      .et-rule {
+        width: 60px;
+        height: 3px;
+        background: var(--amber);
+        border-radius: 2px;
+        margin-bottom: 32px;
+        transform-origin: left center;
+      }
+
+      /* End card */
+      #et-end {
+        position: absolute;
+        inset: 0;
+        background: var(--amber);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 180px;
+      }
+      #et-end-label {
+        font-family: Inter, sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #fbbf24;
+        margin-bottom: 24px;
+      }
+      #et-end-rule {
+        width: 60px;
+        height: 3px;
+        background: #fbbf24;
+        border-radius: 2px;
+        margin-bottom: 36px;
+        transform-origin: left center;
+      }
+      #et-end-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 84px;
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: #fafaf9;
+        max-width: 1300px;
+      }
+      #et-end-period {
+        font-family: Inter, sans-serif;
+        font-size: 28px;
+        font-weight: 400;
+        color: #f5ede0;
+        margin-top: 40px;
+      }
+      #et-end-cta {
+        font-family: Inter, sans-serif;
+        font-size: 22px;
+        font-weight: 600;
+        color: #fbbf24;
+        margin-top: 56px;
+        letter-spacing: 0.04em;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="36"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="et-bg" class="clip" data-start="0" data-duration="30" data-track-index="0"></div>
+
+      <!-- Corner label -->
+      <div id="et-corner" class="clip" data-start="0.4" data-duration="29.6" data-track-index="5">
+        Quarterly Edition · Special Issue
+      </div>
+
+      <!-- Card 1: Open Infrastructure -->
+      <div id="et-c1" class="et-card clip" data-start="0.4" data-duration="4.3" data-track-index="1">
+        <div class="et-card-num">Article 01</div>
+        <div class="et-rule" id="et-r1"></div>
+        <div class="et-card-title">The Long View on Open Infrastructure</div>
+        <div class="et-card-sub">Sustaining public digital utilities beyond launch grants</div>
+      </div>
+
+      <!-- Card 2: Autonomous Verification -->
+      <div id="et-c2" class="et-card clip" data-start="5" data-duration="4.3" data-track-index="1">
+        <div class="et-card-num">Article 02</div>
+        <div class="et-rule" id="et-r2"></div>
+        <div class="et-card-title">Autonomous Verification in Peer Review</div>
+        <div class="et-card-sub">Eliminating opaque replication gaps with containerised execution</div>
+      </div>
+
+      <!-- Card 3: Decentralised Sensing -->
+      <div id="et-c3" class="et-card clip" data-start="9.6" data-duration="4.3" data-track-index="1">
+        <div class="et-card-num">Article 03</div>
+        <div class="et-rule" id="et-r3"></div>
+        <div class="et-card-title">Decentralised Open Sensor Meshes</div>
+        <div class="et-card-sub">High-resolution microclimate data sovereignty via LoRaWAN</div>
+      </div>
+
+      <!-- Card 4: Diamond Open Access -->
+      <div id="et-c4" class="et-card clip" data-start="14.2" data-duration="4.3" data-track-index="1">
+        <div class="et-card-num">Article 04</div>
+        <div class="et-rule" id="et-r4"></div>
+        <div class="et-card-title">The Economics of Diamond Open Access</div>
+        <div class="et-card-sub">150 community-owned journals — zero author-facing fees</div>
+      </div>
+
+      <!-- Card 5: Cryptographic Provenance -->
+      <div id="et-c5" class="et-card clip" data-start="18.8" data-duration="4.3" data-track-index="1">
+        <div class="et-card-num">Article 05</div>
+        <div class="et-rule" id="et-r5"></div>
+        <div class="et-card-title">Cryptographic Provenance in Data Commons</div>
+        <div class="et-card-sub">Tamper-evident lineage for genomics and physical simulations</div>
+      </div>
+
+      <!-- Card 6: MCP for Scholarship -->
+      <div id="et-c6" class="et-card clip" data-start="23.4" data-duration="4.3" data-track-index="1">
+        <div class="et-card-num">Article 06</div>
+        <div class="et-rule" id="et-r6"></div>
+        <div class="et-card-title">Model Context Protocol for Scholarship</div>
+        <div class="et-card-sub">Grounded machine synthesis with zero hallucination</div>
+      </div>
+
+      <!-- End card -->
+      <div id="et-end" class="clip" data-start="28.2" data-duration="7.8" data-track-index="2">
+        <div id="et-end-label">Special Edition · Quarter 3, 2026</div>
+        <div id="et-end-rule"></div>
+        <div id="et-end-title">Sustaining Digital Research Infrastructure</div>
+        <div id="et-end-period">Six months of empirical investigation · Open access · CC BY 4.0</div>
+        <div id="et-end-cta">researchwith.me/editions →</div>
+      </div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Corner label
+      tl.fromTo("#et-corner",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.5, ease: "power2.out" },
+        0.4
+      );
+
+      // Helper: animate one article card in and out
+      function card(id, ruleId, inAt, outAt) {
+        // Rule draws
+        tl.fromTo(ruleId,
+          { scaleX: 0 },
+          { scaleX: 1, duration: 0.35, ease: "power3.out" },
+          inAt
+        );
+        // Card title blurs in
+        tl.fromTo(id,
+          { opacity: 0, filter: "blur(10px)" },
+          { opacity: 1, filter: "blur(0px)", duration: 0.45, ease: "power4.out" },
+          inAt + 0.1
+        );
+        // Whip exit: fast horizontal smear
+        tl.to(id,
+          { opacity: 0, x: -60, filter: "blur(8px)", duration: 0.22, ease: "power3.in" },
+          outAt
+        );
+      }
+
+      card("#et-c1", "#et-r1", 0.4,  4.5);
+      card("#et-c2", "#et-r2", 5.0,  9.1);
+      card("#et-c3", "#et-r3", 9.6,  13.7);
+      card("#et-c4", "#et-r4", 14.2, 18.3);
+      card("#et-c5", "#et-r5", 18.8, 22.9);
+      card("#et-c6", "#et-r6", 23.4, 27.5);
+
+      // Corner label exit
+      tl.to("#et-corner", { opacity: 0, duration: 0.25, ease: "power2.in" }, 27.9);
+
+      // End card — elements stagger in
+      tl.fromTo("#et-end-label",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.4, ease: "power3.out" },
+        28.4
+      );
+      tl.fromTo("#et-end-rule",
+        { scaleX: 0 },
+        { scaleX: 1, duration: 0.4, ease: "power3.out" },
+        28.8
+      );
+      tl.fromTo("#et-end-title",
+        { opacity: 0, filter: "blur(12px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.55, ease: "power4.out" },
+        29.1
+      );
+      tl.fromTo("#et-end-period",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
+        30.0
+      );
+      tl.fromTo("#et-end-cta",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" },
+        30.8
+      );
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>

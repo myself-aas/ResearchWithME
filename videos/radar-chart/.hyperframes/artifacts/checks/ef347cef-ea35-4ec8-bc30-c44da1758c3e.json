@@ -1,0 +1,434 @@
+{
+  "ok": false,
+  "strict": false,
+  "browserSkipped": false,
+  "lint": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 2,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"rc-chart\"> is a timeline element that contains nested <svg id=\"rc-svg\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#rc-chart",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\radar-chart\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"rc-chart\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      },
+      {
+        "code": "nested_structure_needs_subcomposition",
+        "severity": "warning",
+        "message": "<div id=\"rc-panel\"> is a timeline element that contains nested <div id=\"rc-author-name\">. The timeline shows one row per top-level element, and the root composition is built only from sub-compositions.",
+        "selector": "#rc-panel",
+        "dataAttributes": {},
+        "sourceFile": "G:\\Github\\ResearchWithME\\videos\\radar-chart\\index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0,
+        "fixHint": "Move <div id=\"rc-panel\"> and its contents into a sub-composition file and mount it with data-composition-src."
+      }
+    ],
+    "filesScanned": 1
+  },
+  "runtime": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": []
+  },
+  "layout": {
+    "ok": false,
+    "errorCount": 2,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "text_box_overflow",
+        "severity": "error",
+        "time": 3.667,
+        "selector": "#rc-lbl-4",
+        "message": "Text extends outside its nearest visual/container box.",
+        "rect": {
+          "left": 143.42,
+          "top": 457,
+          "right": 260,
+          "bottom": 474,
+          "width": 116.58,
+          "height": 17
+        },
+        "containerSelector": "#rc-svg",
+        "text": "Transparency",
+        "fixHint": "Text is 117px x 17px inside 700px x 700px and overflows by up to 17px; widen the container to at least ~717px, or allow wrapping with max-width/fitTextFontSize.",
+        "containerRect": {
+          "left": 160,
+          "top": 190,
+          "right": 860,
+          "bottom": 890,
+          "width": 700,
+          "height": 700
+        },
+        "overflow": {
+          "left": 16.58
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 143.42,
+          "y": 457,
+          "width": 116.58,
+          "height": 17
+        },
+        "firstSeen": 3.667,
+        "lastSeen": 5.667,
+        "occurrences": 4,
+        "heldMs": 2000,
+        "times": [
+          3.667,
+          4.333,
+          5,
+          5.667
+        ]
+      },
+      {
+        "code": "text_occluded",
+        "severity": "error",
+        "time": 3.667,
+        "selector": "#rc-lbl-4",
+        "message": "Text is hidden beneath an opaque element.",
+        "rect": {
+          "left": 143.42,
+          "top": 453,
+          "right": 260,
+          "bottom": 474,
+          "width": 116.58,
+          "height": 21
+        },
+        "containerSelector": "#rc-bg",
+        "text": "Transparency",
+        "fixHint": "Give the text its own zone, raise its stacking order above the covering element, or mark intentional layering with data-layout-allow-occlusion.",
+        "coveredFraction": 0.22,
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 143.42,
+          "y": 453,
+          "width": 116.58,
+          "height": 21
+        },
+        "firstSeen": 3.667,
+        "lastSeen": 5.667,
+        "occurrences": 4,
+        "heldMs": 2000,
+        "times": [
+          3.667,
+          4.333,
+          5,
+          5.667
+        ]
+      },
+      {
+        "code": "container_overflow",
+        "severity": "warning",
+        "time": 0.333,
+        "selector": "#rc-labels",
+        "message": "Element extends outside a clipping layout container.",
+        "rect": {
+          "left": 143.42,
+          "top": 269,
+          "right": 834.2,
+          "bottom": 818,
+          "width": 690.78,
+          "height": 549
+        },
+        "containerSelector": "#rc-svg",
+        "fixHint": "Resize/reposition the child or container, or mark intentional overflow with data-layout-allow-overflow.",
+        "containerRect": {
+          "left": 160,
+          "top": 190,
+          "right": 860,
+          "bottom": 890,
+          "width": 700,
+          "height": 700
+        },
+        "overflow": {
+          "left": 16.58
+        },
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 143.42,
+          "y": 269,
+          "width": 690.78,
+          "height": 549
+        },
+        "firstSeen": 0.333,
+        "lastSeen": 5.667,
+        "occurrences": 9,
+        "heldMs": 5334,
+        "times": [
+          0.333,
+          1,
+          1.667,
+          2.333,
+          3,
+          3.667,
+          4.333,
+          5,
+          5.667
+        ]
+      }
+    ],
+    "duration": 6,
+    "samples": [
+      0.333,
+      1,
+      1.667,
+      2.333,
+      3,
+      3.667,
+      4.333,
+      5,
+      5.667
+    ],
+    "transitionSamples": [],
+    "transitionSamplesDropped": 0,
+    "tolerance": 2,
+    "totalIssueCount": 3,
+    "truncated": false
+  },
+  "motion": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": false,
+    "samples": 0
+  },
+  "contrast": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 0,
+    "findings": [],
+    "enabled": true,
+    "samples": [
+      0.333,
+      1.667,
+      3,
+      4.333,
+      5.667
+    ],
+    "checked": 57,
+    "passed": 57
+  },
+  "craft": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 1,
+    "infoCount": 0,
+    "findings": [
+      {
+        "code": "text_below_floor",
+        "severity": "warning",
+        "message": "Type floor is 28 px (2.6% of the 1080 px short side, what a phone can read) and 16 text elements stay under it for 0.5 s or more, the smallest \"Article Quality\" at 17 px: set reading text to at least 28 px, or put data-layout-ignore on text that is texture rather than reading; see references/look.md.",
+        "text": "Article Quality",
+        "selector": "#rc-m0 > div:nth-of-type(1)",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 1120,
+          "y": 494.4,
+          "width": 115.03,
+          "height": 20
+        },
+        "time": 0.75,
+        "times": [
+          0.5,
+          0.75,
+          0.75,
+          0.875,
+          1.375,
+          1.375,
+          1.5,
+          2,
+          2,
+          2.125,
+          2.625,
+          2.625,
+          2.75,
+          3.25,
+          3.25,
+          3.375
+        ],
+        "fontPx": 17,
+        "floorPx": 28,
+        "seconds": 5.25,
+        "elements": [
+          {
+            "selector": "#rc-m0 > div:nth-of-type(1)",
+            "text": "Article Quality",
+            "fontPx": 17,
+            "time": 0.75,
+            "seconds": 5.25
+          },
+          {
+            "selector": "#rc-val-0",
+            "text": "15",
+            "fontPx": 17,
+            "time": 0.75,
+            "seconds": 5.25
+          },
+          {
+            "selector": "#rc-m1 > div:nth-of-type(1)",
+            "text": "Community",
+            "fontPx": 17,
+            "time": 1.375,
+            "seconds": 4.625
+          },
+          {
+            "selector": "#rc-val-1",
+            "text": "17",
+            "fontPx": 17,
+            "time": 1.375,
+            "seconds": 4.625
+          },
+          {
+            "selector": "#rc-m2 > div:nth-of-type(1)",
+            "text": "Methodology Rigor",
+            "fontPx": 17,
+            "time": 2,
+            "seconds": 4
+          },
+          {
+            "selector": "#rc-val-2",
+            "text": "27",
+            "fontPx": 17,
+            "time": 2,
+            "seconds": 4
+          },
+          {
+            "selector": "#rc-m3 > div:nth-of-type(1)",
+            "text": "Citation Impact",
+            "fontPx": 17,
+            "time": 2.625,
+            "seconds": 3.375
+          },
+          {
+            "selector": "#rc-val-3",
+            "text": "14",
+            "fontPx": 17,
+            "time": 2.625,
+            "seconds": 3.375
+          },
+          {
+            "selector": "#rc-m4 > div:nth-of-type(1)",
+            "text": "Open Transparency",
+            "fontPx": 17,
+            "time": 3.25,
+            "seconds": 2.75
+          },
+          {
+            "selector": "#rc-val-4",
+            "text": "25",
+            "fontPx": 17,
+            "time": 3.25,
+            "seconds": 2.75
+          },
+          {
+            "selector": "#rc-lbl-0",
+            "text": "Article Quality",
+            "fontPx": 18,
+            "time": 0.875,
+            "seconds": 5.125
+          },
+          {
+            "selector": "#rc-lbl-1",
+            "text": "Community",
+            "fontPx": 18,
+            "time": 1.5,
+            "seconds": 4.5
+          },
+          {
+            "selector": "#rc-lbl-2",
+            "text": "Methodology",
+            "fontPx": 18,
+            "time": 2.125,
+            "seconds": 3.875
+          },
+          {
+            "selector": "#rc-lbl-3",
+            "text": "Citation Impact",
+            "fontPx": 18,
+            "time": 2.75,
+            "seconds": 3.25
+          },
+          {
+            "selector": "#rc-lbl-4",
+            "text": "Transparency",
+            "fontPx": 18,
+            "time": 3.375,
+            "seconds": 2.625
+          },
+          {
+            "selector": "#rc-author-role",
+            "text": "AI Systems & Verification Fellow · Cambridge",
+            "fontPx": 20,
+            "time": 0.5,
+            "seconds": 5.5
+          }
+        ]
+      }
+    ],
+    "enabled": true,
+    "step": 0.125,
+    "samples": 48
+  },
+  "audio": {
+    "ok": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "infoCount": 1,
+    "findings": [
+      {
+        "code": "audio_none",
+        "severity": "info",
+        "message": "The film has no sound: no clip in it plays audio.",
+        "selector": "[data-composition-id]",
+        "dataAttributes": {},
+        "sourceFile": "index.html",
+        "bbox": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0
+        },
+        "time": 0
+      }
+    ]
+  },
+  "hdr": {
+    "autoPromotion": null,
+    "inspection": "available"
+  },
+  "snapshots": {
+    "enabled": false,
+    "files": [],
+    "times": [],
+    "findingFiles": []
+  }
+}
