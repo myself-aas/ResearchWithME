@@ -1,9 +1,11 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { AUTHORS } from './blog-data';
 import { safeInitials } from './format';
 import { readLocal, removeLocal, writeLocal } from './storage';
+import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from './supabase/client';
 import {
   cleanText,
   getInstitutionalRegionDetails,
@@ -15,7 +17,7 @@ import {
 } from './validation';
 
 export type UserRole = 'reader' | 'author';
-export type AuthProviderType = 'guest' | 'gmail' | 'orcid' | 'github' | 'institution';
+export type AuthProviderType = 'guest' | 'gmail' | 'google' | 'email' | 'orcid' | 'github' | 'institution';
 
 export interface AuthUser {
   id: string;
@@ -60,16 +62,95 @@ function matchAuthorProfile(name: string) {
   })?.id;
 }
 
+function readStoredSession() {
+  const stored = readLocal<AuthUser | null>(SESSION_KEY, null);
+  if (stored && typeof stored.name === 'string' && (stored.role === 'reader' || stored.role === 'author')) {
+    return stored;
+  }
+  return null;
+}
+
+const SUPABASE_PROVIDER_LABELS: Record<string, string> = {
+  google: 'Google',
+  github: 'GitHub',
+  email: 'email',
+};
+
+/** Maps a real Supabase session onto the reader/author profile the UI expects. */
+function fromSupabaseUser(account: User, isEditor: boolean): AuthUser {
+  const metadata = (account.user_metadata ?? {}) as Record<string, unknown>;
+  const provider = typeof account.app_metadata?.provider === 'string' ? account.app_metadata.provider : 'email';
+  const handle = typeof metadata.user_name === 'string' ? metadata.user_name : undefined;
+  const email = account.email ?? '';
+  const name =
+    [metadata.full_name, metadata.name, handle].find(
+      (value): value is string => typeof value === 'string' && value.trim().length > 0,
+    ) ?? (email.split('@')[0] || 'Reader');
+  const cleanName = cleanText(name, 120);
+
+  return {
+    id: account.id,
+    name: cleanName,
+    email,
+    avatar: safeInitials(cleanName, 'RD'),
+    role: isEditor ? 'author' : 'reader',
+    authProvider: provider === 'github' ? 'github' : provider === 'google' ? 'google' : 'email',
+    verifiedTitle: `${isEditor ? 'Editor' : 'Reader'} · signed in with ${SUPABASE_PROVIDER_LABELS[provider] ?? provider}`,
+    verifiedIdentifier: provider === 'github' && handle ? `@${handle}` : email || undefined,
+    authorProfileId: matchAuthorProfile(cleanName),
+  };
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  // True while `user` mirrors a Supabase session rather than the local prototype.
+  const supabaseBacked = useRef(false);
 
   useEffect(() => {
-    const stored = readLocal<AuthUser | null>(SESSION_KEY, null);
-    if (stored && typeof stored.name === 'string' && (stored.role === 'reader' || stored.role === 'author')) {
-      setUser(stored);
+    setUser(readStoredSession());
+
+    if (!hasSupabaseBrowserConfig()) {
+      setHydrated(true);
+      return;
     }
-    setHydrated(true);
+
+    const supabase = getSupabaseBrowserClient();
+    let active = true;
+
+    async function sync(account: User | null) {
+      if (!account) {
+        if (supabaseBacked.current) {
+          supabaseBacked.current = false;
+          setUser(readStoredSession());
+        }
+        return;
+      }
+      const { data: isEditor } = await supabase.rpc('is_editor');
+      if (!active) return;
+      supabaseBacked.current = true;
+      setUser(fromSupabaseUser(account, isEditor === true));
+    }
+
+    supabase.auth
+      .getUser()
+      .then(({ data }) => sync(data.user))
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setHydrated(true);
+      });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        // Defer: Supabase must not be called synchronously inside this callback.
+        setTimeout(() => void sync(session?.user ?? null), 0);
+      }
+    });
+
+    return () => {
+      active = false;
+      subscription.subscription.unsubscribe();
+    };
   }, []);
 
   function saveSession(nextUser: AuthUser | null) {
@@ -174,6 +255,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   function logout() {
+    if (supabaseBacked.current && hasSupabaseBrowserConfig()) {
+      void getSupabaseBrowserClient().auth.signOut();
+    }
+    supabaseBacked.current = false;
     saveSession(null);
   }
 

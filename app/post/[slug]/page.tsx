@@ -216,7 +216,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <MarkdownBody markdown={article.bodyMarkdown} />
               </div>
             ) : (
-              <div className="mt-10 space-y-6">
+              <div className="journal-prose drop-cap mt-10 space-y-6">
                 {paragraphs.map((paragraph, index) => (
                   <p key={`${index}-${paragraph.slice(0, 24)}`} className="max-w-prose break-words text-lg leading-relaxed text-stone-800">
                     {paragraph}

@@ -16,7 +16,7 @@ Help researchers find a rigorous article quickly and understand why the publicat
 A reader lands on a readable lead article, can search or filter the catalog, and opens a dedicated article page without a modal interrupting the task.
 
 ## Direction
-Use the archival editorial system: warm parchment ground, Newsreader display type, amber actions, emerald verification cues, and a calm reading measure. Keep the article hierarchy bold and the feed compact but legible.
+Use the archival editorial system: warm parchment ground, Aptos Serif display and reading type under a double-ruled masthead, amber actions, emerald verification cues, and a calm reading measure. Keep the article hierarchy bold and the feed compact but legible.
 
 ## Constraints
 - WCAG 2.1 AA contrast, visible keyboard focus, and semantic landmarks.

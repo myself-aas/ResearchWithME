@@ -27,7 +27,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 | 3.2 Dashboard layout | `app/dashboard/layout.tsx`, `components/cms/DashboardShell.tsx` | Rebuilt in the publication's design language. Responsive nav instead of a fixed 16rem sidebar, no modal, explicit sign-out states. |
 | 4.1 Editor styles | `components/cms/styles.ts`, `app/globals.css` | No `@apply` overrides for a third-party editor. Tokens come from the design system. |
 | 4.2 Rich editor | `components/cms/MarkdownEditor.tsx` | Markdown toolbar, write/preview tabs, link and image inserters, image upload, character and reading-time feedback. Raw HTML is not rendered. |
-| 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Password sign-in plus a magic-link alternative. PKCE codes are exchanged on `/login`, then the editor is sent to the requested studio URL. No public sign-up. |
+| 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Google, GitHub, password, and magic-link sign-in. Every redirect returns to `/auth/callback` (`app/auth/callback/route.ts`), which exchanges the PKCE code server-side and sends the user to `next`. Signed-in accounts without editor access see an explanation instead of the studio. |
 | 4.4 New article | `app/dashboard/page.tsx`, `components/cms/PostEditor.tsx` | Shared create/edit form with server-side validation, inline field errors, focus management, unsaved-change warning, cover library, takeaways, and draft/publish states. |
 | 5.1 Manage articles | `app/dashboard/manage/page.tsx`, `lib/cms/use-cms.ts` | Search and status filters, counts, publish/revert, delete, realtime refetch when Supabase is configured. |
 | 5.2 Edit article | `app/dashboard/edit/[id]/page.tsx` | Loads through the API, then reuses `PostEditor`. Status changes are explicit; un-publishing takes a published article off the journal. |
@@ -88,12 +88,18 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 
    Or paste each file in `supabase/migrations/` into the SQL editor in order. The storage migration creates the `blog-images` bucket and its policies.
 
-4. **Create the editor account.** Supabase → Authentication → Users → *Add user*. Use *Send magic link* or set a password. Also turn off *Allow new users to sign up* in Authentication → Sign In / Providers: every authenticated account can publish, so sign-up must stay invite-only.
-5. **Allow redirects.** Supabase → Authentication → URL Configuration:
+4. **Enable sign-in providers.** Authentication → Sign In / Providers: Email, Google, and GitHub. Open sign-up is safe because an account alone grants no studio access (see step 5). For each OAuth app, the provider's callback URL is the one Supabase shows (`https://<project-ref>.supabase.co/auth/v1/callback`), not this site.
+5. **Grant editor access.** The `20261028000100_editor_allowlist.sql` migration gates every studio write, draft read, comment moderation, and image upload on `public.editors`. After an editor has signed in once, add them in the SQL editor:
+   ```sql
+   insert into public.editors (user_id, note)
+   select id, 'editor' from auth.users where email = 'editor@example.org'
+   on conflict (user_id) do nothing;
+   ```
+6. **Allow redirects.** Supabase → Authentication → URL Configuration:
    - Site URL: `https://<your-origin>`
-   - Redirect URLs: `https://<your-origin>/login`
-   Magic links return to `/login?next=…`, exchange the PKCE code, and then enter the studio.
-6. **Configure the cache webhook (optional).** Database → Webhooks → *Create*:
+   - Redirect URLs: `https://<your-origin>/auth/callback` (add `http://localhost:3000/auth/callback` for local development)
+   Provider sign-ins and magic links return to `/auth/callback?next=…`, which exchanges the PKCE code and continues to `next`.
+7. **Configure the cache webhook (optional).** Database → Webhooks → *Create*:
    - Table: `posts`; events: insert, update, delete
    - URL: `https://<your-origin>/api/revalidate`
    - HTTP header: `x-revalidate-secret: <REVALIDATE_SECRET>`
@@ -127,12 +133,12 @@ Manual checks for a configured project: sign in, save a draft, edit it, publish 
 
 ## Security model
 
-- **RLS everywhere.** Anonymous visitors can only read published posts and append comments to published posts that satisfy the length constraints; comments on drafts never leave the studio. Only authenticated users can create, update, or delete posts. No update policy exists on comments, so they are immutable.
+- **RLS everywhere.** Anonymous visitors can only read published posts and append comments to published posts that satisfy the length constraints; comments on drafts never leave the studio. Only accounts listed in `public.editors` (checked by `public.is_editor()`) can read drafts, create, update, or delete posts, moderate comments, or upload images. Any other signed-in account is a reader. No update policy exists on comments, so they are immutable.
 - **No service-role key in the app.** Every request runs with the user's session or the anon key; RLS is the boundary. This keeps the deployment safe if a server bundle leaks.
 - **Writes go through route handlers** (`/api/cms/*`) rather than direct browser CRUD. The handlers validate with the same schema as the editor, enforce origin checks, and apply per-IP rate limits. RLS remains a second line of defence.
 - **Sanitised rendering.** `react-markdown` does not render raw HTML. Link and image URLs are filtered; covers may only come from this project's storage bucket or the bundled editorial images.
 - **Secret handling.** The revalidation secret is compared with `timingSafeEqual` over SHA-256 digests, accepts a header rather than a query string, and is never exposed to the browser.
-- **Session handling.** Middleware refreshes cookies on `/dashboard/**`; the dashboard layout re-checks the user server-side. Magic-link codes are exchanged on `/login` rather than on a protected route.
+- **Session handling.** Middleware refreshes cookies on `/dashboard/**`; the dashboard layout re-checks the user server-side. OAuth and magic-link codes are exchanged on `/auth/callback` rather than on a protected route. The app gate (`requireEditor`) and RLS both fail closed if the allowlist cannot be read.
 - **Comments are append-only** for readers and editors. Moderation can delete but not rewrite what a reader said.
 
 ## Local demo mode details

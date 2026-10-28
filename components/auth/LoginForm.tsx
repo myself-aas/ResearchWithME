@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, ArrowRight, CheckCircle2, Mail, Send } from 'lucide-react';
 import type { DashboardUser } from '@/lib/cms/types';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
+import { authCallbackUrl, startOAuthSignIn, type OAuthProviderId } from '@/lib/supabase/oauth';
 import {
   fieldClass,
   hintClass,
@@ -44,7 +45,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [pending, setPending] = useState<'password' | 'magic' | 'signout' | null>(null);
+  const [pending, setPending] = useState<'password' | 'magic' | 'signout' | OAuthProviderId | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [exchanging, setExchanging] = useState(false);
@@ -137,6 +138,25 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
     }
   }
 
+  async function signInWithProvider(provider: OAuthProviderId) {
+    if (pending) return;
+    setPending(provider);
+    setError(null);
+    setNotice(null);
+
+    try {
+      const result = await startOAuthSignIn(provider, next);
+      // On success the browser is already navigating to the provider.
+      if (result?.error) {
+        fail(mapAuthError(result.error));
+        setPending(null);
+      }
+    } catch {
+      fail('The sign-in service could not be reached. Check your connection and try again.');
+      setPending(null);
+    }
+  }
+
   async function sendMagicLink() {
     if (pending) return;
     if (!email.trim()) {
@@ -154,8 +174,8 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
       const { error: authError } = await supabase.auth.signInWithOtp({
         email: email.trim(),
         options: {
-          // The code is exchanged on /login, then the editor is sent onward.
-          emailRedirectTo: `${window.location.origin}/login?next=${encodeURIComponent(next)}`,
+          // The code is exchanged by /auth/callback, then the user is sent onward.
+          emailRedirectTo: authCallbackUrl(next),
         },
       });
 
@@ -236,6 +256,45 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
     );
   }
 
+  if (user && !user.isEditor) {
+    return (
+      <section aria-labelledby="no-access-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
+        <h2 id="no-access-heading" className="font-serif text-2xl font-bold text-stone-900">
+          Signed in, without editor access
+        </h2>
+        <p className="mt-2 text-base leading-relaxed text-stone-700">
+          {user.name}
+          {user.email ? (
+            <>
+              {' '}
+              <span className="break-all font-mono text-sm text-stone-600">{user.email}</span>
+            </>
+          ) : null}
+        </p>
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-stone-600">
+          Your account can read, save, and cite. Writing and publishing in the studio needs an administrator to add
+          this account to the editor list.
+        </p>
+
+        {error && (
+          <div ref={errorRef} tabIndex={-1} role="alert" className={cn(inlineErrorClass, 'mt-4')}>
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <Link href="/" className={primaryButtonClass}>
+            Back to the journal
+          </Link>
+          <button type="button" onClick={signOutDifferentAccount} disabled={pending !== null} className={secondaryButtonClass}>
+            {pending === 'signout' ? 'Signing out…' : 'Use a different account'}
+          </button>
+        </div>
+      </section>
+    );
+  }
+
   if (user) {
     return (
       <section aria-labelledby="signed-in-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
@@ -291,7 +350,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
         Sign in
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-stone-600">
-        Use the editor account your administrator created. There is no public sign-up.
+        Sign in with Google, GitHub, or email. Studio access is granted to editor accounts by an administrator.
       </p>
 
       {error && (
@@ -310,7 +369,28 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
         </p>
       )}
 
-      <form onSubmit={signIn} className="mt-5 space-y-4" noValidate>
+      <div role="group" aria-label="Sign in with a provider" className="mt-5 grid gap-2 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={() => signInWithProvider('google')}
+          disabled={pending !== null}
+          className={cn(secondaryButtonClass, 'w-full')}
+        >
+          {pending === 'google' ? 'Opening Google…' : 'Continue with Google'}
+        </button>
+        <button
+          type="button"
+          onClick={() => signInWithProvider('github')}
+          disabled={pending !== null}
+          className={cn(secondaryButtonClass, 'w-full')}
+        >
+          {pending === 'github' ? 'Opening GitHub…' : 'Continue with GitHub'}
+        </button>
+      </div>
+
+      <p className="mt-5 border-t border-stone-200 pt-4 text-sm font-medium text-stone-800">Or use your email</p>
+
+      <form onSubmit={signIn} className="mt-3 space-y-4" noValidate>
         <div>
           <label htmlFor={emailId} className={labelClass}>
             Email address
@@ -369,8 +449,8 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
           )}
         </button>
         <p className="mt-3 text-sm leading-relaxed text-stone-600">
-          Links open the studio directly. Ask an administrator to add the deployment origin and{' '}
-          <code className="font-mono">/login</code> to the allowed redirect URLs in Supabase Auth.
+          Links and provider sign-ins return through <code className="font-mono">/auth/callback</code>, which must be
+          listed under Supabase Auth → URL Configuration → Redirect URLs.
         </p>
       </div>
     </section>

@@ -13,7 +13,7 @@ function isExternal(href: string | undefined) {
  */
 export default function MarkdownBody({ markdown }: { markdown: string }) {
   return (
-    <div className="max-w-prose">
+    <div className="journal-prose drop-cap max-w-prose">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

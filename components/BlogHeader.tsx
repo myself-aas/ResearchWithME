@@ -88,14 +88,14 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   }, [menuOpen]);
 
   const navLinkClass = (active: boolean) =>
-    `inline-flex min-h-10 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+    `inline-flex min-h-10 items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-semibold uppercase tracking-wider transition-colors ${
       active
-        ? 'bg-stone-900 text-white'
-        : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900'
+        ? 'border-amber-900 text-stone-900'
+        : 'border-transparent text-stone-700 hover:border-stone-400 hover:text-stone-900'
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-stone-200 bg-white">
+    <header className="sticky top-0 z-40 border-b-4 border-double border-stone-900 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 items-center justify-between gap-4">
           <Link
@@ -117,7 +117,6 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                       aria-current={active ? 'page' : undefined}
                       className={navLinkClass(active)}
                     >
-                      <item.icon className="h-4 w-4" aria-hidden="true" />
                       <span>{item.label}</span>
                     </Link>
                   </li>

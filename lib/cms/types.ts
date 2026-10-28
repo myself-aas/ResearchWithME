@@ -6,6 +6,8 @@ export interface DashboardUser {
   id: string;
   email: string;
   name: string;
+  /** Present in public.editors. Signing in alone grants no studio access. */
+  isEditor: boolean;
 }
 
 export interface CmsPost {

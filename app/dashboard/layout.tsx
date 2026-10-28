@@ -24,7 +24,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   // The middleware already redirects; this is a second line of defence so a
   // route can never render drafts if the matcher is edited later.
-  if (configured && !user) {
+  // Signed-in readers are sent back to /login, which explains that the account
+  // needs editor access instead of rendering the studio.
+  if (configured && (!user || !user.isEditor)) {
     redirect('/login?next=/dashboard');
   }
 

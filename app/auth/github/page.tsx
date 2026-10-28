@@ -15,6 +15,8 @@ import {
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { useAuth } from '@/lib/auth-context';
+import { hasSupabaseBrowserConfig } from '@/lib/supabase/client';
+import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import { normalizeGithubHandle } from '@/lib/validation';
 
 export default function GitHubOAuthPage() {
@@ -27,33 +29,23 @@ export default function GitHubOAuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Initiates standard GitHub OAuth 2.0 flow
+  // Full-page redirect through Supabase Auth; /auth/callback sets the session.
   async function startGitHubOAuth() {
     setLoading(true);
     setError(null);
+    if (!hasSupabaseBrowserConfig()) {
+      setError('GitHub sign-in needs Supabase credentials on this deployment. Use the form below in the meantime.');
+      setLoading(false);
+      return;
+    }
     try {
-      const res = await fetch('/api/auth/oauth-url?provider=github');
-      const data = await res.json();
-      if (data.url) {
-        // Open GitHub OAuth popup
-        const width = 600;
-        const height = 700;
-        const left = window.screen.width / 2 - width / 2;
-        const top = window.screen.height / 2 - height / 2;
-        const popup = window.open(
-          data.url,
-          'github-oauth',
-          `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`
-        );
-
-        if (!popup || popup.closed) {
-          // If popup blocked or demo client, use the interactive verification form below
-          setError('Browser popup was blocked. You can complete verification directly below using your GitHub handle.');
-        }
+      const result = await startOAuthSignIn('github', '/write');
+      if (result?.error) {
+        setError(result.error);
+        setLoading(false);
       }
     } catch {
-      setError('Could not connect to GitHub OAuth endpoint. You can authenticate using your handle below.');
-    } finally {
+      setError('Could not reach the sign-in service. Check your connection and try again.');
       setLoading(false);
     }
   }
@@ -167,18 +159,18 @@ export default function GitHubOAuthPage() {
               {loading ? (
                 <>
                   <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>Connecting to GitHub OAuth 2.0...</span>
+                  <span>Opening GitHub…</span>
                 </>
               ) : (
                 <>
                   <GitBranch className="h-4 w-4" />
-                  <span>Authorize with GitHub OAuth</span>
+                  <span>Continue with GitHub</span>
                   <ExternalLink className="h-3.5 w-3.5 opacity-70" />
                 </>
               )}
             </button>
             <p className="text-center font-mono text-xs text-stone-500">
-              Scope: read:user, user:email · Callback: /auth/callback?provider=github
+              Scope: read:user, user:email · Signed in through Supabase Auth
             </p>
           </div>
 

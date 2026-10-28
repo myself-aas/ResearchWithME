@@ -110,7 +110,9 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-Newsreader and Inter variable WOFF2 files are self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift. Both are licensed under the SIL Open Font License 1.1; the licence texts ship next to the files.
+The journal is set in the Aptos family: Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data. Aptos is licensed by Microsoft, so this repository does not bundle it; the font stacks in `app/globals.css` use the copy installed on the reader's machine (it ships with Microsoft 365).
+
+Readers without Aptos get Newsreader and Inter. Their variable WOFF2 files are self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift. Both are licensed under the SIL Open Font License 1.1; the licence texts ship next to the files. If you obtain a web-embedding licence for Aptos, add its WOFF2 files to `app/fonts/` and load them with `next/font/local` ahead of the fallbacks.
 
 ## Contributing
 

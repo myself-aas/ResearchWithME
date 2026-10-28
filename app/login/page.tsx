@@ -4,6 +4,7 @@ import { BadgeCheck, FileText, MessageSquare } from 'lucide-react';
 import LoginForm from '@/components/auth/LoginForm';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { safeNextPath } from '@/lib/safe-redirect';
 
 export const metadata: Metadata = {
   title: 'Sign in to the editorial studio',
@@ -15,20 +16,13 @@ export const metadata: Metadata = {
   },
 };
 
-function safeNext(value: string | string[] | undefined) {
-  const candidate = Array.isArray(value) ? value[0] : value;
-  if (!candidate || !candidate.startsWith('/') || candidate.startsWith('//')) return '/dashboard';
-  if (candidate.startsWith('/login')) return '/dashboard';
-  return candidate;
-}
-
 export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ next?: string | string[] }>;
 }) {
   const params = await searchParams;
-  const next = safeNext(params.next);
+  const next = safeNextPath(params.next);
   const configured = isSupabaseConfigured;
   const user = await getDashboardUser();
 

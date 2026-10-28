@@ -11,7 +11,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
   return (
     <html lang="en">
-      <body className="bg-stone-50 font-sans text-stone-900 antialiased">
+      <body className="bg-stone-50 font-serif text-stone-900 antialiased">
         <PageState
           role="alert"
           tone="error"

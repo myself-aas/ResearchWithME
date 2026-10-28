@@ -45,7 +45,7 @@ All seven HyperFrames skills are installed globally. Read `/hyperframes` **first
 - Supabase migrations are idempotent SQL in `supabase/migrations/`.
 
 ## Design system
-- Fonts: Newsreader (serif body) + Inter variable (sans UI) — self-hosted, no CDN.
+- Fonts: Aptos family. Aptos Serif is primary (headings + body), Aptos (sans) for UI chrome, Aptos Mono for code. Aptos is requested by installed name only (never bundled); self-hosted Newsreader/Inter in `app/fonts/` are the fallbacks. No CDN.
 - Tailwind v4: no arbitrary values for spacing or colour that exist as tokens.
 - Follow `DESIGN.md` for surface-level design decisions; per-route detail is in `.impeccable/surfaces/`.
 
