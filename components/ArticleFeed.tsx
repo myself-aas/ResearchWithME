@@ -117,11 +117,11 @@ export default function ArticleFeed({
             </p>
           </div>
 
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="editorial-grid mt-6">
             {Object.entries(CATEGORY_META).map(([category, meta]) => {
               const count = posts.filter((post) => post.category === category).length;
               return (
-                <li key={category}>
+                <li key={category} className="col-span-12 sm:col-span-6 lg:col-span-4">
                   <button
                     type="button"
                     onClick={() => onSelectCategory?.(category)}
@@ -217,13 +217,13 @@ export default function ArticleFeed({
           </button>
         </div>
       ) : (
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="editorial-grid mt-8">
           {posts.map((post) => {
             const isSaved = savedPostIds.includes(post.id) || savedPostIds.includes(post.slug);
             const meta = CATEGORY_META[post.category as BlogCategory] ?? CATEGORY_META['Research Reviews'];
 
             return (
-              <li key={post.id} className="flex min-w-0">
+              <li key={post.id} className="col-span-12 flex min-w-0 sm:col-span-6 lg:col-span-4">
                 <article className="group flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-stone-200 bg-white transition-colors hover:border-stone-300">
                   <div className="relative aspect-[16/9] w-full overflow-hidden bg-stone-900">
                     <Image

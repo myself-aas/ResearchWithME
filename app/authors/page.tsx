@@ -129,9 +129,9 @@ export default function AuthorsDirectoryPage() {
             </button>
           </div>
         ) : (
-          <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <ul className="editorial-grid mt-8">
             {filteredAuthors.map((author) => (
-              <li key={author.id} className="flex">
+              <li key={author.id} className="col-span-12 flex md:col-span-6 lg:col-span-4">
                 <article className="flex w-full flex-col justify-between rounded-lg border border-stone-200 bg-white p-6">
                   <div>
                     <div className="flex items-start justify-between gap-3">

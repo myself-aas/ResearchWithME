@@ -12,8 +12,8 @@ interface FeaturedArticleProps {
 export default function FeaturedArticle({ post, isSaved, onToggleSave }: FeaturedArticleProps) {
   return (
     <section aria-labelledby="featured-heading" className="page-container page-section-tight max-w-wide">
-      <div className="grid gap-0 overflow-hidden rounded-lg border border-stone-200 bg-white lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <div className="relative min-h-64 bg-stone-900 lg:min-h-full">
+      <div className="editorial-grid gap-0 overflow-hidden rounded-lg border border-stone-200 bg-white">
+        <div className="relative col-span-12 min-h-64 bg-stone-900 lg:col-span-5 lg:min-h-full">
           {post.coverImage && post.coverImage.startsWith('data:') ? (
             <picture className="h-full w-full">
               <source srcSet={post.coverImage} type="image/avif" />
@@ -38,7 +38,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
           </span>
         </div>
 
-        <div className="flex flex-col justify-between gap-8 p-6 sm:p-10">
+        <div className="col-span-12 flex flex-col justify-between gap-8 p-6 sm:p-10 lg:col-span-7">
           <div>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
               <span className="font-medium text-amber-900">{post.category}</span>

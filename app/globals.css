@@ -54,6 +54,7 @@
     --page-section-tight: 2.5rem;
     --page-section: 3rem;
     --page-section-loose: 3.5rem;
+    --grid-gap: 1.5rem;
   }
 
   @media (min-width: 40rem) {
@@ -67,6 +68,7 @@
   @media (min-width: 64rem) {
     :root {
       --page-gutter: 2rem;
+      --grid-gap: 2rem;
     }
   }
 
@@ -247,6 +249,18 @@
 
   .page-section-loose {
     padding-block: var(--page-section-loose);
+  }
+
+  /* Twelve columns behind the editorial surfaces. The hero's aside, the
+     featured split, the tile rows, and the card rows all land on the same
+     vertical rules instead of each grid inventing its own tracks. Children
+     choose their own span; everything is full width until the layout asks
+     for more. */
+  .editorial-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+    row-gap: var(--grid-gap);
   }
 
   /* Reading page: text column plus one rail, stacked until there is room. */
