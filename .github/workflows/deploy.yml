@@ -1,0 +1,87 @@
+name: Deploy
+
+# Deploys the Worker to production after Quality passes on main.
+#
+# This replaces Cloudflare's own "Workers Builds" check, which failed within a
+# second on every commit (including main) and kept its log behind the
+# dashboard. With the build here, the logs are in GitHub.
+#
+# Turn Workers Builds off once this workflow is live
+# (Workers & Pages -> researchwithme -> Settings -> Build), otherwise every push
+# to main deploys twice.
+
+on:
+  workflow_run:
+    workflows: ['Quality']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: https://researchwith.me
+    env:
+      # NEXT_PUBLIC_* values are compiled into the Worker at build time, so they
+      # belong to the build, not to the Worker's runtime secrets.
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me' }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      HF_SPACE_NAME: ${{ secrets.HF_SPACE_NAME }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # workflow_run runs in the context of the default branch, so the commit
+          # that passed Quality has to be named explicitly.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 1
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Refresh the video manifest
+        run: npm run videos:manifest
+
+      # Refuses to build when the CMS values are missing or the site URL still
+      # points at localhost: that Worker would serve the studio unauthenticated.
+      - name: Check the build environment
+        run: npm run deploy-guard
+
+      - name: Build the Worker
+        run: npm run build:worker
+
+      - name: Deploy
+        run: npx wrangler deploy
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            home=$(curl -s -o /dev/null -w '%{http_code}' https://researchwith.me/)
+            film=$(curl -s -o /dev/null -w '%{http_code}' https://researchwith.me/videos/hero.mp4)
+            echo "attempt $attempt: home $home, film $film"
+            if [ "$home" = "200" ] && [ "$film" = "200" ]; then
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "The deployment did not answer 200 for the homepage and the film." >&2
+          exit 1
