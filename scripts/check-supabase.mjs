@@ -117,8 +117,21 @@ for (const result of results) {
 }
 
 const hardFailures = results.filter((result) => !result.ok);
-if (hardFailures.length > 0) {
-  console.log(`\n${hardFailures.length} problem(s). The app falls back to local demo mode until both public values are valid.`);
+const configProblems = hardFailures.filter((result) => /URL|key/.test(result.name));
+const networkProblems = hardFailures.filter((result) => /fetch failed|timeout|ENOTFOUND|ECONN/i.test(result.detail));
+
+if (configProblems.length > 0) {
+  console.log(`\n${configProblems.length} configuration problem(s). The app stays in local demo mode until the URL and key are valid.`);
+  process.exitCode = 1;
+} else if (networkProblems.length > 0) {
+  console.log(
+    `\nThe credentials look right, but ${url} is unreachable from this machine.\n` +
+      'Each page falls back to the bundled catalogue and the studio redirects to /login.\n' +
+      'Allow outbound HTTPS to *.supabase.co, then run this check again.',
+  );
+  process.exitCode = 1;
+} else if (hardFailures.length > 0) {
+  console.log(`\n${hardFailures.length} problem(s). Apply supabase/setup.sql, then run this check again.`);
   process.exitCode = 1;
 } else {
   console.log('\nConnection looks good. Rebuild after changing NEXT_PUBLIC_* values: they are inlined at build time.');

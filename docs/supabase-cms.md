@@ -118,6 +118,8 @@ npm run supabase:bundle     # rebuild supabase/setup.sql from the migrations
 
 A network that blocks `*.supabase.co` (some sandboxes, CI runners without egress) makes the public site fall back to the bundled catalogue and sends `/dashboard` to `/login`, where the sign-in call fails. That is the expected behaviour of a configured-but-unreachable project, not a missing table.
 
+The first request after such a failure waits for the read timeout (8 s on anonymous GETs). For the next 30 s the CMS reads are skipped entirely, so pages render immediately from the bundled catalogue instead of stalling again; the cooldown is logged and self-clears, and the first read after it retries Supabase. During a real outage this keeps the site fast rather than merely correct.
+
 ## Rendering and caching
 
 - `/post/[slug]` is server-rendered on demand with `revalidate = 30`. It mixes bundled articles with live CMS rows, so it cannot be limited to build-time slugs; the route cache keeps repeat reads fast, and studio writes revalidate the path immediately.
