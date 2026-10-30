@@ -71,6 +71,7 @@ npm run dev                       # or npm start, in another shell
 QA_CHROMIUM_PATH=/path/to/chrome python scripts/qa_sweep.py    # every route: status, headings, duplicate ids, axe WCAG 2.1 AA, overflow, console and network failures
 python scripts/qa_flows.py                                     # search, filters, like, save, comment, citation copy, submit validation, ORCID, assistant, mobile menu
 python scripts/qa_studio.py                                    # draft → publish → public render → delete, in the local JSON adapter
+python scripts/qa_layout.py                                     # gutters, page padding, card columns and rail alignment at 375/768/1024/1440
 ```
 
 `QA_CHROMIUM_PATH` is optional; set it when the sandbox ships its own Chromium instead of Playwright's download.
