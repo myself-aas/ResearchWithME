@@ -77,8 +77,14 @@ jobs:
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: |
           set -euo pipefail
-          npx wrangler versions upload --preview-alias "pr-${{ github.event.pull_request.number }}" | tee /tmp/upload.log
-          url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' /tmp/upload.log | head -1 || true)
+          alias="pr-${{ github.event.pull_request.number }}"
+          npx wrangler versions upload --preview-alias "$alias" | tee /tmp/upload.log
+          # Wrangler prints the immutable version URL and the alias URL; the alias
+          # is the one that survives the next push, so prefer it.
+          url=$(grep -oE "https://${alias}-[A-Za-z0-9.-]+\.workers\.dev" /tmp/upload.log | head -1 || true)
+          if [ -z "$url" ]; then
+            url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' /tmp/upload.log | head -1 || true)
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Note that the preview upload was skipped
