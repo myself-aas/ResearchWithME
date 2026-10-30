@@ -301,7 +301,7 @@ export default function WritePage() {
           primaryAction={{ href: '/verify?redirect=/write', label: 'Record an identity' }}
           secondaryAction={{ href: '/', label: 'Browse the journal' }}
         >
-          <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+          <p className="flex items-start gap-2 border-l border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
             <Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>This check is a local prototype; no credentials are sent anywhere.</span>
           </p>
@@ -317,7 +317,7 @@ export default function WritePage() {
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
         {isSupabaseConfigured && (
-          <div className="mb-6 border-l-2 border-amber-700 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+          <div className="rounded-md mb-6 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
             <p className="font-semibold">Publishing now happens in the editorial studio</p>
             <p className="mt-1 max-w-2xl">
               This prototype form still autosaves a draft in your browser, but publication is disabled because the site
@@ -377,7 +377,7 @@ export default function WritePage() {
         </div>
 
         {error && (
-          <div role="alert" className="mt-6 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+          <div role="alert" className="rounded-md mt-6 bg-red-50 px-4 py-3 text-sm text-red-900">
             <p className="flex items-start gap-2">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{error}</span>
@@ -698,7 +698,7 @@ export default function WritePage() {
                   </div>
                 </div>
               ) : (
-                <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+                <p className="border-l border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
                   No cover yet. Without one, the review uses the default editorial photograph for its field.
                 </p>
               )}
@@ -814,7 +814,7 @@ export default function WritePage() {
               </button>
             </div>
 
-            <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+            <p className="flex items-start gap-2 border-l border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
               <span>
                 {isSupabaseConfigured

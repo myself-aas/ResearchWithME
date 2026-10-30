@@ -87,9 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         <Providers>
-          <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
-            {children}
-          </div>
+          <div className="min-h-screen">{children}</div>
         </Providers>
       </body>
     </html>

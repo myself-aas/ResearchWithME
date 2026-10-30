@@ -204,7 +204,7 @@ export default function AssistantPage() {
           </div>
 
           {error && (
-            <div role="alert" className="mt-6 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+            <div role="alert" className="rounded-md mt-6 bg-red-50 px-4 py-3 text-sm text-red-900">
               <p className="font-medium">The assistant stopped before answering.</p>
               <p className="mt-1">{error}</p>
               <button

@@ -251,7 +251,7 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
               </div>
 
               {saveMessage && (
-                <p role="status" className="mt-4 border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+                <p role="status" className="rounded-md mt-4 bg-amber-50 px-4 py-3 text-sm text-amber-950">
                   {saveMessage}
                 </p>
               )}

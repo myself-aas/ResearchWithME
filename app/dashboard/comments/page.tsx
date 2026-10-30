@@ -66,7 +66,7 @@ export default function CommentsModerationPage() {
       {notice && (
         <p
           role="status"
-          className="mt-5 flex items-start gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
+          className="rounded-md mt-5 flex items-start gap-2 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
         >
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{notice}</span>
@@ -74,7 +74,7 @@ export default function CommentsModerationPage() {
       )}
 
       {(error || actionError) && (
-        <div role="alert" className="mt-5 border-l-2 border-red-700 bg-red-50 px-4 py-3">
+        <div role="alert" className="rounded-md mt-5 bg-red-50 px-4 py-3">
           <p className="flex items-start gap-2 text-sm font-semibold text-red-900">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{actionError ?? error}</span>
@@ -172,7 +172,7 @@ export default function CommentsModerationPage() {
                       {comment.postTitle}
                     </Link>
                   </p>
-                  <p className="mt-3 whitespace-pre-wrap break-words border-l-2 border-stone-200 pl-4 text-base leading-relaxed text-stone-800">
+                  <p className="mt-3 whitespace-pre-wrap break-words border-l border-stone-300 pl-4 text-base leading-relaxed text-stone-800">
                     {comment.content}
                   </p>
                 </div>

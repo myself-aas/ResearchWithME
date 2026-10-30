@@ -69,6 +69,7 @@ export default function AuthorAvatar({
         ) : svgContent ? (
           <div
             className="h-full w-full"
+            role="img"
             dangerouslySetInnerHTML={{ __html: svgContent }}
             aria-label={`Illustrated avatar for ${author.name}`}
           />

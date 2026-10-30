@@ -33,6 +33,15 @@ const initialState: FormState = {
   consent: false,
 };
 
+const FIELD_ORDER: Array<[keyof FormState, string, string]> = [
+  ['title', 'submit-title', 'Title'],
+  ['authorName', 'submit-author', 'Submitting author'],
+  ['email', 'submit-email', 'Contact email'],
+  ['abstract', 'submit-abstract', 'Abstract'],
+  ['dataUrl', 'submit-data', 'Data or code repository'],
+  ['consent', 'submit-consent', 'Declaration'],
+];
+
 export default function SubmitPage() {
   const [form, setForm] = useState<FormState>(initialState);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
@@ -71,15 +80,7 @@ export default function SubmitPage() {
     setSubmitError(null);
     if (!validate()) {
       setSubmitError('Some fields need another look. Your text is still in the form.');
-      const order: Array<[keyof FormState, string]> = [
-        ['title', 'submit-title'],
-        ['authorName', 'submit-author'],
-        ['email', 'submit-email'],
-        ['abstract', 'submit-abstract'],
-        ['dataUrl', 'submit-data'],
-        ['consent', 'submit-consent'],
-      ];
-      const first = order.find(([key]) => key in fieldErrorsRef.current);
+      const first = FIELD_ORDER.find(([key]) => key in fieldErrorsRef.current);
       if (first) document.getElementById(first[1])?.focus();
       return;
     }
@@ -161,6 +162,37 @@ export default function SubmitPage() {
           </section>
         ) : (
           <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-8">
+            {submitError && (
+              <div
+                role="alert"
+                className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900"
+              >
+                <p className="font-semibold">{submitError}</p>
+                {(() => {
+                  const invalid = FIELD_ORDER.filter(([key]) => fieldErrors[key]);
+                  if (invalid.length === 0) return null;
+                  return (
+                    <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                      {invalid.map(([key, id, label]) => (
+                        <li key={key}>
+                          <a
+                            href={`#${id}`}
+                            className="underline underline-offset-2 hover:text-red-950"
+                            onClick={(event) => {
+                              event.preventDefault();
+                              document.getElementById(id)?.focus();
+                            }}
+                          >
+                            {label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                })()}
+              </div>
+            )}
+
             <fieldset className="space-y-4">
               <legend className="font-serif text-xl font-semibold text-stone-900">Manuscript details</legend>
 
@@ -332,12 +364,6 @@ export default function SubmitPage() {
                 <p id="submit-consent-error" className="text-sm text-red-800">{fieldErrors.consent}</p>
               )}
             </fieldset>
-
-            {submitError && (
-              <div role="alert" className="border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
-                {submitError}
-              </div>
-            )}
 
             <div className="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
               <p className="text-sm text-stone-600">No publication or article processing fees.</p>

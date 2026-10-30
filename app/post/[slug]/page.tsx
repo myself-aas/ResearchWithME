@@ -15,6 +15,7 @@ import { AUTHORS } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
 import VideoEmbed from '@/components/VideoEmbed';
+import { hasVideo } from '@/lib/videos';
 
 // The reader mixes bundled articles with live CMS posts, so the route cannot be
 // limited to build-time slugs. It still uses ISR: the first request renders and
@@ -67,6 +68,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     .map((entry) => entry.article);
 
   const paragraphs = article.content.flatMap((block) => block.split(/\n{2,}/)).filter(Boolean);
+  const videoSrc = `/videos/explainer-${slug}.mp4`;
 
   return (
     <div className="flex min-h-screen flex-col bg-stone-50">
@@ -186,15 +188,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </figcaption>
             </figure>
 
-            <section aria-labelledby="explainer-video-heading" className="mt-8">
-              <h2 id="explainer-video-heading" className="mb-3 text-sm font-semibold text-stone-900">
-                Video explainer
-              </h2>
-              <VideoEmbed
-                src={`/videos/explainer-${slug}.mp4`}
-                label={`Animated explainer for: ${article.title}`}
-              />
-            </section>
+            {hasVideo(videoSrc) && (
+              <section aria-labelledby="explainer-video-heading" className="mt-8">
+                <h2 id="explainer-video-heading" className="mb-3 text-sm font-semibold text-stone-900">
+                  Video explainer
+                </h2>
+                <VideoEmbed src={videoSrc} label={`Animated explainer for: ${article.title}`} />
+              </section>
+            )}
 
             <section aria-labelledby="takeaways-heading" className="mt-10 border-y border-stone-200 py-6">
               <h2 id="takeaways-heading" className="font-serif text-xl font-semibold text-stone-900">

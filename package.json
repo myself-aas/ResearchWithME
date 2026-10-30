@@ -20,7 +20,10 @@
     "quality": "npm run lint && npm run typecheck && npm run test && npm run impeccable:source",
     "impeccable:source": "impeccable detect app components",
     "impeccable:url": "impeccable detect --json --no-advisory --viewport 1280x800 http://localhost:3000",
-    "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\""
+    "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
+    "videos:manifest": "node scripts/build-video-manifest.mjs",
+    "predev": "npm run videos:manifest",
+    "prebuild": "npm run videos:manifest"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

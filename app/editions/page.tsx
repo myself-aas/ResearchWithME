@@ -4,6 +4,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import PrintButton from '@/components/PrintButton';
 import VideoEmbed from '@/components/VideoEmbed';
+import { hasVideo } from '@/lib/videos';
 import { PDF_EDITIONS_DATA, PUBLICATIONS_DATA } from '@/lib/research-data';
 
 export default function EditionsArchivePage() {
@@ -21,7 +22,7 @@ export default function EditionsArchivePage() {
           </p>
         </header>
 
-        <p className="mt-6 max-w-3xl border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+        <p className="rounded-md mt-6 max-w-3xl bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
           Printing happens in your browser; this prototype hosts no PDF file. A production pipeline would issue the archival PDF and its DOI.
         </p>
 
@@ -53,7 +54,7 @@ export default function EditionsArchivePage() {
                     <p className="mt-2 text-sm font-medium text-amber-900">{edition.theme}</p>
                     <p className="mt-3 max-w-prose text-base leading-relaxed text-stone-700">{edition.description}</p>
 
-                    {editionIndex === 0 && (
+                    {editionIndex === 0 && hasVideo('/videos/edition-trailer.mp4') && (
                       <div className="mt-5">
                         <h3 className="mb-3 text-sm font-semibold text-stone-900">Edition trailer</h3>
                         <VideoEmbed

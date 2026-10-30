@@ -26,6 +26,8 @@ export default function PageState({
 }: PageStateProps) {
   return (
     <main
+      id="main-content"
+      tabIndex={-1}
       className={cn(
         'mx-auto flex min-h-[62vh] w-full max-w-3xl flex-col justify-center px-4 py-16 sm:px-6',
         className,

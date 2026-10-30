@@ -208,12 +208,12 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         </div>
 
         {formError && (
-          <p role="alert" className="border-l-2 border-red-800 bg-red-50 px-3 py-2 text-sm text-red-900">
+          <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-900">
             {formError}
           </p>
         )}
         {status && (
-          <p role="status" className="border-l-2 border-emerald-700 bg-emerald-50 px-3 py-2 text-sm text-emerald-950">
+          <p role="status" className="rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-950">
             {status}
           </p>
         )}
@@ -228,7 +228,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
       </form>
 
       {loadError && (
-        <p role="status" className="mt-4 border-l-2 border-amber-800 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+        <p role="status" className="rounded-md mt-4 bg-amber-50 px-3 py-2 text-sm text-amber-950">
           {loadError}
         </p>
       )}

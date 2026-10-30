@@ -319,6 +319,11 @@ html .shadow-2xs {
   }
 }
 
+/* The studio editor's block-type control ships with a 1.9:1 placeholder. */
+.mdxeditor .mdxeditor-toolbar [class*='_selectTrigger_'][data-placeholder] > span:first-child {
+  color: #44403c;
+}
+
 /* Print: the reading surface only, no navigation, chrome, or controls. */
 @media print {
   html,

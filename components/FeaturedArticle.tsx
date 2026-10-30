@@ -58,7 +58,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
 
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">{post.subtitle}</p>
 
-            <div className="mt-6 border-l-2 border-amber-800 pl-4">
+            <div className="rounded-md mt-6 pl-4">
               <h3 className="text-sm font-semibold text-stone-900">What the review establishes</h3>
               <ul className="mt-2 space-y-2 text-sm leading-relaxed text-stone-700">
                 {post.keyTakeaways.slice(0, 2).map((takeaway) => (

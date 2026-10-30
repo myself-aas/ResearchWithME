@@ -190,12 +190,12 @@ export default function PapersArchivePage() {
         </div>
 
         {loadError && (
-          <p role="status" className="mt-4 border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <p role="status" className="rounded-md mt-4 bg-amber-50 px-4 py-3 text-sm text-amber-950">
             {loadError}
           </p>
         )}
         {copyError && (
-          <p role="alert" className="mt-4 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+          <p role="alert" className="rounded-md mt-4 bg-red-50 px-4 py-3 text-sm text-red-900">
             {copyError}
           </p>
         )}

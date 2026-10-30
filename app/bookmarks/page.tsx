@@ -196,13 +196,13 @@ export default function BookmarksPage() {
             </div>
 
             {status && (
-              <p role="status" className="mt-4 flex items-center gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+              <p role="status" className="rounded-md mt-4 flex items-center gap-2 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
                 <Check className="h-4 w-4" aria-hidden="true" />
                 <span>{status}</span>
               </p>
             )}
             {error && (
-              <p role="alert" className="mt-4 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+              <p role="alert" className="rounded-md mt-4 bg-red-50 px-4 py-3 text-sm text-red-900">
                 {error}
               </p>
             )}

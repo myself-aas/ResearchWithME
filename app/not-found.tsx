@@ -1,4 +1,10 @@
 import BlogFooter from '@/components/BlogFooter';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Page not found',
+  robots: { index: false, follow: false },
+};
 import BlogHeader from '@/components/BlogHeader';
 import PageState from '@/components/PageState';
 

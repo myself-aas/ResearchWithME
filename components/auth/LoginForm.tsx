@@ -354,7 +354,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
       </p>
 
       {error && (
-        <div ref={errorRef} tabIndex={-1} role="alert" className="mt-4 border-l-2 border-red-700 bg-red-50 px-3 py-2">
+        <div ref={errorRef} tabIndex={-1} role="alert" className="rounded-md mt-4 bg-red-50 px-3 py-2">
           <p className="flex items-start gap-2 text-sm font-medium text-red-900">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
@@ -363,7 +363,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
       )}
 
       {notice && (
-        <p role="status" className="mt-4 flex items-start gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-3 py-2 text-sm text-emerald-950">
+        <p role="status" className="rounded-md mt-4 flex items-start gap-2 bg-emerald-50 px-3 py-2 text-sm text-emerald-950">
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{notice}</span>
         </p>

@@ -59,6 +59,24 @@ npx impeccable detect --viewport 390x844 http://localhost:3000
 
 Current state: no Impeccable findings in source, and none in rendered scans at 1280×800, 390×844, and 320×720; no axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
 
+## Browser tests
+
+The Playwright scripts in `scripts/` drive the running app the way a reader or editor would. They need a Chromium build and a server on `QA_BASE_URL` (default `http://localhost:3000`).
+
+```bash
+python -m pip install playwright
+python -m playwright install chromium
+
+npm run dev                       # or npm start, in another shell
+QA_CHROMIUM_PATH=/path/to/chrome python scripts/qa_sweep.py    # every route: status, headings, duplicate ids, axe WCAG 2.1 AA, overflow, console and network failures
+python scripts/qa_flows.py                                     # search, filters, like, save, comment, citation copy, submit validation, ORCID, assistant, mobile menu
+python scripts/qa_studio.py                                    # draft → publish → public render → delete, in the local JSON adapter
+```
+
+`QA_CHROMIUM_PATH` is optional; set it when the sandbox ships its own Chromium instead of Playwright's download.
+
+Video explainers and the edition trailer only appear when a rendered file exists. `npm run videos:manifest` (also run by `predev` and `prebuild`) lists `public/videos/*.mp4` in `lib/video-manifest.json`; without a file the section stays out of the page instead of loading a 404.
+
 ## Deploy (Cloudflare Workers)
 
 Production runs on Cloudflare Workers through the [OpenNext adapter](https://opennext.js.org/cloudflare). The app needs a server (middleware, API routes, the OAuth callback), so it can't be served as a static Cloudflare Pages export.

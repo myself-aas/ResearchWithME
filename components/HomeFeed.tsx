@@ -143,7 +143,7 @@ export default function HomeFeed({ initialCategory = 'All', initialSearch = '' }
         savedCount={savedPostIds.length}
       />
 
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         <BlogHero
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}

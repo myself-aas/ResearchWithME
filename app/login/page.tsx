@@ -43,7 +43,7 @@ export default async function LoginPage({
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-10 sm:px-6 lg:py-16">
+      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-10 outline-none sm:px-6 lg:py-16">
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-16">
           <section aria-labelledby="login-title">
             <h1 id="login-title" className="font-serif text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">

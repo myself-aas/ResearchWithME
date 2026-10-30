@@ -158,7 +158,7 @@ The active interface is the root Next.js application, set in the Aptos family. A
 - **Status:** Draft and published are always a dot plus a word, with amber/emerald borders and text that meet AA. Live-update status uses the same dot-and-label pattern; no pulsing.
 - **Forms:** Visible labels on every control, hints tied with `aria-describedby`, inline errors marked `role="alert"`, and an error summary that links to the first invalid field. Submitting never clears input.
 - **Destructive actions:** Delete uses an inline two-step confirmation with initial focus on the confirm button and an explicit Cancel. No modal.
-- **Editor:** Markdown source in monospace, a formatting group with named icon buttons, write/preview as a pressed-state pair, and an inline insert panel for links and images. Raw HTML is never rendered.
+- **Editor:** MDXEditor in its Markdown-backed writing mode with a fixed toolbar of named icon buttons (block type, emphasis, lists, link, image, table, code block). Prose styling comes from the design tokens, and raw HTML is never rendered on the read side.
 - **Sign-in:** A reading-room invitation, not a generic SaaS card: one editorial column, one focused form, password and magic link, and a demo-mode panel that explains the local archive rather than pretending accounts exist.
 
 ## Motion & States

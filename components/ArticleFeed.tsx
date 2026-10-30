@@ -105,7 +105,7 @@ export default function ArticleFeed({
   const hasFilters = selectedCategory !== 'All' || selectedFormat !== 'All' || Boolean(searchQuery);
 
   return (
-    <section id="articles-feed" aria-labelledby="catalogue-title" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <section id="articles-feed" aria-label="Reviews" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       {showCategoryGrid && (
         <div className="mb-14">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
@@ -181,7 +181,7 @@ export default function ArticleFeed({
 
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
         <div>
-          <h2 id="catalogue-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+          <h2 id="latest-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
             {activeCategory ? `${activeCategory} reviews` : 'Latest reviews'}
           </h2>
           <p className="mt-2 text-sm text-stone-600">

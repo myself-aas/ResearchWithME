@@ -128,9 +128,9 @@ export default function DashboardShell({ children, configured, user }: Dashboard
             </ul>
           </nav>
 
-          <main className="min-w-0 py-6 sm:py-8">
+          <main id="main-content" tabIndex={-1} className="min-w-0 py-6 outline-none sm:py-8">
             {!configured && (
-              <div className="mb-6 border-l-2 border-amber-700 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+              <div className="rounded-md mb-6 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
                 <p className="font-semibold">Local demo mode</p>
                 <p className="mt-1 max-w-2xl">
                   Reviews and comments are saved to <code className="font-mono">data/cms-*.json</code> on the

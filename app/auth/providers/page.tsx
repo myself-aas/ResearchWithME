@@ -23,7 +23,7 @@ export default function AuthProvidersPage() {
     <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-12">
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 outline-none sm:px-6 sm:py-12">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>

@@ -19,7 +19,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 | 1.2 RLS policies | Same migration | Public reads are limited to published posts. Writes require `authenticated`. Comments are public-read and public-insert with length checks, but **append-only** (no update policy). Likes go through one narrow `SECURITY DEFINER` function. |
 | 1.3 `blog-images` bucket | `supabase/migrations/20261025000200_cms_storage.sql` | Public read; authenticated upload/replace/delete. The bucket enforces 5 MB and JPEG/PNG/WebP/AVIF/GIF. |
 | 1.4 Realtime | Same schema migration | Adds both tables to `supabase_realtime` with guards so re-running the migration is safe. The studio and the public discussion subscribe as a progressive enhancement. |
-| 2.1 Dependencies | `package.json` | `@supabase/ssr`, `@supabase/supabase-js`, `react-markdown`, `remark-gfm`. `@mdxeditor/editor` was not used: it adds a large Lexical bundle and a second styling system. The custom editor keeps the design system, is keyboard accessible, and ships less JavaScript. |
+| 2.1 Dependencies | `package.json` | `@supabase/ssr`, `@supabase/supabase-js`, `react-markdown`, `remark-gfm`, `@mdxeditor/editor`. MDXEditor provides the writing surface, driven by a curated plugin list and toolbar rather than its defaults; `react-markdown` renders published bodies on the public side, so the read path ships no editor code. |
 | 2.2 Environment | `.env.example` | Documents the two public Supabase values and the revalidation secret. Public values are inlined at build time. |
 | 2.3 Image optimizer | `next.config.ts` | Remote pattern derived from `NEXT_PUBLIC_SUPABASE_URL`, limited to `/storage/v1/object/public/**`. No wildcard host. |
 | 2.4 Upload helper | `lib/supabase/storage.ts` | Validates type and size before upload, writes to `uploads/<year>/<month>/<unique>`, returns the public URL. |
@@ -153,7 +153,7 @@ Manual checks for a configured project: sign in, save a draft, edit it, publish 
 ## Deliberate departures from the attached blueprint
 
 1. **One canonical reader.** The blueprint's `/blog` and `/blog/[slug]` would duplicate `/` and `/post/[slug]` and split SEO signals. Published posts feed the existing routes and sitemap.
-2. **Custom Markdown editor** instead of MDXEditor: smaller bundle, consistent typography, no second theme layer, and full keyboard support.
+2. **MDXEditor with a curated surface** instead of the blueprint's default setup: a fixed plugin and toolbar set (no HTML or JSX blocks), design-token styling on the read path, uploads routed through `lib/supabase/storage.ts`, and a contrast override for its block-type control.
 3. **Server-mediated mutations** instead of client-side inserts: validation, rate limiting, origin checks, and no direct table access from the browser.
 4. **Hardened RLS** instead of `using (true)` for every authenticated operation and an unconstrained public insert: comments are length-checked, scoped to published posts, and immutable, and likes use a two-line function rather than exposing post updates.
 5. **Draft-aware constraints.** The blueprint requires content on every row; the CMS allows unfinished drafts and enforces completeness at publish time.

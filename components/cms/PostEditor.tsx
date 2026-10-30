@@ -366,7 +366,7 @@ export default function PostEditor({
       {notice && (
         <p
           role="status"
-          className="mt-5 flex items-start gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
+          className="rounded-md mt-5 flex items-start gap-2 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
         >
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{notice}</span>
@@ -378,7 +378,7 @@ export default function PostEditor({
           ref={errorRef}
           tabIndex={-1}
           role="alert"
-          className="mt-5 border-l-2 border-red-700 bg-red-50 px-4 py-3"
+          className="rounded-md mt-5 bg-red-50 px-4 py-3"
         >
           <p className="flex items-start gap-2 text-sm font-semibold text-red-900">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -607,7 +607,7 @@ export default function PostEditor({
               </div>
             </div>
           ) : (
-            <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+            <p className="border-l border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
               No cover selected. Without one, the review carries the default editorial image.
             </p>
           )}

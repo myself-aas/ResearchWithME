@@ -69,7 +69,7 @@ export default function EditArticlePage() {
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           <span>All reviews</span>
         </Link>
-        <div role="alert" className="mt-5 border-l-2 border-red-700 bg-red-50 px-4 py-3">
+        <div role="alert" className="rounded-md mt-5 bg-red-50 px-4 py-3">
           <p className="flex items-start gap-2 text-sm font-semibold text-red-900">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error ?? 'That review was not found.'}</span>

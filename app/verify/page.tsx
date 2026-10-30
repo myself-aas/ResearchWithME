@@ -96,7 +96,7 @@ function VerifyContent() {
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
             Publishing tools open to contributors with a checkable scholarly identity. This page records one in your browser. It does not contact ORCID, GitHub, or your institution.
           </p>
-          <p className="mt-3 max-w-[60ch] border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+          <p className="rounded-md mt-3 max-w-[60ch] bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
             Nothing leaves this device and no OAuth exchange takes place. Treat the session as a demonstration of the permission model, not as proof of identity.
           </p>
         </header>
@@ -121,22 +121,22 @@ function VerifyContent() {
           </div>
           <div className="mt-4 flex flex-wrap gap-2 text-xs">
             <Link href="/auth/github" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
-              /auth/github (GitHub)
+              GitHub
             </Link>
             <Link href="/auth/orcid" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
-              /auth/orcid (ORCID)
+              ORCID
             </Link>
             <Link href="/auth/academic" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
-              /auth/academic (.edu / .edu.bd)
+              Institutional address
             </Link>
             <Link href="/auth/google" className="rounded border border-amber-300 bg-white px-2.5 py-1 text-stone-800 hover:bg-stone-50">
-              /auth/google (Gmail)
+              Google
             </Link>
           </div>
         </div>
 
         {unverified && !hasAuthorPermissions && (
-          <section role="alert" className="mt-6 border-l-2 border-amber-800 bg-amber-50 px-4 py-4 text-sm text-amber-950">
+          <section role="alert" className="rounded-md mt-6 bg-amber-50 px-4 py-4 text-sm text-amber-950">
             <p className="flex items-center gap-2 font-semibold">
               <AlertCircle className="h-4 w-4" aria-hidden="true" />
               <span>Publishing requires a contributor identity</span>
@@ -148,7 +148,7 @@ function VerifyContent() {
         )}
 
         {status && (
-          <p role="status" className="mt-6 flex flex-wrap items-center gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
+          <p role="status" className="rounded-md mt-6 flex flex-wrap items-center gap-2 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
             <span>{status}</span>
             {hasAuthorPermissions && (
@@ -400,7 +400,7 @@ function VerifyContent() {
               )}
 
               {error && (
-                <p role="alert" className="border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+                <p role="alert" className="rounded-md bg-red-50 px-4 py-3 text-sm text-red-900">
                   {error}
                 </p>
               )}
