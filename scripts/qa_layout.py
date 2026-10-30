@@ -14,6 +14,7 @@ from qa_common import BASE, launch, sync_playwright  # noqa: E402
 
 # A journal page, tool pages, and two surfaces built from the editorial grid.
 SHELL_ROUTES = ["/papers", "/assistant", "/cite", "/bookmarks", "/login", "/authors"]
+READER_ROUTES = ["/post/inside-vllm-and-paged-attention", "/paper/the-long-view-on-open-infrastructure"]
 WIDTHS = (375, 768, 1024, 1440)
 
 # Theme tokens are authored in rem, so convert them before comparing with
@@ -139,6 +140,50 @@ def editorial_columns(page, width):
         )
 
 
+
+def reader_columns(page, width, route):
+    """Breadcrumb and article hold one column; the rail holds the other."""
+    result = page.evaluate(
+        """() => {
+          const box = (selector) => {
+            const node = document.querySelector(selector);
+            if (!node) return null;
+            const rect = node.getBoundingClientRect();
+            return [Math.round(rect.left), Math.round(rect.right), Math.round(rect.top)];
+          };
+          return {
+            breadcrumb: box('.reader-breadcrumb'),
+            body: box('.reader-body'),
+            rail: box('.reader-rail'),
+          };
+        }"""
+    )
+    if not result["breadcrumb"] or not result["body"] or not result["rail"]:
+        check(False, f"{route} at {width}px exposes the reader grid parts")
+        return
+
+    breadcrumb, body, rail = result["breadcrumb"], result["body"], result["rail"]
+    check(
+        breadcrumb[0] == body[0] and breadcrumb[1] == body[1],
+        f"{route} at {width}px: breadcrumb shares the article column "
+        f"({breadcrumb[0]}..{breadcrumb[1]} vs {body[0]}..{body[1]})",
+    )
+    if width >= 1024:
+        check(
+            rail[0] > body[1],
+            f"{route} at {width}px: rail sits in its own column ({rail[0]} > {body[1]})",
+        )
+        check(
+            abs(rail[2] - breadcrumb[2]) <= 1,
+            f"{route} at {width}px: rail starts level with the breadcrumb ({rail[2]} vs {breadcrumb[2]})",
+        )
+    else:
+        check(
+            rail[0] == body[0] and rail[2] > body[2],
+            f"{route} at {width}px: rail stacks under the article ({rail[0]} / {rail[2]})",
+        )
+
+
 def main():
     only = sys.argv[1:] or None
     routes = [route for route in SHELL_ROUTES if not only or route in only]
@@ -152,6 +197,12 @@ def main():
                 page.wait_for_timeout(150)
                 no_overflow(page, width, route)
                 page_padding_matches(page, route)
+            if not only or any(route in READER_ROUTES for route in only):
+                for route in READER_ROUTES if not only else [r for r in only if r in READER_ROUTES]:
+                    page.goto(f"{BASE}{route}", wait_until="domcontentloaded", timeout=45000)
+                    page.wait_for_timeout(200)
+                    reader_columns(page, width, route)
+                    no_overflow(page, width, route)
             page.goto(BASE + "/", wait_until="networkidle", timeout=45000)
             page.wait_for_timeout(250)
             gutters_match(page, width)

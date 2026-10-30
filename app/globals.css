@@ -263,6 +263,24 @@
     row-gap: var(--grid-gap);
   }
 
+  /* Reader page: the breadcrumb and the article share the text column, and
+     the rail starts level with the breadcrumb so a long title never runs
+     under it. */
+  .reader-grid {
+    display: grid;
+    row-gap: 0;
+  }
+
+  /* Grid children default to min-width:auto, which lets a nowrap breadcrumb
+     force the column wider than the phone. */
+  .reader-grid > * {
+    min-width: 0;
+  }
+
+  .reader-rail {
+    margin-top: var(--page-section-tight);
+  }
+
   /* Reading page: text column plus one rail, stacked until there is room. */
   .article-grid {
     display: grid;
@@ -273,6 +291,28 @@
     .article-grid {
       grid-template-columns: minmax(0, 1fr) var(--container-rail);
       gap: var(--page-section);
+    }
+
+    .reader-grid {
+      grid-template-columns: minmax(0, 1fr) var(--container-rail);
+      column-gap: var(--page-section);
+      align-items: start;
+    }
+
+    .reader-breadcrumb {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .reader-body {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .reader-rail {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      margin-top: 0;
     }
   }
 }

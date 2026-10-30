@@ -76,7 +76,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <BlogHeader />
 
       <main id="main-content" className="page-container page-main max-w-wide flex-1">
-        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
+                <div className="reader-grid">
+          <nav aria-label="Breadcrumb" className="reader-breadcrumb mb-6 text-sm text-stone-600">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-stone-900 hover:underline">
@@ -99,19 +100,25 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </li>
           </ol>
         </nav>
-
-        <div className="article-grid">
-          <article aria-labelledby="article-title" className="min-w-0">
+          <article aria-labelledby="article-title" className="reader-body min-w-0">
             <header className="border-b border-stone-200 pb-8">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                <span className="font-medium text-amber-900">{article.category}</span>
-                <span aria-hidden="true">·</span>
-                <span>{article.format}</span>
-                <span aria-hidden="true">·</span>
-                <time dateTime={article.dateISO ?? article.publishedAt}>{article.publishedAt}</time>
-                <span aria-hidden="true">·</span>
-                <span>{article.readTime}</span>
-              </p>
+              <ul className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
+                {/* Each item carries its own separator so a wrapped line never
+                    begins with a dot. */}
+                <li className="inline-flex items-center gap-2">
+                  <span className="font-medium text-amber-900">{article.category}</span>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span>{article.format}</span>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <time dateTime={article.dateISO ?? article.publishedAt}>{article.publishedAt}</time>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li>{article.readTime}</li>
+              </ul>
 
               <h1 id="article-title" className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
                 {article.title}
@@ -299,7 +306,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             )}
           </article>
 
-          <aside aria-label="Article tools" className="h-fit space-y-6 lg:sticky lg:top-24">
+          <aside aria-label="Article tools" className="reader-rail h-fit space-y-6 lg:sticky lg:top-24">
             <div className="rounded-lg border border-stone-200 bg-white p-5">
               <h2 className="font-serif text-lg font-semibold text-stone-900">Cite this review</h2>
               <p className="mt-2 text-sm leading-relaxed text-stone-600">

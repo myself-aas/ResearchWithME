@@ -133,6 +133,7 @@ The active interface is the root Next.js application, set in the Aptos family. A
 - **Page padding**: `page-main` sets the top and bottom of every `<main>` (32/64px, 48px above from 640px). Shells that carry their own vertical rhythm, such as sign-in, keep explicit padding.
 - **Section rhythm**: three tiers only — `page-section-tight` (40px), `page-section` (48px), `page-section-loose` (56px, 64px from 640px). Sections choose a tier rather than a one-off `py` value.
 - **Editorial grid**: `editorial-grid` is a twelve-column field shared by the homepage hero (8 + 4), the featured card (5 + 7), the field tiles, the review cards, and the contributor cards (4 each, 6 from 640px). Because they share the tracks and the 24/32px gap, the hero's summary rail sits exactly over the third card column, and a reader scanning down the page sees one set of vertical rules rather than three.
+- **Reader grid**: `reader-grid` puts the breadcrumb and the article in the text column and the rail in its own, so the rail starts level with the breadcrumb and a long title never runs under it. Below 1024px the rail stacks after the article.
 - **Reading grid**: `article-grid` stacks text and rail below 1024px, then splits into a flexible column plus an 18rem rail with a consistent gap. Rails are for citation, metadata, and actions; prose never sits inside one.
 - **Reading column**: Article and paper bodies stay at 65–75ch. Global paragraph rules constrain prose to 65ch and small copy to 58ch to prevent 100-character lines.
 - **Grouping**: Related controls sit tight; distinct groups get generous separation. Sections use rules, spacing, and typography instead of nesting bordered cards inside bordered cards.
@@ -153,7 +154,7 @@ The active interface is the root Next.js application, set in the Aptos family. A
 - **Navigation**: Solid white sticky masthead closed by a 4px double ink rule, serif wordmark, uppercase sans section links whose current page is marked by an amber underline plus `aria-current`, accessible mobile disclosure, and a skip link.
 - **Buttons**: One primary amber action per task, secondary neutral outline actions, and explicit disabled/loading labels. Buttons default to `type="button"` unless they submit a form.
 - **Form controls**: Visible labels or `aria-label`, 44px min-height, AA placeholders, focus ring, validation text, preserved input on failure, and duplicate-submit protection.
-- **Article header**: Byline, publication date, reading time, artifact metadata, bookmark, share, and citation utilities in a clear hierarchy.
+- **Article header**: Byline, publication date, reading time, artifact metadata, bookmark, share, and citation utilities in a clear hierarchy. The metadata row is a list in which each item carries its own separator, so a wrapped line starts with a category or a date instead of a stray dot.
 - **Related reviews**: Three typographic recommendations at the natural end of a review, without an eyebrow label.
 - **Newsletter**: Inline footer subscription only, with confirmation and error states; no reading-flow pop-up.
 - **Verification and assistant**: Standard controls and status panels; no terminal costume, pulsing decorative dot, or cyan-on-dark AI styling.

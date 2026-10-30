@@ -45,7 +45,8 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
       <BlogHeader />
 
       <main id="main-content" className="page-container page-main max-w-wide flex-1">
-        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
+                <div className="reader-grid">
+          <nav aria-label="Breadcrumb" className="reader-breadcrumb mb-6 text-sm text-stone-600">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-stone-900 hover:underline">
@@ -68,23 +69,31 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             </li>
           </ol>
         </nav>
-
-        <div className="article-grid">
-          <article aria-labelledby="paper-title" className="min-w-0">
+          <article aria-labelledby="paper-title" className="reader-body min-w-0">
             <header className="border-b border-stone-200 pb-8">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                <span className="font-medium text-amber-900">{paper.topic}</span>
-                <span aria-hidden="true">·</span>
-                <span>{paper.journal}</span>
-                <span aria-hidden="true">·</span>
-                <span>
-                  {paper.volume}, {paper.issue}
-                </span>
-                <span aria-hidden="true">·</span>
-                <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
-                <span aria-hidden="true">·</span>
-                <span>{paper.readTime}</span>
-              </p>
+              <ul className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
+                {/* Each item carries its own separator so a wrapped line never
+                    begins with a dot. */}
+                <li className="inline-flex items-center gap-2">
+                  <span className="font-medium text-amber-900">{paper.topic}</span>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span>{paper.journal}</span>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <span>
+                    {paper.volume}, {paper.issue}
+                  </span>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li className="inline-flex items-center gap-2">
+                  <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
+                  <span aria-hidden="true">·</span>
+                </li>
+                <li>{paper.readTime}</li>
+              </ul>
 
               <h1 id="paper-title" className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
                 {paper.title}
@@ -208,7 +217,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             </footer>
           </article>
 
-          <aside aria-label="Record" className="h-fit space-y-6 lg:sticky lg:top-24">
+          <aside aria-label="Record" className="reader-rail h-fit space-y-6 lg:sticky lg:top-24">
             <div className="rounded-lg border border-stone-200 bg-white p-5">
               <h2 className="font-serif text-lg font-semibold text-stone-900">Record</h2>
               <dl className="mt-4 space-y-3 text-sm">
