@@ -28,9 +28,9 @@ export default async function LoginPage({
   const user = await getDashboardUser();
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <div className="page-container flex max-w-focus items-center justify-between gap-4 py-3">
           <Link href="/" aria-label="πeme home" className="flex items-center gap-2.5">
             <BrandLogo size="md" />
           </Link>
@@ -43,7 +43,7 @@ export default async function LoginPage({
         </div>
       </header>
 
-      <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-10 outline-none sm:px-6 lg:py-16">
+      <main id="main-content" tabIndex={-1} className="page-container flex max-w-focus flex-1 items-center py-10 outline-none lg:py-16">
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-16">
           <section aria-labelledby="login-title">
             <h1 id="login-title" className="font-serif text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">
@@ -89,7 +89,7 @@ export default async function LoginPage({
       </main>
 
       <footer className="border-t border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-sm text-stone-600 sm:px-6">
+        <div className="page-container flex max-w-focus flex-wrap items-center justify-between gap-2 py-4 text-sm text-stone-600">
           <p>πeme article studio</p>
           <p>
             <Link href="/editorial-board" className="underline underline-offset-4 hover:text-stone-900">

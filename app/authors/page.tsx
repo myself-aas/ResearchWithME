@@ -6,6 +6,7 @@ import { ArrowRight, Building2, CheckCircle2, GitBranch, GraduationCap, Search, 
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { AUTHORS, Author } from '@/lib/blog-data';
+import PageHeader from '@/components/PageHeader';
 
 type CredentialFilter = 'All' | Author['verifiedVia'];
 
@@ -48,18 +49,14 @@ export default function AuthorsDirectoryPage() {
   }, [authors, credentialFilter, searchQuery]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Reviewers and their records
-          </h1>
-          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            Each contributor publishes under a recorded scholarly identity. A profile lists their credentials, research area, and everything they have reviewed.
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-wide flex-1">
+        <PageHeader
+          title="Reviewers and their records"
+          description="Each contributor publishes under a recorded scholarly identity. A profile lists their credentials, research area, and everything they have reviewed."
+        />
 
         <section aria-labelledby="author-filters" className="border-b border-stone-200 py-8">
           <h2 id="author-filters" className="sr-only">

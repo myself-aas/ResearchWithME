@@ -96,7 +96,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
 
   return (
     <header className="sticky top-0 z-40 border-b-4 border-double border-stone-900 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="page-container max-w-wide">
         <div className="flex min-h-16 items-center justify-between gap-4">
           <Link
             href="/"

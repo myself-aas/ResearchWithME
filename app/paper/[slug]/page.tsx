@@ -41,10 +41,10 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+      <main id="main-content" className="page-container page-main max-w-wide flex-1">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
@@ -69,7 +69,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
           </ol>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14">
+        <div className="article-grid">
           <article aria-labelledby="paper-title" className="min-w-0">
             <header className="border-b border-stone-200 pb-8">
               <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">

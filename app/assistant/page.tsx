@@ -6,6 +6,7 @@ import { ArrowRight, Check, Copy, FileText, Loader2, Send, Sparkles } from 'luci
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import PageHeader from '@/components/PageHeader';
 
 interface Citation {
   id: string;
@@ -105,18 +106,14 @@ export default function AssistantPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Ask the archive a question
-          </h1>
-          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            Answers come only from the reviews and papers published here, and each one links to the work it draws on. With no model key configured, the answer is assembled straight from the catalog text; with one, a language model writes it from the same text.
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-focus flex-1">
+        <PageHeader
+          title="Ask the archive a question"
+          description="Answers come only from the reviews and papers published here, and each one links to the work it draws on. With no model key configured, the answer is assembled straight from the catalog text; with one, a language model writes it from the same text."
+        />
 
         <section aria-labelledby="assistant-form-heading" className="py-8">
           <h2 id="assistant-form-heading" className="sr-only">

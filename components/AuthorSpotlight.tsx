@@ -19,7 +19,7 @@ export default function AuthorSpotlight() {
 
   return (
     <section aria-labelledby="contributors-title" className="border-t border-stone-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className="page-container page-section-loose max-w-wide">
         <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 id="contributors-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">

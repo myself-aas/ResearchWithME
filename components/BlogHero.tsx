@@ -29,7 +29,7 @@ export default function BlogHero({
 }: BlogHeroProps) {
   return (
     <section className="border-b border-stone-200 bg-stone-50" aria-labelledby="journal-title">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+      <div className="page-container page-section-loose max-w-wide">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
           <div>
             <h1

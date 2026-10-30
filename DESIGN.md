@@ -128,6 +128,11 @@ The active interface is the root Next.js application, set in the Aptos family. A
 
 ## Layout
 - **Modes**: The homepage is Persuade; article and paper readers are Read; searchable archives, forms, verification, citation, assistant, writer, and studio surfaces are Operate. Each route has a brief under `.impeccable/surfaces/`.
+- **Width roles**: every page shell names its width instead of writing one. `max-w-wide` (80rem) for the journal, feeds, archives, and readers; `max-w-page` (72rem) for registries and boards; `max-w-focus` (64rem) for tools, the studio, and sign-in; `max-w-form` (56rem) for submission; `max-w-note` (48rem) for a single message or auth note. The tokens are declared once in `globals.css` as Tailwind `--container-*` values.
+- **Container and gutter**: `page-container` supplies the width, centring, and the one gutter scale — 16px, 24px from 640px, 32px from 1024px — so columns align when a reader moves between a feed and a tool. No route hand-rolls `px-4 sm:px-6 lg:px-8`.
+- **Page padding**: `page-main` sets the top and bottom of every `<main>` (32/64px, 48px above from 640px). Shells that carry their own vertical rhythm, such as sign-in, keep explicit padding.
+- **Section rhythm**: three tiers only — `page-section-tight` (40px), `page-section` (48px), `page-section-loose` (56px, 64px from 640px). Sections choose a tier rather than a one-off `py` value.
+- **Reading grid**: `article-grid` stacks text and rail below 1024px, then splits into a flexible column plus an 18rem rail with a consistent gap. Rails are for citation, metadata, and actions; prose never sits inside one.
 - **Reading column**: Article and paper bodies stay at 65–75ch. Global paragraph rules constrain prose to 65ch and small copy to 58ch to prevent 100-character lines.
 - **Grouping**: Related controls sit tight; distinct groups get generous separation. Sections use rules, spacing, and typography instead of nesting bordered cards inside bordered cards.
 - **Responsive navigation**: Desktop uses a single compact nav; mobile uses a disclosure menu, not a horizontally scrolling strip. Layouts reflow to 320px without horizontal page scroll.
@@ -143,6 +148,7 @@ The active interface is the root Next.js application, set in the Aptos family. A
 - Pills (`rounded-full`) are reserved for compact tags, counters, and avatars.
 
 ## Components
+- **Page header**: `PageHeader` carries the h1, one lede at the 60ch measure, an optional callout, and the closing rule for every archive, tool, and form surface. Its heading stops at `max-w-4xl`, so a long title wraps inside the reading column instead of across the page.
 - **Navigation**: Solid white sticky masthead closed by a 4px double ink rule, serif wordmark, uppercase sans section links whose current page is marked by an amber underline plus `aria-current`, accessible mobile disclosure, and a skip link.
 - **Buttons**: One primary amber action per task, secondary neutral outline actions, and explicit disabled/loading labels. Buttons default to `type="button"` unless they submit a form.
 - **Form controls**: Visible labels or `aria-label`, 44px min-height, AA placeholders, focus ring, validation text, preserved input on failure, and duplicate-submit protection.

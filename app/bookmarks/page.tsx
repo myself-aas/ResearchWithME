@@ -7,6 +7,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
 import { readStringArray, removeLocal, writeLocal } from '@/lib/storage';
+import PageHeader from '@/components/PageHeader';
 
 const SAVED_KEY = 'rwm_saved_posts';
 
@@ -105,18 +106,20 @@ export default function BookmarksPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader savedCount={savedIds.length} />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">Your reading list</h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
-            The list lives in this browser, so it survives a refresh but not a device change.
-            {savedArticles.length > 0 &&
-              ` ${savedArticles.length} ${savedArticles.length === 1 ? 'item' : 'items'}, about ${totalMinutes} minutes of reading.`}
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-focus flex-1">
+        <PageHeader
+          title="Your reading list"
+          description={
+            <>
+              The list lives in this browser, so it survives a refresh but not a device change.
+              {savedArticles.length > 0 &&
+                ` ${savedArticles.length} ${savedArticles.length === 1 ? 'item' : 'items'}, about ${totalMinutes} minutes of reading.`}
+            </>
+          }
+        />
 
         {savedArticles.length === 0 ? (
           <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">

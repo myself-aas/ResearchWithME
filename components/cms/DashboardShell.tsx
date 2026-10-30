@@ -49,9 +49,9 @@ export default function DashboardShell({ children, configured, user }: Dashboard
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+        <div className="page-container flex max-w-wide flex-wrap items-center justify-between gap-3 py-3">
           <div className="flex min-w-0 items-center gap-3">
             <Link href="/" aria-label="πeme home" className="flex items-center gap-2.5">
               <BrandLogo size="md" />
@@ -91,13 +91,13 @@ export default function DashboardShell({ children, configured, user }: Dashboard
           </div>
         </div>
         {signOutError && (
-          <p role="alert" className="mx-auto max-w-7xl px-4 pb-3 text-sm font-medium text-red-800 sm:px-6 lg:px-8">
+          <p role="alert" className="page-container max-w-wide pb-3 text-sm font-medium text-red-800">
             {signOutError}
           </p>
         )}
       </header>
 
-      <div className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 sm:px-6 lg:px-8">
+      <div className="page-container max-w-wide flex-1 pb-16">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10">
           <nav
             aria-label="Article studio"

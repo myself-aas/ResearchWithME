@@ -277,7 +277,7 @@ export default function WritePage() {
 
   if (!hydrated) {
     return (
-      <div className="min-h-screen bg-stone-50">
+      <div className="min-h-dvh bg-stone-50">
         <BlogHeader />
         <PageState
           role="status"
@@ -292,7 +292,7 @@ export default function WritePage() {
 
   if (!hasAuthorPermissions) {
     return (
-      <div className="flex min-h-screen flex-col bg-stone-50">
+      <div className="flex min-h-dvh flex-col bg-stone-50">
         <BlogHeader />
         <PageState
           code="Contributor access"
@@ -312,10 +312,10 @@ export default function WritePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+      <main id="main-content" className="page-container page-main max-w-focus flex-1">
         {isSupabaseConfigured && (
           <div className="rounded-md mb-6 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
             <p className="font-semibold">Publishing now happens in the editorial studio</p>

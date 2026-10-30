@@ -11,7 +11,7 @@ interface FeaturedArticleProps {
 
 export default function FeaturedArticle({ post, isSaved, onToggleSave }: FeaturedArticleProps) {
   return (
-    <section aria-labelledby="featured-heading" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section aria-labelledby="featured-heading" className="page-container page-section-tight max-w-wide">
       <div className="grid gap-0 overflow-hidden rounded-lg border border-stone-200 bg-white lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div className="relative min-h-64 bg-stone-900 lg:min-h-full">
           {post.coverImage && post.coverImage.startsWith('data:') ? (

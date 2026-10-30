@@ -6,21 +6,18 @@ import PrintButton from '@/components/PrintButton';
 import VideoEmbed from '@/components/VideoEmbed';
 import { hasVideo } from '@/lib/videos';
 import { PDF_EDITIONS_DATA, PUBLICATIONS_DATA } from '@/lib/research-data';
+import PageHeader from '@/components/PageHeader';
 
 export default function EditionsArchivePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Quarterly editions
-          </h1>
-          <p className="mt-4 max-w-3xl text-base leading-relaxed text-stone-700">
-            Each edition gathers a quarter&apos;s reviews, methods, and corrections into one printable volume. Print a volume to save it as a PDF from your browser.
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-wide flex-1">
+        <PageHeader
+          title="Quarterly editions"
+          description="Each edition gathers a quarter's reviews, methods, and corrections into one printable volume. Print a volume to save it as a PDF from your browser."
+        />
 
         <p className="rounded-md mt-6 max-w-3xl bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
           Printing happens in your browser; this prototype hosts no PDF file. A production pipeline would issue the archival PDF and its DOI.

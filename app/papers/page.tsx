@@ -7,6 +7,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { PUBLICATIONS_DATA, Publication } from '@/lib/research-data';
 import { readStringArray, writeLocal } from '@/lib/storage';
+import PageHeader from '@/components/PageHeader';
 
 const SAVED_KEY = 'rwm_saved_papers';
 const TOPICS = ['All', 'Open Infrastructure', 'AI & Systems', 'Climate & Policy', 'Data Commons', 'Scholarly Tech'] as const;
@@ -93,18 +94,14 @@ export default function PapersArchivePage() {
   const filtersActive = selectedTopic !== 'All' || Boolean(searchQuery);
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Paper archive
-          </h1>
-          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            Open-access papers with their authors, DOI, license, methods, findings, and the material needed to reproduce them.
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-wide flex-1">
+        <PageHeader
+          title="Paper archive"
+          description="Open-access papers with their authors, DOI, license, methods, findings, and the material needed to reproduce them."
+        />
 
         <section aria-labelledby="archive-filters" className="mt-8 border-b border-stone-200 pb-8">
           <h2 id="archive-filters" className="sr-only">
@@ -226,7 +223,7 @@ export default function PapersArchivePage() {
 
               return (
                 <li key={paper.id} className="py-8">
-                  <article aria-labelledby={`paper-${paper.id}-title`} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+                  <article aria-labelledby={`paper-${paper.id}-title`} className="article-grid">
                     <div className="min-w-0">
                       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
                         <span className="font-medium text-amber-900">{paper.topic}</span>

@@ -92,7 +92,7 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
 
   if (!author) {
     return (
-      <div className="flex min-h-screen flex-col bg-stone-50">
+      <div className="flex min-h-dvh flex-col bg-stone-50">
         <BlogHeader />
         <PageState
           code="404"
@@ -114,10 +114,10 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader savedCount={savedIds.length} />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+      <main id="main-content" className="page-container page-main max-w-focus flex-1">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>

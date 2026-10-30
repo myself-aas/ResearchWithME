@@ -19,7 +19,7 @@ const portalLinks = [
 export default function BlogFooter() {
   return (
     <footer className="dark-surface mt-16 bg-stone-900 text-stone-200">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <div className="page-container page-section-loose max-w-wide">
         <NewsletterSignup />
 
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">

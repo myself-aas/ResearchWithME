@@ -7,7 +7,7 @@ import { BookOpen, ArrowLeft, Search } from 'lucide-react';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col font-sans antialiased">
+    <div className="min-h-dvh bg-stone-50 text-stone-900 flex flex-col font-sans antialiased">
       <BlogHeader />
 
       <main className="flex-1 max-w-3xl mx-auto px-4 py-20 text-center flex flex-col items-center justify-center space-y-6">

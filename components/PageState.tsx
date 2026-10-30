@@ -29,7 +29,7 @@ export default function PageState({
       id="main-content"
       tabIndex={-1}
       className={cn(
-        'mx-auto flex min-h-[62vh] w-full max-w-3xl flex-col justify-center px-4 py-16 sm:px-6',
+        'page-container flex min-h-[62vh] max-w-note flex-col justify-center py-16',
         className,
       )}
       aria-labelledby="page-state-title"

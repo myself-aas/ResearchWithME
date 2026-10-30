@@ -28,11 +28,46 @@
   --color-brand-hover: var(--color-amber-800);
   --color-verified: var(--color-emerald-700);
   --color-focus: var(--color-amber-800);
+
+  /* Layout roles. Named widths keep page shells on one system: a journal
+     surface, a registry/board page, a working surface, a form, a note. */
+  --container-wide: 80rem;
+  --container-page: 72rem;
+  --container-focus: 64rem;
+  --container-form: 56rem;
+  --container-note: 48rem;
+
+  /* Sidebars: one rail for reading pages, a wider one for page-level asides. */
+  --container-rail: 18rem;
+  --container-rail-wide: 20rem;
+  --container-rail-note: 24rem;
 }
 
 @layer base {
   :root {
     color-scheme: light;
+
+    /* One gutter scale for every shell, so columns line up across routes. */
+    --page-gutter: 1rem;
+    --page-top: 2rem;
+    --page-bottom: 4rem;
+    --page-section-tight: 2.5rem;
+    --page-section: 3rem;
+    --page-section-loose: 3.5rem;
+  }
+
+  @media (min-width: 40rem) {
+    :root {
+      --page-gutter: 1.5rem;
+      --page-top: 3rem;
+      --page-section-loose: 4rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --page-gutter: 2rem;
+    }
   }
 
   html {
@@ -187,6 +222,44 @@
     background: var(--color-stone-400);
     border: 2px solid var(--color-stone-100);
     border-radius: 999px;
+  }
+}
+
+/* Layout shell: one container, one page padding, three section rhythms. */
+@layer components {
+  .page-container {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--page-gutter);
+  }
+
+  .page-main {
+    padding-block: var(--page-top) var(--page-bottom);
+  }
+
+  .page-section-tight {
+    padding-block: var(--page-section-tight);
+  }
+
+  .page-section {
+    padding-block: var(--page-section);
+  }
+
+  .page-section-loose {
+    padding-block: var(--page-section-loose);
+  }
+
+  /* Reading page: text column plus one rail, stacked until there is room. */
+  .article-grid {
+    display: grid;
+    gap: var(--page-section-tight);
+  }
+
+  @media (min-width: 64rem) {
+    .article-grid {
+      grid-template-columns: minmax(0, 1fr) var(--container-rail);
+      gap: var(--page-section);
+    }
   }
 }
 

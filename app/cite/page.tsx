@@ -8,6 +8,7 @@ import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
 import { CITATION_FORMATS, CitationFormat, buildCitation, citationFileExtension } from '@/lib/citations';
 import { cleanText, safeExternalUrl, slugify } from '@/lib/validation';
+import PageHeader from '@/components/PageHeader';
 
 const inputClass =
   'w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 transition-colors focus:border-amber-800';
@@ -91,10 +92,10 @@ export default function CitePage() {
   const doiLink = safeExternalUrl(`https://doi.org/${source.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')}`);
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main id="main-content" className="page-container page-main max-w-focus flex-1">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">
           <Link href="/" className="inline-flex items-center gap-1.5 hover:text-stone-900 hover:underline">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -104,14 +105,10 @@ export default function CitePage() {
           <span className="font-medium text-amber-900">Citation builder</span>
         </nav>
 
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Build a citation
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
-            Pick a published review or an external paper, then copy the citation in the style you need. Every style draws on the same record.
-          </p>
-        </header>
+        <PageHeader
+          title="Build a citation"
+          description="Pick a published review or an external paper, then copy the citation in the style you need. Every style draws on the same record."
+        />
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <form className="space-y-8" onSubmit={(event) => event.preventDefault()}>

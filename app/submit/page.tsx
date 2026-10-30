@@ -7,6 +7,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogCategory, CATEGORIES } from '@/lib/blog-data';
 import { LIMITS, cleanText, isValidEmail } from '@/lib/validation';
+import PageHeader from '@/components/PageHeader';
 
 const inputClass =
   'h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600';
@@ -118,18 +119,14 @@ export default function SubmitPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Submit a review or manuscript
-          </h1>
-          <p className="mt-4 max-w-3xl text-base leading-relaxed text-stone-700">
-            Send a paper breakdown, repository teardown, or analytical essay. The editorial desk checks that claims point to a public artifact and that funding conflicts are disclosed.
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-form flex-1">
+        <PageHeader
+          title="Submit a review or manuscript"
+          description="Send a paper breakdown, repository teardown, or analytical essay. The editorial desk checks that claims point to a public artifact and that funding conflicts are disclosed."
+        />
 
         {receipt ? (
           <section role="status" aria-labelledby="receipt-heading" className="mt-8 border border-stone-200 bg-white p-8 sm:p-10">

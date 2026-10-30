@@ -8,6 +8,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import PageState from '@/components/PageState';
 import { AuthProviderType, useAuth } from '@/lib/auth-context';
+import PageHeader from '@/components/PageHeader';
 
 const methods: Array<{ id: Exclude<AuthProviderType, 'guest'>; label: string; description: string; icon: typeof GraduationCap; role: string }> = [
   { id: 'orcid', label: 'ORCID', description: 'Researchers with an ORCID iD', icon: GraduationCap, role: 'Publishing access' },
@@ -85,21 +86,18 @@ function VerifyContent() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Record a contributor identity
-          </h1>
-          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            Publishing tools open to contributors with a checkable scholarly identity. This page records one in your browser. It does not contact ORCID, GitHub, or your institution.
-          </p>
-          <p className="rounded-md mt-3 max-w-[60ch] bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+      <main id="main-content" className="page-container page-main max-w-focus flex-1">
+        <PageHeader
+          title="Record a contributor identity"
+          description="Publishing tools open to contributors with a checkable scholarly identity. This page records one in your browser. It does not contact ORCID, GitHub, or your institution."
+        >
+          <p className="rounded-md bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
             Nothing leaves this device and no OAuth exchange takes place. Treat the session as a demonstration of the permission model, not as proof of identity.
           </p>
-        </header>
+        </PageHeader>
 
         <div className="mt-8 rounded-lg border border-amber-300 bg-amber-50/70 p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -456,7 +454,7 @@ export default function VerifyPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-stone-50">
+        <div className="min-h-dvh bg-stone-50">
           <PageState
             role="status"
             code="Loading"

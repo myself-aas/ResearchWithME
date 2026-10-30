@@ -3,6 +3,7 @@ import { ExternalLink, GraduationCap } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { EDITORIAL_BOARD } from '@/lib/research-data';
+import PageHeader from '@/components/PageHeader';
 
 const principles = [
   {
@@ -21,18 +22,14 @@ const principles = [
 
 export default function EditorialBoardPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-dvh flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Editorial standards
-          </h1>
-          <p className="mt-4 max-w-3xl text-lg leading-relaxed text-stone-700">
-            An independent collective of researchers, systems engineers, clinicians, and data librarians governs ResearchWithMe. They set the review standard and sign the record when a publication meets it.
-          </p>
-        </header>
+      <main id="main-content" className="page-container page-main max-w-page flex-1">
+        <PageHeader
+          title="Editorial standards"
+          description="An independent collective of researchers, systems engineers, clinicians, and data librarians governs ResearchWithMe. They set the review standard and sign the record when a publication meets it."
+        />
 
         <section aria-labelledby="board-heading" className="py-10">
           <h2 id="board-heading" className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl">

@@ -105,7 +105,7 @@ export default function ArticleFeed({
   const hasFilters = selectedCategory !== 'All' || selectedFormat !== 'All' || Boolean(searchQuery);
 
   return (
-    <section id="articles-feed" aria-label="Reviews" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <section id="articles-feed" aria-label="Reviews" className="page-container page-section max-w-wide">
       {showCategoryGrid && (
         <div className="mb-14">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
