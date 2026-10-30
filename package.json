@@ -11,7 +11,9 @@
     "start": "next start",
     "build:worker": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "predeploy": "node scripts/check-production-env.mjs",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "preupload": "node scripts/check-production-env.mjs",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "lint": "eslint .",
@@ -20,7 +22,8 @@
     "quality": "npm run lint && npm run typecheck && npm run test && npm run impeccable:source",
     "impeccable:source": "impeccable detect app components",
     "impeccable:url": "impeccable detect --json --no-advisory --viewport 1280x800 http://localhost:3000",
-    "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\""
+    "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
+    "deploy-guard": "node scripts/check-production-env.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

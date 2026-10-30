@@ -2,12 +2,28 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"main": ".open-next/worker.js",
 	"name": "researchwithme",
+	// Ashif Ahmed Shuvo's account, so a local `wrangler deploy` and the
+	// dashboard build hit the same Worker.
+	"account_id": "74d241df16b8aaa80914e3dbb6e16758",
 	"compatibility_date": "2026-10-23",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
+	// Custom domains are deliberately not declared yet. A Worker route claims the
+	// hostname, and `researchwith.me` is currently served by whatever is already
+	// attached to it (the Pages project whose build also runs on this repo). A
+	// deploy that claims a hostname another project owns fails outright, which
+	// would block the first production deployment — the one Worker Previews need
+	// before they can branch. Once the hostname is free, add:
+	//
+	//   "routes": [
+	//     { "pattern": "researchwith.me", "custom_domain": true },
+	//     { "pattern": "www.researchwith.me", "custom_domain": true }
+	//   ],
+	//
+	// and `wrangler deploy` creates the proxied AAAA records itself.
 	"services": [
 		{
 			// Self-reference used by OpenNext's cache; must match "name" above.

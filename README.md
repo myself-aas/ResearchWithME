@@ -74,7 +74,21 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 - The namespace ID is set on both `kv_namespaces` entries in `wrangler.jsonc`. To move to another account, create a new namespace with `npx wrangler kv namespace create researchwithme-opennext-cache` and replace both IDs.
 - `NEXT_PUBLIC_*` values are compiled into the build, so they must be set as **build** variables. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**.
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
+- `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost: a Worker built that way serves the studio unauthenticated and cannot save a draft. `ALLOW_DEMO_DEPLOY=1` overrides the guard on purpose. Run the same check alone with `npm run deploy-guard`.
+- `wrangler.jsonc` names the account, so a local `wrangler deploy` and the dashboard build land in the same place. It does **not** claim the custom domain yet: a `routes` entry with `custom_domain: true` takes the hostname, and `researchwith.me` is currently served by whatever already holds it. Claiming it in the same deploy that is meant to create the first production deployment turns a working deploy into a conflict. Add the routes once the hostname is free — the commented block in the file is the exact shape.
 - OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
+
+### First production deployment
+
+Worker Previews branch off the *deployed* Worker, so nothing previews until one production deployment exists. When the Worker has never been deployed — or the dashboard build has only ever run `wrangler preview` — do it once from a checkout:
+
+```bash
+npm run deploy-guard     # stops if the production CMS values are missing
+npm run build:worker     # next build, then the OpenNext bundle
+npx wrangler deploy      # creates the Worker and its first production deployment
+```
+
+`wrangler deploy` creates the Worker when it does not exist, so this works even if every dashboard build has failed so far. It leaves the domain alone while the `routes` block in `wrangler.jsonc` stays commented out. Once `researchwith.me` is free of whatever currently serves it, uncomment those routes and deploy again — the records are created for you.
 
 ### Worker Previews
 
