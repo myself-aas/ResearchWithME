@@ -25,6 +25,7 @@ Run them from this folder. The CLI is pinned in `package.json` (`hyperframes@0.8
 | `SPEC.md`                | The director's brief: look, numbers, shots, banned defaults, QA frames                                      |
 | `REVIEW.md`              | What the review pass found, what it fixed, and what is still weak                                           |
 | `design.md`              | Symlink to this repository's `DESIGN.md`; the look is read from it                                          |
+| `preview/`               | The last review sheets: `beats.jpg` (every scene, start and middle) and `phone-360.jpg`                     |
 
 ## Changing it
 
