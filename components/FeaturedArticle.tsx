@@ -62,8 +62,8 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
               <h3 className="text-sm font-semibold text-stone-900">What the review establishes</h3>
               <ul className="mt-2 space-y-2 text-sm leading-relaxed text-stone-700">
                 {post.keyTakeaways.slice(0, 2).map((takeaway) => (
-                  <li key={takeaway} className="flex gap-2">
-                    <span aria-hidden="true" className="text-amber-800">—</span>
+                  <li key={takeaway} className="flex gap-3">
+                    <span aria-hidden="true" className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-800" />
                     <span>{takeaway}</span>
                   </li>
                 ))}
