@@ -107,6 +107,17 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
    Studio writes already call `revalidatePath`, so the webhook mainly covers edits made directly in Supabase.
 8. **Rebuild.** `NEXT_PUBLIC_*` values are inlined by Next.js; changing them requires a new build.
 
+## Verify a connection
+
+```bash
+npm run supabase:check      # URL shape, key format, auth health, posts, bucket, allowlist
+npm run supabase:bundle     # rebuild supabase/setup.sql from the migrations
+```
+
+`supabase:check` reads `.env.local` the way Next.js does. It fails on a placeholder key, an unreachable project, a missing `posts` table, or an image bucket that is not public, and stays quiet when the app is deliberately running in local demo mode. Because `NEXT_PUBLIC_*` values are inlined at build time, run it, then rebuild.
+
+A network that blocks `*.supabase.co` (some sandboxes, CI runners without egress) makes the public site fall back to the bundled catalogue and sends `/dashboard` to `/login`, where the sign-in call fails. That is the expected behaviour of a configured-but-unreachable project, not a missing table.
+
 ## Rendering and caching
 
 - `/post/[slug]` is server-rendered on demand with `revalidate = 30`. It mixes bundled articles with live CMS rows, so it cannot be limited to build-time slugs; the route cache keeps repeat reads fast, and studio writes revalidate the path immediately.

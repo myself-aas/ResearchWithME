@@ -13,6 +13,20 @@ import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from './config'
  * middleware refreshes the session on every dashboard request, so we swallow
  * the error here and keep rendering.
  */
+/**
+ * Reads are capped so a slow or unreachable project cannot hold a page render
+ * open. Writes, uploads, and auth are left alone: they need the full timeout.
+ */
+const READ_TIMEOUT_MS = 8000;
+
+function fetchWithReadTimeout(input: RequestInfo | URL, init?: RequestInit) {
+  const method = (init?.method ?? 'GET').toUpperCase();
+  if (method !== 'GET' && method !== 'HEAD') return fetch(input, init);
+  const timeout = AbortSignal.timeout(READ_TIMEOUT_MS);
+  const signal = init?.signal ? AbortSignal.any([init.signal, timeout]) : timeout;
+  return fetch(input, { ...init, signal });
+}
+
 export async function createSupabaseServerClient(): Promise<SupabaseClient> {
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is not configured.');
@@ -21,6 +35,7 @@ export async function createSupabaseServerClient(): Promise<SupabaseClient> {
   const cookieStore = await cookies();
 
   return createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { fetch: fetchWithReadTimeout },
     cookies: {
       getAll() {
         return cookieStore.getAll();
@@ -52,6 +67,7 @@ export function getSupabasePublicClient(): SupabaseClient {
   }
   if (!publicClient) {
     publicClient = createServerClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { fetch: fetchWithReadTimeout },
       cookies: {
         getAll() {
           return [];

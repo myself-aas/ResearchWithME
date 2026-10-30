@@ -23,7 +23,9 @@
     "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
     "videos:manifest": "node scripts/build-video-manifest.mjs",
     "predev": "npm run videos:manifest",
-    "prebuild": "npm run videos:manifest"
+    "prebuild": "npm run videos:manifest",
+    "supabase:check": "node scripts/check-supabase.mjs",
+    "supabase:bundle": "node scripts/bundle-migrations.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

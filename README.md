@@ -104,6 +104,8 @@ The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_S
 - **Cache invalidation:** studio writes revalidate `/` and `/post/[slug]`; an optional Supabase webhook hits `/api/revalidate` with a timing-safe shared secret.
 - **Auth:** Supabase email/password and magic links. Magic links return to `/login` to exchange the PKCE code. Accounts are created by an administrator; there is no public sign-up.
 
+`npm run supabase:check` verifies a configured project (URL, key, auth health, tables, bucket) and `npm run supabase:bundle` rebuilds `supabase/setup.sql` for a single paste into the SQL editor.
+
 Full setup, the blueprint-to-code map, the data model, and the security notes are in [`docs/supabase-cms.md`](./docs/supabase-cms.md).
 
 ## Data and prototype behavior

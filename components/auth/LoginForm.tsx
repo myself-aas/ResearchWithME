@@ -34,6 +34,9 @@ function mapAuthError(message: string) {
   if (normalised.includes('rate limit') || normalised.includes('too many')) {
     return 'Too many attempts. Wait a minute before trying again.';
   }
+  if (/failed to fetch|network ?error|network request failed|load failed|fetch failed|timed? ?out/.test(normalised)) {
+    return 'Could not reach the sign-in service. Check your connection, then try again.';
+  }
   return message;
 }
 

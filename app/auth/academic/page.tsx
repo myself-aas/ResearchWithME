@@ -86,8 +86,12 @@ export default function AcademicOAuthPage() {
         router.push('/write');
       }, 1500);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Institutional verification failed';
-      setError(msg);
+      const message = err instanceof Error ? err.message : '';
+      setError(
+        /failed to fetch|network ?error|fetch failed/i.test(message)
+          ? 'Could not reach the verification service. Check your connection, then try again.'
+          : message || 'The institutional check did not complete. Try again.',
+      );
     } finally {
       setLoading(false);
     }
