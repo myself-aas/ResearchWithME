@@ -1,34 +1,112 @@
 name: Deploy
 
-# Deploys the Worker to production after Quality passes on main.
+# Two jobs, two audiences:
+#   preview  - a version of the Worker for every pull request, at its own URL,
+#              without touching production traffic
+#   deploy   - production, only after Quality passes on main (or on demand)
 #
 # This replaces Cloudflare's own "Workers Builds" check, which failed within a
 # second on every commit (including main) and kept its log behind the
-# dashboard. With the build here, the logs are in GitHub.
-#
-# Turn Workers Builds off once this workflow is live
-# (Workers & Pages -> researchwithme -> Settings -> Build), otherwise every push
-# to main deploys twice.
+# dashboard. Turn Workers Builds off once this workflow is live
+# (Workers & Pages -> researchwithme -> Settings -> Builds), otherwise every
+# push to main deploys twice.
 
 on:
   workflow_run:
     workflows: ['Quality']
     types: [completed]
     branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
   contents: read
-
-concurrency:
-  group: deploy-production
-  cancel-in-progress: false
+  pull-requests: write
+  issues: write
 
 jobs:
-  deploy:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+  preview:
+    name: Preview (PR)
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    concurrency:
+      group: preview-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    env:
+      # Canonical links and OG images keep the production origin: a preview
+      # hostname in metadata would be wrong the moment the version is replaced.
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me' }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      HF_SPACE_NAME: ${{ secrets.HF_SPACE_NAME }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Refresh the video manifest
+        run: npm run videos:manifest
+
+      - name: Check the build environment
+        run: npm run deploy-guard
+
+      - name: Build the Worker
+        run: npm run build:worker
+
+      # A version, not a deployment: production keeps serving the last deployed
+      # version while this one gets a URL of its own.
+      - name: Upload a preview version
+        id: upload
+        run: |
+          set -euo pipefail
+          npx wrangler versions upload --preview-alias "pr-${{ github.event.pull_request.number }}" | tee /tmp/upload.log
+          url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' /tmp/upload.log | head -1 || true)
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Comment the preview link on the pull request
+        if: steps.upload.outputs.url != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.upload.outputs.url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          body=$(printf '<!-- preview-deploy -->\n**Preview:** %s\n\nBuilt from `%s`. Not production: the alias is replaced on the next push and serves the version without moving the domain.\n' "$PREVIEW_URL" "${HEAD_SHA:0:7}")
+          id=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+                 --jq '.[] | select(.body | contains("<!-- preview-deploy -->")) | .id' | head -1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" > /dev/null
+          else
+            gh api "repos/$REPO/issues/$PR/comments" -f body="$body" > /dev/null
+          fi
+
+  deploy:
+    name: Deploy (production)
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     environment:
       name: production
       url: https://researchwith.me

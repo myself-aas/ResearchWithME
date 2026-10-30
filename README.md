@@ -82,7 +82,58 @@ The homepage hero film is authored in HyperFrames at `video/hero/`: five HTML sc
 
 ## Deploy (Cloudflare Workers)
 
-Production runs on Cloudflare Workers through the [OpenNext adapter](https://opennext.js.org/cloudflare). The app needs a server (middleware, API routes, the OAuth callback), so it can't be served as a static Cloudflare Pages export.
+Production runs on Cloudflare Workers through the [OpenNext adapter](https://opennext.js.org/cloudflare). The app needs a server (middleware, API routes, the OAuth callback), so it can't be served as a static Cloudflare Pages export. The Worker is `researchwithme` in account `74d241df16b8aaa80914e3dbb6e16758` and serves `https://researchwith.me` plus `https://www.researchwith.me`.
+
+### Where deploys run
+
+`.github/workflows/deploy.yml` has two jobs:
+
+| Trigger | Job | What happens |
+| --- | --- | --- |
+| `Quality` completes on `main` | `Deploy (production)` | Runs only if Quality succeeded, on the exact commit that passed. Builds, deploys with `npx wrangler deploy`, smoke-tests the site. |
+| Actions → Deploy → Run workflow | `Deploy (production)` | Same path, for a manual release. Needs `main` as the ref. |
+| Pull request opened / updated | `Preview (PR)` | Builds and runs `npx wrangler versions upload --preview-alias pr-<number>`, then comments the preview URL on the PR. Production traffic does not move. |
+
+Both jobs run `bun install --frozen-lockfile`, `npm run videos:manifest`, `npm run deploy-guard`, `npm run build:worker`. Nothing deploys unverified: production waits for Quality, and the guard refuses a build without CMS values.
+
+`workflow_dispatch` only appears once the workflow is on the default branch, so the first real deploy happens after this PR is merged.
+
+### GitHub secrets and variables
+
+Settings → Secrets and variables → Actions.
+
+| Name | Kind | Where the value comes from |
+| --- | --- | --- |
+| `CLOUDFLARE_API_TOKEN` | secret | Cloudflare dashboard → My Profile → API Tokens → Create Token → "Edit Cloudflare Workers" template, or a custom token with **Account → Workers Scripts: Edit** and **Account → Workers KV Storage: Edit** for this account. |
+| `CLOUDFLARE_ACCOUNT_ID` | secret | `74d241df16b8aaa80914e3dbb6e16758` (`npx wrangler whoami` prints it too). The same ID is in `wrangler.jsonc`, so local and CI deploys hit the same Worker. |
+| `NEXT_PUBLIC_SITE_URL` | variable | `https://researchwith.me`. Falls back to that value in the workflow, so the variable is optional. |
+| `NEXT_PUBLIC_SUPABASE_URL` | secret | Supabase → Project Settings → API → Project URL. |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | secret | Supabase → Project Settings → API keys → publishable key (`sb_publishable_…`). |
+| `HF_SPACE_NAME`, `HF_TOKEN` | optional secrets | Only needed when the build reaches a Hugging Face Space. |
+
+`NEXT_PUBLIC_*` values are compiled into the Worker at build time, so they must exist when the build runs; changing them means rebuilding. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker secrets and are set with `npx wrangler secret put`, not in GitHub.
+
+### `wrangler.jsonc`
+
+One file describes the Worker; every value in it has to resolve or `wrangler deploy` fails.
+
+- `name: researchwithme`, `main: .open-next/worker.js` (the OpenNext bundle), `account_id` as above, `compatibility_date: 2026-10-23` with `nodejs_compat` and `global_fetch_strictly_public`.
+- `assets` points at `.open-next/assets` on the `ASSETS` binding; that is where the film (`/videos/hero.mp4`) and the rest of the static files live.
+- `routes` declares both custom domains, so Wrangler owns the DNS: it creates a proxied `AAAA` record pointing at `100::` for each host. The zone already runs on Cloudflare's nameservers (`luciana.ns.cloudflare.com`, `evan.ns.cloudflare.com`), which is what makes a custom domain possible. If a deploy reports that a record already exists for `www`, delete the old `www` record once and let Wrangler recreate it.
+- `preview_urls: true` is what lets `wrangler versions upload --preview-alias` hand back a link per pull request. The alias points at the newest version for that PR and is replaced on every push; it never receives production traffic.
+- `kv_namespaces` binds `NEXT_INC_CACHE_KV` and `NEXT_TAG_CACHE_KV`. One namespace (`researchwithme-opennext-cache`, `8d2dc8f0b1bb4839962ae63df8296b31`) backs both OpenNext caches; their key prefixes don't overlap (see `open-next.config.ts`), and KV is eventually consistent, so a revalidation can take up to about 60 s to show. Each deploy writes about 33 entries, well inside KV's free 1,000 writes a day. To move to another account: `npx wrangler kv namespace create researchwithme-opennext-cache`, then replace both IDs.
+- **D1 is not used.** Articles, comments, and studio data live in Supabase Postgres and the Worker never opens a database binding, so there is no `d1_databases` entry — a binding that does not resolve fails the deploy, and declaring one for capacity the app does not have would be a lie in the config. If a feature ever needs D1: `npx wrangler d1 create researchwithme-db`, add `d1_databases` with the returned `database_id` (the commented block in `wrangler.jsonc` is the shape), apply `npx wrangler d1 migrations apply researchwithme-db --remote`, and regenerate types with `npm run cf-typegen`.
+- `services` holds the `WORKER_SELF_REFERENCE` binding OpenNext's cache uses to regenerate stale pages; it must match `name`.
+
+### Smoke tests
+
+The deploy job calls `https://researchwith.me/` and `https://researchwith.me/videos/hero.mp4` up to ten times, six seconds apart, and fails the run if either does not answer 200. That covers both halves of the deploy: the Worker rendering and the static assets.
+
+### Turn Cloudflare's own builds off
+
+Cloudflare's **Workers Builds** check fails within a second on every commit in this repo, `main` included, and keeps its log behind the dashboard. Once the Actions deploy has run once: Workers & Pages → `researchwithme` → Settings → Builds → delete the build configuration (or switch auto-build off). Otherwise every push to `main` deploys twice and the red check keeps appearing on commits.
+
+### Local commands
 
 ```bash
 npm run preview     # OpenNext build, then serve the Worker locally in workerd (:8787)
@@ -91,12 +142,8 @@ npm run upload      # OpenNext build, then upload a new version without promotin
 npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 ```
 
-- **Deploys run in GitHub Actions.** `.github/workflows/deploy.yml` waits for `Quality` to pass on `main`, builds the Worker with `npm run build:worker`, ships it with `npx wrangler deploy`, then smoke-tests `https://researchwith.me/` and `/videos/hero.mp4`. A manual run is available from the Actions tab. It reads `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit, Workers KV Storage: Edit) and `CLOUDFLARE_ACCOUNT_ID` as repository secrets, the `NEXT_PUBLIC_*` values as repository variables or secrets, and `HF_SPACE_NAME` / `HF_TOKEN` when the build should reach the Space. Turn Cloudflare's own Workers Builds check off once it is live, or every push to `main` deploys twice. The local commands below still work with a logged-in `wrangler`.
-- Runs on the Workers free plan. One KV namespace (`researchwithme-opennext-cache`) backs both the incremental cache and the tag cache, so studio `revalidatePath` calls refresh static routes such as `/sitemap.xml` without a redeploy. KV is eventually consistent, so a revalidation can take up to about 60 s to show. Each deploy writes about 33 cache entries, well within KV's free 1,000 writes a day. `next/image` serves original files because there is no Images binding.
-- The namespace ID is set on both `kv_namespaces` entries in `wrangler.jsonc`. To move to another account, create a new namespace with `npx wrangler kv namespace create researchwithme-opennext-cache` and replace both IDs.
-- `NEXT_PUBLIC_*` values are compiled into the build, so they have to be present at build time — repository variables or secrets for the Actions deploy, or Workers & Pages → Settings → Build → Variables and secrets when Cloudflare builds — and the Worker has to be rebuilt afterwards. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets** and are set with `npx wrangler secret put`.
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
-- `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost. A Worker built that way serves the studio unauthenticated and cannot save a draft; `ALLOW_DEMO_DEPLOY=1` overrides the guard when demo mode is intentional.
+- `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost. A Worker built that way serves the studio unauthenticated and cannot save a draft; `ALLOW_DEMO_DEPLOY=1` overrides the guard when demo mode is intentional. The same guard runs in CI as `npm run deploy-guard`.
 - Production origin is `https://researchwith.me`. Supabase needs `https://researchwith.me/auth/callback` in Authentication → URL Configuration → Redirect URLs, and the same origin as Site URL.
 - OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
 

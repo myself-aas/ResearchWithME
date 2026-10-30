@@ -61,9 +61,11 @@ const allow = process.env.ALLOW_DEMO_DEPLOY === '1';
 console.error('\nThis build would ship without a working CMS:');
 for (const problem of problems) console.error(`  - ${problem}`);
 console.error(`
-On Cloudflare these must be set as build variables, not runtime variables:
-Workers & Pages → researchwithme → Settings → Build → Variables and secrets,
-then redeploy so the values are compiled into the Worker.
+These values are compiled into the build, so they have to exist when the build
+runs: Settings → Secrets and variables → Actions in GitHub (repository secret
+or variable) for the deploy workflow, or Workers & Pages → researchwithme →
+Settings → Build → Variables and secrets for a Cloudflare-side build. Runtime
+variables cannot fix this — the Worker has to be rebuilt.
 
 Demo mode is unauthenticated by design, and a Worker cannot write the JSON
 files it falls back to. Set the values, or pass ALLOW_DEMO_DEPLOY=1 to deploy
