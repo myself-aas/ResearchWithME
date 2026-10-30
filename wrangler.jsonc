@@ -23,6 +23,31 @@
 		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
 		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 	],
+	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
+	// pull request. A preview is a branch of the Worker, not the production
+	// instance, so it does not inherit the bindings above; anything it needs has
+	// to be named again here, or the preview deploy stops with
+	// "Your Wrangler configuration is missing a `previews` block".
+	//
+	// These point at the production namespace deliberately. OpenNext scopes every
+	// key by build id, so a preview's entries are unreachable from production and
+	// vice versa: the incremental cache stores
+	// `incremental-cache/<buildId>/<sha256>.cache`
+	// (node_modules/@opennextjs/cloudflare/dist/api/overrides/incremental-cache/
+	// kv-incremental-cache.js) and the tag cache stores `<buildId>/<tag>`
+	// (…/tag-cache/kv-next-tag-cache.js). What the two do share is the free
+	// plan's 1,000 KV writes a day; to split that as well, create a second
+	// namespace and swap the ids here — see README, "Worker Previews".
+	//
+	// `WORKER_SELF_REFERENCE` is deliberately absent: Worker Previews do not
+	// support service bindings, so a preview renders and caches but does not
+	// re-render itself through OpenNext's queue.
+	"previews": {
+		"kv_namespaces": [
+			{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
+			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+		]
+	},
 	"observability": {
 		"enabled": true
 	}

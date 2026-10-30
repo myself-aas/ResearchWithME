@@ -76,6 +76,15 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
 - OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
 
+### Worker Previews
+
+Cloudflare's build for this project runs two commands: `npx @opennextjs/cloudflare build`, then `npx wrangler deploy` on the production branch and `npx wrangler preview` everywhere else. `wrangler preview` (open beta) creates a *preview* of the Worker — a branch of it with its own URL — instead of touching production.
+
+- A preview does not inherit the Worker's bindings. `wrangler.jsonc` therefore repeats the two KV bindings under `previews`, and a preview deploy without that block fails with ``Your Wrangler configuration is missing a `previews` block``.
+- Those preview bindings name the production namespace on purpose. OpenNext prefixes every key with the build id (`incremental-cache/<buildId>/<hash>.cache`, `<buildId>/<tag>`), so preview entries are unreachable from production and the reverse — sharing the namespace cannot serve a preview's HTML to a reader. The two do share the free plan's 1,000 KV writes a day, so a busy preview eats into the production write budget. To separate them: `npx wrangler kv namespace create researchwithme-opennext-cache-preview`, then put that id in the `previews.kv_namespaces` entries (production keeps `8d2dc8f0…`).
+- Service bindings are not supported in previews, which is why `WORKER_SELF_REFERENCE` is not listed there. A preview renders and caches normally; it just cannot re-render itself through OpenNext's queue the way production does.
+- Worker secrets are not inherited either. `npx wrangler preview secret put <NAME>` sets one for previews; without it a preview runs with whatever the build had compiled in.
+
 ## Editorial CMS
 
 The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, which keeps the project runnable for review without cloud credentials.
