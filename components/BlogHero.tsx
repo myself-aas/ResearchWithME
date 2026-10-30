@@ -2,6 +2,8 @@
 
 import { Search, X } from 'lucide-react';
 import { ArticleFormat } from '@/lib/blog-data';
+import { hasVideo } from '@/lib/videos';
+import HeroFilm from '@/components/HeroFilm';
 
 interface BlogHeroProps {
   searchQuery: string;
@@ -10,6 +12,8 @@ interface BlogHeroProps {
   setSelectedFormat: (f: string) => void;
   totalArticles: number;
 }
+
+const heroFilm = '/videos/hero.mp4';
 
 const formats: Array<'All' | ArticleFormat> = [
   'All',
@@ -132,6 +136,25 @@ export default function BlogHero({
             </p>
           </aside>
         </div>
+
+        {hasVideo(heroFilm) && (
+          <figure className="mt-12 grid gap-6 border-t border-stone-300 pt-8 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-6">
+              <HeroFilm
+                src={heroFilm}
+                poster="/images/hero-film-poster.jpg"
+                label={'πeme in twenty-two seconds: a review record from masthead to citation, captioned on screen.'}
+              />
+            </div>
+            <figcaption className="lg:col-span-6 lg:self-center">
+              <h2 className="font-serif text-xl font-bold text-stone-900">The journal in twenty-two seconds</h2>
+              <p className="mt-2 max-w-md text-sm leading-relaxed text-stone-600">
+                One review record, start to finish: who wrote it, what it examined, and the citation you can copy out of it.
+                Captions are on screen, so it works with the sound off.
+              </p>
+            </figcaption>
+          </figure>
+        )}
       </div>
     </section>
   );

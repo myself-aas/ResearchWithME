@@ -155,6 +155,7 @@ The active interface is the root Next.js application, set in the Aptos family. A
 - **Buttons**: One primary amber action per task, secondary neutral outline actions, and explicit disabled/loading labels. Buttons default to `type="button"` unless they submit a form.
 - **Form controls**: Visible labels or `aria-label`, 44px min-height, AA placeholders, focus ring, validation text, preserved input on failure, and duplicate-submit protection.
 - **Article header**: Byline, publication date, reading time, artifact metadata, bookmark, share, and citation utilities in a clear hierarchy. The metadata row is a list in which each item carries its own separator, so a wrapped line starts with a category or a date instead of a stray dot.
+- **Hero film**: The homepage closes its hero with the 22-second composition: `HeroFilm` renders the poster frame and puts the play control on a bar under the frame, so nothing is drawn over the film. `hasVideo()` hides the whole figure when the render is missing from `public/videos`, so a checkout without the MP4 still builds.
 - **Related reviews**: Three typographic recommendations at the natural end of a review, without an eyebrow label.
 - **Newsletter**: Inline footer subscription only, with confirmation and error states; no reading-flow pop-up.
 - **Verification and assistant**: Standard controls and status panels; no terminal costume, pulsing decorative dot, or cyan-on-dark AI styling.
@@ -173,6 +174,7 @@ The active interface is the root Next.js application, set in the Aptos family. A
 - One restrained page-settle entrance is applied to `main`: 360ms, exponential ease-out, transform and opacity only.
 - State feedback uses short color, opacity, and border transitions. No scattered entrance animations on every card.
 - `prefers-reduced-motion: reduce` disables the entrance and transform transitions while preserving color/opacity state changes.
+- The hero film never autoplays. It is poster-first and starts on a click, so a reduced-motion reader gets a still frame, nobody downloads 1.8 MB unasked, and sound is allowed from the same gesture.
 - Every asynchronous action has loading, success, empty, error, and disabled behavior where applicable. Errors preserve user input and offer a retry.
 
 ## Do's and Don'ts

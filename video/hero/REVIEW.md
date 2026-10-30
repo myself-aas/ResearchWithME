@@ -13,8 +13,8 @@ Written after the review pass (`check` + `snapshot --review`), before any render
 
 - **Measured:** `check --json` — lint 0 errors / 1 warning, runtime, layout, motion, contrast and craft all clean. 22.0 s at 30 fps, 660 frames, five scene slots, 14 caption groups, 4 narration clips. Narration line starts 0.900 / 4.628 / 12.772 / 16.620 s, all taken from the files themselves, not estimated (`scripts/measure-narration.py`). Word times inside a line are weighted by characters, so they are close but not transcript-exact.
 - **Looked at:** every beat frame, all eight seam strips, the 360 px phone sheet, and frames at 4.9 s, 16.85 s and 17.15 s for the two seams I changed last. Fixes that came out of looking: the caption scrim read as a grey bar on the white scenes (removed); the scribble and the hand-drawn circle were colliding with each other (moved into their own rows); the card sat in the top third of an empty frame (raised, rows 62 px, title 46 px); the citation block's rule printed before the block arrived (now they arrive together); the end-card wipe left ~0.4 s of bare paper (sped up, content lands behind it).
-- **Not checked at all:** the soundtrack. There is no `ffprobe` on this machine, so `check` reports `audio_source_unreadable` for the four narration clips, `hyperframes audio` cannot run, and no render exists. Nobody has heard this film, including me. Before publishing, run `npx hyperframes render` and `npx hyperframes audio <file> --json` on a machine with ffmpeg, and confirm the four lines sit at the timings above with no clipping.
-- **Not checked frame by frame:** the motion between the beats. The contact sheets sample instants; the exit of the headline in scene 1 (4.28–4.78 s) and the push in scene 3 (8.7–9.6 s) were judged from their endpoints only.
+- **Checked after the render:** `npx hyperframes render` produced 22.0 s / 660 frames / 1920×1080 at 30 fps in 42 s wall, and `npx hyperframes audio` measured it: voice, first onset 1.195 s, tail 20.854 s, −15.9 LUFS integrated, true peak −1.7 dBFS, zero clipped samples. The silent stretches fall exactly on the scene cuts (12.065–13.04 s, 20.86–22.0 s). Frames pulled from the MP4 at 3.2, 12.8, 15.4 and 19.2 s match the snapshots: fonts, rules, ticks, captions.
+- **Still not checked frame by frame:** the motion between the beats. The contact sheets sample instants; the exit of the headline in scene 1 (4.28–4.78 s) and the push in scene 3 (8.7–9.6 s) were judged from their endpoints only. The render is continuous, so anything that stutters there is in the timeline, not the encoder.
 
 ## Sound
 
@@ -33,4 +33,6 @@ The verify scene (7.55–13.05 s). The card is dense at this size, the two ticks
 
 ## State
 
-`check`: lint 0 errors, 1 warning (above); runtime, layout, motion, contrast, craft clean; audio unverifiable here. No render was produced, and the Studio preview was not opened — the film stops here for approval.
+Approved as shot and shipped. `check`: lint 0 errors, 1 warning (above); runtime, layout, motion, contrast, craft and audio clean. Rendered once and measured: −15.9 LUFS, no clipping. The MP4 is `public/videos/hero.mp4` (1.8 MB), the poster is `public/images/hero-film-poster.jpg` (frame 6.9 s), and the homepage hero plays it poster-first, on a click.
+
+Regenerate with the four commands under "Shipping the render" in `README.md` after any change.

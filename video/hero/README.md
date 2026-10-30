@@ -33,10 +33,23 @@ Run them from this folder. The CLI is pinned in `package.json` (`hyperframes@0.8
 - **Timing** is narration-first. Re-record a line into `assets/audio/narr-N.mp3`, run `python3 scripts/measure-narration.py --write`, paste the new numbers into the scene files (each scene's local times are commented), then `python3 scripts/build-captions.py`.
 - **The headline** in scene 1 is per-word HTML spans, not a variable, because each word is animated separately. Edit the spans and the tween timings together.
 
+## Shipping the render
+
+The homepage plays `../../public/videos/hero.mp4` and shows `../../public/images/hero-film-poster.jpg` until it is pressed. `lib/videos.ts` only advertises files that existed at build time, so the manifest is the switch that turns the hero film on.
+
+```bash
+npx hyperframes render -o ../../public/videos/hero.mp4 -q standard -w 2   # 22 s, ~1.8 MB
+ffmpeg -y -ss 6.9 -i ../../public/videos/hero.mp4 -frames:v 1 \
+  -vf scale=1280:-2 -q:v 4 ../../public/images/hero-film-poster.jpg      # poster = end of the record scene
+npm --prefix ../.. run videos:manifest                                   # rewrites lib/video-manifest.json
+```
+
+Re-run `videos:manifest` after any re-render. If the MP4 is absent the hero silently drops the whole figure, which is why the poster is committed next to it.
+
 ## Environment notes
 
-- The sandbox that wrote this has no `ffprobe`, so `check` reports `audio_source_unreadable` for the four narration files and `render` cannot mix the soundtrack. Everything else in `check` passes. Install ffmpeg (`ffprobe` included) and both go away.
-- No browser is downloadable here either; set `HYPERFRAMES_BROWSER_PATH` to a Chrome/Chromium you already have before `check`, `snapshot` or `render`.
+- **GSAP is vendored.** `index.html` loads `assets/vendor/gsap.min.js` (3.15.0). The compiler runs offline and a CDN `<script>` fails the render at ~90 % with `sub_timeline_script_failure`; do not put the `jsdelivr` tag back.
+- `check`, `snapshot` and `render` need a Chrome/Chromium and `ffprobe` on `PATH`. In a bare sandbox: `HYPERFRAMES_BROWSER_PATH=/path/to/chromium`, plus `LD_LIBRARY_PATH` for the bundled libraries. Without `ffprobe` the audio checks report `audio_source_unreadable`; with it they pass.
 - `π` (U+03C0) is not in the Latin Newsreader or Inter files, exactly as on the site: the glyph comes from the system serif, so the wordmark's `π` can differ between machines. Anywhere the film must be pixel-identical (a printed frame, a still), set the wordmark in a face that carries Greek.
 - `hyperframes preview` writes a `data-hf-id` attribute onto every element it touches, so the Studio can address them. That rewrites the composition files (166 lines here). Run `git checkout -- .` after a Studio session if you did not change anything there, or commit the ids deliberately.
 - The preview server binds `127.0.0.1` only and has no `--host` flag, so it cannot be proxied as a remote preview; open Studio on the machine that holds the project.
