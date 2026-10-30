@@ -11,9 +11,9 @@ type CredentialFilter = 'All' | Author['verifiedVia'];
 
 const FILTERS: Array<{ value: CredentialFilter; label: string; icon: typeof Users }> = [
   { value: 'All', label: 'All contributors', icon: Users },
-  { value: 'orcid', label: 'ORCID verified', icon: GraduationCap },
-  { value: 'github', label: 'GitHub verified', icon: GitBranch },
-  { value: 'institution', label: 'Institutional', icon: Building2 },
+  { value: 'orcid', label: 'ORCID', icon: GraduationCap },
+  { value: 'github', label: 'GitHub', icon: GitBranch },
+  { value: 'institution', label: 'Institution', icon: Building2 },
 ];
 
 function credentialIcon(author: Author) {
@@ -54,10 +54,10 @@ export default function AuthorsDirectoryPage() {
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-stone-200 pb-8">
           <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            The reviewers behind the archive
+            Reviewers and their records
           </h1>
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            Each contributor publishes under a verified scholarly identity. Profiles list their credentials, research domain, and complete publication record so you can judge the expertise behind a review.
+            Each contributor publishes under a recorded scholarly identity. A profile lists their credentials, research area, and everything they have reviewed.
           </p>
         </header>
 
@@ -109,16 +109,16 @@ export default function AuthorsDirectoryPage() {
           </div>
 
           <p className="mt-4 text-sm text-stone-600">
-            {filteredAuthors.length} {filteredAuthors.length === 1 ? 'contributor' : 'contributors'} shown
+            {filteredAuthors.length} {filteredAuthors.length === 1 ? 'contributor' : 'contributors'}
             {searchQuery ? ` for “${searchQuery}”` : ''}
           </p>
         </section>
 
         {filteredAuthors.length === 0 ? (
           <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">
-            <h2 className="font-serif text-2xl font-semibold text-stone-900">No contributors match those filters</h2>
+            <h2 className="font-serif text-2xl font-semibold text-stone-900">No contributors match</h2>
             <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-              Try a different name or clear the credential filter to see the full directory.
+              Try another name, or clear the credential filter to see everyone.
             </p>
             <button
               type="button"
@@ -145,7 +145,7 @@ export default function AuthorsDirectoryPage() {
                         {author.avatar}
                       </span>
                       <span className="rounded border border-stone-300 bg-stone-100 px-2 py-1 text-sm text-stone-700">
-                        {author.articleCount} articles
+                        {author.articleCount} {author.articleCount === 1 ? 'review' : 'reviews'}
                       </span>
                     </div>
 
@@ -178,7 +178,7 @@ export default function AuthorsDirectoryPage() {
                       href={`/author/${author.id}`}
                       className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-amber-900 underline-offset-4 hover:underline"
                     >
-                      <span>View profile and archive</span>
+                      <span>View profile</span>
                       <ArrowRight className="h-4 w-4" aria-hidden="true" />
                     </Link>
                   </div>

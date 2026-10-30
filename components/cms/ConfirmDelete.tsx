@@ -36,7 +36,7 @@ export default function ConfirmDelete({
         type="button"
         onClick={() => setConfirming(true)}
         className={dangerButtonClass}
-        aria-label={`${label} — asks for confirmation`}
+        aria-label={`${label}: asks for confirmation`}
       >
         <Trash2 className="h-4 w-4" aria-hidden="true" />
         <span>{label}</span>
@@ -48,7 +48,7 @@ export default function ConfirmDelete({
     <span role="group" aria-label="Confirm deletion" className="inline-flex flex-wrap items-center gap-2">
       <span className="text-sm font-medium text-red-800">{question}</span>
       <button ref={confirmRef} type="button" onClick={onConfirm} disabled={busy} className={dangerButtonClass}>
-        {busy ? busyLabel : 'Yes, delete'}
+        {busy ? busyLabel : label}
       </button>
       <button type="button" onClick={() => setConfirming(false)} disabled={busy} className={secondaryButtonClass}>
         Cancel

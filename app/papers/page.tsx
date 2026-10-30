@@ -37,7 +37,7 @@ export default function PapersArchivePage() {
         }
       } catch {
         if (active) {
-          setLoadError('The live archive could not be reached, so the bundled publication records are shown.');
+          setLoadError('The live archive did not respond, so the bundled records are shown instead.');
         }
       }
     }
@@ -54,7 +54,7 @@ export default function PapersArchivePage() {
       setCopiedDoi(id);
       window.setTimeout(() => setCopiedDoi(null), 2200);
     } catch {
-      setCopyError('Clipboard access was blocked. The DOI is printed on the record below.');
+      setCopyError('The browser blocked clipboard access. The DOI is printed on each record below.');
     }
   }
 
@@ -99,10 +99,10 @@ export default function PapersArchivePage() {
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-stone-200 pb-8">
           <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Papers, methods, and reproducible artifacts
+            Paper archive
           </h1>
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            A structured archive of open-access publications. Each record lists its authors, DOI, license, methods, findings, and reproducibility material so the work can be checked rather than taken on trust.
+            Open-access papers with their authors, DOI, license, methods, findings, and the material needed to reproduce them.
           </p>
         </header>
 
@@ -319,14 +319,14 @@ export default function PapersArchivePage() {
                           ) : (
                             <Share2 className="h-4 w-4" aria-hidden="true" />
                           )}
-                          <span>{isCopied ? 'DOI copied' : 'Copy DOI link'}</span>
+                          <span>{isCopied ? 'DOI copied' : 'Copy DOI'}</span>
                         </button>
                         <Link
                           href={`/cite?article=${encodeURIComponent(paper.slug)}`}
                           className="inline-flex min-h-10 items-center gap-1.5 font-medium text-stone-700 underline-offset-4 hover:text-stone-900 hover:underline"
                         >
                           <Quote className="h-4 w-4" aria-hidden="true" />
-                          <span>Cite</span>
+                          <span>Cite this paper</span>
                         </Link>
                       </div>
                     </div>

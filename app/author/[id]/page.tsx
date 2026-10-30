@@ -154,19 +154,19 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
         <section aria-labelledby="author-archive" className="mt-10">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
             <h2 id="author-archive" className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl">
-              Publication archive
+              Published reviews
             </h2>
             <p className="text-sm text-stone-600">
-              {filteredArticles.length} of {articles.length} {articles.length === 1 ? 'article' : 'articles'}
+              {filteredArticles.length} of {articles.length} {articles.length === 1 ? 'review' : 'reviews'}
             </p>
           </div>
 
           {articles.length === 0 ? (
             <div className="mt-6 border border-stone-200 bg-white p-8">
               <FileText className="h-8 w-8 text-stone-500" aria-hidden="true" />
-              <h3 className="mt-3 font-serif text-xl font-semibold text-stone-900">No articles published yet</h3>
+              <h3 className="mt-3 font-serif text-xl font-semibold text-stone-900">No published reviews yet</h3>
               <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-                This contributor has a verified profile but no published reviews in the current archive. Check back after the next editorial cycle.
+                This contributor&apos;s profile is on file, but nothing is published here yet.
               </p>
               <Link
                 href="/"
@@ -180,7 +180,7 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="sm:col-span-2 lg:col-span-1">
                   <label htmlFor="author-article-search" className="mb-1.5 block text-sm font-medium text-stone-800">
-                    Search this archive
+                    Search these reviews
                   </label>
                   <div className="relative">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-600" aria-hidden="true" />
@@ -258,7 +258,7 @@ export default function AuthorDetailPage({ params }: { params: Promise<{ id: str
 
               {filteredArticles.length === 0 ? (
                 <div className="mt-6 border border-stone-200 bg-white p-8">
-                  <h3 className="font-serif text-xl font-semibold text-stone-900">No articles match those filters</h3>
+                  <h3 className="font-serif text-xl font-semibold text-stone-900">No reviews match those filters</h3>
                   <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
                     Clear the search text and filters to see this contributor&apos;s full archive.
                   </p>

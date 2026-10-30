@@ -113,7 +113,7 @@ export default function ArticleFeed({
               Browse by field
             </h2>
             <p className="max-w-md text-sm leading-relaxed text-stone-600">
-              Six editorial columns, each defined by the evidence its reviewers work with.
+              Six editorial sections. Pick one to see its reviews.
             </p>
           </div>
 
@@ -185,7 +185,7 @@ export default function ArticleFeed({
             {activeCategory ? `${activeCategory} reviews` : 'Latest reviews'}
           </h2>
           <p className="mt-2 text-sm text-stone-600">
-            {posts.length} {posts.length === 1 ? 'article' : 'articles'}
+            {posts.length} {posts.length === 1 ? 'review' : 'reviews'}
             {selectedFormat !== 'All' ? ` · ${selectedFormat}` : ''}
             {searchQuery ? ` · matching “${searchQuery}”` : ''}
           </p>
@@ -204,9 +204,9 @@ export default function ArticleFeed({
 
       {posts.length === 0 ? (
         <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">
-          <h3 className="font-serif text-2xl font-semibold text-stone-900">No articles match those filters</h3>
+          <h3 className="font-serif text-2xl font-semibold text-stone-900">No reviews match these filters</h3>
           <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-            Nothing in the archive matches this combination of search text, field, and format. Clear the filters to see the full catalogue.
+            Nothing in the archive matches this search, field, and format together. Clear the filters to see every review.
           </p>
           <button
             type="button"
@@ -331,7 +331,7 @@ export default function ArticleFeed({
       )}
 
       <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
-        <p className="text-sm text-stone-600">Every review is open access under CC BY 4.0.</p>
+        <p className="text-sm text-stone-600">Open access under CC BY 4.0.</p>
         <Link
           href="/papers"
           className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"

@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Editorial Board',
-  description: 'Review the editors, verification standards, and publishing principles behind ResearchWithMe.',
+  title: 'Editorial board',
+  description: 'The editors, the verification standards, and the publishing principles.',
   path: '/editorial-board',
   type: 'website' as const,
 });

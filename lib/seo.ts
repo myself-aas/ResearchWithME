@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 
-export const SITE_NAME = 'reme';
+export const SITE_NAME = 'πeme';
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').replace(/\/$/, '');
 export const SITE_DESCRIPTION =
-  'Open-access scholarly essays, reproducible paper reviews, and rigorous repository teardowns from verified domain experts.';
+  'Open-access reviews of published papers and open repositories, written by specialists whose credentials you can check.';
 
 export function absoluteUrl(path = '/') {
   return new URL(path.startsWith('/') ? path : `/${path}`, SITE_URL).toString();

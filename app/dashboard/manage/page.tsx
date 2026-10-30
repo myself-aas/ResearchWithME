@@ -75,8 +75,8 @@ export default function ManageArticlesPage() {
       if (!isUnauthorized(cause)) {
         setActionError(
           cause instanceof Error
-            ? `${cause.message} Open the article to finish the required fields.`
-            : 'The status could not be changed.',
+            ? `${cause.message} Open the review to finish the required fields.`
+            : 'The status did not change.',
         );
       }
     } finally {
@@ -96,7 +96,7 @@ export default function ManageArticlesPage() {
       reload();
     } catch (cause) {
       if (!isUnauthorized(cause)) {
-        setActionError(cause instanceof Error ? cause.message : 'The article could not be deleted.');
+        setActionError(cause instanceof Error ? cause.message : 'The review was not deleted.');
       }
     } finally {
       setBusyId(null);
@@ -107,14 +107,14 @@ export default function ManageArticlesPage() {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Articles</h1>
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Reviews</h1>
           <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-            Every draft and published article, with its live status. Publishing here revalidates the public journal.
+            Every draft and published review with its current status. Publishing here refreshes the public journal.
           </p>
         </div>
         <Link href="/dashboard" className={primaryButtonClass}>
           <PenSquare className="h-4 w-4" aria-hidden="true" />
-          <span>New article</span>
+          <span>New review</span>
         </Link>
       </div>
 
@@ -145,7 +145,7 @@ export default function ManageArticlesPage() {
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <div className="w-full max-w-sm">
           <label htmlFor="article-filter" className="mb-1.5 block text-sm font-medium text-stone-800">
-            Filter articles
+            Filter reviews
           </label>
           <input
             id="article-filter"
@@ -191,7 +191,7 @@ export default function ManageArticlesPage() {
 
       {loading && posts === null && (
         <div aria-busy="true" aria-live="polite" className="mt-6">
-          <p className="text-sm font-medium text-stone-600">Loading articles…</p>
+          <p className="text-sm font-medium text-stone-600">Loading reviews…</p>
           <div aria-hidden="true" className="mt-3 divide-y divide-stone-200 rounded-lg border border-stone-200 bg-white">
             {[0, 1, 2].map((row) => (
               <div key={row} className="flex items-center justify-between gap-4 px-4 py-5">
@@ -208,22 +208,22 @@ export default function ManageArticlesPage() {
 
       {posts !== null && posts.length === 0 && (
         <div className="mt-8 border-y border-stone-200 py-12 text-center">
-          <h2 className="font-serif text-2xl font-bold text-stone-900">No articles yet</h2>
+          <h2 className="font-serif text-2xl font-bold text-stone-900">No reviews yet</h2>
           <p className="mx-auto mt-2 max-w-md text-base leading-relaxed text-stone-700">
-            Write the first article. It stays private as a draft until you publish it.
+            Start the first one. It stays a private draft until you publish.
           </p>
           <Link href="/dashboard" className={cn(primaryButtonClass, 'mt-5')}>
             <PenSquare className="h-4 w-4" aria-hidden="true" />
-            <span>Write the first article</span>
+            <span>Start a review</span>
           </Link>
         </div>
       )}
 
       {posts !== null && posts.length > 0 && filtered.length === 0 && (
         <div className="mt-8 border-y border-stone-200 py-10 text-center">
-          <h2 className="font-serif text-xl font-semibold text-stone-900">No articles match this filter</h2>
+          <h2 className="font-serif text-xl font-semibold text-stone-900">Nothing matches this filter</h2>
           <p className="mt-2 text-sm text-stone-600">
-            {counts.all} {counts.all === 1 ? 'article is' : 'articles are'} in the studio.
+            The studio holds {counts.all} {counts.all === 1 ? 'review' : 'reviews'} in total.
           </p>
           <button
             type="button"
@@ -302,7 +302,7 @@ export default function ManageArticlesPage() {
                     onConfirm={() => void remove(post)}
                     busy={busy}
                     label="Delete"
-                    question="Delete this article?"
+                    question="Delete this review?"
                   />
                 </div>
               </li>
@@ -312,7 +312,7 @@ export default function ManageArticlesPage() {
       )}
 
       <p className="mt-4 text-sm leading-relaxed text-stone-600">
-        Deleting an article also deletes its comments. Reverting a published article removes it from the journal
+        Deleting a review also deletes its comments. Reverting a published review removes it from the journal
         immediately.
       </p>
     </div>

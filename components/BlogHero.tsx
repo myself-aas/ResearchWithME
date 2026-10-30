@@ -39,7 +39,7 @@ export default function BlogHero({
               Research you can read, check, and reuse.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-stone-700">
-              Long-form reviews of published papers and open repositories, written by verified domain specialists. Every claim carries a citation, every artifact has a home, and nothing sits behind a paywall.
+              Long-form reviews of published papers and open repositories, written by specialists whose credentials you can check. Each review cites the artifact it examined, and every one is free to read.
             </p>
 
             <div className="mt-8 max-w-2xl">
@@ -76,7 +76,7 @@ export default function BlogHero({
                   onClick={() => document.getElementById('articles-feed')?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                   className="inline-flex min-h-12 items-center justify-center rounded-lg bg-stone-900 px-6 text-sm font-semibold text-white transition-colors hover:bg-stone-800"
                 >
-                  Browse results
+                  Search
                 </button>
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function BlogHero({
           <aside aria-label="Publication summary" className="border-t border-stone-300 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
             <dl className="grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-1">
               <div>
-                <dt className="text-sm text-stone-600">Published reviews</dt>
+                <dt className="text-sm text-stone-600">Reviews published</dt>
                 <dd className="font-serif text-3xl font-semibold text-stone-900">{totalArticles}</dd>
               </div>
               <div>
@@ -116,7 +116,7 @@ export default function BlogHero({
                 <dd className="font-serif text-3xl font-semibold text-stone-900">6</dd>
               </div>
               <div>
-                <dt className="text-sm text-stone-600">Access model</dt>
+                <dt className="text-sm text-stone-600">Access</dt>
                 <dd className="text-base font-semibold text-stone-900">Diamond open access</dd>
               </div>
               <div>
@@ -125,7 +125,7 @@ export default function BlogHero({
               </div>
             </dl>
             <p className="mt-6 max-w-xs text-sm leading-relaxed text-stone-600">
-              No paywalls, advertising trackers, or reading-flow pop-ups. The archive is the product.
+              No paywalls, no ad trackers, and no pop-ups interrupting the reading.
             </p>
           </aside>
         </div>

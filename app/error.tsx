@@ -17,10 +17,10 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         role="alert"
         tone="error"
         code="Error"
-        title="We could not open this publication"
-        description="The request did not complete. Your reading list and drafts are stored separately, so you can retry without losing them."
+        title="This page did not load"
+        description="The request failed before the page was built. Your reading list and drafts live in the browser, so retrying will not lose them."
         primaryAction={{ href: '/', label: 'Return to the journal' }}
-        secondaryAction={{ href: '/papers', label: 'Browse the paper archive' }}
+        secondaryAction={{ href: '/papers', label: 'Search the paper archive' }}
       >
         <button
           type="button"

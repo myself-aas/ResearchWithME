@@ -16,12 +16,12 @@ Understand a long-form technical review without interruption.
 A reader reaches the argument, key takeaways, author credentials, related work, and peer discussion in a natural reading order.
 
 ## Direction
-Editorial serif titles, high-legibility sans body, monospace reserved for code and identifiers, calm reading column, and one restrained page entrance. No popup newsletters.
+Editorial serif titles, high-legibility sans body, monospace reserved for code and identifiers, calm reading column, and one restrained page entrance. No newsletter pop-ups.
 
 ## Constraints
 - WCAG 2.1 AA contrast, visible keyboard focus, and semantic landmarks.
 - Reflow to 320px without horizontal scrolling.
-- No kickers above headings, gradient text, glass as decoration, nested cards, or intrusive popups.
+- No kickers above headings, gradient text, glass as decoration, nested cards, or intrusive pop-ups.
 - Loading, empty, error, disabled, and success states explain what happened and what to do next.
 - Local assets and honest demo labels; no fabricated live verification claims.
 

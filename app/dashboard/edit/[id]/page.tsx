@@ -19,7 +19,7 @@ export default function EditArticlePage() {
 
   useEffect(() => {
     if (!id) {
-      setError('The article address is incomplete.');
+      setError('This review has no address in the URL.');
       setLoading(false);
       return;
     }
@@ -37,7 +37,7 @@ export default function EditArticlePage() {
         setError(
           cause instanceof Error
             ? cause.message
-            : 'The article could not be loaded. It may have been deleted.',
+            : 'The review did not load. It may have been deleted.',
         );
       })
       .finally(() => {
@@ -67,12 +67,12 @@ export default function EditArticlePage() {
       <div className="max-w-2xl">
         <Link href="/dashboard/manage" className={secondaryButtonClass}>
           <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          <span>All articles</span>
+          <span>All reviews</span>
         </Link>
         <div role="alert" className="mt-5 border-l-2 border-red-700 bg-red-50 px-4 py-3">
           <p className="flex items-start gap-2 text-sm font-semibold text-red-900">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>{error ?? 'That article was not found.'}</span>
+            <span>{error ?? 'That review was not found.'}</span>
           </p>
           <div className="mt-3 flex flex-wrap gap-2">
             <button type="button" onClick={() => setNonce((value) => value + 1)} className={primaryButtonClass}>

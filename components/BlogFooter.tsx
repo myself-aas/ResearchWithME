@@ -24,12 +24,12 @@ export default function BlogFooter() {
 
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 rounded-md" aria-label="ResearchWithMe home">
+            <Link href="/" className="inline-flex items-center gap-2 rounded-md" aria-label="πeme home">
               <BrandLogo variant="light" size="md" showText={true} />
             </Link>
 
             <p className="mt-4 max-w-md text-sm leading-relaxed text-stone-300">
-              An independent, open-access publication of expert essays, reproducible paper reviews, and repository teardowns across STEM, health, sociology, and research policy.
+              An independent, open-access publication: long-form reviews, repository teardowns, and essays on science, health, and research policy.
             </p>
 
             <dl className="mt-5 space-y-1.5 text-sm text-stone-300">
@@ -43,7 +43,7 @@ export default function BlogFooter() {
               </div>
               <div>
                 <dt className="sr-only">Funding model</dt>
-                <dd>No paywalls · no behavioural ad trackers · community funded</dd>
+                <dd>No paywalls · no ad trackers · funded by readers</dd>
               </div>
             </dl>
 
@@ -60,7 +60,7 @@ export default function BlogFooter() {
                 className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-600 px-4 py-2 text-sm font-semibold text-stone-100 transition-colors hover:border-stone-500 hover:bg-stone-800"
               >
                 <ShieldCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />
-                <span>Verification prototype</span>
+                <span>Check a contributor</span>
               </Link>
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function BlogFooter() {
 
           <nav aria-labelledby="footer-portals">
             <h2 id="footer-portals" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
-              Publication portals
+              Publication
             </h2>
             <ul className="mt-3 space-y-2 text-sm">
               {portalLinks.map((link) => (
@@ -103,10 +103,10 @@ export default function BlogFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-stone-700 pt-6 text-sm text-stone-300 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 ResearchWithMe Publication Collective. Research published under open access.</p>
+          <p>© 2026 ResearchWithMe Publication Collective. Everything here is open access.</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <Link href="/submit" className="underline-offset-4 hover:text-white hover:underline">
-              Editorial guidelines
+              Submission guidelines
             </Link>
             <Link href="/cite" className="underline-offset-4 hover:text-white hover:underline">
               Citation export

@@ -41,7 +41,7 @@ export default function CommentsModerationPage() {
       reload();
     } catch (cause) {
       if (!isUnauthorized(cause)) {
-        setActionError(cause instanceof Error ? cause.message : 'The comment could not be deleted.');
+        setActionError(cause instanceof Error ? cause.message : 'The comment was not deleted.');
       }
     } finally {
       setBusyId(null);
@@ -54,12 +54,12 @@ export default function CommentsModerationPage() {
         <div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Comments</h1>
           <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-            Reader discussion on published CMS articles. Delete removes a comment for every visitor; comments cannot be
-            edited after posting.
+            Reader discussion on published reviews. Deleting a comment removes it for every visitor, and comments cannot
+            be edited after posting.
           </p>
         </div>
         <p className="text-sm text-stone-600">
-          {(comments ?? []).length} {(comments ?? []).length === 1 ? 'comment' : 'comments'} in the archive
+          {(comments ?? []).length} {(comments ?? []).length === 1 ? 'comment' : 'comments'} in total
         </p>
       </div>
 
@@ -97,7 +97,7 @@ export default function CommentsModerationPage() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Author, article, or text"
+            placeholder="Author, review, or text"
             className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600"
           />
         </div>
@@ -190,7 +190,7 @@ export default function CommentsModerationPage() {
       )}
 
       <p className="mt-4 text-sm leading-relaxed text-stone-600">
-        Public comments are rate limited per IP address and validated against the same length limits as the database.
+        New comments are rate limited and length-checked before they appear here.
       </p>
     </div>
   );

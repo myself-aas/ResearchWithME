@@ -3,6 +3,8 @@
 ## Project overview
 Scholarly publication platform: long-form paper reviews, reproducible teardowns, citation-first reading. Stack: Next.js 15 App Router, React 19, Tailwind CSS v4, Supabase, TypeScript.
 
+User-facing copy calls the publication's own pieces "reviews" and the CMS at `/dashboard` the "article studio"; `/write` is the "writer studio". Keep those terms.
+
 Read `PRODUCT.md` and `DESIGN.md` before touching any UI surface. Keep `.impeccable/surfaces/` briefs in sync with every route change.
 
 ## Quality gate (must pass before any commit or PR)
@@ -13,7 +15,7 @@ Individual commands: `npm run lint`, `npm run typecheck`, `npm test`, `npm run i
 
 ## HyperFrames video skills
 
-All seven HyperFrames skills are installed globally. Read `/hyperframes` **first** before generating any video, motion graphic, caption overlay, or slideshow for this project.
+All seven HyperFrames skills are installed globally. Read `/hyperframes` **before** generating any video, motion graphic, caption overlay, or slideshow for this project.
 
 ### When to use each skill
 | Request | Skill to read first |

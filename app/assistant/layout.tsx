@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
   title: 'Assistant',
-  description: 'Query the ResearchWithMe catalog with cited answers drawn from published articles and papers.',
+  description: 'Ask the archive a question and get an answer with links to the reviews behind it.',
   path: '/assistant',
   type: 'website' as const,
 });

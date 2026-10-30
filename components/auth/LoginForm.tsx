@@ -110,7 +110,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
     if (pending) return;
 
     if (!email.trim() || !password) {
-      fail('Enter both the email address and the password for the editor account.');
+      fail('Enter the email and password for the editor account.');
       return;
     }
 
@@ -160,7 +160,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
   async function sendMagicLink() {
     if (pending) return;
     if (!email.trim()) {
-      fail('Add the email address first, then request a sign-in link.');
+      fail('Add an email address, then request the sign-in link.');
       document.getElementById(emailId)?.focus();
       return;
     }
@@ -214,8 +214,8 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
           Supabase is not connected
         </h2>
         <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">
-          The editorial studio still works: it saves articles and comments to the JSON archive on this server. Cloud
-          accounts, media uploads, and realtime updates turn on when credentials are configured.
+          The article studio still works: reviews and comments save to the JSON archive on this server. Accounts, media
+          uploads, and live updates switch on once credentials are configured.
         </p>
 
         <div className="mt-5 flex flex-wrap gap-2">
@@ -224,7 +224,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link href="/write" className={secondaryButtonClass}>
-            Prototype authoring form
+            Open the prototype writer
           </Link>
         </div>
 
@@ -260,7 +260,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
     return (
       <section aria-labelledby="no-access-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
         <h2 id="no-access-heading" className="font-serif text-2xl font-bold text-stone-900">
-          Signed in, without editor access
+          Signed in without editor access
         </h2>
         <p className="mt-2 text-base leading-relaxed text-stone-700">
           {user.name}

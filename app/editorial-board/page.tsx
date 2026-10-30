@@ -27,10 +27,10 @@ export default function EditorialBoardPage() {
       <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-stone-200 pb-8">
           <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Editorial standards and the people who keep them
+            Editorial standards
           </h1>
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-stone-700">
-            ResearchWithMe is governed by an independent collective of researchers, systems engineers, clinicians, and data librarians. They set the review standard and sign the record when a publication meets it.
+            An independent collective of researchers, systems engineers, clinicians, and data librarians governs ResearchWithMe. They set the review standard and sign the record when a publication meets it.
           </p>
         </header>
 
@@ -78,15 +78,10 @@ export default function EditorialBoardPage() {
             What the editorial gate checks
           </h2>
           <ol className="mt-6 space-y-8">
-            {principles.map((principle, index) => (
-              <li key={principle.title} className="grid gap-3 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-6">
-                <span aria-hidden="true" className="font-serif text-3xl font-semibold text-amber-800">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <div>
-                  <h3 className="font-serif text-xl font-semibold text-stone-900">{principle.title}</h3>
-                  <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">{principle.body}</p>
-                </div>
+            {principles.map((principle) => (
+              <li key={principle.title}>
+                <h3 className="font-serif text-xl font-semibold text-stone-900">{principle.title}</h3>
+                <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">{principle.body}</p>
               </li>
             ))}
           </ol>
@@ -107,13 +102,13 @@ export default function EditorialBoardPage() {
                 href="/verify"
                 className="inline-flex min-h-11 items-center rounded-md border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
               >
-                Verification prototype
+                Record a contributor identity
               </Link>
               <Link
                 href="/submit"
                 className="inline-flex min-h-11 items-center rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
               >
-                Submit a manuscript
+                Submit your work
               </Link>
             </div>
           </div>

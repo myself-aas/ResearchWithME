@@ -16,9 +16,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           role="alert"
           tone="error"
           code="Fatal"
-          title="ResearchWithMe could not start"
-          description="The application shell failed to load. Retry the request, or return later if the problem continues."
-          primaryAction={{ href: '/', label: 'Reload the journal' }}
+          title="The application did not start"
+          description="The page shell failed to load. Retry once; if it fails again, come back later."
+          primaryAction={{ href: '/', label: 'Back to the journal' }}
         >
           <button
             type="button"

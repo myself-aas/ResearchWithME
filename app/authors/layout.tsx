@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
   title: 'Authors',
-  description: 'Find domain specialists, their credentials, and their publication archives.',
+  description: 'Domain specialists, what they study, and every review they have published.',
   path: '/authors',
   type: 'website' as const,
 });

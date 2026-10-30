@@ -52,7 +52,6 @@ export default function MarkdownEditor({ id, value, onChange, error, disabled = 
     setMounted(true);
   }, []);
 
-  // Calculate stats
   const words = value.trim() ? value.trim().split(/\s+/).length : 0;
   const readMinutes = Math.max(1, Math.round(words / 220));
 
@@ -63,7 +62,7 @@ export default function MarkdownEditor({ id, value, onChange, error, disabled = 
   return (
     <div className="space-y-2">
       <label htmlFor={id} className={labelClass}>
-        Article body
+        Body
       </label>
       
       <div className={cn(
@@ -90,7 +89,7 @@ export default function MarkdownEditor({ id, value, onChange, error, disabled = 
                   try {
                     return await uploadBlogImage(file);
                   } catch (e) {
-                    console.error('Upload failed', e);
+                    console.error('Image upload failed', e);
                     return URL.createObjectURL(file);
                   }
                 }

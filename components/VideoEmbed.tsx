@@ -17,10 +17,9 @@ export default function VideoEmbed({ src, label, aspectClass = 'aspect-video', a
 
   if (error) {
     return (
-      <div className={`${aspectClass} flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-stone-300 bg-stone-50 text-sm text-stone-500`}>
-        <Film className="h-8 w-8 text-stone-400" aria-hidden="true" />
-        <span className="font-medium">Render pending</span>
-        <code className="rounded bg-stone-100 px-2 py-0.5 text-xs text-stone-600">{src}</code>
+      <div className="flex items-center gap-3 rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-700">
+        <Film className="h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
+        <span>No video for this review yet. The text is complete below.</span>
       </div>
     );
   }

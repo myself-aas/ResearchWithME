@@ -40,7 +40,7 @@ export default function ArticleInteractions({ postId, title, initialLikes }: Art
       setLiked(false);
       setLikes((value) => Math.max(0, value - 1));
       writeLocal('rwm_liked_posts', readStringArray('rwm_liked_posts').filter((id) => id !== postId));
-      setStatus('The like could not be recorded. Check your connection and try again.');
+      setStatus('The like was not saved. Check your connection and try again.');
     }
   }
 
@@ -55,7 +55,7 @@ export default function ArticleInteractions({ postId, title, initialLikes }: Art
         ? next.includes(postId)
           ? 'Saved to your reading list on this device.'
           : 'Removed from your reading list.'
-        : 'Your browser blocked local storage, so the reading list was not updated.',
+        : 'The browser blocked local storage, so the reading list was not updated.',
     );
   }
 
@@ -63,7 +63,7 @@ export default function ArticleInteractions({ postId, title, initialLikes }: Art
     try {
       await navigator.clipboard.writeText(window.location.href);
       setCopiedDoi(true);
-      setStatus('Article link copied to clipboard.');
+      setStatus('Link copied.');
       window.setTimeout(() => setCopiedDoi(false), 2200);
     } catch {
       setStatus('Clipboard access was blocked. Copy the address from your browser.');
@@ -102,7 +102,7 @@ export default function ArticleInteractions({ postId, title, initialLikes }: Art
         >
           <Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} aria-hidden="true" />
           <span>{likes}</span>
-          <span className="sr-only">likes. {liked ? 'You liked this article' : 'Add a like'}</span>
+          <span className="sr-only">likes. {liked ? 'You already liked this review' : 'Add a like'}</span>
         </button>
 
         <button

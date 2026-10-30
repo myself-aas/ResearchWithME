@@ -23,10 +23,10 @@ export default function AuthorSpotlight() {
         <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 id="contributors-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
-              The people behind the reviews
+              Who writes the reviews
             </h2>
             <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-              Contributors verify their scholarly identity before publishing. Their profile records what they study and what they have reviewed.
+              Every contributor records a scholarly identity before publishing. Their profile shows what they study and what they have reviewed.
             </p>
           </div>
           <Link
@@ -77,7 +77,7 @@ export default function AuthorSpotlight() {
                     <span>{author.verifiedTitle}</span>
                   </span>
                   <span>
-                    {author.articleCount} articles · {author.totalReads ?? 'New'} reads
+                    {author.articleCount} {author.articleCount === 1 ? 'review' : 'reviews'} · {author.totalReads ?? 'New'} reads
                   </span>
                 </span>
               </Link>

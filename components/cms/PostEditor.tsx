@@ -257,8 +257,8 @@ export default function PostEditor({
       setSlugTouched(true);
       setNotice(
         data.post.status === 'published'
-          ? 'Published. The article is live and the journal index has been revalidated.'
-          : 'Draft saved. It is private until you publish it.',
+          ? 'Published. The review is live and the journal index has been refreshed.'
+          : 'Draft saved. Nobody else can see it until you publish.',
       );
       router.refresh();
 
@@ -273,7 +273,7 @@ export default function PostEditor({
           focusFirstError(cause.fieldErrors);
         }
       } else {
-        setError('The article could not be saved. Your text is still in the editor.');
+        setError('The review was not saved. Your text is still in the editor.');
       }
     } finally {
       setSaving(null);
@@ -289,7 +289,7 @@ export default function PostEditor({
       router.push('/dashboard/manage');
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : 'The article could not be deleted.');
+      setError(cause instanceof Error ? cause.message : 'The review was not deleted.');
       setDeleting(false);
     }
   }
@@ -307,7 +307,7 @@ export default function PostEditor({
       const url = await uploadBlogImage(file);
       update('coverImage', url);
     } catch (cause) {
-      setUploadError(cause instanceof Error ? cause.message : 'The cover image could not be uploaded.');
+      setUploadError(cause instanceof Error ? cause.message : 'The cover image did not upload.');
     } finally {
       setUploading(false);
       if (coverInputRef.current) coverInputRef.current.value = '';
@@ -315,7 +315,7 @@ export default function PostEditor({
   }
 
   const errorKeys = Object.keys(fieldErrors);
-  const primaryLabel = status === 'published' ? 'Save published changes' : 'Publish article';
+  const primaryLabel = status === 'published' ? 'Save published changes' : 'Publish review';
   const secondaryLabel = status === 'published' ? 'Revert to draft' : 'Save draft';
 
   return (
@@ -324,10 +324,10 @@ export default function PostEditor({
         <div className="min-w-0">
           <Link href="/dashboard/manage" className={cn(subtleButtonClass, '-ml-2.5')}>
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span>All articles</span>
+            <span>All reviews</span>
           </Link>
           <h1 className="mt-2 break-words font-serif text-3xl font-bold tracking-tight text-stone-900">
-            {mode === 'create' && !postId ? 'New article' : form.title || 'Untitled article'}
+            {mode === 'create' && !postId ? 'New review' : form.title || 'Untitled review'}
           </h1>
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-600">
             <StatusBadge status={status} />
@@ -348,15 +348,15 @@ export default function PostEditor({
           {status === 'published' && form.slug && (
             <Link href={`/post/${form.slug}`} className={secondaryButtonClass}>
               <Eye className="h-4 w-4" aria-hidden="true" />
-              <span>View article</span>
+              <span>View review</span>
             </Link>
           )}
           {postId && (
             <ConfirmDelete
               onConfirm={remove}
               busy={deleting}
-              label="Delete article"
-              question="Delete this article and its comments?"
+              label="Delete review"
+              question="Delete this review and its comments?"
               busyLabel="Deleting…"
             />
           )}
@@ -455,7 +455,7 @@ export default function PostEditor({
             </div>
             <p id="post-slug-hint" className={hintClass}>
               {status === 'published'
-                ? 'Changing the URL of a published article breaks existing links.'
+                ? 'Changing the URL of a published review breaks existing links.'
                 : 'Letters, numbers, and hyphens only.'}
             </p>
             <FieldError id="post-slug-error" message={fieldErrors.slug} />
@@ -463,7 +463,7 @@ export default function PostEditor({
 
           <div>
             <label htmlFor="post-subtitle" className={labelClass}>
-              Standfirst <span className="font-normal text-stone-600">(optional)</span>
+              Subtitle <span className="font-normal text-stone-600">(optional)</span>
             </label>
             <input
               id="post-subtitle"
@@ -504,8 +504,7 @@ export default function PostEditor({
             Byline and classification
           </h2>
           <p className="max-w-2xl text-sm leading-relaxed text-stone-600">
-            Bylines must map to a verified author profile so every published article has a credential the reader can
-            inspect.
+            Every byline points to an author profile, so a reader can see the credential behind a published review.
           </p>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -588,8 +587,7 @@ export default function PostEditor({
             Cover image
           </h2>
           <p className="max-w-2xl text-sm leading-relaxed text-stone-600">
-            Covers use the 16:9 editorial frame at the top of the article. Upload a new image to the media library, or
-            choose a bundled photograph.
+            Covers fill the 16:9 frame at the top of the review. Upload an image to the media library, or pick a bundled photograph.
           </p>
 
           {form.coverImage ? (
@@ -610,7 +608,7 @@ export default function PostEditor({
             </div>
           ) : (
             <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
-              No cover selected. The default editorial image is used if this article is published without one.
+              No cover selected. Without one, the review carries the default editorial image.
             </p>
           )}
 
@@ -621,7 +619,7 @@ export default function PostEditor({
               className="inline-flex min-h-10 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
             >
               <Sparkles className="h-4 w-4" aria-hidden="true" />
-              <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate with Qwen 2.1 (AVIF)'}</span>
+              <span>{showAiCover ? 'Hide the cover generator' : 'Generate a cover'}</span>
             </button>
 
             {isSupabaseConfigured && (
@@ -711,7 +709,7 @@ export default function PostEditor({
               Key takeaways
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-relaxed text-stone-600">
-              At least one is required before publishing. These appear above the body in the reader.
+              At least one is required to publish. They sit above the body in the reader.
             </p>
           </div>
 
@@ -786,7 +784,7 @@ export default function PostEditor({
             <span className="text-sm leading-relaxed text-stone-800">
               <span className="block font-medium">Feature on the journal home page</span>
               <span className="block text-stone-600">
-                The featured article occupies the lead slot. Use it for at most one live article at a time.
+                The featured review takes the lead slot. Keep it to one live review at a time.
               </span>
             </span>
           </label>
@@ -797,7 +795,7 @@ export default function PostEditor({
             {saving
               ? 'Saving…'
               : error
-                ? 'Nothing was saved. Fix the fields above and try again.'
+                ? 'Nothing was saved. Fix the fields marked above and try again.'
                 : dirty
                   ? 'Unsaved changes.'
                   : savedAt
@@ -840,13 +838,13 @@ export default function PostEditor({
             Moderate the discussion
           </Link>
           <span aria-hidden="true">·</span>
-          <span>Comments on this article appear publicly immediately.</span>
+          <span>Comments on this review appear publicly as soon as they are posted.</span>
         </p>
       )}
 
       {postId && status === 'draft' && (
         <p className="mt-4 text-sm leading-relaxed text-stone-600">
-          This draft is not visible on the journal. Publishing revalidates the home page and its reader URL.
+          This draft is invisible on the journal. Publishing refreshes the home page and the review&apos;s URL.
         </p>
       )}
 

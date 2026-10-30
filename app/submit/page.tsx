@@ -50,16 +50,16 @@ export default function SubmitPage() {
 
   function validate() {
     const errors: Partial<Record<keyof FormState, string>> = {};
-    if (cleanText(form.title, LIMITS.title).length < 8) errors.title = 'Use a title of at least 8 characters.';
-    if (cleanText(form.authorName, LIMITS.name).length < 2) errors.authorName = 'Add the submitting author name.';
-    if (!isValidEmail(form.email)) errors.email = 'Enter a complete email, including an @ and a domain.';
+    if (cleanText(form.title, LIMITS.title).length < 8) errors.title = 'Give the title at least 8 characters.';
+    if (cleanText(form.authorName, LIMITS.name).length < 2) errors.authorName = 'Add the name of the submitting author.';
+    if (!isValidEmail(form.email)) errors.email = 'That email is incomplete. Include the @ and the domain.';
     if (cleanText(form.abstract, LIMITS.summary).length < 80) {
-      errors.abstract = 'Write at least 80 characters so editors can assess the submission.';
+      errors.abstract = 'Write at least 80 characters so the editors can assess it.';
     }
     if (form.dataUrl && !/^https?:\/\//i.test(form.dataUrl.trim())) {
-      errors.dataUrl = 'Use a full http:// or https:// link.';
+      errors.dataUrl = 'Use the full link, starting with http:// or https://.';
     }
-    if (!form.consent) errors.consent = 'Confirm the citation and conflict-of-interest statement.';
+    if (!form.consent) errors.consent = 'Tick the declaration before submitting.';
     fieldErrorsRef.current = errors;
     setFieldErrors(errors);
     return Object.keys(errors).length === 0;
@@ -70,7 +70,7 @@ export default function SubmitPage() {
     if (submitting || submittedRef.current) return;
     setSubmitError(null);
     if (!validate()) {
-      setSubmitError('Some fields need attention. Your draft is preserved below.');
+      setSubmitError('Some fields need another look. Your text is still in the form.');
       const order: Array<[keyof FormState, string]> = [
         ['title', 'submit-title'],
         ['authorName', 'submit-author'],
@@ -101,7 +101,7 @@ export default function SubmitPage() {
         }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'The submission could not be recorded.');
+      if (!res.ok) throw new Error(data.error || 'The submission was not recorded.');
       submittedRef.current = false;
       setReceipt({ id: data.submission?.id ?? 'Received', title: form.title });
       setForm(initialState);
@@ -109,7 +109,7 @@ export default function SubmitPage() {
       setSubmitError(
         error instanceof Error
           ? `${error.message} Your draft is still in the form.`
-          : 'The submission could not be recorded. Your draft is still in the form.',
+          : 'The submission was not recorded. Your text is still in the form.',
       );
     } finally {
       setSubmitting(false);
@@ -141,7 +141,7 @@ export default function SubmitPage() {
               <span className="break-all font-mono font-semibold text-stone-900">{receipt.id}</span>.
             </p>
             <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-              No reviewer has been assigned and no email has been sent. A production desk would contact you at the address you supplied.
+              No reviewer has been assigned and no email has been sent. The editorial desk would reply to the address you gave.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button
@@ -149,7 +149,7 @@ export default function SubmitPage() {
                 onClick={() => setReceipt(null)}
                 className="inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
               >
-                Submit another manuscript
+                Submit another
               </button>
               <Link
                 href="/"
@@ -236,7 +236,7 @@ export default function SubmitPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="submit-category" className="mb-1.5 block text-sm font-medium text-stone-800">
-                    Editorial column
+                    Field
                   </label>
                   <select
                     id="submit-category"

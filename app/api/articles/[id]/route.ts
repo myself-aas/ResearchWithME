@@ -38,7 +38,7 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ id: 
     );
   } catch (error) {
     console.error('Error fetching article:', error);
-    return NextResponse.json({ error: 'The article could not be read.' }, { status: 500 });
+    return NextResponse.json({ error: 'The article could not be loaded.' }, { status: 500 });
   }
 }
 
@@ -73,6 +73,6 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
     return NextResponse.json({ success: true, likes });
   } catch (error) {
     console.error('Error updating article likes:', error);
-    return NextResponse.json({ error: 'The reaction could not be recorded.' }, { status: 500 });
+    return NextResponse.json({ error: 'The reaction was not saved.' }, { status: 500 });
   }
 }

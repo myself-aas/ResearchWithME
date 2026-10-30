@@ -125,7 +125,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         role: 'Contributing Researcher',
       },
     ],
-    abstract: 'Digital public research infrastructure faces an acute operational paradox: grant mechanisms favor novel tool incubation while routinely failing to finance ongoing security audits, dependency hygiene, and institutional archiving. Tracking 420 academic software tools funded between 2018 and 2024, this study identifies structural failure modes and models three viable multi-institution endowment covenants.',
+    abstract: 'Digital public research infrastructure runs into the same problem everywhere: grants pay for building a tool and rarely for the security audits, dependency upkeep, and archiving that keep it alive. Tracking 420 academic software tools funded between 2018 and 2024, this study identifies structural failure modes and models three viable multi-institution endowment covenants.',
     publishedDate: 'October 14, 2026',
     year: 2026,
     doi: '10.5555/rwm.2026.1042',
@@ -149,7 +149,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         'Overhead allocation policies in 74% of research universities explicitly prevent direct grant expenditure on continuous cloud hosting and automated test matrices after grant expiry.',
         'Decentralized preservation covenants reduced infrastructure downtime by 81% across distributed high-energy physics pipelines.',
       ],
-      discussion: 'Funding agencies must shift from a "ship-and-forget" procurement model to long-term digital maintenance covenants. We propose a statutory 15% endowment holdback dedicated exclusively to post-grant infrastructure stewardship.',
+      discussion: 'Funding agencies should stop treating a tool as finished when the grant closes. We propose a statutory 15% endowment holdback for maintenance after the grant ends.',
       implications: 'University procurement offices and research funders can adopt our open stewardship covenant template to safeguard reproducibility across decades of computational scholarship.',
       references: [
         'Eghbal, N. (2020). Working in Public: The Making and Maintenance of Open Source Software. Stripe Press.',
@@ -200,7 +200,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         'Automated dependency freezing reduced initial reviewer review latency by an average of 19 days.',
         'Human reviewers who were provided automated reproducibility telemetry gave 40% more detailed methodological critique on theoretical assumptions rather than debugging broken code.',
       ],
-      discussion: 'Automating the verification layer does not replace human domain expertise; it elevates human reviewers to focus on conceptual soundness while leaving binary execution verification to deterministic pipelines.',
+      discussion: 'Automated checks do not replace reviewers. They take over the pass-or-fail execution checks so reviewers can spend their time on whether the method makes sense.',
       implications: 'Scientific preprint servers and journals can integrate automated sandbox checks to ensure only fully reproducible research advances to editorial boards.',
       references: [
         'Baker, M. (2016). 1,500 scientists lift the lid on reproducibility. Nature, 533(7604), 452-454.',
@@ -256,7 +256,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         'Hardware unit cost was reduced from $2,400 for commercial weather stations to $115 per open node with equivalent drift metrics over 24 months.',
         'Immediate community access to raw river height data permitted early flood evacuations 4.5 hours ahead of national centralized warnings.',
       ],
-      discussion: 'Open environmental telemetry empowers localized policy decisions while ensuring that raw ecological data remains inalienable public property.',
+      discussion: 'Open telemetry lets local authorities act on their own measurements and keeps the raw ecological data in public hands.',
       implications: 'Municipalities can deploy cost-effective open hardware mesh grids to fulfill climate adaptation mandates without recurring SaaS license burdens.',
       references: [
         'Oost, K., et al. (2023). Low-cost IoT sensors for environmental monitoring. Hydrological Processes.',
@@ -283,7 +283,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         role: 'Economic Modeler',
       },
     ],
-    abstract: 'Article Processing Charges (APCs) have exacerbated global academic inequities by shifting paywalls from readers to authors, systematically marginalizing scholars in the Global South. This paper analyzes financial audit records from 150 Diamond Open Access journals, proving that institutional library consortia can fully sustain publication operations at an average cost of $210 per article — an 88% reduction compared to commercial APCs.',
+    abstract: 'Article Processing Charges (APCs) have exacerbated global academic inequities by shifting paywalls from readers to authors, systematically marginalizing scholars in the Global South. This paper analyses audit records from 150 Diamond Open Access journals and finds that library consortia can cover publication costs at an average of $210 per article, 88% below commercial APCs.',
     publishedDate: 'July 11, 2026',
     year: 2026,
     doi: '10.5555/rwm.2026.0711',
@@ -306,7 +306,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         '84% of surveyed Diamond journals maintained citation impact factors equal to or exceeding quartile-1 commercial rivals in their disciplinary categories.',
         'Collective funding mechanisms funded by library consortium memberships generated a 100% budget surplus while abolishing all author submission charges.',
       ],
-      discussion: 'The scholarly community possesses the collective capital to fund diamond publishing natively; the obstacle is legacy subscription contracts that capture university procurement budgets.',
+      discussion: 'Universities already hold the money needed to fund diamond publishing. What stands in the way is legacy subscription contracts that absorb their procurement budgets.',
       implications: 'University libraries can safely divert 10% of their subscription allocations to fully endow self-sustaining Diamond Open Access journals.',
       references: [
         'Becerril-García, A., et al. (2021). AmeliCA vs Plan S: Same destination, different paths. Scholarly Commons.',
@@ -356,7 +356,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         'Header serialization overhead was less than 0.04% of total dataset volume.',
         'Replication time for downstream researchers dropped from 3.2 weeks to 40 minutes due to explicit container digest references.',
       ],
-      discussion: 'Treating data lineage as an intrinsic cryptographic property rather than an informal text note is essential for trustworthy computational science.',
+      discussion: 'Lineage has to be verifiable from the file itself, not a note in a README, before a computational result can be trusted.',
       implications: 'Repositories like Dryad, Zenodo, and Figshare can automatically parse provenance graphs to generate interactive lineage explorers.',
       references: [
         'Moreau, L., et al. (2011). The Open Provenance Model core specification (v1.1). Future Generation Computer Systems.',
@@ -406,7 +406,7 @@ export const PUBLICATIONS_DATA: Publication[] = [
         'Cross-article synthesis queries achieved 3.8x faster extraction of quantitative results compared to traditional PDF text scraping.',
         'Reviewers utilized MCP-powered verification tools to validate mathematical derivations against referenced foundational theorems in real time.',
       ],
-      discussion: 'MCP represents a critical shift from passive static document hosting to active, machine-queryable knowledge bases.',
+      discussion: 'MCP turns a journal from a set of static pages into something a machine can query directly.',
       implications: 'Scholarly archives can deploy MCP servers to allow responsible, authenticated AI research assistants to summarize papers without violating copyright or hallucinating results.',
       references: [
         'Anthropic. (2024). Model Context Protocol Specification. ModelContextProtocol.io.',

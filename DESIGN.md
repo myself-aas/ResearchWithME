@@ -106,9 +106,9 @@ components:
 <!-- impeccable:design-schema 1 -->
 
 ## Overview
-ResearchWithMe's design system evokes the quiet authority and sustained readability of a printed research journal and a serious newspaper of record, combined with the responsiveness of a modern open-science platform. It rejects transient trends: no gradient text, no decorative glass, no artificial kickers, no purple/cyan AI palette, no nested ghost cards, and no intrusive pop-ups. The visual world is an archival reading room built from warm paper, ink, ochre, and emerald verification marks.
+The design system takes its cues from a printed research journal and a newspaper of record: quiet, dense, and built for long reading sessions, with the responsiveness an open-science platform needs. It leaves out what dates quickly: no gradient text, no decorative glass, no kicker labels, no purple-and-cyan AI palette, no nested ghost cards, no pop-ups. The visual world is an archival reading room made of warm paper, ink, ochre, and emerald verification marks.
 
-The active interface is the root Next.js application. The typeface is the Aptos family. Aptos is licensed by Microsoft and is not redistributed, so each stack requests the reader's installed copy by name. Self-hosted OFL faces (Newsreader for the serif, Inter for the sans) are loaded through `next/font/local` (`app/fonts/`) as size-adjusted fallbacks that prevent layout shift. Typography does not depend on a third-party font CDN. All shipped imagery is local.
+The active interface is the root Next.js application, set in the Aptos family. Aptos is licensed by Microsoft and not redistributed, so each stack asks for the reader's installed copy by name. Self-hosted OFL faces (Newsreader for the serif, Inter for the sans) load through `next/font/local` (`app/fonts/`) as size-adjusted fallbacks, which keeps layout shift at zero. No font comes from a third-party CDN, and every shipped image is local.
 
 ## Colors
 - **Primary / Brand**: Amber-900 (`#78350f`) for archival ink, primary actions, text selection, and active navigation; amber-800 for hover and focus.
@@ -147,8 +147,8 @@ The active interface is the root Next.js application. The typeface is the Aptos 
 - **Buttons**: One primary amber action per task, secondary neutral outline actions, and explicit disabled/loading labels. Buttons default to `type="button"` unless they submit a form.
 - **Form controls**: Visible labels or `aria-label`, 44px min-height, AA placeholders, focus ring, validation text, preserved input on failure, and duplicate-submit protection.
 - **Article header**: Byline, publication date, reading time, artifact metadata, bookmark, share, and citation utilities in a clear hierarchy.
-- **Related articles**: Three typographic recommendations at the natural end of an article, without an eyebrow label.
-- **Newsletter**: Inline footer subscription only, with confirmation and error states; no reading-flow popup.
+- **Related reviews**: Three typographic recommendations at the natural end of a review, without an eyebrow label.
+- **Newsletter**: Inline footer subscription only, with confirmation and error states; no reading-flow pop-up.
 - **Verification and assistant**: Standard controls and status panels; no terminal costume, pulsing decorative dot, or cyan-on-dark AI styling.
 - **Status surfaces**: Shared loading, empty, error, and 404 states use semantic `main`, an announced live region, and explicit recovery actions.
 
@@ -159,7 +159,7 @@ The active interface is the root Next.js application. The typeface is the Aptos 
 - **Forms:** Visible labels on every control, hints tied with `aria-describedby`, inline errors marked `role="alert"`, and an error summary that links to the first invalid field. Submitting never clears input.
 - **Destructive actions:** Delete uses an inline two-step confirmation with initial focus on the confirm button and an explicit Cancel. No modal.
 - **Editor:** Markdown source in monospace, a formatting group with named icon buttons, write/preview as a pressed-state pair, and an inline insert panel for links and images. Raw HTML is never rendered.
-- **Sign-in:** A reading-room invitation rather than a generic SaaS card: one editorial column, one focused form, password and magic link, and a demo-mode panel that explains the local archive instead of pretending accounts exist.
+- **Sign-in:** A reading-room invitation, not a generic SaaS card: one editorial column, one focused form, password and magic link, and a demo-mode panel that explains the local archive rather than pretending accounts exist.
 
 ## Motion & States
 - One restrained page-settle entrance is applied to `main`: 360ms, exponential ease-out, transform and opacity only.

@@ -30,7 +30,7 @@ interface BlogHeaderProps {
 }
 
 const primaryNav = [
-  { href: '/', label: 'Articles', icon: BookOpen, match: (path: string) => path === '/' },
+  { href: '/', label: 'Reviews', icon: BookOpen, match: (path: string) => path === '/' },
   { href: '/papers', label: 'Papers', icon: FileText, match: (path: string) => path.startsWith('/paper') },
   { href: '/authors', label: 'Authors', icon: Users, match: (path: string) => path.startsWith('/author') },
   { href: '/editions', label: 'Editions', icon: BookOpen, match: (path: string) => path.startsWith('/editions') },
@@ -39,12 +39,12 @@ const primaryNav = [
 
 const secondaryNav = [
   { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
-  { href: '/auth/providers', label: 'OAuth & Writer Access', icon: ShieldCheck },
+  { href: '/auth/providers', label: 'Sign-in options', icon: ShieldCheck },
   { href: '/cite', label: 'Citation builder', icon: Quote },
   { href: '/submit', label: 'Submit a manuscript', icon: UploadCloud },
   { href: '/editorial-board', label: 'Editorial board', icon: Users },
-  { href: '/verify', label: 'Verification prototype', icon: ShieldCheck },
-  { href: '/dashboard', label: 'Editorial studio', icon: PenSquare },
+  { href: '/verify', label: 'Contributor identity', icon: ShieldCheck },
+  { href: '/dashboard', label: 'Article studio', icon: PenSquare },
 ];
 
 export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {
@@ -101,7 +101,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           <Link
             href="/"
             className="flex items-center gap-2 rounded-md focus-visible:outline-none"
-            aria-label="ResearchWithMe journal home"
+            aria-label="πeme journal home"
           >
             <BrandLogo size="xl" showText={true} />
           </Link>
@@ -129,7 +129,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             {setSearchQuery && (
               <div className="relative hidden 2xl:block">
                 <label htmlFor="header-search" className="sr-only">
-                  Search articles and repositories
+                  Search reviews and papers
                 </label>
                 <Search
                   className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-600"
@@ -140,7 +140,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   type="search"
                   value={searchQuery ?? ''}
                   onChange={(event) => setSearchQuery(event.target.value)}
-                  placeholder="Search articles"
+                  placeholder="Search reviews"
                   className="h-10 w-52 rounded-md border border-stone-300 bg-stone-50 pl-9 pr-3 text-sm text-stone-900 placeholder:text-stone-600 focus:bg-white"
                 />
               </div>
@@ -163,7 +163,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             <Link
               href="/auth/providers"
               className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
-              title={user ? `Signed in as ${user.name} (${user.role})` : 'Authentication & Writer Verification'}
+              title={user ? `Signed in as ${user.name} (${user.role})` : 'Sign in or register a contributor identity'}
             >
               <ShieldCheck className="h-4 w-4 text-amber-900" aria-hidden="true" />
               <span className="hidden sm:inline">
@@ -274,8 +274,10 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>
                 {hasAuthorPermissions
-                  ? `Signed in as ${user?.name ?? 'a verified author'}. Publishing permissions are active.`
-                  : 'Reader mode. Verify a scholarly identity to publish reviews.'}
+                  ? `Signed in as ${user?.name ?? 'a verified author'}. You can publish reviews.`
+                  : user
+                    ? 'Signed in as a reader. Record a scholarly identity to publish reviews.'
+                    : 'Reading, saving, and citing work without an account. You only need to sign in to publish.'}
               </span>
             </p>
           </div>

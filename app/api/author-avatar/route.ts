@@ -15,7 +15,6 @@ function createDomainFallbackSvg(name: string, domain: string, role: string): st
     .slice(0, 2)
     .toUpperCase();
 
-  // Pick color themes based on research domain
   let bgGradientStart = '#78350f'; // amber-900
   let bgGradientEnd = '#451a03'; // amber-950
   let accentColor = '#f59e0b'; // amber-500
@@ -82,10 +81,9 @@ export async function POST(req: NextRequest) {
     const { name, role, domain, bio, authorId } = await req.json();
 
     if (!name || !domain) {
-      return NextResponse.json({ error: 'Author name and domain are required.' }, { status: 400 });
+      return NextResponse.json({ error: 'Add the author name and field.' }, { status: 400 });
     }
 
-    // Attempt Gemini AI SVG generation
     if (process.env.GEMINI_API_KEY) {
       try {
         const prompt = `Generate a high-quality, professional, modern SVG profile avatar for a distinguished scholar and researcher:
@@ -101,8 +99,9 @@ Design Rules:
 - Use professional scholarly palette (deep stone, amber, emerald, indigo, gold).
 - High visual quality, vector accuracy, valid SVG tags only.`;
 
+        const model = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
         const response = await ai.models.generateContent({
-          model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+          model,
           contents: prompt,
         });
 
@@ -117,7 +116,7 @@ Design Rules:
           return NextResponse.json({
             svg: cleanSvg,
             authorId,
-            source: 'gemini-3.8-flash',
+            source: model,
           });
         }
       } catch (geminiError) {
@@ -125,7 +124,6 @@ Design Rules:
       }
     }
 
-    // Fallback domain-customized vector SVG avatar
     const fallbackSvg = createDomainFallbackSvg(name, domain, role);
     return NextResponse.json({
       svg: fallbackSvg,

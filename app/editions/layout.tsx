@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'PDF Editions',
-  description: 'Download curated, print-ready compendiums for offline and library reading.',
+  title: 'PDF editions',
+  description: 'Print-ready compendiums of published reviews for offline and library reading.',
   path: '/editions',
   type: 'website' as const,
 });

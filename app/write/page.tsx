@@ -70,7 +70,7 @@ export default function WritePage() {
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [tab, setTab] = useState<'editor' | 'preview'>('editor');
   const [hydratedDraft, setHydratedDraft] = useState(false);
-  const [saveStatus, setSaveStatus] = useState('Draft not saved yet');
+  const [saveStatus, setSaveStatus] = useState('Nothing saved yet');
   const [error, setError] = useState<string | null>(null);
   const [errorField, setErrorField] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
@@ -88,7 +88,7 @@ export default function WritePage() {
       }));
       setRestored(true);
       setSaveStatus(
-        stored.updatedAt ? `Draft from ${new Date(stored.updatedAt).toLocaleString()}` : 'Draft restored from this browser',
+        stored.updatedAt ? `Draft from ${new Date(stored.updatedAt).toLocaleString()}` : 'Restored from this browser',
       );
     }
     setHydratedDraft(true);
@@ -103,7 +103,7 @@ export default function WritePage() {
       setSaveStatus(
         saved
           ? `Saved locally at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-          : 'Autosave is blocked by this browser. Copy your text before leaving.',
+          : 'The browser blocked autosave. Copy your text before leaving.',
       );
     }, 700);
     return () => {
@@ -148,7 +148,7 @@ export default function WritePage() {
   function discardDraft() {
     setDraft(emptyDraft);
     removeLocal(DRAFT_KEY);
-    setSaveStatus('Draft cleared');
+    setSaveStatus('Draft discarded');
     setRestored(false);
     setError(null);
   }
@@ -174,11 +174,11 @@ export default function WritePage() {
       return;
     }
     if (cleanText(draft.summary, LIMITS.summary).length < 40) {
-      fail('The executive summary needs at least 40 characters so readers can judge the article from the feed.', 'write-summary');
+      fail('The summary needs at least 40 characters, which is what readers see in the feed.', 'write-summary');
       return;
     }
     if (cleanText(draft.content, LIMITS.body).length < 200) {
-      fail('The article body needs at least 200 characters.', 'write-content');
+      fail('The body needs at least 200 characters.', 'write-content');
       return;
     }
     const takeaways = draft.takeaways.map((item) => cleanText(item, 300)).filter(Boolean);
@@ -188,11 +188,11 @@ export default function WritePage() {
     }
     if (draft.hasArtifact) {
       if (!cleanText(draft.artifactIdentifier, LIMITS.identifier)) {
-        fail('Add the identifier of the artifact you reviewed, or turn the artifact block off.', 'write-artifact-identifier');
+        fail('Add the identifier of the work you reviewed, or switch the artifact block off.', 'write-artifact-identifier');
         return;
       }
       if (draft.artifactUrl && !/^https?:\/\//i.test(draft.artifactUrl.trim())) {
-        fail('The artifact URL must start with http:// or https://.', 'write-artifact-url');
+        fail('The artifact link needs to start with http:// or https://.', 'write-artifact-url');
         return;
       }
     }
@@ -219,7 +219,7 @@ export default function WritePage() {
 
     const slug = slugify(draft.title);
     if (!slug) {
-      fail('The title needs at least one letter or number to build a URL.', 'write-title');
+      fail('The title needs a letter or a number so it can become a URL.', 'write-title');
       return;
     }
 
@@ -241,7 +241,7 @@ export default function WritePage() {
             title: cleanText(draft.artifactTitle, 200) || cleanText(draft.artifactIdentifier, LIMITS.identifier),
             identifier: cleanText(draft.artifactIdentifier, LIMITS.identifier),
             url: draft.artifactUrl.trim() || (draft.artifactType === 'github' ? 'https://github.com' : 'https://doi.org'),
-            meta: cleanText(draft.artifactMeta, 160) || 'Metadata supplied by the author',
+            meta: cleanText(draft.artifactMeta, 160) || 'Metadata from the author',
           }
         : undefined,
       summary: cleanText(draft.summary, LIMITS.summary),
@@ -283,7 +283,7 @@ export default function WritePage() {
           role="status"
           code="Loading"
           title="Opening the writer studio"
-          description="Checking the contributor session stored in this browser."
+          description="Reading the contributor session saved in this browser."
           primaryAction={{ href: '/', label: 'Return to the journal' }}
         />
       </div>
@@ -296,14 +296,14 @@ export default function WritePage() {
         <BlogHeader />
         <PageState
           code="Contributor access"
-          title="The writer studio needs a contributor identity"
-          description="Publishing is restricted to contributors who have recorded a scholarly identity. You can still read, save, and cite every article without an account."
+          title="Publishing needs a contributor identity"
+          description="Only contributors with a recorded scholarly identity can publish. Reading, saving, and citing still work without an account."
           primaryAction={{ href: '/verify?redirect=/write', label: 'Record an identity' }}
           secondaryAction={{ href: '/', label: 'Browse the journal' }}
         >
           <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
             <Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>Verification here is a local prototype; no credentials are sent anywhere.</span>
+            <span>This check is a local prototype; no credentials are sent anywhere.</span>
           </p>
         </PageState>
         <BlogFooter />
@@ -370,7 +370,7 @@ export default function WritePage() {
                 className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-red-300 hover:text-red-800"
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
-                <span>Discard draft</span>
+                <span>Discard this draft</span>
               </button>
             )}
           </div>
@@ -402,7 +402,7 @@ export default function WritePage() {
                   <source srcSet={draft.coverImage} type="image/avif" />
                   <img
                     src={draft.coverImage}
-                    alt={draft.title || 'Article cover preview'}
+                    alt={draft.title || 'Cover preview'}
                     className="h-auto max-h-[380px] w-full object-cover"
                   />
                 </picture>
@@ -442,7 +442,7 @@ export default function WritePage() {
                   </p>
                 ))
               ) : (
-                <p className="text-base text-stone-600">The article body will appear here as you write.</p>
+                <p className="text-base text-stone-600">The body appears here as you write.</p>
               )}
             </div>
 
@@ -459,7 +459,7 @@ export default function WritePage() {
         ) : (
           <form onSubmit={publish} noValidate className="mt-8 space-y-10">
             <fieldset className="space-y-4">
-              <legend className="font-serif text-xl font-semibold text-stone-900">Article</legend>
+              <legend className="font-serif text-xl font-semibold text-stone-900">Review</legend>
 
               <div>
                 <label htmlFor="write-title" className="mb-1.5 block text-sm font-medium text-stone-800">
@@ -495,7 +495,7 @@ export default function WritePage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <label htmlFor="write-category" className="mb-1.5 block text-sm font-medium text-stone-800">
-                    Editorial column
+                    Field
                   </label>
                   <select
                     id="write-category"
@@ -538,7 +538,7 @@ export default function WritePage() {
 
               <div>
                 <label htmlFor="write-summary" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Executive summary <span className="text-stone-600">(required)</span>
+                  Summary <span className="text-stone-600">(required)</span>
                 </label>
                 <textarea
                   id="write-summary"
@@ -547,7 +547,7 @@ export default function WritePage() {
                   onChange={(event) => update('summary', event.target.value)}
                   maxLength={LIMITS.summary}
                   aria-invalid={errorField === 'write-summary' ? true : undefined}
-                  placeholder="State the question, evidence, and result in two or three sentences."
+                  placeholder="The question, the evidence, and the result, in two or three sentences."
                   className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
                 />
                 <p className="mt-1 text-sm text-stone-600">
@@ -557,7 +557,7 @@ export default function WritePage() {
             </fieldset>
 
             <fieldset className="space-y-4 border-t border-stone-200 pt-8">
-              <legend className="font-serif text-xl font-semibold text-stone-900">Reviewed artifact</legend>
+              <legend className="font-serif text-xl font-semibold text-stone-900">Artifact under review</legend>
 
               <label className="flex items-start gap-3 text-base text-stone-800">
                 <input
@@ -566,7 +566,7 @@ export default function WritePage() {
                   onChange={(event) => update('hasArtifact', event.target.checked)}
                   className="mt-1 h-5 w-5 rounded border-stone-400 text-amber-800"
                 />
-                <span>This article reviews a paper, repository, or dataset.</span>
+                <span>This review covers a paper, repository, or dataset.</span>
               </label>
 
               {draft.hasArtifact && (
@@ -613,7 +613,7 @@ export default function WritePage() {
                       value={draft.artifactTitle}
                       onChange={(event) => update('artifactTitle', event.target.value)}
                       maxLength={200}
-                      placeholder="The published title of the work you reviewed"
+                      placeholder="Title of the work you reviewed"
                       className={fieldClass}
                     />
                   </div>
@@ -657,7 +657,7 @@ export default function WritePage() {
                 <div>
                   <legend className="font-serif text-xl font-semibold text-stone-900">Cover image</legend>
                   <p className="mt-1 text-sm text-stone-600">
-                    Editorial 16:9 header image. Generate artwork with your Qwen 2.1 Hugging Face Space (AVIF) or select presets.
+                    A 16:9 header image. Generate one with the Qwen 2.1 Space on Hugging Face, or pick a preset.
                   </p>
                 </div>
 
@@ -667,7 +667,7 @@ export default function WritePage() {
                   className="inline-flex min-h-10 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate Cover with Qwen 2.1 (AVIF)'}</span>
+                  <span>{showAiCover ? 'Hide the cover generator' : 'Generate a cover'}</span>
                 </button>
               </div>
 
@@ -678,14 +678,14 @@ export default function WritePage() {
                       <source srcSet={draft.coverImage} type="image/avif" />
                       <img
                         src={draft.coverImage}
-                        alt="Article cover"
+                        alt="Review cover"
                         className="h-44 w-full object-cover"
                       />
                     </picture>
                   </div>
                   <div className="mt-2.5 flex items-center justify-between">
                     <span className="font-mono text-xs text-stone-600">
-                      {draft.coverImage.startsWith('data:') ? 'AVIF Base64 Data Stream' : draft.coverImage}
+                      {draft.coverImage.startsWith('data:') ? 'AVIF image data' : draft.coverImage}
                     </span>
                     <button
                       type="button"
@@ -699,7 +699,7 @@ export default function WritePage() {
                 </div>
               ) : (
                 <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
-                  No custom cover image applied yet. The journal will use default editorial photography if published without one.
+                  No cover yet. Without one, the review uses the default editorial photograph for its field.
                 </p>
               )}
 
@@ -721,7 +721,7 @@ export default function WritePage() {
 
               <div>
                 <label htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Article body <span className="text-stone-600">(required)</span>
+                  Body <span className="text-stone-600">(required)</span>
                 </label>
                 <div className="mt-1">
                   <MarkdownEditor
@@ -732,7 +732,7 @@ export default function WritePage() {
                   />
                 </div>
                 <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-stone-600">
-                  <span>Separate paragraphs with an empty line. Estimated reading time: {readTime} min.</span>
+                  <span>Leave an empty line between paragraphs. Reading time: {readTime} min.</span>
                   <span>
                     {draft.content.length} of {LIMITS.body} characters
                   </span>
@@ -779,7 +779,7 @@ export default function WritePage() {
                   className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
                 >
                   <Plus className="h-4 w-4" aria-hidden="true" />
-                  <span>Add a takeaway</span>
+                  <span>Add another takeaway</span>
                 </button>
               </div>
 
@@ -818,8 +818,8 @@ export default function WritePage() {
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
               <span>
                 {isSupabaseConfigured
-                  ? 'Publishing is disabled on this prototype form while the Supabase studio is active. Your draft stays in this browser.'
-                  : 'Publication writes to the local JSON archive in this prototype. In a read-only deployment the save will fail without losing your draft.'}
+                  ? 'This form cannot publish while the Supabase studio is active. Your draft stays in this browser.'
+                  : 'Publishing writes to the local JSON archive. On a read-only deployment the save fails and your draft stays put.'}
               </span>
             </p>
           </form>

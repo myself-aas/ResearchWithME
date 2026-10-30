@@ -4,11 +4,10 @@ import './globals.css';
 import Providers from '@/components/Providers';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
 
-// The journal is set in the Aptos family (Aptos Serif for reading, Aptos for
-// interface chrome, Aptos Mono for data). Aptos is a Microsoft-licensed face
-// and is not redistributed here: the stacks in globals.css request the
-// installed copy by name. These self-hosted OFL faces are the metric-adjusted
-// fallbacks for readers who do not have Aptos installed.
+// The journal is set in Aptos: Serif for reading, Sans for interface chrome,
+// Mono for data. Aptos is Microsoft-licensed and is not redistributed here, so
+// globals.css asks for the installed copy by name. These self-hosted OFL faces
+// are the metric-adjusted fallbacks for readers who do not have it.
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
   variable: '--font-inter',
@@ -28,7 +27,7 @@ const newsreader = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Open-Access Research Reviews & Repository Teardowns`,
+    default: `${SITE_NAME} — open-access research reviews`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -45,7 +44,7 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: `${SITE_NAME} — Open-Access Research Reviews & Repository Teardowns`,
+    title: `${SITE_NAME} — open-access research reviews`,
     description: SITE_DESCRIPTION,
     url: absoluteUrl('/'),
     siteName: SITE_NAME,
@@ -54,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME} — Open-Access Research Reviews`,
+    title: `${SITE_NAME} — open-access research reviews`,
     description: SITE_DESCRIPTION,
   },
   robots: {

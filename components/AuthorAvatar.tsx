@@ -19,7 +19,6 @@ export default function AuthorAvatar({
   const [loading, setLoading] = useState<boolean>(false);
   const [sourceInfo, setSourceInfo] = useState<string | null>(null);
 
-  // Default dimension mappings
   const dimensions = {
     sm: 'h-10 w-10 text-xs',
     md: 'h-14 w-14 text-sm',
@@ -43,14 +42,14 @@ export default function AuthorAvatar({
         }),
       });
 
-      if (!res.ok) throw new Error('Avatar request failed');
+      if (!res.ok) throw new Error('The avatar request failed');
       const data = await res.json();
       if (data.svg) {
         setSvgContent(data.svg);
-        setSourceInfo(data.source && data.source.includes('gemini') ? 'Gemini 3.8 Flash' : 'Domain Synthesis');
+        setSourceInfo(data.source && data.source.includes('gemini') ? 'Model-drawn' : 'Drawn from domain');
       }
     } catch (err) {
-      console.error('Error generating AI avatar:', err);
+      console.error('Avatar generation failed:', err);
     } finally {
       setLoading(false);
     }
@@ -71,7 +70,7 @@ export default function AuthorAvatar({
           <div
             className="h-full w-full"
             dangerouslySetInnerHTML={{ __html: svgContent }}
-            aria-label={`AI-driven profile avatar for ${author.name}`}
+            aria-label={`Illustrated avatar for ${author.name}`}
           />
         ) : (
           <span className="flex h-full w-full items-center justify-center font-serif font-bold text-stone-100">
@@ -87,10 +86,10 @@ export default function AuthorAvatar({
             onClick={() => generateAvatar(true)}
             disabled={loading}
             className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 transition-colors hover:border-amber-700 hover:text-amber-900 disabled:opacity-50"
-            title="Generate custom AI profile avatar based on author domain"
+            title="Draw a new avatar from this author's field"
           >
             <Sparkles className="h-3 w-3 text-amber-800" />
-            <span>{loading ? 'Synthesizing...' : 'Regenerate AI Avatar'}</span>
+            <span>{loading ? 'Drawing…' : 'Redraw avatar'}</span>
           </button>
           {sourceInfo && (
             <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-800" title="Avatar source">

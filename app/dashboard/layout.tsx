@@ -6,8 +6,8 @@ import { getDashboardUser } from '@/lib/cms/auth';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 export const metadata: Metadata = {
-  title: 'Editorial studio',
-  description: 'Write, review, and publish ResearchWithMe articles.',
+  title: 'Article studio',
+  description: 'Draft, review, and publish ResearchWithMe reviews.',
   robots: {
     index: false,
     follow: false,

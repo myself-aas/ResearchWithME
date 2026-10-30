@@ -9,8 +9,6 @@ export async function GET() {
     configured: Boolean(spaceName),
     spaceName: spaceName ? spaceName.trim() : null,
     hasToken,
-    engine: "Qwen 2.1 (Quantized ZeroGPU) -> AVIF Base64",
-    endpoint: "/generate_avif",
   });
 }
 
@@ -32,7 +30,7 @@ export async function POST(req: NextRequest) {
     } = body;
 
     if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
+      return NextResponse.json({ error: "Describe the cover before generating." }, { status: 400 });
     }
 
     const hfToken = (customToken && typeof customToken === "string" && customToken.trim()) 
@@ -46,19 +44,17 @@ export async function POST(req: NextRequest) {
     if (!spaceName) {
       return NextResponse.json(
         {
-          error: "Hugging Face Space name is missing. Please configure HF_SPACE_NAME in your environment or enter your private space name (e.g. 'username/qwen2-space') in the settings panel below.",
+          error: "No Space name yet. Set HF_SPACE_NAME, or enter the Space name as username/space below.",
           needsConfig: true,
         },
         { status: 400 }
       );
     }
 
-    // Connect to the Hugging Face Space from server side
     const client = await Client.connect(spaceName, {
       hf_token: hfToken ? (hfToken as `hf_${string}`) : undefined,
     });
 
-    // Call the /generate_avif endpoint defined in app.py
     const result = await client.predict("/generate_avif", {
       prompt: prompt.trim(),
       negative_prompt: typeof negative_prompt === "string" ? negative_prompt : "",
@@ -96,7 +92,7 @@ export async function POST(req: NextRequest) {
           space: spaceName,
         });
       }
-      throw new Error("No image data returned from Hugging Face Space");
+      throw new Error("The Space returned no image. Check that it is running, then try again.");
     }
 
     return NextResponse.json({
@@ -108,7 +104,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error: unknown) {
     console.error("HF Space Generation Error:", error);
-    const message = error instanceof Error ? error.message : "Failed to generate image via Hugging Face Space";
+    const message = error instanceof Error ? error.message : "The cover was not generated. Try again.";
     return NextResponse.json(
       { error: message },
       { status: 500 }

@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import {
-  ShieldCheck,
   CheckCircle2,
   ChevronRight,
   GitBranch,
@@ -36,12 +35,11 @@ export default function AuthProvidersPage() {
               <ChevronRight className="h-4 w-4 text-stone-500" />
             </li>
             <li aria-current="page" className="font-medium text-stone-900">
-              Authentication & Permissions
+              Sign-in and permissions
             </li>
           </ol>
         </nav>
 
-        {/* Current Active Session Status */}
         {user && (
           <div className="mb-8 rounded-lg border border-amber-200 bg-amber-50/80 p-5 shadow-2xs">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -62,10 +60,10 @@ export default function AuthProvidersPage() {
                       {hasAuthorPermissions ? (
                         <>
                           <CheckCircle2 className="h-3 w-3 text-emerald-700" />
-                          <span>Verified Writer & Author</span>
+                          <span>Writer</span>
                         </>
                       ) : (
-                        <span>Reader Account</span>
+                        <span>Reader</span>
                       )}
                     </span>
                   </div>
@@ -82,7 +80,7 @@ export default function AuthProvidersPage() {
                     className="inline-flex min-h-9 items-center gap-1.5 rounded-md bg-amber-900 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 transition-colors"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
-                    <span>Open Writer Studio</span>
+                    <span>Open the writer studio</span>
                   </Link>
                 ) : (
                   <Link
@@ -90,7 +88,7 @@ export default function AuthProvidersPage() {
                     className="inline-flex min-h-9 items-center gap-1.5 rounded-md bg-amber-900 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 transition-colors"
                   >
                     <GraduationCap className="h-3.5 w-3.5" />
-                    <span>Upgrade to Writer (.edu)</span>
+                    <span>Add an academic email</span>
                   </Link>
                 )}
                 <button
@@ -98,74 +96,59 @@ export default function AuthProvidersPage() {
                   onClick={logout}
                   className="inline-flex min-h-9 items-center rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-100 transition-colors"
                 >
-                  Sign Out
+                  Sign out
                 </button>
               </div>
             </div>
           </div>
         )}
 
-        {/* Page Header */}
         <div className="border-b border-stone-200 pb-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-md bg-stone-200 px-2.5 py-1 text-xs font-semibold text-stone-800">
-              <ShieldCheck className="h-3.5 w-3.5 text-amber-900" />
-              <span>Identity & Permission Architecture</span>
-            </span>
-            <span className="rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
-              Dedicated OAuth Routes Active
-            </span>
-          </div>
-          <h1 className="mt-3 font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
-            Authentication Pathways & Dedicated OAuth Routes
+          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+            Sign-in options and what each one gives you
           </h1>
           <p className="mt-2 max-w-3xl text-base leading-relaxed text-stone-600">
-            ResearchWithMe provides dedicated, unique authentication routes for <strong>Gmail/Google OAuth</strong>, <strong>Institutional .edu/.edu.bd SSO</strong>, <strong>ORCID OAuth</strong>, and <strong>GitHub OAuth</strong>.
+            Every provider has its own page. What you can do afterwards depends on the identity you record there, not on the provider you pick.
           </p>
         </div>
 
-        {/* Section 1: Writer & Researcher Permissions */}
         <section aria-labelledby="writer-providers-heading" className="mt-10">
           <div className="flex items-center justify-between border-b border-stone-200 pb-3">
             <div>
               <h2 id="writer-providers-heading" className="font-serif text-xl font-bold text-stone-900">
-                1. Writer & Researcher Permissions (Unlocks Writer Studio & CMS)
+                Writer permissions
               </h2>
               <p className="text-xs text-stone-600">
-                Requires attested open-science credentials. Grants publishing rights, AI avatar generation, and Qwen 2.1 AVIF cover generation.
+                Publishing rights and the cover tools in the studio. Each option records a different kind of scholarly identity.
               </p>
             </div>
             <span className="rounded bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-900 shrink-0">
-              Writer Role Granted
+              Writer access
             </span>
           </div>
 
           <div className="mt-6 grid gap-6 md:grid-cols-3">
-            {/* Dedicated Card 1: GitHub OAuth */}
             <div className="flex flex-col justify-between rounded-lg border border-stone-200 bg-white p-6 shadow-2xs hover:border-amber-800 transition-colors">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-stone-900 text-white shadow-sm">
                     <GitBranch className="h-5 w-5" />
                   </div>
-                  <span className="rounded bg-stone-100 px-2 py-0.5 font-mono text-xs font-semibold text-stone-700">
-                    Route: /auth/github
-                  </span>
                 </div>
                 <h3 className="mt-4 font-serif text-lg font-bold text-stone-900">
-                  GitHub OAuth Portal
+                  GitHub
                 </h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-600">
-                  Attest open-source code repositories, commit histories, and systems engineering contributions for repository teardown reviews.
+                  For maintainers of public repositories. Record a handle so readers can see the code your teardowns come from.
                 </p>
                 <ul className="mt-4 space-y-1.5 text-xs text-stone-700">
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Public key & commit attestation</span>
+                    <span>GitHub handle recorded</span>
                   </li>
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Instant Writer Studio access (/write)</span>
+                    <span>Writer studio access (/write)</span>
                   </li>
                 </ul>
               </div>
@@ -175,37 +158,33 @@ export default function AuthProvidersPage() {
                   href="/auth/github"
                   className="inline-flex w-full min-h-10 items-center justify-center gap-2 rounded-md bg-stone-900 px-4 py-2 text-xs font-semibold text-white hover:bg-stone-800 transition-colors"
                 >
-                  <span>Open /auth/github Route</span>
+                  <span>Continue with GitHub</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
 
-            {/* Dedicated Card 2: ORCID OAuth */}
             <div className="flex flex-col justify-between rounded-lg border border-stone-200 bg-white p-6 shadow-2xs hover:border-amber-800 transition-colors">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-800 text-white shadow-sm">
                     <BookOpen className="h-5 w-5" />
                   </div>
-                  <span className="rounded bg-emerald-50 px-2 py-0.5 font-mono text-xs font-semibold text-emerald-800">
-                    Route: /auth/orcid
-                  </span>
                 </div>
                 <h3 className="mt-4 font-serif text-lg font-bold text-stone-900">
-                  ORCID Researcher OAuth
+                  ORCID
                 </h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-600">
-                  Connect your official 16-digit ORCID persistent identifier with ISO 7064 checksum verification for scholarly reviews.
+                  For researchers who already have an ORCID iD. The 16-digit identifier is checked against the ISO 7064 checksum, in this browser.
                 </p>
                 <ul className="mt-4 space-y-1.5 text-xs text-stone-700">
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>ORCID registry cross-reference</span>
+                    <span>16-digit iD validated locally</span>
                   </li>
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Automated DOI citation links</span>
+                    <span>DOI citations for your reviews</span>
                   </li>
                 </ul>
               </div>
@@ -215,37 +194,33 @@ export default function AuthProvidersPage() {
                   href="/auth/orcid"
                   className="inline-flex w-full min-h-10 items-center justify-center gap-2 rounded-md bg-emerald-800 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-900 transition-colors"
                 >
-                  <span>Open /auth/orcid Route</span>
+                  <span>Continue with ORCID</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
 
-            {/* Dedicated Card 3: Institutional .edu / .edu.bd SSO */}
             <div className="flex flex-col justify-between rounded-lg border border-amber-300 bg-white p-6 shadow-2xs hover:border-amber-800 transition-colors">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-amber-900 text-white shadow-sm">
                     <GraduationCap className="h-5 w-5" />
                   </div>
-                  <span className="rounded bg-amber-100 px-2 py-0.5 font-mono text-xs font-semibold text-amber-900">
-                    Route: /auth/academic
-                  </span>
                 </div>
                 <h3 className="mt-4 font-serif text-lg font-bold text-stone-900">
-                  Institutional .edu / .edu.bd SSO
+                  Institutional address
                 </h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-600">
-                  Verify academic faculty/student status across <strong>.edu</strong>, <strong>.edu.bd</strong> (Bangladesh), <strong>.ac.uk</strong>, <strong>.edu.au</strong>, and regional ccTLDs.
+                  For faculty and students. Accepts <strong>.edu</strong>, <strong>.edu.bd</strong> (Bangladesh), <strong>.ac.uk</strong>, <strong>.edu.au</strong>, and regional academic domains.
                 </p>
                 <ul className="mt-4 space-y-1.5 text-xs text-stone-700">
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Country & region code detection</span>
+                    <span>Domain checked against academic suffixes</span>
                   </li>
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Cryptographic university attestation</span>
+                    <span>Institution recorded, not confirmed</span>
                   </li>
                 </ul>
               </div>
@@ -255,7 +230,7 @@ export default function AuthProvidersPage() {
                   href="/auth/academic"
                   className="inline-flex w-full min-h-10 items-center justify-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-800 transition-colors"
                 >
-                  <span>Open /auth/academic Route</span>
+                  <span>Continue with an academic email</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
@@ -263,48 +238,43 @@ export default function AuthProvidersPage() {
           </div>
         </section>
 
-        {/* Section 2: Reader Accounts & General Community */}
         <section aria-labelledby="reader-providers-heading" className="mt-12">
           <div className="flex items-center justify-between border-b border-stone-200 pb-3">
             <div>
               <h2 id="reader-providers-heading" className="font-serif text-xl font-bold text-stone-900">
-                2. Reader & Community Accounts
+                Reader accounts
               </h2>
               <p className="text-xs text-stone-600">
-                Create a reader profile for bookmarks, reading lists, citation exports, and peer discussion.
+                Covers the reading list, citations, and discussion. Neither option allows publishing.
               </p>
             </div>
             <span className="rounded bg-stone-200 px-2.5 py-1 text-xs font-semibold text-stone-800 shrink-0">
-              Reader Role Granted
+              Reader access
             </span>
           </div>
 
           <div className="mt-6 grid gap-6 md:grid-cols-2">
-            {/* Dedicated Card 4: Gmail / Google OAuth */}
             <div className="flex flex-col justify-between rounded-lg border border-stone-200 bg-white p-6 shadow-2xs hover:border-stone-400 transition-colors">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-red-800 text-white shadow-sm">
                     <Mail className="h-5 w-5" />
                   </div>
-                  <span className="rounded bg-stone-100 px-2 py-0.5 font-mono text-xs font-semibold text-stone-700">
-                    Route: /auth/google
-                  </span>
                 </div>
                 <h3 className="mt-4 font-serif text-lg font-bold text-stone-900">
-                  Gmail / Google OAuth Portal
+                  Google
                 </h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-600">
-                  Sign in instantly with your Google account. Save reading lists, participate in peer discussions, and upgrade to writer permissions anytime.
+                  For readers who want a named account for saving and discussion. Adding a scholarly identity later upgrades it.
                 </p>
                 <ul className="mt-4 space-y-1.5 text-xs text-stone-700">
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>1-click Google OAuth 2.0 sign-in</span>
+                    <span>Google sign-in</span>
                   </li>
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Personal reading list & bookmarks</span>
+                    <span>Reading list on this device</span>
                   </li>
                 </ul>
               </div>
@@ -314,37 +284,33 @@ export default function AuthProvidersPage() {
                   href="/auth/google"
                   className="inline-flex w-full min-h-10 items-center justify-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2 text-xs font-semibold text-stone-800 hover:bg-stone-50 transition-colors"
                 >
-                  <span>Open /auth/google Route</span>
+                  <span>Continue with Google</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
             </div>
 
-            {/* Dedicated Card 5: Passwordless Editorial Login */}
             <div className="flex flex-col justify-between rounded-lg border border-stone-200 bg-white p-6 shadow-2xs hover:border-stone-400 transition-colors">
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-stone-800 text-white shadow-sm">
                     <Building2 className="h-5 w-5" />
                   </div>
-                  <span className="rounded bg-stone-100 px-2 py-0.5 font-mono text-xs font-semibold text-stone-700">
-                    Route: /login
-                  </span>
                 </div>
                 <h3 className="mt-4 font-serif text-lg font-bold text-stone-900">
-                  Editorial Passwordless Login
+                  Editorial sign-in
                 </h3>
                 <p className="mt-1.5 text-xs leading-relaxed text-stone-600">
-                  Sign in via email magic link or editorial staff credentials configured via Supabase CMS studio authentication.
+                  For editors with an account in Supabase. Sign in with an emailed link or a password.
                 </p>
                 <ul className="mt-4 space-y-1.5 text-xs text-stone-700">
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Supabase PKCE magic link exchange</span>
+                    <span>Email sign-in link</span>
                   </li>
                   <li className="flex items-center gap-1.5">
                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700 shrink-0" />
-                    <span>Editorial board studio login</span>
+                    <span>Article studio access</span>
                   </li>
                 </ul>
               </div>
@@ -354,7 +320,7 @@ export default function AuthProvidersPage() {
                   href="/login"
                   className="inline-flex w-full min-h-10 items-center justify-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2 text-xs font-semibold text-stone-800 hover:bg-stone-50 transition-colors"
                 >
-                  <span>Open /login Route</span>
+                  <span>Open the article studio</span>
                   <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
               </div>

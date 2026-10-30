@@ -29,19 +29,19 @@ function verification(author: Author) {
   switch (author.verifiedVia) {
     case 'orcid':
       return {
-        label: 'ORCID verified researcher',
+        label: 'ORCID record on file',
         detail: author.orcid ? `iD ${author.orcid}` : author.verifiedIdentifier,
         link: author.orcid ? `https://orcid.org/${author.orcid.replace(/^https?:\/\/orcid\.org\//, '')}` : undefined,
       };
     case 'github':
       return {
-        label: 'GitHub verified maintainer',
+        label: 'GitHub maintainer',
         detail: author.verifiedIdentifier,
         link: author.github,
       };
     default:
       return {
-        label: 'Institutional affiliation',
+        label: 'Institutional affiliation on file',
         detail: author.verifiedIdentifier || author.institution || 'Affiliation on file',
         link: author.website,
       };
@@ -92,14 +92,14 @@ export default function AuthorProfileCard({
     const url = typeof window !== 'undefined' ? window.location.href : '';
     try {
       if (navigator.share) {
-        await navigator.share({ title: `${author.name} on ResearchWithMe`, url });
+        await navigator.share({ title: `${author.name} on πeme`, url });
         setShareMessage('Profile shared.');
         return;
       }
       await navigator.clipboard.writeText(url);
       setShareMessage('Profile link copied.');
     } catch {
-      setShareMessage('Sharing is unavailable in this browser. Copy the address from the browser bar.');
+      setShareMessage('This browser cannot share. Copy the address from the browser bar.');
     }
   }
 
@@ -127,7 +127,7 @@ export default function AuthorProfileCard({
         </p>
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-3 text-sm">
-          <span className="text-stone-600">{metrics?.totalArticles ?? author.articleCount} articles</span>
+          <span className="text-stone-600">{metrics?.totalArticles ?? author.articleCount} reviews on record</span>
           <Link
             href={`/author/${author.id}`}
             className="inline-flex min-h-9 items-center gap-1 font-medium text-amber-900 underline-offset-4 hover:underline"
@@ -174,7 +174,7 @@ export default function AuthorProfileCard({
             className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
           >
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            <span>Writer studio</span>
+            <span>Open the writer studio</span>
           </Link>
         </div>
       </div>
@@ -185,7 +185,7 @@ export default function AuthorProfileCard({
 
       <dl className="mt-6 grid gap-6 border-y border-stone-200 py-5 sm:grid-cols-4">
         <div>
-          <dt className="text-sm text-stone-600">Articles</dt>
+          <dt className="text-sm text-stone-600">Reviews here</dt>
           <dd className="mt-1 font-serif text-2xl font-semibold text-stone-900">
             {metrics?.totalArticles ?? author.articleCount}
           </dd>
@@ -218,7 +218,7 @@ export default function AuthorProfileCard({
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold text-stone-900">Verification record</h2>
+          <h2 className="text-sm font-semibold text-stone-900">Credential on file</h2>
           <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-emerald-900">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{badge.label}</span>
@@ -236,7 +236,7 @@ export default function AuthorProfileCard({
             </a>
           )}
           <p className="mt-3 text-sm leading-relaxed text-stone-600">
-            Verification is shown as recorded in this prototype. Confirm credentials with the issuing registry before relying on them.
+            This is the credential as recorded here. Check it with the issuing registry before you rely on it.
           </p>
         </div>
       </div>

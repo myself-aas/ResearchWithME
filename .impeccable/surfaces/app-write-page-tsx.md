@@ -21,7 +21,7 @@ A standard editor shell with draft autosave status, clear labels, and a print-li
 ## Constraints
 - WCAG 2.1 AA contrast, visible keyboard focus, and semantic landmarks.
 - Reflow to 320px without horizontal scrolling.
-- No kickers above headings, gradient text, glass as decoration, nested cards, or intrusive popups.
+- No kickers above headings, gradient text, glass as decoration, nested cards, or intrusive pop-ups.
 - Loading, empty, error, disabled, and success states explain what happened and what to do next.
 - Local assets and honest demo labels; no fabricated live verification claims.
 

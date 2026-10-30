@@ -9,8 +9,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   return pageMetadata({
-    title: 'Author Profile',
-    description: "Explore a verified contributor's credentials, publication record, and research domains.",
+    title: 'Author profile',
+    description: "A contributor's credentials, research areas, and publication record.",
     path: `/author/${id}`,
   });
 }

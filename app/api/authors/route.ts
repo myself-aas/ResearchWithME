@@ -27,7 +27,7 @@ export async function GET() {
   } catch (err) {
     console.error('Failed to fetch authors:', err);
     return NextResponse.json(
-      { error: 'Internal server error fetching authors' },
+      { error: 'The author directory could not be loaded.' },
       { status: 500 }
     );
   }

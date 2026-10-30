@@ -34,7 +34,6 @@ export default function AcademicOAuthPage() {
     regionLabel: string;
   } | null>(null);
 
-  // Real-time analysis of institutional region & country code
   const regionInfo = useMemo(() => {
     if (!email.includes('@')) return null;
     return getInstitutionalRegionDetails(email);
@@ -43,7 +42,7 @@ export default function AcademicOAuthPage() {
   async function handleVerification(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || !name.trim()) {
-      setError('Please provide your name and institutional email.');
+      setError('Add your name and your institutional email.');
       return;
     }
 
@@ -66,7 +65,6 @@ export default function AcademicOAuthPage() {
         throw new Error(data.error || 'Institutional verification failed');
       }
 
-      // Update auth context
       const authRes = verifyWithInstitution(
         email.trim(),
         institution.trim() || data.countryName || 'Verified University',
@@ -112,7 +110,7 @@ export default function AcademicOAuthPage() {
             </li>
             <li>
               <Link href="/auth/providers" className="hover:text-stone-900 hover:underline">
-                Authentication
+                Sign-in
               </Link>
             </li>
             <li aria-hidden="true">
@@ -131,24 +129,20 @@ export default function AcademicOAuthPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded bg-amber-50 px-2 py-0.5 font-mono text-xs font-semibold text-amber-900">
-                  Unique Route: /auth/academic
-                </span>
                 <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-900">
-                  Writer Role
+                  Writer role
                 </span>
               </div>
               <h1 className="mt-1 font-serif text-2xl font-bold text-stone-900 sm:text-3xl">
-                Academic & Regional (.edu / .edu.bd) Verification
+                Verify with an academic email
               </h1>
             </div>
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-stone-600">
-            Verify academic status using your institutional domain. We support accredited educational email domains worldwide with automated country/region code detection—including <strong>.edu</strong>, <strong>.edu.bd</strong> (Bangladesh), <strong>.ac.uk</strong> (United Kingdom), <strong>.edu.au</strong> (Australia), <strong>.ac.in</strong> (India), and regional ccTLDs.
+            Academic domains are accepted worldwide, including <strong>.edu</strong>, <strong>.edu.bd</strong> (Bangladesh), <strong>.ac.uk</strong> (United Kingdom), <strong>.edu.au</strong> (Australia), and <strong>.ac.in</strong> (India). The domain is checked here; no email is sent to the institution.
           </p>
 
-          {/* Active Session Status */}
           {user && hasAuthorPermissions && (
             <div className="mt-6 rounded-md border border-emerald-200 bg-emerald-50/70 p-4 text-xs text-emerald-950">
               <div className="flex items-center justify-between">
@@ -160,29 +154,27 @@ export default function AcademicOAuthPage() {
                   href="/write"
                   className="rounded bg-emerald-800 px-3 py-1 font-semibold text-white hover:bg-emerald-900 transition-colors"
                 >
-                  Go to Writer Studio
+                  Open the writer studio
                 </Link>
               </div>
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleVerification} className="mt-8 space-y-5">
             <div>
               <label htmlFor="academic-email" className="block text-xs font-semibold text-stone-800 mb-1">
-                Institutional Email Address <span className="text-red-700">*</span>
+                Institutional email <span className="text-red-700">*</span>
               </label>
               <input
                 id="academic-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. researcher@du.edu.bd or scholar@mit.edu"
+                placeholder="researcher@du.edu.bd or scholar@mit.edu"
                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-800 font-mono"
                 disabled={loading}
               />
 
-              {/* Dynamic Country/Region Indicator */}
               {regionInfo && (
                 <div className={`mt-2 flex items-center gap-2 rounded-md p-2 text-xs ${
                   regionInfo.isAcademic
@@ -195,7 +187,7 @@ export default function AcademicOAuthPage() {
                       Detected: <strong>{regionInfo.regionLabel}</strong>
                     </span>
                     <span className="rounded bg-white/80 px-2 py-0.5 font-mono text-xs font-bold">
-                      Region Code: {regionInfo.countryCode}
+                      code {regionInfo.countryCode}
                     </span>
                   </div>
                 </div>
@@ -204,7 +196,7 @@ export default function AcademicOAuthPage() {
 
             <div>
               <label htmlFor="academic-institution" className="block text-xs font-semibold text-stone-800 mb-1">
-                University or Research Institution <span className="text-red-700">*</span>
+                Institution <span className="text-red-700">*</span>
               </label>
               <div className="relative">
                 <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-500">
@@ -215,7 +207,7 @@ export default function AcademicOAuthPage() {
                   type="text"
                   value={institution}
                   onChange={(e) => setInstitution(e.target.value)}
-                  placeholder="e.g. University of Dhaka, BUET, or Harvard Medical School"
+                  placeholder="University of Dhaka, BUET, or Harvard Medical School"
                   className="w-full rounded-md border border-stone-300 bg-white pl-9 pr-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-800"
                   disabled={loading}
                 />
@@ -224,14 +216,14 @@ export default function AcademicOAuthPage() {
 
             <div>
               <label htmlFor="academic-name" className="block text-xs font-semibold text-stone-800 mb-1">
-                Author & Contributor Name <span className="text-red-700">*</span>
+                Name to publish under <span className="text-red-700">*</span>
               </label>
               <input
                 id="academic-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Dr. Asif Ahmed"
+                placeholder="Dr. Asif Ahmed"
                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-800"
                 disabled={loading}
               />
@@ -248,15 +240,15 @@ export default function AcademicOAuthPage() {
               <div className="rounded-md border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-950 space-y-2">
                 <div className="flex items-center gap-2 font-semibold">
                   <CheckCircle2 className="h-4 w-4 text-emerald-700" />
-                  <span>Academic Attestation Verified!</span>
+                  <span>Academic domain recognised</span>
                 </div>
                 <div className="grid gap-1 font-mono text-xs text-emerald-900">
                   <div>Region: {verifiedPayload.regionLabel} [{verifiedPayload.countryCode}]</div>
-                  <div>Token: {verifiedPayload.token}</div>
-                  <div>Granted Role: Verified Academic Writer</div>
+                  <div>Reference: {verifiedPayload.token}</div>
+                  <div>Role: writer</div>
                 </div>
                 <p className="text-stone-600 pt-1 font-sans">
-                  Redirecting to the Writer Studio...
+                  Taking you to the writer studio…
                 </p>
               </div>
             )}
@@ -269,21 +261,20 @@ export default function AcademicOAuthPage() {
               {loading ? (
                 <>
                   <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>Verifying Institutional Domain...</span>
+                  <span>Checking the domain…</span>
                 </>
               ) : (
                 <>
                   <ShieldCheck className="h-4 w-4" />
-                  <span>Verify Academic Credentials & Grant Writer Access</span>
+                  <span>Record this academic identity</span>
                 </>
               )}
             </button>
           </form>
 
-          {/* Preset regional academic examples */}
           <div className="mt-8 rounded-md bg-stone-50 p-4 border border-stone-200 space-y-2">
             <span className="text-xs font-semibold text-stone-800 block">
-              Quick Test Presets (Click to autofill):
+              Try a sample address:
             </span>
             <div className="flex flex-wrap gap-2 text-xs">
               <button
@@ -295,7 +286,7 @@ export default function AcademicOAuthPage() {
                 }}
                 className="rounded border border-stone-300 bg-white px-2.5 py-1 text-xs text-stone-800 hover:border-amber-800"
               >
-                🇧🇩 .edu.bd · Univ of Dhaka
+                .edu.bd · University of Dhaka
               </button>
               <button
                 type="button"
@@ -306,7 +297,7 @@ export default function AcademicOAuthPage() {
                 }}
                 className="rounded border border-stone-300 bg-white px-2.5 py-1 text-xs text-stone-800 hover:border-amber-800"
               >
-                🇧🇩 .ac.bd · BUET
+                .ac.bd · BUET
               </button>
               <button
                 type="button"
@@ -317,7 +308,7 @@ export default function AcademicOAuthPage() {
                 }}
                 className="rounded border border-stone-300 bg-white px-2.5 py-1 text-xs text-stone-800 hover:border-amber-800"
               >
-                🇬🇧 .ac.uk · Cambridge
+                .ac.uk · Cambridge
               </button>
               <button
                 type="button"
@@ -328,7 +319,7 @@ export default function AcademicOAuthPage() {
                 }}
                 className="rounded border border-stone-300 bg-white px-2.5 py-1 text-xs text-stone-800 hover:border-amber-800"
               >
-                🇺🇸 .edu · Johns Hopkins
+                .edu · Johns Hopkins
               </button>
             </div>
           </div>

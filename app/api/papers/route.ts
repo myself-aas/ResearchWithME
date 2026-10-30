@@ -33,7 +33,6 @@ export async function GET(request: Request) {
     } else if (sort === 'title') {
       papers.sort((a, b) => a.title.localeCompare(b.title));
     } else {
-      // default: newest first
       papers.sort((a, b) => new Date(b.publishedDate).getTime() - new Date(a.publishedDate).getTime());
     }
 

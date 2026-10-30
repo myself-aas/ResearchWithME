@@ -49,7 +49,7 @@ export default function ReadingActions({
         ? next.includes(itemId)
           ? 'Saved to your reading list on this device.'
           : 'Removed from your reading list.'
-        : 'Your browser blocked local storage, so the reading list could not be updated.',
+        : 'The browser blocked local storage, so the reading list was not updated.',
     );
   }
 
@@ -58,7 +58,7 @@ export default function ReadingActions({
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
-      setFeedback(doi ? 'DOI link copied to clipboard.' : 'Article link copied to clipboard.');
+      setFeedback(doi ? 'DOI link copied.' : 'Link copied.');
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
       setFeedback('Clipboard access was blocked. Copy the address from your browser.');
@@ -78,7 +78,7 @@ export default function ReadingActions({
     }
     try {
       await navigator.clipboard.writeText(url);
-      setFeedback('Link copied. Paste it wherever you want to share the work.');
+      setFeedback('Link copied. Paste it wherever you want to share it.');
     } catch {
       setFeedback('Sharing is unavailable in this browser. Copy the address from your browser.');
     }
@@ -129,8 +129,8 @@ export default function ReadingActions({
             className={compact ? buttonClass : 'inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950'}
           >
             <Link2 className="h-4 w-4" aria-hidden="true" />
-            {!compact && <span>Resolve DOI</span>}
-            <span className="sr-only">Resolve DOI at doi.org</span>
+            {!compact && <span>Open DOI</span>}
+            <span className="sr-only">Open the DOI at doi.org in a new tab</span>
           </a>
         )}
       </div>

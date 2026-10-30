@@ -34,7 +34,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         const data: { comments?: Comment[] } = await res.json();
         if (active) setComments(Array.isArray(data.comments) ? data.comments : []);
       } catch {
-        if (active) setLoadError('Comments could not be loaded. This does not affect the article.');
+        if (active) setLoadError('Comments did not load. The review still reads normally; reload the page to try the discussion again.');
       } finally {
         if (active) setLoading(false);
       }
@@ -116,11 +116,11 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
     const cleanName = cleanText(name, LIMITS.name);
     const cleanComment = cleanText(text, LIMITS.comment);
     if (!cleanName) {
-      setFormError('Add the name and role you want shown with your comment.');
+      setFormError('Add the name and role to show next to your comment.');
       return;
     }
     if (cleanComment.length < 2) {
-      setFormError('Write at least a sentence before posting.');
+      setFormError('Add a few words before posting.');
       return;
     }
 
@@ -139,7 +139,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
           authorRole: 'Reader',
         }),
       });
-      if (!res.ok) throw new Error('The comment could not be saved.');
+      if (!res.ok) throw new Error('The comment was not saved.');
       const data: { comment?: Comment } = await res.json();
       if (data.comment) {
         const posted = data.comment as Comment;
@@ -148,9 +148,9 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         );
       }
       setNameText('');
-      setStatus('Comment posted. It is visible below for this session.');
+      setStatus('Comment posted. It appears below.');
     } catch {
-      setFormError('Your comment could not be saved. The text is still in the box, so you can try again.');
+      setFormError('The comment was not saved. Your text is still in the box, so you can post it again.');
     } finally {
       setSubmitting(false);
     }
@@ -164,12 +164,12 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
           <span>Peer discussion</span>
         </h2>
         <p className="text-sm text-stone-600">
-          {loading ? 'Loading comments…' : `${comments.length || commentCount} notes`}
+          {loading ? 'Loading comments…' : `${comments.length || commentCount} comments`}
         </p>
       </div>
 
       <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-        Comments are public. Critique the method, reproduce a result, or ask a precise question.
+        Comments are public. Critique the method, describe a reproduction, or ask a specific question.
       </p>
 
       <form onSubmit={submit} className="mt-6 space-y-4 rounded-lg border border-stone-200 bg-white p-5">

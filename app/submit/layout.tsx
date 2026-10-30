@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Submit a Manuscript',
-  description: 'Share a manuscript, dataset, or reproducible artifact with the editorial collective.',
+  title: 'Submit a manuscript',
+  description: 'Send a manuscript, dataset, or reproducible artifact to the editors.',
   path: '/submit',
   type: 'website' as const,
 });

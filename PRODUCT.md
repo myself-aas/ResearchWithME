@@ -7,53 +7,53 @@
 web
 
 ## Users
-Academic researchers, computational scientists, graduate scholars, independent open-science investigators, and peer reviewers seeking rigorous technical analyses, reproducible code artifacts, dataset manifests, and open research reviews across computational neuroscience, distributed systems, climate telemetry, and diamond open-access publishing models.
+Academic researchers, computational scientists, graduate students, independent open-science investigators, and peer reviewers. They come for technical analyses, reproducible code artifacts, dataset manifests, and open review threads in computational neuroscience, distributed systems, climate telemetry, and diamond open-access publishing.
 
 ## Product Purpose
-ResearchWithMe is an open-access scholarly publication and research engine delivering rigorous, long-form technical syntheses, reproducible code artifacts, dataset manifests, and open peer-review threads without paywalls, commercial metric gamification, or disruptive pop-up modals.
+ResearchWithMe is an open-access publication and research engine. It publishes long-form technical reviews with the code, datasets, and DOI records behind them, and it hosts the discussion that follows. Readers pay nothing, and no pop-up interrupts an article.
 
 ## Positioning
-Unlike commercial academic publishers that lock preprints behind paywalls or developer blogs with superficial overviews, ResearchWithMe combines peer-reviewed rigor with live MCP data access, reproducible DOI manifests, verifiable open-science hashes, and dedicated distraction-free reading surfaces.
+Commercial publishers put preprints behind paywalls, and developer blogs summarize work without checking it. ResearchWithMe keeps the review standard and adds what a paper alone cannot show: the artifact that was examined, the credentials of the person who examined it, and citation metadata a reader can copy.
 
 ## Operating Context
-Scholars read research papers across desktop and mobile viewports, inspect math formulas and syntax-highlighted code blocks, copy DOI citations in BibTeX format, trigger native mobile share sheets, subscribe to weekly research digests, and query research repositories through a dedicated scholarly assistant interface.
+Scholars read on desktop and mobile, inspect formulas and syntax-highlighted code, copy BibTeX citations, use the native share sheet, save a digest preference, and query the catalog through the research assistant.
 
 ## Capabilities and Constraints
-- Dedicated article reading pages (`/post/[slug]`) with full markdown rendering, metadata panels, code syntax highlighting, DOI copy utilities, and related articles based on tag similarity.
-- Interactive category-filtered feed with verified topic thumbnail headers for all 6 core disciplines.
-- Dedicated scholarly research assistant (`/assistant`) for querying open literature and reproducible repos.
-- Dedicated standalone verification page (`/verify`) for checking DOI manifests, cryptographic hashes, and citation records.
-- Native responsive layout adhering to WCAG AA contrast standards (>= 4.5:1), semantic markup, and clear typographic hierarchy.
-- Zero disruptive pop-ups or modal interruptions during reading.
+- Article readers at `/post/[slug]` with rendered Markdown, a metadata panel, syntax highlighting, DOI copy, and related reviews chosen by tag overlap.
+- A feed filtered by field, with a topic header for each of the six disciplines.
+- A research assistant at `/assistant` that answers from published reviews and open repositories.
+- A `/verify` page that models contributor identity checks as a local prototype, with no credentials leaving the browser.
+- Responsive layout to WCAG AA contrast (4.5:1 for body text), semantic markup, and a clear type hierarchy.
+- No modal, overlay, or pop-up during reading.
 
 ## Brand Commitments
-- Name: ResearchWithMe
-- Editorial voice: Scholarly, precise, restrained, transparent, evidence-based.
-- Typography: The Aptos family. Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data tables. The overall feel is a research journal and newspaper of record.
-- Palette: Warm archival stone background, deep amber/ochre accents, emerald verification indicators, high-contrast ink text.
+- Name: ResearchWithMe. The wordmark is set as πeme.
+- Editorial voice: scholarly, precise, restrained, transparent. Claims carry evidence.
+- Typography: the Aptos family. Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data. It should read like a research journal and a newspaper of record.
+- Palette: warm archival stone, deep amber and ochre accents, emerald for verification, high-contrast ink text.
 
 ## Evidence on Hand
-- Published articles across 6 domains: Computational Neuroscience, Distributed ML Infrastructure, Climate Telemetry, Diamond Open Access, Quantum Algorithms, and Genomic Pipelines.
-- Real DOI records, author credentials, citation counts, reading time estimates, and tag metadata.
+- Published reviews across six fields: Computational Neuroscience, Distributed ML Infrastructure, Climate Telemetry, Diamond Open Access, Quantum Algorithms, and Genomic Pipelines.
+- DOI records, author credentials, citation counts, reading-time estimates, and tag metadata.
 
 ## Product Principles
-1. Content-first reading: The article is sacred; zero intrusive modals or obstructive overlays.
-2. Verifiability by default: Every claim, dataset, and code artifact carries citation metadata and reproducible links.
-3. Accessible precision: Typography and color choices optimize sustained reading comfort and WCAG AA contrast compliance.
-4. Cohesive fullstack experience: Dedicated URLs for every major user intent and task.
+1. The article comes first. Nothing overlays it.
+2. Every claim, dataset, and code artifact carries citation metadata and a reproducible link.
+3. Typography and colour are chosen for long reading sessions, at WCAG AA contrast.
+4. Every major task has its own URL.
 
 ## Implementation Status
-- The active product is the root Next.js App Router application. `ResearchWith.me-main/` is a legacy WordPress theme archive and is outside the active build.
-- The editorial studio (`/login`, `/dashboard`) is backed by Supabase when credentials are configured: posts, comments, an image bucket, RLS, and realtime. Without credentials it writes to local JSON so the project stays runnable for review. See `docs/supabase-cms.md`.
-- Readers sign in through Supabase Auth with Google, GitHub, ORCID, or email (password or magic link). Studio access requires an administrator to add the account to `public.editors`; signing in alone grants reader access only.
-- Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
-- Contributor verification on `/verify` remains a clearly labeled local prototype, not production OAuth. No credentials are sent to ORCID, GitHub, an institution, or Google.
-- The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
-- Newsletter and reading-list preferences are stored locally in the browser. No email is sent and no behavioral tracking is used.
+- The active product is the root Next.js App Router application. `ResearchWith.me-main/` is a legacy WordPress theme archive and sits outside the build.
+- The article studio (`/login`, `/dashboard`) runs on Supabase when credentials are configured: posts, comments, an image bucket, RLS, and realtime. Without credentials it writes to local JSON so the project still runs for review. See `docs/supabase-cms.md`.
+- Readers sign in through Supabase Auth with Google, GitHub, ORCID, or email (password or magic link). Studio access needs an administrator to add the account to `public.editors`; signing in alone grants reader access only.
+- Published CMS articles share the reader, feed, sitemap, and author record with the bundled catalogue. Drafts stay private.
+- The `/verify` contributor check is a clearly labelled local prototype, not production OAuth. No credentials go to ORCID, GitHub, an institution, or Google.
+- The research assistant uses Gemini only when `GEMINI_API_KEY` is set; otherwise it returns a deterministic, cited answer built from the local catalogue.
+- Newsletter and reading-list preferences live in the browser. No email is sent and no behavioural tracking is used.
 
 ## Accessibility & Inclusion
-- Strict adherence to WCAG 2.1 AA contrast ratios (>= 4.5:1 for body text, >= 3:1 for large display text).
-- Full keyboard navigation with visible focus rings and semantic landmarks.
-- Responsive reflow without horizontal scrolling down to 320px viewports.
-- Reduced-motion preferences preserve state feedback while removing travel and transform motion.
-- All form controls have accessible names; loading, empty, disabled, and error states are announced where they matter.
+- WCAG 2.1 AA contrast throughout: 4.5:1 for body text, 3:1 for large display text.
+- Full keyboard navigation, visible focus rings, and semantic landmarks.
+- Reflow without horizontal scrolling down to 320px.
+- Reduced-motion preferences keep state feedback and drop travel and transform motion.
+- Every form control has an accessible name, and loading, empty, disabled, and error states are announced when they matter.

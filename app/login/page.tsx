@@ -2,13 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { BadgeCheck, FileText, MessageSquare } from 'lucide-react';
 import LoginForm from '@/components/auth/LoginForm';
+import BrandLogo from '@/components/BrandLogo';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { safeNextPath } from '@/lib/safe-redirect';
 
 export const metadata: Metadata = {
-  title: 'Sign in to the editorial studio',
-  description: 'Sign in to write, review, and publish ResearchWithMe articles.',
+  title: 'Sign in to the article studio',
+  description: 'Sign in to draft, review, and publish ResearchWithMe reviews.',
   robots: {
     index: false,
     follow: false,
@@ -30,16 +31,8 @@ export default async function LoginPage({
     <div className="flex min-h-screen flex-col bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span
-              aria-hidden="true"
-              className="flex h-9 w-9 items-center justify-center rounded-lg bg-stone-900 font-serif text-lg font-bold text-stone-50"
-            >
-              R
-            </span>
-            <span className="font-serif text-lg font-bold tracking-tight text-stone-900">
-              ResearchWith<span className="text-amber-800">.me</span>
-            </span>
+          <Link href="/" aria-label="πeme home" className="flex items-center gap-2.5">
+            <BrandLogo size="md" />
           </Link>
           <Link
             href="/"
@@ -57,8 +50,7 @@ export default async function LoginPage({
               Write, review, and publish
             </h1>
             <p className="mt-4 max-w-xl text-lg leading-relaxed text-stone-700">
-              The studio holds drafts privately, publishes to the journal, and keeps reader discussion in one
-              moderation queue.
+              Drafts stay private until you publish, and reader comments land in one queue for review.
             </p>
 
             <ul className="mt-8 space-y-5 border-t border-stone-200 pt-6">
@@ -74,9 +66,9 @@ export default async function LoginPage({
               <li className="flex gap-3">
                 <BadgeCheck className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" aria-hidden="true" />
                 <div>
-                  <p className="font-medium text-stone-900">Verified bylines</p>
+                  <p className="font-medium text-stone-900">A byline readers can check</p>
                   <p className="mt-0.5 text-sm leading-relaxed text-stone-600">
-                    Every article maps to a credentialed author profile, so readers can inspect the record.
+                    Every review points to an author profile with the credentials behind it.
                   </p>
                 </div>
               </li>
@@ -85,7 +77,7 @@ export default async function LoginPage({
                 <div>
                   <p className="font-medium text-stone-900">One moderation queue</p>
                   <p className="mt-0.5 text-sm leading-relaxed text-stone-600">
-                    Reader notes arrive in realtime when Supabase Realtime is enabled, and delete in one step.
+                    Reader comments arrive live when Supabase Realtime is on, and each one deletes in a single step.
                   </p>
                 </div>
               </li>
@@ -98,7 +90,7 @@ export default async function LoginPage({
 
       <footer className="border-t border-stone-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-2 px-4 py-4 text-sm text-stone-600 sm:px-6">
-          <p>ResearchWithMe editorial studio</p>
+          <p>πeme article studio</p>
           <p>
             <Link href="/editorial-board" className="underline underline-offset-4 hover:text-stone-900">
               Editorial board

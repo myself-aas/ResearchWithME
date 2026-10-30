@@ -50,11 +50,10 @@ export default function OrcidOAuthPage() {
     }
   }
 
-  // Completes ORCID iD validation and checksum verification
   function handleDirectVerification(e: React.FormEvent) {
     e.preventDefault();
     if (!orcidId.trim()) {
-      setError('Please provide your 16-digit ORCID iD.');
+      setError('Add your 16-digit ORCID iD.');
       return;
     }
 
@@ -65,7 +64,7 @@ export default function OrcidOAuthPage() {
     }
 
     if (!orcidChecksumIsValid(cleanOrcid)) {
-      setError('The provided ORCID iD failed the ISO 7064 MOD 11-2 checksum. Recheck your identifier.');
+      setError('That iD fails the ORCID checksum (ISO 7064). Check the digits against your ORCID record.');
       return;
     }
 
@@ -99,14 +98,14 @@ export default function OrcidOAuthPage() {
             </li>
             <li>
               <Link href="/auth/providers" className="hover:text-stone-900 hover:underline">
-                Authentication
+                Sign-in
               </Link>
             </li>
             <li aria-hidden="true">
               <ChevronRight className="h-4 w-4 text-stone-500" />
             </li>
             <li aria-current="page" className="font-medium text-stone-900">
-              ORCID OAuth
+              ORCID
             </li>
           </ol>
         </nav>
@@ -118,42 +117,37 @@ export default function OrcidOAuthPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded bg-emerald-50 px-2 py-0.5 font-mono text-xs font-semibold text-emerald-900">
-                  Unique Route: /auth/orcid
-                </span>
                 <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-900">
-                  Writer Role
+                  Writer role
                 </span>
               </div>
               <h1 className="mt-1 font-serif text-2xl font-bold text-stone-900 sm:text-3xl">
-                ORCID Researcher OAuth Verification
+                Verify with ORCID
               </h1>
             </div>
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-stone-600">
-            Authenticate using your official ORCID persistent digital identifier. Verifying with ORCID links peer-reviewed publications, DOI metadata, and grants full editorial writer privileges on ResearchWithMe.
+            An ORCID iD ties your reviews to your publication record. Signing in with ORCID, or recording the iD below, opens the writer studio.
           </p>
 
-          {/* Active Session Status */}
           {user && hasAuthorPermissions && (
             <div className="mt-6 rounded-md border border-emerald-200 bg-emerald-50/70 p-4 text-xs text-emerald-950">
               <div className="flex items-center justify-between">
                 <span className="font-semibold flex items-center gap-1.5">
                   <CheckCircle2 className="h-4 w-4 text-emerald-700" />
-                  <span>Currently Verified as {user.name} ({user.verifiedIdentifier})</span>
+                  <span>Signed in as {user.name} ({user.verifiedIdentifier})</span>
                 </span>
                 <Link
                   href="/write"
                   className="rounded bg-emerald-800 px-3 py-1 font-semibold text-white hover:bg-emerald-900 transition-colors"
                 >
-                  Go to Writer Studio
+                  Open the writer studio
                 </Link>
               </div>
             </div>
           )}
 
-          {/* Primary OAuth Button */}
           <div className="mt-8 space-y-3">
             <button
               type="button"
@@ -169,7 +163,7 @@ export default function OrcidOAuthPage() {
               ) : (
                 <>
                   <BookOpen className="h-4 w-4" />
-                  <span>Sign in with ORCID OAuth</span>
+                  <span>Continue with ORCID</span>
                   <ExternalLink className="h-3.5 w-3.5 opacity-70" />
                 </>
               )}
@@ -184,11 +178,10 @@ export default function OrcidOAuthPage() {
               <div className="w-full border-t border-stone-200" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-stone-500">Or attest your 16-digit ORCID iD directly</span>
+              <span className="bg-white px-3 text-stone-500">Or record a 16-digit ORCID iD directly</span>
             </div>
           </div>
 
-          {/* ORCID Form */}
           <form onSubmit={handleDirectVerification} className="space-y-4">
             <div>
               <label htmlFor="orcid-id" className="block text-xs font-semibold text-stone-800 mb-1">
@@ -199,25 +192,25 @@ export default function OrcidOAuthPage() {
                 type="text"
                 value={orcidId}
                 onChange={(e) => setOrcidId(e.target.value)}
-                placeholder="e.g. 0000-0001-9234-8812 or https://orcid.org/..."
+                placeholder="0000-0001-9234-8812 or https://orcid.org/…"
                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700 font-mono"
                 disabled={loading}
               />
               <p className="mt-1 text-xs text-stone-500">
-                16 digits separated by hyphens with ISO 7064 checksum verification.
+                16 digits in hyphenated groups. The ISO 7064 checksum is verified in this browser.
               </p>
             </div>
 
             <div>
               <label htmlFor="orcid-name" className="block text-xs font-semibold text-stone-800 mb-1">
-                Researcher Name <span className="font-normal text-stone-500">(as recorded in ORCID registry)</span>
+                Name <span className="font-normal text-stone-500">(as it appears on your ORCID record)</span>
               </label>
               <input
                 id="orcid-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Prof. Marcus Vance"
+                placeholder="Prof. Marcus Vance"
                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-emerald-700"
                 disabled={loading}
               />
@@ -233,7 +226,7 @@ export default function OrcidOAuthPage() {
             {success && (
               <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900 flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                <span>ORCID validated! Writer permissions granted. Navigating to Writer Studio...</span>
+                <span>ORCID iD validated. Taking you to the writer studio…</span>
               </div>
             )}
 
@@ -243,14 +236,13 @@ export default function OrcidOAuthPage() {
               className="inline-flex w-full min-h-11 items-center justify-center gap-2 rounded-md bg-emerald-800 px-5 py-2.5 text-xs font-semibold text-white hover:bg-emerald-900 transition-colors disabled:opacity-50"
             >
               <ShieldCheck className="h-4 w-4" />
-              <span>Verify ORCID iD & Grant Writer Role</span>
+              <span>Record this ORCID iD</span>
             </button>
           </form>
 
-          {/* Quick preset examples */}
           <div className="mt-6 rounded-md bg-stone-50 p-3 border border-stone-200">
             <span className="text-xs font-semibold text-stone-700 block mb-1">
-              Sample Verified ORCID Records:
+              Try a sample record:
             </span>
             <div className="flex flex-wrap gap-2 text-xs">
               <button

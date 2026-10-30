@@ -94,7 +94,6 @@ const DEFAULT_COMMENTS: CommentRecord[] = [
   },
 ];
 
-// Helper to ensure data files exist
 function ensureFiles() {
   try {
     if (!fs.existsSync(DATA_DIR)) {
@@ -141,14 +140,12 @@ export function getAuthorById(authorId: string): Author | undefined {
   if (AUTHORS[authorId]) {
     return AUTHORS[authorId];
   }
-  // Try case-insensitive or name match
   const lower = authorId.toLowerCase().trim();
   const found = Object.values(AUTHORS).find(
     (a) => a.id.toLowerCase() === lower || a.name.toLowerCase().replace(/[^a-z0-9]/g, '-') === lower || a.name.toLowerCase() === lower
   );
   if (found) return found;
 
-  // Check if any articles have this author
   const articles = getArticles();
   const articleWithAuthor = articles.find(
     (a) => a.author.id.toLowerCase() === lower || a.author.name.toLowerCase() === lower

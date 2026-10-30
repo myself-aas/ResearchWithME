@@ -18,18 +18,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!paper) notFound();
   return pageMetadata({
     title: paper?.title ?? 'Research Paper',
-    description: paper?.abstract ?? 'Read the full structured publication, methods, findings, references, and citation metadata.',
+    description: paper?.abstract ?? 'Read the full publication: method, findings, references, and citation details.',
     path: `/paper/${slug}`,
     type: 'article',
   });
 }
 
 const sections = [
-  { key: 'background', heading: '1. Context and research problem' },
-  { key: 'methodology', heading: '2. Methodology and observational setup' },
-  { key: 'findings', heading: '3. Empirical findings and benchmarks' },
-  { key: 'discussion', heading: '4. Technical discussion and trade-offs' },
-  { key: 'implications', heading: '5. Implications for practitioners' },
+  { key: 'background', heading: '1. Background and problem' },
+  { key: 'methodology', heading: '2. Method' },
+  { key: 'findings', heading: '3. Findings' },
+  { key: 'discussion', heading: '4. Discussion' },
+  { key: 'implications', heading: '5. What practitioners can use' },
 ] as const;
 
 export default async function PaperDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -78,7 +78,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                 <span>{paper.journal}</span>
                 <span aria-hidden="true">·</span>
                 <span>
-                  Volume {paper.volume}, Issue {paper.issue}
+                  {paper.volume}, {paper.issue}
                 </span>
                 <span aria-hidden="true">·</span>
                 <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
@@ -175,12 +175,12 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             {paper.fullContent?.references && paper.fullContent.references.length > 0 && (
               <section aria-labelledby="references-heading" className="border-t border-stone-200 py-8">
                 <h2 id="references-heading" className="font-serif text-2xl font-semibold text-stone-900">
-                  References and primary literature
+                  References
                 </h2>
                 <ol className="mt-4 space-y-3">
                   {paper.fullContent.references.map((reference, index) => (
                     <li key={reference} className="flex gap-3 text-base leading-relaxed text-stone-700">
-                      <span className="font-mono text-sm text-stone-600">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="font-mono text-sm text-stone-600">{index + 1}.</span>
                       <span className="min-w-0 break-words">{reference}</span>
                     </li>
                   ))}
@@ -195,22 +195,22 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                   className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
                 >
                   <Quote className="h-4 w-4" aria-hidden="true" />
-                  <span>Build a citation</span>
+                  <span>Cite this paper</span>
                 </Link>
                 <Link
                   href="/papers"
                   className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
                 >
                   <FileText className="h-4 w-4" aria-hidden="true" />
-                  <span>Back to the archive</span>
+                  <span>All papers</span>
                 </Link>
               </div>
             </footer>
           </article>
 
-          <aside aria-label="Publication record" className="h-fit space-y-6 lg:sticky lg:top-24">
+          <aside aria-label="Record" className="h-fit space-y-6 lg:sticky lg:top-24">
             <div className="rounded-lg border border-stone-200 bg-white p-5">
-              <h2 className="font-serif text-lg font-semibold text-stone-900">Publication record</h2>
+              <h2 className="font-serif text-lg font-semibold text-stone-900">Record</h2>
               <dl className="mt-4 space-y-3 text-sm">
                 <div>
                   <dt className="text-stone-600">DOI</dt>
@@ -248,10 +248,10 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                         rel="noreferrer noopener"
                         className="text-amber-900 underline underline-offset-4 hover:text-amber-950"
                       >
-                        Repository record
+                        Open the repository
                       </a>
                     ) : (
-                      'No public data deposit listed'
+                      'None listed'
                     )}
                   </dd>
                 </div>
@@ -261,10 +261,10 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             <div className="rounded-lg border border-stone-200 bg-stone-100 p-5 text-sm leading-relaxed text-stone-700">
               <p className="flex items-center gap-2 font-semibold text-stone-900">
                 <ShieldCheck className="h-4 w-4 text-emerald-700" aria-hidden="true" />
-                <span>Archive note</span>
+                <span>Note on this record</span>
               </p>
               <p className="mt-2">
-                This record is part of a prototype publication archive. The DOI and licence values are sample metadata; confirm any production citation against the issuing registry.
+                This record belongs to a prototype archive. The DOI and license are sample values, so check any citation against the issuing registry before you use it.
               </p>
             </div>
           </aside>

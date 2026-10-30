@@ -70,8 +70,8 @@ function VerifyContent() {
     }
     setStatus(
       method === 'gmail'
-        ? 'Reader account saved in this browser. You can now save articles and build citations.'
-        : 'Scholarly identity recorded in this prototype. Publishing tools are now available.',
+        ? 'Reader account saved in this browser. Saving and citing now work for this session.'
+        : 'Identity recorded in this browser. Publishing tools are now available.',
     );
   }
 
@@ -91,31 +91,31 @@ function VerifyContent() {
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
         <header className="border-b border-stone-200 pb-8">
           <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Contributor identity, without the theatre
+            Record a contributor identity
           </h1>
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            Publishing tools are reserved for contributors with a checkable scholarly identity. This page records a prototype attestation in your browser. It does not contact ORCID, GitHub, or your institution.
+            Publishing tools open to contributors with a checkable scholarly identity. This page records one in your browser. It does not contact ORCID, GitHub, or your institution.
           </p>
           <p className="mt-3 max-w-[60ch] border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
-            No credentials leave this device, and no external OAuth exchange takes place. Treat the resulting session as a demonstration of the permission model, not proof of identity.
+            Nothing leaves this device and no OAuth exchange takes place. Treat the session as a demonstration of the permission model, not as proof of identity.
           </p>
         </header>
 
         <div className="mt-8 rounded-lg border border-amber-300 bg-amber-50/70 p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
-                Dedicated OAuth Authentication Portals
+              <span className="text-sm font-semibold text-amber-900">
+                Sign-in portals
               </span>
               <p className="mt-0.5 text-xs text-amber-950">
-                Authenticate via dedicated portals with unique URLs for GitHub, ORCID, .edu / .edu.bd regional SSO, or Google.
+                Each provider has its own page: GitHub, ORCID, an institutional .edu or .edu.bd address, or Google.
               </p>
             </div>
             <Link
               href="/auth/providers"
               className="inline-flex min-h-9 items-center gap-1.5 rounded-md bg-amber-900 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-800 transition-colors shrink-0"
             >
-              <span>View All OAuth Portals</span>
+              <span>See all sign-in options</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
@@ -229,7 +229,7 @@ function VerifyContent() {
 
           <dl className="mt-6 grid gap-4 border-t border-stone-200 pt-5 text-sm sm:grid-cols-4">
             <div>
-              <dt className="text-stone-600">Read articles</dt>
+              <dt className="text-stone-600">Read reviews</dt>
               <dd className="mt-1 font-medium text-emerald-900">All visitors</dd>
             </div>
             <div>
@@ -239,13 +239,13 @@ function VerifyContent() {
             <div>
               <dt className="text-stone-600">Draft in the studio</dt>
               <dd className={`mt-1 font-medium ${hasAuthorPermissions ? 'text-emerald-900' : 'text-stone-700'}`}>
-                {hasAuthorPermissions ? 'Contributor' : 'Sign-in required'}
+                {hasAuthorPermissions ? 'Contributor' : 'Contributor only'}
               </dd>
             </div>
             <div>
               <dt className="text-stone-600">Publish a review</dt>
               <dd className={`mt-1 font-medium ${hasAuthorPermissions ? 'text-emerald-900' : 'text-stone-700'}`}>
-                {hasAuthorPermissions ? 'Contributor' : 'Sign-in required'}
+                {hasAuthorPermissions ? 'Contributor' : 'Contributor only'}
               </dd>
             </div>
           </dl>
@@ -429,19 +429,19 @@ function VerifyContent() {
           <ul className="mt-3 grid gap-3 text-base leading-relaxed text-stone-700 sm:grid-cols-2">
             <li className="flex gap-2">
               <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
-              <span>It does not verify that an ORCID iD or GitHub handle belongs to you.</span>
+              <span>It does not check that an ORCID iD or GitHub handle belongs to you.</span>
             </li>
             <li className="flex gap-2">
               <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
-              <span>It does not send an email or confirm an institutional address.</span>
+              <span>It sends no email and confirms no institutional address.</span>
             </li>
             <li className="flex gap-2">
               <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
-              <span>It does not grant access to any server-side action beyond this demonstration.</span>
+              <span>It grants no server-side access beyond this demonstration.</span>
             </li>
             <li className="flex gap-2">
               <Check className="mt-1 h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
-              <span>It can be cleared at any time with “Sign out” above.</span>
+              <span>“Sign out” above clears it whenever you want.</span>
             </li>
           </ul>
         </section>

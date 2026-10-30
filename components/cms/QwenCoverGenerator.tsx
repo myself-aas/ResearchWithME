@@ -25,7 +25,6 @@ interface ServerStatus {
   configured: boolean;
   spaceName: string | null;
   hasToken: boolean;
-  engine: string;
 }
 
 export default function QwenCoverGenerator({
@@ -45,13 +44,11 @@ export default function QwenCoverGenerator({
   const [randomizeSeed, setRandomizeSeed] = useState(true);
   const [seed, setSeed] = useState(0);
 
-  // Custom Space connection overrides
   const [customSpaceName, setCustomSpaceName] = useState('');
   const [customToken, setCustomToken] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
-  // Generation status
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedUri, setGeneratedUri] = useState<string | null>(null);
@@ -59,7 +56,6 @@ export default function QwenCoverGenerator({
   const [applied, setApplied] = useState(false);
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
 
-  // Check backend HF Space status on mount
   useEffect(() => {
     async function checkStatus() {
       try {
@@ -72,12 +68,10 @@ export default function QwenCoverGenerator({
           }
         }
       } catch {
-        // Silent fallback
       }
     }
     checkStatus();
 
-    // Check localStorage for saved custom credentials
     if (typeof window !== 'undefined') {
       const savedSpace = localStorage.getItem('rwm_hf_space_name');
       const savedToken = localStorage.getItem('rwm_hf_token');
@@ -86,7 +80,6 @@ export default function QwenCoverGenerator({
     }
   }, [customSpaceName]);
 
-  // Craft a scholarly visual prompt from the article metadata
   function suggestPrompt() {
     const parts: string[] = [];
     if (articleTitle) {
@@ -107,11 +100,10 @@ export default function QwenCoverGenerator({
     setPrompt(parts.join(', '));
   }
 
-  // Handle generation request
   async function handleGenerate(e?: React.FormEvent) {
     if (e) e.preventDefault();
     if (!prompt.trim()) {
-      setError('Please provide a prompt describing the desired cover artwork.');
+      setError('Add a prompt describing the cover you want.');
       return;
     }
 
@@ -159,14 +151,12 @@ export default function QwenCoverGenerator({
     }
   }
 
-  // Commit cover to article
   function handleApply() {
     if (!generatedUri) return;
     onApplyCover(generatedUri);
     setApplied(true);
   }
 
-  // Save custom Space settings
   function saveSettings() {
     if (typeof window !== 'undefined') {
       if (customSpaceName) localStorage.setItem('rwm_hf_space_name', customSpaceName);
@@ -177,13 +167,12 @@ export default function QwenCoverGenerator({
 
   return (
     <div className="rounded-lg border border-stone-200 bg-stone-50 p-5 sm:p-6 space-y-5">
-      {/* Header with Title and Connection Status */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200 pb-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
               <Sparkles className="h-3.5 w-3.5 text-amber-800" aria-hidden="true" />
-              <span>Qwen 2.1 Storage Bucket</span>
+              <span>Cover generator</span>
             </span>
             <span className="rounded-md bg-stone-200 px-2 py-0.5 font-mono text-xs font-semibold text-stone-700">
               AVIF ZeroGPU
@@ -191,19 +180,19 @@ export default function QwenCoverGenerator({
             {serverStatus?.configured ? (
               <span className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-900">
                 <Check className="h-3 w-3" />
-                <span>HF Secrets Active</span>
+                <span>Server credentials set</span>
               </span>
             ) : customSpaceName ? (
               <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
-                <span>Session Space Active</span>
+                <span>Using this session&apos;s Space</span>
               </span>
             ) : null}
           </div>
           <h3 className="mt-2 font-serif text-lg font-bold text-stone-900">
-            Generate Editorial Cover Image
+            Generate a cover image
           </h3>
           <p className="mt-0.5 text-xs text-stone-600">
-            Render high-fidelity, compressed AVIF cover artwork directly via your private Hugging Face Space.
+            Renders AVIF cover art through your own Hugging Face Space.
           </p>
         </div>
 
@@ -213,29 +202,27 @@ export default function QwenCoverGenerator({
           className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors"
         >
           <Key className="h-3.5 w-3.5 text-amber-800" aria-hidden="true" />
-          <span>Space Config</span>
+          <span>Space settings</span>
         </button>
       </div>
 
-      {/* Hugging Face Space Config Drawer */}
       {showSettings && (
         <div className="rounded-lg border border-amber-200 bg-amber-50/70 p-4 space-y-3">
           <div className="flex items-start justify-between">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-900">
-              Hugging Face Space Credentials
+            <h4 className="text-sm font-semibold text-amber-900">
+              Hugging Face Space
             </h4>
             <span className="text-xs text-stone-500">ZeroGPU Gradio SDK</span>
           </div>
           <p className="text-xs text-amber-950 leading-relaxed">
-            Specify your private Hugging Face Space URL/name where your Qwen 2.1 storage bucket (
-            <code className="bg-amber-100 px-1 py-0.5 rounded text-xs">@me-aas/Qwen-Image-2.1-Uncensored-Quantized-bucket</code>)
-            is hosted.
+            Name the Space that hosts the Qwen 2.1 bucket (
+            <code className="bg-amber-100 px-1 py-0.5 rounded text-xs">@me-aas/Qwen-Image-2.1-Uncensored-Quantized-bucket</code>).
           </p>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="hf-space-input" className="block text-xs font-medium text-stone-800 mb-1">
-                HF Space Name / Path
+                Space name or path
               </label>
               <input
                 id="hf-space-input"
@@ -248,7 +235,7 @@ export default function QwenCoverGenerator({
             </div>
             <div>
               <label htmlFor="hf-token-input" className="block text-xs font-medium text-stone-800 mb-1">
-                HF Token (for Private Space)
+                Hugging Face token (private Spaces only)
               </label>
               <input
                 id="hf-token-input"
@@ -264,7 +251,7 @@ export default function QwenCoverGenerator({
           <div className="flex items-center justify-between pt-1">
             <span className="text-xs text-stone-600 flex items-center gap-1">
               <HelpCircle className="h-3 w-3" />
-              Credentials stay secure on the Next.js server proxy route.
+              The token is saved in this browser and passed to the server proxy for each render.
             </span>
             <button
               type="button"
@@ -272,18 +259,17 @@ export default function QwenCoverGenerator({
               className="inline-flex items-center gap-1 rounded bg-amber-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 transition-colors"
             >
               <Check className="h-3.5 w-3.5" />
-              <span>Save Space Settings</span>
+              <span>Save settings</span>
             </button>
           </div>
         </div>
       )}
 
-      {/* Main Generator Form */}
       <form onSubmit={handleGenerate} className="space-y-4">
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <label htmlFor="qwen-prompt" className="text-xs font-semibold text-stone-800">
-              Visual Artwork Prompt
+              Prompt
             </label>
             <button
               type="button"
@@ -291,7 +277,7 @@ export default function QwenCoverGenerator({
               className="inline-flex items-center gap-1 text-xs font-medium text-amber-900 hover:text-amber-800 underline underline-offset-2"
             >
               <Sparkles className="h-3 w-3" />
-              <span>Suggest from article context</span>
+              <span>Suggest from the article</span>
             </button>
           </div>
           <textarea
@@ -299,13 +285,12 @@ export default function QwenCoverGenerator({
             rows={3}
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe the conceptual cover image (e.g. 'A sleek architectural representation of distributed neural weights, copper traces on obsidian stone, soft volumetric studio lighting, 8k resolution')..."
+            placeholder="Describe the cover. For example: layered neural weights as copper traces on dark stone, soft studio light."
             className="w-full rounded-md border border-stone-300 bg-white p-3 text-xs text-stone-900 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-800 font-sans"
             disabled={loading}
           />
         </div>
 
-        {/* Aspect Ratio & Basic Tuning */}
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
             <label htmlFor="qwen-dimensions" className="block text-xs font-medium text-stone-700 mb-1">
@@ -364,7 +349,6 @@ export default function QwenCoverGenerator({
           </div>
         </div>
 
-        {/* Advanced Accordion */}
         <div>
           <button
             type="button"
@@ -436,7 +420,6 @@ export default function QwenCoverGenerator({
           )}
         </div>
 
-        {/* Action Button */}
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <button
             type="submit"
@@ -446,12 +429,12 @@ export default function QwenCoverGenerator({
             {loading ? (
               <>
                 <RefreshCw className="h-4 w-4 animate-spin" />
-                <span>Running ZeroGPU Diffusion Pipeline...</span>
+                <span>Rendering the cover…</span>
               </>
             ) : (
               <>
                 <Sparkles className="h-4 w-4" />
-                <span>Generate AVIF Cover with Qwen 2.1</span>
+                <span>Generate cover</span>
               </>
             )}
           </button>
@@ -464,28 +447,26 @@ export default function QwenCoverGenerator({
         </div>
       </form>
 
-      {/* Error Feedback */}
       {error && (
         <div className="rounded-md border border-red-200 bg-red-50 p-4 text-xs text-red-900 flex items-start gap-2">
           <AlertCircle className="h-4 w-4 text-red-700 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="font-semibold">Generation encountered an error:</p>
+            <p className="font-semibold">The cover was not generated.</p>
             <p className="leading-relaxed">{error}</p>
             <p className="text-stone-700 pt-1">
-              Ensure your Hugging Face Space is online, your <code className="bg-red-100 px-1 py-0.5 rounded">HF_TOKEN</code> is authorized, and the Space exposes the <code className="bg-red-100 px-1 py-0.5 rounded">/generate_avif</code> API endpoint.
+              Check that the Space is running, that <code className="bg-red-100 px-1 py-0.5 rounded">HF_TOKEN</code> is authorised, and that the Space exposes the <code className="bg-red-100 px-1 py-0.5 rounded">/generate_avif</code> endpoint.
             </p>
           </div>
         </div>
       )}
 
-      {/* Generated Image Result Display */}
       {generatedUri && (
         <div className="rounded-lg border border-stone-200 bg-white p-4 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-2.5">
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-900">
                 <Check className="h-3 w-3" />
-                <span>AVIF Rendered</span>
+                <span>Cover rendered</span>
               </span>
               <span className="text-xs text-stone-600 font-mono">
                 {width} × {height} px · Seed {generatedSeed ?? 'random'}
@@ -500,7 +481,7 @@ export default function QwenCoverGenerator({
                 title="Download AVIF file"
               >
                 <Download className="h-3.5 w-3.5" />
-                <span>Download AVIF</span>
+                <span>Download</span>
               </a>
 
               <button
@@ -512,19 +493,18 @@ export default function QwenCoverGenerator({
                 {applied ? (
                   <>
                     <Check className="h-3.5 w-3.5" />
-                    <span>Applied to Article!</span>
+                    <span>Applied</span>
                   </>
                 ) : (
                   <>
                     <ImageIcon className="h-3.5 w-3.5" />
-                    <span>Apply as Article Cover</span>
+                    <span>Use as cover</span>
                   </>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Native HTML <picture> Tag Rendering AVIF Data Stream */}
           <div className="relative overflow-hidden rounded-md border border-stone-200 bg-stone-900 flex items-center justify-center">
             <picture className="w-full">
               <source srcSet={generatedUri} type="image/avif" />
@@ -537,8 +517,8 @@ export default function QwenCoverGenerator({
           </div>
 
           <div className="flex items-center justify-between text-xs text-stone-600 font-mono">
-            <span>Encoding: Native AVIF Base64 Data Stream</span>
-            <span>ZeroGPU Accelerated</span>
+            <span>AVIF, base64 data</span>
+            <span>ZeroGPU</span>
           </div>
         </div>
       )}

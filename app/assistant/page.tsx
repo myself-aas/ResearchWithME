@@ -114,7 +114,7 @@ export default function AssistantPage() {
             Ask the archive a question
           </h1>
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            The assistant answers from this publication&apos;s own catalog. Without a configured model key it returns a deterministic, cited summary; with one, the model receives the same catalog text and is asked to cite its sources.
+            Answers come only from the reviews and papers published here, and each one links to the work it draws on. With no model key configured, the answer is assembled straight from the catalog text; with one, a language model writes it from the same text.
           </p>
         </header>
 
@@ -157,7 +157,7 @@ export default function AssistantPage() {
                   disabled={loading}
                   className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900"
                 >
-                  <option value="all">Entire catalog ({articles.length} articles)</option>
+                  <option value="all">All {articles.length} reviews</option>
                   {articles.map((article) => (
                     <option key={article.id} value={article.id}>
                       {article.title}
@@ -165,7 +165,7 @@ export default function AssistantPage() {
                   ))}
                 </select>
                 <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                  Narrowing the scope keeps the answer anchored to one review.
+                  Pick one review to keep the answer close to its source.
                 </p>
               </div>
             </div>
@@ -179,12 +179,12 @@ export default function AssistantPage() {
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Send className="h-4 w-4" aria-hidden="true" />}
                 <span>{loading ? 'Searching the archive…' : 'Ask the archive'}</span>
               </button>
-              <p className="text-sm text-stone-600">Answers summarize published work; verify claims against the linked article.</p>
+              <p className="font-serif text-sm text-stone-600">Answers summarize published work. Check the linked review before you rely on a claim.</p>
             </div>
           </form>
 
           <div className="mt-8">
-            <h2 className="text-sm font-semibold text-stone-900">Try one of these</h2>
+            <h2 className="text-sm font-semibold text-stone-900">Example questions</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {SAMPLE_QUESTIONS.map((question) => (
                 <button
@@ -205,7 +205,7 @@ export default function AssistantPage() {
 
           {error && (
             <div role="alert" className="mt-6 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
-              <p className="font-medium">The request did not complete.</p>
+              <p className="font-medium">The assistant stopped before answering.</p>
               <p className="mt-1">{error}</p>
               <button
                 type="button"
@@ -285,19 +285,19 @@ export default function AssistantPage() {
           <ul className="mt-3 grid gap-3 text-base leading-relaxed text-stone-700 sm:grid-cols-2">
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
-              <span>It searches the published catalog and links every cited article.</span>
+              <span>It searches the published catalog and links every review it cites.</span>
             </li>
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
-              <span>It does not search outside this publication or access paywalled literature.</span>
+              <span>It never leaves this publication, so paywalled literature is out of reach.</span>
             </li>
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
-              <span>It cannot verify a factual claim; it summarizes what a review already established.</span>
+              <span>It cannot verify a claim. It reports what a reviewer already established.</span>
             </li>
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
-              <span>It stores nothing you type and keeps no conversation history.</span>
+              <span>It stores nothing you type and keeps no history of the conversation.</span>
             </li>
           </ul>
         </section>

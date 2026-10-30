@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts';
-import { Award, Sparkles } from 'lucide-react';
+import { Award } from 'lucide-react';
 import { Author } from '@/lib/blog-data';
 import VideoEmbed from '@/components/VideoEmbed';
 
@@ -30,7 +30,7 @@ interface AuthorImpactRadarChartProps {
 }
 
 /**
- * Derives realistic, domain-grounded impact scores for an author based on their bio, domain, and metrics.
+ * Builds five illustrative scores for an author from their id and activity counters.
  */
 export function getAuthorImpactMetrics(
   author: Author,
@@ -38,7 +38,7 @@ export function getAuthorImpactMetrics(
   totalLikes: number,
   totalComments: number,
 ): ImpactMetrics {
-  // Base scores calculated deterministically from author ID to stay stable across renders
+  // Derived from the id so the scores stay stable between renders.
   const hash = author.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   
   const baseQuality = 85 + (hash % 11); // 85 - 95
@@ -71,11 +71,11 @@ export default function AuthorImpactRadarChart({
   const metrics = getAuthorImpactMetrics(author, articleCount, totalLikes, totalComments);
 
   const chartData = [
-    { subject: 'Article Quality', score: metrics.articleQuality, fullMark: 100 },
-    { subject: 'Community Engagement', score: metrics.communityEngagement, fullMark: 100 },
-    { subject: 'Methodology Rigor', score: metrics.methodologyRigor, fullMark: 100 },
-    { subject: 'Citation Impact', score: metrics.citationImpact, fullMark: 100 },
-    { subject: 'Open Science', score: metrics.openTransparency, fullMark: 100 },
+    { subject: 'Review quality', score: metrics.articleQuality, fullMark: 100 },
+    { subject: 'Community engagement', score: metrics.communityEngagement, fullMark: 100 },
+    { subject: 'Method rigor', score: metrics.methodologyRigor, fullMark: 100 },
+    { subject: 'Citation reach', score: metrics.citationImpact, fullMark: 100 },
+    { subject: 'Open verification', score: metrics.openTransparency, fullMark: 100 },
   ];
 
   const overallScore = Math.round(
@@ -94,29 +94,22 @@ export default function AuthorImpactRadarChart({
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200 pb-5">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
-              <Sparkles className="h-3.5 w-3.5 text-amber-800" aria-hidden="true" />
-              <span>Scholarly Assessment</span>
-            </span>
-            <span className="text-xs text-stone-600 font-mono">ID: {author.id}</span>
-          </div>
           <h2
             id="author-impact-heading"
-            className="mt-2 font-serif text-2xl font-bold text-stone-900 sm:text-3xl"
+            className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl"
           >
-            Author Impact & Research Metrics
+            Impact profile
           </h2>
-          <p className="mt-1 text-sm text-stone-600">
-            Multi-axis KPI analysis assessing peer review rigor, community discussion, and reproducible artifact citations.
+          <p className="mt-1 max-w-lg text-sm leading-relaxed text-stone-600">
+            Five scores built from this prototype&apos;s own counters. They are illustrative, not measured.
           </p>
         </div>
 
         <div className="flex items-center gap-3 rounded-lg border border-amber-200/80 bg-amber-50/60 p-3.5 sm:px-5">
           <Award className="h-8 w-8 text-amber-900 shrink-0" aria-hidden="true" />
           <div>
-            <div className="text-xs font-semibold text-amber-900 uppercase tracking-wider">
-              Composite Impact Rating
+            <div className="text-sm font-semibold text-amber-900">
+              Average of the five
             </div>
             <div className="font-serif text-2xl font-bold text-stone-900">
               {overallScore} <span className="text-xs font-sans font-normal text-stone-600">/ 100</span>
@@ -178,66 +171,65 @@ export default function AuthorImpactRadarChart({
             </div>
           ) : (
             <div className="flex h-[320px] items-center justify-center text-sm text-stone-500">
-              Loading impact radar...
+              Loading the chart…
             </div>
           )}
         </div>
 
-        {/* Detailed KPI Breakdown Cards */}
         <div className="lg:col-span-5 space-y-3.5">
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-amber-800" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Article Quality</span>
-                <span className="text-xs text-stone-600">Depth & peer-review evaluations</span>
+                <span className="text-xs font-semibold text-stone-900 block">Review quality</span>
+                <span className="text-xs text-stone-600">Depth of each review</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-stone-900">{metrics.articleQuality}%</span>
+            <span className="font-serif text-lg font-bold text-stone-900">{metrics.articleQuality} / 100</span>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-amber-700" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Community Engagement</span>
-                <span className="text-xs text-stone-600">Reader responses & technical discussions</span>
+                <span className="text-xs font-semibold text-stone-900 block">Community engagement</span>
+                <span className="text-xs text-stone-600">Comments and discussion</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-stone-900">{metrics.communityEngagement}%</span>
+            <span className="font-serif text-lg font-bold text-stone-900">{metrics.communityEngagement} / 100</span>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-emerald-700" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Methodology Rigor</span>
-                <span className="text-xs text-stone-600">Code artifacts & reproducible datasets</span>
+                <span className="text-xs font-semibold text-stone-900 block">Method rigor</span>
+                <span className="text-xs text-stone-600">Code and data in the artifact</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-emerald-900">{metrics.methodologyRigor}%</span>
+            <span className="font-serif text-lg font-bold text-emerald-900">{metrics.methodologyRigor} / 100</span>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-amber-900" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Citation Impact</span>
-                <span className="text-xs text-stone-600">Scholarly citations & public interest</span>
+                <span className="text-xs font-semibold text-stone-900 block">Citation reach</span>
+                <span className="text-xs text-stone-600">Citations and public interest</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-stone-900">{metrics.citationImpact}%</span>
+            <span className="font-serif text-lg font-bold text-stone-900">{metrics.citationImpact} / 100</span>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-emerald-800" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Open Science & Verification</span>
-                <span className="text-xs text-stone-600">ORCID/GitHub public key attestation</span>
+                <span className="text-xs font-semibold text-stone-900 block">Open verification</span>
+                <span className="text-xs text-stone-600">ORCID and GitHub records on file</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-emerald-900">{metrics.openTransparency}%</span>
+            <span className="font-serif text-lg font-bold text-emerald-900">{metrics.openTransparency} / 100</span>
           </div>
         </div>
       </div>

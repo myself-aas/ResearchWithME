@@ -75,7 +75,6 @@ export interface InstitutionalRegionInfo {
 export function getInstitutionalRegionDetails(emailOrDomain: string): InstitutionalRegionInfo {
   const domain = (emailOrDomain.includes('@') ? emailOrDomain.split('@')[1] : emailOrDomain).toLowerCase().trim();
 
-  // Region and country code resolvers
   if (domain.endsWith('.edu.bd') || domain.endsWith('.ac.bd')) {
     return {
       isAcademic: true,

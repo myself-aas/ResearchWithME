@@ -1,6 +1,6 @@
-# ResearchWithMe
+# πeme (ResearchWithMe)
 
-An open-access scholarly publication: long-form reviews of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
+An open-access publication of long-form reviews: published papers taken apart, repositories read line by line, and every claim tied to something you can open. Built on the Next.js App Router with React 19 and Tailwind CSS v4, with a Supabase-backed article studio and a local demo adapter.
 
 The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) and uses the [Impeccable](https://impeccable.style) workflow and detector. Product context lives in [`PRODUCT.md`](./PRODUCT.md); per-route briefs live in [`.impeccable/surfaces/`](./.impeccable/surfaces).
 
@@ -32,12 +32,12 @@ Node 20.9 or newer. `next.config.ts` sets `output: 'standalone'`, so a productio
 | `/verify` | Operate | Prototype contributor identity and permission model |
 | `/write` | Operate | Prototype draft autosave, validation, preview, publish (local archive) |
 | `/login` | Operate | Editor sign-in: password or magic link (Supabase), setup guide in demo mode |
-| `/dashboard` | Operate | Studio: new article with Markdown editor, cover library, takeaways |
-| `/dashboard/manage` | Operate | Search, filter, publish/revert, delete, live status |
+| `/dashboard` | Operate | Article studio: new review with Markdown editor, cover library, takeaways |
+| `/dashboard/manage` | Operate | Search, filter, publish or revert, delete, live status |
 | `/dashboard/edit/[id]` | Operate | Edit a draft or published article |
-| `/dashboard/comments` | Operate | Comment moderation with realtime updates |
+| `/dashboard/comments` | Operate | Comment moderation with live updates |
 
-Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
+Unknown routes and render failures have their own pages (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Loading states sit inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
 ## Quality checks
 
@@ -57,7 +57,7 @@ For a rendered audit (requires a Chromium-based browser):
 npx impeccable detect --viewport 390x844 http://localhost:3000
 ```
 
-The publication surfaces are clean: 0 Impeccable findings in source and rendered scans at 1280×800, 390×844, and 320×720; 0 axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
+Current state: no Impeccable findings in source, and none in rendered scans at 1280×800, 390×844, and 320×720; no axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
 
 ## Deploy (Cloudflare Workers)
 
@@ -78,7 +78,7 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 
 ## Editorial CMS
 
-The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, which keeps the project runnable for review without cloud credentials.
+The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` are configured. Without them the same interface writes to `data/cms-posts.json` and `data/cms-comments.json`, so the project runs for review without cloud credentials.
 
 - **Database, RLS, storage, realtime:** `supabase/migrations/` (idempotent SQL) with published-only public reads, authenticated editorial writes, append-only comments, a 5 MB public image bucket, and realtime replication.
 - **One canonical reader:** published CMS articles are merged into `/`, `/post/[slug]`, the sitemap, and the author record. There is no duplicate `/blog` route.

@@ -1,6 +1,6 @@
 # Supabase editorial CMS
 
-The attachment titled *Full-Stack Next.js & Supabase Free Tier Blogging CMS Blueprint* is implemented here as the production backend for this publication. The reader, editorial studio, comments, and cache invalidation all use one content model; there is no parallel blog bolted onto the site.
+This is the implementation of the blueprint *Full-Stack Next.js & Supabase Free Tier Blogging CMS Blueprint*, and it serves as the production backend for the publication. The reader, the article studio, comments, and cache invalidation share one content model. There is no second blog bolted onto the side.
 
 The CMS has two adapters behind one interface:
 
@@ -105,7 +105,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
    - HTTP header: `x-revalidate-secret: <REVALIDATE_SECRET>`
 
    Studio writes already call `revalidatePath`, so the webhook mainly covers edits made directly in Supabase.
-7. **Rebuild.** `NEXT_PUBLIC_*` values are inlined by Next.js; changing them requires a new build.
+8. **Rebuild.** `NEXT_PUBLIC_*` values are inlined by Next.js; changing them requires a new build.
 
 ## Rendering and caching
 
@@ -118,7 +118,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 ## Verify
 
 ```bash
-npm run quality             # lint, typecheck, 51 tests, source detector
+npm run quality             # lint, typecheck, 55 tests, source detector
 npm run build               # production build
 npm start                   # then open /login and /dashboard
 

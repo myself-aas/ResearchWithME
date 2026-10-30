@@ -10,12 +10,12 @@ export async function GET(
   try {
     const { id } = await props.params;
     if (!id) {
-      return NextResponse.json({ error: 'Author ID is required' }, { status: 400 });
+      return NextResponse.json({ error: 'An author id is required.' }, { status: 400 });
     }
 
     const author = getAuthorById(id);
     if (!author) {
-      return NextResponse.json({ error: 'Author not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Author not found.' }, { status: 404 });
     }
 
     const articles = getArticlesByAuthor(id);
@@ -37,7 +37,7 @@ export async function GET(
   } catch (err) {
     console.error('Failed to fetch author profile:', err);
     return NextResponse.json(
-      { error: 'Internal server error fetching author' },
+      { error: 'The author record could not be loaded.' },
       { status: 500 }
     );
   }

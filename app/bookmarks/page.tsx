@@ -67,7 +67,7 @@ export default function BookmarksPage() {
     setSavedIds([]);
     removeLocal(SAVED_KEY);
     setConfirmClear(false);
-    setStatus('Reading list cleared. Saved items are gone from this device.');
+    setStatus('Reading list cleared. Nothing is saved on this device now.');
   }
 
   function handleExport() {
@@ -75,7 +75,7 @@ export default function BookmarksPage() {
     const markdown = [
       '# ResearchWithMe reading list',
       '',
-      `Exported ${exportedOn}. ${savedArticles.length} articles, about ${totalMinutes} minutes of reading.`,
+      `Exported ${exportedOn}. ${savedArticles.length} items, about ${totalMinutes} minutes of reading.`,
       '',
       ...savedArticles.map((article, index) =>
         [
@@ -98,9 +98,9 @@ export default function BookmarksPage() {
       anchor.remove();
       URL.revokeObjectURL(url);
       setError(null);
-      setStatus('Reading list downloaded as Markdown.');
+      setStatus('Reading list saved as a Markdown file.');
     } catch {
-      setError('The download could not start. Check your browser download permissions and try again.');
+      setError('The download did not start. Allow downloads for this site and try again.');
     }
   }
 
@@ -112,9 +112,9 @@ export default function BookmarksPage() {
         <header className="border-b border-stone-200 pb-8">
           <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">Your reading list</h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
-            Saved articles live in this browser only, so they survive a refresh but not a device change. {savedArticles.length > 0
-              ? `${savedArticles.length} ${savedArticles.length === 1 ? 'article' : 'articles'}, about ${totalMinutes} minutes of reading.`
-              : 'Nothing saved yet.'}
+            The list lives in this browser, so it survives a refresh but not a device change.
+            {savedArticles.length > 0 &&
+              ` ${savedArticles.length} ${savedArticles.length === 1 ? 'item' : 'items'}, about ${totalMinutes} minutes of reading.`}
           </p>
         </header>
 
@@ -123,7 +123,7 @@ export default function BookmarksPage() {
             <Bookmark className="h-8 w-8 text-stone-500" aria-hidden="true" />
             <h2 className="mt-4 font-serif text-2xl font-semibold text-stone-900">Nothing saved yet</h2>
             <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-              Use the bookmark button on any article or paper to keep it here for later. The list stays on this device.
+              The bookmark button on any review or paper keeps it here. The list stays on this device.
             </p>
             <Link
               href="/"
@@ -162,7 +162,7 @@ export default function BookmarksPage() {
                   className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
                 >
                   <Download className="h-4 w-4" aria-hidden="true" />
-                  <span>Export Markdown</span>
+                  <span>Download as Markdown</span>
                 </button>
                 {!confirmClear ? (
                   <button

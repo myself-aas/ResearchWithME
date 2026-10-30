@@ -14,15 +14,15 @@ export default function EditionsArchivePage() {
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-stone-200 pb-8">
           <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Quarterly editions for offline reading
+            Quarterly editions
           </h1>
           <p className="mt-4 max-w-3xl text-base leading-relaxed text-stone-700">
-            Thematic compendiums that gather a quarter&apos;s reviews, methods, and corrections into one printable volume. Use the print action to save a volume as a PDF through your browser.
+            Each edition gathers a quarter&apos;s reviews, methods, and corrections into one printable volume. Print a volume to save it as a PDF from your browser.
           </p>
         </header>
 
         <p className="mt-6 max-w-3xl border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
-          Print-ready compilation is a browser feature in this prototype. A hosted archival PDF and its DOI would be issued by the production publishing pipeline.
+          Printing happens in your browser; this prototype hosts no PDF file. A production pipeline would issue the archival PDF and its DOI.
         </p>
 
         <ul className="mt-8 grid gap-8 lg:grid-cols-2">
@@ -41,7 +41,7 @@ export default function EditionsArchivePage() {
                     <p className="flex flex-wrap items-center justify-between gap-2 text-sm text-stone-600">
                       <span className="font-medium text-amber-900">{edition.period}</span>
                       <span>
-                        Volume {edition.volume}, Issue {edition.issue}
+                        {edition.volume}, {edition.issue}
                       </span>
                     </p>
                   </div>
@@ -55,9 +55,7 @@ export default function EditionsArchivePage() {
 
                     {editionIndex === 0 && (
                       <div className="mt-5">
-                        <span className="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900 mb-3">
-                          Edition trailer
-                        </span>
+                        <h3 className="mb-3 text-sm font-semibold text-stone-900">Edition trailer</h3>
                         <VideoEmbed
                           src="/videos/edition-trailer.mp4"
                           label={`Trailer for ${edition.title}`}
@@ -67,7 +65,7 @@ export default function EditionsArchivePage() {
 
                     <dl className="mt-6 grid grid-cols-2 gap-4 border-y border-stone-200 py-4 text-sm sm:grid-cols-4">
                       <div>
-                        <dt className="text-stone-600">Articles</dt>
+                        <dt className="text-stone-600">Reviews</dt>
                         <dd className="mt-0.5 font-semibold text-stone-900">{edition.articleCount}</dd>
                       </div>
                       <div>
@@ -106,7 +104,7 @@ export default function EditionsArchivePage() {
 
                   <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 bg-stone-50 px-6 py-4">
                     <span className="font-mono text-sm text-stone-600">DOI 10.5555/rwm.ed.{edition.id}</span>
-                    <PrintButton label={`Print volume ${edition.volume}.${edition.issue}`} />
+                    <PrintButton label={`Print ${edition.volume}, ${edition.issue}`} />
                   </div>
                 </article>
               </li>
@@ -116,7 +114,7 @@ export default function EditionsArchivePage() {
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
           <p className="text-sm text-stone-600">
-            Looking for a single paper? The paper archive keeps every record with its own citation metadata.
+            Looking for one paper? The paper archive has every record with its own citation metadata.
           </p>
           <Link
             href="/papers"

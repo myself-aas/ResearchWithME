@@ -53,16 +53,15 @@ export default function GoogleOAuthPage() {
     }
   }
 
-  // Completes direct Gmail sign in
   function handleDirectSignIn(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim() || !name.trim()) {
-      setError('Please provide your name and Gmail address.');
+      setError('Add your name and a Gmail address.');
       return;
     }
 
     if (!isValidEmail(email)) {
-      setError('Please enter a valid email address.');
+      setError('That email address is not valid.');
       return;
     }
 
@@ -102,7 +101,7 @@ export default function GoogleOAuthPage() {
               <ChevronRight className="h-4 w-4 text-stone-500" />
             </li>
             <li aria-current="page" className="font-medium text-stone-900">
-              Google / Gmail OAuth
+              Google
             </li>
           </ol>
         </nav>
@@ -114,30 +113,26 @@ export default function GoogleOAuthPage() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="rounded bg-stone-100 px-2 py-0.5 font-mono text-xs font-semibold text-stone-800">
-                  Unique Route: /auth/google
-                </span>
                 <span className="rounded bg-stone-200 px-2 py-0.5 text-xs font-semibold text-stone-800">
-                  Reader Profile
+                  Reader role
                 </span>
               </div>
               <h1 className="mt-1 font-serif text-2xl font-bold text-stone-900 sm:text-3xl">
-                Google / Gmail Account Sign-In
+                Sign in with Google
               </h1>
             </div>
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-stone-600">
-            Create or sign in to your reader profile using Google. Reader accounts let you save articles to bookmarks, participate in peer discussions, and export custom BibTeX/RIS citations. You can upgrade to a verified writer anytime by linking your GitHub, ORCID, or academic email.
+            A reader account covers the reading list, discussion, and citation export. Add a GitHub, ORCID, or academic identity later if you want to publish.
           </p>
 
-          {/* Active Session Status */}
           {user && (
             <div className="mt-6 rounded-md border border-stone-200 bg-stone-50 p-4 text-xs text-stone-800">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2 font-medium">
                   <User className="h-4 w-4 text-stone-600" />
-                  <span>Currently signed in as <strong>{user.name}</strong> ({user.email})</span>
+                  <span>Signed in as <strong>{user.name}</strong> ({user.email})</span>
                 </span>
                 {!hasAuthorPermissions && (
                   <Link
@@ -145,14 +140,13 @@ export default function GoogleOAuthPage() {
                     className="inline-flex items-center gap-1 rounded bg-amber-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-amber-800 transition-colors"
                   >
                     <GraduationCap className="h-3 w-3" />
-                    <span>Upgrade to Writer</span>
+                    <span>Add a scholarly identity</span>
                   </Link>
                 )}
               </div>
             </div>
           )}
 
-          {/* Primary Google OAuth Button */}
           <div className="mt-8 space-y-3">
             <button
               type="button"
@@ -168,7 +162,7 @@ export default function GoogleOAuthPage() {
               ) : (
                 <>
                   <Mail className="h-4 w-4 text-red-700" />
-                  <span>Continue with Google Account</span>
+                  <span>Continue with Google</span>
                   <ExternalLink className="h-3.5 w-3.5 text-stone-400" />
                 </>
               )}
@@ -183,22 +177,21 @@ export default function GoogleOAuthPage() {
               <div className="w-full border-t border-stone-200" />
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="bg-white px-3 text-stone-500">Or sign in with your Gmail address</span>
+              <span className="bg-white px-3 text-stone-500">Or record an address without OAuth</span>
             </div>
           </div>
 
-          {/* Gmail Form */}
           <form onSubmit={handleDirectSignIn} className="space-y-4">
             <div>
               <label htmlFor="google-email" className="block text-xs font-semibold text-stone-800 mb-1">
-                Gmail or Google Account Email <span className="text-red-700">*</span>
+                Google account email <span className="text-red-700">*</span>
               </label>
               <input
                 id="google-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="e.g. yourname@gmail.com"
+                placeholder="yourname@gmail.com"
                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-800"
                 disabled={loading}
               />
@@ -206,14 +199,14 @@ export default function GoogleOAuthPage() {
 
             <div>
               <label htmlFor="google-name" className="block text-xs font-semibold text-stone-800 mb-1">
-                Your Full Name <span className="text-red-700">*</span>
+                Name to display <span className="text-red-700">*</span>
               </label>
               <input
                 id="google-name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Asif Ahmed"
+                placeholder="Asif Ahmed"
                 className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-2 focus:ring-amber-800"
                 disabled={loading}
               />
@@ -229,7 +222,7 @@ export default function GoogleOAuthPage() {
             {success && (
               <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900 flex items-start gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
-                <span>Welcome! Reader account initialized. Navigating to the journal...</span>
+                <span>Reader account saved. Taking you to the journal…</span>
               </div>
             )}
 
@@ -239,26 +232,25 @@ export default function GoogleOAuthPage() {
               className="inline-flex w-full min-h-11 items-center justify-center gap-2 rounded-md bg-stone-900 px-5 py-2.5 text-xs font-semibold text-white hover:bg-stone-800 transition-colors disabled:opacity-50"
             >
               <ShieldCheck className="h-4 w-4" />
-              <span>Complete Sign-In</span>
+              <span>Save this reader account</span>
             </button>
           </form>
 
-          {/* Upgrade prompt */}
           <div className="mt-8 rounded-md bg-amber-50/80 p-4 border border-amber-200">
             <div className="flex items-start gap-3">
               <GraduationCap className="h-5 w-5 text-amber-900 shrink-0 mt-0.5" />
               <div>
                 <span className="text-xs font-bold text-amber-950 block">
-                  Looking to publish paper reviews or code teardowns?
+                  Want to publish a review?
                 </span>
                 <p className="mt-0.5 text-xs text-amber-900 leading-relaxed">
-                  Reader accounts cannot publish articles. To unlock writer privileges, verify with your institutional email (.edu / .edu.bd) or GitHub account.
+                  A reader account cannot publish. Publish with an academic email (.edu or .edu.bd) or a GitHub handle instead.
                 </p>
                 <Link
                   href="/auth/academic"
                   className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-950 hover:underline"
                 >
-                  <span>Verify Academic Credentials</span>
+                  <span>Use an academic email</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>

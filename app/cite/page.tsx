@@ -71,7 +71,7 @@ export default function CitePage() {
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
       setCopied(false);
-      setCopyError('Your browser blocked clipboard access. Select the citation text and copy it manually.');
+      setCopyError('The browser blocked clipboard access. Select the citation text and copy it by hand.');
     }
   }
 
@@ -106,10 +106,10 @@ export default function CitePage() {
 
         <header className="border-b border-stone-200 pb-8">
           <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
-            Build a citation that travels
+            Build a citation
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
-            Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same verified metadata.
+            Pick a published review or an external paper, then copy the citation in the style you need. Every style draws on the same record.
           </p>
         </header>
 
@@ -163,7 +163,7 @@ export default function CitePage() {
                     ))}
                   </select>
                   <p className="mt-2 max-w-xl text-sm text-stone-600">
-                    {currentArticle?.category ?? 'Research'} · {currentArticle?.publishedAt ?? 'Published'} · {currentArticle?.readTime ?? 'Reading time available on the article'}
+                    {currentArticle?.category ?? 'Research'} · {currentArticle?.publishedAt ?? 'Published'} · {currentArticle?.readTime ?? 'Reading time in the review'}
                   </p>
                 </div>
               ) : (
@@ -299,7 +299,7 @@ export default function CitePage() {
                   className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-50"
                 >
                   {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
-                  <span>{copied ? 'Copied to clipboard' : 'Copy citation'}</span>
+                  <span>{copied ? 'Copied' : 'Copy citation'}</span>
                 </button>
 
                 {(format === 'bibtex' || format === 'ris') && (
@@ -319,7 +319,7 @@ export default function CitePage() {
                     href={`/post/${currentArticle.slug}`}
                     className="inline-flex min-h-11 items-center text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
                   >
-                    Read the cited article
+                    Read the cited review
                   </Link>
                 )}
               </div>
@@ -356,11 +356,11 @@ export default function CitePage() {
                 rel="noreferrer noopener"
                 className="inline-flex text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
               >
-                Resolve DOI at doi.org
+                Open the DOI at doi.org
               </a>
             )}
             <p className="border-t border-stone-200 pt-4 text-sm leading-relaxed text-stone-600">
-              Prefer reusable metadata? Choose BibTeX or RIS and download the file for your reference manager.
+              For a reference manager, choose BibTeX or RIS and download the file.
             </p>
           </aside>
         </div>

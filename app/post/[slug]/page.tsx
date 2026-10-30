@@ -115,7 +115,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 {article.title}
               </h1>
 
-              <p className="mt-4 max-w-prose break-words font-serif text-xl leading-relaxed text-stone-700">{article.subtitle}</p>
+              {article.subtitle && (
+                <p className="mt-4 max-w-prose break-words font-serif text-xl leading-relaxed text-stone-700">{article.subtitle}</p>
+              )}
 
               <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                 {authorProfile ? (
@@ -164,7 +166,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     <source srcSet={article.coverImage} type="image/avif" />
                     <img
                       src={article.coverImage}
-                      alt={article.title}
+                      alt=""
                       className="h-full w-full object-cover"
                     />
                   </picture>
@@ -180,17 +182,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 )}
               </div>
               <figcaption className="mt-2 text-sm text-stone-600">
-                Editorial imagery for this review. Reviewed artifacts are linked in the record below.
+                Cover image for this review. The artifact under review is linked below.
               </figcaption>
             </figure>
 
-            {/* HyperFrames explainer video — rendered per article slug */}
             <section aria-labelledby="explainer-video-heading" className="mt-8">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
-                  Visual explainer
-                </span>
-              </div>
+              <h2 id="explainer-video-heading" className="mb-3 text-sm font-semibold text-stone-900">
+                Video explainer
+              </h2>
               <VideoEmbed
                 src={`/videos/explainer-${slug}.mp4`}
                 label={`Animated explainer for: ${article.title}`}
@@ -303,19 +302,19 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <div className="rounded-lg border border-stone-200 bg-white p-5">
               <h2 className="font-serif text-lg font-semibold text-stone-900">Cite this review</h2>
               <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                Build an APA, MLA, Chicago, IEEE, BibTeX, or RIS citation from this record.
+                Build an APA, MLA, Chicago, IEEE, BibTeX, or RIS citation.
               </p>
               <Link
                 href={`/cite?article=${encodeURIComponent(article.slug)}`}
                 className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
               >
                 <Quote className="h-4 w-4" aria-hidden="true" />
-                <span>Open citation builder</span>
+                <span>Open the builder</span>
               </Link>
             </div>
 
             <div className="rounded-lg border border-stone-200 bg-white p-5">
-              <h2 className="font-serif text-lg font-semibold text-stone-900">Publication record</h2>
+              <h2 className="font-serif text-lg font-semibold text-stone-900">Details</h2>
               <dl className="mt-3 space-y-3 text-sm">
                 <div>
                   <dt className="text-stone-600">Domain</dt>
@@ -339,10 +338,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <div className="rounded-lg border border-stone-200 bg-stone-100 p-5 text-sm leading-relaxed text-stone-700">
               <p className="flex items-center gap-2 font-semibold text-stone-900">
                 <BookOpen className="h-4 w-4 text-amber-800" aria-hidden="true" />
-                <span>Reading note</span>
+                <span>Note on this review</span>
               </p>
               <p className="mt-2">
-                This is a prototype publication. Sample claims and citations are illustrative; verify any production reference against its primary source.
+                This is a prototype publication. Sample claims and citations are illustrative, so check any reference against its primary source.
               </p>
             </div>
           </aside>

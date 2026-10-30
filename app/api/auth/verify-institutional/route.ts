@@ -6,11 +6,11 @@ export async function POST(req: NextRequest) {
     const { email, institution, name } = await req.json();
 
     if (!email || !name) {
-      return NextResponse.json({ error: 'Name and email are required.' }, { status: 400 });
+      return NextResponse.json({ error: 'Add a name and an email address.' }, { status: 400 });
     }
 
     if (!isValidEmail(email)) {
-      return NextResponse.json({ error: 'Invalid email address format.' }, { status: 400 });
+      return NextResponse.json({ error: 'That email address is not valid.' }, { status: 400 });
     }
 
     const regionInfo = getInstitutionalRegionDetails(email);
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           error:
-            'The provided email address does not belong to a recognized academic or higher-education top-level domain (e.g., .edu, .edu.bd, .ac.uk, .edu.au).',
+            'That address is not on a recognised academic domain. Use an address ending in .edu, .edu.bd, .ac.uk, or .edu.au.',
           domain: regionInfo.domain,
         },
         { status: 422 }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       permissions: ['write:post', 'upload:artifact', 'publish:review', 'access:writer-studio'],
     });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Institutional verification failed';
+    const message = err instanceof Error ? err.message : 'The academic domain check did not complete.';
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

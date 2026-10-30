@@ -39,11 +39,11 @@ export default function NewsletterSignup() {
     if (isSubmitting) return;
 
     if (!email.trim()) {
-      setError('Enter an email address to subscribe.');
+      setError('Enter the email address for the digest.');
       return;
     }
     if (!isValidEmail(email)) {
-      setError('Enter a complete email address, including an @ and a domain.');
+      setError('That address is incomplete. Include the @ and the domain.');
       return;
     }
 
@@ -56,7 +56,7 @@ export default function NewsletterSignup() {
       writeLocalString('rwm_newsletter_email', email.trim());
       setIsSubmitting(false);
       if (!stored) {
-        setError('Your browser blocked local storage, so this subscription was not saved. Enable site data and try again.');
+        setError('The browser blocked local storage, so the preference was not saved. Allow site data for this site and try again.');
         return;
       }
       setIsSubscribed(true);
@@ -79,10 +79,10 @@ export default function NewsletterSignup() {
               The weekly research digest
             </h2>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-stone-300">
-              One Tuesday email with the newest reviews, reproducible notebooks, and corrections. No advertising, no tracking pixels.
+              A Tuesday email with the week&apos;s reviews, notebooks, and corrections. No advertising, no tracking pixels.
             </p>
             <p className="mt-3 text-sm text-stone-300">
-              This is a prototype: the address is saved in this browser only and no email is sent.
+              Nothing is sent from this deployment: the address is saved in this browser only.
             </p>
           </div>
 
@@ -93,7 +93,7 @@ export default function NewsletterSignup() {
                 Saved in this browser
               </p>
               <p className="mt-2 text-sm leading-relaxed text-emerald-100">
-                The digest preference is stored locally on this device. You can remove it at any time.
+                The preference is stored on this device. Remove it whenever you like.
               </p>
               <button
                 type="button"
@@ -154,7 +154,7 @@ export default function NewsletterSignup() {
                 className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600 disabled:opacity-60"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
-                <span>{isSubmitting ? 'Saving preference…' : 'Subscribe to the digest'}</span>
+                <span>{isSubmitting ? 'Saving…' : 'Save digest preference'}</span>
               </button>
             </form>
           )}

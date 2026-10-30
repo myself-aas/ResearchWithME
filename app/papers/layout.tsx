@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Research Papers',
-  description: 'Filter open-access publications by field, author, DOI, citation count, and publication date.',
+  title: 'Research papers',
+  description: 'Open-access papers, filterable by field, author, DOI, citation count, and date.',
   path: '/papers',
   type: 'website' as const,
 });
