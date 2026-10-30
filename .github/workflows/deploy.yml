@@ -69,17 +69,24 @@ jobs:
         run: npm run build:worker
 
       # A version, not a deployment: production keeps serving the last deployed
-      # version while this one gets a URL of its own.
+      # version while this one gets a URL of its own. Skipped until the Cloudflare
+      # token exists, so an unconfigured repository does not paint every PR red;
+      # the build above still runs and still tells you the branch compiles.
       - name: Upload a preview version
         id: upload
+        if: env.CLOUDFLARE_API_TOKEN != ''
         run: |
           set -euo pipefail
           npx wrangler versions upload --preview-alias "pr-${{ github.event.pull_request.number }}" | tee /tmp/upload.log
           url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev' /tmp/upload.log | head -1 || true)
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
+      - name: Note that the preview upload was skipped
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: echo "::notice title=Preview upload skipped::CLOUDFLARE_API_TOKEN is not set. Add it under Settings → Secrets and variables → Actions to get a preview URL on pull requests. The Worker built fine."
+
       - name: Comment the preview link on the pull request
-        if: steps.upload.outputs.url != ''
+        if: env.CLOUDFLARE_API_TOKEN != '' && steps.upload.outputs.url != ''
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
@@ -145,6 +152,18 @@ jobs:
 
       - name: Build the Worker
         run: npm run build:worker
+
+      - name: Check the deploy credentials
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set. Add it under Settings → Secrets and variables → Actions (Workers Scripts: Edit, Workers KV Storage: Edit)."
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID is not set. It is 74d241df16b8aaa80914e3dbb6e16758."
+            exit 1
+          fi
 
       - name: Deploy
         run: npx wrangler deploy
