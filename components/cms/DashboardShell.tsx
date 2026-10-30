@@ -98,7 +98,7 @@ export default function DashboardShell({ children, configured, user }: Dashboard
       </header>
 
       <div className="page-container max-w-wide flex-1 pb-16">
-        <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10">
+        <div className="lg:grid lg:grid-cols-[var(--container-rail-nav)_minmax(0,1fr)] lg:gap-10">
           <nav
             aria-label="Article studio"
             className="-mx-4 border-b border-stone-200 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:border-b-0 lg:border-r lg:px-0 lg:pr-6"

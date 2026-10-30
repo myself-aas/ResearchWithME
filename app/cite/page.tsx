@@ -110,7 +110,7 @@ export default function CitePage() {
           description="Pick a published review or an external paper, then copy the citation in the style you need. Every style draws on the same record."
         />
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_var(--container-rail-wide)]">
           <form className="space-y-8" onSubmit={(event) => event.preventDefault()}>
             <fieldset className="space-y-3">
               <legend className="text-sm font-semibold text-stone-900">1. Choose the source</legend>

@@ -41,6 +41,7 @@
   --container-rail: 18rem;
   --container-rail-wide: 20rem;
   --container-rail-note: 24rem;
+  --container-rail-nav: 15rem;
 }
 
 @layer base {

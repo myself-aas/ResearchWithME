@@ -208,7 +208,7 @@ export default function AuthorProfileCard({
         </div>
       </dl>
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_18rem]">
+      <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_var(--container-rail)]">
         <div>
           <h2 className="text-sm font-semibold text-stone-900">Research background</h2>
           <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">{author.bio}</p>
