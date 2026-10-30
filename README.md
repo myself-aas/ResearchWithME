@@ -90,8 +90,10 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 
 - Runs on the Workers free plan. One KV namespace (`researchwithme-opennext-cache`) backs both the incremental cache and the tag cache, so studio `revalidatePath` calls refresh static routes such as `/sitemap.xml` without a redeploy. KV is eventually consistent, so a revalidation can take up to about 60 s to show. Each deploy writes about 33 cache entries, well within KV's free 1,000 writes a day. `next/image` serves original files because there is no Images binding.
 - The namespace ID is set on both `kv_namespaces` entries in `wrangler.jsonc`. To move to another account, create a new namespace with `npx wrangler kv namespace create researchwithme-opennext-cache` and replace both IDs.
-- `NEXT_PUBLIC_*` values are compiled into the build, so they must be set as **build** variables. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**.
+- `NEXT_PUBLIC_*` values are compiled into the build, so they must be set as **build** variables (Workers & Pages → the Worker → Settings → Build → Variables and secrets), and the Worker must be rebuilt afterwards. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**.
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
+- `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost. A Worker built that way serves the studio unauthenticated and cannot save a draft; `ALLOW_DEMO_DEPLOY=1` overrides the guard when demo mode is intentional.
+- Production origin is `https://researchwith.me`. Supabase needs `https://researchwith.me/auth/callback` in Authentication → URL Configuration → Redirect URLs, and the same origin as Site URL.
 - OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
 
 ## Editorial CMS

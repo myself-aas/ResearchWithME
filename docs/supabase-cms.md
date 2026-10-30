@@ -79,6 +79,8 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
    REVALIDATE_SECRET="<openssl rand -hex 32>"
    ```
 
+   On Cloudflare the public values are build variables, not runtime variables: set them in Workers & Pages → the Worker → Settings → Build, then rebuild. `npm run deploy` checks this and stops rather than shipping a demo-mode Worker.
+
 3. **Apply the migrations** with the Supabase CLI:
 
    ```bash
@@ -96,8 +98,8 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
    on conflict (user_id) do nothing;
    ```
 6. **Allow redirects.** Supabase → Authentication → URL Configuration:
-   - Site URL: `https://<your-origin>`
-   - Redirect URLs: `https://<your-origin>/auth/callback` (add `http://localhost:3000/auth/callback` for local development)
+   - Site URL: `https://researchwith.me`
+   - Redirect URLs: `https://researchwith.me/auth/callback` (add `http://localhost:3000/auth/callback` for local development; add the `*.workers.dev` preview origin if you sign in there)
    Provider sign-ins and magic links return to `/auth/callback?next=…`, which exchanges the PKCE code and continues to `next`.
 7. **Configure the cache webhook (optional).** Database → Webhooks → *Create*:
    - Table: `posts`; events: insert, update, delete
