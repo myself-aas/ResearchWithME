@@ -78,6 +78,8 @@ python scripts/qa_layout.py                                     # gutters, page 
 
 Video explainers and the edition trailer only appear when a rendered file exists. `npm run videos:manifest` (also run by `predev` and `prebuild`) lists `public/videos/*.mp4` in `lib/video-manifest.json`; without a file the section stays out of the page instead of loading a 404.
 
+The homepage hero film is authored in HyperFrames at `video/hero/`: five HTML scenes, a TTS narration as the clock, burned-in captions, and variables for its copy and colours. See `video/hero/README.md` for the file map and `SPEC.md` / `REVIEW.md` for the brief and the review. `npm run video:hero:check` runs its lint, layout, motion and contrast pass; a render needs ffmpeg on the machine.
+
 ## Deploy (Cloudflare Workers)
 
 Production runs on Cloudflare Workers through the [OpenNext adapter](https://opennext.js.org/cloudflare). The app needs a server (middleware, API routes, the OAuth callback), so it can't be served as a static Cloudflare Pages export.

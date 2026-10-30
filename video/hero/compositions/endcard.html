@@ -1,0 +1,152 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Newsreader";
+      src: url("assets/fonts/newsreader-latin-variable.woff2") format("woff2-variations");
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/inter-latin-variable.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      color: var(--ink, #1c1917);
+      font-family: "Inter", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .ground {
+      position: absolute;
+      inset: 0;
+      background: var(--ground, #fafaf9);
+    }
+
+    /* A sheet of the film's paper crosses the frame and becomes the ground. */
+    #endcard-wipe {
+      position: absolute;
+      inset: 0;
+      background: var(--ground, #fafaf9);
+      z-index: 3;
+    }
+
+    #endcard-content {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      text-align: center;
+    }
+
+    .bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      width: 560px;
+      height: 4px;
+      background: var(--accent, #78350f);
+      transform-origin: 50% 50%;
+    }
+    #endcard-bar-a {
+      top: 366px;
+    }
+    #endcard-bar-b {
+      top: 376px;
+    }
+
+    .wordmark {
+      position: absolute;
+      left: 0;
+      top: 404px;
+      width: 100%;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 600;
+      font-size: 200px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--ink, #1c1917);
+      text-align: center;
+    }
+    .wordmark span {
+      display: inline-block;
+    }
+
+    .url {
+      position: absolute;
+      left: 0;
+      top: 646px;
+      width: 100%;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 40px;
+      line-height: 1;
+      color: #57534e;
+      text-align: center;
+      clip-path: inset(0 100% 0 0);
+    }
+
+    .end-licence {
+      position: absolute;
+      left: 0;
+      top: 726px;
+      width: 100%;
+      font-size: 30px;
+      font-weight: 500;
+      color: var(--verify, #047857);
+      text-align: center;
+    }
+  </style>
+
+  <div id="root" data-composition-id="endcard" data-width="1920" data-height="1080">
+    <div id="endcard-ground" class="ground"></div>
+
+    <div id="endcard-content" data-layout-allow-overlap>
+      <div class="bar" id="endcard-bar-a"></div>
+      <div class="bar" id="endcard-bar-b"></div>
+
+      <div class="wordmark" id="endcard-wordmark" aria-label="πeme">
+        <span>π</span><span>e</span><span>m</span><span>e</span>
+      </div>
+
+      <div class="url" id="endcard-url" data-var-text="url">researchwith.me</div>
+      <div class="end-licence" id="endcard-licence">CC BY 4.0 · Diamond open access</div>
+    </div>
+
+    <div id="endcard-wipe"></div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // Object becomes the world: the citation sheet is wiped away by the film's own paper.
+    tl.fromTo("#endcard-wipe", { x: 1920 }, { x: 0, duration: 0.26, ease: "power3.inOut" }, 0.02);
+    tl.to("#endcard-wipe", { opacity: 0, duration: 0.14, ease: "none" }, 0.22);
+
+    // The mark is performed: the rule prints, then the wordmark lands letter by letter.
+    tl.fromTo("#endcard-bar-a", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 0.04);
+    tl.fromTo("#endcard-bar-b", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 0.1);
+    tl.fromTo(
+      "#endcard-wordmark span",
+      { opacity: 0, y: 16, filter: "blur(6px)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "expo.out", stagger: 0.06 },
+      0.1,
+    );
+
+    tl.fromTo("#endcard-url", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.42, ease: "power3.inOut" }, 0.96);
+    tl.fromTo("#endcard-licence", { opacity: 0 }, { opacity: 1, duration: 0.28, ease: "power2.out" }, 1.2);
+
+    // Audio-reactive: the two stressed words of the closing line pulse the mark and the licence.
+    tl.fromTo("#endcard-wordmark", { scale: 1.03 }, { scale: 1, duration: 0.46, ease: "sine.out" }, 1.32);
+    tl.fromTo("#endcard-licence", { scale: 1.04 }, { scale: 1, duration: 0.46, ease: "sine.out" }, 3.31);
+
+    window.__timelines["endcard"] = tl;
+    tl.seek(0);
+  </script>
+</template>

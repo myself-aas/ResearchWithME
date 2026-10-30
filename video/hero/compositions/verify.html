@@ -1,0 +1,284 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Newsreader";
+      src: url("assets/fonts/newsreader-latin-variable.woff2") format("woff2-variations");
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/inter-latin-variable.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      color: var(--ink, #1c1917);
+      font-family: "Inter", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .ground {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    #verify-stage {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 50%;
+    }
+
+    .rule {
+      position: absolute;
+      left: 160px;
+      top: 168px;
+      width: 1600px;
+      height: 4px;
+      background: var(--accent, #78350f);
+    }
+    .rule.b {
+      top: 178px;
+    }
+
+    .columns {
+      position: absolute;
+      left: 160px;
+      top: 60px;
+      width: 1600px;
+      height: 960px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .columns span {
+      width: 1px;
+      height: 100%;
+      background: #e7e5e4;
+    }
+
+    .brand {
+      position: absolute;
+      left: 160px;
+      top: 84px;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 600;
+      font-size: 56px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .site-line {
+      position: absolute;
+      right: 160px;
+      top: 104px;
+      font-size: 28px;
+      font-weight: 500;
+      color: #57534e;
+    }
+
+    .card {
+      position: absolute;
+      left: 160px;
+      top: 380px;
+      width: 1600px;
+      height: 480px;
+      background: #ffffff;
+      border: 1px solid #e7e5e4;
+      border-radius: 3px;
+      padding: 40px 44px 34px;
+      box-sizing: border-box;
+    }
+
+    .card-title {
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 700;
+      font-size: 46px;
+      line-height: 1.22;
+      letter-spacing: -0.012em;
+      width: 1440px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e7e5e4;
+      margin: 18px 0 0;
+    }
+
+    .rows {
+      margin-top: 18px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 300px 1fr 60px;
+      align-items: center;
+      height: 62px;
+    }
+    .row .label {
+      font-size: 28px;
+      font-weight: 500;
+      color: #57534e;
+    }
+    .row .value {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--ink, #1c1917);
+    }
+
+    .wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .circle {
+      position: absolute;
+      left: -16px;
+      top: -9px;
+      width: 440px;
+      height: 64px;
+      overflow: visible;
+    }
+    .circle path {
+      fill: none;
+      stroke: var(--accent, #78350f);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 0;
+    }
+
+    .scribble {
+      position: absolute;
+      left: -4px;
+      bottom: -4px;
+      width: 268px;
+      height: 12px;
+      overflow: visible;
+    }
+    .scribble path {
+      fill: none;
+      stroke: var(--accent, #78350f);
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-dasharray: 500;
+      stroke-dashoffset: 0;
+    }
+
+    .tick {
+      width: 40px;
+      height: 40px;
+      overflow: visible;
+      opacity: 0;
+    }
+    .tick path {
+      fill: none;
+      stroke: var(--verify, #047857);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 90;
+      stroke-dashoffset: 90;
+    }
+  </style>
+
+  <div id="root" data-composition-id="verify" data-width="1920" data-height="1080">
+    <div id="verify-ground" class="ground"></div>
+
+    <div id="verify-stage" data-layout-allow-overflow>
+      <div class="columns" data-layout-ignore><span></span><span></span><span></span><span></span></div>
+
+    <div class="brand" aria-label="πeme" data-layout-allow-overlap>πeme</div>
+      <div class="site-line" data-var-text="siteLine" data-layout-allow-overlap>Open-access research reviews</div>
+      <div class="rule"></div>
+      <div class="rule b"></div>
+
+      <div class="clip" id="verify-card" data-start="0" data-duration="5.5" data-track-index="0">
+        <div class="card" id="verify-card-inner" data-layout-allow-overlap>
+          <div class="card-title" data-var-text="recordTitle">
+            Deconstructing DeepSeek-R1: How Pure RL Unlocked Emergent Chain-of-Thought
+          </div>
+          <div class="divider"></div>
+
+          <div class="rows">
+            <div class="row">
+              <span class="label">Reviewed by</span>
+              <span class="value"
+                ><span class="wrap"
+                  ><span data-var-text="recordAuthor">Prof. Marcus Vance</span>
+                  <svg class="scribble" viewBox="0 0 268 14" data-layout-ignore aria-hidden="true">
+                    <path d="M5 9C48 2 128 12 186 6 224 2 252 8 263 5" />
+                  </svg>
+                </span>
+              </span>
+              <span></span>
+            </div>
+
+            <div class="row">
+              <span class="label">Credential</span>
+              <span class="value"
+                ><span class="wrap"
+                  ><span data-var-text="recordCredential">ORCID 0000-0001-9234-8812</span>
+                  <svg class="circle" viewBox="0 0 440 64" data-layout-ignore aria-hidden="true">
+                    <path
+                      d="M16 34C16 12 120 6 232 7 344 8 424 14 424 34 424 54 330 58 210 58 100 58 18 52 18 34"
+                    />
+                  </svg>
+                </span>
+              </span>
+              <span></span>
+            </div>
+
+            <div class="row">
+              <span class="label">Artifact</span>
+              <span class="value" data-var-text="recordArtifact">arXiv:2501.12948</span>
+              <svg class="tick" id="verify-tick-artifact" viewBox="0 0 40 40" data-layout-ignore aria-hidden="true">
+                <path d="M6 22l9 9 19-21" />
+              </svg>
+            </div>
+
+            <div class="row">
+              <span class="label">Licence</span>
+              <span class="value" id="verify-licence" data-var-text="licence">CC BY 4.0</span>
+              <svg class="tick" id="verify-tick-licence" viewBox="0 0 40 40" data-layout-ignore aria-hidden="true">
+                <path d="M6 22l9 9 19-21" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // The ground floods from paper to white while the card stays put.
+    tl.fromTo("#verify-ground", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "power2.inOut" }, 0.15);
+
+    // One camera move for the scene: a slow push so the rows read.
+    tl.fromTo("#verify-stage", { scale: 1 }, { scale: 1.05, duration: 0.9, ease: "power2.inOut" }, 1.15);
+
+    // "links the artifact it examined" — the tick stamps and the row answers.
+    tl.fromTo("#verify-tick-artifact", { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.4)" }, 0.42);
+    tl.fromTo("#verify-tick-artifact path", { strokeDashoffset: 90 }, { strokeDashoffset: 0, duration: 0.26, ease: "power2.out" }, 0.46);
+
+    // "…carries citation metadata you can reuse" — the licence row verifies.
+    tl.fromTo("#verify-tick-licence", { opacity: 0, scale: 1.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(1.4)" }, 4.03);
+    tl.fromTo("#verify-tick-licence path", { strokeDashoffset: 90 }, { strokeDashoffset: 0, duration: 0.26, ease: "power2.out" }, 4.07);
+    tl.to("#verify-licence", { color: "var(--verify, #047857)", duration: 0.24, ease: "power2.out" }, 4.1);
+    tl.fromTo("#verify-licence", { scale: 1.05 }, { scale: 1, duration: 0.46, ease: "sine.out" }, 4.36);
+
+    // Hands off: the card leaves to the left, and the citation scene takes the frame.
+    tl.fromTo("#verify-card-inner", { x: 0 }, { x: -980, duration: 0.4, ease: "power3.in" }, 4.72);
+
+    window.__timelines["verify"] = tl;
+    tl.seek(0);
+  </script>
+</template>

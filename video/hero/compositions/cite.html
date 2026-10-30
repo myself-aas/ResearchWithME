@@ -1,0 +1,276 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Newsreader";
+      src: url("assets/fonts/newsreader-latin-variable.woff2") format("woff2-variations");
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/inter-latin-variable.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      color: var(--ink, #1c1917);
+      font-family: "Inter", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .ground {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+    }
+
+    .rule {
+      position: absolute;
+      left: 160px;
+      top: 168px;
+      width: 1600px;
+      height: 4px;
+      background: var(--accent, #78350f);
+    }
+    .rule.b {
+      top: 178px;
+    }
+
+    .columns {
+      position: absolute;
+      left: 160px;
+      top: 60px;
+      width: 1600px;
+      height: 960px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .columns span {
+      width: 1px;
+      height: 100%;
+      background: #e7e5e4;
+    }
+
+    .brand {
+      position: absolute;
+      left: 160px;
+      top: 84px;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 600;
+      font-size: 56px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .site-line {
+      position: absolute;
+      right: 160px;
+      top: 104px;
+      font-size: 28px;
+      font-weight: 500;
+      color: #57534e;
+    }
+
+    .verb {
+      position: absolute;
+      left: 160px;
+      width: 420px;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 700;
+      font-size: 72px;
+      line-height: 1;
+      letter-spacing: -0.012em;
+      color: var(--ink, #1c1917);
+    }
+    #cite-verb-1 {
+      top: 372px;
+    }
+    #cite-verb-2 {
+      top: 472px;
+    }
+    #cite-verb-3 {
+      top: 572px;
+    }
+
+    .verb-rule {
+      position: absolute;
+      left: 160px;
+      width: 168px;
+      height: 4px;
+      background: var(--accent, #78350f);
+      transform-origin: 0 50%;
+    }
+    #cite-rule-1 {
+      top: 460px;
+    }
+    #cite-rule-2 {
+      top: 560px;
+    }
+    #cite-rule-3 {
+      top: 660px;
+    }
+
+    #cite-block-rule {
+      position: absolute;
+      left: 620px;
+      top: 332px;
+      width: 1140px;
+      height: 4px;
+      background: var(--accent, #78350f);
+      transform-origin: 0 50%;
+    }
+
+    .block {
+      position: absolute;
+      left: 620px;
+      top: 340px;
+      width: 1140px;
+      background: #f5f5f4;
+      border: 1px solid #e7e5e4;
+      border-radius: 3px;
+      padding: 32px 38px 30px;
+      box-sizing: border-box;
+    }
+
+    .cite-row {
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #e7e5e4;
+    }
+    .cite-row:last-of-type {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .cite-label {
+      display: block;
+      font-size: 28px;
+      font-weight: 600;
+      color: #57534e;
+      margin-bottom: 8px;
+    }
+    .cite-text {
+      display: block;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.45;
+      color: var(--ink, #1c1917);
+    }
+
+    .foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 26px;
+    }
+
+    .copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--ink, #1c1917);
+      color: #fafaf9;
+      border-radius: 4px;
+      padding: 14px 22px;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .copy svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: #fafaf9;
+      stroke-width: 1.8;
+    }
+
+    .licence {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 28px;
+      color: var(--verify, #047857);
+    }
+  </style>
+
+  <div id="root" data-composition-id="cite" data-width="1920" data-height="1080">
+    <div id="cite-ground" class="ground"></div>
+
+    <div class="columns" data-layout-ignore><span></span><span></span><span></span><span></span></div>
+
+    <div class="brand" aria-label="πeme" data-layout-allow-overlap>πeme</div>
+    <div class="site-line" data-var-text="siteLine" data-layout-allow-overlap>Open-access research reviews</div>
+    <div class="rule"></div>
+    <div class="rule b"></div>
+
+    <div class="clip" id="cite-verbs" data-start="0" data-duration="4.5" data-track-index="0">
+      <div class="verb" id="cite-verb-1">Read it.</div>
+      <div class="verb-rule" id="cite-rule-1"></div>
+      <div class="verb" id="cite-verb-2">Check it.</div>
+      <div class="verb-rule" id="cite-rule-2"></div>
+      <div class="verb" id="cite-verb-3">Cite it.</div>
+      <div class="verb-rule" id="cite-rule-3"></div>
+    </div>
+
+    <div class="clip" id="cite-citations" data-start="0.1" data-duration="4.4" data-track-index="1">
+      <div id="cite-block-rule"></div>
+      <div class="block" id="cite-block">
+        <div class="cite-row" id="cite-row-apa">
+          <span class="cite-label">APA</span>
+          <span class="cite-text">Vance, M. (2026). Deconstructing DeepSeek-R1. πeme.</span>
+        </div>
+        <div class="cite-row" id="cite-row-bib">
+          <span class="cite-label">BibTeX</span>
+          <span class="cite-text"
+            >@article{vance2026deepseek, author={Vance, Marcus}, year={2026}}</span
+          >
+        </div>
+        <div class="foot">
+          <span class="copy" id="cite-copy">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="9" y="9" width="11" height="11" rx="2" />
+              <path d="M6 15H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v1" />
+            </svg>
+            Copy BibTeX
+          </span>
+          <span class="licence" id="cite-licence" data-var-text="licence">CC BY 4.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // The three verbs land on the narration's three words, each with its rule.
+    tl.fromTo("#cite-verb-1", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.26, ease: "power4.out" }, 0.04);
+    tl.fromTo("#cite-rule-1", { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: "expo.out" }, 0.12);
+    tl.fromTo("#cite-verb-1", { scale: 1.045 }, { scale: 1, duration: 0.46, ease: "sine.out" }, 0.56);
+
+    tl.fromTo("#cite-verb-2", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.26, ease: "power4.out" }, 1.19);
+    tl.fromTo("#cite-rule-2", { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: "expo.out" }, 1.27);
+    tl.fromTo("#cite-verb-2", { scale: 1.045 }, { scale: 1, duration: 0.46, ease: "sine.out" }, 1.53);
+
+    tl.fromTo("#cite-verb-3", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.26, ease: "power4.out" }, 2.25);
+    tl.fromTo("#cite-rule-3", { scaleX: 0 }, { scaleX: 1, duration: 0.32, ease: "expo.out" }, 2.33);
+    tl.fromTo("#cite-verb-3", { scale: 1.045 }, { scale: 1, duration: 0.46, ease: "sine.out" }, 2.59);
+
+    // The citation block: its rule prints, the rows cascade, the copy control presses in.
+    tl.fromTo("#cite-block-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 0.34);
+    tl.fromTo("#cite-block", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.45, ease: "expo.out" }, 0.34);
+    tl.fromTo(
+      ".cite-row",
+      { opacity: 0, filter: "blur(4px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out", stagger: 0.1 },
+      0.52,
+    );
+    tl.fromTo("#cite-copy", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.34, ease: "back.out(1.4)" }, 2.42);
+    tl.fromTo("#cite-licence", { opacity: 0 }, { opacity: 1, duration: 0.24, ease: "power2.out" }, 3.05);
+
+    window.__timelines["cite"] = tl;
+    tl.seek(0);
+  </script>
+</template>

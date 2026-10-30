@@ -1,0 +1,167 @@
+<!doctype html>
+<html
+  lang="en"
+  data-composition-variables='[
+    {"id":"brand","type":"string","label":"Wordmark","default":"πeme"},
+    {"id":"siteLine","type":"string","label":"Masthead line","default":"Open-access research reviews"},
+    {"id":"tagline","type":"string","label":"Hero tagline","default":"Long-form reviews of published papers and open repositories."},
+    {"id":"url","type":"string","label":"Site address","default":"researchwith.me"},
+    {"id":"licence","type":"string","label":"Licence","default":"CC BY 4.0"},
+    {"id":"recordTitle","type":"string","label":"Record title","default":"Deconstructing DeepSeek-R1: How Pure RL Unlocked Emergent Chain-of-Thought"},
+    {"id":"recordAuthor","type":"string","label":"Reviewed by","default":"Prof. Marcus Vance"},
+    {"id":"recordCredential","type":"string","label":"Reviewer credential","default":"ORCID 0000-0001-9234-8812"},
+    {"id":"recordArtifact","type":"string","label":"Reviewed artifact","default":"arXiv:2501.12948"},
+    {"id":"accent","type":"color","label":"Accent (rules, marker)","default":"#78350f"},
+    {"id":"verify","type":"color","label":"Verification","default":"#047857"},
+    {"id":"ink","type":"color","label":"Ink","default":"#1c1917"},
+    {"id":"ground","type":"color","label":"Ground","default":"#fafaf9"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground, #fafaf9);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      /* Scene hosts stack full frame; paint order is z-index. */
+      [data-composition-src] {
+        position: absolute;
+        inset: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="22"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div
+        id="masthead"
+        data-composition-id="masthead"
+        data-composition-src="compositions/masthead.html"
+        data-start="0"
+        data-duration="4.95"
+        data-track-index="1"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 1"
+      ></div>
+      <div
+        id="record"
+        data-composition-id="record"
+        data-composition-src="compositions/record.html"
+        data-start="4.45"
+        data-duration="3.45"
+        data-track-index="2"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 2"
+      ></div>
+      <div
+        id="verify"
+        data-composition-id="verify"
+        data-composition-src="compositions/verify.html"
+        data-start="7.55"
+        data-duration="5.5"
+        data-track-index="3"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 3"
+      ></div>
+      <div
+        id="cite"
+        data-composition-id="cite"
+        data-composition-src="compositions/cite.html"
+        data-start="12.7"
+        data-duration="4.5"
+        data-track-index="4"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 4"
+      ></div>
+      <div
+        id="endcard"
+        data-composition-id="endcard"
+        data-composition-src="compositions/endcard.html"
+        data-start="16.7"
+        data-duration="5.3"
+        data-track-index="5"
+        data-track-kind="graphics"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 5"
+      ></div>
+      <div
+        id="captions"
+        data-composition-id="captions"
+        data-composition-src="compositions/captions.html"
+        data-start="0"
+        data-duration="22"
+        data-track-index="9"
+        data-track-kind="captions"
+        data-width="1920"
+        data-height="1080"
+        style="z-index: 9"
+      ></div>
+
+      <!-- The clock: four narration lines, timed from their measured lengths. -->
+      <audio
+        id="narr-1"
+        class="clip"
+        data-start="0.9"
+        data-duration="3.408"
+        data-volume="1"
+        src="assets/audio/narr-1.mp3"
+      ></audio>
+      <audio
+        id="narr-2"
+        class="clip"
+        data-start="4.628"
+        data-duration="7.76"
+        data-volume="1"
+        src="assets/audio/narr-2.mp3"
+      ></audio>
+      <audio
+        id="narr-3"
+        class="clip"
+        data-start="12.772"
+        data-duration="3.528"
+        data-volume="1"
+        src="assets/audio/narr-3.mp3"
+      ></audio>
+      <audio
+        id="narr-4"
+        class="clip"
+        data-start="16.62"
+        data-duration="4.608"
+        data-volume="1"
+        src="assets/audio/narr-4.mp3"
+      ></audio>
+    </div>
+    <script>
+      // The root holds no animation of its own: every scene drives itself, and the
+      // runtime seeks each one. Registering an empty timeline keeps the root seekable.
+      window.__timelines["main"] = gsap.timeline({ paused: true });
+    </script>
+  </body>
+</html>

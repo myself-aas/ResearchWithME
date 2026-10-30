@@ -1,0 +1,268 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Newsreader";
+      src: url("assets/fonts/newsreader-latin-variable.woff2") format("woff2-variations");
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/inter-latin-variable.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      color: var(--ink, #1c1917);
+      font-family: "Inter", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .ground {
+      position: absolute;
+      inset: 0;
+      background: var(--ground, #fafaf9);
+    }
+
+    .rule {
+      position: absolute;
+      left: 160px;
+      top: 168px;
+      width: 1600px;
+      height: 4px;
+      background: var(--accent, #78350f);
+    }
+    .rule.b {
+      top: 178px;
+    }
+
+    .columns {
+      position: absolute;
+      left: 160px;
+      top: 60px;
+      width: 1600px;
+      height: 960px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .columns span {
+      width: 1px;
+      height: 100%;
+      background: #e7e5e4;
+    }
+
+    .brand {
+      position: absolute;
+      left: 160px;
+      top: 84px;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 600;
+      font-size: 56px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+    .site-line {
+      position: absolute;
+      right: 160px;
+      top: 104px;
+      font-size: 28px;
+      font-weight: 500;
+      color: #57534e;
+    }
+
+    .card {
+      position: absolute;
+      left: 160px;
+      top: 380px;
+      width: 1600px;
+      height: 480px;
+      background: #ffffff;
+      border: 1px solid #e7e5e4;
+      border-radius: 3px;
+      padding: 40px 44px 34px;
+      box-sizing: border-box;
+    }
+
+    .card-title {
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 700;
+      font-size: 46px;
+      line-height: 1.22;
+      letter-spacing: -0.012em;
+      width: 1440px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #e7e5e4;
+      margin: 18px 0 0;
+      transform-origin: 0 50%;
+    }
+
+    .rows {
+      margin-top: 18px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      align-items: center;
+      height: 62px;
+    }
+    .row .label {
+      font-size: 28px;
+      font-weight: 500;
+      color: #57534e;
+    }
+    .row .value {
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--ink, #1c1917);
+    }
+
+    .wrap {
+      position: relative;
+      display: inline-block;
+    }
+
+    .circle {
+      position: absolute;
+      left: -16px;
+      top: -9px;
+      width: 440px;
+      height: 64px;
+      overflow: visible;
+    }
+    .circle path {
+      fill: none;
+      stroke: var(--accent, #78350f);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 1200;
+      stroke-dashoffset: 1200;
+    }
+
+    .scribble {
+      position: absolute;
+      left: -4px;
+      bottom: -4px;
+      width: 268px;
+      height: 12px;
+      overflow: visible;
+    }
+    .scribble path {
+      fill: none;
+      stroke: var(--accent, #78350f);
+      stroke-width: 3.5;
+      stroke-linecap: round;
+      stroke-dasharray: 500;
+      stroke-dashoffset: 500;
+    }
+  </style>
+
+  <div id="root" data-composition-id="record" data-width="1920" data-height="1080">
+    <div id="record-ground" class="ground"></div>
+
+    <div class="columns" data-layout-ignore><span></span><span></span><span></span><span></span></div>
+
+    <div class="brand" aria-label="πeme" data-layout-allow-overlap>πeme</div>
+    <div class="site-line" data-var-text="siteLine" data-layout-allow-overlap>Open-access research reviews</div>
+    <div class="rule"></div>
+    <div class="rule b"></div>
+
+    <div class="clip" id="record-card" data-start="0.05" data-duration="3.4" data-track-index="0">
+      <div class="card" id="record-card-inner" data-layout-allow-overlap>
+        <div class="card-title" id="record-title" data-var-text="recordTitle">
+          Deconstructing DeepSeek-R1: How Pure RL Unlocked Emergent Chain-of-Thought
+        </div>
+        <div class="divider" id="record-divider"></div>
+
+        <div class="rows">
+          <div class="row" id="record-row-1">
+            <span class="label">Reviewed by</span>
+            <span class="value"
+              ><span class="wrap" id="record-author-wrap"
+                ><span data-var-text="recordAuthor">Prof. Marcus Vance</span>
+                <svg class="scribble" viewBox="0 0 268 14" data-layout-ignore aria-hidden="true">
+                  <path d="M5 9C48 2 128 12 186 6 224 2 252 8 263 5" />
+                </svg>
+              </span>
+            </span>
+          </div>
+
+          <div class="row" id="record-row-2">
+            <span class="label">Credential</span>
+            <span class="value"
+              ><span class="wrap" id="record-credential-wrap"
+                ><span data-var-text="recordCredential">ORCID 0000-0001-9234-8812</span>
+                <svg class="circle" viewBox="0 0 440 64" data-layout-ignore aria-hidden="true">
+                  <path
+                    d="M16 34C16 12 120 6 232 7 344 8 424 14 424 34 424 54 330 58 210 58 100 58 18 52 18 34"
+                  />
+                </svg>
+              </span>
+            </span>
+          </div>
+
+          <div class="row" id="record-row-3">
+            <span class="label">Artifact</span>
+            <span class="value" data-var-text="recordArtifact">arXiv:2501.12948</span>
+          </div>
+
+          <div class="row" id="record-row-4">
+            <span class="label">Licence</span>
+            <span class="value" data-var-text="licence">CC BY 4.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // The page crossfades in over the masthead; the card is the shot.
+    tl.fromTo("#record-ground", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "none" }, 0);
+
+    tl.fromTo(
+      "#record-card-inner",
+      { y: 130 },
+      { y: 0, duration: 0.55, ease: "expo.out" },
+      0.05,
+    );
+    tl.fromTo(
+      "#record-title",
+      { opacity: 0, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" },
+      0.02,
+    );
+    tl.fromTo("#record-divider", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "expo.out" }, 0.14);
+
+    // Rows fill top to bottom, 0.075 s apart, as the narration names them.
+    tl.fromTo(
+      ".row",
+      { opacity: 0, filter: "blur(4px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out", stagger: 0.075 },
+      0.22,
+    );
+
+    // "names the reviewer's credential" — the scribble, then the circle.
+    tl.fromTo(".scribble path", { strokeDashoffset: 500 }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.out" }, 1.32);
+    tl.fromTo(
+      ".circle path",
+      { strokeDashoffset: 1200 },
+      { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" },
+      2.16,
+    );
+
+    window.__timelines["record"] = tl;
+    tl.seek(0);
+  </script>
+</template>

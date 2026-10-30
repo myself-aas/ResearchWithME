@@ -29,3 +29,6 @@ data/cms-comments.json
 !.dev.vars.example
 __pycache__/
 *.pyc
+
+# HyperFrames hero film: render artifacts and per-machine caches (the composition is tracked).
+video/hero/.hyperframes/

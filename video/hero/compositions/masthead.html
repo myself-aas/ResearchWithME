@@ -1,0 +1,207 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Newsreader";
+      src: url("assets/fonts/newsreader-latin-variable.woff2") format("woff2-variations");
+      font-weight: 200 800;
+      font-style: normal;
+      font-display: block;
+    }
+    @font-face {
+      font-family: "Inter";
+      src: url("assets/fonts/inter-latin-variable.woff2") format("woff2-variations");
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: block;
+    }
+
+    #root {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      color: var(--ink, #1c1917);
+      font-family: "Inter", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .rule {
+      position: absolute;
+      left: 160px;
+      top: 168px;
+      width: 1600px;
+      height: 4px;
+      background: var(--accent, #78350f);
+      transform-origin: 0 50%;
+    }
+    .rule + .rule {
+      top: 178px;
+    }
+
+    .ground {
+      position: absolute;
+      inset: 0;
+      background: var(--ground, #fafaf9);
+    }
+
+    .columns {
+      position: absolute;
+      left: 160px;
+      top: 60px;
+      width: 1600px;
+      height: 960px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .columns span {
+      width: 1px;
+      height: 100%;
+      background: #e7e5e4;
+      transform-origin: 50% 0;
+    }
+
+    .brand {
+      position: absolute;
+      left: 160px;
+      top: 84px;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 600;
+      font-size: 56px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      color: var(--ink, #1c1917);
+    }
+    .brand span {
+      display: inline-block;
+    }
+
+    .site-line {
+      position: absolute;
+      right: 160px;
+      top: 104px;
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: 0.005em;
+      color: #57534e;
+    }
+
+    .headline {
+      position: absolute;
+      left: 160px;
+      top: 292px;
+      width: 1500px;
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 700;
+      font-size: 104px;
+      line-height: 1.08;
+      letter-spacing: -0.012em;
+      color: var(--ink, #1c1917);
+    }
+    .headline .line {
+      display: block;
+    }
+    .headline .word {
+      display: inline-block;
+      white-space: pre;
+    }
+
+    .hair {
+      position: absolute;
+      left: 160px;
+      top: 636px;
+      width: 1600px;
+      height: 1px;
+      background: #e7e5e4;
+      transform-origin: 0 50%;
+    }
+
+    .tagline {
+      position: absolute;
+      left: 160px;
+      top: 676px;
+      width: 860px;
+      font-size: 30px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #57534e;
+    }
+  </style>
+
+  <div id="root" data-composition-id="masthead" data-width="1920" data-height="1080">
+    <div id="masthead-ground" class="ground"></div>
+    <div class="columns" id="masthead-columns" data-layout-ignore>
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="brand" id="masthead-brand" aria-label="πeme" data-layout-allow-overlap>
+      <span>π</span><span>e</span><span>m</span><span>e</span>
+    </div>
+    <div class="site-line" id="masthead-site" data-var-text="siteLine" data-layout-allow-overlap>Open-access research reviews</div>
+
+    <div class="rule" id="masthead-rule-a"></div>
+    <div class="rule" id="masthead-rule-b"></div>
+
+    <h1 class="headline" id="masthead-headline">
+      <span class="line">
+        <span class="word">Research </span><span class="word">you </span><span class="word">can </span><span class="word">read,</span>
+      </span>
+      <span class="line">
+        <span class="word">check, </span><span class="word">and </span><span class="word">reuse.</span>
+      </span>
+    </h1>
+
+    <div class="hair" id="masthead-hair"></div>
+    <p class="tagline" id="masthead-tagline" data-var-text="tagline">
+      Long-form reviews of published papers and open repositories.
+    </p>
+  </div>
+
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const words = gsap.utils.toArray("#masthead-headline .word");
+
+    // Structure first: the page's grid draws down, then the masthead rule prints.
+    // The page is already printed at frame 0 — ground, hairlines, masthead rule
+    // and wordmark. That frame is also the film's thumbnail.
+    tl.fromTo(
+      "#masthead-brand",
+      { opacity: 1 },
+      { opacity: 1, duration: 0.1, ease: "none" },
+      0,
+    );
+    tl.fromTo(
+      "#masthead-site",
+      { opacity: 0 },
+      { opacity: 1, duration: 0.3, ease: "power4.out" },
+      0.5,
+    );
+
+    // The headline arrives word by word on the narration's first line.
+    tl.fromTo(
+      words,
+      { opacity: 0, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.16, ease: "power4.out", stagger: 0.085 },
+      0.95,
+    );
+
+    tl.fromTo("#masthead-hair", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.out" }, 1.95);
+    tl.fromTo(
+      "#masthead-tagline",
+      { opacity: 0, filter: "blur(4px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out" },
+      2.1,
+    );
+
+    // Hands off: the words blur out (exits run ~45% of their entrance), the page
+    // structure stays so the record scene can rise into it.
+    tl.to(
+      words,
+      { opacity: 0, filter: "blur(5px)", duration: 0.22, ease: "power3.in", stagger: 0.014 },
+      4.28,
+    );
+    tl.to("#masthead-tagline", { opacity: 0, filter: "blur(4px)", duration: 0.2, ease: "power3.in" }, 4.44);
+    tl.to("#masthead-hair", { scaleX: 0, duration: 0.24, ease: "power3.in" }, 4.5);
+
+    window.__timelines["masthead"] = tl;
+    tl.seek(0);
+  </script>
+</template>

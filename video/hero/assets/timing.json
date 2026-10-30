@@ -1,0 +1,458 @@
+{
+  "filmEnd": 22.028,
+  "lines": [
+    {
+      "line": 1,
+      "file": "assets/audio/narr-1.mp3",
+      "text": "Every review here shows its working.",
+      "start": 0.9,
+      "end": 4.308,
+      "duration": 3.408,
+      "groups": [
+        [
+          "Every review here",
+          []
+        ],
+        [
+          "shows its working.",
+          []
+        ]
+      ]
+    },
+    {
+      "line": 2,
+      "file": "assets/audio/narr-2.mp3",
+      "text": "Each one names the reviewer's credential, links the artifact it examined, and carries citation metadata you can reuse.",
+      "start": 4.628,
+      "end": 12.452,
+      "duration": 7.824,
+      "groups": [
+        [
+          "Each one names",
+          []
+        ],
+        [
+          "the reviewer's credential,",
+          [
+            "credential"
+          ]
+        ],
+        [
+          "links the artifact",
+          [
+            "artifact"
+          ]
+        ],
+        [
+          "it examined, and carries",
+          []
+        ],
+        [
+          "citation metadata you",
+          []
+        ],
+        [
+          "can reuse.",
+          [
+            "reuse"
+          ]
+        ]
+      ]
+    },
+    {
+      "line": 3,
+      "file": "assets/audio/narr-3.mp3",
+      "text": "Read it. Check it. Cite it.",
+      "start": 12.772,
+      "end": 16.3,
+      "duration": 3.528,
+      "groups": [
+        [
+          "Read it.",
+          [
+            "Read"
+          ]
+        ],
+        [
+          "Check it.",
+          [
+            "Check"
+          ]
+        ],
+        [
+          "Cite it.",
+          [
+            "Cite"
+          ]
+        ]
+      ]
+    },
+    {
+      "line": 4,
+      "file": "assets/audio/narr-4.mp3",
+      "text": "Research With Me. Free to read, free to publish.",
+      "start": 16.62,
+      "end": 21.228,
+      "duration": 4.608,
+      "groups": [
+        [
+          "Research With Me.",
+          []
+        ],
+        [
+          "Free to read,",
+          [
+            "Free"
+          ]
+        ],
+        [
+          "free to publish.",
+          [
+            "publish"
+          ]
+        ]
+      ]
+    }
+  ],
+  "words": [
+    {
+      "word": "Every",
+      "start": 1.08,
+      "end": 1.53
+    },
+    {
+      "word": "review",
+      "start": 1.53,
+      "end": 2.054
+    },
+    {
+      "word": "here",
+      "start": 2.054,
+      "end": 2.429
+    },
+    {
+      "word": "shows",
+      "start": 2.429,
+      "end": 2.879
+    },
+    {
+      "word": "its",
+      "start": 2.879,
+      "end": 3.179
+    },
+    {
+      "word": "working.",
+      "start": 3.179,
+      "end": 3.958
+    },
+    {
+      "word": "Each",
+      "start": 4.808,
+      "end": 5.108
+    },
+    {
+      "word": "one",
+      "start": 5.108,
+      "end": 5.348
+    },
+    {
+      "word": "names",
+      "start": 5.348,
+      "end": 5.708
+    },
+    {
+      "word": "the",
+      "start": 5.708,
+      "end": 5.948
+    },
+    {
+      "word": "reviewer's",
+      "start": 5.948,
+      "end": 6.608
+    },
+    {
+      "word": "credential,",
+      "start": 6.608,
+      "end": 7.363
+    },
+    {
+      "word": "links",
+      "start": 7.363,
+      "end": 7.723
+    },
+    {
+      "word": "the",
+      "start": 7.723,
+      "end": 7.963
+    },
+    {
+      "word": "artifact",
+      "start": 7.963,
+      "end": 8.503
+    },
+    {
+      "word": "it",
+      "start": 8.503,
+      "end": 8.683
+    },
+    {
+      "word": "examined,",
+      "start": 8.683,
+      "end": 9.319
+    },
+    {
+      "word": "and",
+      "start": 9.319,
+      "end": 9.559
+    },
+    {
+      "word": "carries",
+      "start": 9.559,
+      "end": 10.039
+    },
+    {
+      "word": "citation",
+      "start": 10.039,
+      "end": 10.578
+    },
+    {
+      "word": "metadata",
+      "start": 10.578,
+      "end": 11.118
+    },
+    {
+      "word": "you",
+      "start": 11.118,
+      "end": 11.358
+    },
+    {
+      "word": "can",
+      "start": 11.358,
+      "end": 11.598
+    },
+    {
+      "word": "reuse.",
+      "start": 11.598,
+      "end": 12.102
+    },
+    {
+      "word": "Read",
+      "start": 12.952,
+      "end": 13.418
+    },
+    {
+      "word": "it.",
+      "start": 13.418,
+      "end": 13.92
+    },
+    {
+      "word": "Check",
+      "start": 13.92,
+      "end": 14.479
+    },
+    {
+      "word": "it.",
+      "start": 14.479,
+      "end": 14.982
+    },
+    {
+      "word": "Cite",
+      "start": 14.982,
+      "end": 15.447
+    },
+    {
+      "word": "it.",
+      "start": 15.447,
+      "end": 15.95
+    },
+    {
+      "word": "Research",
+      "start": 16.8,
+      "end": 17.5
+    },
+    {
+      "word": "With",
+      "start": 17.5,
+      "end": 17.89
+    },
+    {
+      "word": "Me.",
+      "start": 17.89,
+      "end": 18.31
+    },
+    {
+      "word": "Free",
+      "start": 18.31,
+      "end": 18.699
+    },
+    {
+      "word": "to",
+      "start": 18.699,
+      "end": 18.932
+    },
+    {
+      "word": "read,",
+      "start": 18.932,
+      "end": 19.446
+    },
+    {
+      "word": "free",
+      "start": 19.446,
+      "end": 19.835
+    },
+    {
+      "word": "to",
+      "start": 19.835,
+      "end": 20.069
+    },
+    {
+      "word": "publish.",
+      "start": 20.069,
+      "end": 20.878
+    }
+  ],
+  "groups": [
+    {
+      "id": "cap-0",
+      "line": 1,
+      "text": "Every review here",
+      "start": 0.98,
+      "voiceEnd": 2.429,
+      "beats": [],
+      "end": 2.329
+    },
+    {
+      "id": "cap-1",
+      "line": 1,
+      "text": "shows its working.",
+      "start": 2.329,
+      "voiceEnd": 3.958,
+      "beats": [],
+      "end": 4.708
+    },
+    {
+      "id": "cap-2",
+      "line": 2,
+      "text": "Each one names",
+      "start": 4.708,
+      "voiceEnd": 5.708,
+      "beats": [],
+      "end": 5.608
+    },
+    {
+      "id": "cap-3",
+      "line": 2,
+      "text": "the reviewer's credential,",
+      "start": 5.608,
+      "voiceEnd": 7.363,
+      "beats": [
+        6.608
+      ],
+      "end": 7.263
+    },
+    {
+      "id": "cap-4",
+      "line": 2,
+      "text": "links the artifact",
+      "start": 7.263,
+      "voiceEnd": 8.503,
+      "beats": [
+        7.963
+      ],
+      "end": 8.403
+    },
+    {
+      "id": "cap-5",
+      "line": 2,
+      "text": "it examined, and carries",
+      "start": 8.403,
+      "voiceEnd": 10.039,
+      "beats": [],
+      "end": 9.939
+    },
+    {
+      "id": "cap-6",
+      "line": 2,
+      "text": "citation metadata you",
+      "start": 9.939,
+      "voiceEnd": 11.358,
+      "beats": [],
+      "end": 11.258
+    },
+    {
+      "id": "cap-7",
+      "line": 2,
+      "text": "can reuse.",
+      "start": 11.258,
+      "voiceEnd": 12.102,
+      "beats": [
+        11.598
+      ],
+      "end": 12.852
+    },
+    {
+      "id": "cap-8",
+      "line": 3,
+      "text": "Read it.",
+      "start": 12.852,
+      "voiceEnd": 13.92,
+      "beats": [
+        12.952
+      ],
+      "end": 13.82
+    },
+    {
+      "id": "cap-9",
+      "line": 3,
+      "text": "Check it.",
+      "start": 13.82,
+      "voiceEnd": 14.982,
+      "beats": [
+        13.92
+      ],
+      "end": 14.882
+    },
+    {
+      "id": "cap-10",
+      "line": 3,
+      "text": "Cite it.",
+      "start": 14.882,
+      "voiceEnd": 15.95,
+      "beats": [
+        14.982
+      ],
+      "end": 16.7
+    },
+    {
+      "id": "cap-11",
+      "line": 4,
+      "text": "Research With Me.",
+      "start": 16.7,
+      "voiceEnd": 18.31,
+      "beats": [],
+      "end": 18.21
+    },
+    {
+      "id": "cap-12",
+      "line": 4,
+      "text": "Free to read,",
+      "start": 18.21,
+      "voiceEnd": 19.446,
+      "beats": [
+        18.31
+      ],
+      "end": 19.346
+    },
+    {
+      "id": "cap-13",
+      "line": 4,
+      "text": "free to publish.",
+      "start": 19.346,
+      "voiceEnd": 20.878,
+      "beats": [
+        20.069
+      ],
+      "end": 22.028
+    }
+  ]
+}
