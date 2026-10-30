@@ -265,7 +265,7 @@ export default function PapersArchivePage() {
                     </div>
 
                     <div className="flex flex-col gap-4 border-t border-stone-200 pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-                      <dl className="grid grid-cols-2 gap-3 text-sm lg:grid-cols-1">
+                      <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-1">
                         <div>
                           <dt className="text-stone-600">DOI</dt>
                           <dd className="break-all font-mono text-stone-900">{paper.doi}</dd>
