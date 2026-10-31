@@ -495,8 +495,9 @@ deployment; every branch then fails with *This Worker does not exist on your acc
 ### 7.3 What a build does
 
 1. Clone the branch at the pushed SHA.
-2. `bun`/`npm` install (the repo's lockfile is Bun's — `bun.lock`; the dashboard build uses npm and
-   works because `package-lock.json` is present, but **GitHub Actions uses Bun** to match `Quality`).
+2. Install dependencies. The repository has two lockfiles: `bun.lock` (the one CI uses) and
+   `package-lock.json` (what the dashboard's npm install reads). `npm ci` fails against the second
+   one, so any path you write yourself should use `bun install --frozen-lockfile`.
 3. Build command → `.open-next/`.
 4. Deploy command → `wrangler deploy` (production branch) or `wrangler preview` (anything else).
 5. Report a check run with a link to the build, and for previews, to the preview URL.
