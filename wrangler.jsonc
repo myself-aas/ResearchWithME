@@ -11,19 +11,16 @@
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
-	// Custom domains are deliberately not declared yet. A Worker route claims the
-	// hostname, and `researchwith.me` is currently served by whatever is already
-	// attached to it (the Pages project whose build also runs on this repo). A
-	// deploy that claims a hostname another project owns fails outright, which
-	// would block the first production deployment — the one Worker Previews need
-	// before they can branch. Once the hostname is free, add:
-	//
-	//   "routes": [
-	//     { "pattern": "researchwith.me", "custom_domain": true },
-	//     { "pattern": "www.researchwith.me", "custom_domain": true }
-	//   ],
-	//
-	// and `wrangler deploy` creates the proxied AAAA records itself.
+	// Cloudflare custom domains on this Worker: `wrangler deploy` creates the
+	// proxied AAAA record (100::) and the edge certificate for each host itself,
+	// and `www` serves the same Worker rather than redirecting. A hostname can
+	// only belong to one thing, so if `researchwith.me` is still attached to the
+	// old Pages project the deploy stops with a domain conflict until that
+	// project releases it. Canonical links use NEXT_PUBLIC_SITE_URL, the apex.
+	"routes": [
+		{ "pattern": "researchwith.me", "custom_domain": true },
+		{ "pattern": "www.researchwith.me", "custom_domain": true }
+	],
 	"services": [
 		{
 			// Self-reference used by OpenNext's cache; must match "name" above.

@@ -75,8 +75,22 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 - `NEXT_PUBLIC_*` values are compiled into the build, so they must be set as **build** variables. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**.
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
 - `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost: a Worker built that way serves the studio unauthenticated and cannot save a draft. `ALLOW_DEMO_DEPLOY=1` overrides the guard on purpose. Run the same check alone with `npm run deploy-guard`.
-- `wrangler.jsonc` names the account, so a local `wrangler deploy` and the dashboard build land in the same place. It does **not** claim the custom domain yet: a `routes` entry with `custom_domain: true` takes the hostname, and `researchwith.me` is currently served by whatever already holds it. Claiming it in the same deploy that is meant to create the first production deployment turns a working deploy into a conflict. Add the routes once the hostname is free — the commented block in the file is the exact shape.
+- `wrangler.jsonc` names the account and claims both hostnames — `researchwith.me` and `www.researchwith.me` — as custom domains, so a local `wrangler deploy` and a dashboard build land in the same Worker and own the same hostnames. `www` serves the same Worker rather than redirecting; canonical links stay on the apex through `NEXT_PUBLIC_SITE_URL`. A hostname can belong to only one thing: while an old Pages project still lists `researchwith.me`, the deploy stops with a domain conflict, and the fix is to remove the custom domain there, not to edit this file.
 - OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
+
+### Cloudflare build settings
+
+Workers & Pages → `researchwithme` → Settings → Builds:
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npx @opennextjs/cloudflare build` |
+| Deploy command (production) | `npx wrangler deploy` |
+| Deploy command (preview) | `npx wrangler preview` |
+| Production branch | `main` |
+| Root directory | `/` |
+
+If the production deploy command is left at `npx wrangler preview`, `main` only ever produces previews: the Worker never gains a production deployment, and every branch keeps failing with `Preview creation failed: This Worker does not exist on your account` — previews branch *from* the deployed Worker. Pick one deployer as well: if the GitHub Actions `deploy.yml` is merged too, both it and Workers Builds run `wrangler deploy` on `main`, and every merge deploys twice.
 
 ### First production deployment
 
