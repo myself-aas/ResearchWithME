@@ -74,7 +74,45 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 - The namespace ID is set on both `kv_namespaces` entries in `wrangler.jsonc`. To move to another account, create a new namespace with `npx wrangler kv namespace create researchwithme-opennext-cache` and replace both IDs.
 - `NEXT_PUBLIC_*` values are compiled into the build, so they must be set as **build** variables. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**.
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
+- `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost: a Worker built that way serves the studio unauthenticated and cannot save a draft. `ALLOW_DEMO_DEPLOY=1` overrides the guard on purpose. Run the same check alone with `npm run deploy-guard`.
+- `wrangler.jsonc` names the account and claims both hostnames — `researchwith.me` and `www.researchwith.me` — as custom domains, so a local `wrangler deploy` and a dashboard build land in the same Worker and own the same hostnames. `www` serves the same Worker rather than redirecting; canonical links stay on the apex through `NEXT_PUBLIC_SITE_URL`. A hostname can belong to only one thing: while an old Pages project still lists `researchwith.me`, the deploy stops with a domain conflict, and the fix is to remove the custom domain there, not to edit this file.
 - OpenNext's build is only partly supported on Windows; use WSL or CI for release builds.
+
+### Cloudflare build settings
+
+Workers & Pages → `researchwithme` → Settings → Builds:
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npx @opennextjs/cloudflare build` |
+| Deploy command (production) | `npx wrangler deploy` |
+| Deploy command (preview) | `npx wrangler preview` |
+| Production branch | `main` |
+| Root directory | `/` |
+
+If the production deploy command is left at `npx wrangler preview`, `main` only ever produces previews: the Worker never gains a production deployment, and every branch keeps failing with `Preview creation failed: This Worker does not exist on your account` — previews branch *from* the deployed Worker. Pick one deployer as well: if the GitHub Actions `deploy.yml` is merged too, both it and Workers Builds run `wrangler deploy` on `main`, and every merge deploys twice.
+
+### First production deployment
+
+Worker Previews branch off the *deployed* Worker, so nothing previews until one production deployment exists. When the Worker has never been deployed — or the dashboard build has only ever run `wrangler preview` — do it once from a checkout:
+
+```bash
+npm run deploy-guard     # stops if the production CMS values are missing
+npm run build:worker     # next build, then the OpenNext bundle
+npx wrangler deploy      # creates the Worker and its first production deployment
+```
+
+`wrangler deploy` creates the Worker when it does not exist, so this works even if every dashboard build has failed so far. It leaves the domain alone while the `routes` block in `wrangler.jsonc` stays commented out. Once `researchwith.me` is free of whatever currently serves it, uncomment those routes and deploy again — the records are created for you.
+
+### Worker Previews
+
+Cloudflare's build for this project runs two commands: `npx @opennextjs/cloudflare build`, then `npx wrangler deploy` on the production branch and `npx wrangler preview` everywhere else. `wrangler preview` (open beta) creates a *preview* of the Worker — a branch of it with its own URL — instead of touching production.
+
+- A preview does not inherit the Worker's bindings. `wrangler.jsonc` therefore repeats the two KV bindings under `previews`, and a preview deploy without that block fails with ``Your Wrangler configuration is missing a `previews` block``.
+- Those preview bindings name the production namespace on purpose. OpenNext prefixes every key with the build id (`incremental-cache/<buildId>/<hash>.cache`, `<buildId>/<tag>`), so preview entries are unreachable from production and the reverse — sharing the namespace cannot serve a preview's HTML to a reader. The two do share the free plan's 1,000 KV writes a day, so a busy preview eats into the production write budget. To separate them: `npx wrangler kv namespace create researchwithme-opennext-cache-preview`, then put that id in the `previews.kv_namespaces` entries (production keeps `8d2dc8f0…`).
+- Service bindings are not supported in previews, which is why `WORKER_SELF_REFERENCE` is not listed there. A preview renders and caches normally; it just cannot re-render itself through OpenNext's queue the way production does.
+- Previews branch off the **deployed** Worker, so one successful production deployment has to exist first. Until it does, `wrangler preview` fails with `Preview creation failed: This Worker does not exist on your account` — even when the Worker and its versions are there. `npx wrangler deploy` (or `npm run deploy`) creates it; Cloudflare's build does the same on the production branch.
+- Worker secrets are not inherited either. `npx wrangler preview secret put <NAME>` sets one for previews; without it a preview runs with whatever the build had compiled in.
 
 ## Editorial CMS
 
