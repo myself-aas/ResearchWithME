@@ -49,7 +49,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
-  output: 'standalone',
+  output: 'standalone', // switched back to avoid export build issues
   async headers() {
     return [
       {
@@ -72,4 +72,10 @@ const nextConfig: NextConfig = {
 export default nextConfig;
 
 // Exposes Cloudflare bindings to `next dev` via getCloudflareContext().
-initOpenNextCloudflareForDev();
+if (process.env.NODE_ENV === 'development') {
+  try {
+    initOpenNextCloudflareForDev();
+  } catch {
+    // Ignore when running outside of wrangler dev environment
+  }
+}

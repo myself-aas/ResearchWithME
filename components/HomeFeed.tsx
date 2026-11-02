@@ -8,7 +8,7 @@ import FeaturedArticle from '@/components/FeaturedArticle';
 import ArticleFeed from '@/components/ArticleFeed';
 import AuthorSpotlight from '@/components/AuthorSpotlight';
 import BlogFooter from '@/components/BlogFooter';
-import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { readStringArray, writeLocal } from '@/lib/storage';
 
 const SAVED_KEY = 'rwm_saved_posts';
@@ -125,13 +125,16 @@ export default function HomeFeed({ initialCategory = 'All', initialSearch = '' }
     setSelectedCategory('All');
     setSelectedFormat('All');
     setSearchQuery('');
-    router.replace('/', { scroll: false });
+    router.push('/');
     scrollToFeed();
   }
 
   function selectCategory(category: string) {
-    setSelectedCategory(category);
-    setSelectedFormat('All');
+    if (category === 'All') {
+      router.push('/');
+    } else {
+      router.push(`/category/${categoryToSlug(category)}`);
+    }
     scrollToFeed();
   }
 

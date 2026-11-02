@@ -16,7 +16,7 @@ import {
   MessageSquare,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { BlogCategory, BlogPost } from '@/lib/blog-data';
+import { BlogCategory, BlogPost, categoryToSlug } from '@/lib/blog-data';
 
 interface CategoryMeta {
   thumbnail: string;
@@ -97,7 +97,7 @@ export default function ArticleFeed({
   selectedFormat,
   searchQuery,
   onClearFilters,
-  onSelectCategory,
+  onSelectCategory: _onSelectCategory,
 }: ArticleFeedProps) {
   const showCategoryGrid = selectedCategory === 'All' && !searchQuery;
   const activeCategory = selectedCategory !== 'All' ? (selectedCategory as BlogCategory) : null;
@@ -122,9 +122,8 @@ export default function ArticleFeed({
               const count = posts.filter((post) => post.category === category).length;
               return (
                 <li key={category}>
-                  <button
-                    type="button"
-                    onClick={() => onSelectCategory?.(category)}
+                  <Link
+                    href={`/category/${categoryToSlug(category)}`}
                     className="group relative flex h-48 w-full flex-col justify-end overflow-hidden rounded-lg border border-stone-200 bg-stone-900 text-left transition-colors hover:border-amber-700"
                   >
                     <Image
@@ -148,7 +147,7 @@ export default function ArticleFeed({
                         {meta.description}
                       </span>
                     </span>
-                  </button>
+                  </Link>
                 </li>
               );
             })}
@@ -255,14 +254,13 @@ export default function ArticleFeed({
 
                   <div className="flex flex-1 flex-col gap-3 p-5">
                     <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                      <button
-                        type="button"
-                        onClick={() => onSelectCategory?.(post.category)}
+                      <Link
+                        href={`/category/${categoryToSlug(post.category)}`}
                         className="inline-flex items-center gap-1 font-medium text-amber-900 underline-offset-4 hover:underline"
                       >
                         {categoryIcon(post.category)}
                         <span>{post.category}</span>
-                      </button>
+                      </Link>
                       <span aria-hidden="true">·</span>
                       <span>{post.publishedAt}</span>
                       <span aria-hidden="true">·</span>

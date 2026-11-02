@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowUpRight, PenSquare, ShieldCheck } from 'lucide-react';
-import { CATEGORIES } from '@/lib/blog-data';
+import { CATEGORIES, categoryToSlug } from '@/lib/blog-data';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import BrandLogo from '@/components/BrandLogo';
 
@@ -73,7 +73,7 @@ export default function BlogFooter() {
               {CATEGORIES.map((category) => (
                 <li key={category}>
                   <Link
-                    href={`/?category=${encodeURIComponent(category)}`}
+                    href={`/category/${categoryToSlug(category)}`}
                     className="text-stone-300 underline-offset-4 transition-colors hover:text-white hover:underline"
                   >
                     {category}

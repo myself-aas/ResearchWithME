@@ -76,6 +76,8 @@ export const CATEGORIES: BlogCategory[] = [
   'Data & Policy',
 ];
 
+export { categoryToSlug, slugToCategory, CATEGORY_SLUGS, SLUG_TO_CATEGORY } from './categories';
+
 export const AUTHORS: Record<string, Author> = {
   'marcus-vance': {
     id: 'marcus-vance',

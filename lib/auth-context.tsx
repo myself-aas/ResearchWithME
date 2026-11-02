@@ -126,10 +126,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         return;
       }
-      const { data: isEditor } = await supabase.rpc('is_editor');
+      let isEditor = false;
+      try {
+        const { data } = await supabase.rpc('is_editor');
+        isEditor = data === true;
+      } catch {
+        isEditor = false;
+      }
       if (!active) return;
       supabaseBacked.current = true;
-      setUser(fromSupabaseUser(account, isEditor === true));
+      setUser(fromSupabaseUser(account, isEditor));
+    }
+
+    if (typeof window !== 'undefined' && window.location.pathname !== '/auth/callback' && window.location.pathname !== '/login') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const code = searchParams.get('code');
+      if (code) {
+        supabase.auth.exchangeCodeForSession(code).then(({ data, error }) => {
+          if (!error && data?.session?.user) {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('code');
+            window.history.replaceState({}, '', cleanUrl.toString());
+            sync(data.session.user);
+          }
+        }).catch(() => undefined);
+      }
     }
 
     supabase.auth

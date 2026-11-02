@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { AUTHORS, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { AUTHORS, CATEGORIES, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { getPublishedCmsPosts } from '@/lib/cms/read';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
 import { toDate } from '@/lib/seo';
@@ -42,6 +42,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: FALLBACK_DATE,
       changeFrequency,
       priority,
+    })),
+    ...CATEGORIES.map((category) => ({
+      url: new URL(`/category/${categoryToSlug(category)}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      lastModified: FALLBACK_DATE,
+      changeFrequency: 'weekly' as const,
+      priority: 0.85,
     })),
     ...[...articleSlugs].map(([slug, lastModified]) => ({
       url: new URL(`/post/${slug}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),

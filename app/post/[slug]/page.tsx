@@ -11,7 +11,7 @@ import ArticleInteractions from '@/components/ArticleInteractions';
 import ArticleDiscussion from '@/components/ArticleDiscussion';
 import ReadingProgress from '@/components/ReadingProgress';
 import MarkdownBody from '@/components/MarkdownBody';
-import { AUTHORS } from '@/lib/blog-data';
+import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
 import VideoEmbed from '@/components/VideoEmbed';
@@ -85,7 +85,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <ChevronRight className="h-4 w-4 text-stone-500" />
             </li>
             <li>
-              <Link href={`/?category=${encodeURIComponent(article.category)}`} className="hover:text-stone-900 hover:underline">
+              <Link href={`/category/${categoryToSlug(article.category)}`} className="hover:text-stone-900 hover:underline">
                 {article.category}
               </Link>
             </li>

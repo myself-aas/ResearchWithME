@@ -8,7 +8,6 @@ import { isSameOrigin } from '@/lib/cms/http';
 import { isLocalCmsMode } from '@/lib/cms/store';
 
 export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   try {

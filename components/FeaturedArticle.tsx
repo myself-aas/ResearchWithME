@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Bookmark, FileText, GitBranch } from 'lucide-react';
-import { BlogPost } from '@/lib/blog-data';
+import { BlogPost, categoryToSlug } from '@/lib/blog-data';
 
 interface FeaturedArticleProps {
   post: BlogPost;
@@ -41,7 +41,12 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
         <div className="flex flex-col justify-between gap-8 p-6 sm:p-10">
           <div>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-              <span className="font-medium text-amber-900">{post.category}</span>
+              <Link
+                href={`/category/${categoryToSlug(post.category)}`}
+                className="font-medium text-amber-900 underline-offset-4 hover:underline"
+              >
+                {post.category}
+              </Link>
               <span aria-hidden="true">·</span>
               <span>{post.format}</span>
               <span aria-hidden="true">·</span>

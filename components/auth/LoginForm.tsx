@@ -74,6 +74,16 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
       try {
         const supabase = getSupabaseBrowserClient();
+        const code = params.get('code');
+        if (code) {
+          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) {
+            if (!active) return;
+            setError(mapAuthError(exchangeError.message));
+            setExchanging(false);
+            return;
+          }
+        }
         const { data, error: sessionError } = await supabase.auth.getSession();
         if (!active) return;
         if (sessionError) {

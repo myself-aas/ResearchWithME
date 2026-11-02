@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og';
 
-export const alt = 'reme — open-access scholarly publishing & research reviews';
+export const alt = 'ResearchWithMe — Open-Access Scholarly Publishing & Research Reviews';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
