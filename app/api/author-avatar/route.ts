@@ -1,19 +1,40 @@
 import { GoogleGenAI } from '@google/genai';
 import { NextRequest, NextResponse } from 'next/server';
+import { getDashboardUser } from '@/lib/cms/auth';
+import { clientKey, rateLimit } from '@/lib/rate-limit';
+import { sanitizeSvgMarkup } from '@/lib/svg';
+import { cleanText } from '@/lib/validation';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+const MODEL_TIMEOUT_MS = 20_000;
+const FIELD_LIMITS = { name: 120, role: 120, domain: 120, bio: 400 } as const;
+
+/** Escapes text interpolated into SVG so a name cannot inject markup. */
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
 
 /**
  * Generates an SVG avatar customized to the author's academic domain and expertise.
+ * Every interpolated value is escaped; this runs without any external call.
  */
 function createDomainFallbackSvg(name: string, domain: string, role: string): string {
-  const initials = name
-    .split(' ')
-    .map((word) => word[0])
-    .filter(Boolean)
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
+  const initials = escapeXml(
+    name
+      .split(' ')
+      .map((word) => word[0])
+      .filter(Boolean)
+      .join('')
+      .slice(0, 2)
+      .toUpperCase(),
+  );
 
   // Pick color themes based on research domain
   let bgGradientStart = '#78350f'; // amber-900
@@ -57,18 +78,18 @@ function createDomainFallbackSvg(name: string, domain: string, role: string): st
     </defs>
     <rect width="200" height="200" rx="24" fill="url(#grad-${initials})" />
     <rect width="200" height="200" rx="24" fill="url(#grid-${initials})" />
-    
+
     <!-- Domain Background Rings -->
     <circle cx="100" cy="100" r="70" fill="none" stroke="${accentColor}" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="4 4" />
     <circle cx="100" cy="100" r="85" fill="none" stroke="${accentColor}" stroke-opacity="0.15" stroke-width="1" />
-    
+
     <!-- Domain Symbol Badge -->
     <circle cx="160" cy="40" r="18" fill="${bgGradientEnd}" stroke="${accentColor}" stroke-width="1.5" />
     <text x="160" y="45" font-size="14" text-anchor="middle" dominant-baseline="middle">${motifIcon}</text>
 
     <!-- Author Initials Avatar -->
     <text x="100" y="108" font-family="Georgia, serif" font-size="52" font-weight="bold" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" letter-spacing="-1">${initials}</text>
-    
+
     <!-- AI Verification Pill -->
     <rect x="40" y="152" width="120" height="22" rx="11" fill="${accentColor}" fill-opacity="0.2" stroke="${accentColor}" stroke-width="1" />
     <text x="100" y="166" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.5">AI RESEARCH AVATAR</text>
@@ -77,18 +98,52 @@ function createDomainFallbackSvg(name: string, domain: string, role: string): st
   return svg;
 }
 
+/**
+ * Model-written avatars are a paid, editor-initiated action: `forceAi` must be
+ * set and the caller must hold studio access. Everyone else — including every
+ * reader loading an author page — gets the deterministic local avatar, so a
+ * page view never spends the Gemini key.
+ */
 export async function POST(req: NextRequest) {
-  try {
-    const { name, role, domain, bio, authorId } = await req.json();
+  const limit = await rateLimit(clientKey(req, 'author-avatar'), 6, 60_000);
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { error: 'Too many avatars requested in a short window. Wait a minute and try again.' },
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } },
+    );
+  }
 
-    if (!name || !domain) {
-      return NextResponse.json({ error: 'Author name and domain are required.' }, { status: 400 });
+  let payload: Record<string, unknown>;
+  try {
+    payload = (await req.json()) as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: 'The request body could not be read.' }, { status: 400 });
+  }
+
+  const name = cleanText(payload.name, FIELD_LIMITS.name);
+  const role = cleanText(payload.role, FIELD_LIMITS.role);
+  const domain = cleanText(payload.domain, FIELD_LIMITS.domain);
+  const bio = cleanText(payload.bio, FIELD_LIMITS.bio);
+  const authorId = cleanText(payload.authorId, 80);
+
+  if (!name || !domain) {
+    return NextResponse.json({ error: 'Author name and domain are required.' }, { status: 400 });
+  }
+
+  const wantsModel = payload.forceAi === true || payload.forceAi === 'true';
+
+  if (wantsModel && process.env.GEMINI_API_KEY) {
+    const user = await getDashboardUser();
+    if (!user?.isEditor) {
+      return NextResponse.json(
+        { error: 'Model-generated avatars are a studio feature. Sign in with editor access to request one.' },
+        { status: 403 },
+      );
     }
 
-    // Attempt Gemini AI SVG generation
-    if (process.env.GEMINI_API_KEY) {
-      try {
-        const prompt = `Generate a high-quality, professional, modern SVG profile avatar for a distinguished scholar and researcher:
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const prompt = `Generate a high-quality, professional, modern SVG profile avatar for a distinguished scholar and researcher:
 Name: ${name}
 Role: ${role}
 Domain/Field: ${domain}
@@ -97,46 +152,31 @@ Bio summary: ${bio || domain}
 Design Rules:
 - Output ONLY pure, valid SVG code starting with <svg> and ending with </svg>. Do NOT wrap in markdown code blocks or quotes.
 - ViewBox must be 0 0 200 200 with rx=24 or rounded container.
-- Create an aesthetically appealing geometric or abstract scholarly illustration representing their field (${domain}) with their initials (${name.split(' ').map((w: string)=>w[0]).join('')}) integrated smoothly.
+- Create an aesthetically appealing geometric or abstract scholarly illustration representing their field (${domain}) with their initials (${name.split(' ').map((w: string) => w[0]).join('')}) integrated smoothly.
 - Use professional scholarly palette (deep stone, amber, emerald, indigo, gold).
 - High visual quality, vector accuracy, valid SVG tags only.`;
 
-        const response = await ai.models.generateContent({
-          model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
-          contents: prompt,
-        });
+      const response = await ai.models.generateContent({
+        model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+        contents: prompt,
+        config: { abortSignal: AbortSignal.timeout(MODEL_TIMEOUT_MS) },
+      });
 
-        let svgText = response.text || '';
-        svgText = svgText.replace(/```xml|```svg|```/gi, '').trim();
-
-        if (svgText.includes('<svg') && svgText.includes('</svg>')) {
-          const start = svgText.indexOf('<svg');
-          const end = svgText.lastIndexOf('</svg>') + 6;
-          const cleanSvg = svgText.substring(start, end);
-
-          return NextResponse.json({
-            svg: cleanSvg,
-            authorId,
-            source: 'gemini-3.8-flash',
-          });
-        }
-      } catch (geminiError) {
-        console.warn('Gemini avatar generation fallback engaged:', geminiError);
+      const svg = sanitizeSvgMarkup(response.text ?? '');
+      if (svg) {
+        return NextResponse.json({ svg, authorId, source: 'gemini' });
       }
+      console.warn('Gemini returned markup that failed sanitisation; using the local avatar.');
+    } catch (error) {
+      console.warn('Gemini avatar generation failed; using the local avatar:', error);
     }
-
-    // Fallback domain-customized vector SVG avatar
-    const fallbackSvg = createDomainFallbackSvg(name, domain, role);
-    return NextResponse.json({
-      svg: fallbackSvg,
-      authorId,
-      source: 'domain-fallback',
-    });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Internal avatar generation error';
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
   }
+
+  // Deterministic domain-customized vector avatar. No external call, so it is
+  // safe to serve to any reader on every page view.
+  return NextResponse.json({
+    svg: createDomainFallbackSvg(name, domain, role),
+    authorId,
+    source: 'domain-fallback',
+  });
 }
