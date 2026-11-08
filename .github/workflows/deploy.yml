@@ -265,15 +265,51 @@ jobs:
 
       - name: Smoke test
         run: |
-          set -euo pipefail
-          for attempt in 1 2 3 4 5 6 7 8 9 10; do
-            home=$(curl -s -o /dev/null -w '%{http_code}' https://researchwith.me/)
-            sitemap=$(curl -s -o /dev/null -w '%{http_code}' https://researchwith.me/sitemap.xml)
-            echo "attempt $attempt: home $home, sitemap $sitemap"
-            if [ "$home" = "200" ] && [ "$sitemap" = "200" ]; then
+          # No `set -e`: every failure path below is handled explicitly, and with
+          # -e a single curl transport error in `code=$(curl ...)` aborted the
+          # whole step on attempt 1, skipping all ten retries.
+          set -uo pipefail
+          urls="https://researchwith.me/ https://researchwith.me/sitemap.xml"
+          attempts=12
+          last=""
+
+          for attempt in $(seq 1 "$attempts"); do
+            failing=""
+            line="attempt $attempt:"
+            for url in $urls; do
+              body=$(mktemp)
+              # curl already prints 000 for %{http_code} on a transport failure,
+              # so `|| echo` would double it; assign on failure instead.
+              code=$(curl -sL -o "$body" -w '%{http_code}' --max-time 20 "$url" 2>/dev/null) || code="000"
+              line="$line $url=$code"
+              if [ "$code" != "200" ]; then
+                snippet=$(tr -d '%' < "$body" | head -c 400 | tr '\n\r\t' '   ')
+                failing="$failing $url=$code body=${snippet}"
+              fi
+              rm -f "$body"
+            done
+            echo "$line"
+            if [ -z "$failing" ]; then
+              echo "Smoke test passed on attempt $attempt."
               exit 0
             fi
-            sleep 6
+            last="$failing"
+            sleep 8
           done
-          echo "The deployment did not answer 200 for the homepage and the sitemap." >&2
+
+          echo "The deployment did not answer 200 within $attempts attempts." >&2
+          echo "Last attempt:$last" >&2
+          # Job logs are served from blob storage that is not always reachable,
+          # so repeat the status codes and response body as an annotation, which
+          # the check-runs API does return.
+          echo "::error::Smoke test failed after $attempts attempts. Last attempt:$last"
+          {
+            echo "## Smoke test failed"
+            echo ""
+            echo "\`npx wrangler deploy\` exited 0, but the site did not answer 200 within $attempts attempts."
+            echo ""
+            echo '```'
+            echo "Last attempt:$last"
+            echo '```'
+          } >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
           exit 1
