@@ -12,7 +12,6 @@ import {
 } from 'recharts';
 import { Award, Sparkles } from 'lucide-react';
 import { Author } from '@/lib/blog-data';
-import VideoEmbed from '@/components/VideoEmbed';
 
 export interface ImpactMetrics {
   articleQuality: number;
@@ -128,15 +127,7 @@ export default function AuthorImpactRadarChart({
       <div className="mt-6 grid gap-8 lg:grid-cols-12 lg:items-center">
         {/* Radar Chart Container — animated video for authors with a rendered composition */}
         <div className="lg:col-span-7 bg-stone-50/80 rounded-lg overflow-hidden border border-stone-200/80 flex flex-col items-center justify-center min-h-[320px]">
-          {author.id === 'marcus-vance' ? (
-            <div className="relative w-full h-[320px] bg-stone-50">
-              <VideoEmbed
-                src="/videos/radar-chart.mp4"
-                label={`Impact metrics animation for ${author.name}`}
-                ambient
-              />
-            </div>
-          ) : mounted ? (
+          {mounted ? (
             <div className="w-full h-[320px] p-4">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>

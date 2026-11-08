@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireEditor } from '@/lib/cms/auth';
+import { resolvePublishableAuthor } from '@/lib/cms/authors';
 import { normalizePostInput } from '@/lib/cms/schema';
 import { errorResponse, isSameOrigin, noStoreHeaders, readJsonBody } from '@/lib/cms/http';
 import { revalidateArticle } from '@/lib/cms/revalidate';
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
-  const limit = rateLimit(clientKey(request, 'cms:create'), 20, 60_000);
+  const limit = await rateLimit(clientKey(request, 'cms:create'), 20, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many saves in a short window. Try again in a minute.' },
@@ -55,8 +56,13 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Attribution is server-derived. The byline text comes from the profile, so
+    // a request body cannot claim an author name that is not on the profile.
+    const author = await resolvePublishableAuthor(parsed.value.authorId);
+    const value = { ...parsed.value, authorName: author.displayName };
+
     const store = await getEditorCmsStore();
-    const existingCmsPost = await store.getPostBySlug(parsed.value.slug);
+    const existingCmsPost = await store.getPostBySlug(value.slug);
     if (existingCmsPost) {
       return NextResponse.json(
         { error: 'An article already uses this URL. Change the title or slug.' },
@@ -64,7 +70,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const catalogueConflict = getArticles().find((article) => article.slug === parsed.value.slug);
+    const catalogueConflict = getArticles().find((article) => article.slug === value.slug);
     if (catalogueConflict) {
       return NextResponse.json(
         { error: 'A catalogue article already uses this URL. Choose a different slug.' },
@@ -72,7 +78,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const post = await store.createPost(parsed.value);
+    const post = await store.createPost(value);
     if (post.status === 'published') revalidateArticle(post.slug);
 
     return NextResponse.json({ post, mode: gate.mode }, { status: 201, headers: noStoreHeaders() });

@@ -3,17 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, CheckCircle2, Eye, Lock, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import PageState from '@/components/PageState';
 import QwenCoverGenerator from '@/components/cms/QwenCoverGenerator';
-import { ArticleFormat, AUTHORS, BlogCategory, BlogPost, CATEGORIES } from '@/lib/blog-data';
-import { useAuth } from '@/lib/auth-context';
+import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES } from '@/lib/blog-data';
+import { ApiError, cmsFetch } from '@/lib/cms/client-api';
+import type { CmsPost } from '@/lib/cms/types';
 import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
 import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
-import { formatDate, readingTimeFromText } from '@/lib/format';
+import { readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { useSession } from '@/lib/supabase/use-session';
 import dynamic from 'next/dynamic';
 
 const MarkdownEditor = dynamic(() => import('@/components/cms/MarkdownEditor'), {
@@ -26,6 +27,8 @@ const DRAFT_KEY = 'rwm_writer_draft';
 interface Draft {
   title: string;
   subtitle: string;
+  /** Verified author profile from the catalogue the article is published under. */
+  authorId: string;
   category: BlogCategory;
   format: ArticleFormat;
   summary: string;
@@ -42,9 +45,12 @@ interface Draft {
   updatedAt: string;
 }
 
+const AUTHOR_IDS = Object.keys(AUTHORS);
+
 const emptyDraft: Draft = {
   title: '',
   subtitle: '',
+  authorId: '',
   category: 'Research Reviews',
   format: 'Paper Review',
   summary: '',
@@ -66,7 +72,7 @@ const fieldClass =
 
 export default function WritePage() {
   const router = useRouter();
-  const { user, hydrated, hasAuthorPermissions } = useAuth();
+  const { user } = useSession();
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [tab, setTab] = useState<'editor' | 'preview'>('editor');
   const [hydratedDraft, setHydratedDraft] = useState(false);
@@ -154,6 +160,12 @@ export default function WritePage() {
   }
 
   const parsedTags = useMemo(() => parseTags(draft.tags), [draft.tags]);
+  // The byline is chosen in the editor and validated against the AUTHORS
+  // registry; access itself is enforced by app/write/layout.tsx on the server.
+  const resolvedAuthorId = useMemo(
+    () => (draft.authorId && AUTHORS[draft.authorId] ? draft.authorId : ''),
+    [draft.authorId],
+  );
   const readTime = useMemo(() => readingTimeFromText(`${draft.summary} ${draft.content}`), [draft.summary, draft.content]);
   const previewParagraphs = useMemo(
     () => draft.content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean),
@@ -165,10 +177,6 @@ export default function WritePage() {
     if (publishing) return;
     setError(null);
 
-    if (!hasAuthorPermissions || !user) {
-      router.push('/verify?redirect=/write&error=unverified');
-      return;
-    }
     if (cleanText(draft.title, LIMITS.title).length < 8) {
       fail('Add a title of at least 8 characters before publishing.', 'write-title');
       return;
@@ -197,25 +205,10 @@ export default function WritePage() {
       }
     }
 
-    const knownAuthor = user.authorProfileId ? AUTHORS[user.authorProfileId] : undefined;
-    const author =
-      knownAuthor ?? {
-        id: slugify(user.name) || user.id,
-        name: user.name,
-        avatar: user.avatar,
-        role: user.verifiedTitle ?? 'Verified contributor',
-        domain: draft.category,
-        institution: user.institution ?? 'Independent researcher',
-        verifiedVia:
-          user.authProvider === 'orcid' || user.authProvider === 'github' || user.authProvider === 'institution'
-            ? user.authProvider
-            : 'institution',
-        verifiedIdentifier: user.verifiedIdentifier ?? user.email,
-        verifiedTitle: user.verifiedTitle ?? 'Contributor identity on file',
-        joinedDate: formatDate(new Date(), { day: undefined, month: 'long', year: 'numeric' }),
-        articleCount: 1,
-        bio: `${user.name} reviews work in ${draft.category.toLowerCase()} on ResearchWithME.`,
-      };
+    if (!resolvedAuthorId) {
+      fail('Choose the verified author profile this article is published under.', 'write-author');
+      return;
+    }
 
     const slug = slugify(draft.title);
     if (!slug) {
@@ -223,92 +216,51 @@ export default function WritePage() {
       return;
     }
 
-    const article: BlogPost = {
-      id: `post-${Date.now()}`,
-      slug,
-      title: cleanText(draft.title, LIMITS.title),
-      subtitle: cleanText(draft.subtitle, 400) || cleanText(draft.summary, 140),
-      category: draft.category,
-      format: draft.format,
-      author,
-      publishedAt: new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()),
-      readTime: `${readTime} min read`,
-      coverImage: draft.coverImage?.trim() || (draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg'),
-      featured: false,
-      reviewedArtifact: draft.hasArtifact
-        ? {
-            type: draft.artifactType,
-            title: cleanText(draft.artifactTitle, 200) || cleanText(draft.artifactIdentifier, LIMITS.identifier),
-            identifier: cleanText(draft.artifactIdentifier, LIMITS.identifier),
-            url: draft.artifactUrl.trim() || (draft.artifactType === 'github' ? 'https://github.com' : 'https://doi.org'),
-            meta: cleanText(draft.artifactMeta, 160) || 'Metadata supplied by the author',
-          }
-        : undefined,
-      summary: cleanText(draft.summary, LIMITS.summary),
-      content: draft.content
-        .split(/\n{2,}/)
-        .map((paragraph) => cleanText(paragraph, 40_000))
-        .filter(Boolean),
-      keyTakeaways: takeaways,
-      tags: parsedTags,
-      likes: 0,
-      commentsCount: 0,
-    };
-
     setPublishing(true);
     try {
-      const res = await fetch('/api/articles', {
+      // The writer studio publishes through the same CMS store as /dashboard, so
+      // the article lands in Supabase (or the local archive in demo mode), joins
+      // the canonical reader and sitemap, and is revalidated on publish.
+      const saved = await cmsFetch<{ post: CmsPost }>('/api/cms/posts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(article),
+        body: JSON.stringify({
+          title: cleanText(draft.title, LIMITS.title),
+          slug,
+          subtitle: cleanText(draft.subtitle, 400) || cleanText(draft.summary, 140),
+          summary: cleanText(draft.summary, LIMITS.summary),
+          content: draft.content,
+          status: 'published',
+          category: draft.category,
+          format: draft.format,
+          authorId: resolvedAuthorId,
+          coverImage:
+            draft.coverImage?.trim() ||
+            (draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg'),
+          tags: parsedTags,
+          keyTakeaways: takeaways,
+          featured: false,
+          artifact: draft.hasArtifact
+            ? {
+                type: draft.artifactType,
+                title: cleanText(draft.artifactTitle, 200) || cleanText(draft.artifactIdentifier, LIMITS.identifier),
+                identifier: cleanText(draft.artifactIdentifier, LIMITS.identifier),
+                url: draft.artifactUrl.trim() || (draft.artifactType === 'github' ? 'https://github.com' : 'https://doi.org'),
+                meta: cleanText(draft.artifactMeta, 160),
+              }
+            : null,
+        }),
       });
-      const payload = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(payload.error || 'The publication could not be saved.');
+
       removeLocal(DRAFT_KEY);
-      const savedSlug = payload.article?.slug ?? slug;
-      router.push(`/post/${savedSlug}`);
+      router.push(`/post/${saved.post.slug}`);
     } catch (publishError) {
-      setError(
-        `${publishError instanceof Error ? publishError.message : 'The publication could not be saved.'} Your draft is preserved in this browser.`,
-      );
+      const message =
+        publishError instanceof ApiError
+          ? publishError.message
+          : 'The publication could not be saved.';
+      setError(`${message} Your draft is preserved in this browser.`);
       setPublishing(false);
     }
-  }
-
-  if (!hydrated) {
-    return (
-      <div className="min-h-screen bg-stone-50">
-        <BlogHeader />
-        <PageState
-          role="status"
-          code="Loading"
-          title="Opening the writer studio"
-          description="Checking the contributor session stored in this browser."
-          primaryAction={{ href: '/', label: 'Return to the journal' }}
-        />
-      </div>
-    );
-  }
-
-  if (!hasAuthorPermissions) {
-    return (
-      <div className="flex min-h-screen flex-col bg-stone-50">
-        <BlogHeader />
-        <PageState
-          code="Contributor access"
-          title="The writer studio needs a contributor identity"
-          description="Publishing is restricted to contributors who have recorded a scholarly identity. You can still read, save, and cite every article without an account."
-          primaryAction={{ href: '/verify?redirect=/write', label: 'Record an identity' }}
-          secondaryAction={{ href: '/', label: 'Browse the journal' }}
-        >
-          <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
-            <Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>Verification here is a local prototype; no credentials are sent anywhere.</span>
-          </p>
-        </PageState>
-        <BlogFooter />
-      </div>
-    );
   }
 
   return (
@@ -509,6 +461,29 @@ export default function WritePage() {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label htmlFor="write-author" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Published under
+                  </label>
+                  <select
+                    id="write-author"
+                    value={resolvedAuthorId}
+                    onChange={(event) => update('authorId', event.target.value)}
+                    aria-invalid={errorField === 'write-author' ? true : undefined}
+                    className={fieldClass}
+                  >
+                    {resolvedAuthorId ? null : <option value="">Choose a verified author</option>}
+                    {AUTHOR_IDS.map((id) => (
+                      <option key={id} value={id}>
+                        {AUTHORS[id].name} — {AUTHORS[id].role}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-xs text-stone-500">
+                    Articles are attributed to a verified profile in the catalogue.
+                  </p>
                 </div>
 
                 <div>

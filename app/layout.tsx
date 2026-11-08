@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import Providers from '@/components/Providers';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
 
 // The journal is set in the Aptos family (Aptos Serif for reading, Aptos for
@@ -87,11 +86,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <Providers>
-          <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
-            {children}
-          </div>
-        </Providers>
+        <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
+          {children}
+        </div>
       </body>
     </html>
   );

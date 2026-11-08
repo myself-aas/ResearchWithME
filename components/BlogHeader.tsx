@@ -19,7 +19,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
-import { useAuth } from '@/lib/auth-context';
+import { useSession } from '@/lib/supabase/use-session';
 import { readStringArray } from '@/lib/storage';
 import BrandLogo from './BrandLogo';
 
@@ -39,17 +39,16 @@ const primaryNav = [
 
 const secondaryNav = [
   { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
-  { href: '/auth/providers', label: 'OAuth & Writer Access', icon: ShieldCheck },
   { href: '/cite', label: 'Citation builder', icon: Quote },
   { href: '/submit', label: 'Submit a manuscript', icon: UploadCloud },
   { href: '/editorial-board', label: 'Editorial board', icon: Users },
-  { href: '/verify', label: 'Verification prototype', icon: ShieldCheck },
+  { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck },
   { href: '/dashboard', label: 'Editorial studio', icon: PenSquare },
 ];
 
 export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {
   const pathname = usePathname() || '/';
-  const { user, hasAuthorPermissions } = useAuth();
+  const { user } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
   const [savedOnDevice, setSavedOnDevice] = useState(0);
   const menuId = useId();
@@ -161,24 +160,24 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             </Link>
 
             <Link
-              href="/auth/providers"
+              href={user ? '/dashboard/access' : '/login'}
               className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
-              title={user ? `Signed in as ${user.name} (${user.role})` : 'Authentication & Writer Verification'}
+              title={user ? `Signed in as ${user.name}` : 'Sign in or create an account'}
             >
               <ShieldCheck className="h-4 w-4 text-amber-900" aria-hidden="true" />
               <span className="hidden sm:inline">
-                {user ? (hasAuthorPermissions ? 'Writer' : 'Reader') : 'Sign In'}
+                {user ? (user.isEditor ? 'Writer' : 'Your account') : 'Sign In'}
               </span>
             </Link>
 
             <Link
-              href={hasAuthorPermissions ? '/write' : '/verify'}
-              aria-label={hasAuthorPermissions ? 'Write a review in the writer studio' : 'Verify a contributor identity'}
+              href={user?.isEditor ? '/write' : '/login?next=%2Fwrite'}
+              aria-label={user?.isEditor ? 'Write a review in the writer studio' : 'Sign in to write'}
               className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-md bg-amber-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800 sm:px-4"
             >
               <PenSquare className="h-4 w-4" aria-hidden="true" />
               <span aria-hidden="true" className="hidden min-[430px]:inline">
-                {hasAuthorPermissions ? 'Write' : 'Verify'}
+                {user?.isEditor ? 'Write' : 'Sign in'}
               </span>
             </Link>
 
@@ -273,9 +272,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             <p className="mt-4 flex items-start gap-2 border-t border-stone-200 pt-4 text-sm text-stone-600">
               <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>
-                {hasAuthorPermissions
-                  ? `Signed in as ${user?.name ?? 'a verified author'}. Publishing permissions are active.`
-                  : 'Reader mode. Verify a scholarly identity to publish reviews.'}
+                {user?.isEditor
+                  ? `Signed in as ${user.name}. Publishing permissions are active.`
+                  : 'Reader mode. Apply to write to publish reviews.'}
               </span>
             </p>
           </div>

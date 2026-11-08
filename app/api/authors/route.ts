@@ -1,33 +1,24 @@
 import { NextResponse } from 'next/server';
 
-import { getAllAuthors, getArticles } from '@/lib/db';
+import { listPublishedAuthors } from '@/lib/author-directory';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+/**
+ * Published author profiles. Shares its query with app/author/[id]/page.tsx via
+ * lib/author-directory.ts -- see the note there on why neither entry point
+ * fetches the other.
+ */
 export async function GET() {
   try {
-    const authors = getAllAuthors();
-    const articles = getArticles();
-
-    const authorsWithCounts = authors.map((author) => {
-      const authorArticles = articles.filter(
-        (a) =>
-          a.author.id === author.id ||
-          a.author.name.toLowerCase() === author.name.toLowerCase()
-      );
-      return {
-        ...author,
-        actualArticleCount: authorArticles.length,
-      };
-    });
-
+    const authors = await listPublishedAuthors();
     return NextResponse.json(
-      { authors: authorsWithCounts },
+      { authors },
       { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=600' } },
     );
   } catch (err) {
     console.error('Failed to fetch authors:', err);
-    return NextResponse.json(
-      { error: 'Internal server error fetching authors' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error fetching authors' }, { status: 500 });
   }
 }

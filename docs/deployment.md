@@ -39,8 +39,8 @@ This document is the long form. The short form is the *Deploy (Cloudflare Worker
 | Worker Previews | Working | branch build `90662e61…` produced a preview URL |
 | Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview` | check run `Workers Builds: researchwithme` passes |
 | GitHub Actions `Quality` | On `main` | `.github/workflows/quality.yml` |
-| GitHub Actions `Deploy` | **Designed, not merged** — lives on PR #5 (`arena/29f3543c-researchwithme`) | `.github/workflows/deploy.yml` there; conflicts with `main` on `README.md`, `package.json`, `scripts/check-production-env.mjs`, `wrangler.jsonc` |
-| Supabase | Project linked; four migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
+| GitHub Actions `Deploy` | **On `main`** | `.github/workflows/deploy.yml`; previews per pull request, production after Quality passes. Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as Actions secrets |
+| Supabase | Project linked; eight migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
 | Revalidate webhook endpoint | Exists at `/api/revalidate`, optional workspace webhook to configure | `app/api/revalidate/route.ts` |
 
 Two facts worth knowing before you change anything:
@@ -62,7 +62,7 @@ Two facts worth knowing before you change anything:
                     │                                              │
                     │  Actions: Quality  (lint, types, tests,      │
                     │                     build)  → check suite    │
-                    │  Actions: Deploy   (PR #5, not merged yet)   │
+                    │  Actions: Deploy   (preview + production)    │
                     └───────┬───────────────────────────┬──────────┘
                             │ GitHub App webhooks       │ workflow_run
                             ▼                           ▼
@@ -84,8 +84,8 @@ Two facts worth knowing before you change anything:
         ┌──────────────────────────────────┐          │
         │ Supabase  bxyjjbclaklzjxeumeat   │──────────┘  (database webhook)
         │  Postgres + RLS                  │
-        │  Auth (Google/GitHub/ORCID/      │
-        │        magic link/password)      │
+        │  Auth (email+password, Google;   │
+        │   GitHub/ORCID as identity links)│
         │  Storage: blog-images (5 MB)     │
         │  Realtime: posts, comments       │
         └──────────────────────────────────┘
@@ -337,6 +337,10 @@ order. Four migrations exist:
 | `20261025000200_cms_storage.sql` | `blog-images` bucket + storage policies |
 | `20261025000300_cms_storage.sql` | storage follow-up (idempotent) |
 | `20261028000100_editor_allowlist.sql` | `public.editors` + `public.is_editor()`, studio write policies |
+| `20261108000100_consolidate_editor_allowlist.sql` | folds `editor_memberships` into `public.editors` |
+| `20261108000200_post_artifacts.sql` | artifact columns on `posts` for the reproducible-metadata fields |
+| `20261108000300_author_applications.sql` | `public.author_applications` + `apply_as_author()` / `review_author_application()` |
+| `20261108000400_author_profiles.sql` | `public.profiles` — the author directory, replacing the hardcoded `AUTHORS` record |
 
 The GitHub Supabase integration also runs a *Supabase Preview* check on pull requests. It fails with
 `Remote migration versions not found in local migrations directory` when the remote history contains
@@ -356,9 +360,13 @@ on conflict (user_id) do nothing;
 
 ### 5.4 Authentication
 
-**Authentication → Sign In / Providers**: enable Email (magic link + password), Google, GitHub, and
-the custom ORCID provider (identifier `orcid`, called as `custom:orcid`, issuer `https://orcid.org`,
-scope `openid`).
+**Authentication → Sign In / Providers**: enable Email (password only — magic links are no longer
+used) and Google. These are the two ways a reader signs in.
+
+GitHub and the custom ORCID provider (identifier `orcid`, called as `custom:orcid`, issuer
+`https://orcid.org`, scope `openid`) are configured as **identity links**, not sign-in methods: a
+signed-in reader attaches one from `/dashboard/access` to apply as a writer. They must still be
+enabled as providers with the same callback URL, but they do not need to appear in the sign-in UI.
 
 Every provider's OAuth callback is the one Supabase prints — `https://<ref>.supabase.co/auth/v1/callback`
 — not the site origin. The *site* origin is configured separately:
@@ -495,9 +503,9 @@ deployment; every branch then fails with *This Worker does not exist on your acc
 ### 7.3 What a build does
 
 1. Clone the branch at the pushed SHA.
-2. Install dependencies. The repository has two lockfiles: `bun.lock` (the one CI uses) and
-   `package-lock.json` (what the dashboard's npm install reads). `npm ci` fails against the second
-   one, so any path you write yourself should use `bun install --frozen-lockfile`.
+2. Install dependencies with `bun install --frozen-lockfile`. `bun.lock` is the repository's only
+   lockfile; set the dashboard's install command to match (Settings → Builds) rather than letting it
+   fall back to npm, which has no lockfile to read.
 3. Build command → `.open-next/`.
 4. Deploy command → `wrangler deploy` (production branch) or `wrangler preview` (anything else).
 5. Report a check run with a link to the build, and for previews, to the preview URL.
@@ -534,14 +542,14 @@ to add deploys — that is what `deploy.yml` is for.
 
 ### 8.2 `Deploy` — designed on PR #5
 
-`.github/workflows/deploy.yml` (present on `arena/29f3543c-researchwithme`, not on `main`):
+`.github/workflows/deploy.yml`:
 `workflow_run` on **Quality → completed → main**, plus `pull_request` for previews and
 `workflow_dispatch` for a manual production deploy.
 
 | Job | Trigger | Does |
 | --- | --- | --- |
-| `preview` | `pull_request` (same-repo branches) | install → `videos:manifest` → `deploy-guard` → `build:worker` → `wrangler versions upload --preview-alias pr-<n>` → comments the alias URL on the PR |
-| `deploy` | `workflow_run` success on `main`, or manual dispatch | install → `videos:manifest` → `deploy-guard` → `build:worker` → `wrangler deploy` → smoke test `/` and `/videos/hero.mp4` for 200 |
+| `preview` | `pull_request` (same-repo branches) | install → `deploy-guard` → `build:worker` → `wrangler preview --name pr-<n> --json` → comments the preview URL on the PR |
+| `deploy` | `workflow_run` success on `main`, or manual dispatch | install → `deploy-guard` → `build:worker` → `wrangler deploy` → smoke test `/` and `/sitemap.xml` for 200 |
 
 Details that are easy to get wrong:
 
@@ -555,8 +563,9 @@ Details that are easy to get wrong:
   cancelling a half-finished upload.
 - The preview job masks a missing token with a notice rather than a red check, so an unconfigured
   repository still validates that the branch builds.
-- `npm run videos:manifest` exists only alongside the hero film (PR #5). On `main` today there is no
-  such script — merge the film, or drop that step.
+- PR #5's workflow ran `npm run videos:manifest` and smoke-tested `/videos/hero.mp4`. Neither the
+  script nor the film exists on `main`, so both steps were dropped from the merged workflow rather
+  than shipped in a form that fails every deploy. If the hero film lands later, add them back.
 
 ### 8.3 Env wiring in the workflow
 
@@ -658,7 +667,7 @@ Rules and gotchas:
 
 | Rule | Consequence |
 | --- | --- |
-| The workflow file must exist on the default branch | merging `deploy.yml` is what activates it; before that, nothing fires and `workflow_dispatch` is unavailable |
+| The workflow file must exist on the default branch | `deploy.yml` is on `main`, so previews and `workflow_dispatch` are active |
 | The run is evaluated in default-branch context | check out `${{ github.event.workflow_run.head_sha }}` to deploy exactly what passed |
 | `types: [completed]` includes failures | gate with `if: github.event.workflow_run.conclusion == 'success'` |
 | Secrets are available | it runs on your repository's own token, not a fork's |
@@ -770,7 +779,7 @@ lands on `/login` with `error_description` — never as a 500.
 1. `Quality` runs on `main`.
 2. Cloudflare's production build runs `wrangler deploy` → new version → traffic moves immediately.
 3. With `deploy.yml` merged, its `deploy` job starts after Quality reports success, re-runs the guard
-   and the build, deploys again, then smoke-tests `/` and `/videos/hero.mp4`.
+   and the build, deploys again, then smoke-tests `/` and `/sitemap.xml`.
    **This is the double-deploy scenario — pick one owner (§15).**
 4. KV receives fresh entries under the new build id; old entries expire on their TTL.
 
@@ -799,7 +808,7 @@ npx wrangler deploy --dry-run   # config + bindings resolve, nothing uploaded
 
 ```bash
 curl -sI https://researchwith.me/ | head -12
-curl -sI https://researchwith.me/videos/hero.mp4 | head -5     # once the film is merged
+curl -sI https://researchwith.me/sitemap.xml | head -5
 curl -s https://researchwith.me/ | grep -o '<title>[^<]*</title>'
 curl -s -o /dev/null -w '%{http_code}\n' https://www.researchwith.me/
 
@@ -853,10 +862,10 @@ Real errors from this repository, in the order they tend to appear.
 | `/api/revalidate` returns `401` | webhook header value ≠ Worker secret (or `?secret=` missing) | re-copy the header value; rotate both together |
 | Sign-in bounces with `redirect_to is not allowed` | origin missing from Supabase redirect URLs | add `https://researchwith.me/auth/callback` |
 | Studio 403s for a signed-in editor | account not in `public.editors` | insert the allowlist row (§5.3) |
-| `npm ci` fails on a clean clone | `package-lock.json` is out of sync with `bun.lock` | use `bun install --frozen-lockfile` (CI does) |
+| `npm ci` fails on a clean clone | the repository ships `bun.lock`, not `package-lock.json` | use `bun install --frozen-lockfile` (CI does) |
 | `build:worker` fails on Windows | OpenNext builds partly POSIX-only | use WSL or CI |
 | Tailwind utilities missing after a build | stale `.next` | `npm run clean && npm run build:worker` |
-| `Deploy` never triggers | `deploy.yml` not on the default branch, or Quality failed/skipped | merge it to `main`; check `conclusion == 'success'` |
+| `Deploy` never triggers | Quality failed or was skipped, or the Cloudflare secrets are missing | check `conclusion == 'success'`; confirm `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
 | Everything deploys twice | Workers Builds **and** Actions both own production | pick one (§15) |
 | `Supabase Preview` red on a PR | remote migration history has versions missing locally | `supabase migration list --linked`, then `supabase migration repair` |
 | Preview renders but stale content | previews have no service binding, so OpenNext's queue re-render can't run | expected; re-request the page |
@@ -889,7 +898,7 @@ Both paths run `wrangler deploy` on `main`. Keep exactly one:
 | --- | --- | --- |
 | Trigger | push/PR webhooks from the Cloudflare GitHub App | `workflow_run` after Quality, plus manual |
 | Runs tests first | no | yes (Quality gate) |
-| Preview per PR | yes (`wrangler preview`) | yes (`versions upload --preview-alias`) |
+| Preview per PR | yes (`wrangler preview`) | yes (`wrangler preview --name pr-<n>`) |
 | Secrets live in | Cloudflare dashboard | GitHub |
 | Smoke test | no | yes |
 | Requires Bun/npm parity | dashboard uses npm | Bun 1.4.4, matching Quality |

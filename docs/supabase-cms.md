@@ -6,7 +6,7 @@ The CMS has two adapters behind one interface:
 
 | Mode | When | Storage | Auth |
 | --- | --- | --- | --- |
-| **Supabase** | `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`) are set at build time | `posts` and `comments` tables, `blog-images` bucket | Supabase email/password and magic links; RLS on every table |
+| **Supabase** | `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (or legacy `NEXT_PUBLIC_SUPABASE_ANON_KEY`) are set at build time | `posts`, `comments`, `editors`, and `author_applications` tables, `blog-images` bucket | Supabase email/password and Google; RLS on every table |
 | **Local demo** | Either variable is missing | `data/cms-posts.json`, `data/cms-comments.json` (atomic writes) | No accounts; the studio is open on the server it runs on |
 
 Local demo mode exists so the app builds, runs, and can be reviewed without cloud credentials. It is not a production configuration.
@@ -27,7 +27,8 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 | 3.2 Dashboard layout | `app/dashboard/layout.tsx`, `components/cms/DashboardShell.tsx` | Rebuilt in the publication's design language. Responsive nav instead of a fixed 16rem sidebar, no modal, explicit sign-out states. |
 | 4.1 Editor styles | `components/cms/styles.ts`, `app/globals.css` | No `@apply` overrides for a third-party editor. Tokens come from the design system. |
 | 4.2 Rich editor | `components/cms/MarkdownEditor.tsx` | Markdown toolbar, write/preview tabs, link and image inserters, image upload, character and reading-time feedback. Raw HTML is not rendered. |
-| 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Google, GitHub, ORCID, password, and magic-link sign-in. Every redirect returns to `/auth/callback` (`app/auth/callback/route.ts`), which exchanges the PKCE code server-side and sends the user to `next`. Signed-in accounts without editor access see an explanation instead of the studio. |
+| 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Email and password, or Google. The redirect returns to `/auth/callback` (`app/auth/callback/route.ts`), which exchanges the PKCE code server-side and sends the user to `next`. Signed-in readers are pointed at `/dashboard/access` to apply for publishing access. |
+| 4.4 Apply to write | `app/dashboard/access/page.tsx`, `components/dashboard/AuthorApplication.tsx` | Any signed-in account connects a GitHub or ORCID identity with `auth.linkIdentity` and applies. `apply_as_author()` records the request; an editor approves it from `/dashboard/applications`, which writes the `public.editors` row. |
 | 4.4 New article | `app/dashboard/page.tsx`, `components/cms/PostEditor.tsx` | Shared create/edit form with server-side validation, inline field errors, focus management, unsaved-change warning, cover library, takeaways, and draft/publish states. |
 | 5.1 Manage articles | `app/dashboard/manage/page.tsx`, `lib/cms/use-cms.ts` | Search and status filters, counts, publish/revert, delete, realtime refetch when Supabase is configured. |
 | 5.2 Edit article | `app/dashboard/edit/[id]/page.tsx` | Loads through the API, then reuses `PostEditor`. Status changes are explicit; un-publishing takes a published article off the journal. |
@@ -100,7 +101,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
    - Redirect URLs: `https://<your-origin>/auth/callback` (add `http://localhost:3000/auth/callback` for local development)
    For the configured project, enter `https://bxyjjbclaklzjxeumeat.supabase.co/auth/v1/callback` in each OAuth provider's console. In Supabase, allow the **application** callback URLs instead: `https://researchwith.me/auth/callback`, `https://www.researchwith.me/auth/callback`, and local/preview origins as needed. These are separate settings. Set the Site URL to the production origin and ensure sign-ups are enabled in Supabase Auth if new users should register.
 
-   Provider sign-ins and magic links return to `/auth/callback?next=…`, which exchanges the PKCE code and continues to `next`. Open email links in the same browser and origin that requested them, since the PKCE verifier is stored there. OAuth uses same-tab navigation; open the site directly rather than inside an embedded preview if the provider blocks iframe navigation. New OAuth accounts are readers until explicitly granted editor access. If sign-in fails, check the displayed error, enabled provider credentials and callback URLs, and rebuild after changing the public environment variables.
+   Google sign-ins and identity links return to `/auth/callback?next=…`, which exchanges the PKCE code server-side and continues to `next`. OAuth uses same-tab navigation; open the site directly rather than inside an embedded preview if the provider blocks iframe navigation. New accounts are readers until an editor approves their application. If sign-in fails, check the displayed error, enabled provider credentials and callback URLs, and rebuild after changing the public environment variables.
 7. **Configure the cache webhook (optional).** Database → Webhooks → *Create*:
    - Table: `posts`; events: insert, update, delete
    - URL: `https://<your-origin>/api/revalidate`
@@ -140,7 +141,8 @@ Manual checks for a configured project: sign in, save a draft, edit it, publish 
 - **Writes go through route handlers** (`/api/cms/*`) rather than direct browser CRUD. The handlers validate with the same schema as the editor, enforce origin checks, and apply per-IP rate limits. RLS remains a second line of defence.
 - **Sanitised rendering.** `react-markdown` does not render raw HTML. Link and image URLs are filtered; covers may only come from this project's storage bucket or the bundled editorial images.
 - **Secret handling.** The revalidation secret is compared with `timingSafeEqual` over SHA-256 digests, accepts a header rather than a query string, and is never exposed to the browser.
-- **Session handling.** Middleware refreshes cookies on `/dashboard/**`; the dashboard layout re-checks the user server-side. OAuth and magic-link codes are exchanged on `/auth/callback` rather than on a protected route. The app gate (`requireEditor`) and RLS both fail closed if the allowlist cannot be read.
+- **Session handling.** Middleware refreshes cookies on `/dashboard/**`; the dashboard layout re-checks the user server-side, and `app/dashboard/(studio)/layout.tsx` layers the editor gate on top of the session gate. OAuth codes are exchanged on `/auth/callback` rather than on a protected route. The app gate (`requireEditor`) and RLS both fail closed if the allowlist cannot be read.
+- **Writer applications.** `public.author_applications` has no `INSERT`/`UPDATE`/`DELETE` policies — every write goes through `apply_as_author()` or `review_author_application()`, both `security definer` with an empty `search_path`. Approval inserts the `public.editors` row inside the function, so a reviewer can grant access only to the applicant the database resolved from the application id.
 - **Comments are append-only** for readers and editors. Moderation can delete but not rewrite what a reader said.
 
 ## Local demo mode details
@@ -150,7 +152,7 @@ Manual checks for a configured project: sign in, save a draft, edit it, publish 
 - Deleting an article removes its comments (the same cascade as the foreign key).
 - Ids are numeric strings, millisecond-free, so the public namespace matches Supabase (`cms-1`, `cms-2`, …).
 - The studio and `/api/cms/*` are unauthenticated in this mode. Do not expose a local-mode deployment to the internet.
-- `/api/articles` `POST` (the older `/write` prototype) is disabled whenever Supabase is configured, so the JSON archive cannot diverge from the live database.
+- `/write` publishes through the same `/api/cms/posts` route as the dashboard, so there is one write path and the JSON archive cannot diverge from the live database. The older `POST /api/articles` handler has been removed.
 
 ## Deliberate departures from the attached blueprint
 

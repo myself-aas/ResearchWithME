@@ -1,15 +1,14 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, ArrowRight, CheckCircle2, Mail, Send } from 'lucide-react';
+import { AlertCircle, ArrowRight } from 'lucide-react';
 import type { DashboardUser } from '@/lib/cms/types';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
-import { authCallbackUrl, startOAuthSignIn, type OAuthProviderId } from '@/lib/supabase/oauth';
+import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import {
   fieldClass,
-  hintClass,
   inlineErrorClass,
   labelClass,
   primaryButtonClass,
@@ -26,7 +25,7 @@ interface LoginFormProps {
 function mapAuthError(message: string) {
   const normalised = message.toLowerCase();
   if (normalised.includes('invalid login credentials')) {
-    return 'That email and password do not match. Use the sign-in link if you have not set a password.';
+    return 'That email and password do not match. Check the address, or use Continue with Google.';
   }
   if (normalised.includes('email not confirmed')) {
     return 'Confirm the email address from your invitation, then sign in again.';
@@ -45,73 +44,11 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [pending, setPending] = useState<'password' | 'magic' | 'signout' | OAuthProviderId | null>(null);
+  const [pending, setPending] = useState<'password' | 'google' | 'signout' | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [exchanging, setExchanging] = useState(false);
-
-  // Complete a PKCE magic-link redirect before showing the form again. Links
-  // always return to /login so the code is exchanged here, never on a protected
-  // route that the middleware would bounce before the session exists.
-  useEffect(() => {
-    if (!configured || user) return;
-
-    const params = new URLSearchParams(window.location.search);
-    const authError = params.get('error_description') ?? params.get('error');
-    const hasCode = params.has('code');
-    if (!hasCode && !authError) return;
-
-    let active = true;
-    setExchanging(true);
-
-    (async () => {
-      if (authError) {
-        if (!active) return;
-        setError(authError.replace(/\+/g, ' '));
-        setExchanging(false);
-        return;
-      }
-
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const code = params.get('code');
-        if (code) {
-          const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-          if (exchangeError) {
-            if (!active) return;
-            setError(mapAuthError(exchangeError.message));
-            setExchanging(false);
-            return;
-          }
-        }
-        const { data, error: sessionError } = await supabase.auth.getSession();
-        if (!active) return;
-        if (sessionError) {
-          setError(mapAuthError(sessionError.message));
-          setExchanging(false);
-          return;
-        }
-        if (data.session) {
-          window.location.assign(next);
-          return;
-        }
-        setError('That sign-in link has expired or was already used. Request a new one below.');
-        setExchanging(false);
-      } catch {
-        if (!active) return;
-        setError('The sign-in link could not be completed. Request a new one below.');
-        setExchanging(false);
-      }
-    })();
-
-    return () => {
-      active = false;
-    };
-  }, [configured, user, next]);
 
   function fail(message: string) {
     setError(message);
-    setNotice(null);
     requestAnimationFrame(() => errorRef.current?.focus());
   }
 
@@ -126,7 +63,6 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
     setPending('password');
     setError(null);
-    setNotice(null);
 
     try {
       const supabase = getSupabaseBrowserClient();
@@ -148,14 +84,13 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
     }
   }
 
-  async function signInWithProvider(provider: OAuthProviderId) {
+  async function signInWithGoogle() {
     if (pending) return;
-    setPending(provider);
+    setPending('google');
     setError(null);
-    setNotice(null);
 
     try {
-      const result = await startOAuthSignIn(provider, next);
+      const result = await startOAuthSignIn('google', next);
       // On success the browser is already navigating to the provider.
       if (result?.error) {
         fail(mapAuthError(result.error));
@@ -163,41 +98,6 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
       }
     } catch {
       fail('The sign-in service could not be reached. Check your connection and try again.');
-      setPending(null);
-    }
-  }
-
-  async function sendMagicLink() {
-    if (pending) return;
-    if (!email.trim()) {
-      fail('Add the email address first, then request a sign-in link.');
-      document.getElementById(emailId)?.focus();
-      return;
-    }
-
-    setPending('magic');
-    setError(null);
-    setNotice(null);
-
-    try {
-      const supabase = getSupabaseBrowserClient();
-      const { error: authError } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: {
-          // The code is exchanged by /auth/callback, then the user is sent onward.
-          emailRedirectTo: authCallbackUrl(next),
-        },
-      });
-
-      if (authError) {
-        fail(mapAuthError(authError.message));
-        return;
-      }
-
-      setNotice(`Check ${email.trim()} for a sign-in link. It expires shortly, so use it soon.`);
-    } catch {
-      fail('The sign-in email could not be sent. Try again in a moment.');
-    } finally {
       setPending(null);
     }
   }
@@ -233,8 +133,8 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
             <span>Open the local studio</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
-          <Link href="/write" className={secondaryButtonClass}>
-            Prototype authoring form
+          <Link href="/dashboard/access" className={secondaryButtonClass}>
+            Apply to write
           </Link>
         </div>
 
@@ -282,8 +182,8 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
           ) : null}
         </p>
         <p className="mt-3 max-w-prose text-sm leading-relaxed text-stone-600">
-          Your account can read, save, and cite. Writing and publishing in the studio needs an administrator to add
-          this account to the editor list.
+          Your account can read, save, and cite. Writing and publishing needs an approved writer
+          application, which you can submit from your dashboard.
         </p>
 
         {error && (
@@ -294,7 +194,11 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
         )}
 
         <div className="mt-5 flex flex-wrap gap-2">
-          <Link href="/" className={primaryButtonClass}>
+          <Link href="/dashboard/access" className={primaryButtonClass}>
+            Apply to write
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link href="/" className={secondaryButtonClass}>
             Back to the journal
           </Link>
           <button type="button" onClick={signOutDifferentAccount} disabled={pending !== null} className={secondaryButtonClass}>
@@ -341,26 +245,14 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
     );
   }
 
-  if (exchanging) {
-    return (
-      <section aria-labelledby="exchanging-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
-        <h2 id="exchanging-heading" className="font-serif text-2xl font-bold text-stone-900">
-          Checking your sign-in link
-        </h2>
-        <p role="status" aria-live="polite" className="mt-2 text-base leading-relaxed text-stone-700">
-          One moment while the studio verifies the link.
-        </p>
-      </section>
-    );
-  }
-
   return (
     <section aria-labelledby="signin-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
       <h2 id="signin-heading" className="font-serif text-2xl font-bold text-stone-900">
         Sign in
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-stone-600">
-        Sign in with Google, GitHub, ORCID, or email. Studio access is granted to editor accounts by an administrator.
+        Two ways in: your email and password, or your Google account. Publishing access is granted
+        separately, from your dashboard.
       </p>
 
       {error && (
@@ -372,41 +264,16 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
         </div>
       )}
 
-      {notice && (
-        <p role="status" className="mt-4 flex items-start gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-3 py-2 text-sm text-emerald-950">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <span>{notice}</span>
-        </p>
-      )}
-
       <div role="group" aria-label="Sign in with a provider" className="mt-5 grid gap-2 sm:grid-cols-2">
         <button
           type="button"
-          onClick={() => signInWithProvider('google')}
+          onClick={signInWithGoogle}
           disabled={pending !== null}
           className={cn(secondaryButtonClass, 'w-full')}
         >
           {pending === 'google' ? 'Opening Google…' : 'Continue with Google'}
         </button>
-        <button
-          type="button"
-          onClick={() => signInWithProvider('github')}
-          disabled={pending !== null}
-          className={cn(secondaryButtonClass, 'w-full')}
-        >
-          {pending === 'github' ? 'Opening GitHub…' : 'Continue with GitHub'}
-        </button>
-        <button
-          type="button"
-          onClick={() => signInWithProvider('orcid')}
-          disabled={pending !== null}
-          className={cn(secondaryButtonClass, 'w-full sm:col-span-2')}
-        >
-          {pending === 'orcid' ? 'Opening ORCID…' : 'Continue with ORCID'}
-        </button>
       </div>
-
-      <p className="mt-5 border-t border-stone-200 pt-4 text-sm font-medium text-stone-800">Or use your email</p>
 
       <form onSubmit={signIn} className="mt-3 space-y-4" noValidate>
         <div>
@@ -447,28 +314,13 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
       </form>
 
       <div className="mt-5 border-t border-stone-200 pt-4">
-        <p className={hintClass}>No password, or prefer a one-time link?</p>
-        <button
-          type="button"
-          onClick={sendMagicLink}
-          disabled={pending !== null}
-          className={cn(secondaryButtonClass, 'mt-2 w-full')}
-        >
-          {pending === 'magic' ? (
-            <>
-              <Send className="h-4 w-4" aria-hidden="true" />
-              <span>Sending…</span>
-            </>
-          ) : (
-            <>
-              <Mail className="h-4 w-4" aria-hidden="true" />
-              <span>Email me a sign-in link</span>
-            </>
-          )}
-        </button>
-        <p className="mt-3 text-sm leading-relaxed text-stone-600">
-          Links and provider sign-ins return through <code className="font-mono">/auth/callback</code>, which must be
-          listed under Supabase Auth → URL Configuration → Redirect URLs.
+        <p className="text-sm leading-relaxed text-stone-600">
+          Signing in gives you a reader account: bookmarks, comments, and citations.{' '}
+          <Link href="/dashboard/access" className="font-semibold text-stone-900 underline underline-offset-4">
+            Applying to write
+          </Link>{' '}
+          is a separate step inside your dashboard, where you connect a GitHub or ORCID identity and
+          an editor reviews the application.
         </p>
       </div>
     </section>

@@ -23,6 +23,21 @@ export class CmsValidationError extends CmsError {
   }
 }
 
+/**
+ * 422 rather than 400: the payload is well-formed, but the author it names is
+ * not one a post may be attributed to. The editor UI can surface this inline
+ * against the author field instead of treating it as a malformed request.
+ */
+export class CmsAuthorError extends CmsError {
+  readonly fieldErrors: FieldErrors;
+
+  constructor(message: string, fieldErrors: FieldErrors = {}) {
+    super(message, 422, 'author_not_publishable');
+    this.name = 'CmsAuthorError';
+    this.fieldErrors = fieldErrors;
+  }
+}
+
 export class CmsConflictError extends CmsError {
   constructor(message = 'A post with this URL already exists. Choose a different title or slug.') {
     super(message, 409, 'conflict');

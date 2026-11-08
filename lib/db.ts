@@ -1,7 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { BlogPost, INITIAL_BLOG_POSTS, Author, AUTHORS } from './blog-data';
-import { cleanText, slugify } from './validation';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
 const ARTICLES_FILE = path.join(DATA_DIR, 'articles.json');
@@ -171,21 +170,6 @@ export function getArticlesByAuthor(authorIdOrName: string): BlogPost[] {
       (a.author.orcid && a.author.orcid.toLowerCase() === needle) ||
       (a.author.github && a.author.github.toLowerCase().includes(needle))
   );
-}
-
-export function addArticle(newArticle: BlogPost): BlogPost {
-  const articles = getArticles();
-  const safeSlug = slugify(newArticle.slug || newArticle.title).slice(0, 96) || `review-${Date.now()}`;
-  const savedArticle: BlogPost = {
-    ...newArticle,
-    slug: safeSlug,
-    title: cleanText(newArticle.title, 180) || 'Untitled review',
-    summary: cleanText(newArticle.summary, 1200),
-    subtitle: cleanText(newArticle.subtitle, 400),
-  };
-  const updated = [savedArticle, ...articles.filter((a) => a.id !== savedArticle.id && a.slug !== savedArticle.slug)];
-  saveArticles(updated);
-  return savedArticle;
 }
 
 export function incrementLikes(id: string): number {

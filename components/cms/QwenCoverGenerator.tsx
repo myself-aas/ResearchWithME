@@ -45,9 +45,6 @@ export default function QwenCoverGenerator({
   const [randomizeSeed, setRandomizeSeed] = useState(true);
   const [seed, setSeed] = useState(0);
 
-  // Custom Space connection overrides
-  const [customSpaceName, setCustomSpaceName] = useState('');
-  const [customToken, setCustomToken] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -59,32 +56,22 @@ export default function QwenCoverGenerator({
   const [applied, setApplied] = useState(false);
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
 
-  // Check backend HF Space status on mount
+  // Report whether the deployment has a Space configured. Credentials live in
+  // the Worker environment and are never sent to, or stored in, the browser.
   useEffect(() => {
-    async function checkStatus() {
+    let active = true;
+    (async () => {
       try {
-        const res = await fetch('/api/generate');
-        if (res.ok) {
-          const data = await res.json();
-          setServerStatus(data);
-          if (data.spaceName && !customSpaceName) {
-            setCustomSpaceName(data.spaceName);
-          }
-        }
+        const res = await fetch('/api/generate', { headers: { accept: 'application/json' } });
+        if (res.ok && active) setServerStatus(await res.json());
       } catch {
-        // Silent fallback
+        // Silent fallback: the generator reports its own error on submit.
       }
-    }
-    checkStatus();
-
-    // Check localStorage for saved custom credentials
-    if (typeof window !== 'undefined') {
-      const savedSpace = localStorage.getItem('rwm_hf_space_name');
-      const savedToken = localStorage.getItem('rwm_hf_token');
-      if (savedSpace) setCustomSpaceName(savedSpace);
-      if (savedToken) setCustomToken(savedToken);
-    }
-  }, [customSpaceName]);
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Craft a scholarly visual prompt from the article metadata
   function suggestPrompt() {
@@ -133,8 +120,6 @@ export default function QwenCoverGenerator({
           guidance_scale: guidanceScale,
           seed,
           randomize_seed: randomizeSeed,
-          customSpaceName: customSpaceName.trim() || undefined,
-          customToken: customToken.trim() || undefined,
         }),
       });
 
@@ -166,15 +151,6 @@ export default function QwenCoverGenerator({
     setApplied(true);
   }
 
-  // Save custom Space settings
-  function saveSettings() {
-    if (typeof window !== 'undefined') {
-      if (customSpaceName) localStorage.setItem('rwm_hf_space_name', customSpaceName);
-      if (customToken) localStorage.setItem('rwm_hf_token', customToken);
-    }
-    setShowSettings(false);
-  }
-
   return (
     <div className="rounded-lg border border-stone-200 bg-stone-50 p-5 sm:p-6 space-y-5">
       {/* Header with Title and Connection Status */}
@@ -193,9 +169,9 @@ export default function QwenCoverGenerator({
                 <Check className="h-3 w-3" />
                 <span>HF Secrets Active</span>
               </span>
-            ) : customSpaceName ? (
+            ) : serverStatus ? (
               <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
-                <span>Session Space Active</span>
+                <span>Space Not Configured</span>
               </span>
             ) : null}
           </div>
@@ -217,7 +193,7 @@ export default function QwenCoverGenerator({
         </button>
       </div>
 
-      {/* Hugging Face Space Config Drawer */}
+      {/* Hugging Face Space configuration notice */}
       {showSettings && (
         <div className="rounded-lg border border-amber-200 bg-amber-50/70 p-4 space-y-3">
           <div className="flex items-start justify-between">
@@ -227,54 +203,25 @@ export default function QwenCoverGenerator({
             <span className="text-xs text-stone-500">ZeroGPU Gradio SDK</span>
           </div>
           <p className="text-xs text-amber-950 leading-relaxed">
-            Specify your private Hugging Face Space URL/name where your Qwen 2.1 storage bucket (
-            <code className="bg-amber-100 px-1 py-0.5 rounded text-xs">@me-aas/Qwen-Image-2.1-Uncensored-Quantized-bucket</code>)
-            is hosted.
+            Cover generation runs against the private Hugging Face Space named by the deployment.
+            Credentials are supplied by the server environment only, so no token is ever typed into,
+            sent from, or stored in this browser.
           </p>
-
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="hf-space-input" className="block text-xs font-medium text-stone-800 mb-1">
-                HF Space Name / Path
-              </label>
-              <input
-                id="hf-space-input"
-                type="text"
-                value={customSpaceName}
-                onChange={(e) => setCustomSpaceName(e.target.value)}
-                placeholder="e.g. username/qwen-2-1-avif-space"
-                className="w-full rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-1 focus:ring-amber-800"
-              />
+          <dl className="grid gap-2 text-xs sm:grid-cols-2">
+            <div className="rounded-md border border-amber-200 bg-white px-3 py-2">
+              <dt className="font-medium text-stone-600">Space</dt>
+              <dd className="font-mono text-stone-900">{serverStatus?.spaceName ?? 'Not configured'}</dd>
             </div>
-            <div>
-              <label htmlFor="hf-token-input" className="block text-xs font-medium text-stone-800 mb-1">
-                HF Token (for Private Space)
-              </label>
-              <input
-                id="hf-token-input"
-                type="password"
-                value={customToken}
-                onChange={(e) => setCustomToken(e.target.value)}
-                placeholder="hf_xxxxxxxxxxxxxxxxxxxxx"
-                className="w-full rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs text-stone-900 placeholder:text-stone-500 focus:outline-none focus:ring-1 focus:ring-amber-800"
-              />
+            <div className="rounded-md border border-amber-200 bg-white px-3 py-2">
+              <dt className="font-medium text-stone-600">Token present</dt>
+              <dd className="text-stone-900">{serverStatus?.hasToken ? 'Yes' : 'No'}</dd>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-xs text-stone-600 flex items-center gap-1">
-              <HelpCircle className="h-3 w-3" />
-              Credentials stay secure on the Next.js server proxy route.
-            </span>
-            <button
-              type="button"
-              onClick={saveSettings}
-              className="inline-flex items-center gap-1 rounded bg-amber-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-800 transition-colors"
-            >
-              <Check className="h-3.5 w-3.5" />
-              <span>Save Space Settings</span>
-            </button>
-          </div>
+          </dl>
+          <p className="flex items-center gap-1 text-xs text-stone-600">
+            <HelpCircle className="h-3 w-3" />
+            Set <code className="rounded bg-amber-100 px-1 py-0.5">HF_SPACE_NAME</code> and{' '}
+            <code className="rounded bg-amber-100 px-1 py-0.5">HF_TOKEN</code> as Worker variables, then redeploy.
+          </p>
         </div>
       )}
 

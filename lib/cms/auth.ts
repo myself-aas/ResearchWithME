@@ -18,8 +18,6 @@ function displayName(email: string | undefined, metadata: Record<string, unknown
   return email?.split('@')[0]?.slice(0, 80) || 'Editor';
 }
 
-import { cookies } from 'next/headers';
-
 /**
  * Returns the signed-in Supabase user, or null when absent or in local mode.
  * `isEditor` fails closed: if the allowlist cannot be read (for example the
@@ -27,23 +25,8 @@ import { cookies } from 'next/headers';
  */
 export async function getDashboardUser(): Promise<DashboardUser | null> {
   if (!isSupabaseConfigured) {
-    try {
-      const cookieStore = await cookies();
-      const raw = cookieStore.get('rwm_session')?.value;
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed?.name) {
-          return {
-            id: parsed.id || 'local-editor',
-            email: parsed.email || 'editor@researchwith.me',
-            name: parsed.name,
-            isEditor: true,
-          };
-        }
-      }
-    } catch {
-      // Local cookie unparseable, proceed as null
-    }
+    // Demo mode has no identity provider. Access is granted by requireEditor()'s
+    // local branch, not by a cookie, so nothing here can be forged.
     return null;
   }
 

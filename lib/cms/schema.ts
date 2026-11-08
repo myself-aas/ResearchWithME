@@ -1,8 +1,8 @@
-import { AUTHORS, CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
+import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
 import { formatReadingTime, readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured, SUPABASE_URL } from '@/lib/supabase/config';
 import { cleanText, parseTags, safeExternalUrl, slugify } from '@/lib/validation';
-import type { CmsCommentInput, CmsPostInput, CmsStatus, FieldErrors } from './types';
+import type { CmsArtifact, CmsArtifactType, CmsCommentInput, CmsPostInput, CmsStatus, FieldErrors } from './types';
 
 export const CMS_LIMITS = {
   title: 180,
@@ -15,7 +15,12 @@ export const CMS_LIMITS = {
   comment: 4_000,
   commentAuthor: 120,
   commentRole: 80,
+  artifactTitle: 200,
+  artifactIdentifier: 160,
+  artifactMeta: 160,
 } as const;
+
+const ARTIFACT_TYPES: CmsArtifactType[] = ['paper', 'github', 'dataset'];
 
 export const ARTICLE_FORMATS: ArticleFormat[] = [
   'Paper Review',
@@ -25,7 +30,6 @@ export const ARTICLE_FORMATS: ArticleFormat[] = [
   'Case Study',
 ];
 
-const DEFAULT_AUTHOR_ID = 'marcus-vance';
 
 export function isCmsStatus(value: unknown): value is CmsStatus {
   return value === 'draft' || value === 'published';
@@ -76,6 +80,30 @@ function normalizeTakeaways(value: unknown): string[] {
     .slice(0, CMS_LIMITS.takeaways);
 }
 
+/**
+ * Normalises the reviewed-artifact block. Absent or empty means "no artifact";
+ * a block that names nothing is dropped rather than rejected, so an article is
+ * never blocked by a half-filled citation the reader could not render anyway.
+ */
+function normalizeArtifact(value: unknown): CmsArtifact | null {
+  const raw = asRecord(value);
+  if (Object.keys(raw).length === 0) return null;
+
+  const type = ARTIFACT_TYPES.includes(raw.type as CmsArtifactType) ? (raw.type as CmsArtifactType) : 'paper';
+  const identifier = cleanText(raw.identifier, CMS_LIMITS.artifactIdentifier);
+  const title = cleanText(raw.title, CMS_LIMITS.artifactTitle);
+  if (!identifier && !title) return null;
+
+  const url = safeExternalUrl(cleanText(raw.url, 2048)) ?? '';
+  return {
+    type,
+    title: title || identifier,
+    url,
+    identifier: identifier || title,
+    meta: cleanText(raw.meta, CMS_LIMITS.artifactMeta),
+  };
+}
+
 export type PostNormalizationResult =
   | { ok: true; value: CmsPostInput }
   | { ok: false; message: string; fieldErrors: FieldErrors };
@@ -113,11 +141,22 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
     fieldErrors.slug = 'The title needs at least one letter or number to build a URL.';
   }
 
-  const authorId = cleanText(raw.authorId, 80) || DEFAULT_AUTHOR_ID;
-  const author = AUTHORS[authorId];
-  if (!author) {
-    fieldErrors.authorId = 'Choose one of the verified author profiles.';
+  // The byline is stored on the post rather than joined from a fixed roster, so
+  // an author can be renamed or their profile unpublished without orphaning
+  // articles they already published.
+  //
+  // Only presence is checked here. That authorId names a real, published
+  // profile is a database question, resolved by resolvePublishableAuthor in the
+  // post routes; this stays a pure function so the tests and the local store
+  // can share it.
+  const authorId = cleanText(raw.authorId, 80);
+  if (!authorId) {
+    fieldErrors.authorId = 'Choose the profile this article is published under.';
   }
+  // Kept only as a fallback for the local store. When Supabase is configured the
+  // route overwrites it with display_name from public.profiles, so a client can
+  // never dictate the byline text that gets stored.
+  const authorName = cleanText(raw.authorName, 80);
 
   const category = CATEGORIES.includes(raw.category as BlogCategory)
     ? (raw.category as BlogCategory)
@@ -152,7 +191,6 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
     };
   }
 
-  const resolvedAuthor = author ?? AUTHORS[DEFAULT_AUTHOR_ID];
   const readTime = formatReadingTime(readingTimeFromText(content));
 
   return {
@@ -166,13 +204,14 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
       summary,
       category,
       format,
-      authorId: resolvedAuthor.id,
-      authorName: resolvedAuthor.name,
+      authorId,
+      authorName,
       coverImage: coverValue,
       tags: parseTags(raw.tags),
       keyTakeaways,
       readTime,
       featured: raw.featured === true,
+      artifact: normalizeArtifact(raw.artifact),
     },
   };
 }

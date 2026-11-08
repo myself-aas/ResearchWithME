@@ -104,10 +104,10 @@ export default function EditorialBoardPage() {
             </div>
             <div className="flex shrink-0 flex-wrap gap-3">
               <Link
-                href="/verify"
+                href="/dashboard/access"
                 className="inline-flex min-h-11 items-center rounded-md border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
               >
-                Verification prototype
+                Apply to write
               </Link>
               <Link
                 href="/submit"

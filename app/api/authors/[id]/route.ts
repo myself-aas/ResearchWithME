@@ -1,43 +1,34 @@
 import { NextResponse } from 'next/server';
 
-import { getAuthorById, getArticlesByAuthor } from '@/lib/db';
+import { getAuthorArchive } from '@/lib/author-directory';
 
-export async function GET(
-  request: Request,
-  props: { params: Promise<{ id: string }> }
-) {
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+/**
+ * One published profile plus the published articles attributed to it.
+ *
+ * Shares its query with the author page. It used to read the fabricated roster
+ * in lib/blog-data.ts, which has been deleted, so without this it returned 404
+ * for every author.
+ */
+export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await props.params;
     if (!id) {
       return NextResponse.json({ error: 'Author ID is required' }, { status: 400 });
     }
 
-    const author = getAuthorById(id);
-    if (!author) {
+    const archive = await getAuthorArchive(id);
+    if (!archive) {
       return NextResponse.json({ error: 'Author not found' }, { status: 404 });
     }
 
-    const articles = getArticlesByAuthor(id);
-
-    return NextResponse.json(
-      {
-      author,
-      articles,
-      metrics: {
-        totalArticles: articles.length,
-        totalLikes: articles.reduce((acc, curr) => acc + (curr.likes || 0), 0),
-        totalComments: articles.reduce((acc, curr) => acc + (curr.commentsCount || 0), 0),
-        domains: Array.from(new Set(articles.map((a) => a.category))),
-        reviewedArtifactsCount: articles.filter((a) => a.reviewedArtifact).length,
-        },
-      },
-      { headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=600' } },
-    );
+    return NextResponse.json(archive, {
+      headers: { 'Cache-Control': 'public, max-age=60, stale-while-revalidate=600' },
+    });
   } catch (err) {
     console.error('Failed to fetch author profile:', err);
-    return NextResponse.json(
-      { error: 'Internal server error fetching author' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error fetching author' }, { status: 500 });
   }
 }

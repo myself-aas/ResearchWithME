@@ -8,7 +8,7 @@ import FeaturedArticle from '@/components/FeaturedArticle';
 import ArticleFeed from '@/components/ArticleFeed';
 import AuthorSpotlight from '@/components/AuthorSpotlight';
 import BlogFooter from '@/components/BlogFooter';
-import { BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
+import { Author, BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { readStringArray, writeLocal } from '@/lib/storage';
 
 const SAVED_KEY = 'rwm_saved_posts';
@@ -17,9 +17,15 @@ const LIKED_KEY = 'rwm_liked_posts';
 interface HomeFeedProps {
   initialCategory?: string;
   initialSearch?: string;
+  /** Published contributor profiles, read server-side by app/page.tsx. */
+  authors?: Author[];
 }
 
-export default function HomeFeed({ initialCategory = 'All', initialSearch = '' }: HomeFeedProps) {
+export default function HomeFeed({
+  initialCategory = 'All',
+  initialSearch = '',
+  authors = [],
+}: HomeFeedProps) {
   const router = useRouter();
   const [posts, setPosts] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
@@ -177,7 +183,7 @@ export default function HomeFeed({ initialCategory = 'All', initialSearch = '' }
           />
         </div>
 
-        <AuthorSpotlight />
+        <AuthorSpotlight authors={authors} />
       </main>
 
       <BlogFooter />

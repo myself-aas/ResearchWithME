@@ -3,16 +3,30 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ExternalLink, FileText, LogOut, MessageSquare, PenSquare } from 'lucide-react';
+import { ExternalLink, FileText, LogOut, MessageSquare, PenSquare, ShieldCheck, UserCheck } from 'lucide-react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import type { DashboardUser } from '@/lib/cms/types';
 import { subtleButtonClass } from './styles';
 
-const navItems = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: typeof PenSquare;
+  exact: boolean;
+}
+
+/** Every signed-in account gets the application page. */
+const accountNav: NavItem[] = [
+  { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck, exact: false },
+];
+
+/** Approved writers get the publishing surfaces and the review queue. */
+const studioNav: NavItem[] = [
   { href: '/dashboard', label: 'New article', icon: PenSquare, exact: true },
   { href: '/dashboard/manage', label: 'Articles', icon: FileText, exact: false },
   { href: '/dashboard/comments', label: 'Comments', icon: MessageSquare, exact: false },
+  { href: '/dashboard/applications', label: 'Applications', icon: UserCheck, exact: false },
 ];
 
 interface DashboardShellProps {
@@ -111,7 +125,7 @@ export default function DashboardShell({ children, configured, user }: Dashboard
             className="-mx-4 border-b border-stone-200 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:border-b-0 lg:border-r lg:px-0 lg:pr-6"
           >
             <ul className="flex flex-wrap gap-1 py-3 lg:sticky lg:top-6 lg:flex-col lg:gap-1 lg:py-8">
-              {navItems.map((item) => {
+              {(user?.isEditor ? studioNav : accountNav).map((item) => {
                 const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
                 const Icon = item.icon;
                 return (

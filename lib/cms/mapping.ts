@@ -12,14 +12,14 @@ import { toPublicPostId } from './schema';
 function fallbackAuthor(post: CmsPost): Author {
   const joinedYear = post.insertedAt ? new Date(post.insertedAt).getUTCFullYear() : new Date().getUTCFullYear();
   return {
-    id: slugify(post.authorName) || 'editorial',
+    // The stored authorId is the public.profiles slug -- the post routes
+    // validate it there -- so it is the canonical identity. Deriving an id from
+    // the display name instead would only match a profile by coincidence.
+    id: post.authorId || slugify(post.authorName) || 'editorial',
     name: post.authorName || 'ResearchWithMe editors',
     avatar: safeInitials(post.authorName, 'RW'),
     role: 'Contributing editor',
     domain: post.category,
-    verifiedVia: 'institution',
-    verifiedIdentifier: 'Editorial account',
-    verifiedTitle: 'ResearchWithMe editorial account',
     joinedDate: String(joinedYear),
     articleCount: 1,
     bio: `${post.authorName || 'The editorial team'} writes for ResearchWithMe.`,
@@ -55,11 +55,18 @@ export function cmsPostToArticle(post: CmsPost): BlogPost {
     tags: post.tags,
     likes: post.likes,
     commentsCount: 0,
+    // A CMS article renders the same artifact record as a bundled one, so the
+    // reader and the research assistant treat both alike.
+    reviewedArtifact: post.artifact
+      ? {
+          type: post.artifact.type,
+          title: post.artifact.title,
+          url: post.artifact.url,
+          identifier: post.artifact.identifier,
+          meta: post.artifact.meta || 'Artifact record supplied by the author',
+        }
+      : undefined,
   };
-}
-
-export function cmsPostAuthorIsVerified(post: CmsPost) {
-  return Boolean(post.authorId && AUTHORS[post.authorId]);
 }
 
 export function cmsCommentToRecord(comment: CmsComment) {

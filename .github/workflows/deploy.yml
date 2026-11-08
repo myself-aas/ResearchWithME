@@ -1,0 +1,279 @@
+name: Deploy
+
+# Two jobs, two audiences:
+#   preview  - a version of the Worker for every pull request, at its own URL,
+#              without touching production traffic
+#   deploy   - production, only after Quality passes on main (or on demand)
+#
+# This replaces Cloudflare's own "Workers Builds" check, which failed within a
+# second on every commit (including main) and kept its log behind the
+# dashboard. Turn Workers Builds off once this workflow is live
+# (Workers & Pages -> researchwithme -> Settings -> Builds), otherwise every
+# push to main deploys twice.
+
+on:
+  workflow_run:
+    workflows: ['Quality']
+    types: [completed]
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  preview:
+    name: Preview (PR)
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: preview-pr-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    env:
+      # Canonical links and OG images keep the production origin: a preview
+      # hostname in metadata would be wrong the moment the version is replaced.
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me' }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      HF_SPACE_NAME: ${{ secrets.HF_SPACE_NAME }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Check the build environment
+        run: npm run deploy-guard
+
+      - name: Build the Worker
+        run: npm run build:worker
+
+      # A Preview deployment, not a production one: the Worker keeps serving its
+      # live version while this one gets a URL of its own. Skipped until the
+      # Cloudflare token exists, so an unconfigured repository does not paint
+      # every PR red; the build above still runs and still tells you the branch
+      # compiles.
+      - name: Create a preview deployment
+        id: upload
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: |
+          set -euo pipefail
+          name="pr-${{ github.event.pull_request.number }}"
+          npx wrangler preview --name "$name" --json > /tmp/preview.json 2> /tmp/preview.err || {
+            cat /tmp/preview.err >&2
+            exit 1
+          }
+          # The --json shape varies by Wrangler version and a Preview host is not
+          # necessarily *.workers.dev, so walk the payload for any URL instead of
+          # matching one field name or one hostname. Both streams are searched
+          # because Wrangler writes progress to stderr.
+          url=$(node -e '
+            const fs = require("fs");
+            const raw = fs.readFileSync("/tmp/preview.json", "utf8");
+            const err = fs.readFileSync("/tmp/preview.err", "utf8");
+            const isUrl = (v) => typeof v === "string" && /^https?:\/\//.test(v);
+            const start = raw.indexOf("{");
+            let parsed = null;
+            if (start >= 0) { try { parsed = JSON.parse(raw.slice(start)); } catch (e) {} }
+
+            // Read the deployment URL from its own field. Scanning the payload for
+            // any URL is unsafe: the output embeds the worker config, whose vars
+            // include NEXT_PUBLIC_SITE_URL and the Supabase origin.
+            const explicit = [];
+            if (parsed) {
+              for (const holder of [parsed.deployment, parsed.preview, parsed]) {
+                if (!holder || typeof holder !== "object") continue;
+                if (isUrl(holder.url)) explicit.push(holder.url);
+                for (const list of [holder.urls, holder.previews]) {
+                  if (Array.isArray(list)) list.filter(isUrl).forEach((u) => explicit.push(u));
+                }
+              }
+            }
+
+            // Only as a last resort, and never a URL this job itself injected.
+            const injected = new Set(
+              Object.values(process.env).filter(isUrl)
+            );
+            const scanned = [];
+            const walk = (v) => {
+              if (typeof v === "string") { if (isUrl(v)) scanned.push(v); return; }
+              if (Array.isArray(v)) { v.forEach(walk); return; }
+              if (v && typeof v === "object") Object.values(v).forEach(walk);
+            };
+            if (parsed) walk(parsed);
+            for (const m of (raw + "\n" + err).matchAll(/https:\/\/[^\s"]+/g)) scanned.push(m[0]);
+            const usable = scanned.filter(
+              (u) => !injected.has(u) && !/github\.com|githubusercontent\.com/.test(u)
+            );
+
+            const pick = explicit[0]
+              || usable.find((u) => u.includes("workers.dev"))
+              || usable[0]
+              || "";
+            // Runner logs are not reachable from every environment, so record how
+            // the URL was resolved. Values are masked by Actions when they are
+            // secrets, which is why this reports a source rather than the URL.
+            // Report the payload shape by PATH, not by value, so the annotation
+            // is useful even when Actions masks the values as secrets.
+            const shape = [];
+            const urlPaths = [];
+            const walkPaths = (v, path) => {
+              if (typeof v === "string") { if (isUrl(v)) urlPaths.push(path); return; }
+              if (Array.isArray(v)) {
+                shape.push(path + "[]");
+                v.forEach((x, i) => walkPaths(x, path + "[" + i + "]"));
+                return;
+              }
+              if (v && typeof v === "object") {
+                for (const [k2, v2] of Object.entries(v)) walkPaths(v2, path ? path + "." + k2 : k2);
+                return;
+              }
+              shape.push(path + ":" + typeof v);
+            };
+            if (parsed) walkPaths(parsed, "");
+            const note = "source=" + (explicit[0] ? "field" : usable[0] ? "scan" : "none")
+              + " urlPaths=" + JSON.stringify(urlPaths);
+            process.stderr.write("::notice title=preview url resolution::" + note + "\n");
+
+            // A Worker that serves through custom routes has no *.workers.dev
+            // subdomain, so a Preview deployment is created with no public URL.
+            // Report the deployment number rather than inventing a link.
+            const number = parsed && parsed.deployment && parsed.deployment.number;
+            const out = process.env.GITHUB_OUTPUT;
+            if (out) {
+              fs.appendFileSync(out, "url=" + pick + "\n");
+              fs.appendFileSync(out, "number=" + (number === undefined || number === null ? "" : number) + "\n");
+            }
+            process.stdout.write(pick);
+          ')
+          if [ -z "$url" ]; then
+            echo "::warning title=Preview URL not found::wrangler preview exited 0 but no URL was recognised, so no link will be posted. Raw output follows."
+            echo "--- stdout ---"; cat /tmp/preview.json
+            echo "--- stderr ---"; cat /tmp/preview.err
+          fi
+
+      - name: Note that the preview upload was skipped
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: echo "::notice title=Preview upload skipped::CLOUDFLARE_API_TOKEN is not set. Add it under Settings → Secrets and variables → Actions to get a preview URL on pull requests. The Worker built fine."
+
+      - name: Comment the preview link on the pull request
+        if: >-
+          env.CLOUDFLARE_API_TOKEN != '' &&
+          (steps.upload.outputs.url != '' || steps.upload.outputs.number != '')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          PREVIEW_URL: ${{ steps.upload.outputs.url }}
+          PREVIEW_NUMBER: ${{ steps.upload.outputs.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if [ -n "$PREVIEW_URL" ]; then
+            body=$(printf '<!-- preview-deploy -->\n**Preview:** %s\n\nBuilt from `%s`. Not production: it is replaced on the next push and does not move the domain.\n' "$PREVIEW_URL" "${HEAD_SHA:0:7}")
+          else
+            # The Worker serves through custom routes and has no workers.dev
+            # subdomain, so Cloudflare creates the Preview without a public URL.
+            body=$(printf '<!-- preview-deploy -->\n**Preview deployment #%s created.** No public URL: this Worker serves through custom routes, so Cloudflare has no `*.workers.dev` subdomain to hang a Preview on.\n\nBuilt from `%s`. View it in the [Cloudflare dashboard](https://dash.cloudflare.com/74d241df16b8aaa80914e3dbb6e16758/workers/services/view/researchwithme/production/previews/pr-%s). To get a URL, enable the workers.dev subdomain on the Worker.\n' "$PREVIEW_NUMBER" "${HEAD_SHA:0:7}" "$PR")
+          fi
+          id=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+                 --jq '.[] | select(.body | contains("<!-- preview-deploy -->")) | .id' | head -1)
+          if [ -n "$id" ]; then
+            gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" > /dev/null
+          else
+            # Create: POST /repos/{owner}/{repo}/issues/{number}/comments
+            gh api "repos/$REPO/issues/$PR/comments" -f body="$body" > /dev/null
+          fi
+
+  deploy:
+    name: Deploy (production)
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    environment:
+      name: production
+      url: https://researchwith.me
+    env:
+      # NEXT_PUBLIC_* values are compiled into the Worker at build time, so they
+      # belong to the build, not to the Worker's runtime secrets.
+      NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me' }}
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      HF_SPACE_NAME: ${{ secrets.HF_SPACE_NAME }}
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # workflow_run runs in the context of the default branch, so the commit
+          # that passed Quality has to be named explicitly.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 1
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.4
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      # Refuses to build when the CMS values are missing or the site URL still
+      # points at localhost: that Worker would serve the studio unauthenticated.
+      - name: Check the build environment
+        run: npm run deploy-guard
+
+      - name: Build the Worker
+        run: npm run build:worker
+
+      - name: Check the deploy credentials
+        run: |
+          set -euo pipefail
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "::error::CLOUDFLARE_API_TOKEN is not set. Add it under Settings → Secrets and variables → Actions (Workers Scripts: Edit, Workers KV Storage: Edit)."
+            exit 1
+          fi
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "::error::CLOUDFLARE_ACCOUNT_ID is not set. It is the account_id in wrangler.jsonc."
+            exit 1
+          fi
+
+      - name: Deploy
+        run: npx wrangler deploy
+
+      - name: Smoke test
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            home=$(curl -s -o /dev/null -w '%{http_code}' https://researchwith.me/)
+            sitemap=$(curl -s -o /dev/null -w '%{http_code}' https://researchwith.me/sitemap.xml)
+            echo "attempt $attempt: home $home, sitemap $sitemap"
+            if [ "$home" = "200" ] && [ "$sitemap" = "200" ]; then
+              exit 0
+            fi
+            sleep 6
+          done
+          echo "The deployment did not answer 200 for the homepage and the sitemap." >&2
+          exit 1

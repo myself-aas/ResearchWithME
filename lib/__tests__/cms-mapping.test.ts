@@ -23,7 +23,45 @@ const post: CmsPost = {
   publishedAt: '2026-10-20T10:00:00.000Z',
   insertedAt: '2026-10-19T09:00:00.000Z',
   updatedAt: '2026-10-20T10:00:00.000Z',
+  artifact: null,
 };
+
+const postWithArtifact: CmsPost = {
+  ...post,
+  id: '8',
+  slug: 'inside-paged-attention-artifact',
+  artifact: {
+    type: 'github',
+    title: 'vllm-project/vllm',
+    url: 'https://github.com/vllm-project/vllm',
+    identifier: 'vllm-project/vllm',
+    meta: '44.8k Stars · Apache-2.0',
+  },
+};
+
+describe('cmsPostToArticle artifact mapping', () => {
+  it('omits the artifact record when the post has none', () => {
+    expect(cmsPostToArticle(post).reviewedArtifact).toBeUndefined();
+  });
+
+  it('exposes a stored artifact as the reader artifact record', () => {
+    expect(cmsPostToArticle(postWithArtifact).reviewedArtifact).toEqual({
+      type: 'github',
+      title: 'vllm-project/vllm',
+      url: 'https://github.com/vllm-project/vllm',
+      identifier: 'vllm-project/vllm',
+      meta: '44.8k Stars · Apache-2.0',
+    });
+  });
+
+  it('supplies meta copy when the stored record has none', () => {
+    const mapped = cmsPostToArticle({
+      ...postWithArtifact,
+      artifact: { ...postWithArtifact.artifact!, meta: '' },
+    });
+    expect(mapped.reviewedArtifact?.meta).toBe('Artifact record supplied by the author');
+  });
+});
 
 describe('cmsPostToArticle', () => {
   it('maps a CMS row into the reader model', () => {
@@ -39,6 +77,15 @@ describe('cmsPostToArticle', () => {
       'First paragraph about memory.',
       'Second paragraph about throughput.',
     ]);
+  });
+
+  it('keeps the profile slug as the author id rather than deriving one from the name', () => {
+    // The routes validate authorId against public.profiles, so it is the
+    // canonical identity. Deriving it from display_name would only line up with
+    // a profile slug by coincidence.
+    const article = cmsPostToArticle({ ...post, authorId: 'dr-lin', authorName: 'Dr. Maya Lin' });
+    expect(article.author.id).toBe('dr-lin');
+    expect(article.author.name).toBe('Dr. Maya Lin');
   });
 
   it('supplies the default editorial cover when none is set', () => {

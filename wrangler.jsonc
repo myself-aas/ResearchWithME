@@ -11,12 +11,24 @@
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
-	// Cloudflare custom domains on this Worker: `wrangler deploy` creates the
-	// proxied AAAA record (100::) and the edge certificate for each host itself,
-	// and `www` serves the same Worker rather than redirecting. A hostname can
-	// only belong to one thing, so if `researchwith.me` is still attached to the
-	// old Pages project the deploy stops with a domain conflict until that
-	// project releases it. Canonical links use NEXT_PUBLIC_SITE_URL, the apex.
+	// Cloudflare custom domains on this Worker. `wrangler deploy` provisions the
+	// DNS records and the edge certificate for each host itself, and `www` serves
+	// the same Worker rather than redirecting.
+	//
+	// A hostname can only belong to one thing. If `researchwith.me` is still
+	// attached to the old Pages project the deploy fails on a domain conflict
+	// until that project releases it, so check DNS -> Records for a `*.pages.dev`
+	// target before the first production deploy.
+	//
+	// Nothing about the attachment can be inferred from an external DNS lookup,
+	// and it is worth saying why, because it looks like it should be possible.
+	// These records are proxied, so a resolver returns Cloudflare anycast and
+	// never the record's own content -- the `100::` placeholder a Worker origin
+	// uses is visible only in the dashboard. A lookup cannot distinguish a custom
+	// domain from a route, an attached hostname from an unattached one, or a
+	// Worker from a Pages project. Read Settings -> Domains & Routes instead.
+	//
+	// Canonical links use NEXT_PUBLIC_SITE_URL, the apex.
 	"routes": [
 		{ "pattern": "researchwith.me", "custom_domain": true },
 		{ "pattern": "www.researchwith.me", "custom_domain": true }
@@ -32,9 +44,16 @@
 	// Free-plan setup: no R2 or Images bindings, so next/image serves originals.
 	// One KV namespace (researchwithme-opennext-cache) backs both OpenNext
 	// caches; their key prefixes don't overlap (see open-next.config.ts).
+	// RATE_LIMIT_KV points at the same namespace with its own `rl:` prefix
+	// (lib/rate-limit.ts). Sharing it means rate-limiter writes draw on the same
+	// free 1,000-writes-a-day budget as the page cache; to separate them, run
+	// `npx wrangler kv namespace create researchwithme-rate-limit` and use that id
+	// for RATE_LIMIT_KV only. Without any RATE_LIMIT_KV binding the limiter
+	// silently falls back to a per-isolate in-memory count.
 	"kv_namespaces": [
 		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
+		{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 	],
 	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
 	// pull request. A preview is a branch of the Worker, not the production
@@ -58,7 +77,8 @@
 	"previews": {
 		"kv_namespaces": [
 			{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
+			{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 		]
 	},
 	"observability": {
