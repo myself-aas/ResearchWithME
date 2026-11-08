@@ -7,13 +7,10 @@ import {
   Mail,
   BookOpen,
   GraduationCap,
-  ShieldCheck,
   CheckCircle2,
   X,
   RefreshCw,
-  ExternalLink,
   ArrowRight,
-  Sparkles,
   Lock,
 } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
@@ -36,6 +33,7 @@ export default function OAuthModal({
   onClose,
   onSuccess,
 }: OAuthModalProps) {
+  const fieldId = useId();
   const router = useRouter();
   const { verifyWithGithub, loginWithGmail, verifyWithOrcid, verifyWithInstitution } = useAuth();
 
@@ -282,14 +280,14 @@ export default function OAuthModal({
                 {provider === 'github' && (
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-ghHandle`} className="block text-xs font-medium text-stone-700 mb-1">
                         GitHub Username
                       </label>
                       <div className="relative">
                         <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 font-mono text-xs text-stone-400">
                           @
                         </span>
-                        <input
+                        <input id={`${fieldId}-ghHandle`}
                           type="text"
                           value={ghHandle}
                           onChange={(e) => setGhHandle(e.target.value)}
@@ -298,10 +296,10 @@ export default function OAuthModal({
                       </div>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-ghName`} className="block text-xs font-medium text-stone-700 mb-1">
                         Display Name
                       </label>
-                      <input
+                      <input id={`${fieldId}-ghName`}
                         type="text"
                         value={ghName}
                         onChange={(e) => setGhName(e.target.value)}
@@ -314,10 +312,10 @@ export default function OAuthModal({
                 {provider === 'google' && (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-googleEmail`} className="block text-xs font-medium text-stone-700 mb-1">
                         Google Account Email
                       </label>
-                      <input
+                      <input id={`${fieldId}-googleEmail`}
                         type="email"
                         value={googleEmail}
                         onChange={(e) => setGoogleEmail(e.target.value)}
@@ -325,10 +323,10 @@ export default function OAuthModal({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-googleName`} className="block text-xs font-medium text-stone-700 mb-1">
                         Full Name
                       </label>
-                      <input
+                      <input id={`${fieldId}-googleName`}
                         type="text"
                         value={googleName}
                         onChange={(e) => setGoogleName(e.target.value)}
@@ -347,10 +345,10 @@ export default function OAuthModal({
                 {provider === 'orcid' && (
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-orcidId`} className="block text-xs font-medium text-stone-700 mb-1">
                         16-digit ORCID iD
                       </label>
-                      <input
+                      <input id={`${fieldId}-orcidId`}
                         type="text"
                         value={orcidId}
                         onChange={(e) => setOrcidId(e.target.value)}
@@ -359,10 +357,10 @@ export default function OAuthModal({
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-orcidName`} className="block text-xs font-medium text-stone-700 mb-1">
                         Researcher Name
                       </label>
-                      <input
+                      <input id={`${fieldId}-orcidName`}
                         type="text"
                         value={orcidName}
                         onChange={(e) => setOrcidName(e.target.value)}
@@ -375,10 +373,10 @@ export default function OAuthModal({
                 {provider === 'academic' && (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                      <label htmlFor={`${fieldId}-academicEmail`} className="block text-xs font-medium text-stone-700 mb-1">
                         Institutional Email (.edu / .edu.bd)
                       </label>
-                      <input
+                      <input id={`${fieldId}-academicEmail`}
                         type="email"
                         value={academicEmail}
                         onChange={(e) => setAcademicEmail(e.target.value)}
@@ -387,10 +385,10 @@ export default function OAuthModal({
                     </div>
                     <div className="grid gap-3 sm:grid-cols-2">
                       <div>
-                        <label className="block text-xs font-medium text-stone-700 mb-1">
+                        <label htmlFor={`${fieldId}-academicName`} className="block text-xs font-medium text-stone-700 mb-1">
                           Researcher Name
                         </label>
-                        <input
+                        <input id={`${fieldId}-academicName`}
                           type="text"
                           value={academicName}
                           onChange={(e) => setAcademicName(e.target.value)}
@@ -398,10 +396,10 @@ export default function OAuthModal({
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-stone-700 mb-1">
+                        <label htmlFor={`${fieldId}-academicInstitution`} className="block text-xs font-medium text-stone-700 mb-1">
                           University / Institution
                         </label>
-                        <input
+                        <input id={`${fieldId}-academicInstitution`}
                           type="text"
                           value={academicInstitution}
                           onChange={(e) => setAcademicInstitution(e.target.value)}
