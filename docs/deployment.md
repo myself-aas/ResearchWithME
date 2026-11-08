@@ -40,7 +40,7 @@ This document is the long form. The short form is the *Deploy (Cloudflare Worker
 | Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview` | check run `Workers Builds: researchwithme` passes |
 | GitHub Actions `Quality` | On `main` | `.github/workflows/quality.yml` |
 | GitHub Actions `Deploy` | **On `main`** | `.github/workflows/deploy.yml`; previews per pull request, production after Quality passes. Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as Actions secrets |
-| Supabase | Project linked; seven migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
+| Supabase | Project linked; eight migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
 | Revalidate webhook endpoint | Exists at `/api/revalidate`, optional workspace webhook to configure | `app/api/revalidate/route.ts` |
 
 Two facts worth knowing before you change anything:
@@ -340,6 +340,7 @@ order. Four migrations exist:
 | `20261108000100_consolidate_editor_allowlist.sql` | folds `editor_memberships` into `public.editors` |
 | `20261108000200_post_artifacts.sql` | artifact columns on `posts` for the reproducible-metadata fields |
 | `20261108000300_author_applications.sql` | `public.author_applications` + `apply_as_author()` / `review_author_application()` |
+| `20261108000400_author_profiles.sql` | `public.profiles` — the author directory, replacing the hardcoded `AUTHORS` record |
 
 The GitHub Supabase integration also runs a *Supabase Preview* check on pull requests. It fails with
 `Remote migration versions not found in local migrations directory` when the remote history contains
