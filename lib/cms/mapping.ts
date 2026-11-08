@@ -12,7 +12,10 @@ import { toPublicPostId } from './schema';
 function fallbackAuthor(post: CmsPost): Author {
   const joinedYear = post.insertedAt ? new Date(post.insertedAt).getUTCFullYear() : new Date().getUTCFullYear();
   return {
-    id: slugify(post.authorName) || 'editorial',
+    // The stored authorId is the public.profiles slug -- the post routes
+    // validate it there -- so it is the canonical identity. Deriving an id from
+    // the display name instead would only match a profile by coincidence.
+    id: post.authorId || slugify(post.authorName) || 'editorial',
     name: post.authorName || 'ResearchWithMe editors',
     avatar: safeInitials(post.authorName, 'RW'),
     role: 'Contributing editor',

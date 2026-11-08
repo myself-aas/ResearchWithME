@@ -79,6 +79,15 @@ describe('cmsPostToArticle', () => {
     ]);
   });
 
+  it('keeps the profile slug as the author id rather than deriving one from the name', () => {
+    // The routes validate authorId against public.profiles, so it is the
+    // canonical identity. Deriving it from display_name would only line up with
+    // a profile slug by coincidence.
+    const article = cmsPostToArticle({ ...post, authorId: 'dr-lin', authorName: 'Dr. Maya Lin' });
+    expect(article.author.id).toBe('dr-lin');
+    expect(article.author.name).toBe('Dr. Maya Lin');
+  });
+
   it('supplies the default editorial cover when none is set', () => {
     expect(cmsPostToArticle(post).coverImage).toBe('/images/folio-hero.jpeg');
   });
