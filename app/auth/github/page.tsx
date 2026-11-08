@@ -15,10 +15,8 @@ import {
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { useAuth } from '@/lib/auth-context';
-import { hasSupabaseBrowserConfig } from '@/lib/supabase/client';
 import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import { normalizeGithubHandle } from '@/lib/validation';
-import OAuthModal from '@/components/auth/OAuthModal';
 
 export default function GitHubOAuthPage() {
   const router = useRouter();
@@ -30,26 +28,13 @@ export default function GitHubOAuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Initiates GitHub OAuth (popup in cloud mode or interactive modal in local/preview mode)
   async function startGitHubOAuth() {
     setLoading(true);
     setError(null);
-    try {
-      const result = await startOAuthSignIn('github', '/write');
-      if (result.mode === 'interactive') {
-        setIsModalOpen(true);
-        setLoading(false);
-        return;
-      }
-      if (result.error) {
-        // Fall back to interactive modal on provider error
-        setIsModalOpen(true);
-        setLoading(false);
-      }
-    } catch {
-      setIsModalOpen(true);
+    const result = await startOAuthSignIn('github', '/write');
+    if (!result.ok) {
+      setError(result.error ?? 'Could not start sign-in. Please try again.');
       setLoading(false);
     }
   }
@@ -173,6 +158,7 @@ export default function GitHubOAuthPage() {
                 </>
               )}
             </button>
+            {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
             <p className="text-center font-mono text-xs text-stone-500">
               Scope: read:user, user:email · Signed in through Supabase Auth
             </p>
@@ -275,12 +261,6 @@ export default function GitHubOAuthPage() {
         </div>
       </main>
 
-      <OAuthModal
-        isOpen={isModalOpen}
-        provider="github"
-        next="/write"
-        onClose={() => setIsModalOpen(false)}
-      />
 
       <BlogFooter />
     </div>

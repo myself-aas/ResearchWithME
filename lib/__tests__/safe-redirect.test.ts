@@ -10,6 +10,7 @@ describe('safeNextPath', () => {
   it('rejects absolute, protocol-relative, and backslash URLs', () => {
     expect(safeNextPath('https://evil.example')).toBe('/dashboard');
     expect(safeNextPath('//evil.example')).toBe('/dashboard');
+    expect(safeNextPath('/\n/evil.example')).toBe('/dashboard');
     expect(safeNextPath('/\\evil.example')).toBe('/dashboard');
   });
 
