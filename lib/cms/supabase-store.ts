@@ -1,10 +1,11 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
+import { ARTICLE_FORMATS } from './schema';
 import { CmsConflictError, CmsNotFoundError, CmsUnavailableError, CmsValidationError } from './errors';
-import type { CmsComment, CmsPost, CmsPostInput, CmsStore } from './types';
+import type { CmsArtifact, CmsArtifactType, CmsComment, CmsPost, CmsPostInput, CmsStore } from './types';
 
 const CATEGORY_SET = new Set<string>(CATEGORIES);
-const FORMAT_SET = new Set<string>(['Paper Review', 'Repo Teardown', 'Deep-Dive Essay', 'Field Notes', 'Case Study']);
+const FORMAT_SET = new Set<string>(ARTICLE_FORMATS);
 const MAX_ROWS = 500;
 
 interface PostRow {
@@ -28,6 +29,11 @@ interface PostRow {
   published_at: string | null;
   inserted_at: string;
   updated_at: string | null;
+  artifact_type: string | null;
+  artifact_title: string | null;
+  artifact_url: string | null;
+  artifact_identifier: string | null;
+  artifact_meta: string | null;
 }
 
 interface CommentJoinRow {
@@ -44,6 +50,19 @@ function toNumericId(id: string): number | null {
   if (!/^\d{1,19}$/.test(id)) return null;
   const value = Number(id);
   return Number.isSafeInteger(value) ? value : null;
+}
+
+const ARTIFACT_TYPES = new Set<string>(['paper', 'github', 'dataset']);
+
+function rowToArtifact(row: PostRow): CmsArtifact | null {
+  if (!row.artifact_type || !ARTIFACT_TYPES.has(row.artifact_type)) return null;
+  return {
+    type: row.artifact_type as CmsArtifactType,
+    title: row.artifact_title ?? '',
+    url: row.artifact_url ?? '',
+    identifier: row.artifact_identifier ?? '',
+    meta: row.artifact_meta ?? '',
+  };
 }
 
 function rowToPost(row: PostRow): CmsPost {
@@ -68,6 +87,7 @@ function rowToPost(row: PostRow): CmsPost {
     publishedAt: row.published_at,
     insertedAt: row.inserted_at,
     updatedAt: row.updated_at ?? row.inserted_at,
+    artifact: rowToArtifact(row),
   };
 }
 
@@ -88,6 +108,11 @@ function postToRow(input: CmsPostInput) {
     key_takeaways: input.keyTakeaways,
     read_time: input.readTime,
     featured: input.featured,
+    artifact_type: input.artifact?.type ?? null,
+    artifact_title: input.artifact?.title || null,
+    artifact_url: input.artifact?.url || null,
+    artifact_identifier: input.artifact?.identifier || null,
+    artifact_meta: input.artifact?.meta || null,
   };
 }
 

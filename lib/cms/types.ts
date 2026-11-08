@@ -2,6 +2,21 @@ import type { ArticleFormat, BlogCategory } from '@/lib/blog-data';
 
 export type CmsStatus = 'draft' | 'published';
 
+export type CmsArtifactType = 'paper' | 'github' | 'dataset';
+
+/**
+ * The external work an article reviews: a DOI, a repository, or a dataset.
+ * Mirrors `ReviewedArtifact` in `lib/blog-data.ts` so a CMS article renders the
+ * same artifact record as a bundled one.
+ */
+export interface CmsArtifact {
+  type: CmsArtifactType;
+  title: string;
+  url: string;
+  identifier: string;
+  meta: string;
+}
+
 export interface DashboardUser {
   id: string;
   email: string;
@@ -32,6 +47,8 @@ export interface CmsPost {
   publishedAt: string | null;
   insertedAt: string;
   updatedAt: string;
+  /** Null when the article reviews no external artifact. */
+  artifact: CmsArtifact | null;
 }
 
 /** Fully normalised write payload. Timestamps and ids are store-owned. */
@@ -51,6 +68,7 @@ export interface CmsPostInput {
   keyTakeaways: string[];
   readTime: string;
   featured: boolean;
+  artifact: CmsArtifact | null;
 }
 
 export interface CmsComment {

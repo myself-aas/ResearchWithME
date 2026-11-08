@@ -118,3 +118,80 @@ describe('public post ids', () => {
     expect(fromPublicPostId('cms-')).toBeNull();
   });
 });
+
+describe('normalizePostInput artifact record', () => {
+  const artifact = {
+    type: 'github',
+    title: 'vllm-project/vllm',
+    url: 'https://github.com/vllm-project/vllm',
+    identifier: 'vllm-project/vllm',
+    meta: '44.8k Stars · Apache-2.0',
+  };
+
+  it('is null when no artifact is supplied', () => {
+    const result = normalizePostInput(base());
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.artifact).toBeNull();
+  });
+
+  it('is null for an empty object, so the studio never invents a record', () => {
+    const result = normalizePostInput(base({ artifact: {} }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.artifact).toBeNull();
+  });
+
+  it('preserves a complete artifact', () => {
+    const result = normalizePostInput(base({ artifact }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.artifact).toEqual(artifact);
+  });
+
+  it('falls back to the identifier as the title, and vice versa', () => {
+    const fromIdentifier = normalizePostInput(base({ artifact: { type: 'paper', identifier: 'arXiv:2309.06180' } }));
+    expect(fromIdentifier.ok).toBe(true);
+    if (fromIdentifier.ok) {
+      expect(fromIdentifier.value.artifact).toMatchObject({
+        type: 'paper',
+        title: 'arXiv:2309.06180',
+        identifier: 'arXiv:2309.06180',
+      });
+    }
+
+    const fromTitle = normalizePostInput(base({ artifact: { title: 'A study of paged memory' } }));
+    expect(fromTitle.ok).toBe(true);
+    if (fromTitle.ok) {
+      expect(fromTitle.value.artifact).toMatchObject({
+        type: 'paper', // unknown types default rather than reject
+        title: 'A study of paged memory',
+        identifier: 'A study of paged memory',
+      });
+    }
+  });
+
+  it('drops an artifact that names nothing instead of blocking the save', () => {
+    const result = normalizePostInput(base({ artifact: { type: 'dataset', url: 'https://example.org/data' } }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.artifact).toBeNull();
+  });
+
+  it('rejects a non-http artifact URL by clearing it', () => {
+    const result = normalizePostInput(base({ artifact: { ...artifact, url: 'javascript:alert(1)' } }));
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.artifact?.url).toBe('');
+  });
+
+  it('enforces the length limits', () => {
+    const result = normalizePostInput(
+      base({ artifact: { ...artifact, meta: 'x'.repeat(400), identifier: 'y'.repeat(400) } }),
+    );
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.value.artifact?.meta).toHaveLength(160);
+    expect(result.value.artifact?.identifier).toHaveLength(160);
+  });
+});

@@ -2,7 +2,7 @@ import { AUTHORS, CATEGORIES, type ArticleFormat, type BlogCategory } from '@/li
 import { formatReadingTime, readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured, SUPABASE_URL } from '@/lib/supabase/config';
 import { cleanText, parseTags, safeExternalUrl, slugify } from '@/lib/validation';
-import type { CmsCommentInput, CmsPostInput, CmsStatus, FieldErrors } from './types';
+import type { CmsArtifact, CmsArtifactType, CmsCommentInput, CmsPostInput, CmsStatus, FieldErrors } from './types';
 
 export const CMS_LIMITS = {
   title: 180,
@@ -15,7 +15,12 @@ export const CMS_LIMITS = {
   comment: 4_000,
   commentAuthor: 120,
   commentRole: 80,
+  artifactTitle: 200,
+  artifactIdentifier: 160,
+  artifactMeta: 160,
 } as const;
+
+const ARTIFACT_TYPES: CmsArtifactType[] = ['paper', 'github', 'dataset'];
 
 export const ARTICLE_FORMATS: ArticleFormat[] = [
   'Paper Review',
@@ -74,6 +79,30 @@ function normalizeTakeaways(value: unknown): string[] {
     .map((item) => cleanText(item, CMS_LIMITS.takeaway))
     .filter(Boolean)
     .slice(0, CMS_LIMITS.takeaways);
+}
+
+/**
+ * Normalises the reviewed-artifact block. Absent or empty means "no artifact";
+ * a block that names nothing is dropped rather than rejected, so an article is
+ * never blocked by a half-filled citation the reader could not render anyway.
+ */
+function normalizeArtifact(value: unknown): CmsArtifact | null {
+  const raw = asRecord(value);
+  if (Object.keys(raw).length === 0) return null;
+
+  const type = ARTIFACT_TYPES.includes(raw.type as CmsArtifactType) ? (raw.type as CmsArtifactType) : 'paper';
+  const identifier = cleanText(raw.identifier, CMS_LIMITS.artifactIdentifier);
+  const title = cleanText(raw.title, CMS_LIMITS.artifactTitle);
+  if (!identifier && !title) return null;
+
+  const url = safeExternalUrl(cleanText(raw.url, 2048)) ?? '';
+  return {
+    type,
+    title: title || identifier,
+    url,
+    identifier: identifier || title,
+    meta: cleanText(raw.meta, CMS_LIMITS.artifactMeta),
+  };
 }
 
 export type PostNormalizationResult =
@@ -173,6 +202,7 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
       keyTakeaways,
       readTime,
       featured: raw.featured === true,
+      artifact: normalizeArtifact(raw.artifact),
     },
   };
 }

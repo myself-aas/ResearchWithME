@@ -6,7 +6,3 @@ export function revalidateArticle(slug?: string | null) {
   revalidatePath('/sitemap.xml');
   if (slug) revalidatePath(`/post/${slug}`);
 }
-
-export function revalidateComments(postId?: string | null) {
-  if (postId) revalidatePath(`/post/${postId}`);
-}

@@ -20,7 +20,7 @@ import { AUTHORS, CATEGORIES, type ArticleFormat, type BlogCategory } from '@/li
 import QwenCoverGenerator from './QwenCoverGenerator';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import { ARTICLE_FORMATS, normalizePostInput } from '@/lib/cms/schema';
-import type { CmsPost, FieldErrors } from '@/lib/cms/types';
+import type { CmsArtifact, CmsPost, FieldErrors } from '@/lib/cms/types';
 import { formatDate } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { uploadBlogImage, validateImageFile } from '@/lib/supabase/storage';
@@ -73,6 +73,11 @@ interface PostFormState {
   keyTakeaways: string[];
   content: string;
   featured: boolean;
+  /**
+   * The reviewed-artifact record. The studio has no editor for it, so it is
+   * carried through every save untouched instead of being cleared.
+   */
+  artifact: CmsArtifact | null;
 }
 
 function stateFromPost(post?: CmsPost | null): PostFormState {
@@ -89,6 +94,7 @@ function stateFromPost(post?: CmsPost | null): PostFormState {
     keyTakeaways: post?.keyTakeaways.length ? post.keyTakeaways : [''],
     content: post?.content ?? '',
     featured: post?.featured ?? false,
+    artifact: post?.artifact ?? null,
   };
 }
 
@@ -209,6 +215,7 @@ export default function PostEditor({
 
   function payload(targetStatus: 'draft' | 'published') {
     return {
+      artifact: form.artifact,
       title: form.title,
       slug: form.slug,
       subtitle: form.subtitle,

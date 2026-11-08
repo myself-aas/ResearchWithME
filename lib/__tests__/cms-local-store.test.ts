@@ -25,6 +25,13 @@ const input: CmsPostInput = {
   keyTakeaways: ['Block allocation removed the waste.'],
   readTime: '2 min read',
   featured: false,
+  artifact: {
+    type: 'paper',
+    title: 'Efficient Memory Management for Large Language Model Serving with PagedAttention',
+    url: 'https://doi.org/10.1145/3600006.3613165',
+    identifier: 'arXiv:2309.06180',
+    meta: 'Published 2023 · SOSP',
+  },
 };
 
 beforeAll(async () => {
@@ -47,6 +54,7 @@ describe('local CMS store', () => {
     expect(created.status).toBe('draft');
     expect(created.publishedAt).toBeNull();
     expect(created.likes).toBe(0);
+    expect(created.artifact).toMatchObject({ type: 'paper', identifier: 'arXiv:2309.06180' });
     expect(await store.getPost('1')).toMatchObject({ id: '1', title: input.title });
     expect(await store.getPostBySlug(input.slug)).toMatchObject({ id: '1' });
   });

@@ -55,6 +55,17 @@ export function cmsPostToArticle(post: CmsPost): BlogPost {
     tags: post.tags,
     likes: post.likes,
     commentsCount: 0,
+    // A CMS article renders the same artifact record as a bundled one, so the
+    // reader and the research assistant treat both alike.
+    reviewedArtifact: post.artifact
+      ? {
+          type: post.artifact.type,
+          title: post.artifact.title,
+          url: post.artifact.url,
+          identifier: post.artifact.identifier,
+          meta: post.artifact.meta || 'Artifact record supplied by the author',
+        }
+      : undefined,
   };
 }
 
