@@ -149,9 +149,18 @@ jobs:
             };
             if (parsed) walkPaths(parsed, "");
             const note = "source=" + (explicit[0] ? "field" : usable[0] ? "scan" : "none")
-              + " urlPaths=" + JSON.stringify(urlPaths)
-              + " shape=" + JSON.stringify(shape.slice(0, 40));
+              + " urlPaths=" + JSON.stringify(urlPaths);
             process.stderr.write("::notice title=preview url resolution::" + note + "\n");
+
+            // A Worker that serves through custom routes has no *.workers.dev
+            // subdomain, so a Preview deployment is created with no public URL.
+            // Report the deployment number rather than inventing a link.
+            const number = parsed && parsed.deployment && parsed.deployment.number;
+            const out = process.env.GITHUB_OUTPUT;
+            if (out) {
+              fs.appendFileSync(out, "url=" + pick + "\n");
+              fs.appendFileSync(out, "number=" + (number === undefined || number === null ? "" : number) + "\n");
+            }
             process.stdout.write(pick);
           ')
           if [ -z "$url" ]; then
@@ -159,23 +168,31 @@ jobs:
             echo "--- stdout ---"; cat /tmp/preview.json
             echo "--- stderr ---"; cat /tmp/preview.err
           fi
-          echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Note that the preview upload was skipped
         if: env.CLOUDFLARE_API_TOKEN == ''
         run: echo "::notice title=Preview upload skipped::CLOUDFLARE_API_TOKEN is not set. Add it under Settings → Secrets and variables → Actions to get a preview URL on pull requests. The Worker built fine."
 
       - name: Comment the preview link on the pull request
-        if: env.CLOUDFLARE_API_TOKEN != '' && steps.upload.outputs.url != ''
+        if: >-
+          env.CLOUDFLARE_API_TOKEN != '' &&
+          (steps.upload.outputs.url != '' || steps.upload.outputs.number != '')
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
           PREVIEW_URL: ${{ steps.upload.outputs.url }}
+          PREVIEW_NUMBER: ${{ steps.upload.outputs.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          body=$(printf '<!-- preview-deploy -->\n**Preview:** %s\n\nBuilt from `%s`. Not production: the alias is replaced on the next push and serves the version without moving the domain.\n' "$PREVIEW_URL" "${HEAD_SHA:0:7}")
+          if [ -n "$PREVIEW_URL" ]; then
+            body=$(printf '<!-- preview-deploy -->\n**Preview:** %s\n\nBuilt from `%s`. Not production: it is replaced on the next push and does not move the domain.\n' "$PREVIEW_URL" "${HEAD_SHA:0:7}")
+          else
+            # The Worker serves through custom routes and has no workers.dev
+            # subdomain, so Cloudflare creates the Preview without a public URL.
+            body=$(printf '<!-- preview-deploy -->\n**Preview deployment #%s created.** No public URL: this Worker serves through custom routes, so Cloudflare has no `*.workers.dev` subdomain to hang a Preview on.\n\nBuilt from `%s`. View it in the [Cloudflare dashboard](https://dash.cloudflare.com/74d241df16b8aaa80914e3dbb6e16758/workers/services/view/researchwithme/production/previews/pr-%s). To get a URL, enable the workers.dev subdomain on the Worker.\n' "$PREVIEW_NUMBER" "${HEAD_SHA:0:7}" "$PR")
+          fi
           id=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
                  --jq '.[] | select(.body | contains("<!-- preview-deploy -->")) | .id' | head -1)
           if [ -n "$id" ]; then
