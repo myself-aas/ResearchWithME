@@ -11,7 +11,6 @@
   "detector": {
     "ignoreRules": [],
     "ignoreFiles": [
-      "ResearchWith.me-main/**",
       ".next/**",
       "node_modules/**",
       "public/assets/**",
@@ -38,13 +37,13 @@
         "rule": "design-system-font",
         "value": "inter",
         "createdAt": "2026-10-28T04:56:39.320Z",
-        "reason": "HyperFrames video composition — Inter is a HyperFrames-bundled font, not a web UI component"
+        "reason": "HyperFrames video composition \u2014 Inter is a HyperFrames-bundled font, not a web UI component"
       },
       {
         "rule": "design-system-font",
         "value": "playfair display",
         "createdAt": "2026-10-28T04:56:41.149Z",
-        "reason": "HyperFrames video composition — Playfair Display is HyperFrames-bundled serif, closest equivalent to project Newsreader for video renders"
+        "reason": "HyperFrames video composition \u2014 Playfair Display is HyperFrames-bundled serif, closest equivalent to project Newsreader for video renders"
       },
       {
         "rule": "oversized-h1",
@@ -53,7 +52,7 @@
           "videos/explainer/compositions/title.html"
         ],
         "createdAt": "2026-10-28T04:56:42.817Z",
-        "reason": "HyperFrames video composition — 92px in 1920×1080 frame is standard video title size (~4.8% frame height)"
+        "reason": "HyperFrames video composition \u2014 92px in 1920\u00d71080 frame is standard video title size (~4.8% frame height)"
       }
     ],
     "designSystem": {
