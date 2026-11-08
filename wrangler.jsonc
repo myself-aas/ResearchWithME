@@ -18,18 +18,15 @@
 	// A hostname can only belong to one thing. If `researchwith.me` is still
 	// attached to the old Pages project the deploy fails on a domain conflict
 	// until that project releases it, so check DNS -> Records for a `*.pages.dev`
-	// target before the first production deploy. Whether the hostname is held by
-	// Pages or by a plain proxied record is not distinguishable from outside the
-	// account -- both present as Cloudflare-proxied A/AAAA -- so do not infer it
-	// from a DNS lookup.
+	// target before the first production deploy.
 	//
-	// Do not look for a `100::` AAAA record as evidence either way. That is a
-	// placeholder for *routes*, where a Worker sits in front of an existing
-	// origin and you add a proxied AAAA pointing at 100:: to claim the hostname.
-	// Custom domains are the other mechanism: Cloudflare creates the records and
-	// the Worker is the origin. An earlier version of this comment treated 100::
-	// as a custom-domain marker, which is how a DNS lookup came to look like it
-	// could prove the attachment -- it cannot.
+	// Nothing about the attachment can be inferred from an external DNS lookup,
+	// and it is worth saying why, because it looks like it should be possible.
+	// These records are proxied, so a resolver returns Cloudflare anycast and
+	// never the record's own content -- the `100::` placeholder a Worker origin
+	// uses is visible only in the dashboard. A lookup cannot distinguish a custom
+	// domain from a route, an attached hostname from an unattached one, or a
+	// Worker from a Pages project. Read Settings -> Domains & Routes instead.
 	//
 	// Canonical links use NEXT_PUBLIC_SITE_URL, the apex.
 	"routes": [
