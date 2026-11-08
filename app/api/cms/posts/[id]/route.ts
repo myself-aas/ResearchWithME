@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { requireEditor } from '@/lib/cms/auth';
 import { CmsNotFoundError } from '@/lib/cms/errors';
+import { resolvePublishableAuthor } from '@/lib/cms/authors';
 import { normalizePostInput } from '@/lib/cms/schema';
 import { errorResponse, isSameOrigin, noStoreHeaders, readJsonBody } from '@/lib/cms/http';
 import { revalidateArticle } from '@/lib/cms/revalidate';
@@ -66,7 +67,12 @@ export async function PATCH(request: Request, props: RouteProps) {
       );
     }
 
-    if (parsed.value.slug !== existing.slug) {
+    // Same server-derived attribution as on create; a client cannot rename the
+    // byline to something the profile does not say.
+    const author = await resolvePublishableAuthor(parsed.value.authorId);
+    const value = { ...parsed.value, authorName: author.displayName };
+
+    if (value.slug !== existing.slug) {
       const conflict = getArticles().find((article) => article.slug === parsed.value.slug);
       if (conflict) {
         return NextResponse.json(
@@ -76,7 +82,7 @@ export async function PATCH(request: Request, props: RouteProps) {
       }
     }
 
-    const post = await store.updatePost(id, parsed.value);
+    const post = await store.updatePost(id, value);
 
     // The slug can change while editing, so both old and new readers are cleared.
     if (existing.slug !== post.slug) revalidateArticle(existing.slug);

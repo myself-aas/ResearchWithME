@@ -61,7 +61,9 @@ export interface CmsPostInput {
   summary: string;
   category: BlogCategory;
   format: ArticleFormat;
-  authorId: string | null;
+  /** Non-null: normalizePostInput rejects a missing byline, and the post routes
+   *  resolve it against public.profiles before the store ever sees it. */
+  authorId: string;
   authorName: string;
   coverImage: string | null;
   tags: string[];

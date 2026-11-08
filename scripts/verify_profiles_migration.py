@@ -171,6 +171,16 @@ def main():
         status, rows = as_role("authenticated", EDITOR, "select user_id from public.profiles", fetch=True)
         check("editor sees every profile", len(rows or []) == 2, f"saw {len(rows or [])}")
 
+        # The app narrows this on purpose: resolvePublishableAuthor filters
+        # published = true even though RLS would let an editor read the row.
+        # Attribution to an unpublished profile would credit someone whose
+        # /author/[slug] page is not in the directory.
+        status, rows = as_role("authenticated", EDITOR,
+            "select user_id from public.profiles where published = false", fetch=True)
+        visible = {str(r[0]) for r in (rows or [])}
+        check("editor can read unpublished profiles, so the app's published filter is a real narrowing",
+              visible == {OTHER}, f"saw {visible}")
+
         # --- editor can edit anyone ---------------------------------------
         status, err = as_role("authenticated", EDITOR,
             "update public.profiles set institution = 'Institute for Digital Public Goods' where user_id = %s", (OWNER,))

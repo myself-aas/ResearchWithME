@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { CmsError, CmsValidationError, toCmsError } from './errors';
+import { CmsAuthorError, CmsError, CmsValidationError, toCmsError } from './errors';
 
 /**
  * Rejects cross-site browser writes. Non-browser clients that omit Origin are
@@ -55,7 +55,9 @@ export async function readJsonBody(
 export function errorResponse(error: unknown) {
   const cmsError: CmsError = toCmsError(error);
   const body: { error: string; fieldErrors?: Record<string, string> } = { error: cmsError.message };
-  if (cmsError instanceof CmsValidationError) body.fieldErrors = cmsError.fieldErrors;
+  if (cmsError instanceof CmsValidationError || cmsError instanceof CmsAuthorError) {
+    body.fieldErrors = cmsError.fieldErrors;
+  }
   return NextResponse.json(body, { status: cmsError.status });
 }
 

@@ -16,7 +16,7 @@ import {
   Trash2,
   Upload,
 } from 'lucide-react';
-import { AUTHORS, CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
+import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
 import QwenCoverGenerator from './QwenCoverGenerator';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import { ARTICLE_FORMATS, normalizePostInput } from '@/lib/cms/schema';
@@ -60,6 +60,12 @@ const FIELD_DOM_IDS: Record<string, string> = {
   coverImage: 'post-cover-preset-0',
 };
 
+interface AuthorOption {
+  id: string;
+  name: string;
+  role: string;
+}
+
 interface PostFormState {
   title: string;
   slug: string;
@@ -88,7 +94,7 @@ function stateFromPost(post?: CmsPost | null): PostFormState {
     summary: post?.summary ?? '',
     category: post?.category ?? 'Research Reviews',
     format: post?.format ?? 'Paper Review',
-    authorId: post?.authorId && AUTHORS[post.authorId] ? post.authorId : Object.keys(AUTHORS)[0],
+    authorId: post?.authorId ?? '',
     coverImage: post?.coverImage ?? '',
     tags: (post?.tags ?? []).join(', '),
     keyTakeaways: post?.keyTakeaways.length ? post.keyTakeaways : [''],
@@ -129,11 +135,54 @@ export default function PostEditor({
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [showAiCover, setShowAiCover] = useState(false);
+  const [authorOptions, setAuthorOptions] = useState<AuthorOption[]>([]);
+  const [authorsError, setAuthorsError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   const dirty = useMemo(() => JSON.stringify(form) !== baseline, [form, baseline]);
   const savedAt = initialPost ? formatDate(initialPost.updatedAt) : null;
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const response = await fetch('/api/authors', { headers: { Accept: 'application/json' } });
+        if (!response.ok) throw new Error(String(response.status));
+        const payload = (await response.json()) as { authors?: AuthorOption[] };
+        if (cancelled) return;
+        const list = payload.authors ?? [];
+        setAuthorOptions(list);
+        // Default a new post to the first profile, and move the baseline with it
+        // so pre-filling the byline does not mark the form as edited.
+        if (list.length > 0) {
+          setForm((previous) =>
+            previous.authorId ? previous : { ...previous, authorId: list[0].id },
+          );
+          setBaseline((previous) => {
+            const parsed = JSON.parse(previous) as PostFormState;
+            return parsed.authorId ? previous : JSON.stringify({ ...parsed, authorId: list[0].id });
+          });
+        }
+      } catch {
+        if (!cancelled) setAuthorsError('Author profiles could not be loaded. Reload to try again.');
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // A post can predate its author's profile, or the profile was unpublished
+  // after publication. Keep the stored byline visible instead of quietly
+  // re-attributing the article to whoever is first in the list.
+  const selectableAuthors = useMemo(() => {
+    if (!form.authorId || authorOptions.some((author) => author.id === form.authorId)) {
+      return authorOptions;
+    }
+    const stored = initialPost?.authorName || form.authorId;
+    return [{ id: form.authorId, name: stored, role: 'profile unavailable' }, ...authorOptions];
+  }, [authorOptions, form.authorId, initialPost?.authorName]);
 
   useEffect(() => {
     if (!dirty || saving) return;
@@ -528,12 +577,20 @@ export default function PostEditor({
                 aria-describedby={fieldErrors.authorId ? 'post-author-error' : undefined}
                 className={cn(fieldClass, fieldErrors.authorId && 'border-red-700')}
               >
-                {Object.values(AUTHORS).map((author) => (
+                {selectableAuthors.map((author) => (
                   <option key={author.id} value={author.id}>
-                    {author.name} — {author.role}
+                    {author.role ? `${author.name} — ${author.role}` : author.name}
                   </option>
                 ))}
               </select>
+              {authorsError ? (
+                <FieldError id="post-author-load-error" message={authorsError} />
+              ) : authorOptions.length === 0 ? (
+                <p className={hintClass}>
+                  No published author profiles yet. An author has to publish their profile before
+                  they can be credited here.
+                </p>
+              ) : null}
               <FieldError id="post-author-error" message={fieldErrors.authorId} />
             </div>
 

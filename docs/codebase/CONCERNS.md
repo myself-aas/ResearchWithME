@@ -180,19 +180,30 @@ with Supabase stubs.
   a verified user with no matching `authorProfileId` can no longer publish
   without selecting one.
 
-## Author selection is not validated against `public.profiles`
+## Author attribution
 
-`normalizePostInput` (`lib/cms/schema.ts`) checks only that `authorId` and
-`authorName` are non-empty. It used to validate `authorId` against the
-hardcoded `AUTHORS` roster; that roster was deleted along with the rest of the
-fabricated content, and the check was not replaced with a database one.
+Resolved. `normalizePostInput` checks only that a byline is present; the post
+routes then call `resolvePublishableAuthor` (`lib/cms/authors.ts`), which reads
+`public.profiles` and rejects with **422** `author_not_publishable` when the
+`authorId` names no published profile. Both routes overwrite the stored
+`authorName` with `display_name` from the profile, so a request body cannot
+dictate the byline text.
 
-Consequence: an editor can save a post under any `authorId`, including one that
-names no profile. `cmsPostToArticle` resolves an unknown id through
-`fallbackAuthor`, so the reader still renders — with a byline built from
-`authorName` and no verification badge — rather than breaking.
+The check is deliberately **narrower than the table's select policy**. RLS lets
+an editor read every profile, including unpublished ones, because
+"Anyone can read a published profile" includes `public.is_editor()`. Attributing
+a public article to an *unpublished* profile would credit someone whose
+`/author/[slug]` page is not in the directory, so the query filters
+`published = true` explicitly rather than relying on what RLS permits. Editors
+can therefore attribute to any published profile, and to no unpublished one —
+including their own.
 
-Fix: have `POST /api/cms/posts` and `PUT /api/cms/posts/[id]` read
-`public.profiles` and reject an `authorId` with no matching `user_id`/`slug`.
-Both routes already hold a Supabase client via `requireEditor()`, and RLS
-already limits an owner to their own row, so the check is a single select.
+Two consequences worth knowing:
+
+- In local mode (`isSupabaseConfigured === false`) there is no `profiles` table,
+  so the byline is accepted as sent. Production always runs with Supabase
+  configured, where the check applies.
+- `/api/authors` is now backed by published profiles and is what populates the
+  editor's author select. It no longer sets `verifiedVia`: the profile's
+  `orcid`/`github` columns are self-declared, and the authoritative record
+  (`auth.users.identities`) is not readable anonymously.

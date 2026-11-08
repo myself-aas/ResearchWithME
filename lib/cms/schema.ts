@@ -145,19 +145,18 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
   // an author can be renamed or their profile unpublished without orphaning
   // articles they already published.
   //
-  // This only checks that a byline is present. It deliberately does NOT check
-  // that authorId names a real profile: that needs a database read, and this is
-  // a pure function shared by the tests and the local store. Restricting which
-  // profiles may publish against public.profiles is still outstanding -- until
-  // it lands, any editor can set any authorId. See docs/codebase/CONCERNS.md.
+  // Only presence is checked here. That authorId names a real, published
+  // profile is a database question, resolved by resolvePublishableAuthor in the
+  // post routes; this stays a pure function so the tests and the local store
+  // can share it.
   const authorId = cleanText(raw.authorId, 80);
-  const authorName = cleanText(raw.authorName, 80);
   if (!authorId) {
     fieldErrors.authorId = 'Choose the profile this article is published under.';
   }
-  if (!authorName) {
-    fieldErrors.authorName = 'Add the byline that should appear with the article.';
-  }
+  // Kept only as a fallback for the local store. When Supabase is configured the
+  // route overwrites it with display_name from public.profiles, so a client can
+  // never dictate the byline text that gets stored.
+  const authorName = cleanText(raw.authorName, 80);
 
   const category = CATEGORIES.includes(raw.category as BlogCategory)
     ? (raw.category as BlogCategory)

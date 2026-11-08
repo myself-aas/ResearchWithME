@@ -53,13 +53,19 @@ describe('normalizePostInput', () => {
   });
 
   it('rejects a short title and a missing byline', () => {
-    const result = normalizePostInput(base({ title: 'Short', authorId: '', authorName: '' }));
+    const result = normalizePostInput(base({ title: 'Short', authorId: '' }));
     expect(result.ok).toBe(false);
     if (result.ok) return;
 
     expect(result.fieldErrors.title).toBeTruthy();
     expect(result.fieldErrors.authorId).toBeTruthy();
-    expect(result.fieldErrors.authorName).toBeTruthy();
+  });
+
+  it('leaves byline text to the route, which resolves it from the profile', () => {
+    // A client cannot dictate the stored author name: the route overwrites it
+    // with display_name from public.profiles. See lib/cms/authors.ts.
+    const result = normalizePostInput(base({ authorName: 'Not My Name' }));
+    expect(result.ok).toBe(true);
   });
 
   it('accepts bundled covers and rejects unconfigured remote hosts', () => {
