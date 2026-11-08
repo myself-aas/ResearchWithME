@@ -143,8 +143,13 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
 
   // The byline is stored on the post rather than joined from a fixed roster, so
   // an author can be renamed or their profile unpublished without orphaning
-  // articles they already published. Which profiles may be chosen is enforced
-  // against public.profiles in the API route, not here.
+  // articles they already published.
+  //
+  // This only checks that a byline is present. It deliberately does NOT check
+  // that authorId names a real profile: that needs a database read, and this is
+  // a pure function shared by the tests and the local store. Restricting which
+  // profiles may publish against public.profiles is still outstanding -- until
+  // it lands, any editor can set any authorId. See docs/codebase/CONCERNS.md.
   const authorId = cleanText(raw.authorId, 80);
   const authorName = cleanText(raw.authorName, 80);
   if (!authorId) {

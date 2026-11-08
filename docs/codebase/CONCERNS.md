@@ -179,3 +179,20 @@ with Supabase stubs.
   rather than synthesising a byline, which is a deliberate behaviour change:
   a verified user with no matching `authorProfileId` can no longer publish
   without selecting one.
+
+## Author selection is not validated against `public.profiles`
+
+`normalizePostInput` (`lib/cms/schema.ts`) checks only that `authorId` and
+`authorName` are non-empty. It used to validate `authorId` against the
+hardcoded `AUTHORS` roster; that roster was deleted along with the rest of the
+fabricated content, and the check was not replaced with a database one.
+
+Consequence: an editor can save a post under any `authorId`, including one that
+names no profile. `cmsPostToArticle` resolves an unknown id through
+`fallbackAuthor`, so the reader still renders — with a byline built from
+`authorName` and no verification badge — rather than breaking.
+
+Fix: have `POST /api/cms/posts` and `PUT /api/cms/posts/[id]` read
+`public.profiles` and reject an `authorId` with no matching `user_id`/`slug`.
+Both routes already hold a Supabase client via `requireEditor()`, and RLS
+already limits an owner to their own row, so the check is a single select.
