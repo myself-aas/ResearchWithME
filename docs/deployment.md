@@ -187,7 +187,7 @@ Three environments, three sets of values, one repository.
 | Kind | Examples | Where it must be set | Why |
 | --- | --- | --- | --- |
 | **Build-time / inlined** | every `NEXT_PUBLIC_*` | shell running `next build`, or the Workers Builds *build* variables, or GitHub Actions job `env` | Next.js substitutes the literal string into the client and server bundles |
-| **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
+| **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
 | **Preview-only runtime** | the same secrets | `wrangler preview secret put`, or the preview *base config* | previews do not inherit the Worker's secrets |
 
 Both Workers Builds and GitHub Actions therefore need the `NEXT_PUBLIC_*` values as **build**

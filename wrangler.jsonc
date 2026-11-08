@@ -7,6 +7,13 @@
 	"account_id": "74d241df16b8aaa80914e3dbb6e16758",
 	"compatibility_date": "2026-10-23",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// Non-secret runtime variables. `RESEND_API_KEY` is deliberately NOT here --
+	// it goes in as a Worker secret (`wrangler secret put RESEND_API_KEY`).
+	// EMAIL_FROM has to be an address on a domain verified in the Resend
+	// dashboard, so set it there rather than guessing one into this file. Until
+	// both are set, transactional email is skipped and submissions are still
+	// recorded; see lib/email.ts.
+	// "vars": { "EMAIL_FROM": "submissions@researchwith.me" },
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"

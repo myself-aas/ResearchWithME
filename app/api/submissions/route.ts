@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSameOrigin } from '@/lib/cms/http';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
+import { sendEmail } from '@/lib/email';
+import { buildSubmissionReceipt, submissionReceiptKey } from '@/lib/submission-email';
 import { createSubmission } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
@@ -40,6 +42,26 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: result.status });
   }
 
+  // The submission is already recorded at this point, so the acknowledgement is
+  // best-effort: a failed or unconfigured send is logged and reported back in
+  // the body, never turned into a failed request.
+  const receipt = buildSubmissionReceipt(result.submission);
+  const sent = await sendEmail({
+    to: result.submission.email,
+    subject: receipt.subject,
+    html: receipt.html,
+    text: receipt.text,
+    idempotencyKey: submissionReceiptKey(result.submission.id),
+    tags: [{ name: 'category', value: 'submission-receipt' }],
+  });
+
+  if (!sent.ok) {
+    console.error(
+      'Submission receipt not sent:',
+      sent.skipped ? sent.reason : sent.error,
+    );
+  }
+
   return NextResponse.json(
     {
       success: true,
@@ -48,6 +70,7 @@ export async function POST(request: NextRequest) {
         title: result.submission.title,
         createdAt: result.submission.createdAt,
       },
+      receiptSent: sent.ok,
     },
     { status: 201 },
   );

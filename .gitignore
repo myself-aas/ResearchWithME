@@ -22,6 +22,9 @@ dist/
 # Local CMS runtime archive (demo mode); seeded content stays tracked.
 data/cms-posts.json
 data/cms-comments.json
+# Written by POST /api/submissions. Never commit this one: unlike the two above
+# it holds personal data -- submitters' contact email addresses.
+data/submissions.json
 
 # Raw output of the codebase-knowledge scan; docs/codebase/ holds the 7 distilled
 # documents, not the generated dump they were derived from.

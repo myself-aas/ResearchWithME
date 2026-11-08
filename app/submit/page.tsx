@@ -38,7 +38,11 @@ export default function SubmitPage() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [receipt, setReceipt] = useState<{ id: string; title: string } | null>(null);
+  const [receipt, setReceipt] = useState<{
+    id: string;
+    title: string;
+    receiptSent: boolean;
+  } | null>(null);
   const submittedRef = useRef(false);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
@@ -103,7 +107,11 @@ export default function SubmitPage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'The submission could not be recorded.');
       submittedRef.current = false;
-      setReceipt({ id: data.submission?.id ?? 'Received', title: form.title });
+      setReceipt({
+        id: data.submission?.id ?? 'Received',
+        title: form.title,
+        receiptSent: data.receiptSent === true,
+      });
       setForm(initialState);
     } catch (error) {
       setSubmitError(
@@ -141,7 +149,9 @@ export default function SubmitPage() {
               <span className="break-all font-mono font-semibold text-stone-900">{receipt.id}</span>.
             </p>
             <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-              No reviewer has been assigned and no email has been sent. A production desk would contact you at the address you supplied.
+              {receipt.receiptSent
+                ? 'A confirmation is on its way to the address you supplied. No reviewer has been assigned yet, and this is not an acceptance.'
+                : 'No reviewer has been assigned yet, and this is not an acceptance. We could not send a confirmation email, so keep this tracking ID as your reference.'}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <button
