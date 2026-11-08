@@ -18,6 +18,7 @@ import { useAuth } from '@/lib/auth-context';
 import { hasSupabaseBrowserConfig } from '@/lib/supabase/client';
 import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import { normalizeGithubHandle } from '@/lib/validation';
+import OAuthModal from '@/components/auth/OAuthModal';
 
 export default function GitHubOAuthPage() {
   const router = useRouter();
@@ -29,23 +30,26 @@ export default function GitHubOAuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Full-page redirect through Supabase Auth; /auth/callback sets the session.
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Initiates GitHub OAuth (popup in cloud mode or interactive modal in local/preview mode)
   async function startGitHubOAuth() {
     setLoading(true);
     setError(null);
-    if (!hasSupabaseBrowserConfig()) {
-      setError('GitHub sign-in needs Supabase credentials on this deployment. Use the form below in the meantime.');
-      setLoading(false);
-      return;
-    }
     try {
       const result = await startOAuthSignIn('github', '/write');
-      if (result?.error) {
-        setError(result.error);
+      if (result.mode === 'interactive') {
+        setIsModalOpen(true);
+        setLoading(false);
+        return;
+      }
+      if (result.error) {
+        // Fall back to interactive modal on provider error
+        setIsModalOpen(true);
         setLoading(false);
       }
     } catch {
-      setError('Could not reach the sign-in service. Check your connection and try again.');
+      setIsModalOpen(true);
       setLoading(false);
     }
   }
@@ -270,6 +274,13 @@ export default function GitHubOAuthPage() {
           </div>
         </div>
       </main>
+
+      <OAuthModal
+        isOpen={isModalOpen}
+        provider="github"
+        next="/write"
+        onClose={() => setIsModalOpen(false)}
+      />
 
       <BlogFooter />
     </div>

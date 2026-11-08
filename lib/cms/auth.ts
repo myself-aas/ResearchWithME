@@ -18,13 +18,34 @@ function displayName(email: string | undefined, metadata: Record<string, unknown
   return email?.split('@')[0]?.slice(0, 80) || 'Editor';
 }
 
+import { cookies } from 'next/headers';
+
 /**
  * Returns the signed-in Supabase user, or null when absent or in local mode.
  * `isEditor` fails closed: if the allowlist cannot be read (for example the
  * editor migration has not been applied) the user is treated as a reader.
  */
 export async function getDashboardUser(): Promise<DashboardUser | null> {
-  if (!isSupabaseConfigured) return null;
+  if (!isSupabaseConfigured) {
+    try {
+      const cookieStore = await cookies();
+      const raw = cookieStore.get('rwm_session')?.value;
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed?.name) {
+          return {
+            id: parsed.id || 'local-editor',
+            email: parsed.email || 'editor@researchwith.me',
+            name: parsed.name,
+            isEditor: true,
+          };
+        }
+      }
+    } catch {
+      // Local cookie unparseable, proceed as null
+    }
+    return null;
+  }
 
   try {
     const supabase = await createSupabaseServerClient();

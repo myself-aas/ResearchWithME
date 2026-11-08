@@ -21,6 +21,7 @@ import { useAuth } from '@/lib/auth-context';
 import { hasSupabaseBrowserConfig } from '@/lib/supabase/client';
 import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import { isValidEmail } from '@/lib/validation';
+import OAuthModal from '@/components/auth/OAuthModal';
 
 export default function GoogleOAuthPage() {
   const router = useRouter();
@@ -31,24 +32,25 @@ export default function GoogleOAuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Full-page redirect through Supabase Auth; /auth/callback sets the session.
+  // Initiates Google OAuth (popup in cloud mode or interactive modal in local/preview mode)
   async function startGoogleOAuth() {
     setLoading(true);
     setError(null);
-    if (!hasSupabaseBrowserConfig()) {
-      setError('Google sign-in needs Supabase credentials on this deployment. Use the form below in the meantime.');
-      setLoading(false);
-      return;
-    }
     try {
       const result = await startOAuthSignIn('google', '/');
-      if (result?.error) {
-        setError(result.error);
+      if (result.mode === 'interactive') {
+        setIsModalOpen(true);
+        setLoading(false);
+        return;
+      }
+      if (result.error) {
+        setIsModalOpen(true);
         setLoading(false);
       }
     } catch {
-      setError('Could not reach the sign-in service. Check your connection and try again.');
+      setIsModalOpen(true);
       setLoading(false);
     }
   }
@@ -266,6 +268,13 @@ export default function GoogleOAuthPage() {
           </div>
         </div>
       </main>
+
+      <OAuthModal
+        isOpen={isModalOpen}
+        provider="google"
+        next="/"
+        onClose={() => setIsModalOpen(false)}
+      />
 
       <BlogFooter />
     </div>
