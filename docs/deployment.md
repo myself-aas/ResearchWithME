@@ -40,7 +40,7 @@ This document is the long form. The short form is the *Deploy (Cloudflare Worker
 | Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview` | check run `Workers Builds: researchwithme` passes |
 | GitHub Actions `Quality` | On `main` | `.github/workflows/quality.yml` |
 | GitHub Actions `Deploy` | **On `main`** | `.github/workflows/deploy.yml`; previews per pull request, production after Quality passes. Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as Actions secrets |
-| Supabase | Project linked; four migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
+| Supabase | Project linked; seven migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
 | Revalidate webhook endpoint | Exists at `/api/revalidate`, optional workspace webhook to configure | `app/api/revalidate/route.ts` |
 
 Two facts worth knowing before you change anything:
@@ -84,8 +84,8 @@ Two facts worth knowing before you change anything:
         ┌──────────────────────────────────┐          │
         │ Supabase  bxyjjbclaklzjxeumeat   │──────────┘  (database webhook)
         │  Postgres + RLS                  │
-        │  Auth (Google/GitHub/ORCID/      │
-        │        magic link/password)      │
+        │  Auth (email+password, Google;   │
+        │   GitHub/ORCID as identity links)│
         │  Storage: blog-images (5 MB)     │
         │  Realtime: posts, comments       │
         └──────────────────────────────────┘
@@ -337,6 +337,9 @@ order. Four migrations exist:
 | `20261025000200_cms_storage.sql` | `blog-images` bucket + storage policies |
 | `20261025000300_cms_storage.sql` | storage follow-up (idempotent) |
 | `20261028000100_editor_allowlist.sql` | `public.editors` + `public.is_editor()`, studio write policies |
+| `20261108000100_consolidate_editor_allowlist.sql` | folds `editor_memberships` into `public.editors` |
+| `20261108000200_post_artifacts.sql` | artifact columns on `posts` for the reproducible-metadata fields |
+| `20261108000300_author_applications.sql` | `public.author_applications` + `apply_as_author()` / `review_author_application()` |
 
 The GitHub Supabase integration also runs a *Supabase Preview* check on pull requests. It fails with
 `Remote migration versions not found in local migrations directory` when the remote history contains
@@ -356,9 +359,13 @@ on conflict (user_id) do nothing;
 
 ### 5.4 Authentication
 
-**Authentication → Sign In / Providers**: enable Email (magic link + password), Google, GitHub, and
-the custom ORCID provider (identifier `orcid`, called as `custom:orcid`, issuer `https://orcid.org`,
-scope `openid`).
+**Authentication → Sign In / Providers**: enable Email (password only — magic links are no longer
+used) and Google. These are the two ways a reader signs in.
+
+GitHub and the custom ORCID provider (identifier `orcid`, called as `custom:orcid`, issuer
+`https://orcid.org`, scope `openid`) are configured as **identity links**, not sign-in methods: a
+signed-in reader attaches one from `/dashboard/access` to apply as a writer. They must still be
+enabled as providers with the same callback URL, but they do not need to appear in the sign-in UI.
 
 Every provider's OAuth callback is the one Supabase prints — `https://<ref>.supabase.co/auth/v1/callback`
 — not the site origin. The *site* origin is configured separately:

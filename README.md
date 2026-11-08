@@ -29,9 +29,9 @@ Node 20.9 or newer, and [Bun](https://bun.sh) 1.4 or newer — `bun.lock` is the
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
 | `/submit` | Operate | Manuscript intake with validation and failure recovery |
-| `/verify` | Operate | Prototype contributor identity and permission model |
+| `/login` | Operate | Sign in with email and password, or Google; setup guide in demo mode |
+| `/dashboard/access` | Operate | Connect a GitHub or ORCID identity and apply to write |
 | `/write` | Operate | Draft autosave, validation, preview, and publish through the CMS store |
-| `/login` | Operate | Editor sign-in: password or magic link (Supabase), setup guide in demo mode |
 | `/dashboard` | Operate | Studio: new article with Markdown editor, cover library, takeaways |
 | `/dashboard/manage` | Operate | Search, filter, publish/revert, delete, live status |
 | `/dashboard/edit/[id]` | Operate | Edit a draft or published article |
@@ -124,14 +124,14 @@ The studio writes to Supabase when `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_S
 - **One canonical reader:** published CMS articles are merged into `/`, `/post/[slug]`, the sitemap, and the author record. There is no duplicate `/blog` route.
 - **Writes are server-mediated:** `/api/cms/*` validates, rate-limits, checks the request origin, and lets RLS enforce access a second time. No service-role key ships with the app.
 - **Cache invalidation:** studio writes revalidate `/` and `/post/[slug]`; an optional Supabase webhook hits `/api/revalidate` with a timing-safe shared secret.
-- **Auth:** Supabase email/password and magic links. Magic links return to `/login` to exchange the PKCE code. Accounts are created by an administrator; there is no public sign-up.
+- **Auth:** Supabase email/password and Google. Both return through `/auth/callback`, which exchanges the PKCE code server-side. Publishing access comes from `public.editors` alone; a reader applies from `/dashboard/access` and an editor approves it.
 
 Full setup, the blueprint-to-code map, the data model, and the security notes are in [`docs/supabase-cms.md`](./docs/supabase-cms.md).
 
 ## Data and prototype behavior
 
 - Bundled catalogue, browser reading list, newsletter preference, and submission receipt data remain local JSON or `localStorage`.
-- Contributor verification on `/verify` is a **local prototype**: it validates ORCID checksums, GitHub handle syntax, and academic email domains in the browser, then stores a session in `localStorage`. No credentials are sent to ORCID, GitHub, an institution, or Google. Studio authentication is separate and real when Supabase is configured.
+- Writer access is a real, server-enforced decision: an applicant connects GitHub or ORCID with Supabase `linkIdentity`, an editor approves the row in `public.author_applications`, and approval writes the `public.editors` entry. There is no browser-side role and nothing is stored in `localStorage`.
 - The research assistant answers from the local catalog. With `GEMINI_API_KEY` set it asks Gemini to summarize the same records; without a key it returns a deterministic cited answer.
 
 Environment variables:

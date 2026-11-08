@@ -22,7 +22,7 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 - Dedicated article reading pages (`/post/[slug]`) with full markdown rendering, metadata panels, code syntax highlighting, DOI copy utilities, and related articles based on tag similarity.
 - Interactive category-filtered feed with verified topic thumbnail headers for all 6 core disciplines.
 - Dedicated scholarly research assistant (`/assistant`) for querying open literature and reproducible repos.
-- Dedicated standalone verification page (`/verify`) for checking DOI manifests, cryptographic hashes, and citation records.
+- A dedicated writer application (`/dashboard/access`) where a reader connects a GitHub or ORCID identity and an editor reviews the request.
 - Native responsive layout adhering to WCAG AA contrast standards (>= 4.5:1), semantic markup, and clear typographic hierarchy.
 - Zero disruptive pop-ups or modal interruptions during reading.
 
@@ -45,9 +45,9 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 ## Implementation Status
 - The active product is the root Next.js App Router application.
 - The editorial studio (`/login`, `/dashboard`) is backed by Supabase when credentials are configured: posts, comments, an image bucket, RLS, and realtime. Without credentials it writes to local JSON so the project stays runnable for review. See `docs/supabase-cms.md`.
-- Readers sign in through Supabase Auth with Google, GitHub, ORCID, or email (password or magic link). Studio access requires an administrator to add the account to `public.editors`; signing in alone grants reader access only.
+- Readers sign in through Supabase Auth with email and password, or Google. Signing in grants reader access only; publishing requires an approved application, which writes the account into `public.editors`.
 - Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
-- Contributor verification on `/verify` remains a clearly labeled local prototype, not production OAuth. No credentials are sent to ORCID, GitHub, an institution, or Google.
+- GitHub and ORCID are identity links on an existing account, not sign-in methods. Connecting one never replaces the session the reader applied from.
 - The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
 - Newsletter and reading-list preferences are stored locally in the browser. No email is sent and no behavioral tracking is used.
 
