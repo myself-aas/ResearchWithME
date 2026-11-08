@@ -108,7 +108,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabaseBacked = useRef(false);
 
   useEffect(() => {
-    setUser(readStoredSession());
+    const local = readStoredSession();
+    if (local) {
+      setUser(local);
+    } else {
+      fetch('/api/auth/session')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.authenticated && data?.user) {
+            setUser(data.user);
+            writeLocal(SESSION_KEY, data.user);
+          }
+        })
+        .catch(() => undefined);
+    }
 
     if (!hasSupabaseBrowserConfig()) {
       setHydrated(true);
@@ -178,8 +191,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(nextUser);
     if (nextUser) {
       writeLocal(SESSION_KEY, nextUser);
+      try {
+        fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user: nextUser }),
+        }).catch(() => undefined);
+      } catch {
+        // ignore
+      }
     } else {
       removeLocal(SESSION_KEY);
+      try {
+        fetch('/api/auth/session', { method: 'DELETE' }).catch(() => undefined);
+      } catch {
+        // ignore
+      }
     }
     window.dispatchEvent(new Event('rwm:session-changed'));
   }

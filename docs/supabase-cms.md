@@ -98,7 +98,9 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 6. **Allow redirects.** Supabase → Authentication → URL Configuration:
    - Site URL: `https://<your-origin>`
    - Redirect URLs: `https://<your-origin>/auth/callback` (add `http://localhost:3000/auth/callback` for local development)
-   Provider sign-ins and magic links return to `/auth/callback?next=…`, which exchanges the PKCE code and continues to `next`.
+   For the configured project, enter `https://bxyjjbclaklzjxeumeat.supabase.co/auth/v1/callback` in each OAuth provider's console. In Supabase, allow the **application** callback URLs instead: `https://researchwith.me/auth/callback`, `https://www.researchwith.me/auth/callback`, and local/preview origins as needed. These are separate settings. Set the Site URL to the production origin and ensure sign-ups are enabled in Supabase Auth if new users should register.
+
+   Provider sign-ins and magic links return to `/auth/callback?next=…`, which exchanges the PKCE code and continues to `next`. Open email links in the same browser and origin that requested them, since the PKCE verifier is stored there. OAuth uses same-tab navigation; open the site directly rather than inside an embedded preview if the provider blocks iframe navigation. New OAuth accounts are readers until explicitly granted editor access. If sign-in fails, check the displayed error, enabled provider credentials and callback URLs, and rebuild after changing the public environment variables.
 7. **Configure the cache webhook (optional).** Database → Webhooks → *Create*:
    - Table: `posts`; events: insert, update, delete
    - URL: `https://<your-origin>/api/revalidate`

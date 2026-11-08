@@ -18,7 +18,6 @@ import {
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { useAuth } from '@/lib/auth-context';
-import { hasSupabaseBrowserConfig } from '@/lib/supabase/client';
 import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import { isValidEmail } from '@/lib/validation';
 
@@ -32,23 +31,12 @@ export default function GoogleOAuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Full-page redirect through Supabase Auth; /auth/callback sets the session.
   async function startGoogleOAuth() {
     setLoading(true);
     setError(null);
-    if (!hasSupabaseBrowserConfig()) {
-      setError('Google sign-in needs Supabase credentials on this deployment. Use the form below in the meantime.');
-      setLoading(false);
-      return;
-    }
-    try {
-      const result = await startOAuthSignIn('google', '/');
-      if (result?.error) {
-        setError(result.error);
-        setLoading(false);
-      }
-    } catch {
-      setError('Could not reach the sign-in service. Check your connection and try again.');
+    const result = await startOAuthSignIn('google', '/');
+    if (!result.ok) {
+      setError(result.error ?? 'Could not start sign-in. Please try again.');
       setLoading(false);
     }
   }
@@ -173,6 +161,7 @@ export default function GoogleOAuthPage() {
                 </>
               )}
             </button>
+            {error && <p role="alert" className="text-sm text-red-700">{error}</p>}
             <p className="text-center font-mono text-xs text-stone-500">
               Scope: openid, email, profile · Signed in through Supabase Auth
             </p>
@@ -266,6 +255,7 @@ export default function GoogleOAuthPage() {
           </div>
         </div>
       </main>
+
 
       <BlogFooter />
     </div>

@@ -4,7 +4,7 @@
  */
 export function safeNextPath(value: string | string[] | null | undefined, fallback = '/dashboard') {
   const candidate = Array.isArray(value) ? value[0] : value;
-  if (!candidate || !candidate.startsWith('/') || candidate.startsWith('//') || candidate.includes('\\')) {
+  if (!candidate || !candidate.startsWith('/') || candidate.startsWith('//') || candidate.includes('\\') || /[\x00-\x1f\x7f]/.test(candidate)) {
     return fallback;
   }
   if (candidate.startsWith('/login') || candidate.startsWith('/auth/callback')) return fallback;

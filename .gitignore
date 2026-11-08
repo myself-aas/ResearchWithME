@@ -9,6 +9,7 @@ dist/
 *.log
 .env*
 !.env.example
+!.env.production
 
 # Impeccable local/runtime state (shared config is committed intentionally).
 .impeccable/config.local.json
