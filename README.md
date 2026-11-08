@@ -7,12 +7,12 @@ The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) a
 ## Run it
 
 ```bash
-npm install
+bun install
 npm run dev        # http://localhost:3000
 npm run build && npm start
 ```
 
-Node 20.9 or newer. `next.config.ts` sets `output: 'standalone'`, so a production container can run `node .next/standalone/server.js`; `next start` is used for local verification.
+Node 20.9 or newer, and [Bun](https://bun.sh) 1.4 or newer — `bun.lock` is the only lockfile, and CI installs with `bun install --frozen-lockfile`. `next.config.ts` sets `output: 'standalone'`, so a production container can run `node .next/standalone/server.js`; `next start` is used for local verification.
 
 ## Routes
 
@@ -30,7 +30,7 @@ Node 20.9 or newer. `next.config.ts` sets `output: 'standalone'`, so a productio
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
 | `/submit` | Operate | Manuscript intake with validation and failure recovery |
 | `/verify` | Operate | Prototype contributor identity and permission model |
-| `/write` | Operate | Prototype draft autosave, validation, preview, publish (local archive) |
+| `/write` | Operate | Draft autosave, validation, preview, and publish through the CMS store |
 | `/login` | Operate | Editor sign-in: password or magic link (Supabase), setup guide in demo mode |
 | `/dashboard` | Operate | Studio: new article with Markdown editor, cover library, takeaways |
 | `/dashboard/manage` | Operate | Search, filter, publish/revert, delete, live status |
@@ -92,7 +92,7 @@ Workers & Pages → `researchwithme` → Settings → Builds:
 | Production branch | `main` |
 | Root directory | `/` |
 
-If the production deploy command is left at `npx wrangler preview`, `main` only ever produces previews: the Worker never gains a production deployment, and every branch keeps failing with `Preview creation failed: This Worker does not exist on your account` — previews branch *from* the deployed Worker. Pick one deployer as well: if the GitHub Actions `deploy.yml` is merged too, both it and Workers Builds run `wrangler deploy` on `main`, and every merge deploys twice.
+If the production deploy command is left at `npx wrangler preview`, `main` only ever produces previews: the Worker never gains a production deployment, and every branch keeps failing with `Preview creation failed: This Worker does not exist on your account` — previews branch *from* the deployed Worker. The GitHub Actions `Deploy` workflow is on `main`, so turn Cloudflare Workers Builds off (Workers & Pages → `researchwithme` → Settings → Builds); leaving both on runs `wrangler deploy` twice on every merge.
 
 ### First production deployment
 
@@ -163,7 +163,6 @@ data/          seed JSON records (runtime state for the local adapters)
 docs/          audit report, CMS guide, project notes
 ```
 
-`ResearchWith.me-main/` is a legacy WordPress theme kept for reference only; it is excluded from builds and linting.
 
 ## Fonts
 

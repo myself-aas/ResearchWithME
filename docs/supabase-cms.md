@@ -150,7 +150,7 @@ Manual checks for a configured project: sign in, save a draft, edit it, publish 
 - Deleting an article removes its comments (the same cascade as the foreign key).
 - Ids are numeric strings, millisecond-free, so the public namespace matches Supabase (`cms-1`, `cms-2`, …).
 - The studio and `/api/cms/*` are unauthenticated in this mode. Do not expose a local-mode deployment to the internet.
-- `/api/articles` `POST` (the older `/write` prototype) is disabled whenever Supabase is configured, so the JSON archive cannot diverge from the live database.
+- `/write` publishes through the same `/api/cms/posts` route as the dashboard, so there is one write path and the JSON archive cannot diverge from the live database. The older `POST /api/articles` handler has been removed.
 
 ## Deliberate departures from the attached blueprint
 
