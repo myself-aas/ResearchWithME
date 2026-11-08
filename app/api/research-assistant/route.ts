@@ -8,6 +8,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 const MAX_QUERY = 600;
+const MODEL_TIMEOUT_MS = 20_000;
 
 const STOP_WORDS = new Set([
   'the', 'and', 'for', 'with', 'about', 'what', 'does', 'how', 'why', 'from', 'into', 'that', 'this',
@@ -85,7 +86,7 @@ async function fallbackAnswer(query: string) {
 }
 
 export async function POST(request: NextRequest) {
-  const limit = rateLimit(clientKey(request, 'assistant'), 12, 60_000);
+  const limit = await rateLimit(clientKey(request, 'assistant'), 12, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many questions in a short window. Wait a minute and try again.' },
@@ -145,6 +146,7 @@ export async function POST(request: NextRequest) {
     const response = await ai.models.generateContent({
       model: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
       contents: [{ role: 'user', parts: [{ text: `${systemPrompt}\n\nReader question:\n"${query}"` }] }],
+      config: { abortSignal: AbortSignal.timeout(MODEL_TIMEOUT_MS) },
     });
     const answer = cleanText(response.text ?? '', 20_000);
     if (!answer) throw new Error('Empty model response');

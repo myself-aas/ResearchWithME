@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { AUTHORS, CATEGORIES, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { getPublishedCmsPosts } from '@/lib/cms/read';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
-import { toDate } from '@/lib/seo';
+import { SITE_URL, toDate } from '@/lib/seo';
 import persistedArticles from '@/data/articles.json';
 
 const FALLBACK_DATE = new Date('2026-10-25T00:00:00.000Z');
@@ -38,31 +38,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticRoutes.map(({ path, priority, changeFrequency }) => ({
-      url: new URL(path, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      url: new URL(path, SITE_URL).toString(),
       lastModified: FALLBACK_DATE,
       changeFrequency,
       priority,
     })),
     ...CATEGORIES.map((category) => ({
-      url: new URL(`/category/${categoryToSlug(category)}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      url: new URL(`/category/${categoryToSlug(category)}`, SITE_URL).toString(),
       lastModified: FALLBACK_DATE,
       changeFrequency: 'weekly' as const,
       priority: 0.85,
     })),
     ...[...articleSlugs].map(([slug, lastModified]) => ({
-      url: new URL(`/post/${slug}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      url: new URL(`/post/${slug}`, SITE_URL).toString(),
       lastModified,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
     ...PUBLICATIONS_DATA.map((paper) => ({
-      url: new URL(`/paper/${paper.slug}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      url: new URL(`/paper/${paper.slug}`, SITE_URL).toString(),
       lastModified: toDate(paper.publishedDate) ?? FALLBACK_DATE,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
     ...Object.keys(AUTHORS).map((id) => ({
-      url: new URL(`/author/${id}`, process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').toString(),
+      url: new URL(`/author/${id}`, SITE_URL).toString(),
       lastModified: FALLBACK_DATE,
       changeFrequency: 'monthly' as const,
       priority: 0.6,
