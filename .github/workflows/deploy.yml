@@ -80,11 +80,30 @@ jobs:
             cat /tmp/preview.err >&2
             exit 1
           }
-          # --json is shape-dependent across Wrangler versions, so read the URL
-          # out of the payload rather than assuming a field name. Wrangler also
-          # writes progress to stderr, so both streams are searched.
-          cat /tmp/preview.err >> /tmp/preview.json || true
-          url=$(grep -oE 'https://[A-Za-z0-9.-]+\.workers\.dev[A-Za-z0-9/._-]*' /tmp/preview.json | head -1 || true)
+          # The --json shape varies by Wrangler version and a Preview host is not
+          # necessarily *.workers.dev, so walk the payload for any URL instead of
+          # matching one field name or one hostname. Both streams are searched
+          # because Wrangler writes progress to stderr.
+          url=$(node -e '
+            const fs = require("fs");
+            const raw = fs.readFileSync("/tmp/preview.json", "utf8");
+            const err = fs.readFileSync("/tmp/preview.err", "utf8");
+            const found = [];
+            const walk = (v) => {
+              if (typeof v === "string") { if (/^https?:\/\//.test(v)) found.push(v); return; }
+              if (Array.isArray(v)) { v.forEach(walk); return; }
+              if (v && typeof v === "object") Object.values(v).forEach(walk);
+            };
+            const start = raw.indexOf("{");
+            if (start >= 0) { try { walk(JSON.parse(raw.slice(start))); } catch (e) {} }
+            for (const m of (raw + "\n" + err).matchAll(/https:\/\/[^\s"]+/g)) found.push(m[0]);
+            process.stdout.write(found.find((u) => u.includes("workers.dev")) || found[0] || "");
+          ')
+          if [ -z "$url" ]; then
+            echo "::warning title=Preview URL not found::wrangler preview exited 0 but no URL was recognised, so no link will be posted. Raw output follows."
+            echo "--- stdout ---"; cat /tmp/preview.json
+            echo "--- stderr ---"; cat /tmp/preview.err
+          fi
           echo "url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Note that the preview upload was skipped
