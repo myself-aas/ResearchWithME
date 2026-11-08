@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import HomeFeed from '@/components/HomeFeed';
+import { listPublishedAuthors } from '@/lib/author-directory';
 import { categoryToSlug, slugToCategory } from '@/lib/blog-data';
 
 export default async function HomePage({
@@ -20,5 +21,9 @@ export default async function HomePage({
     }
   }
 
-  return <HomeFeed initialCategory="All" initialSearch={search} />;
+  // Read on the server so the spotlight ships with real rows instead of the
+  // client reading a constant that is now empty.
+  const authors = await listPublishedAuthors();
+
+  return <HomeFeed initialCategory="All" initialSearch={search} authors={authors} />;
 }

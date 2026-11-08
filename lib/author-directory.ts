@@ -75,10 +75,39 @@ async function queryProfiles(slug?: string): Promise<ProfileRow[]> {
   return (data ?? []) as ProfileRow[];
 }
 
-/** Every published profile, alphabetically. */
+/**
+ * Public author reads are best-effort, matching lib/cms/read.ts: a storage
+ * outage degrades to an empty directory and is logged, rather than failing the
+ * prerender or returning a 500 to a reader.
+ */
+async function readProfiles(slug?: string): Promise<ProfileRow[]> {
+  try {
+    return await queryProfiles(slug);
+  } catch (error) {
+    console.error('Could not load author profiles:', error);
+    return [];
+  }
+}
+
+/**
+ * Every published profile, alphabetically, with a real article count.
+ *
+ * profileToAuthor cannot know the count -- it only sees one row -- so it leaves
+ * articleCount at 0 and this fills it in from one catalogue read shared by every
+ * author on the page.
+ */
 export const listPublishedAuthors = cache(async (): Promise<Author[]> => {
-  const profiles = await queryProfiles();
-  return profiles.map(profileToAuthor);
+  const [profiles, catalogue] = await Promise.all([readProfiles(), getArticleCatalogue()]);
+
+  const counts = new Map<string, number>();
+  for (const article of catalogue) {
+    counts.set(article.author.id, (counts.get(article.author.id) ?? 0) + 1);
+  }
+
+  return profiles.map((profile) => {
+    const author = profileToAuthor(profile);
+    return { ...author, articleCount: counts.get(author.id) ?? 0 };
+  });
 });
 
 /**
@@ -88,7 +117,7 @@ export const listPublishedAuthors = cache(async (): Promise<Author[]> => {
 export const getPublishedAuthor = cache(async (id: string): Promise<Author | null> => {
   if (!id) return null;
   const wanted = id.trim().toLowerCase();
-  const profiles = await queryProfiles();
+  const profiles = await readProfiles();
   const match = profiles.find((profile) => profile.slug.toLowerCase() === wanted);
   return match ? profileToAuthor(match) : null;
 });
