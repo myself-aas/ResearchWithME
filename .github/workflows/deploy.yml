@@ -130,9 +130,27 @@ jobs:
             // Runner logs are not reachable from every environment, so record how
             // the URL was resolved. Values are masked by Actions when they are
             // secrets, which is why this reports a source rather than the URL.
+            // Report the payload shape by PATH, not by value, so the annotation
+            // is useful even when Actions masks the values as secrets.
+            const shape = [];
+            const urlPaths = [];
+            const walkPaths = (v, path) => {
+              if (typeof v === "string") { if (isUrl(v)) urlPaths.push(path); return; }
+              if (Array.isArray(v)) {
+                shape.push(path + "[]");
+                v.forEach((x, i) => walkPaths(x, path + "[" + i + "]"));
+                return;
+              }
+              if (v && typeof v === "object") {
+                for (const [k2, v2] of Object.entries(v)) walkPaths(v2, path ? path + "." + k2 : k2);
+                return;
+              }
+              shape.push(path + ":" + typeof v);
+            };
+            if (parsed) walkPaths(parsed, "");
             const note = "source=" + (explicit[0] ? "field" : usable[0] ? "scan" : "none")
-              + " workersDev=" + usable.some((u) => u.includes("workers.dev"))
-              + " parsed=" + (parsed ? Object.keys(parsed).join(",") : "no");
+              + " urlPaths=" + JSON.stringify(urlPaths)
+              + " shape=" + JSON.stringify(shape.slice(0, 40));
             process.stderr.write("::notice title=preview url resolution::" + note + "\n");
             process.stdout.write(pick);
           ')
