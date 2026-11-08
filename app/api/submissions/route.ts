@@ -2,7 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isSameOrigin } from '@/lib/cms/http';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 import { sendEmail } from '@/lib/email';
-import { buildSubmissionReceipt, submissionReceiptKey } from '@/lib/submission-email';
+import {
+  submissionReceiptKey,
+  submissionReceiptSubject,
+  submissionReceiptVariables,
+  renderSubmissionReceipt,
+} from '@/lib/submission-email';
 import { createSubmission } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
@@ -45,15 +50,26 @@ export async function POST(request: NextRequest) {
   // The submission is already recorded at this point, so the acknowledgement is
   // best-effort: a failed or unconfigured send is logged and reported back in
   // the body, never turned into a failed request.
-  const receipt = buildSubmissionReceipt(result.submission);
-  const sent = await sendEmail({
+  const variables = submissionReceiptVariables(result.submission);
+  const base = {
     to: result.submission.email,
-    subject: receipt.subject,
-    html: receipt.html,
-    text: receipt.text,
+    // Built here rather than left to the template, so the reference is present
+    // even if the variable is dropped while editing in Resend's visual editor.
+    subject: submissionReceiptSubject(variables.reference),
     idempotencyKey: submissionReceiptKey(result.submission.id),
     tags: [{ name: 'category', value: 'submission-receipt' }],
-  });
+  };
+
+  // With a template configured, Resend renders the body, so the local render is
+  // skipped entirely rather than producing HTML nobody reads. Without one -- the
+  // default, and the state of any environment that has not uploaded a template
+  // yet -- the same component is rendered here and sent as HTML plus text.
+  const templateId = (process.env.RESEND_RECEIPT_TEMPLATE_ID ?? '').trim();
+  const sent = await sendEmail(
+    templateId
+      ? { ...base, template: { id: templateId, variables } }
+      : { ...base, ...(await renderSubmissionReceipt(variables)) },
+  );
 
   if (!sent.ok) {
     console.error(

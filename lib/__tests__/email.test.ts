@@ -164,6 +164,52 @@ describe('sendEmail when configured', () => {
     expect(result.skipped).toBe(false);
   });
 
+  it('sends a Resend template with variables instead of a body', async () => {
+    sendMock.mockResolvedValue({ data: { id: 'msg_2' }, error: null });
+    const { sendEmail } = await loadEmailModule();
+
+    await expect(
+      sendEmail({
+        to: input.to,
+        subject: input.subject,
+        template: {
+          id: 'tmpl_receipt',
+          variables: { reference: 'RWM-2026-7QXTR3', authorName: 'Amara' },
+        },
+        idempotencyKey: input.idempotencyKey,
+      }),
+    ).resolves.toEqual({ ok: true, id: 'msg_2' });
+
+    const [payload] = sendMock.mock.calls[0];
+    expect(payload.template).toEqual({
+      id: 'tmpl_receipt',
+      variables: { reference: 'RWM-2026-7QXTR3', authorName: 'Amara' },
+    });
+    // Resend's template variant is mutually exclusive with html/text, so the
+    // payload must not carry a body alongside it.
+    expect(payload).not.toHaveProperty('html');
+    expect(payload).not.toHaveProperty('text');
+  });
+
+  it('still sends the caller subject with a template, so the reference survives', async () => {
+    // A Resend template can define its own subject. Overriding it at send time
+    // means the tracking ID is present even if an editor drops that variable
+    // while editing the template visually.
+    sendMock.mockResolvedValue({ data: { id: 'msg_3' }, error: null });
+    const { sendEmail } = await loadEmailModule();
+
+    await sendEmail({
+      to: input.to,
+      subject: '[RWM-2026-7QXTR3] We received your submission',
+      template: { id: 'tmpl_receipt', variables: {} },
+      idempotencyKey: input.idempotencyKey,
+    });
+
+    const [payload] = sendMock.mock.calls[0];
+    expect(payload.subject).toBe('[RWM-2026-7QXTR3] We received your submission');
+    expect(payload.from).toBe('ResearchWithMe <editorial@researchwith.me>');
+  });
+
   it('reuses one Resend client across sends', async () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
     const { sendEmail } = await loadEmailModule();

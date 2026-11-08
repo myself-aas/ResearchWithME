@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 /**
  * Outbound email through Resend.
  *
- * Two rules shape this module:
+ * Three rules shape this module:
  *
  * 1. Sending is always best-effort. Every caller uses it *after* its primary
  *    action has already succeeded, so an email failure is logged and reported
@@ -13,6 +13,10 @@ import { Resend } from 'resend';
  * 2. Nothing is sent unless a real sender is configured. `onboarding@resend.dev`
  *    is a Resend test address; silently falling back to it in production would
  *    mean mail leaves the app from an address the project does not own.
+ *
+ * 3. Two body shapes, never both. Resend's own types make `template` mutually
+ *    exclusive with `react`/`html`/`text`, so the union below mirrors that
+ *    rather than letting a caller pass both and discover it at the API.
  */
 
 /** Verified sending address, e.g. `ResearchWithMe <editorial@researchwith.me>`. */
@@ -22,11 +26,15 @@ export function isEmailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY?.trim()) && Boolean(EMAIL_FROM);
 }
 
-export interface SendEmailInput {
+interface SendEmailBase {
   to: string;
+  /**
+   * Always supplied by the caller, never left to the template. A Resend
+   * template may define its own subject, but a caller that has a tracking ID to
+   * guarantee should not depend on someone wiring that variable correctly in a
+   * visual editor.
+   */
   subject: string;
-  html: string;
-  text?: string;
   /**
    * `<event-type>/<entity-id>`, max 256 characters. Lets a retry not duplicate
    * the message.
@@ -34,6 +42,28 @@ export interface SendEmailInput {
   idempotencyKey: string;
   tags?: Array<{ name: string; value: string }>;
 }
+
+export type SendEmailInput =
+  /** Body rendered here and handed to Resend as HTML. */
+  | (SendEmailBase & {
+      template?: undefined;
+      html: string;
+      text?: string;
+    })
+  /**
+   * Body rendered by Resend from an uploaded template. Note that this shape
+   * cannot carry a `text` part -- Resend's template variant sets `text?: never`
+   * -- so choosing it trades the plain-text alternative for editor control.
+   */
+  | (SendEmailBase & {
+      template: {
+        id: string;
+        /** Resend template variables: flat string or number values only. */
+        variables: Record<string, string | number>;
+      };
+      html?: undefined;
+      text?: undefined;
+    });
 
 export type SendEmailResult =
   | { ok: true; id: string }
@@ -60,6 +90,13 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     return { ok: false, skipped: true, reason: 'EMAIL_FROM is not set.' };
   }
 
+  const body = input.template
+    ? { template: { id: input.template.id, variables: input.template.variables } }
+    : {
+        html: input.html,
+        ...(input.text ? { text: input.text } : {}),
+      };
+
   // The SDK resolves with { data, error } rather than throwing, so the result is
   // destructured and inspected. The try/catch is only for transport-level
   // failures -- a DNS or TLS error must not take the caller's request down.
@@ -69,9 +106,8 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
         from: EMAIL_FROM,
         to: [input.to],
         subject: input.subject,
-        html: input.html,
-        ...(input.text ? { text: input.text } : {}),
         ...(input.tags ? { tags: input.tags } : {}),
+        ...body,
       },
       // idempotencyKey is a REQUEST option, sent as the Idempotency-Key header.
       // It is not a field of the payload: resend@6 rejects it there with
