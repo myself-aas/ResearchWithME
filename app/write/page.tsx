@@ -8,11 +8,13 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import PageState from '@/components/PageState';
 import QwenCoverGenerator from '@/components/cms/QwenCoverGenerator';
-import { ArticleFormat, AUTHORS, BlogCategory, BlogPost, CATEGORIES } from '@/lib/blog-data';
+import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES } from '@/lib/blog-data';
 import { useAuth } from '@/lib/auth-context';
+import { ApiError, cmsFetch } from '@/lib/cms/client-api';
+import type { CmsPost } from '@/lib/cms/types';
 import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
 import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
-import { formatDate, readingTimeFromText } from '@/lib/format';
+import { readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import dynamic from 'next/dynamic';
 
@@ -26,6 +28,8 @@ const DRAFT_KEY = 'rwm_writer_draft';
 interface Draft {
   title: string;
   subtitle: string;
+  /** Verified author profile from the catalogue the article is published under. */
+  authorId: string;
   category: BlogCategory;
   format: ArticleFormat;
   summary: string;
@@ -42,9 +46,12 @@ interface Draft {
   updatedAt: string;
 }
 
+const AUTHOR_IDS = Object.keys(AUTHORS);
+
 const emptyDraft: Draft = {
   title: '',
   subtitle: '',
+  authorId: '',
   category: 'Research Reviews',
   format: 'Paper Review',
   summary: '',
@@ -154,6 +161,11 @@ export default function WritePage() {
   }
 
   const parsedTags = useMemo(() => parseTags(draft.tags), [draft.tags]);
+  const resolvedAuthorId = useMemo(() => {
+    if (draft.authorId && AUTHORS[draft.authorId]) return draft.authorId;
+    const fromProfile = user?.authorProfileId;
+    return fromProfile && AUTHORS[fromProfile] ? fromProfile : '';
+  }, [draft.authorId, user?.authorProfileId]);
   const readTime = useMemo(() => readingTimeFromText(`${draft.summary} ${draft.content}`), [draft.summary, draft.content]);
   const previewParagraphs = useMemo(
     () => draft.content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean),
@@ -197,25 +209,10 @@ export default function WritePage() {
       }
     }
 
-    const knownAuthor = user.authorProfileId ? AUTHORS[user.authorProfileId] : undefined;
-    const author =
-      knownAuthor ?? {
-        id: slugify(user.name) || user.id,
-        name: user.name,
-        avatar: user.avatar,
-        role: user.verifiedTitle ?? 'Verified contributor',
-        domain: draft.category,
-        institution: user.institution ?? 'Independent researcher',
-        verifiedVia:
-          user.authProvider === 'orcid' || user.authProvider === 'github' || user.authProvider === 'institution'
-            ? user.authProvider
-            : 'institution',
-        verifiedIdentifier: user.verifiedIdentifier ?? user.email,
-        verifiedTitle: user.verifiedTitle ?? 'Contributor identity on file',
-        joinedDate: formatDate(new Date(), { day: undefined, month: 'long', year: 'numeric' }),
-        articleCount: 1,
-        bio: `${user.name} reviews work in ${draft.category.toLowerCase()} on ResearchWithME.`,
-      };
+    if (!resolvedAuthorId) {
+      fail('Choose the verified author profile this article is published under.', 'write-author');
+      return;
+    }
 
     const slug = slugify(draft.title);
     if (!slug) {
@@ -223,54 +220,49 @@ export default function WritePage() {
       return;
     }
 
-    const article: BlogPost = {
-      id: `post-${Date.now()}`,
-      slug,
-      title: cleanText(draft.title, LIMITS.title),
-      subtitle: cleanText(draft.subtitle, 400) || cleanText(draft.summary, 140),
-      category: draft.category,
-      format: draft.format,
-      author,
-      publishedAt: new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date()),
-      readTime: `${readTime} min read`,
-      coverImage: draft.coverImage?.trim() || (draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg'),
-      featured: false,
-      reviewedArtifact: draft.hasArtifact
-        ? {
-            type: draft.artifactType,
-            title: cleanText(draft.artifactTitle, 200) || cleanText(draft.artifactIdentifier, LIMITS.identifier),
-            identifier: cleanText(draft.artifactIdentifier, LIMITS.identifier),
-            url: draft.artifactUrl.trim() || (draft.artifactType === 'github' ? 'https://github.com' : 'https://doi.org'),
-            meta: cleanText(draft.artifactMeta, 160) || 'Metadata supplied by the author',
-          }
-        : undefined,
-      summary: cleanText(draft.summary, LIMITS.summary),
-      content: draft.content
-        .split(/\n{2,}/)
-        .map((paragraph) => cleanText(paragraph, 40_000))
-        .filter(Boolean),
-      keyTakeaways: takeaways,
-      tags: parsedTags,
-      likes: 0,
-      commentsCount: 0,
-    };
-
     setPublishing(true);
     try {
-      const res = await fetch('/api/articles', {
+      // The writer studio publishes through the same CMS store as /dashboard, so
+      // the article lands in Supabase (or the local archive in demo mode), joins
+      // the canonical reader and sitemap, and is revalidated on publish.
+      const saved = await cmsFetch<{ post: CmsPost }>('/api/cms/posts', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(article),
+        body: JSON.stringify({
+          title: cleanText(draft.title, LIMITS.title),
+          slug,
+          subtitle: cleanText(draft.subtitle, 400) || cleanText(draft.summary, 140),
+          summary: cleanText(draft.summary, LIMITS.summary),
+          content: draft.content,
+          status: 'published',
+          category: draft.category,
+          format: draft.format,
+          authorId: resolvedAuthorId,
+          coverImage:
+            draft.coverImage?.trim() ||
+            (draft.artifactType === 'github' ? '/images/folio-code.jpeg' : '/images/folio-hero.jpeg'),
+          tags: parsedTags,
+          keyTakeaways: takeaways,
+          featured: false,
+          artifact: draft.hasArtifact
+            ? {
+                type: draft.artifactType,
+                title: cleanText(draft.artifactTitle, 200) || cleanText(draft.artifactIdentifier, LIMITS.identifier),
+                identifier: cleanText(draft.artifactIdentifier, LIMITS.identifier),
+                url: draft.artifactUrl.trim() || (draft.artifactType === 'github' ? 'https://github.com' : 'https://doi.org'),
+                meta: cleanText(draft.artifactMeta, 160),
+              }
+            : null,
+        }),
       });
-      const payload = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(payload.error || 'The publication could not be saved.');
+
       removeLocal(DRAFT_KEY);
-      const savedSlug = payload.article?.slug ?? slug;
-      router.push(`/post/${savedSlug}`);
+      router.push(`/post/${saved.post.slug}`);
     } catch (publishError) {
-      setError(
-        `${publishError instanceof Error ? publishError.message : 'The publication could not be saved.'} Your draft is preserved in this browser.`,
-      );
+      const message =
+        publishError instanceof ApiError
+          ? publishError.message
+          : 'The publication could not be saved.';
+      setError(`${message} Your draft is preserved in this browser.`);
       setPublishing(false);
     }
   }
@@ -509,6 +501,29 @@ export default function WritePage() {
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label htmlFor="write-author" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    Published under
+                  </label>
+                  <select
+                    id="write-author"
+                    value={resolvedAuthorId}
+                    onChange={(event) => update('authorId', event.target.value)}
+                    aria-invalid={errorField === 'write-author' ? true : undefined}
+                    className={fieldClass}
+                  >
+                    {resolvedAuthorId ? null : <option value="">Choose a verified author</option>}
+                    {AUTHOR_IDS.map((id) => (
+                      <option key={id} value={id}>
+                        {AUTHORS[id].name} — {AUTHORS[id].role}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="mt-1 text-xs text-stone-500">
+                    Articles are attributed to a verified profile in the catalogue.
+                  </p>
                 </div>
 
                 <div>
