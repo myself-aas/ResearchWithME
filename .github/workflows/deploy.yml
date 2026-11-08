@@ -95,9 +95,19 @@ jobs:
               if (v && typeof v === "object") Object.values(v).forEach(walk);
             };
             const start = raw.indexOf("{");
-            if (start >= 0) { try { walk(JSON.parse(raw.slice(start))); } catch (e) {} }
+            let shape = "unparsed";
+            if (start >= 0) {
+              try { const j = JSON.parse(raw.slice(start)); walk(j); shape = Object.keys(j).join(","); } catch (e) {}
+            }
             for (const m of (raw + "\n" + err).matchAll(/https:\/\/[^\s"]+/g)) found.push(m[0]);
-            process.stdout.write(found.find((u) => u.includes("workers.dev")) || found[0] || "");
+            // GitHub's own URLs appear in the output but are never the preview.
+            const usable = found.filter((u) => !/github\.com|githubusercontent\.com/.test(u));
+            const pick = usable.find((u) => u.includes("workers.dev")) || usable[0] || "";
+            // Runner logs are not reachable from every environment, so surface the
+            // payload shape through an annotation, which the REST API can read.
+            const note = "keys=" + shape + " | urls=" + JSON.stringify(usable.slice(0, 6));
+            process.stderr.write("::notice title=wrangler preview shape::" + note.replace(/\n/g, "%0A") + "\n");
+            process.stdout.write(pick);
           ')
           if [ -z "$url" ]; then
             echo "::warning title=Preview URL not found::wrangler preview exited 0 but no URL was recognised, so no link will be posted. Raw output follows."
