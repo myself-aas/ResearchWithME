@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Cross-site requests are not allowed.' }, { status: 403 });
   }
 
-  const limit = rateLimit(clientKey(request, 'comments'), 8, 60_000);
+  const limit = await rateLimit(clientKey(request, 'comments'), 8, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many comments in a short window. Wait a minute and try again.' },

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
-  const limit = rateLimit(clientKey(request, 'cms:create'), 20, 60_000);
+  const limit = await rateLimit(clientKey(request, 'cms:create'), 20, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many saves in a short window. Try again in a minute.' },

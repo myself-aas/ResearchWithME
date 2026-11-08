@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ id: 
 }
 
 export async function PATCH(request: NextRequest, props: { params: Promise<{ id: string }> }) {
-  const limit = rateLimit(clientKey(request, 'likes'), 30, 60_000);
+  const limit = await rateLimit(clientKey(request, 'likes'), 30, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many reactions in a short window. Try again shortly.' },

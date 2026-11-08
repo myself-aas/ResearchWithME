@@ -18,7 +18,7 @@ export async function DELETE(request: Request, props: { params: Promise<{ id: st
     return NextResponse.json({ error: gate.error }, { status: gate.status });
   }
 
-  const limit = rateLimit(clientKey(request, 'cms:comment-delete'), 30, 60_000);
+  const limit = await rateLimit(clientKey(request, 'cms:comment-delete'), 30, 60_000);
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many moderation actions in a short window. Try again in a minute.' },

@@ -32,9 +32,16 @@
 	// Free-plan setup: no R2 or Images bindings, so next/image serves originals.
 	// One KV namespace (researchwithme-opennext-cache) backs both OpenNext
 	// caches; their key prefixes don't overlap (see open-next.config.ts).
+	// RATE_LIMIT_KV points at the same namespace with its own `rl:` prefix
+	// (lib/rate-limit.ts). Sharing it means rate-limiter writes draw on the same
+	// free 1,000-writes-a-day budget as the page cache; to separate them, run
+	// `npx wrangler kv namespace create researchwithme-rate-limit` and use that id
+	// for RATE_LIMIT_KV only. Without any RATE_LIMIT_KV binding the limiter
+	// silently falls back to a per-isolate in-memory count.
 	"kv_namespaces": [
 		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
+		{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 	],
 	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
 	// pull request. A preview is a branch of the Worker, not the production
@@ -58,7 +65,8 @@
 	"previews": {
 		"kv_namespaces": [
 			{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
+			{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 		]
 	},
 	"observability": {
