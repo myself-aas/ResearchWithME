@@ -6,8 +6,8 @@ import { getDashboardUser } from '@/lib/cms/auth';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 export const metadata: Metadata = {
-  title: 'Editorial studio',
-  description: 'Write, review, and publish ResearchWithMe articles.',
+  title: 'Your account',
+  description: 'Manage your ResearchWithMe account and apply to write.',
   robots: {
     index: false,
     follow: false,
@@ -15,19 +15,22 @@ export const metadata: Metadata = {
   },
 };
 
-// Every studio page depends on the session cookie and live draft data.
+// Every dashboard page depends on the session cookie and live data.
 export const dynamic = 'force-dynamic';
 
+/**
+ * Requires a signed-in account, not editor access. The `(studio)` group adds the
+ * editor requirement on top, so `/dashboard/access` stays reachable by the
+ * readers who are applying to write.
+ */
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const configured = isSupabaseConfigured;
   const user = await getDashboardUser();
 
-  // The middleware already redirects; this is a second line of defence so a
-  // route can never render drafts if the matcher is edited later.
-  // Signed-in readers are sent back to /login, which explains that the account
-  // needs editor access instead of rendering the studio.
-  if (configured && (!user || !user.isEditor)) {
-    redirect('/login?next=/dashboard');
+  // The middleware already redirects; this is a second line of defence so the
+  // matcher can be edited later without exposing the dashboard.
+  if (configured && !user) {
+    redirect('/login?next=/dashboard/access');
   }
 
   return (

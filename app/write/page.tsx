@@ -3,19 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, CheckCircle2, Eye, Lock, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import PageState from '@/components/PageState';
 import QwenCoverGenerator from '@/components/cms/QwenCoverGenerator';
 import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES } from '@/lib/blog-data';
-import { useAuth } from '@/lib/auth-context';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import type { CmsPost } from '@/lib/cms/types';
 import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
 import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
 import { readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { useSession } from '@/lib/supabase/use-session';
 import dynamic from 'next/dynamic';
 
 const MarkdownEditor = dynamic(() => import('@/components/cms/MarkdownEditor'), {
@@ -73,7 +72,7 @@ const fieldClass =
 
 export default function WritePage() {
   const router = useRouter();
-  const { user, hydrated, hasAuthorPermissions } = useAuth();
+  const { user } = useSession();
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [tab, setTab] = useState<'editor' | 'preview'>('editor');
   const [hydratedDraft, setHydratedDraft] = useState(false);
@@ -161,11 +160,12 @@ export default function WritePage() {
   }
 
   const parsedTags = useMemo(() => parseTags(draft.tags), [draft.tags]);
-  const resolvedAuthorId = useMemo(() => {
-    if (draft.authorId && AUTHORS[draft.authorId]) return draft.authorId;
-    const fromProfile = user?.authorProfileId;
-    return fromProfile && AUTHORS[fromProfile] ? fromProfile : '';
-  }, [draft.authorId, user?.authorProfileId]);
+  // The byline is chosen in the editor and validated against the AUTHORS
+  // registry; access itself is enforced by app/write/layout.tsx on the server.
+  const resolvedAuthorId = useMemo(
+    () => (draft.authorId && AUTHORS[draft.authorId] ? draft.authorId : ''),
+    [draft.authorId],
+  );
   const readTime = useMemo(() => readingTimeFromText(`${draft.summary} ${draft.content}`), [draft.summary, draft.content]);
   const previewParagraphs = useMemo(
     () => draft.content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean),
@@ -177,10 +177,6 @@ export default function WritePage() {
     if (publishing) return;
     setError(null);
 
-    if (!hasAuthorPermissions || !user) {
-      router.push('/verify?redirect=/write&error=unverified');
-      return;
-    }
     if (cleanText(draft.title, LIMITS.title).length < 8) {
       fail('Add a title of at least 8 characters before publishing.', 'write-title');
       return;
@@ -265,42 +261,6 @@ export default function WritePage() {
       setError(`${message} Your draft is preserved in this browser.`);
       setPublishing(false);
     }
-  }
-
-  if (!hydrated) {
-    return (
-      <div className="min-h-screen bg-stone-50">
-        <BlogHeader />
-        <PageState
-          role="status"
-          code="Loading"
-          title="Opening the writer studio"
-          description="Checking the contributor session stored in this browser."
-          primaryAction={{ href: '/', label: 'Return to the journal' }}
-        />
-      </div>
-    );
-  }
-
-  if (!hasAuthorPermissions) {
-    return (
-      <div className="flex min-h-screen flex-col bg-stone-50">
-        <BlogHeader />
-        <PageState
-          code="Contributor access"
-          title="The writer studio needs a contributor identity"
-          description="Publishing is restricted to contributors who have recorded a scholarly identity. You can still read, save, and cite every article without an account."
-          primaryAction={{ href: '/verify?redirect=/write', label: 'Record an identity' }}
-          secondaryAction={{ href: '/', label: 'Browse the journal' }}
-        >
-          <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
-            <Lock className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>Verification here is a local prototype; no credentials are sent anywhere.</span>
-          </p>
-        </PageState>
-        <BlogFooter />
-      </div>
-    );
   }
 
   return (

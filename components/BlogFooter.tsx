@@ -56,11 +56,11 @@ export default function BlogFooter() {
                 <span>Write a review</span>
               </Link>
               <Link
-                href="/verify"
+                href="/dashboard/access"
                 className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-600 px-4 py-2 text-sm font-semibold text-stone-100 transition-colors hover:border-stone-500 hover:bg-stone-800"
               >
                 <ShieldCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />
-                <span>Verification prototype</span>
+                <span>Apply to write</span>
               </Link>
             </div>
           </div>
