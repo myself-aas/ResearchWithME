@@ -23,6 +23,14 @@
 	// account -- both present as Cloudflare-proxied A/AAAA -- so do not infer it
 	// from a DNS lookup.
 	//
+	// Do not look for a `100::` AAAA record as evidence either way. That is a
+	// placeholder for *routes*, where a Worker sits in front of an existing
+	// origin and you add a proxied AAAA pointing at 100:: to claim the hostname.
+	// Custom domains are the other mechanism: Cloudflare creates the records and
+	// the Worker is the origin. An earlier version of this comment treated 100::
+	// as a custom-domain marker, which is how a DNS lookup came to look like it
+	// could prove the attachment -- it cannot.
+	//
 	// Canonical links use NEXT_PUBLIC_SITE_URL, the apex.
 	"routes": [
 		{ "pattern": "researchwith.me", "custom_domain": true },
