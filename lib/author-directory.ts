@@ -111,13 +111,24 @@ export const listPublishedAuthors = cache(async (): Promise<Author[]> => {
 });
 
 /**
- * One published profile, or null. Case-insensitive on the slug so an old link
- * to `/author/Maya-Lin` still resolves.
+ * One published profile, or null when no such profile exists.
+ *
+ * Deliberately does NOT use readProfiles. A list can legitimately be empty, so
+ * the directory degrades on an outage; a lookup cannot. If this swallowed a
+ * failed fetch the same way, a three-second Supabase blip would make
+ * /author/[id] call notFound() and serve a 404 for an author who does exist --
+ * and crawlers read a 404 as "gone", so a transient outage could get real
+ * profiles de-indexed. Propagating instead yields a 5xx, which crawlers treat
+ * as temporary.
+ *
+ * So: null means the author genuinely is not published. Anything else throws.
+ *
+ * Case-insensitive on the slug so an old link to /author/Maya-Lin resolves.
  */
 export const getPublishedAuthor = cache(async (id: string): Promise<Author | null> => {
   if (!id) return null;
   const wanted = id.trim().toLowerCase();
-  const profiles = await readProfiles();
+  const profiles = await queryProfiles();
   const match = profiles.find((profile) => profile.slug.toLowerCase() === wanted);
   return match ? profileToAuthor(match) : null;
 });
