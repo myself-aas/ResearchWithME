@@ -126,7 +126,8 @@ jobs:
           if [ -n "$id" ]; then
             gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" > /dev/null
           else
-            gh api "repos/$REPO/issues/comments/$PR" -f body="$body" > /dev/null
+            # Create: POST /repos/{owner}/{repo}/issues/{number}/comments
+            gh api "repos/$REPO/issues/$PR/comments" -f body="$body" > /dev/null
           fi
 
   deploy:
