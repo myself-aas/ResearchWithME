@@ -100,7 +100,7 @@ jobs:
               try { const j = JSON.parse(raw.slice(start)); walk(j); shape = Object.keys(j).join(","); } catch (e) {}
             }
             for (const m of (raw + "\n" + err).matchAll(/https:\/\/[^\s"]+/g)) found.push(m[0]);
-            // GitHub's own URLs appear in the output but are never the preview.
+            // GitHub URLs appear in the output but are never the preview.
             const usable = found.filter((u) => !/github\.com|githubusercontent\.com/.test(u));
             const pick = usable.find((u) => u.includes("workers.dev")) || usable[0] || "";
             // Runner logs are not reachable from every environment, so surface the
