@@ -1,4 +1,4 @@
-import { AUTHORS, CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
+import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
 import { formatReadingTime, readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured, SUPABASE_URL } from '@/lib/supabase/config';
 import { cleanText, parseTags, safeExternalUrl, slugify } from '@/lib/validation';
@@ -30,7 +30,6 @@ export const ARTICLE_FORMATS: ArticleFormat[] = [
   'Case Study',
 ];
 
-const DEFAULT_AUTHOR_ID = 'marcus-vance';
 
 export function isCmsStatus(value: unknown): value is CmsStatus {
   return value === 'draft' || value === 'published';
@@ -142,10 +141,17 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
     fieldErrors.slug = 'The title needs at least one letter or number to build a URL.';
   }
 
-  const authorId = cleanText(raw.authorId, 80) || DEFAULT_AUTHOR_ID;
-  const author = AUTHORS[authorId];
-  if (!author) {
-    fieldErrors.authorId = 'Choose one of the verified author profiles.';
+  // The byline is stored on the post rather than joined from a fixed roster, so
+  // an author can be renamed or their profile unpublished without orphaning
+  // articles they already published. Which profiles may be chosen is enforced
+  // against public.profiles in the API route, not here.
+  const authorId = cleanText(raw.authorId, 80);
+  const authorName = cleanText(raw.authorName, 80);
+  if (!authorId) {
+    fieldErrors.authorId = 'Choose the profile this article is published under.';
+  }
+  if (!authorName) {
+    fieldErrors.authorName = 'Add the byline that should appear with the article.';
   }
 
   const category = CATEGORIES.includes(raw.category as BlogCategory)
@@ -181,7 +187,6 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
     };
   }
 
-  const resolvedAuthor = author ?? AUTHORS[DEFAULT_AUTHOR_ID];
   const readTime = formatReadingTime(readingTimeFromText(content));
 
   return {
@@ -195,8 +200,8 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
       summary,
       category,
       format,
-      authorId: resolvedAuthor.id,
-      authorName: resolvedAuthor.name,
+      authorId,
+      authorName,
       coverImage: coverValue,
       tags: parseTags(raw.tags),
       keyTakeaways,

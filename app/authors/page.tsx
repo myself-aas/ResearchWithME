@@ -13,7 +13,6 @@ const FILTERS: Array<{ value: CredentialFilter; label: string; icon: typeof User
   { value: 'All', label: 'All contributors', icon: Users },
   { value: 'orcid', label: 'ORCID verified', icon: GraduationCap },
   { value: 'github', label: 'GitHub verified', icon: GitBranch },
-  { value: 'institution', label: 'Institutional', icon: Building2 },
 ];
 
 function credentialIcon(author: Author) {
@@ -23,7 +22,7 @@ function credentialIcon(author: Author) {
     case 'github':
       return <GitBranch className="h-4 w-4" aria-hidden="true" />;
     default:
-      return <Building2 className="h-4 w-4" aria-hidden="true" />;
+      return null;
   }
 }
 

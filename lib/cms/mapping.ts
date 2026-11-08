@@ -17,9 +17,6 @@ function fallbackAuthor(post: CmsPost): Author {
     avatar: safeInitials(post.authorName, 'RW'),
     role: 'Contributing editor',
     domain: post.category,
-    verifiedVia: 'institution',
-    verifiedIdentifier: 'Editorial account',
-    verifiedTitle: 'ResearchWithMe editorial account',
     joinedDate: String(joinedYear),
     articleCount: 1,
     bio: `${post.authorName || 'The editorial team'} writes for ResearchWithMe.`,
@@ -67,10 +64,6 @@ export function cmsPostToArticle(post: CmsPost): BlogPost {
         }
       : undefined,
   };
-}
-
-export function cmsPostAuthorIsVerified(post: CmsPost) {
-  return Boolean(post.authorId && AUTHORS[post.authorId]);
 }
 
 export function cmsCommentToRecord(comment: CmsComment) {

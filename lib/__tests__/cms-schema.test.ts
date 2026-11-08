@@ -16,6 +16,7 @@ function base(overrides: Record<string, unknown> = {}) {
     summary,
     keyTakeaways: ['Block-based allocation removed the memory waste.'],
     authorId: 'maya-lin',
+    authorName: 'Maya Lin',
     category: 'GitHub Repo Teardowns',
     format: 'Repo Teardown',
     coverImage: '/images/folio-code.jpeg',
@@ -51,13 +52,14 @@ describe('normalizePostInput', () => {
     expect(publish.fieldErrors.keyTakeaways).toBeTruthy();
   });
 
-  it('rejects a short title and an unknown byline', () => {
-    const result = normalizePostInput(base({ title: 'Short', authorId: 'nobody' }));
+  it('rejects a short title and a missing byline', () => {
+    const result = normalizePostInput(base({ title: 'Short', authorId: '', authorName: '' }));
     expect(result.ok).toBe(false);
     if (result.ok) return;
 
     expect(result.fieldErrors.title).toBeTruthy();
     expect(result.fieldErrors.authorId).toBeTruthy();
+    expect(result.fieldErrors.authorName).toBeTruthy();
   });
 
   it('accepts bundled covers and rejects unconfigured remote hosts', () => {

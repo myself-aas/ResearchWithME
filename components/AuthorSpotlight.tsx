@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Building2, CheckCircle2, GitBranch, GraduationCap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, GitBranch, GraduationCap } from 'lucide-react';
 import { AUTHORS, Author } from '@/lib/blog-data';
 
 function VerificationIcon({ author }: { author: Author }) {
@@ -10,7 +10,7 @@ function VerificationIcon({ author }: { author: Author }) {
     case 'github':
       return <GitBranch {...shared} />;
     default:
-      return <Building2 {...shared} />;
+      return null;
   }
 }
 

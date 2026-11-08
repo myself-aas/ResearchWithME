@@ -26,6 +26,7 @@ interface AuthorProfileCardProps {
 }
 
 function verification(author: Author) {
+  if (!author.verifiedVia) return null;
   switch (author.verifiedVia) {
     case 'orcid':
       return {
@@ -38,12 +39,6 @@ function verification(author: Author) {
         label: 'GitHub verified maintainer',
         detail: author.verifiedIdentifier,
         link: author.github,
-      };
-    default:
-      return {
-        label: 'Institutional affiliation',
-        detail: author.verifiedIdentifier || author.institution || 'Affiliation on file',
-        link: author.website,
       };
   }
 }
@@ -121,10 +116,12 @@ export default function AuthorProfileCard({
 
         <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-stone-700">{author.bio}</p>
 
-        <p className="mt-3 flex items-start gap-1.5 text-sm text-emerald-900">
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-          <span>{badge.label}</span>
-        </p>
+        {badge && (
+          <p className="mt-3 flex items-start gap-1.5 text-sm text-emerald-900">
+            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+            <span>{badge.label}</span>
+          </p>
+        )}
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-3 text-sm">
           <span className="text-stone-600">{metrics?.totalArticles ?? author.articleCount} articles</span>
@@ -217,13 +214,16 @@ export default function AuthorProfileCard({
           </div>
         </div>
 
+        {badge && (
         <div>
           <h2 className="text-sm font-semibold text-stone-900">Verification record</h2>
           <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-emerald-900">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{badge.label}</span>
           </p>
-          <p className="mt-1 break-all font-mono text-sm text-stone-700">{badge.detail}</p>
+          {badge.detail && (
+            <p className="mt-1 break-all font-mono text-sm text-stone-700">{badge.detail}</p>
+          )}
           {badge.link && (
             <a
               href={badge.link}
@@ -239,6 +239,7 @@ export default function AuthorProfileCard({
             Verification is shown as recorded in this prototype. Confirm credentials with the issuing registry before relying on them.
           </p>
         </div>
+        )}
       </div>
     </section>
   );
