@@ -16,6 +16,18 @@ import { SCENARIO_COMPONENTS } from './components';
 /** Every sending domain this app may use. Enforced by test. */
 export const SENDING_DOMAIN = 'researchwith.me';
 
+/**
+ * The sender the Resend-Supabase integration uses for Supabase Auth mail:
+ * email confirmation and password reset, sent by Supabase itself.
+ *
+ * It sits on the sending domain, so nothing here would reject a scenario that
+ * claimed it -- which is why the reservation is stated explicitly. Auth mail
+ * belongs to Supabase; these scenarios are product mail about a person's
+ * submissions, reviews and account. A scenario sending from this address would
+ * make the same event arrive from two different names.
+ */
+export const SUPABASE_AUTH_SENDER = 'team@researchwith.me';
+
 /** Resend rejects these keys on template creation. Compared case-insensitively. */
 export const RESERVED_VARIABLE_KEYS: readonly string[] = [
   'FIRST_NAME',

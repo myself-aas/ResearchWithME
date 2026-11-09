@@ -280,20 +280,80 @@ npm run email:dev      # http://localhost:3001
 npm run email:export   # rendered HTML in .email-export/
 ```
 
+## Sending domain
+
+`researchwith.me` is verified in Resend: the Resend-Supabase integration is
+configured against it with `team@researchwith.me` as the sender, and reports
+*Ready to send*. Any username on a verified domain sends without being created
+first, which is why the ten senders here need no per-address setup.
+
+`sendScenario` still refuses an off-domain sender, but that guard catches typos
+and dashboard edits. It is not the domain check, and it would not catch an
+unverified domain.
+
+## Who sends what
+
+Auth mail is **Supabase's** by default. As the Resend-Supabase integration is
+configured, Supabase sends email confirmation and password reset itself, and
+every one of those emails leaves from a single default sender,
+`team@researchwith.me`. That setting controls only the From address -- recipients
+are whoever signed up, and are unaffected.
+
+Two entries in this registry cover the same events:
+
+| Scenario | Under default Supabase Auth SMTP |
+| --- | --- |
+| `verify-email` | Supabase sends its own from `team@` -- two emails, two sender names |
+| `password-reset` | Supabase sends its own from `team@` -- two emails, two sender names |
+
+Nothing collides today: the app calls only `signInWithPassword`, so Supabase
+sends no email at all, and `submission-receipt` is the only scenario with a
+caller. The collision arrives the moment a sign-up or password-reset flow is
+added.
+
+Default Supabase Auth SMTP cannot do what this registry assumes -- a different
+sender name per message type, from one address. Three ways out, not equivalent:
+
+1. **Send Email Auth Hook.** Supabase hands the email to our code instead of
+   sending it, and we call `sendScenario('verify-email', ...)`. One sender name
+   per message type, all product mail in one system, and these two scenarios gain
+   a real caller. The only option that keeps the registry as it stands.
+2. **Change the integration's sender** to a single address that fits auth mail.
+   Every Auth email type then shares one From name, which can describe the
+   category but not the message.
+3. **Let Supabase send, and drop these two scenarios.** Simplest, but it removes
+   two of the ten this registry is meant to have, and leaves auth mail styled
+   outside `emails/`.
+
+Option 1 is recommended, and it is not built. `supabase/` holds only migrations;
+there is no hook endpoint. Wiring it needs a route, its own secret, and Supabase's
+current hook contract -- check that against their documentation before
+implementing, rather than guessing field names. Treat the endpoint as privileged:
+it can put an arbitrary link into someone's inbox.
+
+`SUPABASE_AUTH_SENDER` in the registry reserves `team@researchwith.me`, and a
+test fails if any scenario claims it as sender or reply-to. The address is on the
+sending domain, so the domain guard would not catch that; this does.
+
 ## What is not verified
 
 No email has been delivered. `api.resend.com` is unreachable from the
-environment this was built in and there is no API key, so **no template has been
-created, published, or sent**. Before this runs in production:
+environment this was built in and there is no `RESEND_API_KEY`, so **no template
+has been created, published, or sent**.
 
-1. Confirm `researchwith.me` is verified in Resend. Nothing here checks that —
-   `sendScenario` refuses an off-domain *sender*, which is not the same thing.
-2. `wrangler secret put RESEND_API_KEY`.
-3. `npm run email:template:sync`, then set the printed env vars.
-4. Send each scenario to `delivered@resend.dev`, and exercise
-   `bounced@resend.dev`, `complained@resend.dev` and `suppressed@resend.dev`
-   once each. Do not use invented addresses — they damage domain reputation.
+The integration's API key ("Supabase Integration") exists in the Resend account,
+but it was created to authenticate Supabase. Reusing it for app sends means one
+rotation breaks both, so create a dedicated key instead.
 
-Whether Resend substitutes camelCase-style keys case-sensitively is also
-unconfirmed. The keys here are `UPPER_SNAKE`, matching Resend's own examples,
-which avoids the question.
+Before this runs in production:
+
+1. Create an API key in Resend, then `wrangler secret put RESEND_API_KEY`.
+2. `npm run email:template:sync`, then set the printed env vars.
+3. `npm run email:verify`, which sends every scenario to `delivered@resend.dev`
+   and exercises `bounced@`, `complained@` and `suppressed@resend.dev` once each.
+   Do not use invented addresses -- they bounce against your own domain and
+   damage its reputation.
+
+Whether Resend substitutes camelCase-style keys case-sensitively is unconfirmed.
+The keys here are `UPPER_SNAKE`, matching Resend's own examples, which avoids the
+question.

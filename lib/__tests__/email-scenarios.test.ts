@@ -7,6 +7,7 @@ import {
   idempotencyKeyFor,
   isOnSendingDomain,
   isReservedVariableKey,
+  SUPABASE_AUTH_SENDER,
   listScenarios,
   parseSender,
 } from '@/lib/email/scenarios';
@@ -275,5 +276,23 @@ describe('idempotencyKeyFor', () => {
     expect(idempotencyKeyFor('welcome', 'x'.repeat(500))).toHaveLength(
       LIMITS.maxIdempotencyKeyLength,
     );
+  });
+});
+
+describe('the Supabase Auth sender stays reserved', () => {
+  // Supabase sends email confirmation and password reset itself, through the
+  // Resend-Supabase integration, from team@researchwith.me. That address is on
+  // the sending domain, so the domain guard would not catch a scenario claiming
+  // it. This does: without it, a future auth scenario would quietly make the
+  // same event arrive from two different sender names.
+  it('is not used by any scenario, as sender or reply-to', () => {
+    for (const scenario of listScenarios()) {
+      expect(parseSender(scenario.from)?.address).not.toBe(SUPABASE_AUTH_SENDER);
+      expect(scenario.replyTo).not.toBe(SUPABASE_AUTH_SENDER);
+    }
+  });
+
+  it('is itself on the sending domain, so only this test protects it', () => {
+    expect(isOnSendingDomain(SUPABASE_AUTH_SENDER)).toBe(true);
   });
 });
