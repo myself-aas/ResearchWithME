@@ -11,7 +11,7 @@ export default function NotFound() {
         tone="neutral"
         code="404"
         title="This page is not in the archive"
-        description="The address may have changed, or the publication may no longer be available. Browse the current journal or search the paper archive to continue."
+        description="The address may have changed, or this piece may no longer be available. Browse the platform or search the paper archive to continue."
         primaryAction={{ href: '/', label: 'Browse latest articles' }}
         secondaryAction={{ href: '/papers', label: 'Search papers' }}
       />

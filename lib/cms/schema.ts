@@ -176,7 +176,7 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
       fieldErrors.content = 'A published article needs at least 200 characters of body copy.';
     }
     if (summary.length < 40) {
-      fieldErrors.summary = 'Write a summary of at least 40 characters. It appears in the journal feed.';
+      fieldErrors.summary = 'Write a summary of at least 40 characters. It appears in the platform feed.';
     }
     if (keyTakeaways.length === 0) {
       fieldErrors.keyTakeaways = 'Add at least one key takeaway before publishing.';

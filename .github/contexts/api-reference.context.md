@@ -70,15 +70,6 @@ DELETE /api/comments/[id]           - Delete comment (auth)
 POST   /api/comments/[id]/reply     - Reply to comment
 ```
 
-### Submissions (`app/api/submissions/`)
-```
-GET    /api/submissions          - List submissions (editorial)
-GET    /api/submissions/[id]     - Single submission
-POST   /api/submissions          - Create submission (auth)
-PATCH  /api/submissions/[id]     - Update submission (editorial)
-POST   /api/submissions/[id]/review - Editorial review
-```
-
 ### Research Assistant (`app/api/research-assistant/`)
 ```
 POST   /api/research-assistant/chat     - AI research chat
@@ -284,7 +275,6 @@ getAuthorPublications(authorId)
 - `article.created` - New article published
 - `paper.created` - New paper added
 - `comment.created` - New comment
-- `submission.updated` - Submission status change
 
 ### Payload Format
 ```json

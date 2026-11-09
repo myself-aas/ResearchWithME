@@ -201,45 +201,6 @@ CREATE POLICY "Users can manage own bookmarks"
   ON bookmarks FOR ALL USING (auth.uid() = user_id);
 ```
 
-#### `submissions`
-```sql
-CREATE TABLE submissions (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title TEXT NOT NULL,
-  abstract TEXT NOT NULL,
-  content TEXT NOT NULL,
-  cover_image TEXT,
-  author_id UUID NOT NULL REFERENCES profiles(id),
-  category_id UUID REFERENCES categories(id),
-  tags TEXT[] DEFAULT '{}',
-  status TEXT DEFAULT 'submitted' CHECK (status IN ('submitted', 'under_review', 'revision_requested', 'accepted', 'rejected', 'published')),
-  reviewer_id UUID REFERENCES profiles(id),
-  review_notes TEXT,
-  decision_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Indexes
-CREATE INDEX idx_submissions_author ON submissions(author_id);
-CREATE INDEX idx_submissions_status ON submissions(status);
-CREATE INDEX idx_submissions_reviewer ON submissions(reviewer_id);
-
--- RLS
-ALTER TABLE submissions ENABLE ROW LEVEL SECURITY;
-
-CREATE POLICY "Authors can view own submissions"
-  ON submissions FOR SELECT USING (auth.uid() = author_id);
-
-CREATE POLICY "Authors can create submissions"
-  ON submissions FOR INSERT WITH CHECK (auth.uid() = author_id);
-
-CREATE POLICY "Editors can manage all submissions"
-  ON submissions FOR ALL USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('editor', 'admin'))
-  );
-```
-
 #### `article_likes`
 ```sql
 CREATE TABLE article_likes (

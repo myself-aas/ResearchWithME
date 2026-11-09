@@ -1,6 +1,6 @@
 {
   "name": "ResearchWithMe — Expert Essays, Research Breakdowns & Repo Teardowns",
-  "description": "An independent blogging publication where domain authors review published research papers, GitHub repositories, trending tech, health, STEM, and sociology.",
+  "description": "An independent open-access platform where domain authors explain published research papers, GitHub repositories, trending tech, health, STEM, and sociology.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

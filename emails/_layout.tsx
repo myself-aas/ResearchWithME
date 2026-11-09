@@ -155,8 +155,8 @@ export function EmailLayout({
               color: palette.inkFaint,
             }}
           >
-            This is a transactional message about your account or submission. It
-            is not a newsletter, and there is nothing to unsubscribe from.
+            This is a transactional message about your account or activity on the
+            platform. It is not a newsletter, and there is nothing to unsubscribe from.
           </Text>
         </Container>
       </Body>

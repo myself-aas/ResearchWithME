@@ -23,10 +23,9 @@
 ## Data Flow
 
 ### Article/Paper Content
-1. **Submission**: `/submit` → `/api/submissions` → Supabase
-2. **Review**: Editorial board workflow
-3. **Publication**: `/api/cms/articles` → Supabase → ISR
-4. **Reading**: `/paper/[id]` or `/post/[slug]` → Server Components → Supabase
+1. **Writing access**: reader applies at `/dashboard/access` → an editor approves (`public.editors`)
+2. **Publishing**: an approved writer publishes via `/write` or the studio → Supabase → revalidation
+3. **Reading**: `/paper/[id]` or `/post/[slug]` → Server Components → Supabase
 
 ### User Authentication
 1. **Providers**: GitHub, Google, ORCID, Email
@@ -58,7 +57,7 @@
 - `authors` - User profiles
 - `comments` - Discussion threads
 - `bookmarks` - User bookmarks
-- `submissions` - Editorial submissions
+- `author_applications` - Writer applications approved into `public.editors`
 - `categories` - Content categorization
 
 ## Deployment

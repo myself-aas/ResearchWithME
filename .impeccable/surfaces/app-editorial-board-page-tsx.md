@@ -10,7 +10,7 @@ related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx"]
 Mode: Read
 
 ## Purpose
-Understand who safeguards the publication and how review standards work.
+Understand who safeguards the platform and how review standards work.
 
 ## First useful result
 A reader identifies an editor, their domain, and the verification principles without decorative clutter.

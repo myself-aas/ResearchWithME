@@ -98,7 +98,7 @@ export default function CitePage() {
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">
           <Link href="/" className="inline-flex items-center gap-1.5 hover:text-stone-900 hover:underline">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span>Journal</span>
+            <span>Platform</span>
           </Link>
           <span aria-hidden="true" className="text-stone-400">/</span>
           <span className="font-medium text-amber-900">Citation builder</span>

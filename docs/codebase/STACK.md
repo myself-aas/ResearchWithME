@@ -101,7 +101,7 @@ npm run clean                    # remove .next
 
 **Deployment/runtime constraints:**
 - `NEXT_PUBLIC_*` values are **compiled into the browser bundle at build time**. Changing one requires a rebuild; a Worker runtime variable of the same name has no effect (`README.md`, `scripts/check-production-env.mjs`).
-- The production target is a Cloudflare Worker with a **read-only, non-persistent filesystem**, so the local JSON adapters (`lib/db.ts`, `lib/cms/local-store.ts`, `lib/submissions.ts`) cannot persist anything there. Supabase must be configured in production (`README.md`).
+- The production target is a Cloudflare Worker with a **read-only, non-persistent filesystem**, so the local JSON adapters (`lib/db.ts`, `lib/cms/local-store.ts`) cannot persist anything there. Supabase must be configured in production (`README.md`).
 - `wrangler.jsonc` sets `compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"]`. Many route handlers declare `export const runtime = 'nodejs'`.
 - Free-tier KV: one namespace `researchwithme-opennext-cache` (`8d2dc8f0b1bb4839962ae63df8296b31`) is bound twice, as both incremental and tag cache (`wrangler.jsonc`, `open-next.config.ts`).
 - No Dockerfile or compose file exists (scan: "No containerization configs detected"), despite `output: 'standalone'` enabling a container.

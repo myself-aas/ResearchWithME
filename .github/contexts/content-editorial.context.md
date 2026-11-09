@@ -25,18 +25,18 @@
 
 ## Editorial Workflow
 
-### Submission Process
-1. **Author submits** via `/submit` → `/api/submissions`
-2. **Editor assigns** reviewer → `submissions.reviewer_id`
-3. **Reviewer reviews** → `submissions.status`: under_review → revision_requested → accepted/rejected
-4. **Editor publishes** → Creates article/paper, sets `published_at`
+### Writing access
+There is no open manuscript intake. Writers are approved individually:
+1. **Writer applies** at `/dashboard/access` (GitHub or ORCID identity linked to the account)
+2. **Editor reviews** the `public.author_applications` row and approves
+3. **Writer publishes** through `/write` or the studio → article goes live at `/post/[slug]`
 
-### Review Criteria
-- **Originality**: Novel contribution to field
-- **Methodology**: Sound, reproducible methods
-- **Clarity**: Clear writing, logical structure
-- **Impact**: Significance to research community
-- **Reproducibility**: Code/data availability
+### Review Criteria (explainers, not manuscripts)
+- **Fidelity**: Faithful to the source paper, repository, or dataset it explains
+- **Reproducibility**: Cited artifacts (DOIs, repos, releases) actually resolve and were checked
+- **Clarity**: Clear writing, logical structure, defined terms
+- **Honesty**: Limitations and conflicts of interest are stated, not smoothed over
+- **Utility**: A reader learns something they can verify themselves
 
 ### Publication Checklist
 - [ ] Title optimized for SEO/AEO

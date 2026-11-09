@@ -20,13 +20,13 @@ const { sendMock, ResendMock } = vi.hoisted(() => {
 
 vi.mock('resend', () => ({ Resend: ResendMock }));
 
-const KEY = 'RESEND_TPL_SUBMISSION_RECEIPT';
+const KEY = 'RESEND_TPL_WELCOME';
 
-function sampleInput(scenarioKey = 'submission-receipt') {
+function sampleInput(scenarioKey = 'welcome') {
   const scenario = getScenario(scenarioKey)!;
   return {
     to: 'amara@example.org',
-    entityId: 'RWM-2026-7QXTR3',
+    entityId: 'user_123',
     variables: scenario.sample,
   };
 }
@@ -42,7 +42,7 @@ describe('sendScenario gating', () => {
   it('skips rather than sending when no API key is configured', async () => {
     const { sendScenario } = await loadSendModule();
 
-    await expect(sendScenario('submission-receipt', sampleInput())).resolves.toEqual({
+    await expect(sendScenario('welcome', sampleInput())).resolves.toEqual({
       ok: false,
       skipped: true,
       reason: 'RESEND_API_KEY is not set.',
@@ -64,7 +64,7 @@ describe('sendScenario gating', () => {
     process.env.RESEND_API_KEY = 're_test';
     const { sendScenario } = await loadSendModule();
 
-    const result = await sendScenario('submission-receipt', {
+    const result = await sendScenario('welcome', {
       ...sampleInput(),
       to: '   ',
     });
@@ -79,14 +79,14 @@ describe('sendScenario gating', () => {
     process.env.RESEND_API_KEY = 're_test';
     const { sendScenario } = await loadSendModule();
 
-    const result = await sendScenario('submission-receipt', {
+    const result = await sendScenario('welcome', {
       ...sampleInput(),
-      variables: { ...sampleInput().variables, REFERENCE: '' },
+      variables: { ...sampleInput().variables, DASHBOARD_URL: '' },
     });
 
     expect(result).toMatchObject({ ok: false, skipped: false });
     if (!result.ok && !result.skipped) {
-      expect(result.error).toContain('REFERENCE');
+      expect(result.error).toContain('DASHBOARD_URL');
     }
     expect(sendMock).not.toHaveBeenCalled();
   });
@@ -103,7 +103,7 @@ describe('sendScenario in template mode', () => {
     const { sendScenario } = await loadSendModule();
 
     await expect(
-      sendScenario('submission-receipt', sampleInput()),
+      sendScenario('welcome', sampleInput()),
     ).resolves.toEqual({ ok: true, id: 'msg_1', mode: 'template' });
 
     const [payload] = sendMock.mock.calls[0];
@@ -122,29 +122,29 @@ describe('sendScenario in template mode', () => {
     // identity cannot drift if someone edits the template in the dashboard.
     sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
     const { sendScenario } = await loadSendModule();
-    const scenario = getScenario('submission-receipt')!;
+    const scenario = getScenario('welcome')!;
 
-    await sendScenario('submission-receipt', sampleInput());
+    await sendScenario('welcome', sampleInput());
 
     const [payload] = sendMock.mock.calls[0];
     expect(payload.from).toBe(scenario.from);
     expect(payload.from).toBe(
-      'Research With Me Submissions <submissions@researchwith.me>',
+      'Research With Me <hello@researchwith.me>',
     );
     expect(payload.replyTo).toBe(scenario.replyTo);
-    expect(payload.subject).toBe('[RWM-2026-7QXTR3] We received your submission');
+    expect(payload.subject).toBe('Welcome to ResearchWithMe, Amara');
   });
 
   it('sets the idempotency key as a request option, not a payload field', async () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
     const { sendScenario } = await loadSendModule();
 
-    await sendScenario('submission-receipt', sampleInput());
+    await sendScenario('welcome', sampleInput());
 
     const [payload, options] = sendMock.mock.calls[0];
     expect(payload).not.toHaveProperty('idempotencyKey');
     expect(options).toEqual({
-      idempotencyKey: 'submission-receipt/RWM-2026-7QXTR3',
+      idempotencyKey: 'welcome/user_123',
     });
     expect(options.idempotencyKey.length).toBeLessThanOrEqual(
       LIMITS.maxIdempotencyKeyLength,
@@ -155,11 +155,11 @@ describe('sendScenario in template mode', () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_1' }, error: null });
     const { sendScenario } = await loadSendModule();
 
-    await sendScenario('submission-receipt', sampleInput());
+    await sendScenario('welcome', sampleInput());
 
     const [payload] = sendMock.mock.calls[0];
     expect(payload.tags).toEqual([
-      { name: 'category', value: 'submission-receipt' },
+      { name: 'category', value: 'welcome' },
     ]);
   });
 
@@ -167,7 +167,7 @@ describe('sendScenario in template mode', () => {
     delete process.env[KEY];
     const { sendScenario } = await loadSendModule();
 
-    const result = await sendScenario('submission-receipt', sampleInput(), {
+    const result = await sendScenario('welcome', sampleInput(), {
       mode: 'template',
     });
 
@@ -189,7 +189,7 @@ describe('sendScenario in local mode', () => {
     const { sendScenario } = await loadSendModule();
 
     await expect(
-      sendScenario('submission-receipt', sampleInput()),
+      sendScenario('welcome', sampleInput()),
     ).resolves.toEqual({ ok: true, id: 'msg_2', mode: 'local' });
 
     const [payload] = sendMock.mock.calls[0];
@@ -204,7 +204,7 @@ describe('sendScenario in local mode', () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_3' }, error: null });
     const { sendScenario } = await loadSendModule();
 
-    const result = await sendScenario('submission-receipt', sampleInput());
+    const result = await sendScenario('welcome', sampleInput());
 
     expect(result).toEqual({ ok: true, id: 'msg_3', mode: 'local' });
   });
@@ -212,11 +212,11 @@ describe('sendScenario in local mode', () => {
   it('escapes hostile variables in the rendered body', async () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_4' }, error: null });
     const { sendScenario } = await loadSendModule();
-    const scenario = getScenario('submission-receipt')!;
+    const scenario = getScenario('welcome')!;
 
-    await sendScenario('submission-receipt', {
+    await sendScenario('welcome', {
       ...sampleInput(),
-      variables: { ...scenario.sample, TITLE: '<script>alert(1)</script>' },
+      variables: { ...scenario.sample, NEXT_STEP: '<script>alert(1)</script>' },
     });
 
     const [payload] = sendMock.mock.calls[0];
@@ -237,7 +237,7 @@ describe('sendScenario failure handling', () => {
     });
     const { sendScenario } = await loadSendModule();
 
-    await expect(sendScenario('submission-receipt', sampleInput())).resolves.toEqual({
+    await expect(sendScenario('welcome', sampleInput())).resolves.toEqual({
       ok: false,
       skipped: false,
       error: 'from must be verified',
@@ -248,7 +248,7 @@ describe('sendScenario failure handling', () => {
     sendMock.mockRejectedValue(new Error('fetch failed'));
     const { sendScenario } = await loadSendModule();
 
-    const result = await sendScenario('submission-receipt', sampleInput());
+    const result = await sendScenario('welcome', sampleInput());
 
     expect(result).toMatchObject({ ok: false, skipped: false });
     if (!result.ok && !result.skipped) {
@@ -266,7 +266,7 @@ describe('sendScenario failure handling', () => {
       .mockResolvedValueOnce({ data: { id: 'msg_after_429' }, error: null });
     const { sendScenario } = await loadSendModule();
 
-    const promise = sendScenario('submission-receipt', sampleInput());
+    const promise = sendScenario('welcome', sampleInput());
     await vi.runAllTimersAsync();
     const result = await promise;
 
@@ -283,7 +283,7 @@ describe('sendScenario failure handling', () => {
     });
     const { sendScenario } = await loadSendModule();
 
-    const promise = sendScenario('submission-receipt', sampleInput());
+    const promise = sendScenario('welcome', sampleInput());
     await vi.runAllTimersAsync();
     const result = await promise;
 
@@ -296,7 +296,7 @@ describe('sendScenario failure handling', () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_5' }, error: null });
     const { sendScenario } = await loadSendModule();
 
-    await sendScenario('submission-receipt', sampleInput());
+    await sendScenario('welcome', sampleInput());
     await sendScenario('welcome', {
       to: 'amara@example.org',
       entityId: 'user_1',

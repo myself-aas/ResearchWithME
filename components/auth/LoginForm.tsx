@@ -199,7 +199,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link href="/" className={secondaryButtonClass}>
-            Back to the journal
+            Back to the platform
           </Link>
           <button type="button" onClick={signOutDifferentAccount} disabled={pending !== null} className={secondaryButtonClass}>
             {pending === 'signout' ? 'Signing out…' : 'Use a different account'}

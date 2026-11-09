@@ -31,7 +31,7 @@ export function Welcome({
     <EmailLayout
       preview={'Your ResearchWithMe account is ready.'}
       heading={`Welcome, ${displayName}.`}
-      intro='Your ResearchWithMe account is ready. You can save reading lists, submit work for editorial review, and track what the desk has received.'
+      intro='Your ResearchWithMe account is ready. You can save reading lists, follow the work of the writers you trust, and apply to write when your profile is ready.'
       closing='Nothing is public until you publish it yourself.'
     >
       <FieldTable

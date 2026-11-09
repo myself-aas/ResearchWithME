@@ -68,10 +68,10 @@ PostEditor -> cmsFetch('/api/cms/posts')       [lib/cms/client-api.ts]
 | **Adapter / Strategy** | `CmsStore` interface (`lib/cms/types.ts:73`) with `createLocalCmsStore` / `createSupabaseCmsStore` | Lets the app run credential-free for review and on Supabase in production without changing callers |
 | **Lazy module-level singleton** | `publicClient` (`lib/supabase/server.ts:44`), `browserClient` (`lib/supabase/client.ts:7`), `localStore`/`publicStore` (`lib/cms/store.ts:9-10`), `rateLimit` buckets (`lib/rate-limit.ts:3`) | Avoids re-creating clients per request; safe because these are cookie-free or request-scoped by construction |
 | **Explicit request-scoped non-singleton** | `createSupabaseServerClient()` — *"Always create a new one per request — never cache it"* | The session client touches cookies; caching would leak sessions |
-| **Result object / discriminated union instead of throwing** | `normalizePostInput` → `{ok:true,value} \| {ok:false,message,fieldErrors}` (`lib/cms/schema.ts:80-83`); `createSubmission` (`lib/submissions.ts:42-45`); `EditorGate` (`lib/cms/auth.ts:9-11`) | Field-level errors must reach the form, so exceptions are the wrong channel |
+| **Result object / discriminated union instead of throwing** | `normalizePostInput` → `{ok:true,value} \| {ok:false,message,fieldErrors}` (`lib/cms/schema.ts:80-83`); `EditorGate` (`lib/cms/auth.ts:9-11`) | Field-level errors must reach the form, so exceptions are the wrong channel |
 | **Typed error hierarchy mapped to HTTP status** | `CmsError` (500) → `CmsValidationError` (400) / `CmsConflictError` (409) / `CmsNotFoundError` (404) / `CmsUnavailableError` (503); `toCmsError()` normalises anything else (`lib/cms/errors.ts`) | One `errorResponse()` call per route produces the right status and body (`lib/cms/http.ts:58-64`) |
 | **Graceful degradation** | `lib/cms/read.ts` returns `[]`/`{}`/`null` on any error; the assistant falls back to a deterministic catalogue answer when Gemini fails (`app/api/research-assistant/route.ts:152-160`) | A storage or model outage must degrade to the bundled catalogue, never to a broken page |
-| **Atomic write with temp-file rename** | `writeJsonAtomic` (`lib/db.ts:10-25`), `writeArrayAtomic` (`lib/cms/local-store.ts:28-43`), `lib/submissions.ts:88-91` | A crash cannot leave a half-written JSON document |
+| **Atomic write with temp-file rename** | `writeJsonAtomic` (`lib/db.ts:10-25`), `writeArrayAtomic` (`lib/cms/local-store.ts:28-43`), | A crash cannot leave a half-written JSON document |
 | **In-process promise queue** | `serialise()` in `lib/cms/local-store.ts:64-70` | Serialises JSON writes so read-modify-write races cannot interleave within one process |
 | **React `cache()` request dedupe** | `const catalogue = cache(getArticleCatalogue)` (`app/post/[slug]/page.tsx:27`) | `generateMetadata` and the page body share one CMS read |
 | **Idempotent SQL migrations** | Every migration is wrapped in `begin/commit` with `create … if not exists`, `drop policy if exists`, `on conflict do update` | Safe to re-run; stated in `CLAUDE.md` |
@@ -118,7 +118,7 @@ There is no explicit boot sequence, but three orderings are load-bearing:
 | Supabase unreachable in the studio | `CmsUnavailableError` → 503 with a retry message | `lib/cms/errors.ts:43-47` |
 | Gemini unavailable or returns empty | Deterministic catalogue answer + a `notice` field | `app/api/research-assistant/route.ts:152-160` |
 | HF Space returns no image | 500 with the raw error message surfaced to the client | `app/api/generate/route.ts:107-114` |
-| Local JSON not writable (e.g. read-only Worker FS) | `CmsUnavailableError`; submissions return 503 with "Email the editorial desk instead" | `lib/cms/local-store.ts:38-40`, `lib/submissions.ts:93-97` |
+| Local JSON not writable (e.g. read-only Worker FS) | `CmsUnavailableError` → 503 with a retry message | `lib/cms/errors.ts:43-47` |
 | `is_editor()` RPC errors | User treated as **non**-editor (fails closed) | `lib/cms/auth.ts:56-59` |
 | Cookie write inside a Server Component | Swallowed; middleware handles refresh | `lib/supabase/server.ts:31-36` |
 | Render throws | `app/error.tsx` (route) / `app/global-error.tsx` (root) | `app/error.tsx`, `app/global-error.tsx` |

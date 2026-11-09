@@ -78,7 +78,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-stone-900 hover:underline">
-                Journal
+                Platform
               </Link>
             </li>
             <li aria-hidden="true">
@@ -216,7 +216,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <MarkdownBody markdown={article.bodyMarkdown} />
               </div>
             ) : (
-              <div className="journal-prose drop-cap mt-10 space-y-6">
+              <div className="reading-prose drop-cap mt-10 space-y-6">
                 {paragraphs.map((paragraph, index) => (
                   <p key={`${index}-${paragraph.slice(0, 24)}`} className="max-w-prose break-words text-lg leading-relaxed text-stone-800">
                     {paragraph}
@@ -315,7 +315,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="rounded-lg border border-stone-200 bg-white p-5">
-              <h2 className="font-serif text-lg font-semibold text-stone-900">Publication record</h2>
+              <h2 className="font-serif text-lg font-semibold text-stone-900">Article record</h2>
               <dl className="mt-3 space-y-3 text-sm">
                 <div>
                   <dt className="text-stone-600">Domain</dt>
@@ -342,7 +342,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <span>Reading note</span>
               </p>
               <p className="mt-2">
-                This is a prototype publication. Sample claims and citations are illustrative; verify any production reference against its primary source.
+                This is a prototype article. Sample claims and citations are illustrative; verify any production reference against its primary source.
               </p>
             </div>
           </aside>

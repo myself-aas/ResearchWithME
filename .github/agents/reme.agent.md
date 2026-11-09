@@ -1,6 +1,6 @@
 ---
 name: reme
-description: ResearchWithMe custom agent for scholarly publication platform tasks. Handles article writing, research assistance, code implementation, and platform maintenance following ResearchWithMe conventions.
+description: ResearchWithMe custom agent for scholarly research platform tasks. Handles article writing, research assistance, code implementation, and platform maintenance following ResearchWithMe conventions.
 argument-hint: A task description, e.g., "write a research article about X", "implement feature Y", "review PR #123", "debug issue with Z"
 tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'todo', 'grep', 'glob', 'view', 'problems', 'runTests', 'testFailure', 'listComments', 'addComment', 'replyToComment', 'resolveComments', 'deleteComments', 'viewUnreviewedComments', 'createAndRunTask', 'runTask', 'getTaskOutput', 'configurePythonEnvironment', 'getPythonEnvironmentInfo', 'getPythonExecutableCommand', 'installPythonPackage', 'configureNotebook', 'listNotebookPackages', 'installNotebookPackages', 'createJupyterNotebook', 'editNotebook', 'runNotebookCell', 'getNotebookSummary', 'readNotebookCellOutput', 'analyzeImage', 'containerToolsConfig', 'openBrowserPage', 'readPage', 'screenshotPage', 'navigatePage', 'clickElement', 'dragElement', 'hoverElement', 'typeInPage', 'runPlaywrightCode', 'handleDialog', 'skill', 'ask_user', 'sql', 'session_store_sql', 'list_sessions', 'get_current_session', 'set_workspace', 'create_session', 'archive_chat', 'send_message', 'get_session_context', 'delete_session', 'add_artifact_or_reference', 'remove_artifact_or_reference', 'list_artifacts_and_references', 'isolate_session', 'extensions_reload']
 ---
@@ -8,7 +8,7 @@ tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'todo', '
 # ResearchWithMe Custom Agent (reme)
 
 ## Purpose
-This agent operates within the ResearchWithMe scholarly publication platform (Next.js 15, React 19, Tailwind CSS v4, Supabase, TypeScript). It handles:
+This agent operates within the ResearchWithMe scholarly research platform (Next.js 15, React 19, Tailwind CSS v4, Supabase, TypeScript). It handles:
 
 - **Article writing & editing** — SEO/AEO/GEO-optimized blog articles using the ResearchWithMe Template v2
 - **Research assistance** — Paper teardowns, citation-first reading, reproducible analyses

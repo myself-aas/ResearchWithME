@@ -6,14 +6,14 @@ function isExternal(href: string | undefined) {
 }
 
 /**
- * Renders CMS article Markdown with the journal's reading typography.
+ * Renders CMS article Markdown with the platform's reading typography.
  *
  * Raw HTML is intentionally not enabled: authors write Markdown, and allowing
  * arbitrary HTML would turn every editor account into a stored-XSS vector.
  */
 export default function MarkdownBody({ markdown }: { markdown: string }) {
   return (
-    <div className="journal-prose drop-cap max-w-prose">
+    <div className="reading-prose drop-cap max-w-prose">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

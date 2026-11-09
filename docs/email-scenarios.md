@@ -5,22 +5,25 @@ Every message this product sends is a **scenario**: one entry in
 template. Nothing else in the codebase constructs a Resend client, picks a
 sender, or formats a subject.
 
-These are transactional messages about a person's own account or submission.
-Marketing and broadcast mail is a different system and does not belong here —
-different sender, different consent rules, different unsubscribe obligation.
+These are transactional messages about a person's own account or activity on
+the platform. Marketing and broadcast mail is a different system and does not
+belong here — different sender, different consent rules, different unsubscribe
+obligation.
+
+The four manuscript-intake scenarios (`submission-receipt`,
+`review-status-update`, `decision-notification`, `deadline-reminder`) were
+removed on 2026-11-09 along with the `/submit` manuscript intake: the platform
+has no open manuscript desk. Writers are approved individually through the
+application flow, and there is no submission lifecycle to notify about.
 
 ## The scenarios
 
 | Key | From | Reply-to | Template env var | Variables (`?` = optional) |
 | --- | --- | --- | --- | --- |
-| `submission-receipt` | `Research With Me Submissions <submissions@researchwith.me>` | `submissions@researchwith.me` | `RESEND_TPL_SUBMISSION_RECEIPT` | REFERENCE, AUTHOR_NAME, TITLE, CATEGORY, DATA_URL?, ARTIFACT?, ABSTRACT |
 | `welcome` | `Research With Me <hello@researchwith.me>` | `hello@researchwith.me` | `RESEND_TPL_WELCOME` | DISPLAY_NAME?, DASHBOARD_URL, NEXT_STEP? |
 | `verify-email` | `Research With Me Accounts <accounts@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_VERIFY_EMAIL` | DISPLAY_NAME?, VERIFY_URL, EXPIRES_IN? |
 | `password-reset` | `Research With Me Security <security@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_PASSWORD_RESET` | DISPLAY_NAME?, RESET_URL, EXPIRES_IN?, REQUESTED_FROM? |
 | `security-alert` | `Research With Me Security <security@researchwith.me>` | `security@researchwith.me` | `RESEND_TPL_SECURITY_ALERT` | DISPLAY_NAME?, EVENT_TYPE, EVENT_TIME, EVENT_LOCATION?, ACTION_URL? |
-| `review-status-update` | `Research With Me Review Team <review@researchwith.me>` | `review@researchwith.me` | `RESEND_TPL_REVIEW_STATUS_UPDATE` | REFERENCE, TITLE, STATUS, REVIEWER_NAME?, NOTE?, UPDATED_AT? |
-| `decision-notification` | `Research With Me Review Team <review@researchwith.me>` | `review@researchwith.me` | `RESEND_TPL_DECISION_NOTIFICATION` | REFERENCE, TITLE, DECISION, DECISION_NOTE?, EDITOR_NAME?, DECIDED_AT? |
-| `deadline-reminder` | `Research With Me Reminders <reminders@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_DEADLINE_REMINDER` | REFERENCE, TITLE, DEADLINE, DAYS_REMAINING, ACTION_URL? |
 | `billing-receipt` | `Research With Me Billing <billing@researchwith.me>` | `billing@researchwith.me` | `RESEND_TPL_BILLING_RECEIPT` | INVOICE_NUMBER, AMOUNT, CURRENCY, PERIOD?, BILLED_ON?, RECEIPT_URL? |
 | `support-reply` | `Research With Me Support <support@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_SUPPORT_REPLY` | TICKET_ID, SUBJECT?, REPLY_BODY, AGENT_NAME?, TICKET_URL? |
 
@@ -37,20 +40,6 @@ never used: a receipt from an address the project does not own is
 indistinguishable from phishing.
 
 ## The variable contract
-### submission-receipt
-
-| Variable | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `REFERENCE` | string | yes | send fails without it |
-| `AUTHOR_NAME` | string | yes | send fails without it |
-| `TITLE` | string | yes | send fails without it |
-| `CATEGORY` | string | yes | send fails without it |
-| `DATA_URL` | string | no | empty string fallback; row hidden |
-| `ARTIFACT` | string | no | empty string fallback; row hidden |
-| `ABSTRACT` | string | yes | send fails without it |
-
-Subject: `[RWM-2026-7QXTR3] We received your submission`
-Idempotency: `submission-receipt/<submission-id>` · Tag: `category=submission-receipt`
 
 ### welcome
 
@@ -99,47 +88,6 @@ Idempotency: `password-reset/<user-id>` · Tag: `category=password-reset`
 Subject: `Security alert: New sign-in`
 Idempotency: `security-alert/<event-id>` · Tag: `category=security-alert`
 
-### review-status-update
-
-| Variable | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `REFERENCE` | string | yes | send fails without it |
-| `TITLE` | string | yes | send fails without it |
-| `STATUS` | string | yes | send fails without it |
-| `REVIEWER_NAME` | string | no | empty string fallback; row hidden |
-| `NOTE` | string | no | empty string fallback; row hidden |
-| `UPDATED_AT` | string | no | empty string fallback; row hidden |
-
-Subject: `[RWM-2026-7QXTR3] Review update: Under review`
-Idempotency: `review-status-update/<submission-id>-<status>` · Tag: `category=review-status-update`
-
-### decision-notification
-
-| Variable | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `REFERENCE` | string | yes | send fails without it |
-| `TITLE` | string | yes | send fails without it |
-| `DECISION` | string | yes | send fails without it |
-| `DECISION_NOTE` | string | no | empty string fallback; row hidden |
-| `EDITOR_NAME` | string | no | empty string fallback; row hidden |
-| `DECIDED_AT` | string | no | empty string fallback; row hidden |
-
-Subject: `[RWM-2026-7QXTR3] Decision on your submission`
-Idempotency: `decision-notification/<submission-id>` · Tag: `category=decision-notification`
-
-### deadline-reminder
-
-| Variable | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `REFERENCE` | string | yes | send fails without it |
-| `TITLE` | string | yes | send fails without it |
-| `DEADLINE` | string | yes | send fails without it |
-| `DAYS_REMAINING` | number | yes | send fails without it |
-| `ACTION_URL` | string | no | empty string fallback; row hidden |
-
-Subject: `[RWM-2026-7QXTR3] Review deadline in 7 days`
-Idempotency: `deadline-reminder/<submission-id>-<date>` · Tag: `category=deadline-reminder`
-
 ### billing-receipt
 
 | Variable | Type | Required | Notes |
@@ -170,7 +118,7 @@ Idempotency: `support-reply/<ticket-id>-<reply-id>` · Tag: `category=support-re
 
 ## Layout
 
-All ten share `emails/_layout.tsx`: header, footer, brand colours from
+All six share `emails/_layout.tsx`: header, footer, brand colours from
 `DESIGN.md`, and block-level structure so the plain-text conversion reads
 properly. `FieldTable` hides empty rows; `StatusPill` always renders its text
 label alongside the colour, because `DESIGN.md` requires status colour never to
@@ -236,9 +184,9 @@ off in this environment; `skipped: false` means it was attempted and failed. A
 `429` (the default limit is 10 requests/second) is retried with exponential
 backoff, up to four attempts.
 
-Callers must send **after** their primary action has succeeded. The submission
-route does exactly that, and because the send sits after its `result.ok` check,
-no receipt can ever confirm a submission that was not stored.
+Callers must send **after** their primary action has succeeded, so a message
+can never confirm an action — an account event, an application decision, a
+support reply — that was not actually stored.
 
 ## Adding a scenario
 
@@ -285,7 +233,7 @@ npm run email:export   # rendered HTML in .email-export/
 `researchwith.me` is verified in Resend: the Resend-Supabase integration is
 configured against it with `team@researchwith.me` as the sender, and reports
 *Ready to send*. Any username on a verified domain sends without being created
-first, which is why the ten senders here need no per-address setup.
+first, which is why the six senders here need no per-address setup.
 
 `sendScenario` still refuses an off-domain sender, but that guard catches typos
 and dashboard edits. It is not the domain check, and it would not catch an

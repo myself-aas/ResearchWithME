@@ -1,6 +1,6 @@
 # Supabase editorial CMS
 
-The attachment titled *Full-Stack Next.js & Supabase Free Tier Blogging CMS Blueprint* is implemented here as the production backend for this publication. The reader, editorial studio, comments, and cache invalidation all use one content model; there is no parallel blog bolted onto the site.
+The attachment titled *Full-Stack Next.js & Supabase Free Tier Blogging CMS Blueprint* is implemented here as the production backend for this platform. The reader, editorial studio, comments, and cache invalidation all use one content model; there is no parallel blog bolted onto the site.
 
 The CMS has two adapters behind one interface:
 
@@ -15,7 +15,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 
 | Blueprint step | Implementation | What changed and why |
 | --- | --- | --- |
-| 1.1 `posts` / `comments` tables | `supabase/migrations/20261025000100_cms_schema.sql` | Keeps the blueprint columns and adds the publication metadata the reader already renders: subtitle, summary, category, format, byline, cover, tags, takeaways, reading time, likes, timestamps. Drafts may be incomplete; a check constraint enforces publish-ready content. |
+| 1.1 `posts` / `comments` tables | `supabase/migrations/20261025000100_cms_schema.sql` | Keeps the blueprint columns and adds the article metadata the reader already renders: subtitle, summary, category, format, byline, cover, tags, takeaways, reading time, likes, timestamps. Drafts may be incomplete; a check constraint enforces publish-ready content. |
 | 1.2 RLS policies | Same migration | Public reads are limited to published posts. Writes require `authenticated`. Comments are public-read and public-insert with length checks, but **append-only** (no update policy). Likes go through one narrow `SECURITY DEFINER` function. |
 | 1.3 `blog-images` bucket | `supabase/migrations/20261025000200_cms_storage.sql` | Public read; authenticated upload/replace/delete. The bucket enforces 5 MB and JPEG/PNG/WebP/AVIF/GIF. |
 | 1.4 Realtime | Same schema migration | Adds both tables to `supabase_realtime` with guards so re-running the migration is safe. The studio and the public discussion subscribe as a progressive enhancement. |
@@ -24,17 +24,17 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 | 2.3 Image optimizer | `next.config.ts` | Remote pattern derived from `NEXT_PUBLIC_SUPABASE_URL`, limited to `/storage/v1/object/public/**`. No wildcard host. |
 | 2.4 Upload helper | `lib/supabase/storage.ts` | Validates type and size before upload, writes to `uploads/<year>/<month>/<unique>`, returns the public URL. |
 | 3.1 Middleware | `middleware.ts` | Refreshes the Supabase session and protects `/dashboard/**`. With no credentials it steps aside so local demo mode remains usable. |
-| 3.2 Dashboard layout | `app/dashboard/layout.tsx`, `components/cms/DashboardShell.tsx` | Rebuilt in the publication's design language. Responsive nav instead of a fixed 16rem sidebar, no modal, explicit sign-out states. |
+| 3.2 Dashboard layout | `app/dashboard/layout.tsx`, `components/cms/DashboardShell.tsx` | Rebuilt in the platform's design language. Responsive nav instead of a fixed 16rem sidebar, no modal, explicit sign-out states. |
 | 4.1 Editor styles | `components/cms/styles.ts`, `app/globals.css` | No `@apply` overrides for a third-party editor. Tokens come from the design system. |
 | 4.2 Rich editor | `components/cms/MarkdownEditor.tsx` | Markdown toolbar, write/preview tabs, link and image inserters, image upload, character and reading-time feedback. Raw HTML is not rendered. |
 | 4.3 Login | `app/login/page.tsx`, `components/auth/LoginForm.tsx` | Email and password, or Google. The redirect returns to `/auth/callback` (`app/auth/callback/route.ts`), which exchanges the PKCE code server-side and sends the user to `next`. Signed-in readers are pointed at `/dashboard/access` to apply for publishing access. |
 | 4.4 Apply to write | `app/dashboard/access/page.tsx`, `components/dashboard/AuthorApplication.tsx` | Any signed-in account connects a GitHub or ORCID identity with `auth.linkIdentity` and applies. `apply_as_author()` records the request; an editor approves it from `/dashboard/applications`, which writes the `public.editors` row. |
 | 4.4 New article | `app/dashboard/page.tsx`, `components/cms/PostEditor.tsx` | Shared create/edit form with server-side validation, inline field errors, focus management, unsaved-change warning, cover library, takeaways, and draft/publish states. |
 | 5.1 Manage articles | `app/dashboard/manage/page.tsx`, `lib/cms/use-cms.ts` | Search and status filters, counts, publish/revert, delete, realtime refetch when Supabase is configured. |
-| 5.2 Edit article | `app/dashboard/edit/[id]/page.tsx` | Loads through the API, then reuses `PostEditor`. Status changes are explicit; un-publishing takes a published article off the journal. |
+| 5.2 Edit article | `app/dashboard/edit/[id]/page.tsx` | Loads through the API, then reuses `PostEditor`. Status changes are explicit; un-publishing takes a published article off the platform. |
 | 5.3 Comment moderation | `app/dashboard/comments/page.tsx` | Joined post titles, filter, two-step delete, realtime refetch. |
 | 6.1 Revalidate webhook | `app/api/revalidate/route.ts` | Accepts the secret in `x-revalidate-secret` (query string supported for compatibility), compares it in constant time, revalidates `/`, `/sitemap.xml`, and `/post/<slug>`. Studio writes also revalidate immediately. |
-| 6.2 Public feed | Existing `/` feed, `/api/articles`, `lib/cms/catalogue.ts` | Published CMS posts are merged ahead of the bundled catalogue, with derived comment totals. The same catalogue feeds the author archive and the research assistant, so a published article is discoverable everywhere. The blueprint's `/blog` would have duplicated content; the publication keeps one canonical URL (`/post/<slug>`). |
+| 6.2 Public feed | Existing `/` feed, `/api/articles`, `lib/cms/catalogue.ts` | Published CMS posts are merged ahead of the bundled catalogue, with derived comment totals. The same catalogue feeds the author archive and the research assistant, so a published article is discoverable everywhere. The blueprint's `/blog` would have duplicated content; the platform keeps one canonical URL (`/post/<slug>`). |
 | 6.3 Public comments | Existing `ArticleDiscussion`, `/api/comments` | CMS posts use a `cms-<id>` namespace. The same component posts, displays, and (in the studio) subscribes to changes. |
 | 6.4 Article rendering | Existing `/post/[slug]`, `components/MarkdownBody.tsx` | Server-rendered Markdown with GFM tables, code, quotes, and safe external links. Unknown bylines do not produce broken author links. |
 
@@ -50,7 +50,7 @@ Local demo mode exists so the app builds, runs, and can be reviewed without clou
 | `content` | `text` | Markdown, up to 200,000 characters; at least 200 to publish |
 | `status` | `text` | `draft` or `published` |
 | `subtitle`, `summary` | `text` | Summary needs 40 characters to publish |
-| `category`, `format` | `text` | Constrained to the publication's lists in the app |
+| `category`, `format` | `text` | Constrained to the platform's lists in the app |
 | `author_id`, `author_name` | `text` | Byline must be one of the verified profiles in `lib/blog-data.ts` |
 | `cover_image` | `text` | Bundled `/images/…` or this project's storage bucket |
 | `tags` | `text[]` | Up to 8 |
@@ -132,7 +132,7 @@ curl -i -X POST http://localhost:3000/api/revalidate \
   -d '{"table":"posts","record":{"slug":"inside-paged-attention"}}'
 ```
 
-Manual checks for a configured project: sign in, save a draft, edit it, publish it, confirm it appears on `/` and `/post/<slug>`, post a comment, delete it in `/dashboard/comments`, revert the article to draft, and confirm it disappears from the journal.
+Manual checks for a configured project: sign in, save a draft, edit it, publish it, confirm it appears on `/` and `/post/<slug>`, post a comment, delete it in `/dashboard/comments`, revert the article to draft, and confirm it disappears from the platform.
 
 ## Security model
 
@@ -161,7 +161,7 @@ Manual checks for a configured project: sign in, save a draft, edit it, publish 
 3. **Server-mediated mutations** instead of client-side inserts: validation, rate limiting, origin checks, and no direct table access from the browser.
 4. **Hardened RLS** instead of `using (true)` for every authenticated operation and an unconstrained public insert: comments are length-checked, scoped to published posts, and immutable, and likes use a two-line function rather than exposing post updates.
 5. **Draft-aware constraints.** The blueprint requires content on every row; the CMS allows unfinished drafts and enforces completeness at publish time.
-6. **Verified bylines.** Authors come from the publication's credential catalogue rather than a free-text account name, preserving the product's authorship guarantee.
+6. **Verified bylines.** Authors come from the platform's credential catalogue rather than a free-text account name, preserving the product's authorship guarantee.
 
 ## Open follow-ups
 

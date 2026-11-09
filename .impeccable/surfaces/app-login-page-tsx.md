@@ -19,6 +19,7 @@ A user signs in with Google, GitHub, ORCID, a password, or a magic link and land
 A reading-room invitation rather than a SaaS card: an editorial column explaining the studio, one focused form, and a setup panel in demo mode. Warm paper, amber actions, no illustration.
 
 ## Constraints
+- Uses the shared platform masthead and footer (BlogHeader/BlogFooter), identical to the public pages; no bespoke studio chrome. The studio sidebar is page content, not site chrome.
 - WCAG 2.1 AA contrast, visible focus, labelled inputs, and announced auth errors.
 - Reflow to 320px; the form never causes horizontal scrolling.
 - OAuth and magic-link codes are exchanged on /auth/callback, never on a protected route.

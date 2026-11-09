@@ -31,7 +31,7 @@ export function VerifyEmail({
     <EmailLayout
       preview={'Confirm your email address to finish setting up.'}
       heading={displayName.trim() !== '' ? `Confirm your email, ${displayName}` : 'Confirm your email address'}
-      intro='Confirm the address below to finish setting up your ResearchWithMe account. Until it is confirmed you cannot submit work or be listed as an author.'
+      intro='Confirm the address below to finish setting up your ResearchWithMe account. Until it is confirmed you cannot publish on the platform or be listed as an author.'
       closing='If you did not create this account, you can ignore this message and no account will be created.'
     >
       <FieldTable

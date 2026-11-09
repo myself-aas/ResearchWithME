@@ -12,7 +12,7 @@ export async function generateMetadata({
   const paper = PUBLICATIONS_DATA.find((item) => item.slug === slug);
   return pageMetadata({
     title: paper?.title ?? 'Research Paper',
-    description: paper?.abstract ?? 'Read the full structured publication, methods, findings, references, and citation metadata.',
+    description: paper?.abstract ?? 'Read the full structured paper: methods, findings, references, and citation metadata.',
     path: `/paper/${slug}`,
     type: 'article',
   });

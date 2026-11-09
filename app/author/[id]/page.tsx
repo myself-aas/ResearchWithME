@@ -62,7 +62,7 @@ export default async function AuthorDetailPage({ params }: PageProps) {
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-stone-900 hover:underline">
-                Journal
+                Platform
               </Link>
             </li>
             <li aria-hidden="true">

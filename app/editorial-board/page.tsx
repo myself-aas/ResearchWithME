@@ -30,7 +30,7 @@ export default function EditorialBoardPage() {
             Editorial standards and the people who keep them
           </h1>
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-stone-700">
-            ResearchWithMe is governed by an independent collective of researchers, systems engineers, clinicians, and data librarians. They set the review standard and sign the record when a publication meets it.
+            ResearchWithMe is governed by an independent collective of researchers, systems engineers, clinicians, and data librarians. They set the review standard and sign the record when an article meets it.
           </p>
         </header>
 
@@ -96,24 +96,18 @@ export default function EditorialBoardPage() {
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 id="contribute-heading" className="font-serif text-2xl font-bold text-stone-900">
-                Review or submit with the collective
+                Write with the collective
               </h2>
               <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-                Guest analyses, computational replications, and infrastructure teardowns are welcome from practitioners who can show their working.
+                Original explanations of research papers, repository teardowns, and field notes are welcome from writers who can show their working. There is no open manuscript intake — access comes through an application the board reviews.
               </p>
             </div>
             <div className="flex shrink-0 flex-wrap gap-3">
               <Link
                 href="/dashboard/access"
-                className="inline-flex min-h-11 items-center rounded-md border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
-              >
-                Apply to write
-              </Link>
-              <Link
-                href="/submit"
                 className="inline-flex min-h-11 items-center rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
               >
-                Submit a manuscript
+                Apply to write
               </Link>
             </div>
           </div>
