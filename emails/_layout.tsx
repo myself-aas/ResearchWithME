@@ -26,20 +26,20 @@ import {
  */
 
 export const palette = {
-  primary: '#78350f',
-  accent: '#047857',
-  danger: '#991b1b',
-  page: '#fafaf9',
+  primary: '#4F46E5',
+  accent: '#059669',
+  danger: '#DC2626',
+  page: '#F8F7F3',
   surface: '#ffffff',
-  surfaceSubtle: '#f5f5f4',
-  border: '#e7e5e4',
-  ink: '#1c1917',
-  inkMuted: '#57534e',
-  inkFaint: '#78716c',
+  surfaceSubtle: '#F0EEE8',
+  border: '#DEDCD5',
+  ink: '#161C1A',
+  inkMuted: '#555955',
+  inkFaint: '#737571',
 } as const;
 
-const serif = "Georgia,'Times New Roman',serif";
-const mono = 'ui-monospace,SFMono-Regular,Menlo,monospace';
+const serif = "Newsreader,Georgia,'Times New Roman',serif";
+const mono = 'JetBrains Mono,ui-monospace,SFMono-Regular,Menlo,monospace';
 
 export interface EmailLayoutProps {
   /** Inbox-list snippet. Factual only -- no marketing line, no false promise. */

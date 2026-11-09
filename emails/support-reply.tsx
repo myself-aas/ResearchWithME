@@ -50,10 +50,10 @@ export function SupportReply({
       />
       {(replyBody as string).trim() !== '' ? (
         <>
-          <Text style={{ fontSize: '13px', lineHeight: 1.6, margin: '24px 0 8px', color: '#78716c', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <Text style={{ fontSize: '13px', lineHeight: 1.6, margin: '24px 0 8px', color: '#737571', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Reply
           </Text>
-          <Text style={{ fontSize: '14px', lineHeight: 1.7, margin: 0, color: '#44403c' }}>
+          <Text style={{ fontSize: '14px', lineHeight: 1.7, margin: 0, color: '#3B403D' }}>
             {replyBody as string}
           </Text>
         </>
