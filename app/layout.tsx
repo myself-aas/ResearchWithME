@@ -28,7 +28,7 @@ const newsreader = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Open-Access Research Reviews & Repository Teardowns`,
+    default: `${SITE_NAME} — Open-Access Research Reviews`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -51,6 +51,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     type: 'website',
     locale: 'en_US',
+    images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630, alt: `${SITE_NAME} — Open-Access Research Reviews` }],
   },
   twitter: {
     card: 'summary_large_image',

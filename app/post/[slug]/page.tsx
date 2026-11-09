@@ -14,6 +14,7 @@ import MarkdownBody from '@/components/MarkdownBody';
 import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
+import { articleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 import VideoEmbed from '@/components/VideoEmbed';
 
 // The reader mixes bundled articles with live CMS posts, so the route cannot be
@@ -68,8 +69,18 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   const paragraphs = article.content.flatMap((block) => block.split(/\n{2,}/)).filter(Boolean);
 
+  const jsonLd = articleJsonLd({
+    title: article.title,
+    description: article.summary,
+    path: `/post/${article.slug}`,
+    authorName: article.author.name,
+    datePublished: article.dateISO ?? article.publishedAt,
+    imagePath: article.coverImage,
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-stone-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
       <ReadingProgress />
       <BlogHeader />
 

@@ -7,6 +7,7 @@ import BlogFooter from '@/components/BlogFooter';
 import ReadingActions from '@/components/ReadingActions';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
 import { pageMetadata } from '@/lib/seo';
+import { scholarlyArticleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 
 export function generateStaticParams() {
   return PUBLICATIONS_DATA.map((paper) => ({ slug: paper.slug }));
@@ -40,8 +41,19 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
     notFound();
   }
 
+  const jsonLd = scholarlyArticleJsonLd({
+    title: paper.title,
+    description: paper.abstract,
+    path: `/paper/${paper.slug}`,
+    authors: paper.authors.map((a) => a.name),
+    datePublished: paper.publishedDate,
+    doi: paper.doi,
+    journal: paper.journal,
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-stone-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
