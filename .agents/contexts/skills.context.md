@@ -2,7 +2,7 @@
 
 ## Available Skills
 
-### Project Skills (`.agent/skills/`)
+### Project Skills (`.agents/skills/`)
 - **SVG-Logo-Designer** - Create professional SVG logos from descriptions
 
 ### Plugin Skills
@@ -70,7 +70,7 @@
 
 ## Custom Agents
 
-### reme Agent (`.github/agents/reme.agent.md`)
+### reme Agent (`.agents/agents/reme.agent.md`)
 ResearchWithMe custom agent for scholarly research platform tasks:
 - Article writing (SEO/AEO/GEO optimized)
 - Research assistance
@@ -88,7 +88,7 @@ tools: [read, write, edit, search, execute, web]
 
 ## Custom Instructions
 
-### Article Writing (`.github/instructions/reme-article-writing.instructions.md`)
+### Article Writing (`.agents/instructions/reme-article-writing.instructions.md`)
 Strict enforcement of ResearchWithMe Template v2 for SEO/AEO/GEO-optimized blog articles.
 
 ### Template Reference
@@ -120,7 +120,7 @@ Skills with `applyTo` patterns trigger automatically on matching files/tasks.
 ### Skill Discovery
 ```bash
 # List available skills
-# Check .agent/skills/ for project skills
+# Check .agents/skills/ for project skills
 # Check plugin skills in VS Code settings
 ```
 

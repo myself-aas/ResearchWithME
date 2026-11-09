@@ -2,7 +2,7 @@
 
 ## Custom Instructions Files
 
-### 1. Article Writing (`.github/instructions/reme-article-writing.instructions.md`)
+### 1. Article Writing (`.agents/instructions/reme-article-writing.instructions.md`)
 **Purpose**: Strict enforcement of ResearchWithMe Template v2 for SEO/AEO/GEO-optimized blog articles.
 
 **Applies When**:
@@ -19,7 +19,7 @@
 - Citations: ResearchWithMe format with DOI links
 - Accessibility: Proper headings, alt text, contrast
 
-### 2. Project Instructions (`.github/copilot-instructions.md` - if exists)
+### 2. Project Instructions (`.agents/copilot-instructions.md` - if exists)
 **Purpose**: Project-wide guidelines for all agent interactions.
 
 **Should Include**:
@@ -31,7 +31,7 @@
 
 ## Custom Agents
 
-### reme Agent (`.github/agents/reme.agent.md`)
+### reme Agent (`.agents/agents/reme.agent.md`)
 **Description**: ResearchWithMe custom agent for scholarly research platform tasks.
 
 **Capabilities**:
@@ -59,7 +59,7 @@ tools: [read, write, edit, search, execute, web]
 
 ### Planned Prompt Files
 ```
-.github/prompts/
+.agents/prompts/
   article-write.prompt.md      # Invoke reme for article writing
   paper-explainer.prompt.md    # Create paper explainer video plan
   feature-plan.prompt.md       # Generate implementation plan
@@ -82,21 +82,21 @@ SEO keywords: {{keywords}}
 
 ### Creating New Instructions
 1. Identify recurring problem/pattern
-2. Create `.github/instructions/[name].instructions.md`
+2. Create `.agents/instructions/[name].instructions.md`
 3. Add `applyTo` glob pattern
 4. Test with agent
 5. Refine based on behavior
 
 ### Creating New Agents
 1. Define agent purpose and scope
-2. Create `.github/agents/[name].agent.md`
+2. Create `.agents/agents/[name].agent.md`
 3. Specify tools, handoffs, prompt
 4. Test with sample tasks
 5. Document in this context
 
 ### Creating Prompt Files
 1. Define reusable workflow
-2. Create `.github/prompts/[name].prompt.md`
+2. Create `.agents/prompts/[name].prompt.md`
 3. Specify agent and parameters
 4. Test with slash command `/prompt-name`
 
@@ -111,17 +111,17 @@ SEO keywords: {{keywords}}
 ### Context Loading Strategy
 ```markdown
 # In copilot-instructions.md
-* [Project Overview](../.github/contexts/project-overview.context.md)
-* [Architecture](../.github/contexts/architecture.context.md)
-* [Workflows](../.github/contexts/workflows.context.md)
-* [Design System](../.github/contexts/design-system.context.md)
-* [Skills](../.github/contexts/skills.context.md)
-* [API Reference](../.github/contexts/api-reference.context.md)
-* [Database](../.github/contexts/database.context.md)
-* [Deployment](../.github/contexts/deployment.context.md)
-* [Testing](../.github/contexts/testing.context.md)
-* [Content & Editorial](../.github/contexts/content-editorial.context.md)
-* [HyperFrames Video](../.github/contexts/hyperframes-video.context.md)
+* [Project Overview](../.agents/contexts/project-overview.context.md)
+* [Architecture](../.agents/contexts/architecture.context.md)
+* [Workflows](../.agents/contexts/workflows.context.md)
+* [Design System](../.agents/contexts/design-system.context.md)
+* [Skills](../.agents/contexts/skills.context.md)
+* [API Reference](../.agents/contexts/api-reference.context.md)
+* [Database](../.agents/contexts/database.context.md)
+* [Deployment](../.agents/contexts/deployment.context.md)
+* [Testing](../.agents/contexts/testing.context.md)
+* [Content & Editorial](../.agents/contexts/content-editorial.context.md)
+* [HyperFrames Video](../.agents/contexts/hyperframes-video.context.md)
 ```
 
 ### Verification
@@ -160,7 +160,7 @@ SEO keywords: {{keywords}}
 
 ### Debugging Steps
 1. Ask agent: "What instructions are you following?"
-2. Check `.github/instructions/` for applicable files
+2. Check `.agents/instructions/` for applicable files
 3. Verify `copilot-instructions.md` includes context links
 4. Test with minimal reproduction
 

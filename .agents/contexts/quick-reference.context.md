@@ -375,6 +375,6 @@ wrangler secret list
 - `PRODUCT.md` - Product vision
 - `DESIGN.md` - Design system
 - `docs/ResearchWithMe_Template.md` - Article template
-- `.github/contexts/` - All context files
-- `.github/instructions/` - Agent instructions
-- `.github/agents/` - Custom agents
+- `.agents/contexts/` - All context files
+- `.agents/instructions/` - Agent instructions
+- `.agents/agents/` - Custom agents

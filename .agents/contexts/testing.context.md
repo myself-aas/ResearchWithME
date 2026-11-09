@@ -118,7 +118,7 @@ bun test --testNamePattern="format"
 
 ### CI Integration
 ```yaml
-# .github/workflows/quality.yml
+# .agents/workflows/quality.yml
 - name: Run tests
   run: bun test --coverage
 ```

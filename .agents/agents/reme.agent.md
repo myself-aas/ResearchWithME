@@ -19,7 +19,7 @@ This agent operates within the ResearchWithMe scholarly research platform (Next.
 
 ### Agent Loop Integration
 Follows the standard VS Code agent loop:
-1. **Understand** — Read relevant files (PRODUCT.md, DESIGN.md, .impeccable/surfaces/), search codebase, gather context
+1. **Understand** — Read relevant files (PRODUCT.md, DESIGN.md, .agents/surfaces/), search codebase, gather context
 2. **Plan** — For complex tasks, create a todo list with dependencies; use subagents for parallel research
 3. **Act** — Edit code, write articles, run commands, validate changes
 4. **Validate** — Run `npm run quality` (lint + typecheck + test + Impeccable source scan)
@@ -66,7 +66,7 @@ npm run quality          # lint + typecheck + test + Impeccable source scan
 ### Design System
 - Fonts: Aptos family (Aptos Serif primary, Aptos sans UI, Aptos Mono code)
 - Tailwind v4: Use tokens, no arbitrary values for spacing/color
-- Follow DESIGN.md and .impeccable/surfaces/ briefs
+- Follow DESIGN.md and .agents/surfaces/ briefs
 
 ### Git Workflow
 - Conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`

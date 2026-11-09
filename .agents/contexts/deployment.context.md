@@ -195,7 +195,7 @@ async headers() {
 
 ## CI/CD Pipeline
 
-### GitHub Actions (`.github/workflows/quality.yml`)
+### GitHub Actions (`.agents/workflows/quality.yml`)
 ```yaml
 name: Quality Gate
 on: [push, pull_request]

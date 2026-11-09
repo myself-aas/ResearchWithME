@@ -22,7 +22,7 @@ Scholarly research platform: long-form paper reviews, reproducible teardowns, ci
 - `scripts/` - Build and deployment scripts
 - `videos/` - HyperFrames video content
 - `docs/` - Documentation
-- `agent/` - Agent skills and configurations
+- `.agents/` - Agent skills and configurations
 
 ## Quality Gate
 ```bash
@@ -33,7 +33,7 @@ Individual commands: `npm run lint`, `npm run typecheck`, `npm test`, `npm run i
 ## Design System
 - **Fonts**: Aptos family (Aptos Serif primary, Aptos sans for UI, Aptos Mono for code)
 - **Tailwind v4**: No arbitrary values for spacing/color that exist as tokens
-- **Design docs**: `DESIGN.md` for surface-level decisions, `.impeccable/surfaces/` for per-route detail
+- **Design docs**: `DESIGN.md` for surface-level decisions, `.agents/surfaces/` for per-route detail
 
 ## Git Conventions
 - Conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`

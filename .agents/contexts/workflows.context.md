@@ -11,7 +11,7 @@ npm test                 # Vitest only
 npm run impeccable:source # Impeccable source scan only
 ```
 
-### CI/CD Pipeline (`.github/workflows/quality.yml`)
+### CI/CD Pipeline (`.agents/workflows/quality.yml`)
 1. **Install**: `bun install --frozen-lockfile`
 2. **Lint**: `npm run lint`
 3. **Typecheck**: `npm run typecheck`
@@ -24,7 +24,7 @@ npm run impeccable:source # Impeccable source scan only
 ### Adding a New Route
 1. Create route under `app/[route]/page.tsx`
 2. Add layout if needed: `app/[route]/layout.tsx`
-3. Create surface brief: `.impeccable/surfaces/[route].md`
+3. Create surface brief: `.agents/surfaces/[route].md`
 4. Update `DESIGN.md` if new patterns
 5. Run `npm run quality`
 

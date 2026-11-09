@@ -156,10 +156,10 @@ Use standard scale: `0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12, 
 ## Design Documentation
 - **DESIGN.md** - High-level design principles
 - **app/applet/DESIGN.md** - Applet-specific design
-- **.impeccable/surfaces/** - Per-route design briefs
+- **.agents/surfaces/** - Per-route design briefs
 - **components/** - Component-level design in code comments
 
 ## Impeccable Integration
 - Run `npm run impeccable:source` for design compliance
-- Surface briefs in `.impeccable/surfaces/` must match routes
+- Surface briefs in `.agents/surfaces/` must match routes
 - Design tokens validated against `globals.css`
