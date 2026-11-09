@@ -1,11 +1,12 @@
 -- Consolidate the editor allowlist onto public.editors.
 --
--- 20261025000300_cms_storage.sql created public.editor_memberships and gated the
--- storage policies on it. 20261028000100_editor_allowlist.sql then created
--- public.editors, added public.is_editor(), and rewrote every posts, comments,
--- and storage policy to consult that function — which reads public.editors.
--- Nothing has referenced editor_memberships since, so a row inserted there
--- grants no access at all.
+-- 20261028000200_cms_storage.sql (originally 20261025000200) created
+-- public.editor_memberships and gated the storage policies on it.
+-- 20261028000100_editor_allowlist.sql then created public.editors, added
+-- public.is_editor(), and rewrote every posts, comments, and storage policy
+-- to consult that function — which reads public.editors. Nothing has
+-- referenced editor_memberships since, so a row inserted there grants no
+-- access at all.
 --
 -- This migration carries any such rows across, then removes the dead table so
 -- there is exactly one allowlist to administer.

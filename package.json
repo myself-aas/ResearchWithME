@@ -1,11 +1,25 @@
 {
   "name": "researchwithme",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
-  "engines": {
-    "node": ">=20.9.0"
+  "description": "Long-form reviews of published papers and open repositories, written by verified domain specialists. Every claim carries a citation, every artifact has a home, and nothing sits behind a paywall.",
+  "homepage": "https://github.com/myself-aas/ResearchWithME#readme",
+  "bugs": {
+    "url": "https://github.com/myself-aas/ResearchWithME/issues"
   },
-  "packageManager": "bun@1.4.4",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/myself-aas/ResearchWithME.git"
+  },
+  "license": "ISC",
+  "author": "Ashif Ahmed Shuvo",
+  "type": "commonjs",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
   "scripts": {
     "dev": "next dev -p 3000 -H 0.0.0.0",
     "build": "next build",
@@ -73,9 +87,13 @@
     "vitest": "^3.2.4",
     "wrangler": "4.154.0"
   },
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "overrides": {
     "next": {
       "postcss": "^8.5.31"
     }
-  }
+  },
+  "packageManager": "bun@1.4.4"
 }
