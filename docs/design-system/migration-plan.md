@@ -19,7 +19,7 @@ Landed: `components/ui/{Dialog,Alert,Toast,Skeleton,EmptyState}.tsx` — token-m
 
 ## Stage 3 — Scholarly components (started)
 
-Landed: `EvidenceCard` (reference component, `docs/design-system/components/evidence-card.md`), `SourceCard`, `ClaimCard`, `TrustAssessmentSummary` (contracts in `docs/design-system/components/source-claim-trust-cards.md`), plus the §23 trust model in `lib/schemas/scholarly.ts` + `lib/scholarly/trust.ts` (dimensions independent, not-assessed ≠ negative). Next: `Citation`, `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`, `ProvenanceGraph` (+ list alternative).
+Landed: `EvidenceCard` (reference component, `docs/design-system/components/evidence-card.md`), `SourceCard`, `ClaimCard`, `TrustAssessmentSummary` (contracts in `docs/design-system/components/source-claim-trust-cards.md`), plus the §23 trust model in `lib/schemas/scholarly.ts` + `lib/scholarly/trust.ts` (dimensions independent, not-assessed ≠ negative). Landed: `Citation` (§7: short/full/machine views, DOI/BibTeX/RIS/CSL-JSON, stable internal id, visible+announced copy feedback). Next: `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`, `ProvenanceGraph` (+ list alternative).
 
 ## Stage 4 — Workspace workflows
 

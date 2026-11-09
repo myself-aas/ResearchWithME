@@ -76,3 +76,46 @@ export function citationFileExtension(format: CitationFormat) {
   if (format === 'bibtex') return 'bib';
   return 'txt';
 }
+
+// ── πeme v3.1 Citation component additions (§7): short/full/machine views + CSL-JSON ──
+
+export type CitationView = 'short' | 'full' | 'machine';
+
+/** Short view: "Last (Year). Title." — for inline references. */
+export function shortCitation(source: CitationSource): string {
+  const { first, last } = splitName(source.author);
+  const title = source.title.trim() || 'Untitled';
+  const year = source.year.trim() || 'n.d.';
+  const shortTitle = title.length > 60 ? `${title.slice(0, 57)}…` : title;
+  return `${last}, ${first.charAt(0)}. (${year}). ${shortTitle}.`;
+}
+
+/** Full view: APA (the platform's default full reference). */
+export function fullCitation(source: CitationSource): string {
+  return buildCitation('apa', source);
+}
+
+export type MachineFormat = 'bibtex' | 'ris' | 'csl-json';
+
+/** CSL-JSON export (spec §7) — validates as JSON with required CSL fields. */
+export function cslJson(source: CitationSource): string {
+  const doi = cleanDoi(source.doi);
+  const link = doiUrl(doi) || source.url?.trim() || '';
+  const csl = {
+    id: bibtexKey(source),
+    type: 'article-journal',
+    title: source.title.trim() || 'Untitled',
+    author: [{ family: splitName(source.author).last, given: splitName(source.author).first }],
+    'container-title': source.journal.trim() || 'ResearchWithMe',
+    issued: { 'date-parts': [[Number(source.year.replace(/[^0-9]/g, '')) || 0]] },
+    ...(doi ? { DOI: doi } : {}),
+    ...(link ? { URL: link } : {}),
+  };
+  return JSON.stringify(csl, null, 2);
+}
+
+/** Machine-readable view: BibTeX, RIS, or CSL-JSON. */
+export function machineCitation(format: MachineFormat, source: CitationSource): string {
+  if (format === 'csl-json') return cslJson(source);
+  return buildCitation(format, source);
+}
