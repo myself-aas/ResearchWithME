@@ -1,9 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
+/* πeme v3.1 generated tokens — single source of truth: tokens/src/*.json
+   (build: npm run tokens:build). Do not hand-edit token values here. */
+@import "../tokens/generated/tokens.css";
 
 /* πeme Frontend Design System v3.1 — token layer.
-   Source of truth: docs/pieme-design-system-v3.1.md (normative Part II).
+   Source of truth: tokens/src/*.json (normative spec: docs/pieme-design-system-v3.1.md).
    Three layers per §3: primitives (raw scales), semantic roles, component
    aliases. Components reference semantic tokens, never primitives. */
 
@@ -20,97 +23,96 @@
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   /* Primitives — the πeme neutral scale replaces Tailwind's stone scale so
-     every existing stone-* utility renders the πeme neutral ramp. The other
-     πeme primitive hues (indigo/emerald/cyan/amber/red/violet) match the
-     Tailwind defaults at the defined steps. */
-  --color-stone-50: #f8f7f3;
-  --color-stone-100: #f0eee8;
-  --color-stone-200: #dedcd5;
-  --color-stone-300: #c6c4bd;
-  --color-stone-400: #9d9c97;
-  --color-stone-500: #737571;
-  --color-stone-600: #555955;
-  --color-stone-700: #3b403d;
-  --color-stone-800: #252b29;
-  --color-stone-900: #161c1a;
-  --color-stone-950: #0b100f;
+     every existing stone-* utility renders the πeme neutral ramp. All values
+     reference the generated --pieme-* tokens (tokens/generated/tokens.css). */
+  --color-stone-50: var(--pieme-color-neutral-50);
+  --color-stone-100: var(--pieme-color-neutral-100);
+  --color-stone-200: var(--pieme-color-neutral-200);
+  --color-stone-300: var(--pieme-color-neutral-300);
+  --color-stone-400: var(--pieme-color-neutral-400);
+  --color-stone-500: var(--pieme-color-neutral-500);
+  --color-stone-600: var(--pieme-color-neutral-600);
+  --color-stone-700: var(--pieme-color-neutral-700);
+  --color-stone-800: var(--pieme-color-neutral-800);
+  --color-stone-900: var(--pieme-color-neutral-900);
+  --color-stone-950: var(--pieme-color-neutral-950);
 
-  /* Semantic — light theme (πeme v3.1 front-matter, color.semantic.light). */
-  --color-canvas: #f8f7f3;
-  --color-surface: #ffffff;
-  --color-surface-subtle: #f0eee8;
-  --color-surface-raised: #ffffff;
-  --color-surface-inverse: #161c1a;
-  --color-text-primary: #161c1a;
-  --color-text-secondary: #555955;
-  --color-text-tertiary: #737571;
-  --color-text-inverse: #ffffff;
-  --color-border-subtle: #dedcd5;
-  --color-border-strong: #9d9c97;
-  --color-focus: #4f46e5;
-  --color-selection: #e0e7ff;
+  /* Semantic — light theme values come from tokens/src/semantic-light.json
+     (emitted as --pieme-* at :root, dark overrides under .dark). */
+  --color-canvas: var(--pieme-canvas);
+  --color-surface: var(--pieme-surface);
+  --color-surface-subtle: var(--pieme-surface-subtle);
+  --color-surface-raised: var(--pieme-surface-raised);
+  --color-surface-inverse: var(--pieme-surface-inverse);
+  --color-text-primary: var(--pieme-text-primary);
+  --color-text-secondary: var(--pieme-text-secondary);
+  --color-text-tertiary: var(--pieme-text-tertiary);
+  --color-text-inverse: var(--pieme-text-inverse);
+  --color-border-subtle: var(--pieme-border-subtle);
+  --color-border-strong: var(--pieme-border-strong);
+  --color-focus: var(--pieme-focus);
+  --color-selection: var(--pieme-selection);
 
   /* Semantic — action roles. */
-  --color-action-primary: #4f46e5;
-  --color-action-primary-hover: #4338ca;
-  --color-action-primary-pressed: #312e81;
-  --color-on-primary: #ffffff;
-  --color-destructive: #dc2626;
-  --color-link: #4338ca;
-  --color-visited: #6d28d9;
+  --color-action-primary: var(--pieme-action-primary);
+  --color-action-primary-hover: var(--pieme-action-primary-hover);
+  --color-action-primary-pressed: var(--pieme-action-primary-pressed);
+  --color-on-primary: var(--pieme-action-on-primary);
+  --color-destructive: var(--pieme-action-destructive);
+  --color-link: var(--pieme-action-link);
+  --color-visited: var(--pieme-action-visited);
 
-  /* Semantic — domain palettes (knowledge / trust / provenance / workflow /
-     collaboration / citation) and provenance-graph nodes and edges. */
-  --color-knowledge-source: #4f46e5;
-  --color-knowledge-evidence: #059669;
-  --color-knowledge-insight: #0891b2;
-  --color-knowledge-discussion: #d97706;
-  --color-knowledge-contradiction: #dc2626;
-  --color-knowledge-publication: #7c3aed;
-  --color-knowledge-archive: #555955;
-  --color-trust-verified: #059669;
-  --color-trust-replicated: #047857;
-  --color-trust-peer-reviewed: #4f46e5;
-  --color-trust-emerging: #0891b2;
-  --color-trust-uncertain: #d97706;
-  --color-trust-contested: #dc2626;
-  --color-trust-unknown: #737571;
-  --color-provenance-direct-source: #059669;
-  --color-provenance-cited-source: #4f46e5;
-  --color-provenance-derived: #0891b2;
-  --color-provenance-inferred: #d97706;
-  --color-provenance-ai-assisted: #7c3aed;
-  --color-provenance-unresolved: #737571;
-  --color-workflow-discovered: #0891b2;
-  --color-workflow-extracted: #0d9488;
-  --color-workflow-validated: #059669;
-  --color-workflow-synthesized: #4f46e5;
-  --color-workflow-reviewed: #7c3aed;
-  --color-workflow-published: #6d28d9;
-  --color-workflow-archived: #555955;
-  --color-collaboration-comment: #0891b2;
-  --color-collaboration-suggestion: #0d9488;
-  --color-collaboration-review: #7c3aed;
-  --color-collaboration-consensus: #059669;
-  --color-collaboration-disagreement: #dc2626;
-  --color-citation-article: #4f46e5;
-  --color-citation-dataset: #0891b2;
-  --color-citation-book: #047857;
-  --color-citation-preprint: #d97706;
-  --color-citation-software: #7c3aed;
-  --color-citation-protocol: #0d9488;
-  --color-citation-webpage: #555955;
-  --color-graph-node-source: #4f46e5;
-  --color-graph-node-evidence: #059669;
-  --color-graph-node-claim: #0891b2;
-  --color-graph-node-discussion: #d97706;
-  --color-graph-node-publication: #7c3aed;
-  --color-graph-node-archived: #737571;
-  --color-graph-edge-cites: #6366f1;
-  --color-graph-edge-supports: #10b981;
-  --color-graph-edge-contradicts: #ef4444;
-  --color-graph-edge-derives: #06b6d4;
-  --color-graph-edge-relates: #9d9c97;
+  /* Semantic — domain palettes and provenance-graph nodes/edges. */
+  --color-knowledge-source: var(--pieme-knowledge-source);
+  --color-knowledge-evidence: var(--pieme-knowledge-evidence);
+  --color-knowledge-insight: var(--pieme-knowledge-insight);
+  --color-knowledge-discussion: var(--pieme-knowledge-discussion);
+  --color-knowledge-contradiction: var(--pieme-knowledge-contradiction);
+  --color-knowledge-publication: var(--pieme-knowledge-publication);
+  --color-knowledge-archive: var(--pieme-knowledge-archive);
+  --color-trust-verified: var(--pieme-trust-verified);
+  --color-trust-replicated: var(--pieme-trust-replicated);
+  --color-trust-peer-reviewed: var(--pieme-trust-peer-reviewed);
+  --color-trust-emerging: var(--pieme-trust-emerging);
+  --color-trust-uncertain: var(--pieme-trust-uncertain);
+  --color-trust-contested: var(--pieme-trust-contested);
+  --color-trust-unknown: var(--pieme-trust-unknown);
+  --color-provenance-direct-source: var(--pieme-provenance-direct-source);
+  --color-provenance-cited-source: var(--pieme-provenance-cited-source);
+  --color-provenance-derived: var(--pieme-provenance-derived);
+  --color-provenance-inferred: var(--pieme-provenance-inferred);
+  --color-provenance-ai-assisted: var(--pieme-provenance-ai-assisted);
+  --color-provenance-unresolved: var(--pieme-provenance-unresolved);
+  --color-workflow-discovered: var(--pieme-workflow-discovered);
+  --color-workflow-extracted: var(--pieme-workflow-extracted);
+  --color-workflow-validated: var(--pieme-workflow-validated);
+  --color-workflow-synthesized: var(--pieme-workflow-synthesized);
+  --color-workflow-reviewed: var(--pieme-workflow-reviewed);
+  --color-workflow-published: var(--pieme-workflow-published);
+  --color-workflow-archived: var(--pieme-workflow-archived);
+  --color-collaboration-comment: var(--pieme-collaboration-comment);
+  --color-collaboration-suggestion: var(--pieme-collaboration-suggestion);
+  --color-collaboration-review: var(--pieme-collaboration-review);
+  --color-collaboration-consensus: var(--pieme-collaboration-consensus);
+  --color-collaboration-disagreement: var(--pieme-collaboration-disagreement);
+  --color-citation-article: var(--pieme-citation-article);
+  --color-citation-dataset: var(--pieme-citation-dataset);
+  --color-citation-book: var(--pieme-citation-book);
+  --color-citation-preprint: var(--pieme-citation-preprint);
+  --color-citation-software: var(--pieme-citation-software);
+  --color-citation-protocol: var(--pieme-citation-protocol);
+  --color-citation-webpage: var(--pieme-citation-webpage);
+  --color-graph-node-source: var(--pieme-graph-node-source);
+  --color-graph-node-evidence: var(--pieme-graph-node-evidence);
+  --color-graph-node-claim: var(--pieme-graph-node-claim);
+  --color-graph-node-discussion: var(--pieme-graph-node-discussion);
+  --color-graph-node-publication: var(--pieme-graph-node-publication);
+  --color-graph-node-archived: var(--pieme-graph-node-archived);
+  --color-graph-edge-cites: var(--pieme-graph-edge-cites);
+  --color-graph-edge-supports: var(--pieme-graph-edge-supports);
+  --color-graph-edge-contradicts: var(--pieme-graph-edge-contradicts);
+  --color-graph-edge-derives: var(--pieme-graph-edge-derives);
+  --color-graph-edge-relates: var(--pieme-graph-edge-relates);
 
   /* Component aliases over semantic tokens (kept for existing markup). */
   --color-paper: var(--color-canvas);
@@ -122,68 +124,43 @@
   --color-brand-pressed: var(--color-action-primary-pressed);
   --color-verified: var(--color-trust-verified);
 
-  /* Radius — πeme v3.1 radius scale. */
-  --radius-xs: 0.25rem;
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
-  --radius-2xl: 1.5rem;
-  --radius-full: 9999px;
+  /* Radius — πeme v3.1 radius scale (generated). */
+  --radius-xs: var(--pieme-radius-xs);
+  --radius-sm: var(--pieme-radius-sm);
+  --radius-md: var(--pieme-radius-md);
+  --radius-lg: var(--pieme-radius-lg);
+  --radius-xl: var(--pieme-radius-xl);
+  --radius-2xl: var(--pieme-radius-2xl);
+  --radius-full: var(--pieme-radius-full);
 
-  /* Elevation — πeme v3.1 shadow scale (neutral-950 based). */
-  --shadow-raised: 0 1px 2px rgba(11, 16, 15, 0.08), 0 6px 18px rgba(11, 16, 15, 0.06);
-  --shadow-floating: 0 4px 12px rgba(11, 16, 15, 0.1), 0 20px 48px rgba(11, 16, 15, 0.1);
-  --shadow-dialog: 0 12px 32px rgba(11, 16, 15, 0.16), 0 36px 80px rgba(11, 16, 15, 0.14);
+  /* Elevation — πeme v3.1 shadow scale (generated). */
+  --shadow-raised: var(--pieme-shadow-raised);
+  --shadow-floating: var(--pieme-shadow-floating);
+  --shadow-dialog: var(--pieme-shadow-dialog);
 
   /* Breakpoints — πeme v3.1 (sm tightened to 36rem; md–2xl match defaults). */
-  --breakpoint-sm: 36rem;
-  --breakpoint-md: 48rem;
-  --breakpoint-lg: 64rem;
-  --breakpoint-xl: 80rem;
-  --breakpoint-2xl: 96rem;
+  --breakpoint-sm: var(--pieme-layout-breakpoint-sm);
+  --breakpoint-md: var(--pieme-layout-breakpoint-md);
+  --breakpoint-lg: var(--pieme-layout-breakpoint-lg);
+  --breakpoint-xl: var(--pieme-layout-breakpoint-xl);
+  --breakpoint-2xl: var(--pieme-layout-breakpoint-2xl);
 
-  /* Motion — πeme v3.1 easing scale. */
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-enter: cubic-bezier(0, 0, 0, 1);
-  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
-  --ease-emphasize: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Motion — πeme v3.1 easing scale (generated). */
+  --ease-standard: var(--pieme-motion-easing-standard);
+  --ease-enter: var(--pieme-motion-easing-enter);
+  --ease-exit: var(--pieme-motion-easing-exit);
+  --ease-emphasize: var(--pieme-motion-easing-emphasize);
 }
 
 @layer base {
   :root {
     color-scheme: light;
-
-    /* Motion durations — πeme v3.1 motion.duration scale. */
-    --pieme-duration-instant: 0ms;
-    --pieme-duration-fast: 120ms;
-    --pieme-duration-standard: 200ms;
-    --pieme-duration-deliberate: 320ms;
-    --pieme-duration-connect: 480ms;
-    --pieme-duration-synthesize: 700ms;
-
-    /* Layout measures — πeme v3.1 layout.max-width. */
-    --pieme-max-reading: 48rem;
-    --pieme-max-workspace: 90rem;
-    --pieme-max-graph: 108rem;
   }
 
-  /* Dark theme — πeme v3.1 color.semantic.dark. Applied with the .dark class. */
+  /* Dark theme — πeme v3.1 color.semantic.dark is emitted by the generated
+     tokens.css under .dark and prefers-color-scheme. */
   .dark {
     color-scheme: dark;
-    --color-canvas: #0b100f;
-    --color-surface: #161c1a;
-    --color-surface-subtle: #252b29;
-    --color-surface-raised: #2f3633;
-    --color-surface-inverse: #f8f7f3;
-    --color-text-primary: #f8f7f3;
-    --color-text-secondary: #c6c4bd;
-    --color-text-tertiary: #9d9c97;
-    --color-text-inverse: #161c1a;
-    --color-border-subtle: #3b403d;
-    --color-border-strong: #737571;
-    --color-focus: #a5b4fc;
-    --color-selection: #312e81;
   }
 
   html {
@@ -482,7 +459,7 @@ html .shadow-2xs {
 
 @media (prefers-reduced-motion: no-preference) {
   main {
-    animation: rwm-page-settle var(--pieme-duration-standard) var(--ease-standard) both;
+    animation: rwm-page-settle var(--pieme-motion-duration-standard) var(--ease-standard) both;
   }
 }
 

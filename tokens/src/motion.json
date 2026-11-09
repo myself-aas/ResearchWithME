@@ -1,0 +1,55 @@
+{
+  "duration": {
+    "instant": "0ms",
+    "fast": "120ms",
+    "standard": "200ms",
+    "deliberate": "320ms",
+    "connect": "480ms",
+    "synthesize": "700ms"
+  },
+  "easing": {
+    "standard": "cubic-bezier(0.2, 0, 0, 1)",
+    "enter": "cubic-bezier(0, 0, 0, 1)",
+    "exit": "cubic-bezier(0.3, 0, 1, 1)",
+    "emphasize": "cubic-bezier(0.2, 0.8, 0.2, 1)"
+  },
+  "patterns": {
+    "reveal": "standard",
+    "connect": "connect",
+    "verify": "deliberate",
+    "synthesize": "synthesize",
+    "archive": "deliberate"
+  },
+  "modes": [
+    "full",
+    "reduced",
+    "static"
+  ],
+  "renderer": {
+    "interface": "css",
+    "react-video": "remotion",
+    "web-video": "hyperframes"
+  },
+  "video": {
+    "fps": {
+      "standard": 30,
+      "high-motion": 60
+    },
+    "resolution": {
+      "landscape-hd": "1920x1080",
+      "portrait-hd": "1080x1920",
+      "square": "1080x1080"
+    },
+    "scene": {
+      "minimum": "2.5s",
+      "standard": "5s",
+      "evidence-dense": "8s",
+      "citation-end-card": "5s"
+    },
+    "frames-at-30fps": {
+      "transition-fast": 8,
+      "transition-standard": 12,
+      "transition-deliberate": 18
+    }
+  }
+}
