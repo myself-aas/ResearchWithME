@@ -3,7 +3,10 @@
 import * as React from 'react';
 import { render, toPlainText } from '@react-email/render';
 import { SubmissionReceipt } from '@/emails/submission-receipt';
-import type { SubmissionReceiptProps } from '@/emails/submission-receipt';
+import {
+  SubmissionReceiptSample,
+  type SubmissionReceiptProps,
+} from '@/emails/submission-receipt';
 import type { SubmissionRecord } from './submissions';
 
 /**
@@ -59,6 +62,27 @@ export function submissionReceiptVariables(
   };
 }
 
+/**
+ * `toPlainText` takes the rendered HTML, not the element -- passing the element
+ * does not fail loudly, it reaches the parser and throws deep inside
+ * htmlparser2.
+ *
+ * The default conversion also mangles two things this template relies on, so
+ * both are overridden:
+ *
+ * - `h1` is uppercased. Without this the greeting reads "THANK YOU, DR. AMARA
+ *   OKONKWO." in the text part, and a `{{{authorName}}}` token in an uploaded
+ *   template would become `{{{AUTHORNAME}}}` and never substitute.
+ * - Adjacent `<td>` cells get no separator, so the two-column detail table
+ *   flattens to "ReferenceRWM-2026-7QXTR3". Making each cell a block puts the
+ *   label above its value, which fixes the text without giving up the table in
+ *   the HTML.
+ */
+const PLAIN_TEXT_SELECTORS = [
+  { selector: 'h1', format: 'block' as const },
+  { selector: 'td', format: 'block' as const },
+];
+
 /** `<event-type>/<entity-id>`, the shape Resend expects for idempotency keys. */
 export function submissionReceiptKey(submissionId: string): string {
   return `submission-receipt/${submissionId}`.slice(0, 256);
@@ -104,17 +128,9 @@ export async function renderSubmissionReceipt(
 
   return {
     html,
-    // `toPlainText` takes the rendered HTML, not the element -- passing the
-    // element makes it hand a non-string to the parser, which throws deep inside
-    // htmlparser2 rather than failing loudly here.
-    //
-    // The detail rows are a two-column table, which reads well in HTML but
-    // flattens to "ReferenceRWM-2026-7QXTR3" in plain text because adjacent
-    // cells get no separator. Treating each cell as a block puts the label above
-    // its value, which fixes the text without giving up the table in the HTML.
-    text: toPlainText(html, {
-      selectors: [{ selector: 'td', format: 'block' }],
-    }),
+    // `toPlainText` takes the rendered HTML, not the element -- see
+    // PLAIN_TEXT_SELECTORS for why the conversion needs configuring.
+    text: toPlainText(html, { selectors: PLAIN_TEXT_SELECTORS }),
   };
 }
 
@@ -131,5 +147,125 @@ export async function buildSubmissionReceipt(
     subject: submissionReceiptSubject(variables.reference),
     variables,
     ...(await renderSubmissionReceipt(variables)),
+  };
+}
+
+/**
+ * Resend template names, and the reserved variable keys.
+ *
+ * `FIRST_NAME`, `LAST_NAME`, `EMAIL`, `UNSUBSCRIBE_URL`, `contact` and `this`
+ * are reserved by Resend and rejected on template creation. The list mixes
+ * cases -- `EMAIL` upper, `contact` lower -- so the reservation cannot be
+ * assumed case-sensitive; the guard below compares case-insensitively, which is
+ * the safe reading.
+ */
+export const SUBMISSION_RECEIPT_TEMPLATE_NAME = 'submission-receipt';
+
+const RESERVED_VARIABLE_KEYS = new Set([
+  'first_name',
+  'last_name',
+  'email',
+  'unsubscribe_url',
+  'contact',
+  'this',
+]);
+
+export function isReservedTemplateVariable(key: string): boolean {
+  return RESERVED_VARIABLE_KEYS.has(key.toLowerCase());
+}
+
+/**
+ * Resend's own type for this is not exported, so the shape is restated here --
+ * as a discriminated union, matching theirs. A single `type: 'string' | 'number'`
+ * with a union `fallbackValue` is not assignable to it, because their type ties
+ * the fallback's type to the discriminator.
+ */
+export type ReceiptVariableDefinition =
+  | { key: string; type: 'string'; fallbackValue?: string | null }
+  | { key: string; type: 'number'; fallbackValue?: number | null };
+
+/**
+ * The variable declarations for the uploaded template.
+ *
+ * Every key carries a fallback. Resend refuses to send a template email when a
+ * variable has neither a supplied value nor a fallback, so a fallback turns a
+ * future gap into a slightly generic receipt instead of a failed send. The
+ * sample values are used, which are ordinary rather than "Lorem ipsum" so a
+ * fallback still reads like a real submission.
+ */
+export function submissionReceiptTemplateVariables(): ReceiptVariableDefinition[] {
+  return Object.entries(SubmissionReceiptSample).map(
+    ([key, value]): ReceiptVariableDefinition =>
+      typeof value === 'number'
+        ? { key, type: 'number', fallbackValue: value }
+        : { key, type: 'string', fallbackValue: value },
+  );
+}
+
+/**
+ * `{{{key}}}`, the triple-brace token Resend templates substitute. Built by
+ * concatenation rather than a template literal: nested braces next to `${}` are
+ * easy to get wrong by one, and a malformed token still renders -- it simply
+ * never substitutes, so the mistake is silent until a real send.
+ */
+function mustache(key: string): string {
+  return '{{{' + key + '}}}';
+}
+
+export interface ReceiptTemplateSource {
+  name: string;
+  html: string;
+  text: string;
+  subject: string;
+  variables: ReceiptVariableDefinition[];
+}
+
+/**
+ * The template source to upload to Resend, built from the same component the
+ * app renders locally.
+ *
+ * The component is rendered with `{{{key}}}` tokens standing in for values.
+ * React escapes interpolated children, but braces are not HTML metacharacters,
+ * so the tokens survive intact -- which is what makes one component able to
+ * produce both a real email and a template.
+ *
+ * `text` is included deliberately. A `template` send cannot carry `text` in its
+ * payload -- Resend's own types set `text?: never` there -- but a Template can
+ * hold a text body of its own, so the multipart alternative survives the
+ * template path as long as the uploaded template has one.
+ *
+ * `subject` is set as a template default so the dashboard's test-email preview
+ * renders, but the app always passes its own subject at send time, which takes
+ * precedence, so the tracking ID never depends on the template being right.
+ */
+export async function buildSubmissionReceiptTemplateSource(): Promise<ReceiptTemplateSource> {
+  const definitions = submissionReceiptTemplateVariables();
+
+  // Guard before building anything: a reserved key would fail at the API, after
+  // the render, with an error that points at Resend rather than at this file.
+  const reserved = definitions
+    .filter((definition) => isReservedTemplateVariable(definition.key))
+    .map((definition) => definition.key);
+  if (reserved.length > 0) {
+    throw new Error(
+      `Reserved Resend template variable key(s): ${reserved.join(', ')}`,
+    );
+  }
+
+  const placeholders = Object.fromEntries(
+    definitions.map((definition) => [
+      definition.key,
+      mustache(definition.key),
+    ]),
+  ) as SubmissionReceiptVariables;
+
+  const { html, text } = await renderSubmissionReceipt(placeholders);
+
+  return {
+    name: SUBMISSION_RECEIPT_TEMPLATE_NAME,
+    html,
+    text,
+    subject: submissionReceiptSubject(mustache('reference')),
+    variables: definitions,
   };
 }

@@ -1,9 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildSubmissionReceipt,
+  buildSubmissionReceiptTemplateSource,
+  isReservedTemplateVariable,
   renderSubmissionReceipt,
   submissionReceiptKey,
   submissionReceiptSubject,
+  submissionReceiptTemplateVariables,
   submissionReceiptVariables,
 } from '@/lib/submission-email';
 import { SubmissionReceiptSample } from '@/emails/submission-receipt';
@@ -212,5 +215,98 @@ describe('buildSubmissionReceipt', () => {
 
     expect(receipt.html).toBe(direct.html);
     expect(receipt.text).toBe(direct.text);
+  });
+});
+
+describe('submissionReceiptTemplateVariables', () => {
+  it('declares one variable per component prop', () => {
+    const keys = submissionReceiptTemplateVariables().map((v) => v.key);
+    expect(keys.sort()).toEqual(Object.keys(SubmissionReceiptSample).sort());
+  });
+
+  it('gives every variable a fallback so a missing value cannot fail the send', () => {
+    // Resend refuses to send when a variable has neither a supplied value nor a
+    // fallback. A fallback turns a future gap into a generic receipt rather
+    // than a failed send.
+    for (const definition of submissionReceiptTemplateVariables()) {
+      expect(
+        definition.fallbackValue,
+        `${definition.key} needs a fallback`,
+      ).not.toBeNull();
+      expect(definition.fallbackValue).not.toBeUndefined();
+    }
+  });
+
+  it('avoids the variable keys Resend reserves', () => {
+    // The reserved list mixes cases (EMAIL upper, contact lower), so the
+    // reservation is treated as case-insensitive -- the safe reading.
+    for (const definition of submissionReceiptTemplateVariables()) {
+      expect(
+        isReservedTemplateVariable(definition.key),
+        `${definition.key} is reserved by Resend`,
+      ).toBe(false);
+    }
+    expect(isReservedTemplateVariable('email')).toBe(true);
+    expect(isReservedTemplateVariable('EMAIL')).toBe(true);
+    expect(isReservedTemplateVariable('contact')).toBe(true);
+    expect(isReservedTemplateVariable('this')).toBe(true);
+    expect(isReservedTemplateVariable('reference')).toBe(false);
+  });
+
+  it('stays well under the 50-variable limit', () => {
+    expect(submissionReceiptTemplateVariables().length).toBeLessThan(50);
+  });
+});
+
+describe('buildSubmissionReceiptTemplateSource', () => {
+  it('emits a triple-brace token for every variable, in both bodies', async () => {
+    // Compared against literal token strings, not the builder's own
+    // construction: comparing both sides of a check to the same helper is how a
+    // malformed token passes a test and then silently never substitutes.
+    const source = await buildSubmissionReceiptTemplateSource();
+
+    for (const key of Object.keys(SubmissionReceiptSample)) {
+      const token = '{{{' + key + '}}}';
+      expect(source.html, `html missing ${token}`).toContain(token);
+      expect(source.text, `text missing ${token}`).toContain(token);
+    }
+  });
+
+  it('leaks no sample values into the uploaded template', async () => {
+    const source = await buildSubmissionReceiptTemplateSource();
+
+    expect(source.html).not.toContain(SubmissionReceiptSample.reference);
+    expect(source.html).not.toContain(SubmissionReceiptSample.authorName);
+    expect(source.text).not.toContain(SubmissionReceiptSample.title);
+  });
+
+  it('includes a text body so the template path keeps its plain-text part', async () => {
+    // A `template` send cannot carry `text` in its payload, but a Template can
+    // hold one, so the multipart alternative survives only if this is set.
+    const source = await buildSubmissionReceiptTemplateSource();
+
+    expect(source.text.length).toBeGreaterThan(100);
+    expect(source.html).toContain('<!DOCTYPE');
+  });
+
+  it('names itself and sets a subject default for dashboard test emails', async () => {
+    const source = await buildSubmissionReceiptTemplateSource();
+
+    expect(source.name).toBe('submission-receipt');
+    expect(source.subject).toBe('[{{{reference}}}] We received your submission');
+  });
+});
+
+describe('plain-text conversion', () => {
+  it('does not uppercase the greeting', async () => {
+    // html-to-text uppercases h1 by default, which made the text part read
+    // "THANK YOU, DR. AMARA OKONKWO." and would have turned a {{{authorName}}}
+    // token into {{{AUTHORNAME}}}, silently unsubstituted.
+    const { text } = await renderSubmissionReceipt(
+      submissionReceiptVariables(submission),
+    );
+
+    expect(text).toContain(`Thank you, ${submission.authorName}.`);
+    expect(text).not.toContain(submission.authorName.toUpperCase());
   });
 });

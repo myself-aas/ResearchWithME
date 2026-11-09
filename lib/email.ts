@@ -51,9 +51,13 @@ export type SendEmailInput =
       text?: string;
     })
   /**
-   * Body rendered by Resend from an uploaded template. Note that this shape
-   * cannot carry a `text` part -- Resend's template variant sets `text?: never`
-   * -- so choosing it trades the plain-text alternative for editor control.
+   * Body rendered by Resend from an uploaded template.
+   *
+   * This shape cannot carry `text` -- Resend's template variant sets
+   * `text?: never` -- but that is not the same as losing the plain-text part:
+   * a Template holds a `text` body of its own (`Template.text`), so the
+   * multipart alternative survives as long as the uploaded template has one.
+   * `scripts/upload-email-template.ts` sets it from the same component render.
    */
   | (SendEmailBase & {
       template: {
