@@ -1,0 +1,25 @@
+name: Quality
+
+on:
+  push:
+    branches: [main, 'arena/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies (canonical lockfile)
+        run: bun install --frozen-lockfile
+      - name: Token pipeline gates (build, validate, contrast)
+        run: bun run tokens:build && bun run tokens:check
+      - name: Lint, typecheck, tests, Impeccable source scan
+        run: bun run lint && bun run typecheck && bun run test && bun run impeccable:source
+      - name: Production build
+        run: bun run build
