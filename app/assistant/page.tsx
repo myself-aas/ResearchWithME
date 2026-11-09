@@ -174,7 +174,7 @@ export default function AssistantPage() {
               <button
                 type="submit"
                 disabled={loading || !query.trim()}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
               >
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Send className="h-4 w-4" aria-hidden="true" />}
                 <span>{loading ? 'Searching the archive…' : 'Ask the archive'}</span>
@@ -233,7 +233,7 @@ export default function AssistantPage() {
             >
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-5 py-3">
                 <h2 id="answer-heading" className="flex items-center gap-2 font-serif text-lg font-semibold text-stone-900">
-                  <Sparkles className="h-4 w-4 text-amber-800" aria-hidden="true" />
+                  <Sparkles className="h-4 w-4 text-brand-hover" aria-hidden="true" />
                   <span>Answer</span>
                 </h2>
                 <button
@@ -258,7 +258,7 @@ export default function AssistantPage() {
                         <li key={citation.id}>
                           <Link
                             href={`/post/${slug}`}
-                            className="group flex items-start justify-between gap-3 py-2 text-sm text-stone-800 transition-colors hover:text-amber-900"
+                            className="group flex items-start justify-between gap-3 py-2 text-sm text-stone-800 transition-colors hover:text-brand"
                           >
                             <span>
                               <span className="font-medium">{citation.title}</span>
@@ -266,7 +266,7 @@ export default function AssistantPage() {
                                 {citation.author} · {citation.category}
                               </span>
                             </span>
-                            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-stone-500 group-hover:text-amber-900" aria-hidden="true" />
+                            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-stone-500 group-hover:text-brand" aria-hidden="true" />
                           </Link>
                         </li>
                       );
@@ -284,19 +284,19 @@ export default function AssistantPage() {
           </h2>
           <ul className="mt-3 grid gap-3 text-base leading-relaxed text-stone-700 sm:grid-cols-2">
             <li className="flex gap-2">
-              <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
+              <FileText className="mt-1 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
               <span>It searches the published catalog and links every cited article.</span>
             </li>
             <li className="flex gap-2">
-              <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
+              <FileText className="mt-1 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
               <span>It does not search outside this platform or access paywalled literature.</span>
             </li>
             <li className="flex gap-2">
-              <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
+              <FileText className="mt-1 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
               <span>It cannot verify a factual claim; it summarizes what a review already established.</span>
             </li>
             <li className="flex gap-2">
-              <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
+              <FileText className="mt-1 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
               <span>It stores nothing you type and keeps no conversation history.</span>
             </li>
           </ul>

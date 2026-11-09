@@ -21,6 +21,7 @@ import {
 import { useSession } from '@/lib/supabase/use-session';
 import { readStringArray } from '@/lib/storage';
 import BrandLogo from './BrandLogo';
+import LocaleSwitcher from './i18n/LocaleSwitcher';
 
 interface BlogHeaderProps {
   searchQuery?: string;
@@ -87,7 +88,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   const navLinkClass = (active: boolean) =>
     `inline-flex min-h-10 items-center gap-1.5 border-b-2 px-3 py-2 text-sm font-semibold uppercase tracking-wider transition-colors ${
       active
-        ? 'border-amber-900 text-stone-900'
+        ? 'border-brand text-stone-900'
         : 'border-transparent text-stone-700 hover:border-stone-400 hover:text-stone-900'
     }`;
 
@@ -123,6 +124,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           </nav>
 
           <div className="flex items-center gap-2">
+            <LocaleSwitcher />
             {setSearchQuery && (
               <div className="relative hidden 2xl:block">
                 <label htmlFor="header-search" className="sr-only">
@@ -151,7 +153,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <span className="hidden xl:inline">Reading list</span>
               <span className="sr-only xl:hidden">Reading list</span>
               {savedTotal > 0 && (
-                <span className="rounded-full bg-amber-900 px-1.5 py-0.5 text-xs font-bold text-white">
+                <span className="rounded-full bg-brand px-1.5 py-0.5 text-xs font-bold text-white">
                   {savedTotal}
                 </span>
               )}
@@ -162,7 +164,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-stone-400 hover:bg-stone-50"
               title={user ? `Signed in as ${user.name}` : 'Sign in or create an account'}
             >
-              <ShieldCheck className="h-4 w-4 text-amber-900" aria-hidden="true" />
+              <ShieldCheck className="h-4 w-4 text-brand" aria-hidden="true" />
               <span className="hidden sm:inline">
                 {user ? (user.isEditor ? 'Writer' : 'Your account') : 'Sign In'}
               </span>
@@ -171,7 +173,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             <Link
               href={user?.isEditor ? '/write' : '/login?next=%2Fwrite'}
               aria-label={user?.isEditor ? 'Write a review in the writer studio' : 'Sign in to write'}
-              className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-md bg-amber-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800 sm:px-4"
+              className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1.5 rounded-md bg-brand px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover sm:px-4"
             >
               <PenSquare className="h-4 w-4" aria-hidden="true" />
               <span aria-hidden="true" className="hidden min-[430px]:inline">

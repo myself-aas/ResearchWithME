@@ -2,12 +2,13 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
+import LocaleProvider from '@/components/i18n/LocaleProvider';
 
-// ResearchWithMe is set in the Aptos family (Aptos Serif for reading, Aptos for
-// interface chrome, Aptos Mono for data). Aptos is a Microsoft-licensed face
-// and is not redistributed here: the stacks in globals.css request the
-// installed copy by name. These self-hosted OFL faces are the metric-adjusted
-// fallbacks for readers who do not have Aptos installed.
+// ResearchWithMe follows the πeme v3.1 design system (docs/pieme-design-system-v3.1.md):
+// Newsreader for editorial reading, Inter for interface chrome, JetBrains Mono
+// for metadata. Newsreader and Inter are self-hosted OFL faces loaded here via
+// next/font/local; JetBrains Mono is requested by name with a system mono
+// fallback in globals.css.
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
   variable: '--font-inter',
@@ -27,7 +28,7 @@ const newsreader = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Open-Access Research Reviews & Repository Teardowns`,
+    default: `${SITE_NAME} — Open-Access Research Reviews`,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -50,6 +51,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     type: 'website',
     locale: 'en_US',
+    images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630, alt: `${SITE_NAME} — Open-Access Research Reviews` }],
   },
   twitter: {
     card: 'summary_large_image',
@@ -73,22 +75,24 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   colorScheme: 'light',
-  themeColor: '#fafaf9',
+  themeColor: '#F8F7F3',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${newsreader.variable}`}>
-      <body className="bg-stone-50 font-serif text-stone-900 antialiased selection:bg-amber-900 selection:text-white" suppressHydrationWarning>
+    <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`}>
+      <body className="bg-stone-50 font-serif text-stone-900 antialiased selection:bg-brand selection:text-white" suppressHydrationWarning>
         <a
           href="#main-content"
-          className="sr-only left-4 top-4 z-[100] rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white shadow-sm focus:not-sr-only focus:fixed"
+          className="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm focus:not-sr-only focus:fixed"
         >
           Skip to main content
         </a>
-        <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
-          {children}
-        </div>
+        <LocaleProvider>
+          <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
+            {children}
+          </div>
+        </LocaleProvider>
       </body>
     </html>
   );

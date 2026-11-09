@@ -1,17 +1,18 @@
 <!doctype html>
 <html lang="en">
   <head>
+  <link rel="stylesheet" href="../tokens/generated/tokens.video.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       :root {
-        --amber:     #78350f;
-        --parchment: #fafaf9;
-        --ink:       #1c1917;
-        --muted:     #78716c;
-        --border:    #e7e5e4;
-        --accent:    #047857;
+        --amber:     var(--pieme-video-color-text-primary);
+        --parchment: var(--pieme-video-color-canvas);
+        --ink:       var(--pieme-video-color-text-primary);
+        --muted:     var(--pieme-video-color-text-secondary);
+        --border:    var(--pieme-video-color-surface-subtle);
+        --accent:    var(--pieme-video-color-text-secondary);
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body {
@@ -24,7 +25,7 @@
         width: 100%;
         height: 100%;
         position: relative;
-        font-family: Inter, sans-serif;
+        font-family: var(--pieme-video-font-latin-interface);
       }
 
       /* Background */
@@ -56,7 +57,7 @@
         gap: 0;
       }
       #rc-author-name {
-        font-family: 'Playfair Display', serif;
+        font-family: var(--pieme-video-font-latin-editorial);
         font-size: 52px;
         font-weight: 700;
         color: var(--ink);
@@ -64,7 +65,7 @@
         margin-bottom: 8px;
       }
       #rc-author-role {
-        font-family: Inter, sans-serif;
+        font-family: var(--pieme-video-font-latin-interface);
         font-size: 20px;
         font-weight: 400;
         color: var(--muted);
@@ -81,7 +82,7 @@
         gap: 20px;
       }
       .rc-metric-label {
-        font-family: Inter, sans-serif;
+        font-family: var(--pieme-video-font-latin-interface);
         font-size: 17px;
         font-weight: 500;
         color: var(--ink);
@@ -104,7 +105,7 @@
         transform: scaleX(0);
       }
       .rc-metric-value {
-        font-family: Inter, sans-serif;
+        font-family: var(--pieme-video-font-latin-interface);
         font-size: 17px;
         font-weight: 700;
         color: var(--amber);
@@ -139,14 +140,14 @@
         <svg id="rc-svg" viewBox="0 0 700 700" width="700" height="700" overflow="visible">
           <!-- Grid rings -->
           <g id="rc-rings" opacity="0">
-            <polygon points="350,150 557,275 557,425 350,550 143,425 143,275" fill="none" stroke="#e7e5e4" stroke-width="1.5"/>
-            <polygon points="350,200 520,300 520,400 350,500 180,400 180,300" fill="none" stroke="#e7e5e4" stroke-width="1.5"/>
-            <polygon points="350,250 483,325 483,375 350,450 217,375 217,325" fill="none" stroke="#e7e5e4" stroke-width="1.5"/>
-            <polygon points="350,300 446,350 446,350 350,400 254,350 254,350" fill="none" stroke="#e7e5e4" stroke-width="1.5"/>
+            <polygon points="350,150 557,275 557,425 350,550 143,425 143,275" fill="none" stroke="var(--pieme-video-color-surface-subtle)" stroke-width="1.5"/>
+            <polygon points="350,200 520,300 520,400 350,500 180,400 180,300" fill="none" stroke="var(--pieme-video-color-surface-subtle)" stroke-width="1.5"/>
+            <polygon points="350,250 483,325 483,375 350,450 217,375 217,325" fill="none" stroke="var(--pieme-video-color-surface-subtle)" stroke-width="1.5"/>
+            <polygon points="350,300 446,350 446,350 350,400 254,350 254,350" fill="none" stroke="var(--pieme-video-color-surface-subtle)" stroke-width="1.5"/>
           </g>
 
           <!-- Axis lines -->
-          <g id="rc-axes" stroke="#d6d3d1" stroke-width="1.5" opacity="0">
+          <g id="rc-axes" stroke="var(--pieme-video-color-surface-subtle)" stroke-width="1.5" opacity="0">
             <line x1="350" y1="350" x2="350" y2="110"/>   <!-- top: Article Quality -->
             <line x1="350" y1="350" x2="582" y2="258"/>   <!-- top-right: Community -->
             <line x1="350" y1="350" x2="582" y2="442"/>   <!-- bottom-right: Methodology -->
@@ -165,9 +166,9 @@
           <polygon
             id="rc-data-poly"
             points="350,141.2 514.4,296.6 478.4,526.8 253.9,482.0 133.1,279.6"
-            fill="#78350f"
+            fill="var(--pieme-video-color-text-primary)"
             fill-opacity="0.15"
-            stroke="#78350f"
+            stroke="var(--pieme-video-color-text-primary)"
             stroke-width="2.5"
             stroke-linejoin="round"
             opacity="0"
@@ -175,15 +176,15 @@
 
           <!-- Axis dots (one per metric, filled once visible) -->
           <g id="rc-dots">
-            <circle id="rc-dot-0" cx="350"   cy="141.2" r="6" fill="#78350f" opacity="0"/>
-            <circle id="rc-dot-1" cx="514.4" cy="296.6" r="6" fill="#78350f" opacity="0"/>
-            <circle id="rc-dot-2" cx="478.4" cy="526.8" r="6" fill="#78350f" opacity="0"/>
-            <circle id="rc-dot-3" cx="253.9" cy="482.0" r="6" fill="#78350f" opacity="0"/>
-            <circle id="rc-dot-4" cx="133.1" cy="279.6" r="6" fill="#78350f" opacity="0"/>
+            <circle id="rc-dot-0" cx="350"   cy="141.2" r="6" fill="var(--pieme-video-color-text-primary)" opacity="0"/>
+            <circle id="rc-dot-1" cx="514.4" cy="296.6" r="6" fill="var(--pieme-video-color-text-primary)" opacity="0"/>
+            <circle id="rc-dot-2" cx="478.4" cy="526.8" r="6" fill="var(--pieme-video-color-text-primary)" opacity="0"/>
+            <circle id="rc-dot-3" cx="253.9" cy="482.0" r="6" fill="var(--pieme-video-color-text-primary)" opacity="0"/>
+            <circle id="rc-dot-4" cx="133.1" cy="279.6" r="6" fill="var(--pieme-video-color-text-primary)" opacity="0"/>
           </g>
 
           <!-- Axis labels -->
-          <g id="rc-labels" font-family="Inter, sans-serif" font-size="18" fill="#78716c" text-anchor="middle">
+          <g id="rc-labels" font-family="Inter, sans-serif" font-size="18" fill="var(--pieme-video-color-text-secondary)" text-anchor="middle">
             <text id="rc-lbl-0" x="350"   y="96"  opacity="0">Article Quality</text>
             <text id="rc-lbl-1" x="562"   y="280" text-anchor="start" opacity="0">Community</text>
             <text id="rc-lbl-2" x="562"   y="544" text-anchor="start" opacity="0">Methodology</text>

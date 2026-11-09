@@ -107,7 +107,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
           </p>
           <Link
             href="/"
-            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             Browse the platform
           </Link>
@@ -126,7 +126,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
               setSearchQuery('');
               setIdentifierFilter('All');
             }}
-            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             Clear filters
           </button>
@@ -150,11 +150,11 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
                   </div>
 
                   <h2 className="mt-4 font-serif text-xl font-semibold text-stone-900">
-                    <Link href={`/author/${author.id}`} className="hover:text-amber-900">
+                    <Link href={`/author/${author.id}`} className="hover:text-brand">
                       {author.name}
                     </Link>
                   </h2>
-                  {author.role && <p className="mt-1 text-sm font-medium text-amber-900">{author.role}</p>}
+                  {author.role && <p className="mt-1 text-sm font-medium text-brand">{author.role}</p>}
                   {author.institution && (
                     <p className="mt-1 flex items-start gap-1.5 text-sm text-stone-600">
                       <Building2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
@@ -205,7 +205,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
 
                   <Link
                     href={`/author/${author.id}`}
-                    className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-amber-900 underline-offset-4 hover:underline"
+                    className="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand underline-offset-4 hover:underline"
                   >
                     <span>View profile and archive</span>
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />

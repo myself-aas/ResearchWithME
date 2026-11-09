@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Open-access research reviews, reproducible papers, and repository teardowns.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#fafaf9',
-    theme_color: '#78350f',
+    background_color: '#F8F7F3',
+    theme_color: '#4F46E5',
     lang: 'en',
     categories: ['education', 'books', 'productivity'],
     icons: [

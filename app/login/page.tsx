@@ -44,7 +44,7 @@ export default async function LoginPage({
 
             <ul className="mt-8 space-y-5 border-t border-stone-200 pt-6">
               <li className="flex gap-3">
-                <FileText className="mt-0.5 h-5 w-5 shrink-0 text-amber-800" aria-hidden="true" />
+                <FileText className="mt-0.5 h-5 w-5 shrink-0 text-brand-hover" aria-hidden="true" />
                 <div>
                   <p className="font-medium text-stone-900">A calm long-form editor</p>
                   <p className="mt-0.5 text-sm leading-relaxed text-stone-600">

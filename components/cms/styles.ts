@@ -9,7 +9,7 @@ export const hintClass = 'mt-1.5 text-sm leading-relaxed text-stone-600';
 export const inlineErrorClass = 'mt-1.5 flex items-start gap-1.5 text-sm font-medium text-red-800';
 
 export const primaryButtonClass =
-  'inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60';
 
 export const secondaryButtonClass =
   'inline-flex min-h-11 items-center justify-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2.5 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50 disabled:cursor-not-allowed disabled:opacity-60';

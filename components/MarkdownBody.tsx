@@ -46,7 +46,7 @@ export default function MarkdownBody({ markdown }: { markdown: string }) {
             <a
               href={href}
               {...(isExternal(href) ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
-              className="font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+              className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
             >
               {children}
             </a>
@@ -55,7 +55,7 @@ export default function MarkdownBody({ markdown }: { markdown: string }) {
           ol: ({ children }) => <ol className="mt-5 list-decimal space-y-2 pl-6 text-lg leading-relaxed text-stone-800">{children}</ol>,
           li: ({ children }) => <li className="pl-1">{children}</li>,
           blockquote: ({ children }) => (
-            <blockquote className="mt-6 border-l-4 border-amber-900 pl-5 font-serif text-xl leading-relaxed text-stone-800">
+            <blockquote className="mt-6 border-l-4 border-brand pl-5 font-serif text-xl leading-relaxed text-stone-800">
               {children}
             </blockquote>
           ),

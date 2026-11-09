@@ -1,0 +1,43 @@
+{
+  "button": {
+    "primary": {
+      "background": "{semantic.light.action.primary}",
+      "backgroundHover": "{semantic.light.action.primary-hover}",
+      "backgroundPressed": "{semantic.light.action.primary-pressed}",
+      "foreground": "{semantic.light.action.on-primary}",
+      "radius": "{primitive.radius.md}",
+      "focusRing": "{semantic.light.focus}"
+    },
+    "destructive": {
+      "background": "{semantic.light.action.destructive}",
+      "foreground": "{semantic.light.action.on-primary}",
+      "radius": "{primitive.radius.md}"
+    }
+  },
+  "evidenceCard": {
+    "background": "{semantic.light.surface}",
+    "border": "{semantic.light.border-subtle}",
+    "accent": "{semantic.light.knowledge.evidence}",
+    "title": "{semantic.light.text-primary}",
+    "metadata": "{semantic.light.text-secondary}"
+  },
+  "sourceCard": {
+    "background": "{semantic.light.surface}",
+    "border": "{semantic.light.border-subtle}",
+    "accent": "{semantic.light.knowledge.source}",
+    "title": "{semantic.light.text-primary}",
+    "metadata": "{semantic.light.text-secondary}"
+  },
+  "claimCard": {
+    "support": "{semantic.light.knowledge.evidence}",
+    "contradiction": "{semantic.light.knowledge.contradiction}",
+    "unresolved": "{semantic.light.trust.unknown}",
+    "background": "{semantic.light.surface}",
+    "border": "{semantic.light.border-subtle}"
+  },
+  "focusRing": {
+    "color": "{semantic.light.focus}",
+    "width": "{primitive.focus.width}",
+    "offset": "{primitive.focus.offset}"
+  }
+}

@@ -110,7 +110,7 @@ export default function ArticleInteractions({ postId, title, initialLikes }: Art
           onClick={toggleSaved}
           aria-pressed={saved}
           className={`inline-flex min-h-11 items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
-            saved ? 'border-amber-300 bg-amber-50 text-amber-900' : 'border-stone-300 bg-white text-stone-800 hover:border-stone-400'
+            saved ? 'border-indigo-300 bg-indigo-50 text-brand' : 'border-stone-300 bg-white text-stone-800 hover:border-stone-400'
           }`}
         >
           <Bookmark className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} aria-hidden="true" />

@@ -37,9 +37,9 @@ function createDomainFallbackSvg(name: string, domain: string, role: string): st
   );
 
   // Pick color themes based on research domain
-  let bgGradientStart = '#78350f'; // amber-900
-  let bgGradientEnd = '#451a03'; // amber-950
-  let accentColor = '#f59e0b'; // amber-500
+  let bgGradientStart = '#4F46E5'; // action-primary
+  let bgGradientEnd = '#312E81'; // action-primary-pressed
+  let accentColor = '#6366F1'; // indigo-500
   let motifIcon = '🔬';
 
   const domainLower = domain.toLowerCase() + ' ' + role.toLowerCase();

@@ -1,0 +1,167 @@
+{
+  "color": {
+    "neutral": {
+      "0": "#FFFFFF",
+      "25": "#FCFCFD",
+      "50": "#F8F7F3",
+      "100": "#F0EEE8",
+      "200": "#DEDCD5",
+      "300": "#C6C4BD",
+      "400": "#9D9C97",
+      "500": "#737571",
+      "600": "#555955",
+      "700": "#3B403D",
+      "800": "#252B29",
+      "900": "#161C1A",
+      "950": "#0B100F"
+    },
+    "indigo": {
+      "50": "#EEF2FF",
+      "100": "#E0E7FF",
+      "300": "#A5B4FC",
+      "500": "#6366F1",
+      "600": "#4F46E5",
+      "700": "#4338CA",
+      "900": "#312E81"
+    },
+    "emerald": {
+      "50": "#ECFDF5",
+      "100": "#D1FAE5",
+      "500": "#10B981",
+      "600": "#059669",
+      "700": "#047857"
+    },
+    "cyan": {
+      "50": "#ECFEFF",
+      "100": "#CFFAFE",
+      "500": "#06B6D4",
+      "600": "#0891B2",
+      "700": "#0E7490"
+    },
+    "amber": {
+      "50": "#FFFBEB",
+      "100": "#FEF3C7",
+      "500": "#F59E0B",
+      "600": "#D97706",
+      "700": "#B45309"
+    },
+    "red": {
+      "50": "#FEF2F2",
+      "100": "#FEE2E2",
+      "500": "#EF4444",
+      "600": "#DC2626",
+      "700": "#B91C1C"
+    },
+    "violet": {
+      "50": "#F5F3FF",
+      "100": "#EDE9FE",
+      "500": "#8B5CF6",
+      "600": "#7C3AED",
+      "700": "#6D28D9"
+    }
+  },
+  "typography": {
+    "family": {
+      "editorial": "Newsreader, Georgia, serif",
+      "interface": "Inter, system-ui, sans-serif",
+      "metadata": "JetBrains Mono, ui-monospace, monospace"
+    }
+  },
+  "space": {
+    "0": "0",
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.25rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem",
+    "20": "5rem",
+    "24": "6rem"
+  },
+  "radius": {
+    "xs": "0.25rem",
+    "sm": "0.375rem",
+    "md": "0.5rem",
+    "lg": "0.75rem",
+    "xl": "1rem",
+    "2xl": "1.5rem",
+    "full": "9999px"
+  },
+  "shadow": {
+    "raised": "0 1px 2px rgba(11,16,15,.08), 0 6px 18px rgba(11,16,15,.06)",
+    "floating": "0 4px 12px rgba(11,16,15,.10), 0 20px 48px rgba(11,16,15,.10)",
+    "dialog": "0 12px 32px rgba(11,16,15,.16), 0 36px 80px rgba(11,16,15,.14)"
+  },
+  "layout": {
+    "max-width": {
+      "reading": "48rem",
+      "workspace": "90rem",
+      "graph": "108rem"
+    },
+    "grid": {
+      "desktop": {
+        "columns": 12,
+        "gutter": "1.5rem",
+        "margin": "3rem"
+      },
+      "tablet": {
+        "columns": 8,
+        "gutter": "1rem",
+        "margin": "2rem"
+      },
+      "mobile": {
+        "columns": 4,
+        "gutter": "0.75rem",
+        "margin": "1rem"
+      }
+    },
+    "breakpoint": {
+      "sm": "36rem",
+      "md": "48rem",
+      "lg": "64rem",
+      "xl": "80rem",
+      "2xl": "96rem"
+    },
+    "density": [
+      "compact",
+      "comfortable",
+      "spacious"
+    ]
+  },
+  "focus": {
+    "width": "2px",
+    "offset": "2px",
+    "light": "#4F46E5",
+    "dark": "#A5B4FC"
+  },
+  "icon": {
+    "small": "1rem",
+    "medium": "1.25rem",
+    "large": "1.5rem",
+    "stroke": "1.75px",
+    "style": "simple, geometric, non-decorative"
+  },
+  "graph": {
+    "node": {
+      "source": "#4F46E5",
+      "evidence": "#059669",
+      "claim": "#0891B2",
+      "discussion": "#D97706",
+      "publication": "#7C3AED",
+      "archived": "#737571"
+    },
+    "edge": {
+      "cites": "#6366F1",
+      "supports": "#10B981",
+      "contradicts": "#EF4444",
+      "derives": "#06B6D4",
+      "relates": "#9D9C97",
+      "direct-style": "solid",
+      "inferred-style": "dashed"
+    }
+  }
+}

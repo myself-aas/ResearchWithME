@@ -94,7 +94,7 @@ export default function BlogHero({
                     onClick={() => setSelectedFormat(format)}
                     className={`min-h-10 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
                       selectedFormat === format
-                        ? 'border-amber-900 bg-amber-900 text-white'
+                        ? 'border-brand bg-brand text-white'
                         : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400 hover:text-stone-900'
                     }`}
                   >

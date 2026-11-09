@@ -269,7 +269,7 @@ export default function WritePage() {
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
         {isSupabaseConfigured && (
-          <div className="mb-6 border-l-2 border-amber-700 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+          <div className="mb-6 border-l-2 border-amber-700 bg-indigo-50 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
             <p className="font-semibold">Publishing now happens in the editorial studio</p>
             <p className="mt-1 max-w-2xl">
               This prototype form still autosaves a draft in your browser, but publishing is disabled because the site
@@ -378,7 +378,7 @@ export default function WritePage() {
                 <ul className="mt-2 space-y-2">
                   {draft.takeaways.filter(Boolean).map((takeaway, index) => (
                     <li key={`${takeaway}-${index}`} className="flex gap-2 text-base leading-relaxed text-stone-800">
-                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-800" />
+                      <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
                       <span>{takeaway}</span>
                     </li>
                   ))}
@@ -539,7 +539,7 @@ export default function WritePage() {
                   type="checkbox"
                   checked={draft.hasArtifact}
                   onChange={(event) => update('hasArtifact', event.target.checked)}
-                  className="mt-1 h-5 w-5 rounded border-stone-400 text-amber-800"
+                  className="mt-1 h-5 w-5 rounded border-stone-400 text-brand-hover"
                 />
                 <span>This article reviews a paper, repository, or dataset.</span>
               </label>
@@ -639,7 +639,7 @@ export default function WritePage() {
                 <button
                   type="button"
                   onClick={() => setShowAiCover(!showAiCover)}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
                   <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate Cover with Qwen 2.1 (AVIF)'}</span>
@@ -782,7 +782,7 @@ export default function WritePage() {
               <button
                 type="submit"
                 disabled={publishing}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-60"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
                 <span>{publishing ? 'Publishing…' : 'Publish review'}</span>

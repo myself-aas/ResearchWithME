@@ -10,7 +10,7 @@ import { CITATION_FORMATS, CitationFormat, buildCitation, citationFileExtension 
 import { cleanText, safeExternalUrl, slugify } from '@/lib/validation';
 
 const inputClass =
-  'w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 transition-colors focus:border-amber-800';
+  'w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 transition-colors focus:border-brand-hover';
 
 export default function CitePage() {
   const [articles, setArticles] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
@@ -101,7 +101,7 @@ export default function CitePage() {
             <span>Platform</span>
           </Link>
           <span aria-hidden="true" className="text-stone-400">/</span>
-          <span className="font-medium text-amber-900">Citation builder</span>
+          <span className="font-medium text-brand">Citation builder</span>
         </nav>
 
         <header className="border-b border-stone-200 pb-8">
@@ -254,7 +254,7 @@ export default function CitePage() {
                     aria-pressed={format === item}
                     className={`min-h-11 rounded-md border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
                       format === item
-                        ? 'border-amber-900 bg-amber-900 text-white'
+                        ? 'border-brand bg-brand text-white'
                         : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
                     }`}
                   >
@@ -296,7 +296,7 @@ export default function CitePage() {
                   type="button"
                   onClick={handleCopy}
                   disabled={citationEmpty}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-50"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
                 >
                   {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
                   <span>{copied ? 'Copied to clipboard' : 'Copy citation'}</span>
@@ -317,7 +317,7 @@ export default function CitePage() {
                 {currentArticle && !isCustomPaper && (
                   <Link
                     href={`/post/${currentArticle.slug}`}
-                    className="inline-flex min-h-11 items-center text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+                    className="inline-flex min-h-11 items-center text-sm font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
                   >
                     Read the cited article
                   </Link>
@@ -328,7 +328,7 @@ export default function CitePage() {
 
           <aside aria-label="Citation details" className="h-fit space-y-4 rounded-lg border border-stone-200 bg-white p-5">
             <div className="flex items-center gap-2 text-sm font-semibold text-stone-900">
-              <Quote className="h-4 w-4 text-amber-800" aria-hidden="true" />
+              <Quote className="h-4 w-4 text-brand-hover" aria-hidden="true" />
               <span>Record details</span>
             </div>
             <dl className="space-y-3 text-sm">
@@ -354,7 +354,7 @@ export default function CitePage() {
                 href={doiLink}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-flex text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+                className="inline-flex text-sm font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
               >
                 Resolve DOI at doi.org
               </a>

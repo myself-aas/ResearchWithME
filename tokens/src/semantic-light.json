@@ -1,0 +1,75 @@
+{
+  "canvas": "#F8F7F3",
+  "surface": "#FFFFFF",
+  "surface-subtle": "#F0EEE8",
+  "surface-raised": "#FFFFFF",
+  "surface-inverse": "#161C1A",
+  "text-primary": "#161C1A",
+  "text-secondary": "#555955",
+  "text-tertiary": "#737571",
+  "text-inverse": "#FFFFFF",
+  "border-subtle": "#DEDCD5",
+  "border-strong": "#9D9C97",
+  "focus": "#4F46E5",
+  "selection": "#E0E7FF",
+  "action": {
+    "primary": "#4F46E5",
+    "primary-hover": "#4338CA",
+    "primary-pressed": "#312E81",
+    "on-primary": "#FFFFFF",
+    "destructive": "#DC2626",
+    "link": "#4338CA",
+    "visited": "#6D28D9"
+  },
+  "knowledge": {
+    "source": "#4F46E5",
+    "evidence": "#059669",
+    "insight": "#0891B2",
+    "discussion": "#D97706",
+    "contradiction": "#DC2626",
+    "publication": "#7C3AED",
+    "archive": "#555955"
+  },
+  "trust": {
+    "verified": "#059669",
+    "replicated": "#047857",
+    "peer-reviewed": "#4F46E5",
+    "emerging": "#0891B2",
+    "uncertain": "#D97706",
+    "contested": "#DC2626",
+    "unknown": "#737571"
+  },
+  "provenance": {
+    "direct-source": "#059669",
+    "cited-source": "#4F46E5",
+    "derived": "#0891B2",
+    "inferred": "#D97706",
+    "ai-assisted": "#7C3AED",
+    "unresolved": "#737571"
+  },
+  "workflow": {
+    "discovered": "#0891B2",
+    "extracted": "#0D9488",
+    "validated": "#059669",
+    "synthesized": "#4F46E5",
+    "reviewed": "#7C3AED",
+    "published": "#6D28D9",
+    "archived": "#555955"
+  },
+  "collaboration": {
+    "comment": "#0891B2",
+    "suggestion": "#0D9488",
+    "review": "#7C3AED",
+    "consensus": "#059669",
+    "disagreement": "#DC2626"
+  },
+  "citation": {
+    "article": "#4F46E5",
+    "dataset": "#0891B2",
+    "book": "#047857",
+    "preprint": "#D97706",
+    "software": "#7C3AED",
+    "protocol": "#0D9488",
+    "webpage": "#555955"
+  }
+}

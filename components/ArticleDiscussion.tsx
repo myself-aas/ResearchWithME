@@ -160,7 +160,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
     <section id="discussion" aria-labelledby="discussion-heading" className="border-t border-stone-200 pt-10">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h2 id="discussion-heading" className="flex items-center gap-2 font-serif text-2xl font-bold text-stone-900">
-          <MessageSquare className="h-5 w-5 text-amber-800" aria-hidden="true" />
+          <MessageSquare className="h-5 w-5 text-brand-hover" aria-hidden="true" />
           <span>Peer discussion</span>
         </h2>
         <p className="text-sm text-stone-600">
@@ -221,14 +221,14 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-60"
+          className="inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
         >
           {submitting ? 'Posting…' : 'Post comment'}
         </button>
       </form>
 
       {loadError && (
-        <p role="status" className="mt-4 border-l-2 border-amber-800 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+        <p role="status" className="mt-4 border-l-2 border-brand-hover bg-indigo-50 px-3 py-2 text-sm text-brand-pressed">
           {loadError}
         </p>
       )}

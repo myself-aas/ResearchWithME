@@ -9,7 +9,7 @@ export default function StatusBadge({ status }: { status: 'draft' | 'published' 
         badgeBaseClass,
         published
           ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
-          : 'border-amber-200 bg-amber-50 text-amber-900',
+          : 'border-indigo-200 bg-indigo-50 text-brand',
       )}
     >
       <span

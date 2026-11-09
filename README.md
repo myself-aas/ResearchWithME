@@ -166,9 +166,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-ResearchWithMe is set in the Aptos family: Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data. Aptos is licensed by Microsoft, so this repository does not bundle it; the font stacks in `app/globals.css` use the copy installed on the reader's machine (it ships with Microsoft 365).
-
-Readers without Aptos get Newsreader and Inter. Their variable WOFF2 files are self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift. Both are licensed under the SIL Open Font License 1.1; the licence texts ship next to the files. If you obtain a web-embedding licence for Aptos, add its WOFF2 files to `app/fonts/` and load them with `next/font/local` ahead of the fallbacks.
+The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)): Newsreader for editorial reading, Inter for interface chrome, JetBrains Mono for code, DOIs, and metadata. Newsreader and Inter are self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift. Both are licensed under the SIL Open Font License 1.1; the licence texts ship next to the files. JetBrains Mono is requested by installed name only, with a system mono fallback — it is not bundled.
 
 ## Contributing
 

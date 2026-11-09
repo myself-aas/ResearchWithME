@@ -182,7 +182,7 @@ export default function PapersArchivePage() {
                 setSearchQuery('');
                 setSelectedTopic('All');
               }}
-              className="min-h-11 text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+              className="min-h-11 text-sm font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
             >
               Clear filters
             </button>
@@ -190,7 +190,7 @@ export default function PapersArchivePage() {
         </div>
 
         {loadError && (
-          <p role="status" className="mt-4 border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+          <p role="status" className="mt-4 border-l-2 border-brand-hover bg-indigo-50 px-4 py-3 text-sm text-brand-pressed">
             {loadError}
           </p>
         )}
@@ -213,7 +213,7 @@ export default function PapersArchivePage() {
                 setSearchQuery('');
                 setSelectedTopic('All');
               }}
-              className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+              className="mt-6 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
             >
               Show all papers
             </button>
@@ -229,7 +229,7 @@ export default function PapersArchivePage() {
                   <article aria-labelledby={`paper-${paper.id}-title`} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
                     <div className="min-w-0">
                       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                        <span className="font-medium text-amber-900">{paper.topic}</span>
+                        <span className="font-medium text-brand">{paper.topic}</span>
                         <span aria-hidden="true">·</span>
                         <span>{paper.journal}</span>
                         <span aria-hidden="true">·</span>
@@ -239,7 +239,7 @@ export default function PapersArchivePage() {
                       </p>
 
                       <h2 id={`paper-${paper.id}-title`} className="mt-2 font-serif text-2xl font-semibold leading-snug text-stone-900 sm:text-3xl">
-                        <Link href={`/paper/${paper.slug}`} className="hover:text-amber-900">
+                        <Link href={`/paper/${paper.slug}`} className="hover:text-brand">
                           {paper.title}
                         </Link>
                       </h2>
@@ -286,7 +286,7 @@ export default function PapersArchivePage() {
                       <div className="flex flex-wrap items-center gap-2">
                         <Link
                           href={`/paper/${paper.slug}`}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                          className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
                         >
                           <span>Read the paper</span>
                           <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -297,7 +297,7 @@ export default function PapersArchivePage() {
                           aria-pressed={isSaved}
                           className={`inline-flex h-11 w-11 items-center justify-center rounded-md border transition-colors ${
                             isSaved
-                              ? 'border-amber-300 bg-amber-50 text-amber-900'
+                              ? 'border-indigo-300 bg-indigo-50 text-brand'
                               : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
                           }`}
                         >

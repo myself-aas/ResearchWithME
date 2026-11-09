@@ -62,7 +62,7 @@ function ProfileLinks({ author }: { author: Author }) {
             href={link.href}
             target="_blank"
             rel="noreferrer noopener"
-            className="inline-flex min-h-9 items-center gap-1 text-amber-900 underline-offset-4 hover:underline"
+            className="inline-flex min-h-9 items-center gap-1 text-brand underline-offset-4 hover:underline"
           >
             <span>{link.label}</span>
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -105,7 +105,7 @@ export default function AuthorProfileCard({
           <AuthorAvatar author={author} size="md" showControls={false} />
           <div className="min-w-0">
             <Heading id="author-compact-heading" className="font-serif text-lg font-semibold text-stone-900">
-              <Link href={`/author/${author.id}`} className="hover:text-amber-900">
+              <Link href={`/author/${author.id}`} className="hover:text-brand">
                 {author.name}
               </Link>
             </Heading>
@@ -127,7 +127,7 @@ export default function AuthorProfileCard({
           <span className="text-stone-600">{metrics?.totalArticles ?? author.articleCount} articles</span>
           <Link
             href={`/author/${author.id}`}
-            className="inline-flex min-h-9 items-center gap-1 font-medium text-amber-900 underline-offset-4 hover:underline"
+            className="inline-flex min-h-9 items-center gap-1 font-medium text-brand underline-offset-4 hover:underline"
           >
             <span>Full profile</span>
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -168,7 +168,7 @@ export default function AuthorProfileCard({
           </button>
           <Link
             href="/write"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             <span>Writer studio</span>
@@ -229,7 +229,7 @@ export default function AuthorProfileCard({
               href={badge.link}
               target="_blank"
               rel="noreferrer noopener"
-              className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-amber-900 underline-offset-4 hover:underline"
+              className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-brand underline-offset-4 hover:underline"
             >
               <span>Public record</span>
               <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />

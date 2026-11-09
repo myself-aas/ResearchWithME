@@ -92,7 +92,7 @@ export default function ReadingActions({
     <div>
       <div className="flex flex-wrap items-center gap-2">
         <button type="button" onClick={toggleSaved} aria-pressed={saved} className={buttonClass}>
-          <Bookmark className={`h-4 w-4 ${saved ? 'fill-amber-900 text-amber-900' : ''}`} aria-hidden="true" />
+          <Bookmark className={`h-4 w-4 ${saved ? 'fill-brand text-brand' : ''}`} aria-hidden="true" />
           {!compact && <span>{saved ? 'Saved' : 'Save'}</span>}
           <span className="sr-only">{saved ? 'Remove from reading list' : 'Save to reading list'}</span>
         </button>
@@ -126,7 +126,7 @@ export default function ReadingActions({
             href={`https://doi.org/${doi}`}
             target="_blank"
             rel="noreferrer noopener"
-            className={compact ? buttonClass : 'inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950'}
+            className={compact ? buttonClass : 'inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-brand underline underline-offset-4 hover:text-brand-pressed'}
           >
             <Link2 className="h-4 w-4" aria-hidden="true" />
             {!compact && <span>Resolve DOI</span>}

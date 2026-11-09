@@ -70,7 +70,7 @@ export default async function ApplyToWritePage({
           approve you, so every article carries a byline someone stands behind.
         </p>
         {params.error === 'not-editor' && (
-          <p className="mt-4 border-l-2 border-amber-400 bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-900">
+          <p className="mt-4 border-l-2 border-indigo-300 bg-indigo-50 px-3 py-2 text-sm leading-relaxed text-brand">
             This account does not have publishing access yet. Apply below and an editor will review
             it.
           </p>
