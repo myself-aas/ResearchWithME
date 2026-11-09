@@ -58,6 +58,63 @@ export interface PermissionDecision {
   reason?: string;
 }
 
+// ── §23 Multidimensional trust — dimensions stay independent ───────────────
+
+export type SourceIntegrityStatus = 'active' | 'corrected' | 'expression-of-concern' | 'retracted' | 'withdrawn';
+export type ReviewStatus = 'not-reviewed' | 'editorially-reviewed' | 'peer-reviewed';
+export type ReplicationStatus = 'not-assessed' | 'replicated' | 'partially-replicated' | 'failed-to-replicate';
+export type Certainty = 'very-low' | 'low' | 'moderate' | 'high';
+export type Consensus = 'unknown' | 'emerging' | 'mixed' | 'broad' | 'contested';
+
+export interface EvidenceAssessment {
+  review: ReviewStatus;
+  replication: ReplicationStatus;
+  certainty: Certainty;
+  consensus: Consensus;
+  sourceIntegrity: SourceIntegrityStatus;
+  assessedBy: UserId;
+  assessedAt: ISODateTime;
+  /** documented assessment method — required so "verified" is never unexplained */
+  method: string;
+  rationale?: string;
+}
+
+export interface ClaimAssessment extends EvidenceAssessment {
+  evidenceCount: number;
+  contradictionCount: number;
+  lastRecomputedAt: ISODateTime;
+}
+
+const REVIEWS: ReviewStatus[] = ['not-reviewed', 'editorially-reviewed', 'peer-reviewed'];
+const REPLICATIONS: ReplicationStatus[] = ['not-assessed', 'replicated', 'partially-replicated', 'failed-to-replicate'];
+const CERTAINTIES: Certainty[] = ['very-low', 'low', 'moderate', 'high'];
+const CONSENSUS: Consensus[] = ['unknown', 'emerging', 'mixed', 'broad', 'contested'];
+const INTEGRITY: SourceIntegrityStatus[] = ['active', 'corrected', 'expression-of-concern', 'retracted', 'withdrawn'];
+
+/**
+ * §23: "not assessed" MUST be distinguishable from a negative result.
+ * Returns false for 'not-assessed'/'not-reviewed'/'unknown' — those are
+ * absences of evidence, not negative findings.
+ */
+export function isNegativeAssessment(value: string): boolean {
+  return ['failed-to-replicate', 'contested', 'retracted', 'withdrawn', 'expression-of-concern', 'very-low'].includes(value);
+}
+
+export function validateEvidenceAssessment(input: object): Result<EvidenceAssessment> {
+  const rec = input as Record<string, unknown>;
+  const e: Record<string, string> = {};
+  if (typeof rec.review !== 'string' || !REVIEWS.includes(rec.review as ReviewStatus)) e.review = 'unknown review status';
+  if (typeof rec.replication !== 'string' || !REPLICATIONS.includes(rec.replication as ReplicationStatus)) e.replication = 'unknown replication status';
+  if (typeof rec.certainty !== 'string' || !CERTAINTIES.includes(rec.certainty as Certainty)) e.certainty = 'unknown certainty';
+  if (typeof rec.consensus !== 'string' || !CONSENSUS.includes(rec.consensus as Consensus)) e.consensus = 'unknown consensus';
+  if (typeof rec.sourceIntegrity !== 'string' || !INTEGRITY.includes(rec.sourceIntegrity as SourceIntegrityStatus)) e.sourceIntegrity = 'unknown integrity state';
+  if (!isUuid(rec.assessedBy)) e.assessedBy = 'assessedBy must be a UUID';
+  if (!isIsoUtc(rec.assessedAt)) e.assessedAt = 'assessedAt must be ISO 8601 UTC';
+  if (!isNonEmptyString(rec.method)) e.method = 'a documented assessment method is required';
+  if (Object.keys(e).length) return err('invalid evidence assessment', e);
+  return ok(input as unknown as EvidenceAssessment);
+}
+
 export type Result<T> = { ok: true; value: T } | { ok: false; message: string; fieldErrors?: Record<string, string> };
 
 const ok = <T>(value: T): Result<T> => ({ ok: true, value });

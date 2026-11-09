@@ -19,7 +19,7 @@ Landed: `components/ui/{Dialog,Alert,Toast,Skeleton,EmptyState}.tsx` — token-m
 
 ## Stage 3 — Scholarly components (started)
 
-`EvidenceCard` landed as the first reference component (`components/scholarly/EvidenceCard.tsx` + `lib/scholarly/evidence-card.ts`, contract in `docs/design-system/components/evidence-card.md`). Next: `SourceCard`, `ClaimCard`, `Citation`, `TrustAssessmentSummary`, `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`. Map CMS posts → Source-shaped cards incrementally.
+Landed: `EvidenceCard` (reference component, `docs/design-system/components/evidence-card.md`), `SourceCard`, `ClaimCard`, `TrustAssessmentSummary` (contracts in `docs/design-system/components/source-claim-trust-cards.md`), plus the §23 trust model in `lib/schemas/scholarly.ts` + `lib/scholarly/trust.ts` (dimensions independent, not-assessed ≠ negative). Next: `Citation`, `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`, `ProvenanceGraph` (+ list alternative).
 
 ## Stage 4 — Workspace workflows
 
