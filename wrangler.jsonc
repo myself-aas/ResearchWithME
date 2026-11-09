@@ -7,6 +7,11 @@
 	"account_id": "74d241df16b8aaa80914e3dbb6e16758",
 	"compatibility_date": "2026-10-23",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// Non-secret runtime variables. `RESEND_API_KEY` is deliberately NOT here --
+	// it goes in as a Worker secret (`wrangler secret put RESEND_API_KEY`).
+	// The per-scenario `RESEND_TPL_*` ids come from `npm run email:template:sync`
+	// and are optional: unset, that scenario renders its component locally.
+	// Sending addresses live in lib/email/scenarios.ts. See docs/email-scenarios.md.
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"

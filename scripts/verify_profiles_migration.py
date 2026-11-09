@@ -181,10 +181,14 @@ def main():
         check("editor can read unpublished profiles, so the app's published filter is a real narrowing",
               visible == {OTHER}, f"saw {visible}")
 
-        # --- editor can edit anyone ---------------------------------------
+        # --- editor cannot edit anyone else's profile ---------------------
+        # RLS makes the row invisible to the update, so this succeeds and
+        # matches zero rows. Assert on the data, not on the status.
         status, err = as_role("authenticated", EDITOR,
             "update public.profiles set institution = 'Institute for Digital Public Goods' where user_id = %s", (OWNER,))
-        check("editor can update another user's profile", status == "ok", err)
+        institution = conn.execute("select institution from public.profiles where user_id = %s", (OWNER,)).fetchone()[0]
+        check("an editor's update of another user's profile touches nothing",
+              institution == "", f"status={status} institution={institution!r}")
 
         # --- stranger cannot edit -----------------------------------------
         status, err = as_role("authenticated", OTHER,
@@ -214,10 +218,17 @@ def main():
         check("a stranger's delete touches nothing (row is invisible, not an error)",
               still == 1, f"status={status} remaining={still}")
 
-        # --- editor can delete --------------------------------------------
+        # --- editor cannot delete -----------------------------------------
         status, err = as_role("authenticated", EDITOR, "delete from public.profiles where user_id = %s", (OTHER,))
         remaining = conn.execute("select count(*) from public.profiles").fetchone()[0]
-        check("editor can delete any profile", status == "ok" and remaining == 1, err)
+        check("an editor's delete of another user's profile touches nothing",
+              remaining == 2, f"status={status} remaining={remaining}")
+
+        # --- owner can still delete their own -----------------------------
+        # The restriction must not be broader than intended.
+        status, err = as_role("authenticated", OTHER, "delete from public.profiles where user_id = %s", (OTHER,))
+        remaining = conn.execute("select count(*) from public.profiles").fetchone()[0]
+        check("owner can delete their own profile", status == "ok" and remaining == 1, err)
 
         # --- FK cascade ----------------------------------------------------
         conn.execute("delete from auth.users where id = %s", (OWNER,))

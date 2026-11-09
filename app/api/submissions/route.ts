@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isSameOrigin } from '@/lib/cms/http';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
+import { sendScenario } from '@/lib/email/send';
 import { createSubmission } from '@/lib/submissions';
 
 export const runtime = 'nodejs';
@@ -40,6 +41,32 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: result.error }, { status: result.status });
   }
 
+  // The submission is already recorded at this point, so the acknowledgement is
+  // best-effort: a failed or unconfigured send is logged and reported back in
+  // the body, never turned into a failed request. The send also sits strictly
+  // after the `result.ok` check above, so no receipt can ever confirm a
+  // submission that was not stored.
+  const sent = await sendScenario('submission-receipt', {
+    to: result.submission.email,
+    entityId: result.submission.id,
+    variables: {
+      REFERENCE: result.submission.id,
+      AUTHOR_NAME: result.submission.authorName,
+      TITLE: result.submission.title,
+      CATEGORY: result.submission.category,
+      DATA_URL: result.submission.dataUrl ?? '',
+      ARTIFACT: result.submission.artifact,
+      ABSTRACT: result.submission.abstract,
+    },
+  });
+
+  if (!sent.ok) {
+    console.error(
+      'Submission receipt not sent:',
+      sent.skipped ? sent.reason : sent.error,
+    );
+  }
+
   return NextResponse.json(
     {
       success: true,
@@ -48,6 +75,7 @@ export async function POST(request: NextRequest) {
         title: result.submission.title,
         createdAt: result.submission.createdAt,
       },
+      receiptSent: sent.ok,
     },
     { status: 201 },
   );
