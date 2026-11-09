@@ -414,3 +414,95 @@ export function validateAuditEvent(input: Record<string, unknown>): Result<Audit
   if (Object.keys(e).length) return err('invalid audit event', e);
   return ok(input as unknown as AuditEvent);
 }
+
+// ── §7 Scholarly Dialogue objects ───────────────────────────────────────────
+
+export type DialogueItemType = 'comment' | 'suggestion' | 'review' | 'rebuttal' | 'decision';
+
+export interface DialogueItem {
+  id: ObjectId;
+  type: DialogueItemType;
+  authorId: UserId;
+  createdAt: ISODateTime;
+  body: string;
+  /** suggestion: proposed change; review: scope+status; rebuttal: links to review items; decision: resolution+rationale */
+  scope?: string;
+  status?: 'open' | 'accepted' | 'rejected' | 'resolved';
+  reviewItemIds?: ObjectId[];
+  rationale?: string;
+  /** reviewer anonymity: display name may be withheld (spec §24) */
+  anonymous?: boolean;
+}
+
+const DIALOGUE_TYPES: DialogueItemType[] = ['comment', 'suggestion', 'review', 'rebuttal', 'decision'];
+
+export function validateDialogueItem(input: object): Result<DialogueItem> {
+  const rec = input as Record<string, unknown>;
+  const e: Record<string, string> = {};
+  if (!isUuid(rec.id)) e.id = 'id must be a UUID';
+  if (typeof rec.type !== 'string' || !DIALOGUE_TYPES.includes(rec.type as DialogueItemType)) e.type = 'unknown dialogue item type';
+  if (!isUuid(rec.authorId)) e.authorId = 'authorId must be a UUID';
+  if (!isIsoUtc(rec.createdAt)) e.createdAt = 'createdAt must be ISO 8601 UTC';
+  if (!isNonEmptyString(rec.body)) e.body = 'body required';
+  if (rec.type === 'rebuttal' && (!Array.isArray(rec.reviewItemIds) || rec.reviewItemIds.length === 0))
+    e.reviewItemIds = 'rebuttal MUST link to review items';
+  if (rec.type === 'decision' && !isNonEmptyString(rec.rationale)) e.rationale = 'decision MUST record a rationale';
+  if (Object.keys(e).length) return err('invalid dialogue item', e);
+  return ok(input as unknown as DialogueItem);
+}
+
+// ── §26 AI validation model ─────────────────────────────────────────────────
+
+export interface AIValidation {
+  sourceResolution: 'resolved' | 'partially-resolved' | 'unresolved';
+  citationEntailment: 'supports' | 'partially-supports' | 'does-not-support' | 'not-assessed';
+  quotationMatch: 'exact' | 'normalized-match' | 'mismatch' | 'not-applicable';
+  sourceIntegrity: SourceIntegrityStatus | 'not-assessed';
+  humanReview: 'not-reviewed' | 'changes-requested' | 'approved' | 'rejected';
+  externalProcessing: 'local-only' | 'approved-provider' | 'restricted' | 'prohibited';
+  reviewedBy?: UserId;
+  reviewedAt?: ISODateTime;
+  notes?: string;
+}
+
+const AI_OPS = ['search', 'extract', 'summarize', 'compare', 'draft', 'translate', 'classify'];
+
+/**
+ * §26 publication blockers — publication MUST be blocked when any is true.
+ * Returns the list of human-readable blocker reasons (empty = publishable).
+ */
+export function publicationBlockers(v: AIValidation, retractionImpactUnresolved = false): string[] {
+  const blockers: string[] = [];
+  if (v.sourceResolution !== 'resolved') blockers.push('Required sources are unresolved');
+  if (v.citationEntailment === 'does-not-support') blockers.push('Citation does not support the claim');
+  if (v.citationEntailment === 'partially-supports') blockers.push('Citation only partially supports the claim');
+  if (v.quotationMatch === 'mismatch') blockers.push('Quotation does not match the source');
+  if (retractionImpactUnresolved || v.sourceIntegrity === 'retracted') blockers.push('Retraction impact is unresolved');
+  if (v.humanReview !== 'approved') blockers.push('Human review is missing or not approved');
+  if (v.externalProcessing === 'restricted' || v.externalProcessing === 'prohibited') blockers.push('External AI processing violates the data-classification policy');
+  return blockers;
+}
+
+export function validateAIValidation(input: object): Result<AIValidation> {
+  const rec = input as Record<string, unknown>;
+  const e: Record<string, string> = {};
+  const enums: Array<[string, string[], unknown]> = [
+    ['sourceResolution', ['resolved', 'partially-resolved', 'unresolved'], rec.sourceResolution],
+    ['citationEntailment', ['supports', 'partially-supports', 'does-not-support', 'not-assessed'], rec.citationEntailment],
+    ['quotationMatch', ['exact', 'normalized-match', 'mismatch', 'not-applicable'], rec.quotationMatch],
+    ['humanReview', ['not-reviewed', 'changes-requested', 'approved', 'rejected'], rec.humanReview],
+    ['externalProcessing', ['local-only', 'approved-provider', 'restricted', 'prohibited'], rec.externalProcessing],
+  ];
+  for (const [key, allowed, val] of enums) {
+    if (typeof val !== 'string' || !allowed.includes(val)) e[key] = `unknown ${key}`;
+  }
+  if (rec.sourceIntegrity !== undefined && rec.sourceIntegrity !== 'not-assessed' &&
+      (typeof rec.sourceIntegrity !== 'string' || !INTEGRITY.includes(rec.sourceIntegrity as SourceIntegrityStatus)))
+    e.sourceIntegrity = 'unknown integrity state';
+  if (rec.reviewedBy !== undefined && !isUuid(rec.reviewedBy)) e.reviewedBy = 'reviewedBy must be a UUID';
+  if (rec.reviewedAt !== undefined && !isIsoUtc(rec.reviewedAt)) e.reviewedAt = 'reviewedAt must be ISO 8601 UTC';
+  if (Object.keys(e).length) return err('invalid AI validation', e);
+  return ok(input as unknown as AIValidation);
+}
+
+export const AI_OPERATIONS = AI_OPS;
