@@ -257,7 +257,7 @@ export default function WritePage() {
       const message =
         publishError instanceof ApiError
           ? publishError.message
-          : 'The publication could not be saved.';
+          : 'The article could not be saved.';
       setError(`${message} Your draft is preserved in this browser.`);
       setPublishing(false);
     }
@@ -272,7 +272,7 @@ export default function WritePage() {
           <div className="mb-6 border-l-2 border-amber-700 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
             <p className="font-semibold">Publishing now happens in the editorial studio</p>
             <p className="mt-1 max-w-2xl">
-              This prototype form still autosaves a draft in your browser, but publication is disabled because the site
+              This prototype form still autosaves a draft in your browser, but publishing is disabled because the site
               is connected to Supabase.{' '}
               <Link href="/dashboard" className="font-semibold underline underline-offset-4">
                 Open the studio
@@ -674,7 +674,7 @@ export default function WritePage() {
                 </div>
               ) : (
                 <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
-                  No custom cover image applied yet. The journal will use default editorial photography if published without one.
+                  No custom cover image applied yet. The platform will use default editorial photography if published without one.
                 </p>
               )}
 
@@ -794,7 +794,7 @@ export default function WritePage() {
               <span>
                 {isSupabaseConfigured
                   ? 'Publishing is disabled on this prototype form while the Supabase studio is active. Your draft stays in this browser.'
-                  : 'Publication writes to the local JSON archive in this prototype. In a read-only deployment the save will fail without losing your draft.'}
+                  : 'Publishing writes to the local JSON archive in this prototype. In a read-only deployment the save will fail without losing your draft.'}
               </span>
             </p>
           </form>

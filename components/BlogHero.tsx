@@ -28,12 +28,12 @@ export default function BlogHero({
   totalArticles,
 }: BlogHeroProps) {
   return (
-    <section className="border-b border-stone-200 bg-stone-50" aria-labelledby="journal-title">
+    <section className="border-b border-stone-200 bg-stone-50" aria-labelledby="platform-title">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
           <div>
             <h1
-              id="journal-title"
+              id="platform-title"
               className="max-w-3xl font-serif text-4xl font-bold leading-[1.08] tracking-tight text-stone-900 sm:text-5xl lg:text-6xl"
             >
               Research you can read, check, and reuse.
@@ -105,7 +105,7 @@ export default function BlogHero({
             </div>
           </div>
 
-          <aside aria-label="Publication summary" className="border-t border-stone-300 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+          <aside aria-label="Platform summary" className="border-t border-stone-300 pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
             <dl className="grid grid-cols-2 gap-x-6 gap-y-6 lg:grid-cols-1">
               <div>
                 <dt className="text-sm text-stone-600">Published reviews</dt>

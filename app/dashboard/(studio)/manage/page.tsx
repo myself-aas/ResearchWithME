@@ -109,7 +109,7 @@ export default function ManageArticlesPage() {
         <div>
           <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900">Articles</h1>
           <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
-            Every draft and published article, with its live status. Publishing here revalidates the public journal.
+            Every draft and published article, with its live status. Publishing here revalidates the public platform.
           </p>
         </div>
         <Link href="/dashboard" className={primaryButtonClass}>
@@ -312,7 +312,7 @@ export default function ManageArticlesPage() {
       )}
 
       <p className="mt-4 text-sm leading-relaxed text-stone-600">
-        Deleting an article also deletes its comments. Reverting a published article removes it from the journal
+        Deleting an article also deletes its comments. Reverting a published article removes it from the platform
         immediately.
       </p>
     </div>

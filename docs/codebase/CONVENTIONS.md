@@ -15,7 +15,7 @@
 | Store factories | `create<Thing>` | `createLocalCmsStore`, `createSupabaseCmsStore`, `createSupabaseServerClient` | `lib/cms/local-store.ts:60`, `lib/cms/store.ts` |
 | Boolean helpers | `is`/`has` prefix | `isSupabaseConfigured`, `isSameOrigin`, `isEditor`, `hasRevalidateSecret`, `isLocalCmsMode` | `lib/supabase/config.ts:32`, `lib/cms/http.ts:6` |
 | Types / interfaces | PascalCase; `interface` for object shapes, `type` for unions | `interface CmsPost`, `type CmsStatus = 'draft' \| 'published'`, `type EditorGate = …` | `lib/cms/types.ts`, `lib/cms/auth.ts:9` |
-| Discriminated-union results | `{ ok: true; value: T } \| { ok: false; message: string; fieldErrors: FieldErrors }` | `PostNormalizationResult`, `CommentNormalizationResult`, `SubmissionResult` | `lib/cms/schema.ts:80-83`, `lib/submissions.ts:42-45` |
+| Discriminated-union results | `{ ok: true; value: T } \| { ok: false; message: string; fieldErrors: FieldErrors }` | `PostNormalizationResult`, `CommentNormalizationResult` | `lib/cms/schema.ts:80-83` |
 | Error classes | `Cms<Kind>Error`, all extending `CmsError` | `CmsValidationError`, `CmsConflictError`, `CmsNotFoundError`, `CmsUnavailableError` | `lib/cms/errors.ts` |
 | Constants | UPPER_SNAKE_CASE module constants; frozen-ish `as const` records | `CMS_LIMITS`, `MAX_QUERY`, `SESSION_COOKIE_NAME`, `SUPABASE_URL`, `CATEGORIES` | `lib/cms/schema.ts:7`, `app/api/research-assistant/route.ts:10`, `app/api/auth/session/route.ts:4` |
 | Env vars | UPPER_SNAKE_CASE; browser-visible ones prefixed `NEXT_PUBLIC_` | `NEXT_PUBLIC_SUPABASE_URL`, `REVALIDATE_SECRET` | `lib/supabase/config.ts`, `.env.example` |
@@ -55,7 +55,7 @@
 
 | Layer | Strategy | Evidence |
 |---|---|---|
-| Validation (`lib/cms/schema.ts`, `lib/validation.ts`, `lib/submissions.ts`) | Return a discriminated union with `fieldErrors`. Never throws | `lib/cms/schema.ts:80-83` |
+| Validation (`lib/cms/schema.ts`, `lib/validation.ts`) | Return a discriminated union with `fieldErrors`. Never throws | `lib/cms/schema.ts:80-83` |
 | Store adapters (`lib/cms/*-store.ts`) | Throw the typed `Cms*Error` hierarchy | `lib/cms/local-store.ts:107`, `lib/cms/supabase-store.ts` |
 | Public reads (`lib/cms/read.ts`) | Catch everything, `console.error`, return an empty result | `lib/cms/read.ts:15-18` |
 | Route handlers | `try/catch` → `errorResponse(error)` (`lib/cms/http.ts:58-64`), or hand-built `NextResponse.json({ error }, { status })` | `app/api/cms/posts/route.ts:24-26` |

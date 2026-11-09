@@ -10,7 +10,7 @@ related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx"]
 Mode: Operate
 
 ## Purpose
-Ask a grounded question and receive a cited answer from the publication corpus.
+Ask a grounded question and receive a cited answer from the platform corpus.
 
 ## First useful result
 A scholar submits a query, sees a scoped source, and receives an answer with citations or a clear error and retry.

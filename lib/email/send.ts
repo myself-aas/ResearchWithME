@@ -26,8 +26,8 @@ export interface SendScenarioInput {
   to: string;
   variables: ScenarioVariables;
   /**
-   * The entity this message is about -- a submission id, a user id, an invoice
-   * number. Becomes the second half of the idempotency key, so a retry of the
+   * The entity this message is about -- a user id, an application id, an
+   * invoice number. Becomes the second half of the idempotency key, so a retry of the
    * same event does not deliver twice. Keys expire after 24 hours; this
    * deduplicates retries, not a deliberate re-send later.
    */

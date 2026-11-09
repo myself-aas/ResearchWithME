@@ -19,6 +19,7 @@ An editor scans recent comments, finds one by author, article, or text, and dele
 A quiet correspondence queue: author and role, article title, date, and the comment as quoted prose. No nested cards, no emoji, no engagement metrics.
 
 ## Constraints
+- Uses the shared platform masthead and footer (BlogHeader/BlogFooter), identical to the public pages; no bespoke studio chrome. The studio sidebar is page content, not site chrome.
 - Deleting is two-step and irreversible; the control states what disappears.
 - Realtime is optional; manual retry is always present.
 - Empty and filtered-empty states explain why the queue is empty.

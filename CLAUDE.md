@@ -1,7 +1,7 @@
 # ResearchWithMe — Agent Instructions
 
 ## Project overview
-Scholarly publication platform: long-form paper reviews, reproducible teardowns, citation-first reading. Stack: Next.js 15 App Router, React 19, Tailwind CSS v4, Supabase, TypeScript.
+Scholarly research platform: long-form paper reviews, reproducible teardowns, citation-first reading. Stack: Next.js 15 App Router, React 19, Tailwind CSS v4, Supabase, TypeScript.
 
 Read `PRODUCT.md` and `DESIGN.md` before touching any UI surface. Keep `.impeccable/surfaces/` briefs in sync with every route change.
 

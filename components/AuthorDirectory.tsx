@@ -109,7 +109,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
             href="/"
             className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
           >
-            Browse the journal
+            Browse the platform
           </Link>
         </div>
       ) : filteredAuthors.length === 0 ? (

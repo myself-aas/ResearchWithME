@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
 
-// The journal is set in the Aptos family (Aptos Serif for reading, Aptos for
+// ResearchWithMe is set in the Aptos family (Aptos Serif for reading, Aptos for
 // interface chrome, Aptos Mono for data). Aptos is a Microsoft-licensed face
 // and is not redistributed here: the stacks in globals.css request the
 // installed copy by name. These self-hosted OFL faces are the metric-adjusted

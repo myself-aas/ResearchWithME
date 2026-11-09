@@ -19,7 +19,7 @@ export default function PageState({
   code,
   tone = 'neutral',
   role = 'status',
-  primaryAction = { href: '/', label: 'Return to the journal' },
+  primaryAction = { href: '/', label: 'Return to the platform' },
   secondaryAction,
   children,
   className,

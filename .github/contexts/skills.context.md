@@ -71,7 +71,7 @@
 ## Custom Agents
 
 ### reme Agent (`.github/agents/reme.agent.md`)
-ResearchWithMe custom agent for scholarly publication platform tasks:
+ResearchWithMe custom agent for scholarly research platform tasks:
 - Article writing (SEO/AEO/GEO optimized)
 - Research assistance
 - Code implementation
@@ -81,7 +81,7 @@ ResearchWithMe custom agent for scholarly publication platform tasks:
 ```yaml
 ---
 name: reme
-description: ResearchWithMe custom agent for scholarly publication platform tasks
+description: ResearchWithMe custom agent for scholarly research platform tasks
 tools: [read, write, edit, search, execute, web]
 ---
 ```

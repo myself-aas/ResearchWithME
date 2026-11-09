@@ -313,7 +313,7 @@ export default function PostEditor({
       setSlugTouched(true);
       setNotice(
         data.post.status === 'published'
-          ? 'Published. The article is live and the journal index has been revalidated.'
+          ? 'Published. The article is live and the platform index has been revalidated.'
           : 'Draft saved. It is private until you publish it.',
       );
       router.refresh();
@@ -548,7 +548,7 @@ export default function PostEditor({
               className={cn(textareaClass, fieldErrors.summary && 'border-red-700')}
             />
             <p id="post-summary-hint" className={cn(hintClass, 'flex flex-wrap justify-between gap-2')}>
-              <span>Shown in the journal feed. At least 40 characters to publish.</span>
+              <span>Shown in the platform feed. At least 40 characters to publish.</span>
               <span>{form.summary.length} of 1200</span>
             </p>
             <FieldError id="post-summary-error" message={fieldErrors.summary} />
@@ -848,7 +848,7 @@ export default function PostEditor({
               className="mt-1 h-4 w-4 rounded border-stone-400 text-amber-900"
             />
             <span className="text-sm leading-relaxed text-stone-800">
-              <span className="block font-medium">Feature on the journal home page</span>
+              <span className="block font-medium">Feature on the platform home page</span>
               <span className="block text-stone-600">
                 The featured article occupies the lead slot. Use it for at most one live article at a time.
               </span>
@@ -910,7 +910,7 @@ export default function PostEditor({
 
       {postId && status === 'draft' && (
         <p className="mt-4 text-sm leading-relaxed text-stone-600">
-          This draft is not visible on the journal. Publishing revalidates the home page and its reader URL.
+          This draft is not visible on the platform. Publishing revalidates the home page and its reader URL.
         </p>
       )}
 

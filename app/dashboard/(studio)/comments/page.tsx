@@ -132,7 +132,7 @@ export default function CommentsModerationPage() {
             Discussion appears here as soon as readers respond to a published article.
           </p>
           <Link href="/" className={cn(primaryButtonClass, 'mt-5')}>
-            Read the journal
+            Read the platform
           </Link>
         </div>
       )}

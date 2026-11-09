@@ -14,7 +14,6 @@ import {
   Search,
   ShieldCheck,
   Sparkles,
-  UploadCloud,
   User,
   Users,
   X,
@@ -40,7 +39,6 @@ const primaryNav = [
 const secondaryNav = [
   { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
   { href: '/cite', label: 'Citation builder', icon: Quote },
-  { href: '/submit', label: 'Submit a manuscript', icon: UploadCloud },
   { href: '/editorial-board', label: 'Editorial board', icon: Users },
   { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck },
   { href: '/dashboard', label: 'Editorial studio', icon: PenSquare },
@@ -100,7 +98,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           <Link
             href="/"
             className="flex items-center gap-2 rounded-md focus-visible:outline-none"
-            aria-label="ResearchWithMe journal home"
+            aria-label="ResearchWithMe platform home"
           >
             <BrandLogo size="xl" showText={true} />
           </Link>

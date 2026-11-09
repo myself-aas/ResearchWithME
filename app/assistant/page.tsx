@@ -114,7 +114,7 @@ export default function AssistantPage() {
             Ask the archive a question
           </h1>
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            The assistant answers from this publication&apos;s own catalog. Without a configured model key it returns a deterministic, cited summary; with one, the model receives the same catalog text and is asked to cite its sources.
+            The assistant answers from this platform&apos;s own catalog. Without a configured model key it returns a deterministic, cited summary; with one, the model receives the same catalog text and is asked to cite its sources.
           </p>
         </header>
 
@@ -289,7 +289,7 @@ export default function AssistantPage() {
             </li>
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
-              <span>It does not search outside this publication or access paywalled literature.</span>
+              <span>It does not search outside this platform or access paywalled literature.</span>
             </li>
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />

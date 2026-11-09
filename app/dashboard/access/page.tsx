@@ -54,7 +54,7 @@ export default async function ApplyToWritePage({
         code="Unavailable"
         title="Applications need Supabase"
         description="Writer applications are stored in Postgres and reviewed through row-level security. Configure Supabase to accept them; until then the studio runs in local demo mode."
-        primaryAction={{ href: '/', label: 'Back to the journal' }}
+        primaryAction={{ href: '/', label: 'Back to the platform' }}
       />
     );
   }

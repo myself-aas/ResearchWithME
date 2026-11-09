@@ -10,7 +10,7 @@ related_targets: ["components/BlogHeader.tsx","components/BlogHero.tsx","compone
 Mode: Persuade
 
 ## Purpose
-Help researchers find a rigorous article quickly and understand why the publication is trustworthy.
+Help researchers find a rigorous article quickly and understand why the platform is trustworthy.
 
 ## First useful result
 A reader lands on a readable lead article, can search or filter the catalog, and opens a dedicated article page without a modal interrupting the task.

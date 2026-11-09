@@ -1,7 +1,7 @@
 # ResearchWithMe Project Overview
 
 ## Project Description
-Scholarly publication platform: long-form paper reviews, reproducible teardowns, citation-first reading.
+Scholarly research platform: long-form paper reviews, reproducible teardowns, citation-first reading.
 
 ## Tech Stack
 - **Framework**: Next.js 15 App Router

@@ -19,6 +19,7 @@ An editor finds an article by title, slug, author, or tag, then publishes, rever
 A typographic archive, not a table of cards: one bordered list, status as a dot plus word, actions aligned right on desktop and wrapped below on mobile.
 
 ## Constraints
+- Uses the shared platform masthead and footer (BlogHeader/BlogFooter), identical to the public pages; no bespoke studio chrome. The studio sidebar is page content, not site chrome.
 - Status is never colour alone; each row states Draft or Published.
 - Publish and revert are explicit; delete needs a second click and moves focus to the confirm action.
 - Loading skeletons are static and reserve space; empty and filtered-empty states offer a recovery path.

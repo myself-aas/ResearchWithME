@@ -13,7 +13,7 @@ Mode: Read
 Help a visitor recover from a missing address.
 
 ## First useful result
-A visitor understands the page is missing and reaches the journal or paper archive in one action.
+A visitor understands the page is missing and reaches the platform or paper archive in one action.
 
 ## Direction
 A calm editorial dead end with a strong title, plain recovery actions, and no decorative error illustration.

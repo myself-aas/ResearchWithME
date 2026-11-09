@@ -1,6 +1,6 @@
 # ResearchWithMe
 
-An open-access scholarly publication: long-form reviews of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
+An open-access research platform: long-form explanations of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
 
 The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) and uses the [Impeccable](https://impeccable.style) workflow and detector. Product context lives in [`PRODUCT.md`](./PRODUCT.md); per-route briefs live in [`.impeccable/surfaces/`](./.impeccable/surfaces).
 
@@ -28,7 +28,6 @@ Node 20.9 or newer, and [Bun](https://bun.sh) 1.4 or newer — `bun.lock` is the
 | `/assistant` | Operate | Catalog-grounded research assistant with citations |
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
-| `/submit` | Operate | Manuscript intake with validation and failure recovery |
 | `/login` | Operate | Sign in with email and password, or Google; setup guide in demo mode |
 | `/dashboard/access` | Operate | Connect a GitHub or ORCID identity and apply to write |
 | `/write` | Operate | Draft autosave, validation, preview, and publish through the CMS store |
@@ -57,7 +56,7 @@ For a rendered audit (requires a Chromium-based browser):
 npx impeccable detect --viewport 390x844 http://localhost:3000
 ```
 
-The publication surfaces are clean: 0 Impeccable findings in source and rendered scans at 1280×800, 390×844, and 320×720; 0 axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
+The public surfaces are clean: 0 Impeccable findings in source and rendered scans at 1280×800, 390×844, and 320×720; 0 axe WCAG 2.1 A/AA violations; CLS 0 and LCP under 400 ms on local runs. See [`docs/audit-2026-10-25.md`](./docs/audit-2026-10-25.md).
 
 ## Deploy (Cloudflare Workers)
 
@@ -130,7 +129,8 @@ Full setup, the blueprint-to-code map, the data model, and the security notes ar
 
 ## Data and prototype behavior
 
-- Bundled catalogue, browser reading list, newsletter preference, and submission receipt data remain local JSON or `localStorage`.
+- Bundled catalogue, browser reading list, and newsletter preference remain local JSON or `localStorage`.
+- There is no open manuscript intake: the platform publishes explanations written by approved writers. A reader applies at `/dashboard/access` (GitHub or ORCID identity), an editor approves, and the writer publishes through `/write` and the studio.
 - Writer access is a real, server-enforced decision: an applicant connects GitHub or ORCID with Supabase `linkIdentity`, an editor approves the row in `public.author_applications`, and approval writes the `public.editors` entry. There is no browser-side role and nothing is stored in `localStorage`.
 - The research assistant answers from the local catalog. With `GEMINI_API_KEY` set it asks Gemini to summarize the same records; without a key it returns a deterministic cited answer.
 
@@ -166,7 +166,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-The journal is set in the Aptos family: Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data. Aptos is licensed by Microsoft, so this repository does not bundle it; the font stacks in `app/globals.css` use the copy installed on the reader's machine (it ships with Microsoft 365).
+ResearchWithMe is set in the Aptos family: Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data. Aptos is licensed by Microsoft, so this repository does not bundle it; the font stacks in `app/globals.css` use the copy installed on the reader's machine (it ships with Microsoft 365).
 
 Readers without Aptos get Newsreader and Inter. Their variable WOFF2 files are self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift. Both are licensed under the SIL Open Font License 1.1; the licence texts ship next to the files. If you obtain a web-embedding licence for Aptos, add its WOFF2 files to `app/fonts/` and load them with `next/font/local` ahead of the fallbacks.
 

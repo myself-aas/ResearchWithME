@@ -8,7 +8,7 @@
 **Applies When**:
 - Writing new research articles
 - Editing existing articles
-- Reviewing article submissions
+- Reviewing writer applications
 - Creating paper explainer content
 
 **Key Rules**:
@@ -32,7 +32,7 @@
 ## Custom Agents
 
 ### reme Agent (`.github/agents/reme.agent.md`)
-**Description**: ResearchWithMe custom agent for scholarly publication platform tasks.
+**Description**: ResearchWithMe custom agent for scholarly research platform tasks.
 
 **Capabilities**:
 - Article writing (SEO/AEO/GEO optimized)
@@ -44,7 +44,7 @@
 ```yaml
 ---
 name: reme
-description: 'ResearchWithMe custom agent for scholarly publication platform tasks. Handles article writing, research assistance, code implementation, and platform maintenance following ResearchWithMe conventions.'
+description: 'ResearchWithMe custom agent for scholarly research platform tasks. Handles article writing, research assistance, code implementation, and platform maintenance following ResearchWithMe conventions.'
 tools: [read, write, edit, search, execute, web]
 ---
 ```

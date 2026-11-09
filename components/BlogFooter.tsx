@@ -4,7 +4,7 @@ import { CATEGORIES, categoryToSlug } from '@/lib/blog-data';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import BrandLogo from '@/components/BrandLogo';
 
-const portalLinks = [
+const exploreLinks = [
   { href: '/papers', label: 'Paper archive' },
   { href: '/authors', label: 'Authors and specialists' },
   { href: '/editions', label: 'PDF editions' },
@@ -12,7 +12,6 @@ const portalLinks = [
   { href: '/assistant', label: 'Research assistant' },
   { href: '/cite', label: 'Citation builder' },
   { href: '/bookmarks', label: 'Reading list' },
-  { href: '/submit', label: 'Submissions' },
   { href: '/write', label: 'Writer studio' },
 ];
 
@@ -29,7 +28,7 @@ export default function BlogFooter() {
             </Link>
 
             <p className="mt-4 max-w-md text-sm leading-relaxed text-stone-300">
-              An independent, open-access publication of expert essays, reproducible paper reviews, and repository teardowns across STEM, health, sociology, and research policy.
+              An independent, open-access platform where expert writers explain research papers, GitHub repositories, and the rest of the literature — across STEM, health, sociology, and research policy.
             </p>
 
             <dl className="mt-5 space-y-1.5 text-sm text-stone-300">
@@ -83,12 +82,12 @@ export default function BlogFooter() {
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-portals">
-            <h2 id="footer-portals" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
-              Publication portals
+          <nav aria-labelledby="footer-explore">
+            <h2 id="footer-explore" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
+              Explore the platform
             </h2>
             <ul className="mt-3 space-y-2 text-sm">
-              {portalLinks.map((link) => (
+              {exploreLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -105,8 +104,8 @@ export default function BlogFooter() {
         <div className="mt-12 flex flex-col gap-4 border-t border-stone-700 pt-6 text-sm text-stone-300 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 ResearchWithMe Publication Collective. Research published under open access.</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link href="/submit" className="underline-offset-4 hover:text-white hover:underline">
-              Editorial guidelines
+            <Link href="/editorial-board" className="underline-offset-4 hover:text-white hover:underline">
+              Editorial standards
             </Link>
             <Link href="/cite" className="underline-offset-4 hover:text-white hover:underline">
               Citation export

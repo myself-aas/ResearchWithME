@@ -3,7 +3,7 @@ import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
   title: 'Research Papers',
-  description: 'Filter open-access publications by field, author, DOI, citation count, and publication date.',
+  description: 'Filter open-access papers by field, author, DOI, citation count, and publication date.',
   path: '/papers',
   type: 'website' as const,
 });

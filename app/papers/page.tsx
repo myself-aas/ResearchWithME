@@ -37,7 +37,7 @@ export default function PapersArchivePage() {
         }
       } catch {
         if (active) {
-          setLoadError('The live archive could not be reached, so the bundled publication records are shown.');
+          setLoadError('The live archive could not be reached, so the bundled paper records are shown.');
         }
       }
     }
@@ -102,7 +102,7 @@ export default function PapersArchivePage() {
             Papers, methods, and reproducible artifacts
           </h1>
           <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
-            A structured archive of open-access publications. Each record lists its authors, DOI, license, methods, findings, and reproducibility material so the work can be checked rather than taken on trust.
+            A structured archive of open-access papers. Each record lists its authors, DOI, license, methods, findings, and reproducibility material so the work can be checked rather than taken on trust.
           </p>
         </header>
 

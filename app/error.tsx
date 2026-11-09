@@ -17,9 +17,9 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         role="alert"
         tone="error"
         code="Error"
-        title="We could not open this publication"
+        title="We could not open this page"
         description="The request did not complete. Your reading list and drafts are stored separately, so you can retry without losing them."
-        primaryAction={{ href: '/', label: 'Return to the journal' }}
+        primaryAction={{ href: '/', label: 'Return to the platform' }}
         secondaryAction={{ href: '/papers', label: 'Browse the paper archive' }}
       >
         <button

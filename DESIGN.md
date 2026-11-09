@@ -1,6 +1,6 @@
 ---
 name: ResearchWithMe
-description: Scholarly open-science publication and research engine
+description: Scholarly open-science platform and research engine
 colors:
   primary: "#78350f" # amber-900, archival ochre
   primary-hover: "#92400e" # amber-800
@@ -106,7 +106,7 @@ components:
 <!-- impeccable:design-schema 1 -->
 
 ## Overview
-ResearchWithMe's design system evokes the quiet authority and sustained readability of a printed research journal and a serious newspaper of record, combined with the responsiveness of a modern open-science platform. It rejects transient trends: no gradient text, no decorative glass, no artificial kickers, no purple/cyan AI palette, no nested ghost cards, and no intrusive pop-ups. The visual world is an archival reading room built from warm paper, ink, ochre, and emerald verification marks.
+ResearchWithMe's design system evokes the quiet authority and sustained readability of a print newspaper of record and a scholarly reading room, combined with the responsiveness of a modern open-science platform. It rejects transient trends: no gradient text, no decorative glass, no artificial kickers, no purple/cyan AI palette, no nested ghost cards, and no intrusive pop-ups. The visual world is an archival reading room built from warm paper, ink, ochre, and emerald verification marks.
 
 The active interface is the root Next.js application. The typeface is the Aptos family. Aptos is licensed by Microsoft and is not redistributed, so each stack requests the reader's installed copy by name. Self-hosted OFL faces (Newsreader for the serif, Inter for the sans) are loaded through `next/font/local` (`app/fonts/`) as size-adjusted fallbacks that prevent layout shift. Typography does not depend on a third-party font CDN. All shipped imagery is local.
 
@@ -120,7 +120,7 @@ The active interface is the root Next.js application. The typeface is the Aptos 
 
 ## Typography
 - **Primary face**: Aptos Serif sets headings and all reading copy. Headings are bold (700), with balanced wrapping, obvious scale steps, and tracking no tighter than `-0.012em`.
-- **Body**: Aptos Serif at 16px/1.65 with a 65–75ch measure. Article bodies use the `journal-prose` treatment (hyphenation, old-style proportional figures, common ligatures) and a `drop-cap` on the opening paragraph. Small copy never goes below 12px.
+- **Body**: Aptos Serif at 16px/1.65 with a 65–75ch measure. Article bodies use the `reading-prose` treatment (hyphenation, old-style proportional figures, common ligatures) and a `drop-cap` on the opening paragraph. Small copy never goes below 12px.
 - **Interface chrome**: Aptos (sans) for buttons, form controls, labels, navigation, table headers, figure captions, tabs, and status text. Primary navigation is set in uppercase with `tracking-wider`, like newspaper section heads.
 - **Code and data**: Aptos Mono is reserved for code, DOI strings, hashes, formulas, and citation output. Tables, code, and times switch back to lining tabular figures.
 - **Small caps**: The `small-caps` utility (true `all-small-caps`) is available for bylines and abbreviations. It is not used as an eyebrow above headings.
@@ -139,11 +139,11 @@ The active interface is the root Next.js application. The typeface is the Aptos 
 - No zero-offset colored halos, hard offset block shadows, or decorative translucent glass.
 
 ## Shapes
-- Print-journal corners: the theme compresses Tailwind's radius scale to 1–8px (`rounded-sm` 2px, `rounded-md` 3px, `rounded-lg` 4px, `rounded-xl` 6px, `rounded-2xl` 8px). Surfaces read as printed blocks separated by rules, not app cards.
+- Print-inspired corners: the theme compresses Tailwind's radius scale to 1–8px (`rounded-sm` 2px, `rounded-md` 3px, `rounded-lg` 4px, `rounded-xl` 6px, `rounded-2xl` 8px). Surfaces read as printed blocks separated by rules, not app cards.
 - Pills (`rounded-full`) are reserved for compact tags, counters, and avatars.
 
 ## Components
-- **Navigation**: Solid white sticky masthead closed by a 4px double ink rule, serif wordmark, uppercase sans section links whose current page is marked by an amber underline plus `aria-current`, accessible mobile disclosure, and a skip link.
+- **Navigation**: Solid white sticky masthead closed by a 4px double ink rule, serif wordmark, uppercase sans section links whose current page is marked by an amber underline plus `aria-current`, accessible mobile disclosure, and a skip link. Every route — public pages, the editorial studio, and sign-in — uses this masthead and the shared footer (`BlogHeader`/`BlogFooter`); the only chrome-free surface is the fatal global-error boundary.
 - **Buttons**: One primary amber action per task, secondary neutral outline actions, and explicit disabled/loading labels. Buttons default to `type="button"` unless they submit a form.
 - **Form controls**: Visible labels or `aria-label`, 44px min-height, AA placeholders, focus ring, validation text, preserved input on failure, and duplicate-submit protection.
 - **Article header**: Byline, publication date, reading time, artifact metadata, bookmark, share, and citation utilities in a clear hierarchy.
@@ -153,7 +153,7 @@ The active interface is the root Next.js application. The typeface is the Aptos 
 - **Status surfaces**: Shared loading, empty, error, and 404 states use semantic `main`, an announced live region, and explicit recovery actions.
 
 ## Editorial studio
-- **Shell:** A white utility header with the wordmark, the studio label, an account control, and a single "View journal" exit. Navigation is a left rail on desktop and a horizontal strip that wraps rather than hiding items on narrow screens. No fixed sidebar, no overlay drawer.
+- **Shell:** The editorial studio wraps the same shared masthead and footer used across the site; navigation is a left rail on desktop and a wrapping strip on narrow screens, with the account control and sign-out in the rail. No bespoke wordmark, no separate utility header, no overlay drawer.
 - **Panels:** The editor is one bordered white surface divided by horizontal rules. Inputs and the Markdown editor are the only nested borders; previews are content, not cards.
 - **Status:** Draft and published are always a dot plus a word, with amber/emerald borders and text that meet AA. Live-update status uses the same dot-and-label pattern; no pulsing.
 - **Forms:** Visible labels on every control, hints tied with `aria-describedby`, inline errors marked `role="alert"`, and an error summary that links to the first invalid field. Submitting never clears input.

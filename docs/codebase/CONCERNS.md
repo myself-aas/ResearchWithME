@@ -1,5 +1,14 @@
 # Codebase Concerns
 
+## Resolved 2026-11-09
+
+The `/submit` manuscript intake was removed entirely — route, API handler,
+`lib/submissions.ts`, `data/submissions.json`, and the four manuscript-pipeline
+email scenarios with it (`submission-receipt`, `review-status-update`,
+`decision-notification`, `deadline-reminder`). The platform publishes
+explanations by approved writers; there is no open manuscript desk, so the
+"unauthenticated submissions write" finding no longer exists.
+
 ## Core Sections (Required)
 
 ### 1) Top Risks (Prioritized)
@@ -10,7 +19,6 @@
 | **High** | `/api/author-avatar` is unauthenticated, has no rate limit, and spends `GEMINI_API_KEY` | `app/api/author-avatar/route.ts:4,88-107` | Same cost-abuse exposure on the Gemini key; user-supplied `name`/`role`/`domain`/`bio` are interpolated straight into the prompt | Gate behind `requireEditor()` and rate-limit; treat the interpolated fields as untrusted prompt content |
 | **High** | Two conflicting editor-allowlist tables; the older one is orphaned | `supabase/migrations/20261025000300_cms_storage.sql:3` creates `public.editor_memberships`; the later `20261028000100_editor_allowlist.sql:44-57` creates `public.editors` and rewrites **every** posts/storage policy to `public.is_editor()`, which reads `public.editors`. `grep -rn editor_memberships` finds it in that one file only | An administrator who grants studio access by inserting into `editor_memberships` gets **no** access, with no error — the failure is silent | Migrate rows into `public.editors` and drop `editor_memberships` in a new idempotent migration |
 | **High** | Rate limiting is in-memory, on a runtime with many short-lived isolates | `lib/rate-limit.ts:3` module-level `Map`; `wrangler.jsonc` targets Cloudflare Workers | The effective limit is `limit × isolate count` and resets on eviction, so the 9 guarded routes are far weaker than their numbers suggest. `MAX_KEYS = 5_000` also clears the **entire** map when full (`lib/rate-limit.ts:11`), resetting every client at once | Move counters to KV/Durable Object/Upstash, or document the limiter as best-effort only |
-| **Med** | `/api/submissions` accepts unauthenticated writes with **no** rate limit | `app/api/submissions/route.ts` — no `rateLimit` call, unlike the other 8 guarded routes | Unthrottled disk writes; `data/submissions.json` is capped at 500 records so the archive silently churns (`lib/submissions.ts:20,87`) | Add `rateLimit(clientKey(request, 'submissions'), …)` |
 | **Med** | Two parallel article write paths that must cross-check each other | `lib/db.ts` (`saveArticles`, `addArticle`, `addComment`) vs `lib/cms/*`; `app/api/cms/posts/route.ts:67` explicitly queries `getArticles()` to catch a slug collision with the *other* path | Slug collisions and divergent content are possible by construction; every new write path has to remember both stores. **Partially mitigated:** `app/api/articles/route.ts:73-81` returns 403 for the legacy write once Supabase is configured, so divergence is confined to local/demo mode. Both stores still feed the read path (`lib/cms/catalogue.ts:26`) | Consolidate on the CMS store; reduce `lib/db.ts` to read-only seed access |
 | **Med** | Local demo mode is fully unauthenticated, and its session cookie is forgeable | `requireEditor()` returns `{ok:true, user:null, mode:'local'}` when Supabase is unconfigured (`lib/cms/auth.ts:78-80`); `middleware.ts:14-16` skips protection; `/api/auth/session` POST stores a **client-supplied, unsigned** JSON blob in `rwm_session` with `sameSite:'none'` (`app/api/auth/session/route.ts:30-36`), which `getDashboardUser()` trusts and upgrades to `isEditor: true` (`lib/cms/auth.ts:31-45`) | A production deploy missing its `NEXT_PUBLIC_SUPABASE_*` build vars silently serves an open CMS. `scripts/check-production-env.mjs` exists precisely to stop this — but it only runs on `npm run deploy`/`upload`, **not** on the dashboard CI path | Keep the guard; consider failing closed at runtime too when `NODE_ENV === 'production'` and Supabase is unconfigured |
 | **Med** | No timeouts on any outbound call | `grep -rn "AbortSignal\|AbortController\|signal:\|timeout" app/api lib` → nothing outside tests | A hung Gemini or HF Space call holds a Worker until the platform kills it, consuming CPU quota and leaving the reader with a spinner | Wrap outbound calls in `AbortSignal.timeout(…)` |
@@ -100,7 +108,7 @@ Fragility assessed structurally instead:
 ### 7) Evidence
 
 - `docs/codebase/.codebase-scan.txt` — TODO/FIXME section ("None found", independently re-verified: `grep -rniE "\b(TODO|FIXME|HACK|XXX)\b"` over `app components lib scripts supabase hooks middleware.ts` returns nothing); CODE METRICS (363 files, 45,607 LOC; largest file `public/assets/aistudio/ResearchWithME_75aee1dd.zip` at 2759.5 KB); HIGH-CHURN section (**void — shallow clone**)
-- `app/api/generate/route.ts`, `app/api/author-avatar/route.ts`, `app/api/submissions/route.ts` — unguarded endpoints
+- `app/api/generate/route.ts`, `app/api/author-avatar/route.ts` — unguarded endpoints
 - `app/api/cms/posts/route.ts` — the reference implementation of a correctly guarded route
 - `lib/rate-limit.ts` — in-memory bucket implementation and its `MAX_KEYS` reset
 - `supabase/migrations/20261025000300_cms_storage.sql`, `20261028000100_editor_allowlist.sql` — the allowlist drift
@@ -120,14 +128,14 @@ Guarded by origin check + rate limit only: `/api/comments` POST, `/api/articles/
 
 Guarded by shared secret (1): `/api/revalidate` POST.
 
-**No guard at all (11 handlers across 8 routes):** `/api/articles` GET, `/api/authors`, `/api/authors/[id]`, `/api/papers`, `/api/papers/[slug]` (all read-only and low risk), `/api/auth/session` (writes a cookie), `/api/auth/verify-institutional`, `/api/author-avatar` (spends Gemini), `/api/generate` (spends HF), `/api/submissions` (writes to disk), `/api/comments` GET.
+**No guard at all (10 handlers across 7 routes):** `/api/articles` GET, `/api/authors`, `/api/authors/[id]`, `/api/papers`, `/api/papers/[slug]` (all read-only and low risk), `/api/auth/session` (writes a cookie), `/api/auth/verify-institutional`, `/api/author-avatar` (spends Gemini), `/api/generate` (spends HF), `/api/comments` GET.
 
-The read-only ones are fine. The four that spend money or write state — `/api/author-avatar`, `/api/generate`, `/api/submissions`, `/api/auth/session` — are the ones to address.
+The read-only ones are fine. The three that spend money or write state — `/api/author-avatar`, `/api/generate`, `/api/auth/session` — are the ones to address.
 
 ### Remediation roadmap (effort-ordered)
 
 1. **~1 hour:** delete `.eslintrc.json`; delete `hooks/use-mobile.ts`; add `GEMINI_API_KEY=` to `.env.example`; delete `revalidateComments` or fix it to take a slug.
-2. **~2 hours:** add `requireEditor()` + `rateLimit()` to `/api/generate` and `/api/author-avatar`; add `rateLimit()` to `/api/submissions`; replace `error.message` responses with generic prose in those two routes.
+2. **~2 hours:** add `requireEditor()` + `rateLimit()` to `/api/generate` and `/api/author-avatar`; replace `error.message` responses with generic prose in those two routes.
 3. **~3 hours:** new idempotent migration copying `editor_memberships` → `editors` then dropping the old table; remove the stale `ResearchWith.me-main/` references.
 4. **~1 day:** resolve the package-manager question and delete one lockfile; add unit tests for `lib/rate-limit.ts`, `lib/cms/supabase-store.ts` mapping, and the CMS write routes.
 5. **Multi-day:** consolidate `lib/db.ts` into `lib/cms/`; decide `/write` vs `/dashboard`; move rate limiting off-isolate; run migrations in CI.

@@ -33,7 +33,6 @@ Outbound call sites total 3 external ones: `ai.models.generateContent` (×2 rout
 | Cloudflare KV `researchwithme-opennext-cache` | Rendered-page cache and revalidation tags | OpenNext runtime (`open-next.config.ts`) | Eventually consistent — a revalidation can take ~60 s; shared 1,000 writes/day with Worker Previews | `open-next.config.ts:8-14`, `wrangler.jsonc` comments |
 | `data/articles.json`, `data/comments.json` | Legacy seed/runtime catalogue | `lib/db.ts` | Two competing article write paths; `data/articles.json` is committed but `saveArticles()` rewrites it | `lib/db.ts:6-8`, `.gitignore` |
 | `data/cms-posts.json`, `data/cms-comments.json` | Demo-mode CMS archive | `lib/cms/local-store.ts` | Git-ignored; **cannot persist on the Worker's read-only filesystem** | `.gitignore`, `README.md` |
-| `data/submissions.json` | Manuscript submissions, capped at 500 records | `lib/submissions.ts:19-20` | Same Worker-filesystem problem; silently capped, oldest dropped | `lib/submissions.ts:87` |
 | Browser `localStorage` | Reader preferences + saved HF credentials | `lib/storage.ts`, `components/cms/QwenCoverGenerator.tsx` | No expiry, no size cap on the HF entries; readable by any script on the origin | `lib/storage.ts:50-57` (`readStringArray` caps at 500) |
 
 ### 3) Secrets and Credentials Handling
@@ -54,7 +53,7 @@ Outbound call sites total 3 external ones: `ai.models.generateContent` (×2 rout
   - Supabase read fails → empty result, page renders from the bundled catalogue (`lib/cms/read.ts`).
   - Gemini missing/failing → deterministic catalogue-grounded answer plus a `notice` field (`app/api/research-assistant/route.ts:152-160`).
   - Gemini avatar fails → a locally generated domain-themed SVG (`app/api/author-avatar/route.ts:88-119`).
-  - Local JSON unwritable → 503 with an actionable message (`lib/cms/local-store.ts:38-40`, `lib/submissions.ts:93-97`).
+  - Local JSON unwritable → 503 with an actionable message (`lib/cms/local-store.ts:38-40`).
   - `/api/generate` has **no** fallback: a Space failure returns 500.
 - **Rate limiting:** in-memory per-isolate, applied to 9 of 18 routes. Per-scope limits per 60 s window: `cms:create` 20, `cms:update` 40, `cms:delete` 20, `cms:comment-delete` 30, `comments` 8, `articles` 10, `likes` 30, `assistant` 12, `revalidate` 60 (`lib/rate-limit.ts`, call sites via grep).
 - **CSRF posture:** writes check `isSameOrigin()` (`lib/cms/http.ts:6-28`), which allows requests with **no** `Origin` header (for non-browser clients) and matches against `Host` plus `NEXT_PUBLIC_SITE_URL`. Applied on `POST /api/cms/posts`, `POST /api/comments`, and the other CMS write routes.
@@ -103,7 +102,6 @@ Outbound call sites total 3 external ones: `ai.models.generateContent` (×2 rout
 | `/api/papers`, `/api/papers/[slug]` | GET | none | none | — | `force-dynamic` |
 | `/api/research-assistant` | POST | none | 12/min | `nodejs` | `force-dynamic` |
 | `/api/revalidate` | POST | shared secret | 60/min | `nodejs` | `force-dynamic` |
-| `/api/submissions` | POST | none | **none** | `nodejs` | `force-dynamic` |
 | `/auth/callback` | GET | PKCE code | n/a | — | `force-dynamic` |
 
 Robots excludes `/api/`, `/dashboard`, `/login` from crawling (`app/robots.ts:8`).
@@ -125,8 +123,9 @@ Corrections to the table and notes above:
   present, giving counters shared across isolates that survive eviction. Keys
   are namespaced `rl:` and written with a TTL, so there is no sweeper. The
   memory store is the local-dev fallback and evicts one key at a time rather
-  than clearing every client. Limits are unchanged, plus `submissions` 5/min
-  and `generate` 10/min, which were previously unlimited.
+  than clearing every client. Limits are unchanged, plus `generate` 10/min,
+  which was previously unlimited. (`submissions` 5/min applied while the
+  manuscript intake existed; the route was removed on 2026-11-09.)
 - **Hugging Face credentials are environment-only.** The operator-supplied space
   name and token were removed from `QwenCoverGenerator`; `customSpaceName` and
   `customToken` no longer exist. Nothing is written to `localStorage` for this
@@ -140,3 +139,9 @@ Corrections to the table and notes above:
   requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as Actions
   secrets, and Workers Builds must be turned off to avoid double deploys.
 - **`/api/submissions`** now enforces a same-origin check and a rate limit.
+- **2026-11-09: the manuscript intake was removed.** `/submit`, `/api/submissions`,
+  `lib/submissions.ts` and `data/submissions.json` are gone, together with the
+  four manuscript-pipeline email scenarios (`submission-receipt`,
+  `review-status-update`, `decision-notification`, `deadline-reminder`) and their
+  `RESEND_TPL_*` variables. The platform publishes explanations by approved
+  writers; there is no open manuscript desk.

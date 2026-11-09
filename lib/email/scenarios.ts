@@ -23,8 +23,8 @@ export const SENDING_DOMAIN = 'researchwith.me';
  * It sits on the sending domain, so nothing here would reject a scenario that
  * claimed it -- which is why the reservation is stated explicitly. Auth mail
  * belongs to Supabase; these scenarios are product mail about a person's
- * submissions, reviews and account. A scenario sending from this address would
- * make the same event arrive from two different names.
+ * account and activity on the platform. A scenario sending from this address
+ * would make the same event arrive from two different names.
  */
 export const SUPABASE_AUTH_SENDER = 'team@researchwith.me';
 
@@ -113,15 +113,6 @@ function address(localPart: string): string {
   return `${localPart}@${SENDING_DOMAIN}`;
 }
 
-/**
- * `"[REF] Rest"` when a reference exists, `"Rest"` when it does not. Without
- * this, an absent reference produces "[] Rest" -- and a builder that leaves a
- * double space produces a subject that reads as a typo.
- */
-function withReference(reference: string, rest: string): string {
-  return reference ? `[${reference}] ${rest}` : rest;
-}
-
 /** Reads a possibly-absent variable as a trimmed string. */
 function str(variables: ScenarioVariables, key: string): string {
   const value = variables[key];
@@ -129,39 +120,6 @@ function str(variables: ScenarioVariables, key: string): string {
 }
 
 export const SCENARIOS = {
-  'submission-receipt': {
-    key: 'submission-receipt',
-    templateAlias: 'submission-receipt',
-    from: sender('Research With Me Submissions', 'submissions'),
-    replyTo: address('submissions'),
-    // The reference leads so it survives client-side subject truncation and
-    // stays visible in an inbox list -- finding this message again is the point.
-    subjectBuilder: (v) => withReference(str(v, 'REFERENCE'), 'We received your submission'),
-    variables: [
-      { key: 'REFERENCE', type: 'string', required: true },
-      { key: 'AUTHOR_NAME', type: 'string', required: true },
-      { key: 'TITLE', type: 'string', required: true },
-      { key: 'CATEGORY', type: 'string', required: true },
-      { key: 'DATA_URL', type: 'string', required: false },
-      { key: 'ARTIFACT', type: 'string', required: false },
-      { key: 'ABSTRACT', type: 'string', required: true },
-    ],
-    tagCategory: 'submission-receipt',
-    idempotencyPattern: 'submission-receipt/<submission-id>',
-    templateEnv: 'RESEND_TPL_SUBMISSION_RECEIPT',
-    component: SCENARIO_COMPONENTS['submission-receipt'] as ScenarioDefinition['component'],
-    sample: {
-      REFERENCE: 'RWM-2026-7QXTR3',
-      AUTHOR_NAME: 'Dr. Amara Okonkwo',
-      TITLE: 'Attention allocation in low-resource clinical triage',
-      CATEGORY: 'Clinical informatics',
-      DATA_URL: 'https://example.org/datasets/triage-attention-2026',
-      ARTIFACT: 'Field notes',
-      ABSTRACT:
-        'A field study of triage decision aids deployed across four district hospitals, measuring the effect of structured prompts on time-to-assessment and on the rate of missed deterioration signals during night shifts.',
-    },
-  },
-
   welcome: {
     key: 'welcome',
     templateAlias: 'welcome',
@@ -266,103 +224,6 @@ export const SCENARIOS = {
     },
   },
 
-  'review-status-update': {
-    key: 'review-status-update',
-    templateAlias: 'review-status-update',
-    from: sender('Research With Me Review Team', 'review'),
-    replyTo: address('review'),
-    subjectBuilder: (v) =>
-      withReference(
-        str(v, 'REFERENCE'),
-        `Review update: ${str(v, 'STATUS') || 'status changed'}`,
-      ),
-    variables: [
-      { key: 'REFERENCE', type: 'string', required: true },
-      { key: 'TITLE', type: 'string', required: true },
-      { key: 'STATUS', type: 'string', required: true },
-      { key: 'REVIEWER_NAME', type: 'string', required: false },
-      { key: 'NOTE', type: 'string', required: false },
-      { key: 'UPDATED_AT', type: 'string', required: false },
-    ],
-    tagCategory: 'review-status-update',
-    idempotencyPattern: 'review-status-update/<submission-id>-<status>',
-    templateEnv: 'RESEND_TPL_REVIEW_STATUS_UPDATE',
-    component: SCENARIO_COMPONENTS['review-status-update'] as ScenarioDefinition['component'],
-    sample: {
-      REFERENCE: 'RWM-2026-7QXTR3',
-      TITLE: 'Attention allocation in low-resource clinical triage',
-      STATUS: 'Under review',
-      REVIEWER_NAME: 'Dr. Ifeoma Balogun',
-      NOTE: 'Assigned to a reviewer with clinical informatics expertise.',
-      UPDATED_AT: '8 November 2026',
-    },
-  },
-
-  'decision-notification': {
-    key: 'decision-notification',
-    templateAlias: 'decision-notification',
-    from: sender('Research With Me Review Team', 'review'),
-    replyTo: address('review'),
-    subjectBuilder: (v) =>
-      withReference(str(v, 'REFERENCE'), 'Decision on your submission'),
-    variables: [
-      { key: 'REFERENCE', type: 'string', required: true },
-      { key: 'TITLE', type: 'string', required: true },
-      { key: 'DECISION', type: 'string', required: true },
-      { key: 'DECISION_NOTE', type: 'string', required: false },
-      { key: 'EDITOR_NAME', type: 'string', required: false },
-      { key: 'DECIDED_AT', type: 'string', required: false },
-    ],
-    tagCategory: 'decision-notification',
-    idempotencyPattern: 'decision-notification/<submission-id>',
-    templateEnv: 'RESEND_TPL_DECISION_NOTIFICATION',
-    component: SCENARIO_COMPONENTS['decision-notification'] as ScenarioDefinition['component'],
-    sample: {
-      REFERENCE: 'RWM-2026-7QXTR3',
-      TITLE: 'Attention allocation in low-resource clinical triage',
-      DECISION: 'Accepted with revisions',
-      DECISION_NOTE:
-        'The triage protocol section needs the inter-rater reliability figures before publication.',
-      EDITOR_NAME: 'Dr. Ifeoma Balogun',
-      DECIDED_AT: '8 November 2026',
-    },
-  },
-
-  'deadline-reminder': {
-    key: 'deadline-reminder',
-    templateAlias: 'deadline-reminder',
-    from: sender('Research With Me Reminders', 'reminders'),
-    replyTo: address('support'),
-    subjectBuilder: (v) => {
-      const days = v.DAYS_REMAINING;
-      const label =
-        days === undefined || days === ''
-          ? 'soon'
-          : Number(days) === 1
-            ? '1 day'
-            : `${days} days`;
-      return withReference(str(v, 'REFERENCE'), `Review deadline in ${label}`);
-    },
-    variables: [
-      { key: 'REFERENCE', type: 'string', required: true },
-      { key: 'TITLE', type: 'string', required: true },
-      { key: 'DEADLINE', type: 'string', required: true },
-      { key: 'DAYS_REMAINING', type: 'number', required: true },
-      { key: 'ACTION_URL', type: 'string', required: false },
-    ],
-    tagCategory: 'deadline-reminder',
-    idempotencyPattern: 'deadline-reminder/<submission-id>-<date>',
-    templateEnv: 'RESEND_TPL_DEADLINE_REMINDER',
-    component: SCENARIO_COMPONENTS['deadline-reminder'] as ScenarioDefinition['component'],
-    sample: {
-      REFERENCE: 'RWM-2026-7QXTR3',
-      TITLE: 'Attention allocation in low-resource clinical triage',
-      DEADLINE: '15 November 2026',
-      DAYS_REMAINING: 7,
-      ACTION_URL: 'https://researchwith.me/dashboard/applications',
-    },
-  },
-
   'billing-receipt': {
     key: 'billing-receipt',
     templateAlias: 'billing-receipt',
@@ -425,7 +286,7 @@ export const SCENARIOS = {
       TICKET_ID: 'RWM-SUP-0091',
       SUBJECT: 'Cannot link my ORCID record',
       REPLY_BODY:
-        'We have re-sent the ORCID authorisation link. It is valid for 30 minutes, and linking does not change your existing submissions.',
+        'We have re-sent the ORCID authorisation link. It is valid for 30 minutes, and linking does not change your existing applications.',
       AGENT_NAME: 'Nadia',
       TICKET_URL: 'https://researchwith.me/support/RWM-SUP-0091',
     },

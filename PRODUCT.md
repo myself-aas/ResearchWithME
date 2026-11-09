@@ -10,7 +10,7 @@ web
 Academic researchers, computational scientists, graduate scholars, independent open-science investigators, and peer reviewers seeking rigorous technical analyses, reproducible code artifacts, dataset manifests, and open research reviews across computational neuroscience, distributed systems, climate telemetry, and diamond open-access publishing models.
 
 ## Product Purpose
-ResearchWithMe is an open-access scholarly publication and research engine delivering rigorous, long-form technical syntheses, reproducible code artifacts, dataset manifests, and open peer-review threads without paywalls, commercial metric gamification, or disruptive pop-up modals.
+ResearchWithMe is an open-access research platform delivering rigorous, long-form technical syntheses, reproducible code artifacts, dataset manifests, and open peer-review threads without paywalls, commercial metric gamification, or disruptive pop-up modals.
 
 ## Positioning
 Unlike commercial academic publishers that lock preprints behind paywalls or developer blogs with superficial overviews, ResearchWithMe combines peer-reviewed rigor with live MCP data access, reproducible DOI manifests, verifiable open-science hashes, and dedicated distraction-free reading surfaces.
@@ -29,7 +29,7 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 ## Brand Commitments
 - Name: ResearchWithMe
 - Editorial voice: Scholarly, precise, restrained, transparent, evidence-based.
-- Typography: The Aptos family. Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data tables. The overall feel is a research journal and newspaper of record.
+- Typography: The Aptos family. Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data tables. The overall feel is a newspaper of record for open research.
 - Palette: Warm archival stone background, deep amber/ochre accents, emerald verification indicators, high-contrast ink text.
 
 ## Evidence on Hand

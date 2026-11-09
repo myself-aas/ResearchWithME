@@ -10,7 +10,7 @@ related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx"]
 Mode: Operate
 
 ## Purpose
-Find an open-access publication by field, DOI, author, keyword, or date.
+Find an open-access paper by field, DOI, author, keyword, or date.
 
 ## First useful result
 A scholar narrows the archive to a relevant paper and opens a dedicated reading surface.

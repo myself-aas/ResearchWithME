@@ -92,7 +92,7 @@ Build classification: `○` static, `●` SSG via `generateStaticParams`, `ƒ` s
 | `/category/[slug]` | `●` | 6 category paths |
 | `/author/[id]` | `ƒ` | |
 | `/dashboard`, `/dashboard/manage`, `/dashboard/edit/[id]`, `/dashboard/comments`, `/login` | `ƒ` | Studio + auth |
-| `/papers`, `/authors`, `/editions`, `/editorial-board`, `/assistant`, `/bookmarks`, `/cite`, `/submit`, `/verify`, `/write` | `○` | Client components fetching `/api/*` |
+| `/papers`, `/authors`, `/editions`, `/editorial-board`, `/assistant`, `/bookmarks`, `/cite`, `/verify`, `/write` | `○` | Client components fetching `/api/*` |
 | `/auth`, `/auth/academic`, `/auth/github`, `/auth/google`, `/auth/orcid`, `/auth/providers` | `○` | Sign-in surfaces |
 | `/auth/callback` | `ƒ` | PKCE code exchange |
 | `/api/*` (18) | `ƒ` | All dynamic |

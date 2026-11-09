@@ -22,12 +22,8 @@ describe('scenario registry', () => {
     expect(keys.sort()).toEqual(
       [
         'billing-receipt',
-        'decision-notification',
-        'deadline-reminder',
         'password-reset',
-        'review-status-update',
         'security-alert',
-        'submission-receipt',
         'support-reply',
         'verify-email',
         'welcome',
@@ -44,7 +40,7 @@ describe('scenario registry', () => {
 
   it('binds a component to every scenario', () => {
     // The registry and emails/ must not be able to disagree: a scenario with no
-    // component would fail at send time, in production, after the submit succeeded.
+    // component would fail at send time, in production, after the caller succeeded.
     for (const scenario of scenarios) {
       expect(
         SCENARIO_COMPONENTS[scenario.key as keyof typeof SCENARIO_COMPONENTS],

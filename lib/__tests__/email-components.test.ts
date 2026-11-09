@@ -79,34 +79,31 @@ describe('component rendering', () => {
   );
 
   it('hides a field row when its value is empty', async () => {
-    const scenario = scenarios.find((s) => s.key === 'submission-receipt')!;
+    const scenario = scenarios.find((s) => s.key === 'security-alert')!;
     const { html } = await renderScenario(scenario, {
       ...scenario.sample,
-      DATA_URL: '',
-      ARTIFACT: '   ',
+      EVENT_LOCATION: '   ',
+      ACTION_URL: '',
     });
 
-    expect(html).not.toContain('Code / data');
-    expect(html).not.toContain('Reviewed artifact');
-    expect(html).toContain('Reference');
+    expect(html).not.toContain('From');
+    expect(html).toContain('What happened');
   });
 
-  it('coerces a numeric variable arriving as a string', async () => {
-    const scenario = scenarios.find((s) => s.key === 'deadline-reminder')!;
-    const props = toComponentProps(scenario, {
-      ...scenario.sample,
-      DAYS_REMAINING: '7',
-    });
+  const numericScenario = {
+    ...scenarios[0],
+    key: 'synthetic-numeric',
+    variables: [{ key: 'DAYS_REMAINING', type: 'number' as const, required: true }],
+  };
+
+  it('coerces a numeric variable arriving as a string', () => {
+    const props = toComponentProps(numericScenario, { DAYS_REMAINING: '7' });
 
     expect(props.daysRemaining).toBe(7);
   });
 
-  it('coerces an unparseable number to zero rather than NaN', async () => {
-    const scenario = scenarios.find((s) => s.key === 'deadline-reminder')!;
-    const props = toComponentProps(scenario, {
-      ...scenario.sample,
-      DAYS_REMAINING: 'not a number',
-    });
+  it('coerces an unparseable number to zero rather than NaN', () => {
+    const props = toComponentProps(numericScenario, { DAYS_REMAINING: 'not a number' });
 
     expect(props.daysRemaining).toBe(0);
     expect(Number.isNaN(props.daysRemaining)).toBe(false);
@@ -117,8 +114,8 @@ describe('escaping untrusted input', () => {
   it.each(scenarios.map((s) => [s.key, s] as const))(
     '%s escapes markup in every interpolated field',
     async (_key, scenario) => {
-      // Every field here can come from a stranger: a submitter's title, a
-      // support agent's reply, a display name. React escapes interpolated
+      // Every field here can come from a stranger: a support agent's reply,
+      // a display name. React escapes interpolated
       // children, and this pins that behaviour -- if a field is ever switched to
       // dangerouslySetInnerHTML, the receipt becomes stored XSS in an inbox.
       const { html } = await renderScenario(
@@ -134,7 +131,7 @@ describe('escaping untrusted input', () => {
   );
 
   it('leaves the plain-text part unescaped so it reads as text', async () => {
-    const scenario = scenarios.find((s) => s.key === 'submission-receipt')!;
+    const scenario = scenarios.find((s) => s.key === 'welcome')!;
     const { text } = await renderScenario(scenario, hostileVariables(scenario.key));
 
     expect(text).toContain('<script>alert(1)</script>');
@@ -153,11 +150,11 @@ describe('variable validation', () => {
   });
 
   it('rejects a missing required variable', () => {
-    const scenario = scenarios.find((s) => s.key === 'submission-receipt')!;
-    const problems = validateVariables(scenario, { ...scenario.sample, REFERENCE: '' });
+    const scenario = scenarios.find((s) => s.key === 'welcome')!;
+    const problems = validateVariables(scenario, { ...scenario.sample, DASHBOARD_URL: '' });
 
     expect(problems.length).toBeGreaterThan(0);
-    expect(problems.join(' ')).toContain('REFERENCE');
+    expect(problems.join(' ')).toContain('DASHBOARD_URL');
   });
 
   it('rejects an undeclared variable', () => {
@@ -181,18 +178,18 @@ describe('variable validation', () => {
   });
 
   it('rejects a value over the length limit', () => {
-    const scenario = scenarios.find((s) => s.key === 'submission-receipt')!;
+    const scenario = scenarios.find((s) => s.key === 'welcome')!;
     const problems = validateVariables(scenario, {
       ...scenario.sample,
-      ABSTRACT: 'x'.repeat(2001),
+      NEXT_STEP: 'x'.repeat(2001),
     });
 
     expect(problems.join(' ')).toContain('2000');
   });
 
   it('allows an optional variable to be absent', () => {
-    const scenario = scenarios.find((s) => s.key === 'submission-receipt')!;
-    const { DATA_URL: _url, ARTIFACT: _artifact, ...rest } = scenario.sample;
+    const scenario = scenarios.find((s) => s.key === 'welcome')!;
+    const { DISPLAY_NAME: _name, NEXT_STEP: _step, ...rest } = scenario.sample;
 
     expect(validateVariables(scenario, rest)).toEqual([]);
   });

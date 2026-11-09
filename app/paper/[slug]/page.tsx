@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!paper) notFound();
   return pageMetadata({
     title: paper?.title ?? 'Research Paper',
-    description: paper?.abstract ?? 'Read the full structured publication, methods, findings, references, and citation metadata.',
+    description: paper?.abstract ?? 'Read the full structured paper: methods, findings, references, and citation metadata.',
     path: `/paper/${slug}`,
     type: 'article',
   });
@@ -49,7 +49,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href="/" className="hover:text-stone-900 hover:underline">
-                Journal
+                Platform
               </Link>
             </li>
             <li aria-hidden="true">
@@ -264,7 +264,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                 <span>Archive note</span>
               </p>
               <p className="mt-2">
-                This record is part of a prototype publication archive. The DOI and licence values are sample metadata; confirm any production citation against the issuing registry.
+                This record is part of a prototype archive. The DOI and licence values are sample metadata; confirm any production citation against the issuing registry.
               </p>
             </div>
           </aside>
