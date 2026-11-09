@@ -7,7 +7,7 @@ import { panelClass } from '@/components/cms/styles';
 import { cn } from '@/lib/utils';
 
 const STATUS_TONE: Record<AuthorApplication['status'], string> = {
-  pending: 'bg-amber-50 text-amber-900 border-amber-300',
+  pending: 'bg-indigo-50 text-brand border-indigo-300',
   approved: 'bg-emerald-50 text-emerald-900 border-emerald-300',
   rejected: 'bg-stone-100 text-stone-800 border-stone-300',
 };

@@ -22,7 +22,7 @@ const PROVIDERS: Array<{ id: LinkableProviderId; label: string; blurb: string }>
 ];
 
 const STATUS_COPY = {
-  pending: { label: 'Under review', tone: 'bg-amber-50 text-amber-900 border-amber-300', Icon: Clock },
+  pending: { label: 'Under review', tone: 'bg-indigo-50 text-brand border-indigo-300', Icon: Clock },
   approved: { label: 'Approved', tone: 'bg-emerald-50 text-emerald-900 border-emerald-300', Icon: CheckCircle2 },
   rejected: { label: 'Not approved', tone: 'bg-stone-100 text-stone-800 border-stone-300', Icon: XCircle },
 } as const;
@@ -139,7 +139,7 @@ export default function AuthorApplication({
             return (
               <li key={id} className="rounded-md border border-stone-200 p-4">
                 <p className="flex items-center gap-2 text-sm font-semibold text-stone-900">
-                  <GitBranch className="h-4 w-4 text-amber-800" aria-hidden="true" />
+                  <GitBranch className="h-4 w-4 text-brand-hover" aria-hidden="true" />
                   {label}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-stone-600">{blurb}</p>

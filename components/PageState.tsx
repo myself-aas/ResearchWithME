@@ -47,7 +47,7 @@ export default function PageState({
                 'rounded-md px-2.5 py-1 font-mono text-sm font-semibold',
                 tone === 'error' && 'bg-red-50 text-red-900',
                 tone === 'success' && 'bg-emerald-50 text-emerald-900',
-                tone === 'neutral' && 'bg-amber-50 text-amber-900',
+                tone === 'neutral' && 'bg-indigo-50 text-brand',
               )}
             >
               {code}
@@ -58,7 +58,7 @@ export default function PageState({
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
             href={primaryAction.href}
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             {primaryAction.label}
           </a>

@@ -157,8 +157,8 @@ export default function QwenCoverGenerator({
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200 pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
-              <Sparkles className="h-3.5 w-3.5 text-amber-800" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand">
+              <Sparkles className="h-3.5 w-3.5 text-brand-hover" aria-hidden="true" />
               <span>Qwen 2.1 Storage Bucket</span>
             </span>
             <span className="rounded-md bg-stone-200 px-2 py-0.5 font-mono text-xs font-semibold text-stone-700">
@@ -170,7 +170,7 @@ export default function QwenCoverGenerator({
                 <span>HF Secrets Active</span>
               </span>
             ) : serverStatus ? (
-              <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-900">
+              <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-brand">
                 <span>Space Not Configured</span>
               </span>
             ) : null}
@@ -188,39 +188,39 @@ export default function QwenCoverGenerator({
           onClick={() => setShowSettings(!showSettings)}
           className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors"
         >
-          <Key className="h-3.5 w-3.5 text-amber-800" aria-hidden="true" />
+          <Key className="h-3.5 w-3.5 text-brand-hover" aria-hidden="true" />
           <span>Space Config</span>
         </button>
       </div>
 
       {/* Hugging Face Space configuration notice */}
       {showSettings && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50/70 p-4 space-y-3">
+        <div className="rounded-lg border border-indigo-200 bg-indigo-50/70 p-4 space-y-3">
           <div className="flex items-start justify-between">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-900">
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-brand">
               Hugging Face Space Credentials
             </h4>
             <span className="text-xs text-stone-500">ZeroGPU Gradio SDK</span>
           </div>
-          <p className="text-xs text-amber-950 leading-relaxed">
+          <p className="text-xs text-brand-pressed leading-relaxed">
             Cover generation runs against the private Hugging Face Space named by the deployment.
             Credentials are supplied by the server environment only, so no token is ever typed into,
             sent from, or stored in this browser.
           </p>
           <dl className="grid gap-2 text-xs sm:grid-cols-2">
-            <div className="rounded-md border border-amber-200 bg-white px-3 py-2">
+            <div className="rounded-md border border-indigo-200 bg-white px-3 py-2">
               <dt className="font-medium text-stone-600">Space</dt>
               <dd className="font-mono text-stone-900">{serverStatus?.spaceName ?? 'Not configured'}</dd>
             </div>
-            <div className="rounded-md border border-amber-200 bg-white px-3 py-2">
+            <div className="rounded-md border border-indigo-200 bg-white px-3 py-2">
               <dt className="font-medium text-stone-600">Token present</dt>
               <dd className="text-stone-900">{serverStatus?.hasToken ? 'Yes' : 'No'}</dd>
             </div>
           </dl>
           <p className="flex items-center gap-1 text-xs text-stone-600">
             <HelpCircle className="h-3 w-3" />
-            Set <code className="rounded bg-amber-100 px-1 py-0.5">HF_SPACE_NAME</code> and{' '}
-            <code className="rounded bg-amber-100 px-1 py-0.5">HF_TOKEN</code> as Worker variables, then redeploy.
+            Set <code className="rounded bg-indigo-100 px-1 py-0.5">HF_SPACE_NAME</code> and{' '}
+            <code className="rounded bg-indigo-100 px-1 py-0.5">HF_TOKEN</code> as Worker variables, then redeploy.
           </p>
         </div>
       )}
@@ -235,7 +235,7 @@ export default function QwenCoverGenerator({
             <button
               type="button"
               onClick={suggestPrompt}
-              className="inline-flex items-center gap-1 text-xs font-medium text-amber-900 hover:text-amber-800 underline underline-offset-2"
+              className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-hover underline underline-offset-2"
             >
               <Sparkles className="h-3 w-3" />
               <span>Suggest from article context</span>
@@ -247,7 +247,7 @@ export default function QwenCoverGenerator({
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe the conceptual cover image (e.g. 'A sleek architectural representation of distributed neural weights, copper traces on obsidian stone, soft volumetric studio lighting, 8k resolution')..."
-            className="w-full rounded-md border border-stone-300 bg-white p-3 text-xs text-stone-900 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-amber-800 font-sans"
+            className="w-full rounded-md border border-stone-300 bg-white p-3 text-xs text-stone-900 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-brand-hover font-sans"
             disabled={loading}
           />
         </div>
@@ -288,7 +288,7 @@ export default function QwenCoverGenerator({
               step="1"
               value={steps}
               onChange={(e) => setSteps(Number(e.target.value))}
-              className="w-full accent-amber-900"
+              className="w-full accent-brand"
               disabled={loading}
             />
           </div>
@@ -305,7 +305,7 @@ export default function QwenCoverGenerator({
               step="5"
               value={quality}
               onChange={(e) => setQuality(Number(e.target.value))}
-              className="w-full accent-amber-900"
+              className="w-full accent-brand"
               disabled={loading}
             />
           </div>
@@ -351,7 +351,7 @@ export default function QwenCoverGenerator({
                     step="0.5"
                     value={guidanceScale}
                     onChange={(e) => setGuidanceScale(Number(e.target.value))}
-                    className="w-full accent-amber-900"
+                    className="w-full accent-brand"
                     disabled={loading}
                   />
                 </div>
@@ -362,7 +362,7 @@ export default function QwenCoverGenerator({
                     type="checkbox"
                     checked={randomizeSeed}
                     onChange={(e) => setRandomizeSeed(e.target.checked)}
-                    className="h-4 w-4 rounded border-stone-300 text-amber-900 focus:ring-amber-800"
+                    className="h-4 w-4 rounded border-stone-300 text-brand focus:ring-brand-hover"
                     disabled={loading}
                   />
                   <label htmlFor="random-seed" className="text-xs font-medium text-stone-700">
@@ -388,7 +388,7 @@ export default function QwenCoverGenerator({
           <button
             type="submit"
             disabled={loading || !prompt.trim()}
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800 disabled:opacity-50"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
           >
             {loading ? (
               <>
@@ -454,7 +454,7 @@ export default function QwenCoverGenerator({
                 type="button"
                 onClick={handleApply}
                 disabled={applied}
-                className="inline-flex min-h-8 items-center gap-1.5 rounded bg-amber-900 px-3.5 py-1 text-xs font-semibold text-white hover:bg-amber-800 disabled:bg-emerald-800 transition-colors"
+                className="inline-flex min-h-8 items-center gap-1.5 rounded bg-brand px-3.5 py-1 text-xs font-semibold text-white hover:bg-brand-hover disabled:bg-emerald-800 transition-colors"
               >
                 {applied ? (
                   <>

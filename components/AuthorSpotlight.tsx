@@ -51,7 +51,7 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
           </div>
           <Link
             href="/authors"
-            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
           >
             <span>All authors</span>
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -67,17 +67,17 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
               >
                 <span
                   aria-hidden="true"
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-stone-900 font-serif text-base font-bold text-stone-50 transition-colors group-hover:bg-amber-900"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-stone-900 font-serif text-base font-bold text-stone-50 transition-colors group-hover:bg-brand"
                 >
                   {author.avatar}
                 </span>
 
                 <span className="min-w-0">
-                  <span className="font-serif text-xl font-semibold text-stone-900 group-hover:text-amber-900">
+                  <span className="font-serif text-xl font-semibold text-stone-900 group-hover:text-brand">
                     {author.name}
                   </span>
                   {author.role && (
-                    <span className="mt-1 block text-sm font-medium text-amber-900">{author.role}</span>
+                    <span className="mt-1 block text-sm font-medium text-brand">{author.role}</span>
                   )}
                   {(author.institution || author.domain) && (
                     <span className="mt-1 block text-sm text-stone-600">

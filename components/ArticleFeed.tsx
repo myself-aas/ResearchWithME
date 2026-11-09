@@ -136,11 +136,11 @@ export default function ArticleFeed({
                     />
                     <span className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/50 to-stone-900/20" />
                     <span className="relative z-10 flex flex-col gap-1 p-5">
-                      <span className="flex items-center gap-2 text-sm font-medium text-amber-200">
+                      <span className="flex items-center gap-2 text-sm font-medium text-indigo-200">
                         {categoryIcon(category)}
                         <span>{count} {count === 1 ? 'review' : 'reviews'}</span>
                       </span>
-                      <span className="font-serif text-xl font-semibold text-white group-hover:text-amber-200">
+                      <span className="font-serif text-xl font-semibold text-white group-hover:text-indigo-200">
                         {category}
                       </span>
                       <span className="line-clamp-2 max-w-sm text-sm leading-snug text-stone-200">
@@ -194,7 +194,7 @@ export default function ArticleFeed({
           <button
             type="button"
             onClick={onClearFilters}
-            className="min-h-11 text-sm font-medium text-amber-900 underline underline-offset-4 hover:text-amber-950"
+            className="min-h-11 text-sm font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
           >
             Clear all filters
           </button>
@@ -210,7 +210,7 @@ export default function ArticleFeed({
           <button
             type="button"
             onClick={onClearFilters}
-            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             Reset filters
           </button>
@@ -241,7 +241,7 @@ export default function ArticleFeed({
                       aria-pressed={isSaved}
                       className={`absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors ${
                         isSaved
-                          ? 'bg-amber-900 text-white'
+                          ? 'bg-brand text-white'
                           : 'bg-stone-950/80 text-stone-200 hover:bg-stone-950 hover:text-white'
                       }`}
                     >
@@ -256,7 +256,7 @@ export default function ArticleFeed({
                     <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
                       <Link
                         href={`/category/${categoryToSlug(post.category)}`}
-                        className="inline-flex items-center gap-1 font-medium text-amber-900 underline-offset-4 hover:underline"
+                        className="inline-flex items-center gap-1 font-medium text-brand underline-offset-4 hover:underline"
                       >
                         {categoryIcon(post.category)}
                         <span>{post.category}</span>
@@ -268,7 +268,7 @@ export default function ArticleFeed({
                     </div>
 
                     <h3 className="break-words font-serif text-xl font-semibold leading-snug text-stone-900">
-                      <Link href={`/post/${post.slug}`} className="hover:text-amber-900">
+                      <Link href={`/post/${post.slug}`} className="hover:text-brand">
                         {post.title}
                       </Link>
                     </h3>
@@ -290,7 +290,7 @@ export default function ArticleFeed({
                   <div className="flex items-center justify-between gap-3 border-t border-stone-200 px-5 py-3">
                     <Link
                       href={`/author/${post.author.id}`}
-                      className="flex min-w-0 items-center gap-2 text-sm text-stone-800 hover:text-amber-900"
+                      className="flex min-w-0 items-center gap-2 text-sm text-stone-800 hover:text-brand"
                     >
                       <span
                         aria-hidden="true"
@@ -332,7 +332,7 @@ export default function ArticleFeed({
         <p className="text-sm text-stone-600">Every review is open access under CC BY 4.0.</p>
         <Link
           href="/papers"
-          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"
+          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
         >
           <span>Browse the paper archive</span>
           <ArrowRight className="h-4 w-4" aria-hidden="true" />

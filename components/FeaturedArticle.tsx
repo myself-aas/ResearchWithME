@@ -33,7 +33,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
               className="object-cover opacity-90"
             />
           )}
-          <span className="absolute left-4 top-4 rounded bg-amber-900 px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
+          <span className="absolute left-4 top-4 rounded bg-brand px-2.5 py-1 text-xs font-semibold uppercase tracking-wide text-white">
             Featured review
           </span>
         </div>
@@ -43,7 +43,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
               <Link
                 href={`/category/${categoryToSlug(post.category)}`}
-                className="font-medium text-amber-900 underline-offset-4 hover:underline"
+                className="font-medium text-brand underline-offset-4 hover:underline"
               >
                 {post.category}
               </Link>
@@ -56,19 +56,19 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             </p>
 
             <h2 id="featured-heading" className="mt-3 font-serif text-3xl font-bold leading-tight text-stone-900 sm:text-4xl">
-              <Link href={`/post/${post.slug}`} className="hover:text-amber-900">
+              <Link href={`/post/${post.slug}`} className="hover:text-brand">
                 {post.title}
               </Link>
             </h2>
 
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">{post.subtitle}</p>
 
-            <div className="mt-6 border-l-2 border-amber-800 pl-4">
+            <div className="mt-6 border-l-2 border-brand-hover pl-4">
               <h3 className="text-sm font-semibold text-stone-900">What the review establishes</h3>
               <ul className="mt-2 space-y-2 text-sm leading-relaxed text-stone-700">
                 {post.keyTakeaways.slice(0, 2).map((takeaway) => (
                   <li key={takeaway} className="flex gap-2">
-                    <span aria-hidden="true" className="text-amber-800">—</span>
+                    <span aria-hidden="true" className="text-brand-hover">—</span>
                     <span>{takeaway}</span>
                   </li>
                 ))}
@@ -95,7 +95,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
           <div className="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-5">
             <Link
               href={`/author/${post.author.id}`}
-              className="flex min-w-0 items-center gap-3 text-sm text-stone-800 hover:text-amber-900"
+              className="flex min-w-0 items-center gap-3 text-sm text-stone-800 hover:text-brand"
             >
               <span
                 aria-hidden="true"
@@ -116,7 +116,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
                 aria-pressed={isSaved}
                 className={`inline-flex h-11 w-11 items-center justify-center rounded-md border transition-colors ${
                   isSaved
-                    ? 'border-amber-300 bg-amber-50 text-amber-900'
+                    ? 'border-indigo-300 bg-indigo-50 text-brand'
                     : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
                 }`}
               >
@@ -128,7 +128,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
 
               <Link
                 href={`/post/${post.slug}`}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
               >
                 <span>Read the review</span>
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />

@@ -2,37 +2,188 @@
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
+/* πeme Frontend Design System v3.1 — token layer.
+   Source of truth: docs/pieme-design-system-v3.1.md (normative Part II).
+   Three layers per §3: primitives (raw scales), semantic roles, component
+   aliases. Components reference semantic tokens, never primitives. */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
-  /* Aptos family first (installed copy, see app/layout.tsx), then the
-     self-hosted metric-adjusted fallbacks, then platform faces. */
-  --font-serif: "Aptos Serif", var(--font-newsreader), Newsreader, Georgia, Cambria, "Times New Roman", serif;
-  --font-sans: Aptos, var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "Aptos Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  /* Typography — πeme v3.1 §2: editorial (Newsreader) for reading,
+     interface (Inter) for chrome, metadata (JetBrains Mono) for DOI/ORCID/
+     code. Newsreader and Inter are self-hosted via next/font/local
+     (--font-newsreader / --font-inter); JetBrains Mono is requested by name
+     with a system mono fallback. */
+  --font-serif: var(--font-newsreader), Newsreader, Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
-  /* Print-inspired corners: crisp, near-square edges. Pills stay round. */
-  --radius-xs: 1px;
-  --radius-sm: 2px;
-  --radius: 2px;
-  --radius-md: 3px;
-  --radius-lg: 4px;
-  --radius-xl: 6px;
-  --radius-2xl: 8px;
+  /* Primitives — the πeme neutral scale replaces Tailwind's stone scale so
+     every existing stone-* utility renders the πeme neutral ramp. The other
+     πeme primitive hues (indigo/emerald/cyan/amber/red/violet) match the
+     Tailwind defaults at the defined steps. */
+  --color-stone-50: #f8f7f3;
+  --color-stone-100: #f0eee8;
+  --color-stone-200: #dedcd5;
+  --color-stone-300: #c6c4bd;
+  --color-stone-400: #9d9c97;
+  --color-stone-500: #737571;
+  --color-stone-600: #555955;
+  --color-stone-700: #3b403d;
+  --color-stone-800: #252b29;
+  --color-stone-900: #161c1a;
+  --color-stone-950: #0b100f;
 
-  --color-paper: var(--color-stone-50);
-  --color-surface: var(--color-white);
-  --color-surface-subtle: var(--color-stone-100);
-  --color-ink: var(--color-stone-900);
-  --color-ink-muted: var(--color-stone-600);
-  --color-line: var(--color-stone-200);
-  --color-brand: var(--color-amber-900);
-  --color-brand-hover: var(--color-amber-800);
-  --color-verified: var(--color-emerald-700);
-  --color-focus: var(--color-amber-800);
+  /* Semantic — light theme (πeme v3.1 front-matter, color.semantic.light). */
+  --color-canvas: #f8f7f3;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #f0eee8;
+  --color-surface-raised: #ffffff;
+  --color-surface-inverse: #161c1a;
+  --color-text-primary: #161c1a;
+  --color-text-secondary: #555955;
+  --color-text-tertiary: #737571;
+  --color-text-inverse: #ffffff;
+  --color-border-subtle: #dedcd5;
+  --color-border-strong: #9d9c97;
+  --color-focus: #4f46e5;
+  --color-selection: #e0e7ff;
+
+  /* Semantic — action roles. */
+  --color-action-primary: #4f46e5;
+  --color-action-primary-hover: #4338ca;
+  --color-action-primary-pressed: #312e81;
+  --color-on-primary: #ffffff;
+  --color-destructive: #dc2626;
+  --color-link: #4338ca;
+  --color-visited: #6d28d9;
+
+  /* Semantic — domain palettes (knowledge / trust / provenance / workflow /
+     collaboration / citation) and provenance-graph nodes and edges. */
+  --color-knowledge-source: #4f46e5;
+  --color-knowledge-evidence: #059669;
+  --color-knowledge-insight: #0891b2;
+  --color-knowledge-discussion: #d97706;
+  --color-knowledge-contradiction: #dc2626;
+  --color-knowledge-publication: #7c3aed;
+  --color-knowledge-archive: #555955;
+  --color-trust-verified: #059669;
+  --color-trust-replicated: #047857;
+  --color-trust-peer-reviewed: #4f46e5;
+  --color-trust-emerging: #0891b2;
+  --color-trust-uncertain: #d97706;
+  --color-trust-contested: #dc2626;
+  --color-trust-unknown: #737571;
+  --color-provenance-direct-source: #059669;
+  --color-provenance-cited-source: #4f46e5;
+  --color-provenance-derived: #0891b2;
+  --color-provenance-inferred: #d97706;
+  --color-provenance-ai-assisted: #7c3aed;
+  --color-provenance-unresolved: #737571;
+  --color-workflow-discovered: #0891b2;
+  --color-workflow-extracted: #0d9488;
+  --color-workflow-validated: #059669;
+  --color-workflow-synthesized: #4f46e5;
+  --color-workflow-reviewed: #7c3aed;
+  --color-workflow-published: #6d28d9;
+  --color-workflow-archived: #555955;
+  --color-collaboration-comment: #0891b2;
+  --color-collaboration-suggestion: #0d9488;
+  --color-collaboration-review: #7c3aed;
+  --color-collaboration-consensus: #059669;
+  --color-collaboration-disagreement: #dc2626;
+  --color-citation-article: #4f46e5;
+  --color-citation-dataset: #0891b2;
+  --color-citation-book: #047857;
+  --color-citation-preprint: #d97706;
+  --color-citation-software: #7c3aed;
+  --color-citation-protocol: #0d9488;
+  --color-citation-webpage: #555955;
+  --color-graph-node-source: #4f46e5;
+  --color-graph-node-evidence: #059669;
+  --color-graph-node-claim: #0891b2;
+  --color-graph-node-discussion: #d97706;
+  --color-graph-node-publication: #7c3aed;
+  --color-graph-node-archived: #737571;
+  --color-graph-edge-cites: #6366f1;
+  --color-graph-edge-supports: #10b981;
+  --color-graph-edge-contradicts: #ef4444;
+  --color-graph-edge-derives: #06b6d4;
+  --color-graph-edge-relates: #9d9c97;
+
+  /* Component aliases over semantic tokens (kept for existing markup). */
+  --color-paper: var(--color-canvas);
+  --color-ink: var(--color-text-primary);
+  --color-ink-muted: var(--color-text-secondary);
+  --color-line: var(--color-border-subtle);
+  --color-brand: var(--color-action-primary);
+  --color-brand-hover: var(--color-action-primary-hover);
+  --color-brand-pressed: var(--color-action-primary-pressed);
+  --color-verified: var(--color-trust-verified);
+
+  /* Radius — πeme v3.1 radius scale. */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Elevation — πeme v3.1 shadow scale (neutral-950 based). */
+  --shadow-raised: 0 1px 2px rgba(11, 16, 15, 0.08), 0 6px 18px rgba(11, 16, 15, 0.06);
+  --shadow-floating: 0 4px 12px rgba(11, 16, 15, 0.1), 0 20px 48px rgba(11, 16, 15, 0.1);
+  --shadow-dialog: 0 12px 32px rgba(11, 16, 15, 0.16), 0 36px 80px rgba(11, 16, 15, 0.14);
+
+  /* Breakpoints — πeme v3.1 (sm tightened to 36rem; md–2xl match defaults). */
+  --breakpoint-sm: 36rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  /* Motion — πeme v3.1 easing scale. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --ease-emphasize: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @layer base {
   :root {
     color-scheme: light;
+
+    /* Motion durations — πeme v3.1 motion.duration scale. */
+    --pieme-duration-instant: 0ms;
+    --pieme-duration-fast: 120ms;
+    --pieme-duration-standard: 200ms;
+    --pieme-duration-deliberate: 320ms;
+    --pieme-duration-connect: 480ms;
+    --pieme-duration-synthesize: 700ms;
+
+    /* Layout measures — πeme v3.1 layout.max-width. */
+    --pieme-max-reading: 48rem;
+    --pieme-max-workspace: 90rem;
+    --pieme-max-graph: 108rem;
+  }
+
+  /* Dark theme — πeme v3.1 color.semantic.dark. Applied with the .dark class. */
+  .dark {
+    color-scheme: dark;
+    --color-canvas: #0b100f;
+    --color-surface: #161c1a;
+    --color-surface-subtle: #252b29;
+    --color-surface-raised: #2f3633;
+    --color-surface-inverse: #f8f7f3;
+    --color-text-primary: #f8f7f3;
+    --color-text-secondary: #c6c4bd;
+    --color-text-tertiary: #9d9c97;
+    --color-text-inverse: #161c1a;
+    --color-border-subtle: #3b403d;
+    --color-border-strong: #737571;
+    --color-focus: #a5b4fc;
+    --color-selection: #312e81;
   }
 
   html {
@@ -44,11 +195,11 @@
   body {
     min-width: 320px;
     min-height: 100vh;
-    background-color: var(--color-stone-50);
-    color: var(--color-stone-900);
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
     font-family: var(--font-serif);
     font-size: 1rem;
-    line-height: 1.65;
+    line-height: 1.625;
     font-kerning: normal;
     font-optical-sizing: auto;
     text-rendering: optimizeLegibility;
@@ -56,19 +207,53 @@
     font-synthesis-weight: none;
   }
 
+  /* Type scale — πeme v3.1 typography.style: editorial display/title for
+     h1–h2, interface headings for h3–h6. */
   h1,
-  h2,
+  h2 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
   h3,
   h4,
   h5,
   h6 {
-    font-family: var(--font-serif);
-    font-weight: 700;
-    letter-spacing: -0.012em;
+    font-family: var(--font-sans);
+    font-weight: 650;
     text-wrap: balance;
   }
 
-  /* Interface chrome is set in Aptos sans; reading copy stays in the serif. */
+  h3 {
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
+
+  h5,
+  h6 {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  /* Interface chrome is set in the interface face; reading copy stays editorial. */
   button,
   input,
   select,
@@ -90,15 +275,16 @@
     text-wrap: pretty;
   }
 
+  /* body-reading max-line: 72ch */
   p {
-    max-width: min(100%, 65ch);
+    max-width: min(100%, 72ch);
   }
 
   p[class*="text-xs"],
   p[class*="text-sm"],
-  p[class*="text-\[1"],
+  p[class*="text-\\[1"],
   li[class*="text-xs"] {
-    max-width: min(100%, 58ch);
+    max-width: min(100%, 65ch);
   }
 
   p[class*="text-center"],
@@ -149,24 +335,25 @@
   }
 
   ::selection {
-    background-color: var(--color-amber-900);
-    color: var(--color-white);
+    background-color: var(--color-selection);
+    color: var(--color-text-primary);
   }
 
   ::placeholder {
     opacity: 1;
   }
 
+  /* Focus — πeme v3.1 focus token: 2px ring, 2px offset. */
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 3px solid var(--color-focus);
-    outline-offset: 3px;
-    border-radius: 4px;
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
   }
 
   input,
   textarea,
   select {
-    caret-color: var(--color-amber-900);
+    caret-color: var(--color-brand);
   }
 
   * {
@@ -192,7 +379,10 @@
 
 /* Reading furniture: running text, drop caps, and small-cap bylines. */
 @layer components {
+  /* body-reading: editorial, 1.125rem / 1.7 */
   .reading-prose {
+    font-size: 1.125rem;
+    line-height: 1.7;
     hyphens: auto;
     font-variant-numeric: oldstyle-nums proportional-nums;
     font-variant-ligatures: common-ligatures;
@@ -209,7 +399,7 @@
     font-size: 3.4em;
     font-weight: 700;
     line-height: 0.82;
-    color: var(--color-amber-900);
+    color: var(--color-brand);
   }
 
   .small-caps {
@@ -267,16 +457,18 @@ html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :wh
   color: var(--color-stone-300) !important;
 }
 
+/* Dark surfaces use the dark focus token (indigo-300). */
 html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(a, button, input, select, textarea, summary):focus-visible {
-  outline-color: var(--color-amber-400);
+  outline-color: var(--color-indigo-300);
 }
 
 html .shadow-xs,
 html .shadow-2xs {
-  --tw-shadow: 0 1px 2px 0 rgb(28 25 23 / 0.05);
+  --tw-shadow: 0 1px 2px 0 rgb(11 16 15 / 0.05);
 }
 
-/* One restrained entrance for each route; all state feedback stays visible. */
+/* One restrained route reveal — πeme v3.1 motion pattern "reveal":
+   200ms, standard easing. */
 @keyframes rwm-page-settle {
   from {
     opacity: 0.96;
@@ -290,26 +482,19 @@ html .shadow-2xs {
 
 @media (prefers-reduced-motion: no-preference) {
   main {
-    animation: rwm-page-settle 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: rwm-page-settle var(--pieme-duration-standard) var(--ease-standard) both;
   }
 }
 
+/* πeme v3.1 §9 reduced-motion contract. */
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  main,
-  .animate-in,
-  [class*="animate-"] {
-    animation: none !important;
-  }
-
   *,
   *::before,
   *::after {
-    transition-duration: 120ms !important;
-    transition-property: color, background-color, border-color, opacity, box-shadow !important;
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -324,7 +509,7 @@ html .shadow-2xs {
   html,
   body {
     background: #ffffff !important;
-    color: #1c1917 !important;
+    color: #161c1a !important;
     font-size: 11.5pt;
   }
 
@@ -353,7 +538,7 @@ html .shadow-2xs {
   }
 
   a {
-    color: #1c1917 !important;
+    color: #161c1a !important;
     text-decoration: underline;
   }
 

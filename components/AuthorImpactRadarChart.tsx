@@ -94,8 +94,8 @@ export default function AuthorImpactRadarChart({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200 pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
-              <Sparkles className="h-3.5 w-3.5 text-amber-800" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand">
+              <Sparkles className="h-3.5 w-3.5 text-brand-hover" aria-hidden="true" />
               <span>Scholarly Assessment</span>
             </span>
             <span className="text-xs text-stone-600 font-mono">ID: {author.id}</span>
@@ -111,10 +111,10 @@ export default function AuthorImpactRadarChart({
           </p>
         </div>
 
-        <div className="flex items-center gap-3 rounded-lg border border-amber-200/80 bg-amber-50/60 p-3.5 sm:px-5">
-          <Award className="h-8 w-8 text-amber-900 shrink-0" aria-hidden="true" />
+        <div className="flex items-center gap-3 rounded-lg border border-indigo-200/80 bg-indigo-50/60 p-3.5 sm:px-5">
+          <Award className="h-8 w-8 text-brand shrink-0" aria-hidden="true" />
           <div>
-            <div className="text-xs font-semibold text-amber-900 uppercase tracking-wider">
+            <div className="text-xs font-semibold text-brand uppercase tracking-wider">
               Composite Impact Rating
             </div>
             <div className="font-serif text-2xl font-bold text-stone-900">
@@ -131,15 +131,15 @@ export default function AuthorImpactRadarChart({
             <div className="w-full h-[320px] p-4">
               <ResponsiveContainer width="100%" height="100%">
                 <RadarChart cx="50%" cy="50%" outerRadius="75%" data={chartData}>
-                  <PolarGrid stroke="#e7e5e4" strokeDasharray="3 3" />
+                  <PolarGrid stroke="#DEDCD5" strokeDasharray="3 3" />
                   <PolarAngleAxis
                     dataKey="subject"
-                    tick={{ fill: '#1c1917', fontSize: 12, fontWeight: 600 }}
+                    tick={{ fill: '#161C1A', fontSize: 12, fontWeight: 600 }}
                   />
                   <PolarRadiusAxis
                     angle={30}
                     domain={[0, 100]}
-                    tick={{ fill: '#57534e', fontSize: 10 }}
+                    tick={{ fill: '#555955', fontSize: 10 }}
                   />
                   <Tooltip
                     content={({ active, payload }) => {
@@ -148,7 +148,7 @@ export default function AuthorImpactRadarChart({
                         return (
                           <div className="rounded-md border border-stone-200 bg-white p-2.5 shadow-md text-xs font-sans">
                             <p className="font-semibold text-stone-900">{data.subject}</p>
-                            <p className="text-amber-900 font-serif font-bold text-sm mt-0.5">
+                            <p className="text-brand font-serif font-bold text-sm mt-0.5">
                               {data.score} / 100
                             </p>
                           </div>
@@ -160,8 +160,8 @@ export default function AuthorImpactRadarChart({
                   <Radar
                     name={author.name}
                     dataKey="score"
-                    stroke="#78350f"
-                    fill="#78350f"
+                    stroke="#4F46E5"
+                    fill="#4F46E5"
                     fillOpacity={0.35}
                   />
                 </RadarChart>
@@ -178,7 +178,7 @@ export default function AuthorImpactRadarChart({
         <div className="lg:col-span-5 space-y-3.5">
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="h-2 w-2 rounded-full bg-amber-800" />
+              <div className="h-2 w-2 rounded-full bg-brand-hover" />
               <div>
                 <span className="text-xs font-semibold text-stone-900 block">Article Quality</span>
                 <span className="text-xs text-stone-600">Depth & peer-review evaluations</span>
@@ -211,7 +211,7 @@ export default function AuthorImpactRadarChart({
 
           <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="h-2 w-2 rounded-full bg-amber-900" />
+              <div className="h-2 w-2 rounded-full bg-brand" />
               <div>
                 <span className="text-xs font-semibold text-stone-900 block">Citation Impact</span>
                 <span className="text-xs text-stone-600">Scholarly citations & public interest</span>

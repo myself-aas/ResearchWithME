@@ -167,7 +167,7 @@ export default function CommentsModerationPage() {
                     On{' '}
                     <Link
                       href={`/post/${comment.postId}`}
-                      className="font-medium text-amber-900 underline underline-offset-4"
+                      className="font-medium text-brand underline underline-offset-4"
                     >
                       {comment.postTitle}
                     </Link>

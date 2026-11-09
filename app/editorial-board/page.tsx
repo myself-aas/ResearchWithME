@@ -50,7 +50,7 @@ export default function EditorialBoardPage() {
                 </span>
                 <div className="min-w-0">
                   <h3 className="font-serif text-xl font-semibold text-stone-900">{member.name}</h3>
-                  <p className="mt-1 text-sm font-medium text-amber-900">{member.role}</p>
+                  <p className="mt-1 text-sm font-medium text-brand">{member.role}</p>
                   <p className="mt-1 text-sm text-stone-600">{member.institution}</p>
                   <p className="mt-3 max-w-2xl text-base leading-relaxed text-stone-700">
                     <span className="font-medium text-stone-900">Focus: </span>
@@ -80,7 +80,7 @@ export default function EditorialBoardPage() {
           <ol className="mt-6 space-y-8">
             {principles.map((principle, index) => (
               <li key={principle.title} className="grid gap-3 sm:grid-cols-[3rem_minmax(0,1fr)] sm:gap-6">
-                <span aria-hidden="true" className="font-serif text-3xl font-semibold text-amber-800">
+                <span aria-hidden="true" className="font-serif text-3xl font-semibold text-brand-hover">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div>
@@ -105,7 +105,7 @@ export default function EditorialBoardPage() {
             <div className="flex shrink-0 flex-wrap gap-3">
               <Link
                 href="/dashboard/access"
-                className="inline-flex min-h-11 items-center rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                className="inline-flex min-h-11 items-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
               >
                 Apply to write
               </Link>

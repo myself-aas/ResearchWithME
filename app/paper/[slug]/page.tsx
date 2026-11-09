@@ -73,7 +73,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
           <article aria-labelledby="paper-title" className="min-w-0">
             <header className="border-b border-stone-200 pb-8">
               <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                <span className="font-medium text-amber-900">{paper.topic}</span>
+                <span className="font-medium text-brand">{paper.topic}</span>
                 <span aria-hidden="true">·</span>
                 <span>{paper.journal}</span>
                 <span aria-hidden="true">·</span>
@@ -159,7 +159,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                       <ul className="mt-4 space-y-3">
                         {value.map((item) => (
                           <li key={item} className="flex gap-3 text-lg leading-relaxed text-stone-800">
-                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-800" />
+                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
                             <span>{item}</span>
                           </li>
                         ))}
@@ -192,7 +192,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
               <div className="flex flex-wrap gap-3">
                 <Link
                   href={`/cite?article=${encodeURIComponent(paper.slug)}`}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
                 >
                   <Quote className="h-4 w-4" aria-hidden="true" />
                   <span>Build a citation</span>
@@ -246,7 +246,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                         href={paper.dataUrl}
                         target="_blank"
                         rel="noreferrer noopener"
-                        className="text-amber-900 underline underline-offset-4 hover:text-amber-950"
+                        className="text-brand underline underline-offset-4 hover:text-brand-pressed"
                       >
                         Repository record
                       </a>

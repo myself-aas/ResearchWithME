@@ -102,10 +102,10 @@ export default function AuthorAvatar({
             type="button"
             onClick={() => generateAvatar(true)}
             disabled={loading}
-            className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 transition-colors hover:border-amber-700 hover:text-amber-900 disabled:opacity-50"
+            className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 transition-colors hover:border-amber-700 hover:text-brand disabled:opacity-50"
             title="Generate custom AI profile avatar based on author domain"
           >
-            <Sparkles className="h-3 w-3 text-amber-800" />
+            <Sparkles className="h-3 w-3 text-brand-hover" />
             <span>{loading ? 'Synthesizing...' : 'Regenerate AI Avatar'}</span>
           </button>
           {sourceInfo && !notice && (

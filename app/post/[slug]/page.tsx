@@ -102,7 +102,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <article aria-labelledby="article-title" className="min-w-0">
             <header className="border-b border-stone-200 pb-8">
               <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                <span className="font-medium text-amber-900">{article.category}</span>
+                <span className="font-medium text-brand">{article.category}</span>
                 <span aria-hidden="true">·</span>
                 <span>{article.format}</span>
                 <span aria-hidden="true">·</span>
@@ -121,7 +121,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 {authorProfile ? (
                   <Link
                     href={`/author/${article.author.id}`}
-                    className="flex min-w-0 items-center gap-3 text-sm hover:text-amber-900"
+                    className="flex min-w-0 items-center gap-3 text-sm hover:text-brand"
                   >
                     <span
                       aria-hidden="true"
@@ -187,7 +187,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             {/* HyperFrames explainer video — rendered per article slug */}
             <section aria-labelledby="explainer-video-heading" className="mt-8">
               <div className="flex items-center gap-2 mb-3">
-                <span className="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">
+                <span className="inline-flex items-center rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand">
                   Visual explainer
                 </span>
               </div>
@@ -204,7 +204,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <ul className="mt-3 space-y-2">
                 {article.keyTakeaways.map((takeaway) => (
                   <li key={takeaway} className="flex gap-3 text-base leading-relaxed text-stone-800">
-                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-800" />
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
                     <span>{takeaway}</span>
                   </li>
                 ))}
@@ -234,7 +234,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   {article.reviewedArtifact.type === 'github' ? (
                     <GitBranch className="h-4 w-4 text-stone-700" aria-hidden="true" />
                   ) : (
-                    <FileText className="h-4 w-4 text-amber-800" aria-hidden="true" />
+                    <FileText className="h-4 w-4 text-brand-hover" aria-hidden="true" />
                   )}
                   <span className="break-all font-mono text-stone-900">{article.reviewedArtifact.identifier}</span>
                   <span aria-hidden="true">·</span>
@@ -245,7 +245,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   href={article.reviewedArtifact.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"
+                  className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
                 >
                   Open the reviewed artifact
                 </a>
@@ -282,12 +282,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     <li key={item.id}>
                       <Link
                         href={`/post/${item.slug}`}
-                        className="group flex flex-col gap-1 py-4 hover:text-amber-900"
+                        className="group flex flex-col gap-1 py-4 hover:text-brand"
                       >
                         <span className="text-sm text-stone-600">
                           {item.category} · {item.readTime}
                         </span>
-                        <span className="font-serif text-xl font-semibold text-stone-900 group-hover:text-amber-900">
+                        <span className="font-serif text-xl font-semibold text-stone-900 group-hover:text-brand">
                           {item.title}
                         </span>
                         <span className="max-w-prose text-sm leading-relaxed text-stone-700">{item.summary}</span>
@@ -307,7 +307,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </p>
               <Link
                 href={`/cite?article=${encodeURIComponent(article.slug)}`}
-                className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
               >
                 <Quote className="h-4 w-4" aria-hidden="true" />
                 <span>Open citation builder</span>
@@ -338,7 +338,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             <div className="rounded-lg border border-stone-200 bg-stone-100 p-5 text-sm leading-relaxed text-stone-700">
               <p className="flex items-center gap-2 font-semibold text-stone-900">
-                <BookOpen className="h-4 w-4 text-amber-800" aria-hidden="true" />
+                <BookOpen className="h-4 w-4 text-brand-hover" aria-hidden="true" />
                 <span>Reading note</span>
               </p>
               <p className="mt-2">

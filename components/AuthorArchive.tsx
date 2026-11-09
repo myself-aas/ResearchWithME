@@ -99,7 +99,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
           </p>
           <Link
             href="/"
-            className="mt-5 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+            className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             Browse the latest reviews
           </Link>
@@ -180,7 +180,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
           </div>
 
           {saveMessage && (
-            <p role="status" className="mt-4 border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+            <p role="status" className="mt-4 border-l-2 border-brand-hover bg-indigo-50 px-4 py-3 text-sm text-brand-pressed">
               {saveMessage}
             </p>
           )}
@@ -200,7 +200,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                   setSelectedCategory('All');
                   setSelectedFormat('All');
                 }}
-                className="mt-5 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
               >
                 Clear filters
               </button>
@@ -213,7 +213,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                   <li key={post.id} className="py-6">
                     <article>
                       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                        <span className="font-medium text-amber-900">{post.category}</span>
+                        <span className="font-medium text-brand">{post.category}</span>
                         <span aria-hidden="true">·</span>
                         <span>{post.format}</span>
                         <span aria-hidden="true">·</span>
@@ -222,7 +222,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                         <span>{post.readTime}</span>
                       </p>
                       <h3 className="mt-2 font-serif text-2xl font-semibold leading-snug text-stone-900">
-                        <Link href={`/post/${post.slug}`} className="hover:text-amber-900">
+                        <Link href={`/post/${post.slug}`} className="hover:text-brand">
                           {post.title}
                         </Link>
                       </h3>
@@ -237,7 +237,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                       <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
                         <Link
                           href={`/post/${post.slug}`}
-                          className="inline-flex min-h-10 items-center font-semibold text-amber-900 underline-offset-4 hover:underline"
+                          className="inline-flex min-h-10 items-center font-semibold text-brand underline-offset-4 hover:underline"
                         >
                           Read the review
                         </Link>
@@ -258,7 +258,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                           aria-pressed={isSaved}
                           className="inline-flex min-h-10 items-center gap-1.5 text-stone-700 underline-offset-4 hover:text-stone-900 hover:underline"
                         >
-                          <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-amber-900 text-amber-900' : ''}`} aria-hidden="true" />
+                          <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-brand text-brand' : ''}`} aria-hidden="true" />
                           <span>{isSaved ? 'Saved' : 'Save'}</span>
                         </button>
                       </div>

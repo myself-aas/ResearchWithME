@@ -248,13 +248,13 @@ export default function ManageArticlesPage() {
                   <div className="flex flex-wrap items-center gap-2">
                     <Link
                       href={`/dashboard/edit/${post.id}`}
-                      className="break-words font-serif text-lg font-semibold text-stone-900 underline-offset-4 hover:text-amber-900 hover:underline"
+                      className="break-words font-serif text-lg font-semibold text-stone-900 underline-offset-4 hover:text-brand hover:underline"
                     >
                       {post.title}
                     </Link>
                     <StatusBadge status={post.status} />
                     {post.featured && (
-                      <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-xs font-semibold text-amber-900">
+                      <span className="rounded border border-indigo-200 bg-indigo-50 px-1.5 py-0.5 text-xs font-semibold text-brand">
                         Featured
                       </span>
                     )}

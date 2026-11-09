@@ -21,7 +21,7 @@ export default function EditionsArchivePage() {
           </p>
         </header>
 
-        <p className="mt-6 max-w-3xl border-l-2 border-amber-800 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-950">
+        <p className="mt-6 max-w-3xl border-l-2 border-brand-hover bg-indigo-50 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
           Print-ready compilation is a browser feature in this prototype. A hosted archival PDF and its DOI would be issued by the production publishing pipeline.
         </p>
 
@@ -39,7 +39,7 @@ export default function EditionsArchivePage() {
                 >
                   <div className="border-b border-stone-200 px-6 py-4">
                     <p className="flex flex-wrap items-center justify-between gap-2 text-sm text-stone-600">
-                      <span className="font-medium text-amber-900">{edition.period}</span>
+                      <span className="font-medium text-brand">{edition.period}</span>
                       <span>
                         Volume {edition.volume}, Issue {edition.issue}
                       </span>
@@ -50,12 +50,12 @@ export default function EditionsArchivePage() {
                     <h2 id={`edition-${edition.id}-title`} className="font-serif text-2xl font-semibold leading-snug text-stone-900">
                       {edition.title}
                     </h2>
-                    <p className="mt-2 text-sm font-medium text-amber-900">{edition.theme}</p>
+                    <p className="mt-2 text-sm font-medium text-brand">{edition.theme}</p>
                     <p className="mt-3 max-w-prose text-base leading-relaxed text-stone-700">{edition.description}</p>
 
                     {editionIndex === 0 && (
                       <div className="mt-5">
-                        <span className="inline-flex items-center rounded-md bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900 mb-3">
+                        <span className="inline-flex items-center rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand mb-3">
                           Edition trailer
                         </span>
                         <VideoEmbed
@@ -91,10 +91,10 @@ export default function EditionsArchivePage() {
                           <li key={paper.id}>
                             <Link
                               href={`/paper/${paper.slug}`}
-                              className="group flex items-start justify-between gap-3 py-3 text-sm text-stone-800 transition-colors hover:text-amber-900"
+                              className="group flex items-start justify-between gap-3 py-3 text-sm text-stone-800 transition-colors hover:text-brand"
                             >
                               <span className="font-medium">{paper.title}</span>
-                              <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-stone-500 group-hover:text-amber-900" aria-hidden="true" />
+                              <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-stone-500 group-hover:text-brand" aria-hidden="true" />
                             </Link>
                           </li>
                         ))}
@@ -120,7 +120,7 @@ export default function EditionsArchivePage() {
           </p>
           <Link
             href="/papers"
-            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-amber-900 underline underline-offset-4 hover:text-amber-950"
+            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
           >
             <FileText className="h-4 w-4" aria-hidden="true" />
             <span>Browse papers</span>

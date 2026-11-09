@@ -682,7 +682,7 @@ export default function PostEditor({
             <button
               type="button"
               onClick={() => setShowAiCover(!showAiCover)}
-              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
             >
               <Sparkles className="h-4 w-4" aria-hidden="true" />
               <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate with Qwen 2.1 (AVIF)'}</span>
@@ -757,7 +757,7 @@ export default function PostEditor({
                 className={cn(
                   'h-16 w-24 overflow-hidden rounded-md border-2 transition-colors',
                   form.coverImage === preset
-                    ? 'border-amber-900'
+                    ? 'border-brand'
                     : 'border-transparent hover:border-stone-400',
                 )}
               >
@@ -845,7 +845,7 @@ export default function PostEditor({
               type="checkbox"
               checked={form.featured}
               onChange={(event) => update('featured', event.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-stone-400 text-amber-900"
+              className="mt-1 h-4 w-4 rounded border-stone-400 text-brand"
             />
             <span className="text-sm leading-relaxed text-stone-800">
               <span className="block font-medium">Feature on the platform home page</span>
@@ -893,14 +893,14 @@ export default function PostEditor({
 
       {!postId && (
         <p className="mt-4 flex items-start gap-2 text-sm leading-relaxed text-stone-600">
-          <ImagePlus className="mt-0.5 h-4 w-4 shrink-0 text-amber-800" aria-hidden="true" />
+          <ImagePlus className="mt-0.5 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
           <span>Nothing is public until you publish. Drafts stay in the studio.</span>
         </p>
       )}
 
       {postId && status === 'published' && (
         <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-stone-600">
-          <Link href={`/dashboard/comments`} className="font-medium text-amber-900 underline underline-offset-4">
+          <Link href={`/dashboard/comments`} className="font-medium text-brand underline underline-offset-4">
             Moderate the discussion
           </Link>
           <span aria-hidden="true">·</span>

@@ -27,7 +27,7 @@ export default function ReadingProgress() {
 
   return (
     <div
-      className="fixed inset-x-0 top-0 z-50 h-1 bg-amber-800"
+      className="fixed inset-x-0 top-0 z-50 h-1 bg-brand-hover"
       style={{ width: `${progress}%` }}
       role="progressbar"
       aria-label="Reading progress"

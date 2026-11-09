@@ -127,7 +127,7 @@ export default function BookmarksPage() {
             </p>
             <Link
               href="/"
-              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
             >
               <span>Browse the latest reviews</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -214,7 +214,7 @@ export default function BookmarksPage() {
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('All')}
-                  className="mt-4 inline-flex min-h-11 items-center rounded-md bg-amber-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                  className="mt-4 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
                 >
                   Show all saved
                 </button>
@@ -226,14 +226,14 @@ export default function BookmarksPage() {
                     <article className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                       <div className="min-w-0">
                         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                          <span className="font-medium text-amber-900">{article.category}</span>
+                          <span className="font-medium text-brand">{article.category}</span>
                           <span aria-hidden="true">·</span>
                           <span>{article.format}</span>
                           <span aria-hidden="true">·</span>
                           <span>{article.readTime}</span>
                         </p>
                         <h2 className="mt-2 font-serif text-2xl font-semibold leading-snug text-stone-900">
-                          <Link href={`/post/${article.slug}`} className="hover:text-amber-900">
+                          <Link href={`/post/${article.slug}`} className="hover:text-brand">
                             {article.title}
                           </Link>
                         </h2>
@@ -244,7 +244,7 @@ export default function BookmarksPage() {
                       <div className="flex items-center gap-2 sm:flex-col sm:items-end">
                         <Link
                           href={`/post/${article.slug}`}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-amber-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-800"
+                          className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
                         >
                           <span>Read</span>
                           <ArrowRight className="h-4 w-4" aria-hidden="true" />
