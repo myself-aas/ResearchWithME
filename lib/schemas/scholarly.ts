@@ -51,6 +51,13 @@ export type LifecycleState =
 
 export type DataClassification = 'public' | 'workspace' | 'confidential' | 'restricted' | 'embargoed';
 
+/** Capability-based authorization decision (spec §24) — always server-issued. */
+export interface PermissionDecision {
+  capability: string;
+  granted: boolean;
+  reason?: string;
+}
+
 export type Result<T> = { ok: true; value: T } | { ok: false; message: string; fieldErrors?: Record<string, string> };
 
 const ok = <T>(value: T): Result<T> => ({ ok: true, value });

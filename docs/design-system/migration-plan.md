@@ -13,13 +13,13 @@ Six docs under `docs/design-system/` (this directory). Component classification 
 - `lib/schemas/scholarly.ts`: runtime-validated types per spec §22 (ScholarlyObjectBase, ExternalIdentifier + normalizers, Source, SourceVersion, Evidence, Claim, KnowledgeRelationship, IntegrityEvent, AuditEvent…) with unit tests.
 - `lib/tokens/contrast.ts` shared contrast util; `test/` helpers for token/axe fixtures.
 
-## Stage 2 — Accessible primitives
+## Stage 2 — Accessible primitives ✅ (in progress → landed in stage-2 commit)
 
-Dialog, Sheet, Alert, Toast, Skeleton, EmptyState, command palette, form primitives — token-mapped, keyboard/focus contracts, tests. Wrap existing modal-less patterns; do not remove `ConfirmDelete` until replaced.
+Landed: `components/ui/{Dialog,Alert,Toast,Skeleton,EmptyState}.tsx` — token-mapped, keyboard/focus contracts, SSR-safe, tested via `renderToStaticMarkup` (`lib/__tests__/ui-primitives.test.ts`; vitest now uses the automatic JSX runtime). Remaining in this stage: Sheet, command palette, form primitives. Do not remove `ConfirmDelete` until replaced.
 
-## Stage 3 — Scholarly components
+## Stage 3 — Scholarly components (started)
 
-`EvidenceCard` first (reference component), then `SourceCard`, `ClaimCard`, `Citation`, `TrustAssessmentSummary`, `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`. Map CMS posts → Source-shaped cards incrementally.
+`EvidenceCard` landed as the first reference component (`components/scholarly/EvidenceCard.tsx` + `lib/scholarly/evidence-card.ts`, contract in `docs/design-system/components/evidence-card.md`). Next: `SourceCard`, `ClaimCard`, `Citation`, `TrustAssessmentSummary`, `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`. Map CMS posts → Source-shaped cards incrementally.
 
 ## Stage 4 — Workspace workflows
 
