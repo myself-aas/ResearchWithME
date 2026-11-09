@@ -8,18 +8,19 @@
   ]'
 >
   <head>
+  <link rel="stylesheet" href="../tokens/generated/tokens.video.css">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
     <style>
       :root {
-        --amber: #78350f;
-        --parchment: #fafaf9;
-        --ink: #1c1917;
-        --muted: #78716c;
-        --accent: #047857;
-        --border: #e7e5e4;
-        --gold: #b45309;
+        --amber: var(--pieme-video-color-text-primary);
+        --parchment: var(--pieme-video-color-canvas);
+        --ink: var(--pieme-video-color-text-primary);
+        --muted: var(--pieme-video-color-text-secondary);
+        --accent: var(--pieme-video-color-text-secondary);
+        --border: var(--pieme-video-color-surface-subtle);
+        --gold: var(--pieme-video-color-action-primary);
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body {
@@ -32,7 +33,7 @@
         width: 100%;
         height: 100%;
         position: relative;
-        font-family: Inter, sans-serif;
+        font-family: var(--pieme-video-font-latin-interface);
       }
     </style>
   </head>

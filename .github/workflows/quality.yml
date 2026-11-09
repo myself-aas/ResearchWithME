@@ -23,3 +23,7 @@ jobs:
         run: bun run lint && bun run typecheck && bun run test && bun run impeccable:source
       - name: Production build
         run: bun run build
+      - name: Performance budgets (§18)
+        run: bun run budgets
+      - name: Release gate machine checks (§44/§46)
+        run: bun run release:gate

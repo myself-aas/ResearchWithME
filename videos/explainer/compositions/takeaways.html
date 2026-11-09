@@ -1,21 +1,23 @@
 <template>
   <style>
+    /* πeme generated video tokens (tokens/generated/tokens.video.css) */
+    @import url("../../../tokens/generated/tokens.video.css");
     #scene-takeaways {
       position: absolute;
       inset: 0;
-      background: #78350f;
+      background: var(--pieme-video-color-text-primary);
       display: flex;
       flex-direction: column;
       justify-content: center;
       padding: 0 200px;
     }
     #tk-eyebrow {
-      font-family: Inter, sans-serif;
+      font-family: var(--pieme-video-font-latin-interface);
       font-size: 20px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #fbbf24;
+      color: var(--pieme-video-color-action-primary);
       margin-bottom: 56px;
     }
     .tk-item {
@@ -25,27 +27,27 @@
       margin-bottom: 40px;
     }
     .tk-num {
-      font-family: Inter, sans-serif;
+      font-family: var(--pieme-video-font-latin-interface);
       font-size: 20px;
       font-weight: 700;
-      color: #fbbf24;
+      color: var(--pieme-video-color-action-primary);
       line-height: 1;
       padding-top: 14px;
       flex-shrink: 0;
       width: 28px;
     }
     .tk-text {
-      font-family: 'Playfair Display', serif;
+      font-family: var(--pieme-video-font-latin-editorial);
       font-size: 56px;
       font-weight: 700;
-      color: #fafaf9;
+      color: var(--pieme-video-color-canvas);
       line-height: 1.15;
       letter-spacing: -0.015em;
     }
     #tk-end-rule {
       width: 80px;
       height: 4px;
-      background: #fbbf24;
+      background: var(--pieme-video-color-action-primary);
       border-radius: 2px;
       margin-top: 48px;
       transform-origin: left center;

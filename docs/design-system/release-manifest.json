@@ -1,0 +1,80 @@
+{
+  "gate": "πeme v3.1 §44/§46 stable release gate",
+  "generatedAt": "2026-11-09T23:02:28.737Z",
+  "tokenChecksum": "sha256:276c5a2123283d15",
+  "results": [
+    {
+      "id": "DS-1",
+      "description": "token pipeline builds from tokens/src",
+      "status": "pass",
+      "evidence": "tokens/generated/* rebuilt"
+    },
+    {
+      "id": "DS-2",
+      "description": "token checksum (conformance manifest §46.1)",
+      "status": "pass",
+      "evidence": "sha256:276c5a2123283d15"
+    },
+    {
+      "id": "DS-3",
+      "description": "contrast gate passes (tokens:check)",
+      "status": "pass",
+      "evidence": "all semantic pairs ≥ 4.5:1"
+    },
+    {
+      "id": "DS-4",
+      "description": "stable components reference tokens, not primitives",
+      "status": "pass",
+      "evidence": "10 components clean"
+    },
+    {
+      "id": "A11Y-1",
+      "description": "axe-core suite present and wired into vitest",
+      "status": "pass",
+      "evidence": "lib/__tests__/a11y.test.ts"
+    },
+    {
+      "id": "I18N-1",
+      "description": "English + Bangla dictionaries have key parity",
+      "status": "pass",
+      "evidence": "34 keys in both locales"
+    },
+    {
+      "id": "I18N-2",
+      "description": "RTL verified with Arabic; LTR isolation for identifiers",
+      "status": "pass",
+      "evidence": "globals.css + locales.ts"
+    },
+    {
+      "id": "I18N-3",
+      "description": "pseudo-localization ≥35% expansion on all messages",
+      "status": "pass",
+      "evidence": "34 messages tested in i18n.test.ts"
+    },
+    {
+      "id": "RES-1",
+      "description": "annotation anchors revalidate without silent relocation (§29)",
+      "status": "pass",
+      "evidence": "lib/scholarly/annotations.ts"
+    },
+    {
+      "id": "RES-2",
+      "description": "conflicts preserve both versions + rationale (§34)",
+      "status": "pass",
+      "evidence": "resolveConflict()"
+    },
+    {
+      "id": "VID-1",
+      "description": "Remotion/Hyperframes compositions use generated tokens only",
+      "status": "pass",
+      "evidence": "8 compositions tokenized"
+    },
+    {
+      "id": "PERF-1",
+      "description": "performance budgets script present (§18)",
+      "status": "pass",
+      "evidence": "scripts/check-budgets.mjs (CI runs it after build)"
+    }
+  ],
+  "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"
+}

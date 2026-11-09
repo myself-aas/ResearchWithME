@@ -8,6 +8,9 @@ export type Locale = 'en' | 'bn';
 export const SUPPORTED_LOCALES: readonly Locale[] = ['en', 'bn'];
 export const DEFAULT_LOCALE: Locale = 'en';
 
+/** Cookie key used to persist the interface locale for server rendering. */
+export const LOCALE_COOKIE = 'pieme-locale';
+
 /** Locales that render right-to-left (Arabic used for RTL verification). */
 export const RTL_LOCALES = new Set(['ar', 'he', 'fa', 'ur']);
 

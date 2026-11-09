@@ -46,7 +46,9 @@
     "impeccable:source": "impeccable detect app components",
     "impeccable:url": "impeccable detect --json --no-advisory --viewport 1280x800 http://localhost:3000",
     "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
-    "deploy-guard": "node scripts/check-production-env.mjs"
+    "deploy-guard": "node scripts/check-production-env.mjs",
+    "budgets": "node scripts/check-budgets.mjs",
+    "release:gate": "node scripts/release-gate.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

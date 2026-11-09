@@ -21,6 +21,7 @@ import {
 import { useSession } from '@/lib/supabase/use-session';
 import { readStringArray } from '@/lib/storage';
 import BrandLogo from './BrandLogo';
+import LocaleSwitcher from './i18n/LocaleSwitcher';
 
 interface BlogHeaderProps {
   searchQuery?: string;
@@ -123,6 +124,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           </nav>
 
           <div className="flex items-center gap-2">
+            <LocaleSwitcher />
             {setSearchQuery && (
               <div className="relative hidden 2xl:block">
                 <label htmlFor="header-search" className="sr-only">
