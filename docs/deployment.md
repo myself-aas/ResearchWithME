@@ -187,7 +187,7 @@ Three environments, three sets of values, one repository.
 | Kind | Examples | Where it must be set | Why |
 | --- | --- | --- | --- |
 | **Build-time / inlined** | every `NEXT_PUBLIC_*` | shell running `next build`, or the Workers Builds *build* variables, or GitHub Actions job `env` | Next.js substitutes the literal string into the client and server bundles |
-| **Runtime var (not secret)** | `EMAIL_FROM`, `RESEND_RECEIPT_TEMPLATE_ID` | `wrangler.jsonc` `vars`, or Worker variables in the dashboard | read at request time; not confidential, so versioning them is preferable. See `docs/email.md` |
+| **Runtime var (not secret)** | `RESEND_TPL_*` (one per email scenario) | Worker variables in the dashboard, or set from `npm run email:template:sync` | read at request time; not confidential. Senders come from `lib/email/scenarios.ts`, not from env. See `docs/email-scenarios.md` |
 | **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
 | **Preview-only runtime** | the same secrets | `wrangler preview secret put`, or the preview *base config* | previews do not inherit the Worker's secrets |
 

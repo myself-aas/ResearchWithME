@@ -20,6 +20,8 @@
     "email:dev": "email dev -d emails -p 3001",
     "email:export": "email export -d emails --outDir .email-export",
     "email:resend:setup": "email resend setup",
+    "email:template:sync": "tsx scripts/sync-templates.ts",
+    "email:verify": "tsx scripts/verify-emails.ts",
     "email:template:upload": "tsx scripts/upload-email-template.ts",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
