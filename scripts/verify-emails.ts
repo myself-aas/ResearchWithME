@@ -38,11 +38,12 @@ async function main() {
   for (const { key, result } of results) {
     if (result.ok) {
       console.log(`  ok   ${key.padEnd(24)} ${result.id} (${result.mode})`);
+    } else if (result.skipped) {
+      // Deliberate: Supabase sends these itself, so refusing is correct.
+      console.log(`  skip ${key.padEnd(24)} ${result.reason}`);
     } else {
       failed += 1;
-      console.error(
-        `  FAIL ${key.padEnd(24)} ${result.skipped ? `skipped: ${result.reason}` : result.error}`,
-      );
+      console.error(`  FAIL ${key.padEnd(24)} ${result.error}`);
     }
   }
 

@@ -293,47 +293,36 @@ unverified domain.
 
 ## Who sends what
 
-Auth mail is **Supabase's** by default. As the Resend-Supabase integration is
-configured, Supabase sends email confirmation and password reset itself, and
-every one of those emails leaves from a single default sender,
-`team@researchwith.me`. That setting controls only the From address -- recipients
-are whoever signed up, and are unaffected.
+**Decided: Supabase Auth keeps sending its own mail.** Email confirmation and
+password reset go out through the Resend-Supabase integration from a single
+sender, `team@researchwith.me`. That setting controls only the From address --
+recipients are whoever signed up, and are unaffected.
 
-Two entries in this registry cover the same events:
+Two entries in this registry cover the same events, so both are marked
+`ownedBySupabase` and `sendScenario` refuses them:
 
-| Scenario | Under default Supabase Auth SMTP |
+| Scenario | Status |
 | --- | --- |
-| `verify-email` | Supabase sends its own from `team@` -- two emails, two sender names |
-| `password-reset` | Supabase sends its own from `team@` -- two emails, two sender names |
+| `verify-email` | Kept in the registry, **never sent from here** |
+| `password-reset` | Kept in the registry, **never sent from here** |
 
-Nothing collides today: the app calls only `signInWithPassword`, so Supabase
-sends no email at all, and `submission-receipt` is the only scenario with a
-caller. The collision arrives the moment a sign-up or password-reset flow is
-added.
+They stay in the registry rather than being deleted, so the variable contract
+and the components survive if the decision is revisited. The refusal is what
+makes that safe: calling either returns `{ ok: false, skipped: true }` with a
+reason naming the Supabase sender, and no client is constructed. A test asserts
+exactly which scenarios carry the mark, so adding or removing one is a reviewed
+change rather than a flag set in passing.
 
-Default Supabase Auth SMTP cannot do what this registry assumes -- a different
-sender name per message type, from one address. Three ways out, not equivalent:
+The trade-off, accepted deliberately: default Auth SMTP sends every email type
+from one address, so auth mail cannot carry a per-message sender name the way
+product mail does, and it is styled outside `emails/`. The alternative -- a Send
+Email Auth Hook delegating to `sendScenario` -- would have given each message
+type its own sender, at the cost of a privileged signed endpoint plus coverage
+for all sixteen of Supabase's email action types. Not built, not needed.
 
-1. **Send Email Auth Hook.** Supabase hands the email to our code instead of
-   sending it, and we call `sendScenario('verify-email', ...)`. One sender name
-   per message type, all product mail in one system, and these two scenarios gain
-   a real caller. The only option that keeps the registry as it stands.
-2. **Change the integration's sender** to a single address that fits auth mail.
-   Every Auth email type then shares one From name, which can describe the
-   category but not the message.
-3. **Let Supabase send, and drop these two scenarios.** Simplest, but it removes
-   two of the ten this registry is meant to have, and leaves auth mail styled
-   outside `emails/`.
-
-Option 1 is recommended, and it is not built. `supabase/` holds only migrations;
-there is no hook endpoint. Wiring it needs a route, its own secret, and Supabase's
-current hook contract -- check that against their documentation before
-implementing, rather than guessing field names. Treat the endpoint as privileged:
-it can put an arbitrary link into someone's inbox.
-
-`SUPABASE_AUTH_SENDER` in the registry reserves `team@researchwith.me`, and a
-test fails if any scenario claims it as sender or reply-to. The address is on the
-sending domain, so the domain guard would not catch that; this does.
+`SUPABASE_AUTH_SENDER` reserves `team@researchwith.me`, and a test fails if any
+scenario claims it as sender or reply-to. The address is on the sending domain,
+so the domain guard would not catch that; this does.
 
 ## What is not verified
 

@@ -313,12 +313,24 @@ describe('sendScenario across every scenario', () => {
     process.env.RESEND_API_KEY = 're_test';
   });
 
-  it('sends each scenario from its own verified address', async () => {
+  it('sends every scenario Supabase does not own, from its own address', async () => {
     sendMock.mockResolvedValue({ data: { id: 'msg_x' }, error: null });
     const { sendScenario } = await loadSendModule();
     const { listScenarios } = await import('@/lib/email/scenarios');
 
-    for (const scenario of listScenarios()) {
+    const scenarios = listScenarios();
+    const sendable = scenarios.filter((scenario) => !scenario.ownedBySupabase);
+    const owned = scenarios.filter((scenario) => scenario.ownedBySupabase);
+
+    // Assert the split rather than trusting the filter: if a scenario is marked
+    // owned by mistake, this fails instead of quietly shrinking the loop.
+    expect(owned.map((scenario) => scenario.key).sort()).toEqual([
+      'password-reset',
+      'verify-email',
+    ]);
+    expect(sendable.length).toBe(scenarios.length - 2);
+
+    for (const scenario of sendable) {
       const result = await sendScenario(scenario.key, {
         to: 'amara@example.org',
         entityId: `entity-${scenario.key}`,
@@ -332,5 +344,48 @@ describe('sendScenario across every scenario', () => {
       expect(payload.subject.trim().length).toBeGreaterThan(0);
       expect(payload.html).toContain('<!DOCTYPE');
     }
+
+    for (const scenario of owned) {
+      const result = await sendScenario(scenario.key, {
+        to: 'amara@example.org',
+        entityId: `entity-${scenario.key}`,
+        variables: scenario.sample,
+      });
+
+      expect(result, `${scenario.key} should not be sent from here`).toMatchObject({
+        ok: false,
+        skipped: true,
+      });
+    }
+  });
+});
+
+describe('Supabase-owned scenarios', () => {
+  it('refuses verify-email and password-reset instead of double-sending', async () => {
+    process.env.RESEND_API_KEY = 're_test_key_not_real';
+    const { sendScenario } = await loadSendModule();
+
+    for (const key of ['verify-email', 'password-reset']) {
+      const result = await sendScenario(key, sampleInput(key));
+      expect(result).toMatchObject({ ok: false, skipped: true });
+      if (!result.ok && result.skipped) {
+        expect(result.reason).toContain('Supabase Auth');
+        expect(result.reason).toContain('team@researchwith.me');
+      }
+    }
+
+    // The refusal happens before a client is even constructed.
+    expect(sendMock).not.toHaveBeenCalled();
+  });
+
+  it('still sends the scenarios Supabase does not own', async () => {
+    process.env.RESEND_API_KEY = 're_test_key_not_real';
+    sendMock.mockResolvedValue({ data: { id: 'em_welcome_1' }, error: null });
+    const { sendScenario } = await loadSendModule();
+
+    const result = await sendScenario('welcome', sampleInput('welcome'));
+
+    expect(result.ok).toBe(true);
+    expect(sendMock).toHaveBeenCalledTimes(1);
   });
 });

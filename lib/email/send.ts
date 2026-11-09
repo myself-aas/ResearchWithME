@@ -7,6 +7,7 @@ import {
   idempotencyKeyFor,
   isOnSendingDomain,
   listScenarios,
+  SUPABASE_AUTH_SENDER,
   parseSender,
   type ScenarioDefinition,
   type ScenarioVariables,
@@ -35,7 +36,7 @@ export interface SendScenarioInput {
 
 export type SendScenarioResult =
   | { ok: true; id: string; mode: 'template' | 'local' }
-  /** Not an error: email is not switched on in this environment. */
+  /** Not an error: the send was deliberately not attempted. */
   | { ok: false; skipped: true; reason: string }
   /** A genuine send failure. */
   | { ok: false; skipped: false; error: string };
@@ -100,6 +101,16 @@ export async function sendScenario(
   const scenario = getScenario(key);
   if (!scenario) {
     return { ok: false, skipped: false, error: `Unknown email scenario "${key}".` };
+  }
+
+  if (scenario.ownedBySupabase) {
+    return {
+      ok: false,
+      skipped: true,
+      reason:
+        `"${key}" is sent by Supabase Auth itself, from ${SUPABASE_AUTH_SENDER}. ` +
+        'Sending it from here too would deliver two emails about the same event.',
+    };
   }
 
   const identityProblem = assertSenderIdentity(scenario);

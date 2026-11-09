@@ -296,3 +296,17 @@ describe('the Supabase Auth sender stays reserved', () => {
     expect(isOnSendingDomain(SUPABASE_AUTH_SENDER)).toBe(true);
   });
 });
+
+describe('Supabase ownership', () => {
+  // Supabase Auth sends email confirmation and password reset itself. Listing
+  // the owned scenarios explicitly means adding one is a reviewed change rather
+  // than a flag set in passing -- and removing one shows up the same way.
+  it('marks exactly the auth events Supabase sends', () => {
+    const owned = listScenarios()
+      .filter((scenario) => scenario.ownedBySupabase)
+      .map((scenario) => scenario.key)
+      .sort();
+
+    expect(owned).toEqual(['password-reset', 'verify-email']);
+  });
+});

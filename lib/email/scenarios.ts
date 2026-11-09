@@ -86,6 +86,15 @@ export interface ScenarioDefinition {
   idempotencyPattern: string;
   /** Env var holding this scenario's published template id. */
   templateEnv: string;
+  /**
+   * Set when Supabase Auth sends this event itself, through the Resend-Supabase
+   * integration, from SUPABASE_AUTH_SENDER.
+   *
+   * `sendScenario` refuses these. Calling one anyway would put two emails about
+   * the same event in one inbox from two different sender names, and only one
+   * of the two links would work.
+   */
+  ownedBySupabase?: true;
   /** The React Email component, used to render the uploaded template source. */
   component: React.ComponentType<Record<string, never>>;
   /** Realistic values, used for preview and for the variable fallbacks. */
@@ -192,6 +201,7 @@ export const SCENARIOS = {
     tagCategory: 'verify-email',
     idempotencyPattern: 'verify-email/<user-id>',
     templateEnv: 'RESEND_TPL_VERIFY_EMAIL',
+    ownedBySupabase: true,
     component: SCENARIO_COMPONENTS['verify-email'] as ScenarioDefinition['component'],
     sample: {
       DISPLAY_NAME: 'Amara',
@@ -215,6 +225,7 @@ export const SCENARIOS = {
     tagCategory: 'password-reset',
     idempotencyPattern: 'password-reset/<user-id>',
     templateEnv: 'RESEND_TPL_PASSWORD_RESET',
+    ownedBySupabase: true,
     component: SCENARIO_COMPONENTS['password-reset'] as ScenarioDefinition['component'],
     sample: {
       DISPLAY_NAME: 'Amara',
