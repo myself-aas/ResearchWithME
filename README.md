@@ -38,6 +38,21 @@ Node 20.9 or newer, and [Bun](https://bun.sh) 1.4 or newer — `bun.lock` is the
 
 Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
+## API discovery
+
+The [API catalog](https://researchwith.me/.well-known/api-catalog) follows RFC 9727 and lists the archive, assistant, and editorial route groups. Its `service-desc` links point to the [OpenAPI 3.1 document](https://researchwith.me/openapi.json), and `service-doc` links point to the [API reference](https://researchwith.me/api-docs). Editor, signed-in, and webhook-secret requirements are documented per operation; publishing the catalog does not grant access. There is no advertised health endpoint.
+
+After deploying, verify discovery with:
+
+```bash
+curl -i https://researchwith.me/.well-known/api-catalog
+curl -sS https://isitagentready.com/api/scan \
+  -H 'Content-Type: application/json' \
+  --data '{"url":"https://researchwith.me"}' | jq '.checks.discovery.apiCatalog.status'
+```
+
+The scan should report `"pass"`. When adding or changing an `app/api` route, update `lib/openapi.ts` and the applicable group in `lib/api-catalog.ts`; the catalog coverage test checks for missing paths and methods.
+
 ## Quality checks
 
 ```bash
