@@ -1,8 +1,11 @@
 'use client';
 
 import { Search, X } from 'lucide-react';
-import { LayoutGroup, LazyMotion, MotionConfig, domMax, m } from 'motion/react';
+import { LayoutGroup } from 'motion/react';
+import * as m from 'motion/react-m';
 import { ArticleFormat, CATEGORIES } from '@/lib/blog-data';
+import Pressable from './motion/Pressable';
+import { EASING } from '@/lib/motion/tokens';
 
 interface BlogHeroProps {
   searchQuery: string;
@@ -35,26 +38,38 @@ export default function BlogHero({
   totalArticles,
 }: BlogHeroProps) {
   return (
-    <LazyMotion features={domMax}>
-      <MotionConfig reducedMotion="user">
-        <section className="border-b border-line bg-canvas" aria-labelledby="platform-title">
+    <section className="border-b border-line bg-canvas" aria-labelledby="platform-title">
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-16">
               <div>
-                <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                <p
+                  data-enter="rise"
+                  style={{ '--enter-delay': '0ms' } as React.CSSProperties}
+                  className="font-mono text-xs uppercase tracking-wider text-ink-secondary"
+                >
                   ISSN 2994-0821 · Diamond Open Access · Verified Specialist Monograph
                 </p>
                 <h1
                   id="platform-title"
+                  data-enter="rise"
+                  style={{ '--enter-delay': '60ms' } as React.CSSProperties}
                   className="mt-3 max-w-3xl font-serif text-4xl font-bold leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-6xl"
                 >
                   Research you can read, check, and reuse.
                 </h1>
-                <p className="mt-5 max-w-2xl font-sans text-base leading-relaxed text-ink-secondary sm:text-lg">
+                <p
+                  data-enter="rise"
+                  style={{ '--enter-delay': '120ms' } as React.CSSProperties}
+                  className="mt-5 max-w-2xl font-sans text-base leading-relaxed text-ink-secondary sm:text-lg"
+                >
                   Long-form teardowns of published papers and open-source repositories, written by ORCID and GitHub attested domain specialists. Every claim carries a verifiable citation and nothing sits behind a paywall.
                 </p>
 
-                <div className="mt-8 max-w-2xl">
+                <div
+                  data-enter="rise"
+                  style={{ '--enter-delay': '180ms' } as React.CSSProperties}
+                  className="mt-8 max-w-2xl"
+                >
                   <label htmlFor="catalog-search" className="mb-2 block font-mono text-xs uppercase tracking-wider text-ink-secondary">
                     Filter catalog by keyword, DOI, or repository
                   </label>
@@ -83,20 +98,25 @@ export default function BlogHero({
                         </button>
                       )}
                     </div>
-                    <button
+                    <Pressable
                       type="button"
+                      feedback="lift"
                       onClick={() =>
                         document.getElementById('articles-feed')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                       }
                       className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
                     >
                       Browse index
-                    </button>
+                    </Pressable>
                   </div>
                 </div>
 
                 {setSelectedCategory && (
-                  <div className="mt-6">
+                  <div
+                    className="mt-6"
+                    data-enter="rise"
+                    style={{ '--enter-delay': '240ms' } as React.CSSProperties}
+                  >
                     <p id="column-label" className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">
                       Editorial Column
                     </p>
@@ -120,7 +140,7 @@ export default function BlogHero({
                                 <m.span
                                   layoutId="active-column-pill"
                                   className="absolute inset-0 rounded-sm bg-brand"
-                                  transition={{ duration: 0.18, ease: [0.2, 0, 0, 1] }}
+                                  transition={{ duration: 0.18, ease: [...EASING.standard] }}
                                 />
                               )}
                               <span className="relative z-10">{column === 'All' ? 'All columns' : column}</span>
@@ -156,7 +176,7 @@ export default function BlogHero({
                               <m.span
                                 layoutId="active-format-pill"
                                 className="absolute inset-0 rounded-sm bg-brand"
-                                transition={{ duration: 0.18, ease: [0.2, 0, 0, 1] }}
+                                transition={{ duration: 0.18, ease: [...EASING.standard] }}
                               />
                             )}
                             <span className="relative z-10">{format === 'All' ? 'All formats' : format}</span>
@@ -196,8 +216,6 @@ export default function BlogHero({
               </aside>
             </div>
           </div>
-        </section>
-      </MotionConfig>
-    </LazyMotion>
+    </section>
   );
 }

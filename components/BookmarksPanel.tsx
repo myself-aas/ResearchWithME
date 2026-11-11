@@ -6,11 +6,17 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Bookmark, Check, Download, Trash2 } from 'lucide-react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
+import { ArrowRight, Bookmark, Download, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
+import { EASING } from '@/lib/motion/tokens';
+import { MotionItem, MotionList } from './motion/MotionList';
+import Pressable from './motion/Pressable';
+import SuccessCheck from './motion/SuccessCheck';
 
 export default function BookmarksPanel() {
   const hydrated = useHydratePreferences();
@@ -181,51 +187,75 @@ export default function BookmarksPanel() {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <button
+                <Pressable
                   type="button"
                   onClick={handleExport}
                   className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
                 >
                   <Download className="h-4 w-4" aria-hidden="true" />
                   <span>Export Markdown</span>
-                </button>
-                {!confirmClear ? (
-                  <button
-                    type="button"
-                    onClick={() => setConfirmClear(true)}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
-                  >
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    <span>Clear list</span>
-                  </button>
-                ) : (
-                  <span className="flex flex-wrap items-center gap-2 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs text-ink">
-                    <span>Remove all {savedArticles.length} saved items?</span>
-                    <button
+                </Pressable>
+                <AnimatePresence initial={false} mode="wait">
+                  {!confirmClear ? (
+                    <m.button
+                      key="clear-trigger"
                       type="button"
-                      onClick={handleClearAll}
-                      className="min-h-9 font-semibold text-danger underline underline-offset-4"
+                      onClick={() => setConfirmClear(true)}
+                      initial={{ opacity: 0, x: -4 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -4 }}
+                      transition={{ duration: 0.16, ease: [...EASING.standard] }}
+                      className="inline-flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
                     >
-                      Yes, clear
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setConfirmClear(false)}
-                      className="min-h-9 underline underline-offset-4"
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      <span>Clear list</span>
+                    </m.button>
+                  ) : (
+                    <m.span
+                      key="clear-confirm"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.16, ease: [...EASING.enter] }}
+                      className="flex flex-wrap items-center gap-2 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs text-ink"
                     >
-                      Keep them
-                    </button>
-                  </span>
-                )}
+                      <span>Remove all {savedArticles.length} saved items?</span>
+                      <button
+                        type="button"
+                        onClick={handleClearAll}
+                        className="min-h-9 font-semibold text-danger underline underline-offset-4"
+                      >
+                        Yes, clear
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmClear(false)}
+                        className="min-h-9 underline underline-offset-4"
+                      >
+                        Keep them
+                      </button>
+                    </m.span>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
 
-            {status && (
-              <p role="status" className="mt-4 flex items-center gap-2 border-l-2 border-brand bg-surface px-4 py-3 font-sans text-sm text-ink">
-                <Check className="h-4 w-4 text-brand" aria-hidden="true" />
-                <span>{status}</span>
-              </p>
-            )}
+            <AnimatePresence initial={false} mode="wait">
+              {status && (
+                <m.p
+                  key={status}
+                  role="status"
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.16, ease: [...EASING.standard] }}
+                  className="mt-4 flex items-center gap-2 border-l-2 border-brand bg-surface px-4 py-3 font-sans text-sm text-ink"
+                >
+                  <SuccessCheck size={16} className="text-brand" />
+                  <span>{status}</span>
+                </m.p>
+              )}
+            </AnimatePresence>
             {error && (
               <p role="alert" className="mt-4 border-l-2 border-danger bg-surface px-4 py-3 font-sans text-sm text-danger">
                 {error}
@@ -236,18 +266,19 @@ export default function BookmarksPanel() {
               <div className="mt-6 rounded-sm border border-line bg-surface p-8">
                 <h2 className="font-serif text-xl font-semibold text-ink">No saved articles in this column</h2>
                 <p className="mt-2 font-sans text-sm text-ink-secondary">Choose another column or show the full list.</p>
-                <button
+                <Pressable
                   type="button"
+                  feedback="lift"
                   onClick={() => setSelectedCategory('All')}
                   className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
                 >
                   Show all saved
-                </button>
+                </Pressable>
               </div>
             ) : (
-              <ul className="mt-6 divide-y divide-line border-y border-line">
+              <MotionList className="mt-6 divide-y divide-line border-y border-line">
                 {filteredArticles.map((article) => (
-                  <li key={article.id} className="py-6">
+                  <MotionItem key={article.id} className="py-6">
                     <article className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                       <div className="min-w-0">
                         <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
@@ -276,19 +307,19 @@ export default function BookmarksPanel() {
                           <span>Read</span>
                           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                         </Link>
-                        <button
+                        <Pressable
                           type="button"
                           onClick={() => handleRemove(article)}
                           className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           <span>Remove</span>
-                        </button>
+                        </Pressable>
                       </div>
                     </article>
-                  </li>
+                  </MotionItem>
                 ))}
-              </ul>
+              </MotionList>
             )}
           </>
         )}

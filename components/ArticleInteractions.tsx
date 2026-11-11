@@ -1,8 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Bookmark, Check, Copy, Heart, Share2 } from 'lucide-react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
+import { Bookmark, Copy, Heart, Share2 } from 'lucide-react';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
+import { EASING } from '@/lib/motion/tokens';
+import Pressable from './motion/Pressable';
+import SuccessCheck from './motion/SuccessCheck';
 
 interface ArticleInteractionsProps {
   postId: string;
@@ -93,7 +98,7 @@ export default function ArticleInteractions({
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Pressable
           type="button"
           onClick={like}
           aria-pressed={liked}
@@ -103,12 +108,21 @@ export default function ArticleInteractions({
               : 'border-line bg-surface text-ink hover:bg-surface-subtle'
           }`}
         >
-          <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`} aria-hidden="true" />
+          {/* Secondary action (principle 8): the heart pops, the number does
+              not count up — πeme §9 keeps numeric animation out of the UI. */}
+          <m.span
+            aria-hidden="true"
+            className="inline-flex"
+            animate={liked ? { scale: [1, 1.35, 1], rotate: [0, -10, 0] } : { scale: 1, rotate: 0 }}
+            transition={{ duration: 0.4, times: [0, 0.45, 1], ease: [...EASING.emphasize] }}
+          >
+            <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`} />
+          </m.span>
           <span>{likes}</span>
           <span className="sr-only">likes. {liked ? 'You liked this article' : 'Add a like'}</span>
-        </button>
+        </Pressable>
 
-        <button
+        <Pressable
           type="button"
           onClick={toggleSaved}
           aria-pressed={saved}
@@ -118,35 +132,66 @@ export default function ArticleInteractions({
               : 'border-line bg-surface text-ink hover:bg-surface-subtle'
           }`}
         >
-          <Bookmark className={`h-3.5 w-3.5 ${saved ? 'fill-current' : ''}`} aria-hidden="true" />
+          <AnimatePresence initial={false} mode="wait">
+            <m.span
+              key={saved ? 'saved' : 'unsaved'}
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.16, ease: [...EASING.enter] }}
+              className="inline-flex"
+            >
+              {saved ? <SuccessCheck size={14} quiet /> : <Bookmark className="h-3.5 w-3.5" aria-hidden="true" />}
+            </m.span>
+          </AnimatePresence>
           <span>{saved ? 'Saved' : 'Save'}</span>
-        </button>
+        </Pressable>
 
-        <button
+        <Pressable
           type="button"
           onClick={share}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
         >
           <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Share</span>
-        </button>
+        </Pressable>
 
-        <button
+        <Pressable
           type="button"
           onClick={copyLink}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
         >
-          {copiedLink ? (
-            <Check className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-          ) : (
-            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
-          )}
+          <AnimatePresence initial={false} mode="wait">
+            <m.span
+              key={copiedLink ? 'copied' : 'idle'}
+              initial={{ scale: 0.7, opacity: 0, rotate: -10 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
+              transition={{ duration: 0.16, ease: [...EASING.emphasize] }}
+              className="inline-flex text-brand"
+            >
+              {copiedLink ? <SuccessCheck size={14} /> : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
+            </m.span>
+          </AnimatePresence>
           <span>{copiedLink ? 'Copied' : 'Copy link'}</span>
-        </button>
+        </Pressable>
       </div>
 
       <p role="status" aria-live="polite" className="mt-2 min-h-5 font-sans text-xs text-ink-secondary">
-        {status}
+        <AnimatePresence initial={false} mode="wait">
+          {status ? (
+            <m.span
+              key={status}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: [...EASING.standard] }}
+              className="inline-block"
+            >
+              {status}
+            </m.span>
+          ) : null}
+        </AnimatePresence>
       </p>
     </div>
   );

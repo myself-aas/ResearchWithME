@@ -123,6 +123,9 @@ export default function BlogFooter() {
               <span>Synthesis</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
+            <Link href="/motion" className="underline-offset-4 hover:text-ink hover:underline">
+              Motion system
+            </Link>
           </div>
         </div>
       </div>

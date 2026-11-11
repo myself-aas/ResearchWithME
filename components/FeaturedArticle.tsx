@@ -1,7 +1,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { ArrowRight, Bookmark, CheckCircle2, FileText, GitBranch } from 'lucide-react';
 import { BlogPost, categoryToSlug } from '@/lib/blog-data';
+import Pressable from '@/components/motion/Pressable';
+import SuccessCheck from '@/components/motion/SuccessCheck';
+import { EASING } from '@/lib/motion/tokens';
 
 interface FeaturedArticleProps {
   post: BlogPost;
@@ -11,9 +16,12 @@ interface FeaturedArticleProps {
 
 export default function FeaturedArticle({ post, isSaved, onToggleSave }: FeaturedArticleProps) {
   return (
-    <section aria-labelledby="featured-heading" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <section
+      aria-labelledby="featured-heading"
+      className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"
+    >
       <div className="grid gap-0 overflow-hidden rounded-sm border border-line bg-surface lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
-        <div className="relative min-h-64 border-b border-line bg-canvas lg:min-h-full lg:border-b-0 lg:border-r">
+        <div className="relative min-h-64 overflow-hidden border-b border-line bg-canvas lg:min-h-full lg:border-b-0 lg:border-r">
           {post.coverImage && post.coverImage.startsWith('data:') ? (
             <picture className="h-full w-full">
               <source srcSet={post.coverImage} type="image/avif" />
@@ -119,8 +127,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             </Link>
 
             <div className="flex items-center gap-2">
-              <button
-                type="button"
+              <Pressable
                 onClick={() => onToggleSave(post.id)}
                 aria-pressed={isSaved}
                 className={`inline-flex h-11 w-11 items-center justify-center rounded-sm border transition-colors ${
@@ -129,18 +136,37 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
                     : 'border-line bg-canvas text-ink-secondary hover:bg-surface-subtle hover:text-ink'
                 }`}
               >
-                <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
+                <AnimatePresence initial={false} mode="wait">
+                  <m.span
+                    key={isSaved ? 'saved' : 'unsaved'}
+                    initial={{ scale: 0.6, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.6, opacity: 0 }}
+                    transition={{ duration: 0.18, ease: [...EASING.emphasize] }}
+                    className="inline-flex"
+                    aria-hidden="true"
+                  >
+                    {isSaved ? (
+                      <SuccessCheck size={16} />
+                    ) : (
+                      <Bookmark className="h-4 w-4" aria-hidden="true" />
+                    )}
+                  </m.span>
+                </AnimatePresence>
                 <span className="sr-only">
                   {isSaved ? 'Remove from reading list' : 'Save to reading list'}
                 </span>
-              </button>
+              </Pressable>
 
               <Link
                 href={`/post/${post.slug}`}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+                className="group inline-flex min-h-11 items-center gap-1.5 rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
               >
                 <span>Read manuscript</span>
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                <ArrowRight
+                  className="h-4 w-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:translate-x-0.5"
+                  aria-hidden="true"
+                />
               </Link>
             </div>
           </div>

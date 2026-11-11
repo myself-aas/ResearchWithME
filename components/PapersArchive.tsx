@@ -6,12 +6,17 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Bookmark, Check, FileText, GraduationCap, Quote, Search, Share2 } from 'lucide-react';
-import { LayoutGroup, LazyMotion, MotionConfig, domMax, m } from 'motion/react';
+import { ArrowRight, Bookmark, FileText, GraduationCap, Quote, Search, Share2 } from 'lucide-react';
+import { AnimatePresence, LayoutGroup } from 'motion/react';
+import * as m from 'motion/react-m';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { PUBLICATIONS_DATA, Publication } from '@/lib/research-data';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
+import { MotionItem, MotionList } from './motion/MotionList';
+import Pressable from './motion/Pressable';
+import SuccessCheck from './motion/SuccessCheck';
+import { EASING } from '@/lib/motion/tokens';
 
 interface PapersArchiveProps {
   /** Bundled records server-side; the client refreshes from /api/papers on mount. */
@@ -103,9 +108,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
   const filtersActive = selectedTopic !== 'All' || Boolean(searchQuery);
 
   return (
-    <LazyMotion features={domMax}>
-      <MotionConfig reducedMotion="user">
-        <div className="flex min-h-screen flex-col bg-canvas text-ink">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
           <BlogHeader />
 
           <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
@@ -169,7 +172,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                     {TOPICS.map((topic) => {
                       const active = selectedTopic === topic;
                       return (
-                        <button
+                        <Pressable
                           key={topic}
                           type="button"
                           onClick={() => setSelectedTopic(topic)}
@@ -184,11 +187,11 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                             <m.span
                               layoutId="active-paper-topic-pill"
                               className="absolute inset-0 rounded-sm bg-brand"
-                              transition={{ duration: 0.18, ease: [0.2, 0, 0, 1] }}
+                              transition={{ duration: 0.18, ease: [...EASING.standard] }}
                             />
                           )}
                           <span className="relative z-10">{topic === 'All' ? 'All topics' : topic}</span>
-                        </button>
+                        </Pressable>
                       );
                     })}
                   </div>
@@ -203,7 +206,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                 {searchQuery ? ` matching “${searchQuery}”` : ''}
               </p>
               {filtersActive && (
-                <button
+                <Pressable
                   type="button"
                   onClick={() => {
                     setSearchQuery('');
@@ -212,7 +215,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                   className="min-h-11 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
                 >
                   Clear filters
-                </button>
+                </Pressable>
               )}
             </div>
 
@@ -248,8 +251,9 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                     )}
                   </div>
                 )}
-                <button
+                <Pressable
                   type="button"
+                  feedback="lift"
                   onClick={() => {
                     setSearchQuery('');
                     setSelectedTopic('All');
@@ -257,16 +261,16 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                   className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
                 >
                   Show all papers
-                </button>
+                </Pressable>
               </div>
             ) : (
-              <ul data-layout-grid="paper-results" className="mt-6 divide-y divide-line border-y border-line">
+              <MotionList data-layout-grid="paper-results" className="mt-6 divide-y divide-line border-y border-line">
                 {filteredPapers.map((paper) => {
                   const isSaved = savedIds.includes(paper.id);
                   const isCopied = copiedDoi === paper.id;
 
                   return (
-                    <li key={paper.id} className="py-8">
+                    <MotionItem key={paper.id} className="py-8">
                       <article aria-labelledby={`paper-${paper.id}-title`} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
                         <div className="min-w-0">
                           <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
@@ -336,7 +340,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                               <span>Read the paper</span>
                               <ArrowRight className="h-4 w-4" aria-hidden="true" />
                             </Link>
-                            <button
+                            <Pressable
                               type="button"
                               onClick={() => handleToggleSave(paper.id)}
                               aria-pressed={isSaved}
@@ -346,26 +350,52 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                                   : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
                               }`}
                             >
-                              <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
+                              <AnimatePresence initial={false} mode="wait">
+                                <m.span
+                                  key={isSaved ? 'saved' : 'unsaved'}
+                                  initial={{ scale: 0.7, opacity: 0 }}
+                                  animate={{ scale: 1, opacity: 1 }}
+                                  exit={{ scale: 0.7, opacity: 0 }}
+                                  transition={{ duration: 0.16, ease: [...EASING.enter] }}
+                                  className="inline-flex"
+                                >
+                                  {isSaved ? (
+                                    <SuccessCheck size={16} quiet />
+                                  ) : (
+                                    <Bookmark className="h-4 w-4" aria-hidden="true" />
+                                  )}
+                                </m.span>
+                              </AnimatePresence>
                               <span className="sr-only">
                                 {isSaved ? 'Remove from reading list' : 'Save to reading list'}
                               </span>
-                            </button>
+                            </Pressable>
                           </div>
 
                           <div className="flex flex-wrap items-center gap-3 font-sans text-xs">
-                            <button
+                            <Pressable
                               type="button"
                               onClick={() => handleCopyDoi(paper.doi, paper.id)}
                               className="inline-flex min-h-10 items-center gap-1.5 font-medium text-ink-secondary underline-offset-4 hover:text-ink hover:underline"
                             >
-                              {isCopied ? (
-                                <Check className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-                              ) : (
-                                <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
-                              )}
-                              <span>{isCopied ? 'DOI copied' : 'Copy DOI link'}</span>
-                            </button>
+                              <AnimatePresence initial={false} mode="wait">
+                                <m.span
+                                  key={isCopied ? 'copied' : 'copy'}
+                                  initial={{ scale: 0.7, opacity: 0, rotate: -10 }}
+                                  animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                                  exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
+                                  transition={{ duration: 0.16, ease: [...EASING.emphasize] }}
+                                  className="inline-flex text-brand"
+                                >
+                                  {isCopied ? (
+                                    <SuccessCheck size={14} />
+                                  ) : (
+                                    <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
+                                  )}
+                                </m.span>
+                              </AnimatePresence>
+                              <span aria-live="polite">{isCopied ? 'DOI copied' : 'Copy DOI link'}</span>
+                            </Pressable>
                             <Link
                               href={`/cite?article=${encodeURIComponent(paper.slug)}`}
                               className="inline-flex min-h-10 items-center gap-1.5 font-medium text-ink-secondary underline-offset-4 hover:text-ink hover:underline"
@@ -376,10 +406,10 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                           </div>
                         </div>
                       </article>
-                    </li>
+                    </MotionItem>
                   );
                 })}
-              </ul>
+              </MotionList>
             )}
 
             <section aria-labelledby="papers-methodology-heading" className="mt-14 border-t border-line pt-8">
@@ -414,9 +444,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
             </section>
           </main>
 
-          <BlogFooter />
-        </div>
-      </MotionConfig>
-    </LazyMotion>
+      <BlogFooter />
+    </div>
   );
 }

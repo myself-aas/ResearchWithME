@@ -10,6 +10,7 @@ import BlogFooter from '@/components/BlogFooter';
 import PrintButton from '@/components/PrintButton';
 import VideoEmbed from '@/components/VideoEmbed';
 import { PDF_EDITIONS_DATA, PUBLICATIONS_DATA } from '@/lib/research-data';
+import { Stagger, StaggerItem } from '@/components/motion/Stagger';
 
 export default function EditionsArchive() {
   return (
@@ -30,14 +31,14 @@ export default function EditionsArchive() {
           Print-ready compilation is a browser feature in this prototype. A hosted archival PDF and its DOI would be issued by the production publishing pipeline.
         </p>
 
-        <ul className="mt-8 grid gap-8 lg:grid-cols-2">
+        <Stagger as="ul" className="mt-8 grid gap-8 lg:grid-cols-2">
           {PDF_EDITIONS_DATA.map((edition, editionIndex) => {
             const featuredPapers = PUBLICATIONS_DATA.filter((paper) =>
               edition.featuredArticleIds.includes(paper.id),
             );
 
             return (
-              <li key={edition.id} className="flex">
+              <StaggerItem as="li" key={edition.id} variant="rise" className="flex">
                 <article
                   aria-labelledby={`edition-${edition.id}-title`}
                   className="flex w-full flex-col rounded-lg border border-stone-200 bg-white"
@@ -114,10 +115,10 @@ export default function EditionsArchive() {
                     <PrintButton label={`Print volume ${edition.volume}.${edition.issue}`} />
                   </div>
                 </article>
-              </li>
+              </StaggerItem>
             );
           })}
-        </ul>
+        </Stagger>
 
         <div className="mt-10 space-y-4 border-t border-stone-200 pt-6">
           <div className="flex flex-wrap items-center justify-between gap-4">

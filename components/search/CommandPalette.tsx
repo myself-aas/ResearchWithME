@@ -3,12 +3,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Command } from 'cmdk';
+import * as m from 'motion/react-m';
 import { useRouter } from 'next/navigation';
 import { ArrowUpRight, BookOpen, CheckCircle2, Compass, FileText, Search, X } from 'lucide-react';
 import type { Author, BlogPost } from '@/lib/blog-data';
 import type { Publication } from '@/lib/research-data';
 import { t } from '@/lib/i18n';
 import { useLocale } from '@/components/i18n/LocaleProvider';
+import { useDelayedLoading } from '@/lib/motion/hooks';
+import { EASING, SPRING } from '@/lib/motion/tokens';
+import Pressable from '@/components/motion/Pressable';
+import { SkeletonShard } from '@/components/motion/LoadingState';
 import {
   buildCatalogIndex,
   searchCatalog,
@@ -41,6 +46,9 @@ export default function CommandPalette({
   const { locale } = useLocale();
   const [query, setQuery] = useState(initialQuery);
   const [corpus, setCorpus] = useState<LoadedCorpus | null>(cachedCorpus);
+  // Loading contract: no skeleton for the first 200ms (cached corpus is
+  // usually instant), then keep it on screen for at least half a second.
+  const showSkeleton = useDelayedLoading(open && corpus === null, { delay: 200, minDuration: 500 });
 
   useEffect(() => {
     if (initialQuery) setQuery(initialQuery);
@@ -138,8 +146,21 @@ export default function CommandPalette({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-[1px]" />
-        <Dialog.Content className="fixed left-1/2 top-[10vh] z-50 w-[min(92vw,42rem)] -translate-x-1/2 overflow-hidden rounded-sm border border-line bg-canvas text-ink focus:outline-none">
+        <Dialog.Overlay asChild>
+          <m.div
+            className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-[1px]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.14, ease: [...EASING.standard] }}
+          />
+        </Dialog.Overlay>
+        <Dialog.Content asChild>
+          <m.div
+            className="fixed left-1/2 top-[10vh] z-50 w-[min(92vw,42rem)] overflow-hidden rounded-sm border border-line bg-canvas text-ink focus:outline-none"
+            initial={{ opacity: 0, y: -10, scale: 0.98, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
+            transition={SPRING.panel}
+          >
           <Dialog.Title className="sr-only">{t(locale, 'cmdk.trigger')}</Dialog.Title>
           <Dialog.Description className="sr-only">
             {t(locale, 'cmdk.placeholder')}
@@ -155,14 +176,14 @@ export default function CommandPalette({
                 className="w-full bg-transparent font-sans text-sm text-ink placeholder:text-ink-secondary focus:outline-none"
               />
               {query && (
-                <button
+                <Pressable
                   type="button"
                   onClick={() => setQuery('')}
                   aria-label="Clear search query"
                   className="inline-flex h-7 w-7 items-center justify-center rounded-sm border border-line text-ink-secondary hover:text-ink"
                 >
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
+                </Pressable>
               )}
               <Dialog.Close asChild>
                 <button
@@ -176,13 +197,31 @@ export default function CommandPalette({
             </div>
 
             <Command.List className="max-h-[62vh] overflow-y-auto divide-y divide-line p-2">
-              {results.length === 0 && (
+              {showSkeleton ? (
+                <div role="status" aria-live="polite" aria-busy="true" className="px-2.5 py-3">
+                  <span className="sr-only">Loading the catalogue index</span>
+                  <div aria-hidden="true" className="space-y-3">
+                    {[0, 1, 2].map((row) => (
+                      <div key={row} className="flex items-center gap-3">
+                        <SkeletonShard height={16} width={16} />
+                        <div className="flex-1">
+                          <SkeletonShard height={12} width="45%" />
+                          <div className="h-1.5" />
+                          <SkeletonShard height={10} width="70%" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {!showSkeleton && results.length === 0 && (
                 <Command.Empty className="px-4 py-10 text-center font-sans text-sm text-ink-secondary">
                   {t(locale, 'cmdk.empty')}
                 </Command.Empty>
               )}
 
-              {sections.map(({ kind, heading }) => {
+              {!showSkeleton && sections.map(({ kind, heading }) => {
                 const groupItems = grouped[kind];
                 if (groupItems.length === 0) return null;
                 return (
@@ -235,6 +274,7 @@ export default function CommandPalette({
               <span>DOI · GitHub · ORCID</span>
             </div>
           </Command>
+          </m.div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

@@ -1,8 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Bookmark, Check, Copy, Link2, Printer, Share2 } from 'lucide-react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
+import { Bookmark, Copy, Link2, Printer, Share2 } from 'lucide-react';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
+import { EASING } from '@/lib/motion/tokens';
+import Pressable from './motion/Pressable';
+import SuccessCheck from './motion/SuccessCheck';
 
 type StorageKey = 'rwm_saved_posts' | 'rwm_saved_papers';
 
@@ -100,7 +105,7 @@ export default function ReadingActions({
   return (
     <div>
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Pressable
           type="button"
           onClick={toggleSaved}
           aria-pressed={saved}
@@ -112,33 +117,53 @@ export default function ReadingActions({
               : buttonClass
           }
         >
-          <Bookmark className={`h-4 w-4 ${saved ? 'fill-current' : ''}`} aria-hidden="true" />
+          <AnimatePresence initial={false} mode="wait">
+            <m.span
+              key={saved ? 'saved' : 'unsaved'}
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.16, ease: [...EASING.enter] }}
+              className="inline-flex"
+              aria-hidden="true"
+            >
+              {saved ? <SuccessCheck size={16} quiet /> : <Bookmark className="h-4 w-4" />}
+            </m.span>
+          </AnimatePresence>
           {!compact && <span>{saved ? 'Saved' : 'Save'}</span>}
           <span className="sr-only">{saved ? 'Remove from reading list' : 'Save to reading list'}</span>
-        </button>
+        </Pressable>
 
-        <button type="button" onClick={copyCitation} className={buttonClass}>
-          {copied ? (
-            <Check className="h-4 w-4 text-brand" aria-hidden="true" />
-          ) : (
-            <Copy className="h-4 w-4" aria-hidden="true" />
-          )}
+        <Pressable type="button" onClick={copyCitation} className={buttonClass}>
+          <AnimatePresence initial={false} mode="wait">
+            <m.span
+              key={copied ? 'copied' : 'idle'}
+              initial={{ scale: 0.7, opacity: 0, rotate: -10 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              exit={{ scale: 0.7, opacity: 0, rotate: 10 }}
+              transition={{ duration: 0.16, ease: [...EASING.emphasize] }}
+              className="inline-flex text-brand"
+              aria-hidden="true"
+            >
+              {copied ? <SuccessCheck size={16} /> : <Copy className="h-4 w-4" />}
+            </m.span>
+          </AnimatePresence>
           {!compact && <span>{copied ? (doi ? 'DOI copied' : 'Link copied') : doi ? 'Copy DOI' : 'Copy link'}</span>}
           {compact && <span className="sr-only">{doi ? 'Copy DOI link' : 'Copy link'}</span>}
-        </button>
+        </Pressable>
 
-        <button type="button" onClick={share} className={buttonClass}>
+        <Pressable type="button" onClick={share} className={buttonClass}>
           <Share2 className="h-4 w-4" aria-hidden="true" />
           {!compact && <span>Share</span>}
           <span className="sr-only">Share {title}</span>
-        </button>
+        </Pressable>
 
         {showPrint && (
-          <button type="button" onClick={() => window.print()} className={buttonClass}>
+          <Pressable type="button" onClick={() => window.print()} className={buttonClass}>
             <Printer className="h-4 w-4" aria-hidden="true" />
             {!compact && <span>Print or save PDF</span>}
             <span className="sr-only">Print or save this paper as PDF</span>
-          </button>
+          </Pressable>
         )}
 
         {doi && (
@@ -160,7 +185,20 @@ export default function ReadingActions({
       </div>
 
       <p role="status" aria-live="polite" className="mt-2 min-h-5 font-sans text-xs text-ink-secondary">
-        {feedback}
+        <AnimatePresence initial={false} mode="wait">
+          {feedback ? (
+            <m.span
+              key={feedback}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.16, ease: [...EASING.standard] }}
+              className="inline-block"
+            >
+              {feedback}
+            </m.span>
+          ) : null}
+        </AnimatePresence>
       </p>
     </div>
   );

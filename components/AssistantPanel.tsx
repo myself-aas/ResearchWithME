@@ -7,10 +7,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Check, Copy, FileText, Loader2, Send, Sparkles } from 'lucide-react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
+import { ArrowRight, Copy, FileText, Send, Sparkles } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
+import { EASING } from '@/lib/motion/tokens';
+import { Spinner } from '@/components/motion/LoadingState';
+import SuccessCheck from '@/components/motion/SuccessCheck';
 
 interface Citation {
   id: string;
@@ -181,7 +186,11 @@ export default function AssistantPanel() {
                 disabled={loading || !query.trim()}
                 className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
               >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <Send className="h-4 w-4" aria-hidden="true" />}
+                {loading ? (
+                  <Spinner size={16} className="text-white" />
+                ) : (
+                  <Send className="h-4 w-4" aria-hidden="true" />
+                )}
                 <span>{loading ? 'Searching the archive…' : 'Ask the archive'}</span>
               </button>
               <p className="text-sm text-stone-600">Answers summarize published work; verify claims against the linked article.</p>
@@ -222,18 +231,34 @@ export default function AssistantPanel() {
             </div>
           )}
 
-          {loading && (
-            <p role="status" className="mt-6 flex items-center gap-2 text-sm text-stone-600">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-              <span>Reading the catalog and drafting a cited answer…</span>
-            </p>
-          )}
+          <AnimatePresence initial={false}>
+            {loading ? (
+              <m.p
+                key="assistant-loading"
+                role="status"
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.18, ease: [...EASING.standard] }}
+                className="mt-6 flex items-center gap-2 text-sm text-stone-600"
+              >
+                <Spinner size={16} className="text-brand" />
+                <span>Reading the catalog and drafting a cited answer…</span>
+              </m.p>
+            ) : null}
+          </AnimatePresence>
 
+          <AnimatePresence initial={false}>
           {answer && (
-            <div
+            <m.div
+              key="assistant-answer"
               ref={answerRef}
               tabIndex={-1}
               aria-labelledby="answer-heading"
+              initial={{ opacity: 0, y: 10, scale: 0.995 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.32, ease: [...EASING.enter] }}
               className="mt-8 rounded-lg border border-stone-200 bg-white"
             >
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-5 py-3">
@@ -246,7 +271,19 @@ export default function AssistantPanel() {
                   onClick={copyAnswer}
                   className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-1.5 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
                 >
-                  {copied ? <Check className="h-4 w-4 text-emerald-700" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+                  <AnimatePresence initial={false} mode="wait">
+                    <m.span
+                      key={copied ? 'copied' : 'idle'}
+                      initial={{ scale: 0.7, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.7, opacity: 0 }}
+                      transition={{ duration: 0.16, ease: [...EASING.emphasize] }}
+                      className="inline-flex text-emerald-700"
+                      aria-hidden="true"
+                    >
+                      {copied ? <SuccessCheck size={16} /> : <Copy className="h-4 w-4" />}
+                    </m.span>
+                  </AnimatePresence>
                   <span>{copied ? 'Copied' : 'Copy answer'}</span>
                 </button>
               </div>
@@ -279,8 +316,9 @@ export default function AssistantPanel() {
                   </ul>
                 </div>
               )}
-            </div>
+            </m.div>
           )}
+          </AnimatePresence>
         </section>
 
         <section aria-labelledby="assistant-limits" className="border-t border-stone-200 py-8">

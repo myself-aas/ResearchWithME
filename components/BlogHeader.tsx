@@ -4,6 +4,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { AnimatePresence, LayoutGroup, useMotionValueEvent, useScroll } from 'motion/react';
+import * as m from 'motion/react-m';
 import {
   Bookmark,
   BookOpen,
@@ -22,7 +24,11 @@ import {
 } from 'lucide-react';
 import { useSession } from '@/lib/supabase/use-session';
 import { useDigestSubscribed, useSavedTotalCount } from '@/lib/stores/preferences-store';
+import { useWarmImport } from '@/lib/motion/hooks';
+import { EASING, TRANSITION } from '@/lib/motion/tokens';
 import { t } from '@/lib/i18n';
+import AttentionPulse from './motion/AttentionPulse';
+import Pressable from './motion/Pressable';
 import BrandLogo from './BrandLogo';
 import LocaleSwitcher from './i18n/LocaleSwitcher';
 import { useLocale } from './i18n/LocaleProvider';
@@ -61,11 +67,29 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   const [menuOpen, setMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteEverOpened, setPaletteEverOpened] = useState(false);
+  const [elevated, setElevated] = useState(false);
+  const [badgePulse, setBadgePulse] = useState(false);
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const savedTotal = savedCount ?? storeSavedCount;
+  const warmPalette = useWarmImport(() => import('./search/CommandPalette'));
+  const { scrollY } = useScroll();
+
+  // Sticky header elevation: staging says chrome should recede only as far as
+  // the reader needs. 8px of travel switches from hairline to raised shadow.
+  useMotionValueEvent(scrollY, 'change', (value) => {
+    setElevated(value > 8);
+  });
+
+  // Attention is rationed: one pulse when the reading list grows, then silence.
+  useEffect(() => {
+    if (savedTotal <= 0) return;
+    setBadgePulse(true);
+    const timer = window.setTimeout(() => setBadgePulse(false), 3400);
+    return () => window.clearTimeout(timer);
+  }, [savedTotal]);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -108,7 +132,11 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
     }`;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur-xs">
+    <header
+      className={`sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur-xs transition-shadow duration-200 ${
+        elevated ? 'shadow-floating' : 'shadow-none'
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 items-center justify-between gap-1.5 sm:gap-3">
           <Link
@@ -120,28 +148,39 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
-            <ul className="flex items-center gap-0.5">
-              {primaryNav.map((item) => {
-                const active = item.match(pathname);
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={active ? 'page' : undefined}
-                      className={navLinkClass(active)}
-                    >
-                      <span>{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <LayoutGroup id="pieme-primary-nav">
+              <ul className="flex items-center gap-0.5">
+                {primaryNav.map((item) => {
+                  const active = item.match(pathname);
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? 'page' : undefined}
+                        className={`${navLinkClass(active)} relative`}
+                      >
+                        <span>{item.label}</span>
+                        {active ? (
+                          <m.span
+                            layoutId="pieme-nav-underline"
+                            aria-hidden="true"
+                            className="absolute inset-x-2 -bottom-[2px] h-0.5 rounded-full bg-ink"
+                            transition={{ layout: TRANSITION.reveal }}
+                          />
+                        ) : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </LayoutGroup>
           </nav>
 
           <div className="flex items-center gap-1 sm:gap-2">
-            <button
+            <Pressable
               type="button"
               onClick={openPalette}
+              {...warmPalette}
               className="inline-flex min-h-11 items-center gap-2.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink sm:px-3"
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -149,7 +188,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <kbd className="hidden rounded-sm border border-line bg-canvas px-1.5 py-0.5 font-mono text-xs font-medium text-ink-secondary sm:inline-block">
                 ⌘K
               </kbd>
-            </button>
+            </Pressable>
 
             <Link
               href="/bookmarks"
@@ -160,9 +199,11 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <span className="hidden 2xl:inline">{t(locale, 'nav.readingList')}</span>
               <span className="sr-only 2xl:hidden">{t(locale, 'nav.readingList')}</span>
               {savedTotal > 0 && (
-                <span className="rounded-sm bg-brand px-1.5 py-0.5 font-mono text-xs font-semibold text-on-primary">
-                  {savedTotal}
-                </span>
+                <AttentionPulse active={badgePulse} className="rounded-sm">
+                  <span className="rounded-sm bg-brand px-1.5 py-0.5 font-mono text-xs font-semibold text-on-primary">
+                    {savedTotal}
+                  </span>
+                </AttentionPulse>
               )}
               {digestSubscribed && (
                 <CheckCircle2
@@ -195,7 +236,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <span>{user?.isEditor ? 'Write' : 'Sign in'}</span>
             </Link>
 
-            <button
+            <Pressable
               ref={menuButtonRef}
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
@@ -203,18 +244,36 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               aria-controls={menuId}
               className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle lg:hidden"
             >
-              {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+              <AnimatePresence initial={false} mode="wait">
+                <m.span
+                  key={menuOpen ? 'close' : 'open'}
+                  initial={{ rotate: -35, opacity: 0, scale: 0.8 }}
+                  animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                  exit={{ rotate: 35, opacity: 0, scale: 0.8 }}
+                  transition={{ duration: 0.16, ease: [...EASING.enter] }}
+                  className="inline-flex"
+                >
+                  {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+                </m.span>
+              </AnimatePresence>
               <span className="sr-only">{menuOpen ? 'Close navigation menu' : 'Open navigation menu'}</span>
-            </button>
+            </Pressable>
           </div>
         </div>
 
-        <div
-          ref={menuRef}
-          id={menuId}
-          hidden={!menuOpen}
-          className={menuOpen ? 'mb-4 rounded-sm border border-line bg-surface p-4 lg:hidden' : 'hidden'}
-        >
+        <AnimatePresence initial={false}>
+          {menuOpen ? (
+            <m.div
+              key="pieme-mobile-menu"
+              ref={menuRef}
+              id={menuId}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.22, ease: [...EASING.standard] }}
+              className="overflow-hidden lg:hidden"
+            >
+              <div className="mb-4 rounded-sm border border-line bg-surface p-4">
           {setSearchQuery && (
             <div className="mb-4">
               <label htmlFor="mobile-search" className="mb-1.5 block font-sans text-xs font-medium text-ink">
@@ -283,15 +342,18 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             </ul>
           </nav>
 
-          <p className="mt-4 flex items-start gap-2 border-t border-line pt-4 font-sans text-xs text-ink-secondary">
-            <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>
-              {user?.isEditor
-                ? `Signed in as ${user.name}. Publishing permissions are active.`
-                : 'Reader mode. Apply to write to publish reviews.'}
-            </span>
-          </p>
-        </div>
+              <p className="mt-4 flex items-start gap-2 border-t border-line pt-4 font-sans text-xs text-ink-secondary">
+                <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>
+                  {user?.isEditor
+                    ? `Signed in as ${user.name}. Publishing permissions are active.`
+                    : 'Reader mode. Apply to write to publish reviews.'}
+                </span>
+              </p>
+              </div>
+            </m.div>
+          ) : null}
+        </AnimatePresence>
       </div>
 
       {paletteEverOpened && (

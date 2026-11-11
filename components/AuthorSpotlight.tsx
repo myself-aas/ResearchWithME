@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { ArrowRight, GitBranch, GraduationCap } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
+import Reveal from '@/components/motion/Reveal';
+import { Stagger, StaggerItem } from '@/components/motion/Stagger';
 
 function IdentifierLinks({ author }: { author: Author }) {
   const shared = { className: 'h-3.5 w-3.5 text-brand', 'aria-hidden': true as const };
@@ -22,7 +24,10 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
   return (
     <section aria-labelledby="contributors-title" className="border-t border-line bg-canvas">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <Reveal
+          variant="rise"
+          className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between"
+        >
           <div>
             <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
               Verified Specialists
@@ -39,16 +44,19 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
           </div>
           <Link
             href="/authors"
-            className="inline-flex min-h-11 items-center gap-2 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
+            className="group inline-flex min-h-11 items-center gap-2 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
           >
             <span>All authors</span>
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowRight
+              className="h-4 w-4 motion-safe:transition-transform motion-safe:duration-200 motion-safe:group-hover:translate-x-0.5"
+              aria-hidden="true"
+            />
           </Link>
-        </div>
+        </Reveal>
 
-        <ul className="divide-y divide-line">
+        <Stagger as="ul" className="divide-y divide-line" amount={0.05} step={0.06}>
           {authors.map((author) => (
-            <li key={author.id}>
+            <StaggerItem as="li" key={author.id} variant="rise">
               <Link
                 href={`/author/${author.id}`}
                 className="group grid gap-4 px-2 py-6 transition-colors hover:bg-surface sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start sm:gap-6"
@@ -84,9 +92,9 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
                   </span>
                 </span>
               </Link>
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       </div>
     </section>
   );
