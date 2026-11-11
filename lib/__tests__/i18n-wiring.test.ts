@@ -38,7 +38,7 @@ describe('route-level i18n wiring (§30)', () => {
 describe('Remotion/Hyperframes token consumers (§44)', () => {
   it('video token outputs exist and compositions contain no hard-coded hex', () => {
     const videoCss = readFileSync(join(process.cwd(), 'tokens/generated/tokens.video.css'), 'utf8');
-    expect(videoCss).toContain('--pieme-video-color-action-primary: #4F46E5');
+    expect(videoCss).toContain('--pieme-video-color-action-primary: #1D4ED8');
     expect(videoCss).toContain('Noto Sans Bengali');
     const dir = join(process.cwd(), 'videos');
     const htmlFiles = readdirSync(dir, { recursive: true }).filter((f) => String(f).endsWith('.html')) as string[];

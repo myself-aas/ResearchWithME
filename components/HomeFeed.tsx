@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import BlogHeader from '@/components/BlogHeader';
 import BlogHero from '@/components/BlogHero';
 import FeaturedArticle from '@/components/FeaturedArticle';
@@ -9,10 +9,7 @@ import ArticleFeed from '@/components/ArticleFeed';
 import AuthorSpotlight from '@/components/AuthorSpotlight';
 import BlogFooter from '@/components/BlogFooter';
 import { Author, BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
-import { readStringArray, writeLocal } from '@/lib/storage';
-
-const SAVED_KEY = 'rwm_saved_posts';
-const LIKED_KEY = 'rwm_liked_posts';
+import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
 
 interface HomeFeedProps {
   initialCategory?: string;
@@ -34,18 +31,27 @@ export default function HomeFeed({
   initialPosts,
 }: HomeFeedProps) {
   const router = useRouter();
+  const pathname = usePathname() || '/';
+  const hydrated = useHydratePreferences();
+  const storeSavedPostIds = usePreferencesStore((state) => state.savedPostIds);
+  const storeLikedPostIds = usePreferencesStore((state) => state.likedPostIds);
+  const toggleSavedPost = usePreferencesStore((state) => state.toggleSavedPost);
+  const setPostLiked = usePreferencesStore((state) => state.setPostLiked);
+
   const [posts, setPosts] = useState<BlogPost[]>(initialPosts ?? INITIAL_BLOG_POSTS);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedFormat, setSelectedFormat] = useState('All');
   const [searchQuery, setSearchQuery] = useState(initialSearch);
-  const [savedPostIds, setSavedPostIds] = useState<string[]>([]);
-  const [likedPostIds, setLikedPostIds] = useState<string[]>([]);
   const feedRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setSavedPostIds(readStringArray(SAVED_KEY));
-    setLikedPostIds(readStringArray(LIKED_KEY));
-  }, []);
+  const savedPostIds = useMemo(
+    () => (hydrated ? storeSavedPostIds : []),
+    [hydrated, storeSavedPostIds],
+  );
+  const likedPostIds = useMemo(
+    () => (hydrated ? storeLikedPostIds : []),
+    [hydrated, storeLikedPostIds],
+  );
 
   useEffect(() => {
     let active = true;
@@ -85,6 +91,8 @@ export default function HomeFeed({
         post.summary,
         post.author.name,
         post.category,
+        post.format,
+        `10.5555/rwm.${post.id}`,
         ...post.tags,
         post.reviewedArtifact?.identifier ?? '',
         post.reviewedArtifact?.title ?? '',
@@ -93,29 +101,20 @@ export default function HomeFeed({
   }, [posts, searchQuery, selectedCategory, selectedFormat]);
 
   const featuredPost = useMemo(() => posts.find((post) => post.featured) ?? posts[0], [posts]);
-  const showFeatured = !searchQuery && selectedCategory === 'All' && selectedFormat === 'All' && Boolean(featuredPost);
+  const showFeatured =
+    !searchQuery && selectedCategory === 'All' && selectedFormat === 'All' && Boolean(featuredPost);
 
   function scrollToFeed() {
     feedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   function handleToggleSave(postId: string) {
-    setSavedPostIds((previous) => {
-      const next = previous.includes(postId)
-        ? previous.filter((id) => id !== postId)
-        : [...previous, postId];
-      writeLocal(SAVED_KEY, next);
-      return next;
-    });
+    toggleSavedPost(postId);
   }
 
   async function handleLikePost(postId: string) {
     if (likedPostIds.includes(postId)) return;
-    setLikedPostIds((previous) => {
-      const next = [...previous, postId];
-      writeLocal(LIKED_KEY, next);
-      return next;
-    });
+    setPostLiked(postId, true);
     setPosts((previous) =>
       previous.map((post) => (post.id === postId ? { ...post, likes: post.likes + 1 } : post)),
     );
@@ -124,13 +123,11 @@ export default function HomeFeed({
       if (!res.ok) throw new Error('Like was not recorded');
     } catch {
       setPosts((previous) =>
-        previous.map((post) => (post.id === postId ? { ...post, likes: Math.max(0, post.likes - 1) } : post)),
+        previous.map((post) =>
+          post.id === postId ? { ...post, likes: Math.max(0, post.likes - 1) } : post,
+        ),
       );
-      setLikedPostIds((previous) => {
-        const next = previous.filter((id) => id !== postId);
-        writeLocal(LIKED_KEY, next);
-        return next;
-      });
+      setPostLiked(postId, false);
     }
   }
 
@@ -138,11 +135,20 @@ export default function HomeFeed({
     setSelectedCategory('All');
     setSelectedFormat('All');
     setSearchQuery('');
-    router.push('/');
+    if (pathname.startsWith('/category/')) {
+      router.push('/');
+    }
     scrollToFeed();
   }
 
-  function selectCategory(category: string) {
+  function handleSelectCategoryInPlace(category: string) {
+    setSelectedCategory(category);
+    if (pathname.startsWith('/category/') && category === 'All') {
+      router.push('/');
+    }
+  }
+
+  function selectCategoryRoute(category: string) {
     if (category === 'All') {
       router.push('/');
     } else {
@@ -152,7 +158,7 @@ export default function HomeFeed({
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <BlogHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
@@ -165,6 +171,8 @@ export default function HomeFeed({
           setSearchQuery={setSearchQuery}
           selectedFormat={selectedFormat}
           setSelectedFormat={setSelectedFormat}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={handleSelectCategoryInPlace}
           totalArticles={posts.length}
         />
 
@@ -186,7 +194,7 @@ export default function HomeFeed({
             selectedFormat={selectedFormat}
             searchQuery={searchQuery}
             onClearFilters={clearFilters}
-            onSelectCategory={selectCategory}
+            onSelectCategory={selectCategoryRoute}
           />
         </div>
 

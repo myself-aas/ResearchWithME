@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
-import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from './client';
+import { hasSupabaseBrowserConfig } from './config';
 
 export interface SessionUser {
   id: string;
@@ -97,48 +97,59 @@ export function useSession(): Session {
       return;
     }
 
-    const supabase = getSupabaseBrowserClient();
     let active = true;
+    let unsubscribe: (() => void) | null = null;
 
-    async function read(account: User | null) {
-      if (!account) {
-        if (active) setUser(null);
-        return;
-      }
-      let isEditor = false;
-      try {
-        const { data } = await supabase.rpc('is_editor');
-        isEditor = data === true;
-      } catch {
-        // Fail closed: an unreadable allowlist means the header shows reader
-        // affordances, and the server still enforces the real gate.
-        isEditor = false;
-      }
-      if (active) setUser(toSessionUser(account, isEditor));
-    }
+    void import('./client')
+      .then(({ getSupabaseBrowserClient }) => {
+        if (!active) return;
+        const supabase = getSupabaseBrowserClient();
 
-    supabase.auth
-      .getUser()
-      .then(({ data }) => read(data.user))
-      .catch(() => undefined)
-      .finally(() => {
+        async function read(account: User | null) {
+          if (!account) {
+            if (active) setUser(null);
+            return;
+          }
+          let isEditor = false;
+          try {
+            const { data } = await supabase.rpc('is_editor');
+            isEditor = data === true;
+          } catch {
+            // Fail closed: an unreadable allowlist means the header shows reader
+            // affordances, and the server still enforces the real gate.
+            isEditor = false;
+          }
+          if (active) setUser(toSessionUser(account, isEditor));
+        }
+
+        supabase.auth
+          .getUser()
+          .then(({ data }) => read(data.user))
+          .catch(() => undefined)
+          .finally(() => {
+            if (active) setHydrated(true);
+          });
+
+        const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
+          if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT' && event !== 'USER_UPDATED') return;
+          // Deferred: Supabase must not be called synchronously from this callback.
+          setTimeout(() => void read(session?.user ?? null), 0);
+        });
+        unsubscribe = () => subscription.subscription.unsubscribe();
+      })
+      .catch(() => {
         if (active) setHydrated(true);
       });
 
-    const { data: subscription } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event !== 'SIGNED_IN' && event !== 'SIGNED_OUT' && event !== 'USER_UPDATED') return;
-      // Deferred: Supabase must not be called synchronously from this callback.
-      setTimeout(() => void read(session?.user ?? null), 0);
-    });
-
     return () => {
       active = false;
-      subscription.subscription.unsubscribe();
+      unsubscribe?.();
     };
   }, []);
 
   async function signOut() {
     if (!hasSupabaseBrowserConfig()) return;
+    const { getSupabaseBrowserClient } = await import('./client');
     await getSupabaseBrowserClient().auth.signOut();
     setUser(null);
   }

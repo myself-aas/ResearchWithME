@@ -1,13 +1,14 @@
 'use client';
 
+import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   Activity,
   ArrowRight,
   BarChart3,
   Bookmark,
   BookOpen,
+  CheckCircle2,
   Cpu,
   FileText,
   GitBranch,
@@ -15,7 +16,7 @@ import {
   Heart,
   MessageSquare,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { AnimatePresence, LazyMotion, MotionConfig, domMax, m } from 'motion/react';
 import { BlogCategory, BlogPost, categoryToSlug } from '@/lib/blog-data';
 
 interface CategoryMeta {
@@ -60,19 +61,19 @@ export const CATEGORY_META: Record<BlogCategory, CategoryMeta> = {
 function categoryIcon(category: string): ReactNode {
   switch (category) {
     case 'Research Reviews':
-      return <BookOpen className="h-4 w-4" aria-hidden="true" />;
+      return <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />;
     case 'GitHub Repo Teardowns':
-      return <GitBranch className="h-4 w-4" aria-hidden="true" />;
+      return <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />;
     case 'STEM & Tech':
-      return <Cpu className="h-4 w-4" aria-hidden="true" />;
+      return <Cpu className="h-3.5 w-3.5" aria-hidden="true" />;
     case 'Health & Medicine':
-      return <Activity className="h-4 w-4" aria-hidden="true" />;
+      return <Activity className="h-3.5 w-3.5" aria-hidden="true" />;
     case 'Sociology & Culture':
-      return <Globe className="h-4 w-4" aria-hidden="true" />;
+      return <Globe className="h-3.5 w-3.5" aria-hidden="true" />;
     case 'Data & Policy':
-      return <BarChart3 className="h-4 w-4" aria-hidden="true" />;
+      return <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />;
     default:
-      return <FileText className="h-4 w-4" aria-hidden="true" />;
+      return <FileText className="h-3.5 w-3.5" aria-hidden="true" />;
   }
 }
 
@@ -97,247 +98,313 @@ export default function ArticleFeed({
   selectedFormat,
   searchQuery,
   onClearFilters,
-  onSelectCategory: _onSelectCategory,
 }: ArticleFeedProps) {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
   const showCategoryGrid = selectedCategory === 'All' && !searchQuery;
   const activeCategory = selectedCategory !== 'All' ? (selectedCategory as BlogCategory) : null;
   const activeMeta = activeCategory ? CATEGORY_META[activeCategory] : null;
   const hasFilters = selectedCategory !== 'All' || selectedFormat !== 'All' || Boolean(searchQuery);
 
   return (
-    <section id="articles-feed" aria-labelledby="catalogue-title" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {showCategoryGrid && (
-        <div className="mb-14">
-          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
-            <h2 id="catalogue-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
-              Browse by field
-            </h2>
-            <p className="max-w-md text-sm leading-relaxed text-stone-600">
-              Six editorial columns, each defined by the evidence its reviewers work with.
-            </p>
-          </div>
+    <LazyMotion features={domMax}>
+      <MotionConfig reducedMotion="user">
+        <section id="articles-feed" aria-labelledby="catalogue-title" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          {showCategoryGrid && (
+            <div className="mb-14">
+              <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                    Six Specialist Columns
+                  </p>
+                  <h2 id="columns-heading" className="mt-1 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                    Browse by editorial column
+                  </h2>
+                </div>
+                <p className="max-w-md font-sans text-xs leading-relaxed text-ink-secondary">
+                  Each column is curated by domain specialists and anchored to primary code, datasets, or peer-reviewed papers.
+                </p>
+              </div>
 
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(CATEGORY_META).map(([category, meta]) => {
-              const count = posts.filter((post) => post.category === category).length;
-              return (
-                <li key={category}>
-                  <Link
-                    href={`/category/${categoryToSlug(category)}`}
-                    className="group relative flex h-48 w-full flex-col justify-end overflow-hidden rounded-lg border border-stone-200 bg-stone-900 text-left transition-colors hover:border-amber-700"
-                  >
-                    <Image
-                      src={meta.thumbnail}
-                      alt=""
-                      aria-hidden="true"
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover opacity-45 transition-opacity group-hover:opacity-55"
-                    />
-                    <span className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/50 to-stone-900/20" />
-                    <span className="relative z-10 flex flex-col gap-1 p-5">
-                      <span className="flex items-center gap-2 text-sm font-medium text-indigo-200">
-                        {categoryIcon(category)}
-                        <span>{count} {count === 1 ? 'review' : 'reviews'}</span>
-                      </span>
-                      <span className="font-serif text-xl font-semibold text-white group-hover:text-indigo-200">
-                        {category}
-                      </span>
-                      <span className="line-clamp-2 max-w-sm text-sm leading-snug text-stone-200">
-                        {meta.description}
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      )}
+              <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {Object.entries(CATEGORY_META).map(([category, meta], idx) => {
+                  const count = posts.filter((post) => post.category === category).length;
+                  const code = String(idx + 1).padStart(2, '0');
+                  return (
+                    <li key={category}>
+                      <Link
+                        href={`/category/${categoryToSlug(category)}`}
+                        className="group flex h-full flex-col justify-between rounded-sm border border-line bg-surface p-5 transition-colors hover:border-brand hover:bg-surface-subtle"
+                      >
+                        <div>
+                          <div className="flex items-center justify-between gap-2 font-mono text-xs text-ink-secondary">
+                            <span className="inline-flex items-center gap-1.5 font-semibold text-brand">
+                              <span>{code}</span>
+                              <span aria-hidden="true">·</span>
+                              {categoryIcon(category)}
+                            </span>
+                            <span>
+                              {count} {count === 1 ? 'review' : 'reviews'}
+                            </span>
+                          </div>
+                          <h3 className="mt-3 font-serif text-xl font-semibold text-ink transition-colors group-hover:text-brand">
+                            {category}
+                          </h3>
+                          <p className="mt-2 font-sans text-xs leading-relaxed text-ink-secondary">
+                            {meta.description}
+                          </p>
+                        </div>
 
-      {activeMeta && activeCategory && (
-        <div className="mb-10 border-y border-stone-200 py-6">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h2 className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl">{activeCategory}</h2>
-              <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">{activeMeta.description}</p>
-              <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-stone-600">
-                {activeMeta.tags.map((tag) => (
-                  <li key={tag}>#{tag}</li>
-                ))}
+                        <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line pt-3 font-mono text-xs text-ink-secondary">
+                          {meta.tags.map((tag) => (
+                            <span key={tag} className="rounded-xs border border-line bg-canvas px-1.5 py-0.5">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
-            <button
-              type="button"
-              onClick={onClearFilters}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
-            >
-              All fields
-            </button>
+          )}
+
+          {activeMeta && activeCategory && (
+            <div className="mb-10 border-y border-line py-6">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-wider text-brand">Active Column</p>
+                  <h2 className="mt-1 font-serif text-2xl font-bold text-ink sm:text-3xl">{activeCategory}</h2>
+                  <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+                    {activeMeta.description}
+                  </p>
+                  <ul className="mt-3 flex flex-wrap gap-2 font-mono text-xs text-ink-secondary">
+                    {activeMeta.tags.map((tag) => (
+                      <li key={tag} className="rounded-sm border border-line bg-surface px-2 py-0.5">
+                        #{tag}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <button
+                  type="button"
+                  onClick={onClearFilters}
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-surface-subtle"
+                >
+                  All columns
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
+            <div>
+              <h2 id="catalogue-title" className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
+                {activeCategory ? `${activeCategory} reviews` : 'Latest reviews'}
+              </h2>
+              <p className="mt-1.5 font-mono text-xs text-ink-secondary">
+                {posts.length} {posts.length === 1 ? 'manuscript' : 'manuscripts'}
+                {selectedFormat !== 'All' ? ` · ${selectedFormat}` : ''}
+                {searchQuery ? ` · matching “${searchQuery}”` : ''}
+              </p>
+            </div>
+
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={onClearFilters}
+                className="min-h-11 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
+              >
+                Clear all filters
+              </button>
+            )}
           </div>
-        </div>
-      )}
 
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
-        <div>
-          <h2 id="catalogue-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
-            {activeCategory ? `${activeCategory} reviews` : 'Latest reviews'}
-          </h2>
-          <p className="mt-2 text-sm text-stone-600">
-            {posts.length} {posts.length === 1 ? 'article' : 'articles'}
-            {selectedFormat !== 'All' ? ` · ${selectedFormat}` : ''}
-            {searchQuery ? ` · matching “${searchQuery}”` : ''}
-          </p>
-        </div>
+          {posts.length === 0 ? (
+            <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
+              <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                Diagnostic Empty State · Zero Matches
+              </p>
+              <h3 className="mt-2 font-serif text-2xl font-semibold text-ink">
+                No manuscripts match the active filter constraints
+              </h3>
+              <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
+                No published review satisfies all of the constraints below simultaneously. Relax a filter or reset the index to view the complete specialist catalog.
+              </p>
 
-        {hasFilters && (
-          <button
-            type="button"
-            onClick={onClearFilters}
-            className="min-h-11 text-sm font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
-          >
-            Clear all filters
-          </button>
-        )}
-      </div>
+              <div
+                data-testid="active-filter-chips"
+                className="mt-5 flex flex-wrap items-center gap-2 font-mono text-xs"
+              >
+                {selectedCategory !== 'All' && (
+                  <span className="rounded-sm border border-brand bg-canvas px-2.5 py-1 text-ink">
+                    Column: {selectedCategory}
+                  </span>
+                )}
+                {selectedFormat !== 'All' && (
+                  <span className="rounded-sm border border-brand bg-canvas px-2.5 py-1 text-ink">
+                    Format: {selectedFormat}
+                  </span>
+                )}
+                {searchQuery && (
+                  <span className="rounded-sm border border-brand bg-canvas px-2.5 py-1 text-ink">
+                    Query: {searchQuery}
+                  </span>
+                )}
+              </div>
 
-      {posts.length === 0 ? (
-        <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">
-          <h3 className="font-serif text-2xl font-semibold text-stone-900">No articles match those filters</h3>
-          <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-            Nothing in the archive matches this combination of search text, field, and format. Clear the filters to see the full catalogue.
-          </p>
-          <button
-            type="button"
-            onClick={onClearFilters}
-            className="mt-6 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
-          >
-            Reset filters
-          </button>
-        </div>
-      ) : (
-        <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post) => {
-            const isSaved = savedPostIds.includes(post.id) || savedPostIds.includes(post.slug);
-            const meta = CATEGORY_META[post.category as BlogCategory] ?? CATEGORY_META['Research Reviews'];
+              <button
+                type="button"
+                onClick={onClearFilters}
+                className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
+              >
+                Reset filters
+              </button>
+            </div>
+          ) : (
+            <m.ul layout className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {posts.map((post) => {
+                  const isSaved = savedPostIds.includes(post.id) || savedPostIds.includes(post.slug);
+                  const canonicalDoi = `10.5555/rwm.${post.id}`;
 
-            return (
-              <li key={post.id} className="flex min-w-0">
-                <article className="group flex w-full min-w-0 flex-col overflow-hidden rounded-lg border border-stone-200 bg-white transition-colors hover:border-stone-300">
-                  <div className="relative aspect-[16/9] w-full overflow-hidden bg-stone-900">
-                    <Image
-                      src={post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : meta.thumbnail}
-                      alt=""
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                    <span className="absolute left-3 top-3 rounded bg-stone-950/90 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-stone-100">
-                      {post.format}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => onToggleSave(post.id)}
-                      aria-pressed={isSaved}
-                      className={`absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors ${
-                        isSaved
-                          ? 'bg-brand text-white'
-                          : 'bg-stone-950/80 text-stone-200 hover:bg-stone-950 hover:text-white'
-                      }`}
+                  return (
+                    <m.li
+                      key={post.id}
+                      layout="position"
+                      initial={hasMounted ? { opacity: 0, y: 8 } : false}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.98 }}
+                      transition={{ duration: 0.18, ease: [0.2, 0, 0, 1] }}
+                      className="flex min-w-0"
                     >
-                      <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
-                      <span className="sr-only">
-                        {isSaved ? `Remove ${post.title} from reading list` : `Save ${post.title} to reading list`}
-                      </span>
-                    </button>
-                  </div>
+                      <article className="group flex w-full min-w-0 flex-col justify-between rounded-sm border border-line bg-surface transition-colors hover:border-brand">
+                        <div className="flex flex-1 flex-col gap-3 p-5">
+                          <div className="flex items-center justify-between gap-2 border-b border-line pb-3">
+                            <span className="rounded-xs border border-line bg-canvas px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wider text-ink-secondary">
+                              {post.format}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => onToggleSave(post.id)}
+                              aria-pressed={isSaved}
+                              className={`inline-flex h-9 w-9 items-center justify-center rounded-sm border transition-colors ${
+                                isSaved
+                                  ? 'border-brand bg-brand text-on-primary'
+                                  : 'border-line bg-canvas text-ink-secondary hover:bg-surface-subtle hover:text-ink'
+                              }`}
+                            >
+                              <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
+                              <span className="sr-only">
+                                {isSaved
+                                  ? `Remove ${post.title} from reading list`
+                                  : `Save ${post.title} to reading list`}
+                              </span>
+                            </button>
+                          </div>
 
-                  <div className="flex flex-1 flex-col gap-3 p-5">
-                    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                      <Link
-                        href={`/category/${categoryToSlug(post.category)}`}
-                        className="inline-flex items-center gap-1 font-medium text-brand underline-offset-4 hover:underline"
-                      >
-                        {categoryIcon(post.category)}
-                        <span>{post.category}</span>
-                      </Link>
-                      <span aria-hidden="true">·</span>
-                      <span>{post.publishedAt}</span>
-                      <span aria-hidden="true">·</span>
-                      <span>{post.readTime}</span>
-                    </div>
+                          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+                            <Link
+                              href={`/category/${categoryToSlug(post.category)}`}
+                              className="inline-flex items-center gap-1 font-semibold text-brand underline-offset-4 hover:underline"
+                            >
+                              {categoryIcon(post.category)}
+                              <span>{post.category}</span>
+                            </Link>
+                            <span aria-hidden="true">·</span>
+                            <span>{post.publishedAt}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{post.readTime}</span>
+                          </div>
 
-                    <h3 className="break-words font-serif text-xl font-semibold leading-snug text-stone-900">
-                      <Link href={`/post/${post.slug}`} className="hover:text-brand">
-                        {post.title}
-                      </Link>
-                    </h3>
+                          <h3 className="break-words font-serif text-xl font-semibold leading-snug text-ink">
+                            <Link href={`/post/${post.slug}`} className="transition-colors hover:text-brand">
+                              {post.title}
+                            </Link>
+                          </h3>
 
-                    <p className="line-clamp-3 break-words text-sm leading-relaxed text-stone-700">{post.summary}</p>
+                          <p className="break-words font-sans text-sm leading-relaxed text-ink-secondary">
+                            {post.summary.length > 180 ? `${post.summary.slice(0, 177)}…` : post.summary}
+                          </p>
 
-                    {post.reviewedArtifact && (
-                      <p className="mt-auto flex min-w-0 max-w-full items-center gap-1.5 overflow-hidden font-mono text-sm text-stone-600">
-                        {post.reviewedArtifact.type === 'github' ? (
-                          <GitBranch className="h-4 w-4 shrink-0" aria-hidden="true" />
-                        ) : (
-                          <FileText className="h-4 w-4 shrink-0" aria-hidden="true" />
-                        )}
-                        <span className="truncate">{post.reviewedArtifact.identifier}</span>
-                      </p>
-                    )}
-                  </div>
+                          <div className="mt-auto space-y-1.5 pt-2 font-mono text-xs text-ink-secondary">
+                            {post.reviewedArtifact && (
+                              <p className="flex min-w-0 items-center gap-1.5 truncate text-ink">
+                                {post.reviewedArtifact.type === 'github' ? (
+                                  <GitBranch className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
+                                ) : (
+                                  <FileText className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
+                                )}
+                                <span className="truncate">{post.reviewedArtifact.identifier}</span>
+                              </p>
+                            )}
+                            <p className="truncate">DOI {canonicalDoi}</p>
+                          </div>
+                        </div>
 
-                  <div className="flex items-center justify-between gap-3 border-t border-stone-200 px-5 py-3">
-                    <Link
-                      href={`/author/${post.author.id}`}
-                      className="flex min-w-0 items-center gap-2 text-sm text-stone-800 hover:text-brand"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-xs font-bold text-stone-50"
-                      >
-                        {post.author.avatar}
-                      </span>
-                      <span className="truncate font-medium">{post.author.name}</span>
-                    </Link>
+                        <div className="flex items-center justify-between gap-3 border-t border-line bg-canvas/60 px-5 py-3">
+                          <Link
+                            href={`/author/${post.author.id}`}
+                            className="flex min-w-0 items-center gap-2 font-sans text-xs text-ink hover:text-brand"
+                          >
+                            <span
+                              aria-hidden="true"
+                              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                            >
+                              {post.author.avatar}
+                            </span>
+                            <span className="truncate font-medium">{post.author.name}</span>
+                            {post.author.verifiedVia && (
+                              <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
+                            )}
+                          </Link>
 
-                    <div className="flex shrink-0 items-center gap-2 text-sm text-stone-600">
-                      <button
-                        type="button"
-                        onClick={() => onLikePost(post.id)}
-                        className="inline-flex min-h-10 items-center gap-1 rounded px-1.5 transition-colors hover:text-red-800"
-                      >
-                        <Heart className="h-4 w-4" aria-hidden="true" />
-                        <span>{post.likes}</span>
-                        <span className="sr-only">likes. Add a like to {post.title}</span>
-                      </button>
-                      <Link
-                        href={`/post/${post.slug}#discussion`}
-                        className="inline-flex min-h-10 items-center gap-1 rounded px-1.5 transition-colors hover:text-stone-900"
-                      >
-                        <MessageSquare className="h-4 w-4" aria-hidden="true" />
-                        <span>{post.commentsCount}</span>
-                        <span className="sr-only">comments on {post.title}</span>
-                      </Link>
-                    </div>
-                  </div>
-                </article>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                          <div className="flex shrink-0 items-center gap-1.5 font-mono text-xs text-ink-secondary">
+                            <button
+                              type="button"
+                              onClick={() => onLikePost(post.id)}
+                              className="inline-flex min-h-9 items-center gap-1 rounded-sm px-1.5 transition-colors hover:text-brand"
+                            >
+                              <Heart className="h-3.5 w-3.5" aria-hidden="true" />
+                              <span>{post.likes}</span>
+                              <span className="sr-only">likes. Add a like to {post.title}</span>
+                            </button>
+                            <Link
+                              href={`/post/${post.slug}#discussion`}
+                              className="inline-flex min-h-9 items-center gap-1 rounded-sm px-1.5 transition-colors hover:text-ink"
+                            >
+                              <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                              <span>{post.commentsCount}</span>
+                              <span className="sr-only">comments on {post.title}</span>
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    </m.li>
+                  );
+                })}
+              </AnimatePresence>
+            </m.ul>
+          )}
 
-      <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
-        <p className="text-sm text-stone-600">Every review is open access under CC BY 4.0.</p>
-        <Link
-          href="/papers"
-          className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
-        >
-          <span>Browse the paper archive</span>
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
-      </div>
-    </section>
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
+            <p className="font-mono text-xs text-ink-secondary">
+              Every review is open access under CC BY 4.0 · ISSN 2994-0821.
+            </p>
+            <Link
+              href="/papers"
+              className="inline-flex min-h-11 items-center gap-2 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
+            >
+              <span>Browse the paper archive</span>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+        </section>
+      </MotionConfig>
+    </LazyMotion>
   );
 }

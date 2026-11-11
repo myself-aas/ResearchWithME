@@ -145,20 +145,23 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
   );
   await appStream.allReady;
 
+  const themeBoot = `(function(){try{var t=localStorage.getItem('rwm-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.classList.toggle('light',t==='light');}catch(e){}})();`;
+
   // locale/dir are derived from resolveLocale(), never from raw request text,
   // so they are safe to interpolate into the shell.
   const head =
     `<!doctype html><html lang="${locale}" dir="${dir}"><head><meta charset="utf-8">` +
     `<meta name="viewport" content="width=device-width, initial-scale=1">` +
-    `<meta name="color-scheme" content="light">` +
-    `<meta name="theme-color" content="#F8F7F3">` +
+    `<meta name="color-scheme" content="light dark">` +
+    `<meta name="theme-color" content="#FAF9F6">` +
     metadataTags +
     cssLinks +
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/newsreader-latin-variable.woff2" crossorigin>` +
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-variable.woff2" crossorigin>` +
+    `<script>${themeBoot}</script>` +
     `<script>window.__RWM_LOCALE__=${JSON.stringify(locale)};window.${HYDRATION_DATA_KEY}=${hydrationJson}</script>` +
-    `</head><body class="bg-stone-50 font-serif text-stone-900 antialiased">` +
-    `<a href="#main-content" class="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm focus:not-sr-only focus:fixed">Skip to main content</a>` +
+    `</head><body class="bg-canvas font-sans text-ink antialiased">` +
+    `<a href="#main-content" class="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary focus:not-sr-only focus:fixed">Skip to main content</a>` +
     `<div id="root">`;
   const tail = '</div></body></html>';
 

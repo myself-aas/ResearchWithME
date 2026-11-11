@@ -3,8 +3,10 @@
 /**
  * LocaleSwitcher — πeme v3.1 §30. EN / বাংলা toggle in the site header.
  * A native <select> keeps it keyboard- and screen-reader-accessible;
- * the current locale is announced via aria-live.
+ * the <label> supplies the accessible name without triggering WCAG 2.5.3
+ * option-text mismatch on select[aria-label].
  */
+import { useId } from 'react';
 import { useLocale } from './LocaleProvider';
 import { SUPPORTED_LOCALES } from '@/lib/i18n/locales';
 
@@ -12,13 +14,16 @@ const LABELS: Record<string, string> = { en: 'English', bn: 'বাংলা' };
 
 export default function LocaleSwitcher() {
   const { locale, setLocale, dir } = useLocale();
+  const selectId = useId();
   return (
-    <label className="flex min-h-11 items-center gap-2 font-sans text-sm text-text-secondary">
-      <span className="sr-only">Interface language / 인터ফেস ভাষা</span>
+    <div role="group" aria-label="Interface language" className="flex min-h-11 items-center font-sans text-xs text-ink-secondary">
+      <label htmlFor={selectId} className="sr-only">
+        Interface language / ইন্টারফেস ভাষা
+      </label>
       <select
-        aria-label="Interface language"
+        id={selectId}
         dir="ltr"
-        className="min-h-11 rounded-sm border border-line bg-surface px-2 text-sm text-text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="min-h-11 rounded-sm border border-line bg-surface px-2.5 font-mono text-xs font-medium text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         value={locale}
         onChange={(e) => setLocale(e.target.value)}
       >
@@ -28,6 +33,6 @@ export default function LocaleSwitcher() {
           </option>
         ))}
       </select>
-    </label>
+    </div>
   );
 }

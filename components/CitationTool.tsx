@@ -369,6 +369,34 @@ export default function CitationTool() {
             </p>
           </aside>
         </div>
+
+        <section aria-labelledby="citation-standards-heading" className="mt-12 border-t border-stone-200 pt-8">
+          <h2 id="citation-standards-heading" className="font-serif text-xl font-semibold text-stone-900">
+            Scholarly provenance and reference verification
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-stone-600">
+            Every formatted reference generated here draws from verified publication dates, persistent Digital Object
+            Identifiers, and contributor records maintained by our{' '}
+            <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              domain specialists
+            </Link>{' '}
+            and{' '}
+            <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              editorial board
+            </Link>
+            . Downloaded <code className="font-mono text-xs">.bib</code> and{' '}
+            <code className="font-mono text-xs">.ris</code> records import directly into Zotero, JabRef, Mendeley, and
+            LaTeX workflows; you can also browse full volumes in{' '}
+            <Link href="/editions" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              printable PDF editions
+            </Link>{' '}
+            or query primary sources in the{' '}
+            <Link href="/assistant" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              research synthesis assistant
+            </Link>
+            .
+          </p>
+        </section>
       </main>
 
       <BlogFooter />

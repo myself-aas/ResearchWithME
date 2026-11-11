@@ -11,13 +11,37 @@ const here = dirname(fileURLToPath(import.meta.url));
 const light = JSON.parse(readFileSync(join(here, '..', 'src', 'semantic-light.json'), 'utf8'));
 const dark = JSON.parse(readFileSync(join(here, '..', 'src', 'semantic-dark.json'), 'utf8'));
 
+const RGBA_RE = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([0-9.]+))?\s*\)$/i;
+
+const hexToRgb = (hex) => {
+  const clean = hex.trim().replace('#', '');
+  const full = clean.length === 3 ? clean.split('').map((c) => c + c).join('') : clean;
+  return full.match(/../g).slice(0, 3).map((h) => parseInt(h, 16));
+};
+
+const compositeOverHex = (color, backdropHex = '#FAF9F6') => {
+  const trimmed = String(color).trim();
+  const match = trimmed.match(RGBA_RE);
+  if (!match) return trimmed;
+  const [, rs, gs, bs, as] = match;
+  const a = as !== undefined ? Math.min(1, Math.max(0, Number(as))) : 1;
+  const [br, bg, bb] = hexToRgb(backdropHex);
+  const blend = (fg, back) => Math.round(fg * a + back * (1 - a));
+  const toHex = (n) => Math.min(255, Math.max(0, n)).toString(16).padStart(2, '0').toUpperCase();
+  return `#${toHex(blend(Number(rs), br))}${toHex(blend(Number(gs), bg))}${toHex(blend(Number(bs), bb))}`;
+};
+
 const lum = (hex) => {
-  const c = hex.replace('#', '').match(/../g).map((h) => parseInt(h, 16) / 255)
+  const c = hexToRgb(hex)
+    .map((v) => v / 255)
     .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
   return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
 };
+
 const ratio = (a, b) => {
-  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  const resolvedBg = compositeOverHex(b, '#FAF9F6');
+  const resolvedFg = compositeOverHex(a, resolvedBg);
+  const [hi, lo] = [lum(resolvedFg), lum(resolvedBg)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 };
 

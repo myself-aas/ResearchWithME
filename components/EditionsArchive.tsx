@@ -119,17 +119,42 @@ export default function EditionsArchive() {
           })}
         </ul>
 
-        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
-          <p className="text-sm text-stone-600">
-            Looking for a single paper? The paper archive keeps every record with its own citation metadata.
+        <div className="mt-10 space-y-4 border-t border-stone-200 pt-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <p className="text-sm text-stone-600">
+              Looking for a single paper? The paper archive keeps every record with its own citation metadata.
+            </p>
+            <Link
+              href="/papers"
+              className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+            >
+              <FileText className="h-4 w-4" aria-hidden="true" />
+              <span>Browse papers</span>
+            </Link>
+          </div>
+          <p className="max-w-3xl text-sm leading-relaxed text-stone-600">
+            Quarterly PDF compendiums assemble peer-reviewed technical essays, benchmark replications, and formal errata
+            overseen by our{' '}
+            <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              editorial board
+            </Link>{' '}
+            and{' '}
+            <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              specialist contributors
+            </Link>{' '}
+            for institutional library preservation and offline seminar reading. Individual entries can also be saved to
+            your{' '}
+            <Link href="/bookmarks" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              local reading list
+            </Link>{' '}
+            or exported via the{' '}
+            <Link href="/cite" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              citation builder
+            </Link>
+            . Each volume preserves stable typography, canonical Digital Object Identifiers, and complete figure captions
+            so university reading rooms, lab groups, and independent scholars can archive permanent copies under Creative
+            Commons Attribution 4.0 International.
           </p>
-          <Link
-            href="/papers"
-            className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
-          >
-            <FileText className="h-4 w-4" aria-hidden="true" />
-            <span>Browse papers</span>
-          </Link>
         </div>
       </main>
 

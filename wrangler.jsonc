@@ -7,6 +7,12 @@
 	"account_id": "74d241df16b8aaa80914e3dbb6e16758",
 	"compatibility_date": "2026-10-23",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+	// Minify the Worker bundle and disable implicit source-map uploads so both
+	// `wrangler deploy` and `wrangler preview` stay well under Cloudflare's
+	// 3 MiB Free-Plan compressed script limit (`wrangler preview` otherwise
+	// attaches a ~17 MB `worker.js.map` when `upload_source_maps` is unset).
+	"minify": true,
+	"upload_source_maps": false,
 	// Non-secret runtime variables. `RESEND_API_KEY` is deliberately NOT here --
 	// it goes in as a Worker secret (`wrangler secret put RESEND_API_KEY`).
 	// The per-scenario `RESEND_TPL_*` ids come from `npm run email:template:sync`

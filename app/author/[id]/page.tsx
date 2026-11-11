@@ -8,6 +8,8 @@ import AuthorProfileCard from '@/components/AuthorProfileCard';
 import BlogFooter from '@/components/BlogFooter';
 import BlogHeader from '@/components/BlogHeader';
 import { getAuthorArchive } from '@/lib/author-directory';
+import { pageMetadata } from '@/lib/seo';
+import { jsonLdScript, personJsonLd } from '@/lib/seo/jsonld';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -36,13 +38,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!archive) return { title: 'Author not found' };
 
   const { author } = archive;
-  return {
-    title: `${author.name} — ResearchWithMe`,
+  return pageMetadata({
+    title: `${author.name} — Specialist Reviews`,
     description:
       author.bio ||
-      `Peer reviews and teardowns by ${author.name}${author.institution ? ` at ${author.institution}` : ''} on ResearchWithMe.`,
-    alternates: { canonical: `/author/${author.id}` },
-  };
+      `Peer reviews, repository teardowns, and scholarly analyses by ${author.name}${author.institution ? ` at ${author.institution}` : ''} on ResearchWithMe.`,
+    path: `/author/${author.id}`,
+    type: 'website',
+  });
 }
 
 export default async function AuthorDetailPage({ params }: PageProps) {
@@ -55,6 +58,7 @@ export default async function AuthorDetailPage({ params }: PageProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-stone-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(personJsonLd(author)) }} />
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
@@ -92,6 +96,20 @@ export default async function AuthorDetailPage({ params }: PageProps) {
         />
 
         <AuthorArchive articles={articles} />
+
+        <p className="mt-10 border-t border-stone-200 pt-6 text-sm leading-relaxed text-stone-600">
+          All reviews, benchmark replications, and technical essays attributed to {author.name} undergo editorial
+          provenance checks against the contributor&apos;s verified registry credentials and are published openly under
+          Creative Commons Attribution 4.0 International. Browse all{' '}
+          <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            contributors and domain reviewers
+          </Link>{' '}
+          or read our{' '}
+          <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            editorial board review standards
+          </Link>
+          .
+        </p>
       </main>
 
       <BlogFooter />

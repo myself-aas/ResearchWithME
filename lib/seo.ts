@@ -14,11 +14,17 @@ export interface PageMetadata {
     url: string;
     siteName: string;
     type: 'website' | 'article';
+    images: Array<{ url: string; width: number; height: number; alt: string }>;
   };
   twitter: {
     card: 'summary_large_image';
     title: string;
     description: string;
+    images: string[];
+  };
+  robots?: {
+    index: boolean;
+    follow: boolean;
   };
 }
 
@@ -37,33 +43,83 @@ export function toDate(value: string | undefined) {
   return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
+export function toIsoDate(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed;
+  const parsed = toDate(trimmed);
+  return parsed ? parsed.toISOString().slice(0, 10) : trimmed;
+}
+
+export function clampSeoTitle(title: string, maxTotal = 60): string {
+  const suffix = ` | ${SITE_NAME}`;
+  const budget = Math.max(24, maxTotal - suffix.length);
+  if (title.length <= budget) return title;
+  const colonIdx = title.indexOf(':');
+  if (colonIdx >= 18 && colonIdx <= budget) {
+    return title.slice(0, colonIdx);
+  }
+  const sliced = title.slice(0, budget - 1);
+  const lastSpace = sliced.lastIndexOf(' ');
+  return `${(lastSpace >= 20 ? sliced.slice(0, lastSpace) : sliced).replace(/[,:;—–-]+$/, '')}…`;
+}
+
+export function clampSeoDescription(description: string, minLen = 115, maxLen = 158): string {
+  const clean = description.replace(/\s+/g, ' ').trim();
+  if (clean.length > maxLen) {
+    const sliced = clean.slice(0, maxLen - 1);
+    const lastSpace = sliced.lastIndexOf(' ');
+    return `${(lastSpace >= 80 ? sliced.slice(0, lastSpace) : sliced).replace(/[,:;—–-]+$/, '')}…`;
+  }
+  if (clean.length > 0 && clean.length < minLen) {
+    const suffix = ' Published open access with verifiable citations on ResearchWithMe.';
+    const combined = clean.endsWith('.') ? `${clean}${suffix}` : `${clean}.${suffix}`;
+    return combined.length <= maxLen ? combined : clampSeoDescription(combined, 0, maxLen);
+  }
+  return clean;
+}
+
 export function pageMetadata({
   title,
   description,
   path,
   type = 'website',
+  imagePath,
+  robots,
 }: {
   title: string;
   description: string;
   path: string;
   type?: 'website' | 'article';
+  imagePath?: string;
+  robots?: { index: boolean; follow: boolean };
 }): PageMetadata {
+  const seoTitle = clampSeoTitle(title);
+  const seoDescription = clampSeoDescription(description);
   const url = absoluteUrl(path);
+  const resolvedImage =
+    imagePath && !imagePath.startsWith('data:')
+      ? absoluteUrl(imagePath)
+      : absoluteUrl('/opengraph-image');
+  const fullTitle = `${seoTitle} | ${SITE_NAME}`;
   return {
-    title,
-    description,
+    title: seoTitle,
+    description: seoDescription,
     alternates: { canonical: path },
     openGraph: {
-      title: `${title} | ${SITE_NAME}`,
-      description,
+      title: fullTitle,
+      description: seoDescription,
       url,
       siteName: SITE_NAME,
       type,
+      images: [{ url: resolvedImage, width: 1200, height: 630, alt: fullTitle }],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${title} | ${SITE_NAME}`,
-      description,
+      title: fullTitle,
+      description: seoDescription,
+      images: [resolvedImage],
     },
+    ...(robots ? { robots } : {}),
   };
 }

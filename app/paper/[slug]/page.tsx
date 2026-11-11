@@ -1,10 +1,16 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ChevronRight, FileText, GraduationCap, Quote, ShieldCheck } from 'lucide-react';
+import { ChevronRight, FileText, Quote, ShieldCheck } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import ReadingActions from '@/components/ReadingActions';
+import ReadingProgress from '@/components/ReadingProgress';
+import ArticleSmoothScroll from '@/components/reader/ArticleSmoothScroll';
+import ReadingProgressDock from '@/components/reader/ReadingProgressDock';
+import InlineCitationPopover from '@/components/reader/InlineCitationPopover';
+import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
+import type { CitationSource } from '@/lib/citations';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
 import { pageMetadata } from '@/lib/seo';
 import { scholarlyArticleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
@@ -41,56 +47,73 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
     notFound();
   }
 
+  const citeHref = `/cite?article=${encodeURIComponent(paper.slug)}`;
+  const paperCitationSource: CitationSource = {
+    title: paper.title,
+    author: paper.authors.map((a) => a.name).join(', ') || 'ResearchWithMe',
+    year: String(paper.year),
+    journal: paper.journal,
+    doi: paper.doi,
+    url: `https://researchwith.me/paper/${paper.slug}`,
+  };
+
   const jsonLd = scholarlyArticleJsonLd({
     title: paper.title,
     description: paper.abstract,
     path: `/paper/${paper.slug}`,
     authors: paper.authors.map((a) => a.name),
+    authorProfiles: paper.authors.map((a) => ({
+      name: a.name,
+      slug: a.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      orcid: a.orcid,
+    })),
     datePublished: paper.publishedDate,
     doi: paper.doi,
     journal: paper.journal,
   });
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
+      <ReadingProgress />
+      <ArticleSmoothScroll />
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-stone-900 hover:underline">
-                Platform
+              <Link href="/" className="hover:text-ink hover:underline">
+                Index
               </Link>
             </li>
             <li aria-hidden="true">
-              <ChevronRight className="h-4 w-4 text-stone-500" />
+              <ChevronRight className="h-3.5 w-3.5 text-ink-secondary" />
             </li>
             <li>
-              <Link href="/papers" className="hover:text-stone-900 hover:underline">
+              <Link href="/papers" className="hover:text-ink hover:underline">
                 Papers
               </Link>
             </li>
             <li aria-hidden="true">
-              <ChevronRight className="h-4 w-4 text-stone-500" />
+              <ChevronRight className="h-3.5 w-3.5 text-ink-secondary" />
             </li>
-            <li aria-current="page" className="max-w-[24rem] truncate font-medium text-stone-900">
+            <li aria-current="page" className="max-w-[24rem] truncate font-medium text-ink">
               {paper.title}
             </li>
           </ol>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12">
           <article aria-labelledby="paper-title" className="min-w-0">
-            <header className="border-b border-stone-200 pb-8">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                <span className="font-medium text-brand">{paper.topic}</span>
+            <header className="border-b border-line pb-8">
+              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+                <span className="font-semibold text-brand">{paper.topic}</span>
                 <span aria-hidden="true">·</span>
                 <span>{paper.journal}</span>
                 <span aria-hidden="true">·</span>
                 <span>
-                  Volume {paper.volume}, Issue {paper.issue}
+                  Vol. {paper.volume}, No. {paper.issue}
                 </span>
                 <span aria-hidden="true">·</span>
                 <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
@@ -98,45 +121,54 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                 <span>{paper.readTime}</span>
               </p>
 
-              <h1 id="paper-title" className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
+              <h1 id="paper-title" className="mt-3 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
                 {paper.title}
               </h1>
 
-              {paper.subtitle && <p className="mt-4 max-w-prose text-lg leading-relaxed text-stone-700">{paper.subtitle}</p>}
+              {paper.subtitle && (
+                <p className="mt-4 reading-column font-serif text-xl leading-relaxed text-ink-secondary">
+                  {paper.subtitle}
+                </p>
+              )}
 
               <ul className="mt-6 grid gap-4 sm:grid-cols-2">
-                {paper.authors.map((author) => (
-                  <li key={author.name} className="flex items-start gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
-                    >
-                      {author.name
-                        .split(' ')
-                        .map((part) => part[0])
-                        .slice(0, 2)
-                        .join('')}
-                    </span>
-                    <span className="min-w-0 text-sm">
-                      <span className="flex flex-wrap items-center gap-1.5 font-semibold text-stone-900">
-                        <span>{author.name}</span>
-                        {author.orcid && (
-                          <a
-                            href={`https://orcid.org/${author.orcid}`}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            className="inline-flex items-center gap-1 text-emerald-800 underline-offset-4 hover:underline"
-                          >
-                            <GraduationCap className="h-4 w-4" aria-hidden="true" />
-                            <span className="sr-only">ORCID record for {author.name}</span>
-                          </a>
-                        )}
+                {paper.authors.map((author) => {
+                  const slugId = author.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                  return (
+                    <li key={author.name} className="flex items-start gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                      >
+                        {author.name
+                          .split(' ')
+                          .map((part) => part[0])
+                          .slice(0, 2)
+                          .join('')}
                       </span>
-                      <span className="block text-stone-600">{author.affiliation}</span>
-                      <span className="block text-stone-600">{author.role}</span>
-                    </span>
-                  </li>
-                ))}
+                      <span className="min-w-0 font-sans text-xs">
+                        <span className="flex flex-wrap items-center gap-2 font-semibold text-ink">
+                          <span>{author.name}</span>
+                          {author.orcid && (
+                            <SpecialistBadgePopover
+                              author={{
+                                id: slugId,
+                                name: author.name,
+                                role: author.role,
+                                institution: author.affiliation,
+                                orcid: author.orcid,
+                                verifiedVia: 'orcid',
+                                verifiedIdentifier: author.orcid,
+                              }}
+                            />
+                          )}
+                        </span>
+                        <span className="mt-0.5 block text-ink-secondary">{author.affiliation}</span>
+                        <span className="block text-ink-secondary">{author.role}</span>
+                      </span>
+                    </li>
+                  );
+                })}
               </ul>
 
               <div className="mt-6">
@@ -144,40 +176,42 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
               </div>
             </header>
 
-            <section aria-labelledby="abstract-heading" className="border-b border-stone-200 py-8">
-              <h2 id="abstract-heading" className="font-serif text-2xl font-semibold text-stone-900">
+            <section aria-labelledby="abstract-heading" className="reading-column border-b border-line py-8">
+              <h2 id="abstract-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Abstract
               </h2>
-              <p className="mt-3 text-lg leading-relaxed text-stone-800">{paper.abstract}</p>
+              <p className="mt-3 font-serif text-lg leading-relaxed text-ink">{paper.abstract}</p>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {paper.keywords.map((keyword) => (
-                  <li key={keyword} className="rounded border border-stone-300 bg-white px-2 py-1 font-mono text-sm text-stone-700">
+                  <li key={keyword} className="rounded-sm border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-secondary">
                     {keyword}
                   </li>
                 ))}
               </ul>
             </section>
 
-            <div className="space-y-10 py-8">
+            <div className="reading-prose reading-column space-y-10 py-8">
               {sections.map((section) => {
                 const value = paper.fullContent?.[section.key];
                 if (!value) return null;
                 return (
                   <section key={section.key} aria-labelledby={`section-${section.key}`}>
-                    <h2 id={`section-${section.key}`} className="font-serif text-2xl font-semibold text-stone-900">
+                    <h2 id={`section-${section.key}`} className="font-serif text-2xl font-semibold text-ink">
                       {section.heading}
                     </h2>
                     {Array.isArray(value) ? (
                       <ul className="mt-4 space-y-3">
                         {value.map((item) => (
-                          <li key={item} className="flex gap-3 text-lg leading-relaxed text-stone-800">
-                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
+                          <li key={item} className="flex gap-3 font-serif text-lg leading-relaxed text-ink">
+                            <span aria-hidden="true" className="font-mono text-brand">—</span>
                             <span>{item}</span>
                           </li>
                         ))}
                       </ul>
                     ) : (
-                      <p className="mt-4 break-words text-lg leading-relaxed text-stone-800">{value}</p>
+                      <p className="mt-4 reading-column break-words font-serif text-lg leading-relaxed text-ink">
+                        {value}
+                      </p>
                     )}
                   </section>
                 );
@@ -185,14 +219,14 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             </div>
 
             {paper.fullContent?.references && paper.fullContent.references.length > 0 && (
-              <section aria-labelledby="references-heading" className="border-t border-stone-200 py-8">
-                <h2 id="references-heading" className="font-serif text-2xl font-semibold text-stone-900">
+              <section aria-labelledby="references-heading" className="reading-column border-t border-line py-8">
+                <h2 id="references-heading" className="font-serif text-2xl font-semibold text-ink">
                   References and primary literature
                 </h2>
                 <ol className="mt-4 space-y-3">
                   {paper.fullContent.references.map((reference, index) => (
-                    <li key={reference} className="flex gap-3 text-base leading-relaxed text-stone-700">
-                      <span className="font-mono text-sm text-stone-600">{String(index + 1).padStart(2, '0')}</span>
+                    <li key={reference} className="flex gap-3 font-sans text-sm leading-relaxed text-ink-secondary">
+                      <span className="font-mono text-xs text-brand">{String(index + 1).padStart(2, '0')}</span>
                       <span className="min-w-0 break-words">{reference}</span>
                     </li>
                   ))}
@@ -200,18 +234,18 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
               </section>
             )}
 
-            <footer className="border-t border-stone-200 py-8">
+            <footer className="reading-column border-t border-line py-8">
               <div className="flex flex-wrap gap-3">
                 <Link
-                  href={`/cite?article=${encodeURIComponent(paper.slug)}`}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                  href={citeHref}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
                 >
                   <Quote className="h-4 w-4" aria-hidden="true" />
                   <span>Build a citation</span>
                 </Link>
                 <Link
                   href="/papers"
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-surface-subtle"
                 >
                   <FileText className="h-4 w-4" aria-hidden="true" />
                   <span>Back to the archive</span>
@@ -220,39 +254,54 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             </footer>
           </article>
 
-          <aside aria-label="Publication record" className="h-fit space-y-6 lg:sticky lg:top-24">
-            <div className="rounded-lg border border-stone-200 bg-white p-5">
-              <h2 className="font-serif text-lg font-semibold text-stone-900">Publication record</h2>
-              <dl className="mt-4 space-y-3 text-sm">
+          <aside
+            aria-label="Publication record"
+            className="h-fit space-y-6 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
+          >
+            <div className="rounded-sm border border-line bg-surface p-5">
+              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+                Publication record
+              </h2>
+              <dl className="mt-4 space-y-3 font-mono text-xs">
                 <div>
-                  <dt className="text-stone-600">DOI</dt>
-                  <dd className="break-all font-mono text-stone-900">{paper.doi}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
+                  <dd className="mt-0.5 break-all text-ink">
+                    <InlineCitationPopover
+                      label={paper.doi}
+                      source={paperCitationSource}
+                      citeHref={citeHref}
+                    />
+                  </dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Journal</dt>
-                  <dd className="text-stone-900">{paper.journal}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">ISSN</dt>
+                  <dd className="mt-0.5 text-ink">2994-0821</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Volume and issue</dt>
-                  <dd className="text-stone-900">
+                  <dt className="uppercase tracking-wider text-ink-secondary">Journal</dt>
+                  <dd className="mt-0.5 font-sans text-ink">{paper.journal}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Volume &amp; Issue</dt>
+                  <dd className="mt-0.5 text-ink">
                     {paper.volume}, {paper.issue}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Pages</dt>
-                  <dd className="text-stone-900">{paper.pages}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Pages</dt>
+                  <dd className="mt-0.5 text-ink">{paper.pages}</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">License</dt>
-                  <dd className="text-stone-900">{paper.license}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">License</dt>
+                  <dd className="mt-0.5 text-ink">{paper.license}</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Citations</dt>
-                  <dd className="text-stone-900">{paper.citationCount}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Citations</dt>
+                  <dd className="mt-0.5 text-ink">{paper.citationCount}</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Data and code</dt>
-                  <dd className="break-all text-stone-900">
+                  <dt className="uppercase tracking-wider text-ink-secondary">Data &amp; Code</dt>
+                  <dd className="mt-0.5 break-all font-sans text-ink">
                     {paper.dataUrl ? (
                       <a
                         href={paper.dataUrl}
@@ -270,18 +319,26 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
               </dl>
             </div>
 
-            <div className="rounded-lg border border-stone-200 bg-stone-100 p-5 text-sm leading-relaxed text-stone-700">
-              <p className="flex items-center gap-2 font-semibold text-stone-900">
-                <ShieldCheck className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+            <div className="rounded-sm border border-line bg-surface p-5 font-sans text-xs leading-relaxed text-ink-secondary">
+              <p className="flex items-center gap-2 font-mono uppercase tracking-wider text-ink">
+                <ShieldCheck className="h-4 w-4 text-brand" aria-hidden="true" />
                 <span>Archive note</span>
               </p>
               <p className="mt-2">
-                This record is part of a prototype archive. The DOI and licence values are sample metadata; confirm any production citation against the issuing registry.
+                Confirm formal DOI registrations and dataset checksums against the upstream repository when citing in peer-reviewed venues.
               </p>
             </div>
           </aside>
         </div>
       </main>
+
+      <ReadingProgressDock
+        itemId={paper.id}
+        itemKind="paper"
+        readTime={paper.readTime}
+        citationSource={paperCitationSource}
+        citeHref={citeHref}
+      />
 
       <BlogFooter />
     </div>

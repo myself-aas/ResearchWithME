@@ -1,7 +1,6 @@
 /**
  * Shared bookmarks (reading list) surface — used by the Next app (app/bookmarks/page.tsx) and the
- * Pages target (cloudflare-pages/src/routes/bookmarks.tsx). One source of truth
- * for the markup and behavior in both runtimes until Task 16 retires Next.
+ * Pages target (cloudflare-pages/src/routes/bookmarks.tsx).
  */
 'use client';
 
@@ -11,20 +10,24 @@ import { ArrowRight, Bookmark, Check, Download, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
-import { readStringArray, removeLocal, writeLocal } from '@/lib/storage';
-
-const SAVED_KEY = 'rwm_saved_posts';
+import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
 
 export default function BookmarksPanel() {
+  const hydrated = useHydratePreferences();
+  const savedPostIds = usePreferencesStore((state) => state.savedPostIds);
+  const removeSavedPost = usePreferencesStore((state) => state.removeSavedPost);
+  const clearSavedPosts = usePreferencesStore((state) => state.clearSavedPosts);
+  const storagePersisted = usePreferencesStore((state) => state.storagePersisted);
+
   const [articles, setArticles] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
-  const [savedIds, setSavedIds] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
 
+  const savedIds = useMemo(() => (hydrated ? savedPostIds : []), [hydrated, savedPostIds]);
+
   useEffect(() => {
-    setSavedIds(readStringArray(SAVED_KEY));
     let active = true;
     async function load() {
       try {
@@ -49,9 +52,15 @@ export default function BookmarksPanel() {
     [articles, savedIds],
   );
 
-  const categories = useMemo(() => [...new Set(savedArticles.map((article) => article.category))], [savedArticles]);
+  const categories = useMemo(
+    () => [...new Set(savedArticles.map((article) => article.category))],
+    [savedArticles],
+  );
   const filteredArticles = useMemo(
-    () => (selectedCategory === 'All' ? savedArticles : savedArticles.filter((article) => article.category === selectedCategory)),
+    () =>
+      selectedCategory === 'All'
+        ? savedArticles
+        : savedArticles.filter((article) => article.category === selectedCategory),
     [savedArticles, selectedCategory],
   );
 
@@ -60,17 +69,16 @@ export default function BookmarksPanel() {
     return total + (Number.isFinite(minutes) ? minutes : 0);
   }, 0);
 
-  function handleRemove(id: string) {
-    const updated = savedIds.filter((item) => item !== id);
-    setSavedIds(updated);
-    const stored = writeLocal(SAVED_KEY, updated);
-    setStatus(stored ? 'Removed from your reading list.' : null);
-    setError(stored ? null : 'Your browser blocked local storage, so this change will not persist.');
+  function handleRemove(article: BlogPost) {
+    const okId = removeSavedPost(article.id);
+    const okSlug = savedIds.includes(article.slug) ? removeSavedPost(article.slug) : true;
+    const ok = okId && okSlug;
+    setStatus(ok ? 'Removed from your reading list.' : null);
+    setError(ok ? null : 'Your browser blocked local storage, so this change will not persist.');
   }
 
   function handleClearAll() {
-    setSavedIds([]);
-    removeLocal(SAVED_KEY);
+    clearSavedPosts();
     setConfirmClear(false);
     setStatus('Reading list cleared. Saved items are gone from this device.');
   }
@@ -110,29 +118,41 @@ export default function BookmarksPanel() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
-      <BlogHeader savedCount={savedIds.length} />
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <BlogHeader savedCount={savedArticles.length} />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">Your reading list</h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
-            Saved articles live in this browser only, so they survive a refresh but not a device change. {savedArticles.length > 0
+        <header className="border-b border-line pb-8">
+          <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            Local Archive · Persisted on Device
+          </p>
+          <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
+            Your reading list
+          </h1>
+          <p className="mt-4 max-w-2xl font-sans text-base leading-relaxed text-ink-secondary">
+            Saved manuscripts live in your browser preferences so they survive refreshes without requiring an account.{' '}
+            {savedArticles.length > 0
               ? `${savedArticles.length} ${savedArticles.length === 1 ? 'article' : 'articles'}, about ${totalMinutes} minutes of reading.`
               : 'Nothing saved yet.'}
           </p>
         </header>
 
+        {!storagePersisted && !error && (
+          <p role="alert" className="mt-4 border-l-2 border-danger bg-surface px-4 py-3 font-sans text-sm text-danger">
+            Browser storage is currently restricted — changes apply to this tab session only.
+          </p>
+        )}
+
         {savedArticles.length === 0 ? (
-          <div className="mt-8 border border-stone-200 bg-white p-8 sm:p-12">
-            <Bookmark className="h-8 w-8 text-stone-500" aria-hidden="true" />
-            <h2 className="mt-4 font-serif text-2xl font-semibold text-stone-900">Nothing saved yet</h2>
-            <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
-              Use the bookmark button on any article or paper to keep it here for later. The list stays on this device.
+          <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
+            <Bookmark className="h-7 w-7 text-ink-secondary" aria-hidden="true" />
+            <h2 className="mt-4 font-serif text-2xl font-semibold text-ink">Nothing saved yet</h2>
+            <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
+              Use the bookmark button on any teardown or paper to queue it here for uninterrupted study.
             </p>
             <Link
               href="/"
-              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
             >
               <span>Browse the latest reviews</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -140,18 +160,18 @@ export default function BookmarksPanel() {
           </div>
         ) : (
           <>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-4">
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">
               <div>
-                <label htmlFor="bookmark-category" className="mr-2 text-sm font-medium text-stone-800">
-                  Filter by field
+                <label htmlFor="bookmark-category" className="mr-2 font-sans text-xs font-medium text-ink-secondary">
+                  Filter by column
                 </label>
                 <select
                   id="bookmark-category"
                   value={selectedCategory}
                   onChange={(event) => setSelectedCategory(event.target.value)}
-                  className="min-h-11 rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900"
+                  className="min-h-11 rounded-sm border border-line bg-surface px-3 font-sans text-sm text-ink"
                 >
-                  <option value="All">All fields</option>
+                  <option value="All">All columns</option>
                   {categories.map((category) => (
                     <option key={category} value={category}>
                       {category}
@@ -164,7 +184,7 @@ export default function BookmarksPanel() {
                 <button
                   type="button"
                   onClick={handleExport}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
                 >
                   <Download className="h-4 w-4" aria-hidden="true" />
                   <span>Export Markdown</span>
@@ -173,18 +193,18 @@ export default function BookmarksPanel() {
                   <button
                     type="button"
                     onClick={() => setConfirmClear(true)}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:text-red-800"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
                   >
                     <Trash2 className="h-4 w-4" aria-hidden="true" />
                     <span>Clear list</span>
                   </button>
                 ) : (
-                  <span className="flex flex-wrap items-center gap-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+                  <span className="flex flex-wrap items-center gap-2 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs text-ink">
                     <span>Remove all {savedArticles.length} saved items?</span>
                     <button
                       type="button"
                       onClick={handleClearAll}
-                      className="min-h-9 font-semibold underline underline-offset-4"
+                      className="min-h-9 font-semibold text-danger underline underline-offset-4"
                     >
                       Yes, clear
                     </button>
@@ -201,65 +221,67 @@ export default function BookmarksPanel() {
             </div>
 
             {status && (
-              <p role="status" className="mt-4 flex items-center gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950">
-                <Check className="h-4 w-4" aria-hidden="true" />
+              <p role="status" className="mt-4 flex items-center gap-2 border-l-2 border-brand bg-surface px-4 py-3 font-sans text-sm text-ink">
+                <Check className="h-4 w-4 text-brand" aria-hidden="true" />
                 <span>{status}</span>
               </p>
             )}
             {error && (
-              <p role="alert" className="mt-4 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+              <p role="alert" className="mt-4 border-l-2 border-danger bg-surface px-4 py-3 font-sans text-sm text-danger">
                 {error}
               </p>
             )}
 
             {filteredArticles.length === 0 ? (
-              <div className="mt-6 border border-stone-200 bg-white p-8">
-                <h2 className="font-serif text-xl font-semibold text-stone-900">No saved articles in this field</h2>
-                <p className="mt-2 text-base text-stone-700">Choose another field or show the full list.</p>
+              <div className="mt-6 rounded-sm border border-line bg-surface p-8">
+                <h2 className="font-serif text-xl font-semibold text-ink">No saved articles in this column</h2>
+                <p className="mt-2 font-sans text-sm text-ink-secondary">Choose another column or show the full list.</p>
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('All')}
-                  className="mt-4 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                  className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
                 >
                   Show all saved
                 </button>
               </div>
             ) : (
-              <ul className="mt-6 divide-y divide-stone-200 border-y border-stone-200">
+              <ul className="mt-6 divide-y divide-line border-y border-line">
                 {filteredArticles.map((article) => (
                   <li key={article.id} className="py-6">
                     <article className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
                       <div className="min-w-0">
-                        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                          <span className="font-medium text-brand">{article.category}</span>
+                        <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+                          <span className="font-semibold text-brand">{article.category}</span>
                           <span aria-hidden="true">·</span>
                           <span>{article.format}</span>
                           <span aria-hidden="true">·</span>
                           <span>{article.readTime}</span>
                         </p>
-                        <h2 className="mt-2 font-serif text-2xl font-semibold leading-snug text-stone-900">
+                        <h2 className="mt-2 font-serif text-2xl font-semibold leading-snug text-ink">
                           <Link href={`/post/${article.slug}`} className="hover:text-brand">
                             {article.title}
                           </Link>
                         </h2>
-                        <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">{article.summary}</p>
-                        <p className="mt-3 text-sm text-stone-600">By {article.author.name}</p>
+                        <p className="mt-2 max-w-prose font-sans text-sm leading-relaxed text-ink-secondary">
+                          {article.summary}
+                        </p>
+                        <p className="mt-3 font-sans text-xs text-ink-secondary">By {article.author.name}</p>
                       </div>
 
                       <div className="flex items-center gap-2 sm:flex-col sm:items-end">
                         <Link
                           href={`/post/${article.slug}`}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
                         >
                           <span>Read</span>
-                          <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handleRemove(article.id)}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-red-300 hover:text-red-800"
+                          onClick={() => handleRemove(article)}
+                          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
                         >
-                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           <span>Remove</span>
                         </button>
                       </div>
@@ -270,6 +292,34 @@ export default function BookmarksPanel() {
             )}
           </>
         )}
+
+        <section aria-labelledby="reading-list-privacy-heading" className="mt-14 border-t border-line pt-8">
+          <h2 id="reading-list-privacy-heading" className="font-serif text-xl font-semibold text-ink">
+            Local-first bibliography storage and offline export
+          </h2>
+          <p className="mt-2 max-w-3xl font-sans text-sm leading-relaxed text-ink-secondary">
+            Your saved reading list stays entirely in your browser storage—no account registration or cloud telemetry is
+            required to bookmark reviews from the{' '}
+            <Link href="/" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              editorial catalog
+            </Link>{' '}
+            or records from the{' '}
+            <Link href="/papers" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              indexed paper archive
+            </Link>
+            . Export saved items as clean Markdown notes for Obsidian, Notion, or lab notebooks, generate structured
+            BibTeX and RIS files in the{' '}
+            <Link href="/cite" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              citation builder
+            </Link>
+            , or inspect our zero-tracking guarantees in the{' '}
+            <Link href="/privacy" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              reader privacy policy
+            </Link>
+            . Saved items persist across sessions on this device so you can assemble seminar packets, replication queues,
+            and literature review checklists at your own pace without exposing reading habits to third-party servers.
+          </p>
+        </section>
       </main>
 
       <BlogFooter />

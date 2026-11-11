@@ -1,7 +1,7 @@
 {
   "gate": "πeme v3.1 §44/§46 stable release gate",
-  "generatedAt": "2026-11-09T23:30:04.299Z",
-  "tokenChecksum": "sha256:276c5a2123283d15",
+  "generatedAt": "2026-11-11T15:04:47.349Z",
+  "tokenChecksum": "sha256:a1c69ed071212508",
   "results": [
     {
       "id": "DS-1",
@@ -13,7 +13,7 @@
       "id": "DS-2",
       "description": "token checksum (conformance manifest §46.1)",
       "status": "pass",
-      "evidence": "sha256:276c5a2123283d15"
+      "evidence": "sha256:a1c69ed071212508"
     },
     {
       "id": "DS-3",
@@ -37,7 +37,7 @@
       "id": "I18N-1",
       "description": "English + Bangla dictionaries have key parity",
       "status": "pass",
-      "evidence": "34 keys in both locales"
+      "evidence": "50 keys in both locales"
     },
     {
       "id": "I18N-2",
@@ -49,7 +49,7 @@
       "id": "I18N-3",
       "description": "pseudo-localization ≥35% expansion on all messages",
       "status": "pass",
-      "evidence": "34 messages tested in i18n.test.ts"
+      "evidence": "50 messages tested in i18n.test.ts"
     },
     {
       "id": "RES-1",

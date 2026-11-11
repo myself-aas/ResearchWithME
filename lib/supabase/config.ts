@@ -31,6 +31,10 @@ function isValidHttpUrl(value: string) {
  */
 export const isSupabaseConfigured = isValidHttpUrl(SUPABASE_URL) && SUPABASE_ANON_KEY.length > 0;
 
+export function hasSupabaseBrowserConfig() {
+  return isSupabaseConfigured;
+}
+
 /** Hostname used by next/image for the public storage bucket. */
 export function supabaseStorageHostname() {
   if (!isSupabaseConfigured) return null;

@@ -1,0 +1,12 @@
+# SquirrelScan audit configuration for ResearchWithMe
+# Validated via `squirrel config validate`
+
+[rules]
+# Public reader/digest forms enforce server-side rate limiting without
+# third-party tracking CAPTCHA scripts (per Privacy Policy & user decision).
+disable = ["security/form-captcha"]
+
+[[ignore]]
+rule = "core/robots-meta"
+urls = ["/", "/?*", "/cite*", "/login*", "/dashboard*", "/write*"]
+reason = "Query-filtered search/citation views and authenticated studio/login routes are intentionally marked noindex."

@@ -1,75 +1,75 @@
 {
-  "canvas": "#F8F7F3",
-  "surface": "#FFFFFF",
-  "surface-subtle": "#F0EEE8",
-  "surface-raised": "#FFFFFF",
-  "surface-inverse": "#161C1A",
-  "text-primary": "#161C1A",
-  "text-secondary": "#555955",
-  "text-tertiary": "#737571",
-  "text-inverse": "#FFFFFF",
-  "border-subtle": "#DEDCD5",
-  "border-strong": "#9D9C97",
-  "focus": "#4F46E5",
-  "selection": "#E0E7FF",
+  "canvas": "#FAF9F6",
+  "surface": "#F3F1EC",
+  "surface-subtle": "#EAE7DF",
+  "surface-raised": "#FAF9F6",
+  "surface-inverse": "#121214",
+  "text-primary": "#121214",
+  "text-secondary": "#5C5C63",
+  "text-tertiary": "#5C5C63",
+  "text-inverse": "#FAF9F6",
+  "border-subtle": "rgba(18, 18, 20, 0.10)",
+  "border-strong": "rgba(18, 18, 20, 0.22)",
+  "focus": "#1D4ED8",
+  "selection": "#DBEAFE",
   "action": {
-    "primary": "#4F46E5",
-    "primary-hover": "#4338CA",
-    "primary-pressed": "#312E81",
+    "primary": "#1D4ED8",
+    "primary-hover": "#1E40AF",
+    "primary-pressed": "#1E3A8A",
     "on-primary": "#FFFFFF",
-    "destructive": "#DC2626",
-    "link": "#4338CA",
-    "visited": "#6D28D9"
+    "destructive": "#B91C1C",
+    "link": "#1D4ED8",
+    "visited": "#1E40AF"
   },
   "knowledge": {
-    "source": "#4F46E5",
+    "source": "#1D4ED8",
     "evidence": "#059669",
     "insight": "#0891B2",
     "discussion": "#D97706",
-    "contradiction": "#DC2626",
-    "publication": "#7C3AED",
-    "archive": "#555955"
+    "contradiction": "#B91C1C",
+    "publication": "#1E40AF",
+    "archive": "#5C5C63"
   },
   "trust": {
-    "verified": "#059669",
+    "verified": "#1D4ED8",
     "replicated": "#047857",
-    "peer-reviewed": "#4F46E5",
+    "peer-reviewed": "#1D4ED8",
     "emerging": "#0891B2",
     "uncertain": "#D97706",
-    "contested": "#DC2626",
-    "unknown": "#737571"
+    "contested": "#B91C1C",
+    "unknown": "#5C5C63"
   },
   "provenance": {
     "direct-source": "#059669",
-    "cited-source": "#4F46E5",
+    "cited-source": "#1D4ED8",
     "derived": "#0891B2",
     "inferred": "#D97706",
-    "ai-assisted": "#7C3AED",
-    "unresolved": "#737571"
+    "ai-assisted": "#1E40AF",
+    "unresolved": "#5C5C63"
   },
   "workflow": {
     "discovered": "#0891B2",
     "extracted": "#0D9488",
     "validated": "#059669",
-    "synthesized": "#4F46E5",
-    "reviewed": "#7C3AED",
-    "published": "#6D28D9",
-    "archived": "#555955"
+    "synthesized": "#1D4ED8",
+    "reviewed": "#1E40AF",
+    "published": "#1D4ED8",
+    "archived": "#5C5C63"
   },
   "collaboration": {
     "comment": "#0891B2",
     "suggestion": "#0D9488",
-    "review": "#7C3AED",
+    "review": "#1E40AF",
     "consensus": "#059669",
-    "disagreement": "#DC2626"
+    "disagreement": "#B91C1C"
   },
   "citation": {
-    "article": "#4F46E5",
+    "article": "#1D4ED8",
     "dataset": "#0891B2",
     "book": "#047857",
     "preprint": "#D97706",
-    "software": "#7C3AED",
+    "software": "#1D4ED8",
     "protocol": "#0D9488",
-    "webpage": "#555955"
+    "webpage": "#5C5C63"
   }
 }

@@ -1,13 +1,14 @@
-import type { Metadata } from 'next';
 import AuthorsDirectoryPage from '@/components/AuthorsDirectoryPage';
 import { listPublishedAuthors } from '@/lib/author-directory';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Contributors — ResearchWithMe',
+export const metadata = pageMetadata({
+  title: 'Contributors & Domain Reviewers',
   description:
-    'The reviewers behind the archive: their research domains, institutions, and complete publication records.',
-  alternates: { canonical: '/authors' },
-};
+    'Meet the verified domain specialists behind ResearchWithMe: inspect their research fields, institutional affiliations, ORCID records, and peer reviews.',
+  path: '/authors',
+  type: 'website',
+});
 
 /**
  * Reads public.profiles on the server and hands the rows to the shared

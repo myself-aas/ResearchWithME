@@ -470,6 +470,7 @@ export default function PostEditor({
             <input
               id="post-title"
               type="text"
+              enterKeyHint="next"
               value={form.title}
               onChange={(event) => updateTitle(event.target.value)}
               maxLength={180}
@@ -486,7 +487,7 @@ export default function PostEditor({
 
           <div>
             <label htmlFor="post-slug" className={labelClass}>
-              URL
+              Article slug
             </label>
             <div className="flex">
               <span
@@ -498,6 +499,7 @@ export default function PostEditor({
               <input
                 id="post-slug"
                 type="text"
+                enterKeyHint="next"
                 value={form.slug}
                 onChange={(event) => updateSlug(event.target.value)}
                 onBlur={() => update('slug', slugify(form.slug))}
@@ -662,6 +664,9 @@ export default function PostEditor({
               <img
                 src={form.coverImage}
                 alt=""
+                width={640}
+                height={360}
+                fetchPriority="high"
                 className="h-40 w-full rounded-md border border-stone-200 object-cover"
               />
               <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
@@ -762,7 +767,15 @@ export default function PostEditor({
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={preset} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={preset}
+                  alt=""
+                  width={192}
+                  height={128}
+                  loading={index < 3 ? 'eager' : 'lazy'}
+                  decoding="async"
+                  className="h-full w-full object-cover"
+                />
               </button>
             ))}
           </div>

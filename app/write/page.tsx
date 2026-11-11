@@ -409,7 +409,7 @@ export default function WritePage() {
             )}
           </article>
         ) : (
-          <form onSubmit={publish} noValidate className="mt-8 space-y-10">
+          <form onSubmit={publish} className="mt-8 space-y-10">
             <fieldset className="space-y-4">
               <legend className="font-serif text-xl font-semibold text-stone-900">Article</legend>
 
@@ -420,6 +420,7 @@ export default function WritePage() {
                 <input
                   id="write-title"
                   type="text"
+                  enterKeyHint="next"
                   value={draft.title}
                   onChange={(event) => update('title', event.target.value)}
                   maxLength={LIMITS.title}
@@ -518,11 +519,12 @@ export default function WritePage() {
                 <textarea
                   id="write-summary"
                   rows={3}
+                  autoComplete="off"
                   value={draft.summary}
                   onChange={(event) => update('summary', event.target.value)}
                   maxLength={LIMITS.summary}
                   aria-invalid={errorField === 'write-summary' ? true : undefined}
-                  placeholder="State the question, evidence, and result in two or three sentences."
+                  placeholder="Summarize the research question, evidence, and key finding in two or three sentences."
                   className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
                 />
                 <p className="mt-1 text-sm text-stone-600">

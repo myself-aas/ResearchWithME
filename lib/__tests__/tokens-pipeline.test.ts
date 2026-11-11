@@ -71,4 +71,28 @@ describe('πeme token pipeline (tokens/generated)', () => {
     // stone scale is an alias over the generated πeme neutral ramp
     expect(css).toContain('--color-stone-50: var(--pieme-color-neutral-50)');
   });
+
+  it('emits exact Archival Paper (light) and Obsidian (dark) palette tokens', () => {
+    expect(tokens.semanticLight.canvas).toBe('#FAF9F6');
+    expect(tokens.semanticLight.surface).toBe('#F3F1EC');
+    expect(tokens.semanticLight['text-primary']).toBe('#121214');
+    expect(tokens.semanticLight['text-secondary']).toBe('#5C5C63');
+    expect(tokens.semanticLight['border-subtle']).toBe('rgba(18, 18, 20, 0.10)');
+    expect(tokens.semanticLight.action.primary).toBe('#1D4ED8');
+    expect(tokens.semanticLight.action['on-primary']).toBe('#FFFFFF');
+
+    expect(tokens.semanticDark.canvas).toBe('#0C0D10');
+    expect(tokens.semanticDark.surface).toBe('#14161B');
+    expect(tokens.semanticDark['text-primary']).toBe('#F2F2F5');
+    expect(tokens.semanticDark['text-secondary']).toBe('#9496A1');
+    expect(tokens.semanticDark['border-subtle']).toBe('rgba(255, 255, 255, 0.10)');
+    expect(tokens.semanticDark.action.primary).toBe('#60A5FA');
+    expect(tokens.semanticDark.action['on-primary']).toBe('#0C0D10');
+  });
+
+  it('computes contrast for rgba() hairline tokens composited over canvas and enforces 4.5:1 on action.on-primary', () => {
+    expect(contrastRatio('rgba(18, 18, 20, 0.10)', '#FAF9F6')).toBeGreaterThan(1.1);
+    expect(contrastRatio(tokens.semanticLight.action['on-primary'], tokens.semanticLight.action.primary)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(tokens.semanticDark.action['on-primary'], tokens.semanticDark.action.primary)).toBeGreaterThanOrEqual(4.5);
+  });
 });

@@ -11,20 +11,19 @@ import ArticleInteractions from '@/components/ArticleInteractions';
 import ArticleDiscussion from '@/components/ArticleDiscussion';
 import ReadingProgress from '@/components/ReadingProgress';
 import MarkdownBody from '@/components/MarkdownBody';
+import VideoEmbed from '@/components/VideoEmbed';
+import ArticleSmoothScroll from '@/components/reader/ArticleSmoothScroll';
+import ReadingProgressDock from '@/components/reader/ReadingProgressDock';
+import InlineCitationPopover from '@/components/reader/InlineCitationPopover';
+import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
 import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
+import { buildArticleCitationMap, renderWithInlineCitations } from '@/lib/citations-inline';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
-import { articleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
-import VideoEmbed from '@/components/VideoEmbed';
+import { articleJsonLd, jsonLdScript, videoJsonLd } from '@/lib/seo/jsonld';
 
-// The reader mixes bundled articles with live CMS posts, so the route cannot be
-// limited to build-time slugs. It still uses ISR: the first request renders and
-// later requests are served from the route cache for 30 seconds. Removing
-// generateStaticParams also makes an unknown slug a real HTTP 404 instead of a
-// cached 200 fallback shell.
 export const revalidate = 30;
 
-// React cache dedupes the CMS read across generateMetadata and the page body.
 const catalogue = cache(getArticleCatalogue);
 
 async function findArticle(slug: string) {
@@ -35,8 +34,6 @@ async function findArticle(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const article = await findArticle(slug);
-  // Resolve the miss before the page starts streaming; otherwise the 404 UI is
-  // served with a 200 status (a soft 404) once headers have been flushed.
   if (!article) notFound();
   return pageMetadata({
     title: article.title,
@@ -68,97 +65,139 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     .map((entry) => entry.article);
 
   const paragraphs = article.content.flatMap((block) => block.split(/\n{2,}/)).filter(Boolean);
+  const canonicalDoi = `10.5555/rwm.${article.id}`;
+  const citeHref = `/cite?article=${encodeURIComponent(article.slug)}`;
+  const citationMap = buildArticleCitationMap(article);
+
+  const authorSameAs = [
+    article.author.orcid
+      ? article.author.orcid.startsWith('http')
+        ? article.author.orcid
+        : `https://orcid.org/${article.author.orcid}`
+      : undefined,
+    article.author.github
+      ? article.author.github.startsWith('http')
+        ? article.author.github
+        : `https://github.com/${article.author.github.replace(/^@/, '')}`
+      : undefined,
+    article.author.website,
+    article.author.scholar,
+  ].filter((entry): entry is string => Boolean(entry));
+
+  const coverPath =
+    article.coverImage && article.coverImage.trim() !== '' && !article.coverImage.startsWith('data:')
+      ? article.coverImage
+      : '/images/folio-hero.jpeg';
 
   const jsonLd = articleJsonLd({
     title: article.title,
     description: article.summary,
     path: `/post/${article.slug}`,
     authorName: article.author.name,
+    authorId: article.author.id,
+    authorSameAs,
     datePublished: article.dateISO ?? article.publishedAt,
     imagePath: article.coverImage,
   });
 
+  const explainerVideoLd = videoJsonLd({
+    name: `Visual explainer: ${article.title}`,
+    description: article.summary,
+    contentPath: `/videos/explainer-${slug}.mp4`,
+    thumbnailPath: coverPath,
+    uploadDate: article.dateISO ?? article.publishedAt,
+  });
+
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(explainerVideoLd) }} />
       <ReadingProgress />
+      <ArticleSmoothScroll />
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-stone-900 hover:underline">
-                Platform
+              <Link href="/" className="hover:text-ink hover:underline">
+                Index
               </Link>
             </li>
             <li aria-hidden="true">
-              <ChevronRight className="h-4 w-4 text-stone-500" />
+              <ChevronRight className="h-3.5 w-3.5 text-ink-secondary" />
             </li>
             <li>
-              <Link href={`/category/${categoryToSlug(article.category)}`} className="hover:text-stone-900 hover:underline">
+              <Link href={`/category/${categoryToSlug(article.category)}`} className="hover:text-ink hover:underline">
                 {article.category}
               </Link>
             </li>
             <li aria-hidden="true">
-              <ChevronRight className="h-4 w-4 text-stone-500" />
+              <ChevronRight className="h-3.5 w-3.5 text-ink-secondary" />
             </li>
-            <li aria-current="page" className="max-w-[22rem] truncate font-medium text-stone-900">
+            <li aria-current="page" className="max-w-[22rem] truncate font-medium text-ink">
               {article.title}
             </li>
           </ol>
         </nav>
 
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-14">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12">
           <article aria-labelledby="article-title" className="min-w-0">
-            <header className="border-b border-stone-200 pb-8">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
-                <span className="font-medium text-brand">{article.category}</span>
+            <header className="border-b border-line pb-8">
+              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+                <span className="font-semibold text-brand">{article.category}</span>
                 <span aria-hidden="true">·</span>
                 <span>{article.format}</span>
                 <span aria-hidden="true">·</span>
                 <time dateTime={article.dateISO ?? article.publishedAt}>{article.publishedAt}</time>
                 <span aria-hidden="true">·</span>
                 <span>{article.readTime}</span>
+                <span aria-hidden="true">·</span>
+                <span>DOI {canonicalDoi}</span>
               </p>
 
-              <h1 id="article-title" className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
+              <h1 id="article-title" className="mt-3 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
                 {article.title}
               </h1>
 
-              <p className="mt-4 max-w-prose break-words font-serif text-xl leading-relaxed text-stone-700">{article.subtitle}</p>
+              <p className="mt-4 reading-column break-words font-serif text-xl leading-relaxed text-ink-secondary">
+                {article.subtitle}
+              </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                {authorProfile ? (
-                  <Link
-                    href={`/author/${article.author.id}`}
-                    className="flex min-w-0 items-center gap-3 text-sm hover:text-brand"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
+                <div className="flex flex-wrap items-center gap-3">
+                  {authorProfile ? (
+                    <Link
+                      href={`/author/${article.author.id}`}
+                      className="flex min-w-0 items-center gap-3 font-sans text-sm hover:text-brand"
                     >
-                      {article.author.avatar}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate font-semibold text-stone-900">{article.author.name}</span>
-                      <span className="block truncate text-stone-600">{article.author.role}</span>
-                    </span>
-                  </Link>
-                ) : (
-                  <div className="flex min-w-0 items-center gap-3 text-sm">
-                    <span
-                      aria-hidden="true"
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
-                    >
-                      {article.author.avatar}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block truncate font-semibold text-stone-900">{article.author.name}</span>
-                      <span className="block truncate text-stone-600">{article.author.role}</span>
-                    </span>
-                  </div>
-                )}
+                      <span
+                        aria-hidden="true"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                      >
+                        {article.author.avatar}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate font-semibold text-ink">{article.author.name}</span>
+                        <span className="block truncate text-xs text-ink-secondary">{article.author.role}</span>
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex min-w-0 items-center gap-3 font-sans text-sm">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                      >
+                        {article.author.avatar}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block truncate font-semibold text-ink">{article.author.name}</span>
+                        <span className="block truncate text-xs text-ink-secondary">{article.author.role}</span>
+                      </span>
+                    </div>
+                  )}
+                  <SpecialistBadgePopover author={article.author} />
+                </div>
 
                 <ArticleInteractions
                   postId={article.id}
@@ -168,54 +207,58 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </div>
             </header>
 
-            <figure className="mt-8">
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-lg bg-stone-900">
+            <figure className="mt-8 reading-column">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm border border-line bg-surface">
                 {article.coverImage && article.coverImage.startsWith('data:') ? (
                   <picture className="h-full w-full">
                     <source srcSet={article.coverImage} type="image/avif" />
                     <img
                       src={article.coverImage}
                       alt={article.title}
+                      width={1280}
+                      height={720}
                       className="h-full w-full object-cover"
                     />
                   </picture>
                 ) : (
                   <Image
-                    src={article.coverImage && article.coverImage.trim() !== '' ? article.coverImage : '/images/folio-hero.jpeg'}
+                    src={coverPath}
                     alt=""
-                    fill
+                    width={1280}
+                    height={720}
                     priority
                     sizes="(max-width: 1024px) 100vw, 66vw"
-                    className="object-cover"
+                    className="h-full w-full object-cover"
                   />
                 )}
               </div>
-              <figcaption className="mt-2 text-sm text-stone-600">
-                Editorial imagery for this review. Reviewed artifacts are linked in the record below.
+              <figcaption className="mt-2 font-mono text-xs text-ink-secondary">
+                Editorial figure · Primary artifacts are linked and citable below.
               </figcaption>
             </figure>
 
-            {/* HyperFrames explainer video — rendered per article slug */}
-            <section aria-labelledby="explainer-video-heading" className="mt-8">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="inline-flex items-center rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand">
+            <section aria-labelledby="explainer-video-heading" className="mt-8 reading-column">
+              <div className="mb-3 flex items-center gap-2">
+                <span id="explainer-video-heading" className="inline-flex items-center rounded-sm border border-brand/30 bg-selection/40 px-2.5 py-1 font-mono text-xs font-medium text-brand">
                   Visual explainer
                 </span>
               </div>
               <VideoEmbed
                 src={`/videos/explainer-${slug}.mp4`}
+                poster={coverPath}
+                captionsSrc={`/videos/captions/${slug}.vtt`}
                 label={`Animated explainer for: ${article.title}`}
               />
             </section>
 
-            <section aria-labelledby="takeaways-heading" className="mt-10 border-y border-stone-200 py-6">
-              <h2 id="takeaways-heading" className="font-serif text-xl font-semibold text-stone-900">
+            <section aria-labelledby="takeaways-heading" className="mt-10 reading-column border-y border-line py-6">
+              <h2 id="takeaways-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Key takeaways
               </h2>
-              <ul className="mt-3 space-y-2">
+              <ul className="mt-3 space-y-2.5">
                 {article.keyTakeaways.map((takeaway) => (
-                  <li key={takeaway} className="flex gap-3 text-base leading-relaxed text-stone-800">
-                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
+                  <li key={takeaway} className="flex gap-3 font-serif text-base leading-relaxed text-ink">
+                    <span aria-hidden="true" className="font-mono text-brand">—</span>
                     <span>{takeaway}</span>
                   </li>
                 ))}
@@ -224,84 +267,103 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
             {article.bodyMarkdown ? (
               <div className="mt-10">
-                <MarkdownBody markdown={article.bodyMarkdown} />
+                <MarkdownBody
+                  markdown={article.bodyMarkdown}
+                  citations={citationMap}
+                  citeHref={citeHref}
+                />
               </div>
             ) : (
-              <div className="reading-prose drop-cap mt-10 space-y-6">
+              <div className="reading-prose drop-cap reading-column mt-10 space-y-6">
                 {paragraphs.map((paragraph, index) => (
-                  <p key={`${index}-${paragraph.slice(0, 24)}`} className="max-w-prose break-words text-lg leading-relaxed text-stone-800">
-                    {paragraph}
+                  <p
+                    key={`${index}-${paragraph.slice(0, 24)}`}
+                    className="reading-column break-words font-serif text-lg leading-relaxed text-ink"
+                  >
+                    {renderWithInlineCitations(paragraph, citationMap, citeHref)}
                   </p>
                 ))}
               </div>
             )}
 
             {article.reviewedArtifact && (
-              <section aria-labelledby="artifact-heading" className="mt-10 rounded-lg border border-stone-200 bg-white p-5">
-                <h2 id="artifact-heading" className="font-serif text-xl font-semibold text-stone-900">
-                  Artifact under review
-                </h2>
-                <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-stone-700">
+              <section
+                aria-labelledby="artifact-heading"
+                className="mt-10 reading-column rounded-sm border border-line bg-surface p-5"
+              >
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h2 id="artifact-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+                    Artifact under review
+                  </h2>
+                  <InlineCitationPopover
+                    label="[1]"
+                    source={citationMap['1']}
+                    citeHref={citeHref}
+                  />
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-ink-secondary">
                   {article.reviewedArtifact.type === 'github' ? (
-                    <GitBranch className="h-4 w-4 text-stone-700" aria-hidden="true" />
+                    <GitBranch className="h-4 w-4 text-brand" aria-hidden="true" />
                   ) : (
-                    <FileText className="h-4 w-4 text-brand-hover" aria-hidden="true" />
+                    <FileText className="h-4 w-4 text-brand" aria-hidden="true" />
                   )}
-                  <span className="break-all font-mono text-stone-900">{article.reviewedArtifact.identifier}</span>
+                  <span className="break-all text-ink">{article.reviewedArtifact.identifier}</span>
                   <span aria-hidden="true">·</span>
                   <span>{article.reviewedArtifact.meta}</span>
                 </div>
-                <p className="mt-2 text-base text-stone-700">{article.reviewedArtifact.title}</p>
+                <p className="mt-2 font-serif text-base text-ink">{article.reviewedArtifact.title}</p>
                 <a
                   href={article.reviewedArtifact.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+                  className="mt-3 inline-flex min-h-10 items-center font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
                 >
                   Open the reviewed artifact
                 </a>
               </section>
             )}
 
-            <div className="mt-10 flex flex-wrap gap-2">
+            <div className="mt-10 reading-column flex flex-wrap gap-2">
               {article.tags.map((tag) => (
                 <Link
                   key={tag}
-                  href={`/?search=${encodeURIComponent(tag)}`}
-                  className="rounded border border-stone-300 bg-white px-2 py-1 font-mono text-sm text-stone-700 hover:border-stone-400"
+                  href={`/?${new URLSearchParams({ search: tag }).toString()}`}
+                  className="rounded-sm border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
                 >
                   #{tag}
                 </Link>
               ))}
             </div>
 
-            <div className="mt-10">
+            <div className="mt-10 reading-column">
               <AuthorProfileCard author={article.author} compact />
             </div>
 
-            <div className="mt-10">
+            <div className="mt-10 reading-column">
               <ArticleDiscussion postId={article.id} commentCount={article.commentsCount} />
             </div>
 
             {related.length > 0 && (
-              <section aria-labelledby="related-heading" className="mt-12 border-t border-stone-200 pt-8">
-                <h2 id="related-heading" className="font-serif text-2xl font-bold text-stone-900">
+              <section aria-labelledby="related-heading" className="mt-12 reading-column border-t border-line pt-8">
+                <h2 id="related-heading" className="font-serif text-2xl font-bold text-ink">
                   Related reviews
                 </h2>
-                <ul className="mt-4 divide-y divide-stone-200 border-y border-stone-200">
+                <ul className="mt-4 divide-y divide-line border-y border-line">
                   {related.map((item) => (
                     <li key={item.id}>
                       <Link
                         href={`/post/${item.slug}`}
                         className="group flex flex-col gap-1 py-4 hover:text-brand"
                       >
-                        <span className="text-sm text-stone-600">
+                        <span className="font-mono text-xs text-ink-secondary">
                           {item.category} · {item.readTime}
                         </span>
-                        <span className="font-serif text-xl font-semibold text-stone-900 group-hover:text-brand">
+                        <span className="font-serif text-xl font-semibold text-ink transition-colors group-hover:text-brand">
                           {item.title}
                         </span>
-                        <span className="max-w-prose text-sm leading-relaxed text-stone-700">{item.summary}</span>
+                        <span className="reading-column font-sans text-sm leading-relaxed text-ink-secondary">
+                          {item.summary}
+                        </span>
                       </Link>
                     </li>
                   ))}
@@ -310,55 +372,86 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             )}
           </article>
 
-          <aside aria-label="Article tools" className="h-fit space-y-6 lg:sticky lg:top-24">
-            <div className="rounded-lg border border-stone-200 bg-white p-5">
-              <h2 className="font-serif text-lg font-semibold text-stone-900">Cite this review</h2>
-              <p className="mt-2 text-sm leading-relaxed text-stone-600">
-                Build an APA, MLA, Chicago, IEEE, BibTeX, or RIS citation from this record.
+          <aside
+            aria-label="Article tools"
+            className="h-fit space-y-6 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
+          >
+            <div className="rounded-sm border border-line bg-surface p-5">
+              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+                Cite this review
+              </h2>
+              <p className="mt-2 font-sans text-xs leading-relaxed text-ink-secondary">
+                Export APA, MLA, Chicago, IEEE, BibTeX, or RIS records, or inspect inline references directly.
               </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <InlineCitationPopover
+                  label={canonicalDoi}
+                  source={citationMap.rwm}
+                  citeHref={citeHref}
+                />
+              </div>
               <Link
-                href={`/cite?article=${encodeURIComponent(article.slug)}`}
-                className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                href={citeHref}
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
               >
-                <Quote className="h-4 w-4" aria-hidden="true" />
+                <Quote className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Open citation builder</span>
               </Link>
             </div>
 
-            <div className="rounded-lg border border-stone-200 bg-white p-5">
-              <h2 className="font-serif text-lg font-semibold text-stone-900">Article record</h2>
-              <dl className="mt-3 space-y-3 text-sm">
+            <div className="rounded-sm border border-line bg-surface p-5">
+              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+                Archival Record
+              </h2>
+              <dl className="mt-3 space-y-3 font-mono text-xs">
                 <div>
-                  <dt className="text-stone-600">Domain</dt>
-                  <dd className="text-stone-900">{article.category}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
+                  <dd className="mt-0.5 break-all text-ink">{canonicalDoi}</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Format</dt>
-                  <dd className="text-stone-900">{article.format}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">ISSN</dt>
+                  <dd className="mt-0.5 text-ink">2994-0821</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Published</dt>
-                  <dd className="text-stone-900">{article.publishedAt}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Column</dt>
+                  <dd className="mt-0.5 font-sans text-ink">{article.category}</dd>
                 </div>
                 <div>
-                  <dt className="text-stone-600">Reading time</dt>
-                  <dd className="text-stone-900">{article.readTime}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Format</dt>
+                  <dd className="mt-0.5 font-sans text-ink">{article.format}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Published</dt>
+                  <dd className="mt-0.5 font-sans text-ink">{article.publishedAt}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase tracking-wider text-ink-secondary">License</dt>
+                  <dd className="mt-0.5 text-ink">CC BY 4.0</dd>
                 </div>
               </dl>
             </div>
 
-            <div className="rounded-lg border border-stone-200 bg-stone-100 p-5 text-sm leading-relaxed text-stone-700">
-              <p className="flex items-center gap-2 font-semibold text-stone-900">
-                <BookOpen className="h-4 w-4 text-brand-hover" aria-hidden="true" />
-                <span>Reading note</span>
+            <div className="rounded-sm border border-line bg-surface p-5 font-sans text-xs leading-relaxed text-ink-secondary">
+              <p className="flex items-center gap-2 font-mono uppercase tracking-wider text-ink">
+                <BookOpen className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+                <span>Verification note</span>
               </p>
               <p className="mt-2">
-                This is a prototype article. Sample claims and citations are illustrative; verify any production reference against its primary source.
+                Verify primary equations, benchmarks, and commits against the linked upstream artifact when citing in formal manuscripts.
               </p>
             </div>
           </aside>
         </div>
       </main>
+
+      <ReadingProgressDock
+        itemId={article.id}
+        itemKind="post"
+        readTime={article.readTime}
+        citationSource={citationMap.rwm}
+        citeHref={citeHref}
+        discussionAnchor="#discussion"
+      />
 
       <BlogFooter />
     </div>

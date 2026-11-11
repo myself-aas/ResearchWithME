@@ -2,8 +2,9 @@ import type { ReactNode } from 'react';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
-  title: 'Reading List',
-  description: 'Review, export, and manage the articles and papers you saved for later reading.',
+  title: 'Saved Reading List & Citations',
+  description:
+    'Review, filter, and export your locally saved ResearchWithMe articles, repository teardowns, and papers as clean Markdown bibliographies.',
   path: '/bookmarks',
   type: 'website' as const,
 });
