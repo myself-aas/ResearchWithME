@@ -44,6 +44,15 @@ All seven HyperFrames skills are installed globally. Read `/hyperframes` **first
 - CMS writes go through `/api/cms/*` — never directly to Supabase client-side with the service-role key.
 - Supabase migrations are idempotent SQL in `supabase/migrations/`.
 
+## Motion system
+All interface motion is governed by `docs/motion-system.md` (πeme §9/§10). Read it before adding any animation.
+
+- Tokens only: `lib/motion/tokens.ts` (no ad-hoc durations/easings).
+- Primitives: `Reveal`, `Stagger`, `Pressable`, `MotionList`, `MotionPillGroup`, `SuccessCheck`, `AttentionPulse`, `LoadingState`, `LazyMount`, `RouteTransition` from `@/components/motion`.
+- Never render `initial={{ opacity: 0 }}` on content that must exist without JavaScript — use `Reveal` (arms below the fold only).
+- Lazy-load interactive-only widgets with `lazyWidget()` + `LazyMount`; never lazy-load crawlable content.
+- Check `/motion` in `full`, `reduced`, and `static` modes after any motion change.
+
 ## Design system
 - Fonts: Aptos family. Aptos Serif is primary (headings + body), Aptos (sans) for UI chrome, Aptos Mono for code. Aptos is requested by installed name only (never bundled); self-hosted Newsreader/Inter in `app/fonts/` are the fallbacks. No CDN.
 - Tailwind v4: no arbitrary values for spacing or colour that exist as tokens.
