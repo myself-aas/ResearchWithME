@@ -1,0 +1,5094 @@
+{
+  "responses": [
+    {
+      "path": "/",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\", </_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "ResearchWithMe — Open-Access Research Reviews",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/category/data-policy",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Data &amp; Policy Reviews &amp; Teardowns | ResearchWithMe",
+      "canonical": "https://researchwith.me/category/data-policy",
+      "json": null
+    },
+    {
+      "path": "/?category=Data%20%26%20Policy",
+      "method": "GET",
+      "status": 307,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\", </_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\"",
+        "location": "/category/data-policy"
+      },
+      "title": "ResearchWithMe — Open-Access Research Reviews",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/post/inside-vllm-and-paged-attention",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Inside vLLM &amp; PagedAttention: Why Memory Fragmentation Was Killing LLM Serving | ResearchWithMe",
+      "canonical": "https://researchwith.me/post/inside-vllm-and-paged-attention",
+      "json": null
+    },
+    {
+      "path": "/post/no-such-post",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "ResearchWithMe — Open-Access Research Reviews",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/papers",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Research Papers | ResearchWithMe",
+      "canonical": "https://researchwith.me/papers",
+      "json": null
+    },
+    {
+      "path": "/paper/no-such-paper",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Research Paper | ResearchWithMe",
+      "canonical": "https://researchwith.me/paper/no-such-paper",
+      "json": null
+    },
+    {
+      "path": "/authors",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Contributors — ResearchWithMe | ResearchWithMe",
+      "canonical": "https://researchwith.me/authors",
+      "json": null
+    },
+    {
+      "path": "/author/maya-lin",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Author Profile | ResearchWithMe",
+      "canonical": "https://researchwith.me/author/maya-lin",
+      "json": null
+    },
+    {
+      "path": "/author/no-such-author",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Author Profile | ResearchWithMe",
+      "canonical": "https://researchwith.me/author/no-such-author",
+      "json": null
+    },
+    {
+      "path": "/editions",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "PDF Editions | ResearchWithMe",
+      "canonical": "https://researchwith.me/editions",
+      "json": null
+    },
+    {
+      "path": "/editorial-board",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Editorial Board | ResearchWithMe",
+      "canonical": "https://researchwith.me/editorial-board",
+      "json": null
+    },
+    {
+      "path": "/assistant",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Assistant | ResearchWithMe",
+      "canonical": "https://researchwith.me/assistant",
+      "json": null
+    },
+    {
+      "path": "/bookmarks",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Reading List | ResearchWithMe",
+      "canonical": "https://researchwith.me/bookmarks",
+      "json": null
+    },
+    {
+      "path": "/cite",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "Citation Builder | ResearchWithMe",
+      "canonical": "https://researchwith.me/cite",
+      "json": null
+    },
+    {
+      "path": "/api-docs",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "s-maxage=31536000",
+        "content-type": "text/html; charset=utf-8"
+      },
+      "title": "API reference | ResearchWithMe",
+      "canonical": "https://researchwith.me/api-docs",
+      "json": null
+    },
+    {
+      "path": "/login",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Sign in to the editorial studio | ResearchWithMe",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/write",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Writer Studio | ResearchWithMe",
+      "canonical": "https://researchwith.me/write",
+      "json": null
+    },
+    {
+      "path": "/dashboard",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </images/folio-hero.jpeg>; rel=preload; as=\"image\", </images/folio-code.jpeg>; rel=preload; as=\"image\", </images/folio-design.jpeg>; rel=preload; as=\"image\", </images/folio-dashboard.jpeg>; rel=preload; as=\"image\", </images/folio-process.jpeg>; rel=preload; as=\"image\""
+      },
+      "title": "New article",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/dashboard/access",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Apply to write",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/dashboard/manage",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Articles | ResearchWithMe",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/dashboard/comments",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Comments | ResearchWithMe",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/dashboard/applications",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "content-type": "text/html; charset=utf-8",
+        "link": "</_next/static/media/257fdc6368e64b83-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\", </_next/static/media/6c596dfcddeca1e9-s.p.woff2>; rel=preload; as=\"font\"; crossorigin=\"\"; type=\"font/woff2\""
+      },
+      "title": "Writer applications",
+      "canonical": "https://researchwith.me",
+      "json": null
+    },
+    {
+      "path": "/robots.txt",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "text/plain"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/sitemap.xml",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/xml"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/manifest.webmanifest",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/manifest+json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "name": "ResearchWithMe — Open Scholarly Publishing",
+        "short_name": "ResearchWithMe",
+        "description": "Open-access research reviews, reproducible papers, and repository teardowns.",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#F8F7F3",
+        "theme_color": "#4F46E5",
+        "lang": "en",
+        "categories": [
+          "education",
+          "books",
+          "productivity"
+        ],
+        "icons": [
+          {
+            "src": "/icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+          },
+          {
+            "src": "/apple-icon",
+            "sizes": "180x180",
+            "type": "image/png",
+            "purpose": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "/icon.svg",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, immutable, no-transform, max-age=31536000",
+        "content-type": "image/svg+xml"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/icon.png",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, immutable, no-transform, max-age=31536000",
+        "content-type": "image/png"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/apple-icon",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, immutable, no-transform, max-age=31536000",
+        "content-type": "image/png"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/opengraph-image",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, immutable, no-transform, max-age=31536000",
+        "content-type": "image/png"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/post/inside-vllm-and-paged-attention/opengraph-image",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, immutable, no-transform, max-age=31536000",
+        "content-type": "image/png"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/paper/no-such-paper/opengraph-image",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, immutable, no-transform, max-age=31536000",
+        "content-type": "image/png"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/.well-known/api-catalog",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "content-type": "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"",
+        "link": "</.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\""
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "linkset": [
+          {
+            "anchor": "https://researchwith.me/api/articles",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#articles",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/authors",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#authors",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/papers",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#papers",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/comments",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#comments",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/research-assistant",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#research-assistant",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/author-avatar",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#author-avatar",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/generate",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#generate",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/cms/posts",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#cms-posts",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/cms/comments",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#cms-comments",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/dashboard/applications",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#applications",
+                "type": "text/html"
+              }
+            ]
+          },
+          {
+            "anchor": "https://researchwith.me/api/revalidate",
+            "service-desc": [
+              {
+                "href": "https://researchwith.me/openapi.json",
+                "type": "application/json"
+              }
+            ],
+            "service-doc": [
+              {
+                "href": "https://researchwith.me/api-docs#revalidate",
+                "type": "text/html"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "/.well-known/api-catalog",
+      "method": "HEAD",
+      "status": 200,
+      "headers": {
+        "content-type": "application/linkset+json; profile=\"https://www.rfc-editor.org/info/rfc9727\"",
+        "link": "</.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\""
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/openapi.json",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "openapi": "3.1.0",
+        "info": {
+          "title": "ResearchWithMe API",
+          "version": "0.2.1",
+          "description": "HTTP routes for the research archive and editorial studio. Some operations require a signed-in session, editor privileges, or a webhook secret. See each operation for its requirements.",
+          "license": {
+            "name": "ISC",
+            "identifier": "ISC"
+          }
+        },
+        "security": [],
+        "servers": [
+          {
+            "url": "/"
+          }
+        ],
+        "tags": [
+          {
+            "name": "Articles",
+            "description": "Browse published articles and record reactions."
+          },
+          {
+            "name": "Authors",
+            "description": "Browse published author profiles and their archives."
+          },
+          {
+            "name": "Papers",
+            "description": "Search the paper archive and retrieve individual papers."
+          },
+          {
+            "name": "Comments",
+            "description": "Read and submit article comments."
+          },
+          {
+            "name": "Research assistant",
+            "description": "Ask questions grounded in the article catalog."
+          },
+          {
+            "name": "Author avatars",
+            "description": "Generate a deterministic author avatar; model-generated avatars are restricted to editors."
+          },
+          {
+            "name": "Cover generation",
+            "description": "Generate article covers. Editor access is required."
+          },
+          {
+            "name": "Editorial posts",
+            "description": "Manage editorial posts. Editor access is required."
+          },
+          {
+            "name": "Comment moderation",
+            "description": "Moderate comments. Editor access is required."
+          },
+          {
+            "name": "Writer applications",
+            "description": "Manage writer applications. A signed-in session is required; reviews require editor access."
+          },
+          {
+            "name": "Cache revalidation",
+            "description": "Receive database webhooks that invalidate cached pages. A shared secret is required."
+          }
+        ],
+        "paths": {
+          "/api/articles": {
+            "get": {
+              "tags": [
+                "Articles"
+              ],
+              "operationId": "listArticles",
+              "summary": "List published articles",
+              "description": "Returns article metadata and a total count after filtering. The article body is omitted unless full=1; limit applies to the returned array, not the count.",
+              "parameters": [
+                {
+                  "name": "category",
+                  "in": "query",
+                  "description": "Exact category name, or All.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "format",
+                  "in": "query",
+                  "description": "Exact article format, or All.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "search",
+                  "in": "query",
+                  "description": "Case-insensitive search across article metadata, up to 120 characters.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "author",
+                  "in": "query",
+                  "description": "Case-insensitive exact author ID or name.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "limit",
+                  "in": "query",
+                  "description": "Maximum number of results, clamped to 1–100; defaults to 100.",
+                  "schema": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 100
+                  }
+                },
+                {
+                  "name": "full",
+                  "in": "query",
+                  "description": "Set to 1 to include article bodies.",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "1"
+                    ]
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Matching articles and total count.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "articles": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Article"
+                            }
+                          },
+                          "count": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "articles",
+                          "count"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/articles/{id}": {
+            "get": {
+              "tags": [
+                "Articles"
+              ],
+              "operationId": "getArticle",
+              "summary": "Get a published article",
+              "description": "Returns the complete article, including its body, by ID or slug.",
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Published article ID or slug.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Published article.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "article": {
+                            "$ref": "#/components/schemas/Article"
+                          }
+                        },
+                        "required": [
+                          "article"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "patch": {
+              "tags": [
+                "Articles"
+              ],
+              "operationId": "likeArticle",
+              "summary": "Record a reaction",
+              "description": "Increments the article’s like count. No request body is needed; this operation is rate limited.",
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Published article ID or slug.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Updated like count.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "likes": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "success",
+                          "likes"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/authors": {
+            "get": {
+              "tags": [
+                "Authors"
+              ],
+              "operationId": "listAuthors",
+              "summary": "List published authors",
+              "description": "Returns published profiles and their article counts.",
+              "responses": {
+                "200": {
+                  "description": "Published author profiles.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "authors": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Author"
+                            }
+                          }
+                        },
+                        "required": [
+                          "authors"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/authors/{id}": {
+            "get": {
+              "tags": [
+                "Authors"
+              ],
+              "operationId": "getAuthor",
+              "summary": "Get an author archive",
+              "description": "Returns a published profile, its articles, and aggregate metrics.",
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Published author profile ID.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Author and archive.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "author": {
+                            "$ref": "#/components/schemas/Author"
+                          },
+                          "articles": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Article"
+                            }
+                          },
+                          "metrics": {
+                            "$ref": "#/components/schemas/AuthorMetrics"
+                          }
+                        },
+                        "required": [
+                          "author",
+                          "articles",
+                          "metrics"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/papers": {
+            "get": {
+              "tags": [
+                "Papers"
+              ],
+              "operationId": "listPapers",
+              "summary": "Search papers",
+              "description": "Returns all matching papers and their total. The archive may be empty.",
+              "parameters": [
+                {
+                  "name": "topic",
+                  "in": "query",
+                  "description": "Case-insensitive exact topic, All, or All Fields.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "q",
+                  "in": "query",
+                  "description": "Search title, abstract, DOI, authors, affiliations, or keywords; up to 120 characters.",
+                  "schema": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "name": "sort",
+                  "in": "query",
+                  "description": "Sort by date (default), citations, or title.",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "date",
+                      "citations",
+                      "title"
+                    ]
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Matching papers.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "papers": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Paper"
+                            }
+                          },
+                          "total": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "papers",
+                          "total"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/papers/{slug}": {
+            "get": {
+              "tags": [
+                "Papers"
+              ],
+              "operationId": "getPaper",
+              "summary": "Get a paper",
+              "description": "Finds a paper by slug, ID, or a matching DOI fragment.",
+              "parameters": [
+                {
+                  "name": "slug",
+                  "in": "path",
+                  "required": true,
+                  "description": "Paper slug, ID, or DOI fragment.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Paper record.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "paper": {
+                            "$ref": "#/components/schemas/Paper"
+                          }
+                        },
+                        "required": [
+                          "paper"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/comments": {
+            "get": {
+              "tags": [
+                "Comments"
+              ],
+              "operationId": "listComments",
+              "summary": "List comments",
+              "description": "Returns comments for a post ID. Without postId, returns up to 200 locally stored comments.",
+              "parameters": [
+                {
+                  "name": "postId",
+                  "in": "query",
+                  "description": "Article ID, including a CMS public post ID when applicable.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Comments.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "comments": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Comment"
+                            }
+                          }
+                        },
+                        "required": [
+                          "comments"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "tags": [
+                "Comments"
+              ],
+              "operationId": "createComment",
+              "summary": "Submit a comment",
+              "description": "Accepts JSON with postId, authorName, text, and optional authorRole. Browser requests with an Origin must be same-origin; submissions are rate limited.",
+              "requestBody": {
+                "required": true,
+                "description": "The article and comment to publish.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CommentInput"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Comment saved.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "comment": {
+                            "$ref": "#/components/schemas/Comment"
+                          }
+                        },
+                        "required": [
+                          "success",
+                          "comment"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "415": {
+                  "description": "The request must be sent as application/json.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/research-assistant": {
+            "post": {
+              "tags": [
+                "Research assistant"
+              ],
+              "operationId": "askResearchAssistant",
+              "summary": "Ask the research assistant",
+              "description": "Send a JSON query (up to 600 characters). The answer uses the published catalog and falls back to a deterministic answer when the language model is unavailable.",
+              "requestBody": {
+                "required": true,
+                "description": "Question about the archive.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "query": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 600
+                        }
+                      },
+                      "required": [
+                        "query"
+                      ]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Answer and citations.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "answer": {
+                            "type": "string"
+                          },
+                          "citations": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/AssistantCitation"
+                            }
+                          },
+                          "mode": {
+                            "type": "string",
+                            "enum": [
+                              "catalog",
+                              "model"
+                            ]
+                          },
+                          "notice": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "answer",
+                          "citations",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "415": {
+                  "description": "The request must be sent as application/json.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/author-avatar": {
+            "post": {
+              "tags": [
+                "Author avatars"
+              ],
+              "operationId": "createAuthorAvatar",
+              "summary": "Generate an author avatar",
+              "description": "Send name and domain, with optional role, bio, authorId, and forceAi. The default is a local SVG; when forceAi is requested and a model is configured, an editor session is required.",
+              "requestBody": {
+                "required": true,
+                "description": "Author details and optional model request.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/AvatarInput"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "SVG avatar.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "svg": {
+                            "type": "string"
+                          },
+                          "authorId": {
+                            "type": "string"
+                          },
+                          "source": {
+                            "type": "string",
+                            "enum": [
+                              "gemini",
+                              "domain-fallback"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "svg",
+                          "authorId",
+                          "source"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/generate": {
+            "get": {
+              "tags": [
+                "Cover generation"
+              ],
+              "operationId": "getCoverGenerator",
+              "summary": "Inspect cover generation configuration",
+              "description": "Editor-only. Returns whether the generator and token are configured; no token value is exposed.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Generator configuration.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "configured": {
+                            "type": "boolean"
+                          },
+                          "spaceName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "hasToken": {
+                            "type": "boolean"
+                          },
+                          "engine": {
+                            "type": "string"
+                          },
+                          "endpoint": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "configured",
+                          "spaceName",
+                          "hasToken",
+                          "engine",
+                          "endpoint"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "tags": [
+                "Cover generation"
+              ],
+              "operationId": "generateCover",
+              "summary": "Generate an article cover",
+              "description": "Editor-only and rate limited. Send a prompt plus optional generation settings; browser requests with an Origin must be same-origin. Availability depends on the configured Hugging Face Space.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "description": "Cover prompt and generation settings.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CoverInput"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Generated image URI and seed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "success": {
+                            "type": "boolean"
+                          },
+                          "imageUri": {
+                            "type": "string"
+                          },
+                          "seed": {
+                            "type": "number"
+                          },
+                          "format": {
+                            "type": "string",
+                            "const": "avif"
+                          }
+                        },
+                        "required": [
+                          "success",
+                          "imageUri",
+                          "seed",
+                          "format"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "502": {
+                  "description": "The upstream generation service failed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/cms/posts": {
+            "get": {
+              "tags": [
+                "Editorial posts"
+              ],
+              "operationId": "listEditorialPosts",
+              "summary": "List editorial posts",
+              "description": "Editor-only. Includes drafts as well as published posts.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Editorial posts and storage mode.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "posts": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/CmsPost"
+                            }
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "posts",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "tags": [
+                "Editorial posts"
+              ],
+              "operationId": "createEditorialPost",
+              "summary": "Create an editorial post",
+              "description": "Editor-only. Send title and authorId plus post fields as JSON. Publishing additionally requires at least 200 characters of content, a 40-character summary, and one key takeaway. Browser requests with an Origin must be same-origin.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "description": "Post to create.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CmsPostInput"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Created post and storage mode.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "post": {
+                            "$ref": "#/components/schemas/CmsPost"
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "post",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "409": {
+                  "description": "The request conflicts with an existing record.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "415": {
+                  "description": "The request must be sent as application/json.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "The selected author cannot be used for publication.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/cms/posts/{id}": {
+            "get": {
+              "tags": [
+                "Editorial posts"
+              ],
+              "operationId": "getEditorialPost",
+              "summary": "Get an editorial post",
+              "description": "Editor-only. Returns a draft or published editorial post by its CMS ID.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Editorial record ID.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Post and storage mode.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "post": {
+                            "$ref": "#/components/schemas/CmsPost"
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "post",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "patch": {
+              "tags": [
+                "Editorial posts"
+              ],
+              "operationId": "updateEditorialPost",
+              "summary": "Update an editorial post",
+              "description": "Editor-only. Send the fields to change as JSON; they are merged with the existing post and validated. Browser requests with an Origin must be same-origin.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Editorial record ID.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "description": "Fields to change.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/CmsPostPatch"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Updated post and storage mode.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "post": {
+                            "$ref": "#/components/schemas/CmsPost"
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "post",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "409": {
+                  "description": "The request conflicts with an existing record.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "415": {
+                  "description": "The request must be sent as application/json.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "422": {
+                  "description": "The selected author cannot be used for publication.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "delete": {
+              "tags": [
+                "Editorial posts"
+              ],
+              "operationId": "deleteEditorialPost",
+              "summary": "Delete an editorial post",
+              "description": "Editor-only and rate limited. Browser requests with an Origin must be same-origin.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Editorial record ID.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Deletion confirmed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "deleted": {
+                            "type": "boolean"
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "deleted",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/cms/comments": {
+            "get": {
+              "tags": [
+                "Comment moderation"
+              ],
+              "operationId": "listModerationComments",
+              "summary": "List comments for moderation",
+              "description": "Editor-only. Lists CMS comments and the storage mode.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "CMS comments and storage mode.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "comments": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/CmsComment"
+                            }
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "comments",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/cms/comments/{id}": {
+            "delete": {
+              "tags": [
+                "Comment moderation"
+              ],
+              "operationId": "deleteModerationComment",
+              "summary": "Delete a comment",
+              "description": "Editor-only and rate limited. Browser requests with an Origin must be same-origin.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Editorial record ID.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Deletion confirmed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "deleted": {
+                            "type": "boolean"
+                          },
+                          "mode": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "deleted",
+                          "mode"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "404": {
+                  "description": "The requested record does not exist.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/dashboard/applications": {
+            "get": {
+              "tags": [
+                "Writer applications"
+              ],
+              "operationId": "listApplications",
+              "summary": "List writer applications",
+              "description": "Requires a signed-in Supabase session. Readers see their own applications; editors see the queue, subject to row-level security.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Visible applications.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "applications": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Application"
+                            }
+                          }
+                        },
+                        "required": [
+                          "applications"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "post": {
+              "tags": [
+                "Writer applications"
+              ],
+              "operationId": "submitApplication",
+              "summary": "Submit a writer application",
+              "description": "Requires a signed-in Supabase session and a connected GitHub or ORCID identity. Send provider, handle, optional displayName, and statement as JSON. Browser requests with an Origin must be same-origin.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "description": "Writer application.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/ApplicationInput"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Saved application.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "application": {
+                            "$ref": "#/components/schemas/Application"
+                          }
+                        },
+                        "required": [
+                          "application"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "415": {
+                  "description": "The request must be sent as application/json.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/dashboard/applications/{id}": {
+            "post": {
+              "tags": [
+                "Writer applications"
+              ],
+              "operationId": "reviewApplication",
+              "summary": "Review a writer application",
+              "description": "Editor-only. Send approve=true to approve, or approve=false to reject, with an optional note. Omission of approve also rejects; always send it explicitly. Browser requests with an Origin must be same-origin.",
+              "security": [
+                {
+                  "SessionCookie": []
+                }
+              ],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "description": "Numeric application ID.",
+                  "schema": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "description": "Review decision.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "approve": {
+                          "type": "boolean"
+                        },
+                        "note": {
+                          "type": "string",
+                          "maxLength": 500
+                        }
+                      },
+                      "required": [
+                        "approve"
+                      ]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Reviewed application.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "application": {
+                            "$ref": "#/components/schemas/Application"
+                          }
+                        },
+                        "required": [
+                          "application"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "400": {
+                  "description": "Invalid request or input.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "403": {
+                  "description": "Insufficient privileges or a disallowed cross-site request.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "415": {
+                  "description": "The request must be sent as application/json.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "/api/revalidate": {
+            "post": {
+              "tags": [
+                "Cache revalidation"
+              ],
+              "operationId": "revalidatePages",
+              "summary": "Invalidate cached pages",
+              "description": "Webhook protected by the x-revalidate-secret header. An optional Supabase webhook body can supply table and record.slug or old_record.slug. Without a valid slug, the home page and sitemap are still revalidated.",
+              "security": [
+                {
+                  "RevalidateSecret": []
+                }
+              ],
+              "requestBody": {
+                "required": false,
+                "description": "Optional Supabase database webhook.",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/RevalidationWebhook"
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Revalidation result.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "revalidated": {
+                            "type": "boolean"
+                          },
+                          "table": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "paths": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "now": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "revalidated",
+                          "table",
+                          "paths",
+                          "now"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Authentication or a valid webhook secret is required.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "429": {
+                  "description": "Too many requests; retry later.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "500": {
+                  "description": "The operation could not be completed.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                },
+                "503": {
+                  "description": "The service or its backing store is unavailable or not configured.",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "$ref": "#/components/schemas/Error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "securitySchemes": {
+            "SessionCookie": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "Cookie",
+              "description": "Supabase Auth session cookie(s), obtained by signing in on the site. Cookie names depend on the deployment and may be chunked. Editor-only operations additionally require an editor account."
+            },
+            "RevalidateSecret": {
+              "type": "apiKey",
+              "in": "header",
+              "name": "x-revalidate-secret",
+              "description": "Shared secret configured for database revalidation webhooks."
+            }
+          },
+          "schemas": {
+            "Error": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "string"
+                },
+                "fieldErrors": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "needsConfig": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "error"
+              ]
+            },
+            "Author": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                },
+                "bio": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                },
+                "domain": {
+                  "type": "string"
+                },
+                "institution": {
+                  "type": "string"
+                },
+                "orcid": {
+                  "type": "string"
+                },
+                "github": {
+                  "type": "string"
+                },
+                "twitter": {
+                  "type": "string"
+                },
+                "website": {
+                  "type": "string"
+                },
+                "scholar": {
+                  "type": "string"
+                },
+                "joinedDate": {
+                  "type": "string"
+                },
+                "articleCount": {
+                  "type": "integer"
+                },
+                "totalReads": {
+                  "type": "string"
+                },
+                "verifiedVia": {
+                  "type": "string"
+                },
+                "verifiedIdentifier": {
+                  "type": "string"
+                },
+                "verifiedTitle": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            },
+            "Artifact": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "paper",
+                    "github",
+                    "dataset"
+                  ]
+                },
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "identifier": {
+                  "type": "string"
+                },
+                "meta": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "title",
+                "url",
+                "identifier",
+                "meta"
+              ]
+            },
+            "Article": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "subtitle": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "author": {
+                  "$ref": "#/components/schemas/Author"
+                },
+                "publishedAt": {
+                  "type": "string"
+                },
+                "dateISO": {
+                  "type": "string"
+                },
+                "readTime": {
+                  "type": "string"
+                },
+                "coverImage": {
+                  "type": "string"
+                },
+                "featured": {
+                  "type": "boolean"
+                },
+                "reviewedArtifact": {
+                  "$ref": "#/components/schemas/Artifact"
+                },
+                "summary": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "bodyMarkdown": {
+                  "type": "string"
+                },
+                "keyTakeaways": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "likes": {
+                  "type": "integer"
+                },
+                "commentsCount": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "id",
+                "slug",
+                "title",
+                "author"
+              ]
+            },
+            "AuthorMetrics": {
+              "type": "object",
+              "properties": {
+                "totalArticles": {
+                  "type": "integer"
+                },
+                "totalLikes": {
+                  "type": "integer"
+                },
+                "totalComments": {
+                  "type": "integer"
+                },
+                "domains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "reviewedArtifactsCount": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "totalArticles",
+                "totalLikes",
+                "totalComments",
+                "domains",
+                "reviewedArtifactsCount"
+              ]
+            },
+            "Paper": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "subtitle": {
+                  "type": "string"
+                },
+                "authors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "affiliation": {
+                        "type": "string"
+                      },
+                      "orcid": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "abstract": {
+                  "type": "string"
+                },
+                "publishedDate": {
+                  "type": "string"
+                },
+                "year": {
+                  "type": "integer"
+                },
+                "doi": {
+                  "type": "string"
+                },
+                "journal": {
+                  "type": "string"
+                },
+                "volume": {
+                  "type": "string"
+                },
+                "issue": {
+                  "type": "string"
+                },
+                "pages": {
+                  "type": "string"
+                },
+                "topic": {
+                  "type": "string"
+                },
+                "citationCount": {
+                  "type": "integer"
+                },
+                "readTime": {
+                  "type": "string"
+                },
+                "keywords": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "license": {
+                  "type": "string"
+                },
+                "pdfFileName": {
+                  "type": "string"
+                },
+                "dataUrl": {
+                  "type": "string"
+                },
+                "fullContent": {
+                  "type": "object",
+                  "properties": {
+                    "background": {
+                      "type": "string"
+                    },
+                    "methodology": {
+                      "type": "string"
+                    },
+                    "findings": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "discussion": {
+                      "type": "string"
+                    },
+                    "implications": {
+                      "type": "string"
+                    },
+                    "references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "slug",
+                "title"
+              ]
+            },
+            "Comment": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "postId": {
+                  "type": "string"
+                },
+                "authorName": {
+                  "type": "string"
+                },
+                "authorRole": {
+                  "type": "string"
+                },
+                "avatar": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "postId",
+                "authorName",
+                "avatar",
+                "timestamp",
+                "text"
+              ]
+            },
+            "CommentInput": {
+              "type": "object",
+              "properties": {
+                "postId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "authorName": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 120
+                },
+                "authorRole": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 2,
+                  "maxLength": 4000
+                }
+              },
+              "required": [
+                "postId",
+                "authorName",
+                "text"
+              ]
+            },
+            "AssistantCitation": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "author",
+                "category"
+              ]
+            },
+            "AvatarInput": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "domain": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "role": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "bio": {
+                  "type": "string",
+                  "maxLength": 400
+                },
+                "authorId": {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                "forceAi": {
+                  "oneOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "true",
+                        "false"
+                      ]
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "name",
+                "domain"
+              ]
+            },
+            "CoverInput": {
+              "type": "object",
+              "properties": {
+                "prompt": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000
+                },
+                "negative_prompt": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "seed": {
+                  "type": "number"
+                },
+                "randomize_seed": {
+                  "type": "boolean"
+                },
+                "width": {
+                  "type": "number"
+                },
+                "height": {
+                  "type": "number"
+                },
+                "guidance_scale": {
+                  "type": "number"
+                },
+                "steps": {
+                  "type": "number"
+                },
+                "quality": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "prompt"
+              ]
+            },
+            "CmsPostInput": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 180
+                },
+                "slug": {
+                  "type": "string",
+                  "maxLength": 96
+                },
+                "content": {
+                  "type": "string",
+                  "maxLength": 200000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "published"
+                  ]
+                },
+                "subtitle": {
+                  "type": "string",
+                  "maxLength": 400
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 1200
+                },
+                "category": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "authorId": {
+                  "type": "string"
+                },
+                "authorName": {
+                  "type": "string"
+                },
+                "coverImage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "keyTakeaways": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "featured": {
+                  "type": "boolean"
+                },
+                "artifact": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Artifact"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "title",
+                "authorId"
+              ]
+            },
+            "CmsPostPatch": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 180
+                },
+                "slug": {
+                  "type": "string",
+                  "maxLength": 96
+                },
+                "content": {
+                  "type": "string",
+                  "maxLength": 200000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "published"
+                  ]
+                },
+                "subtitle": {
+                  "type": "string",
+                  "maxLength": 400
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 1200
+                },
+                "category": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "authorId": {
+                  "type": "string"
+                },
+                "authorName": {
+                  "type": "string"
+                },
+                "coverImage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "keyTakeaways": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "featured": {
+                  "type": "boolean"
+                },
+                "artifact": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Artifact"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            "CmsPost": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 8,
+                  "maxLength": 180
+                },
+                "slug": {
+                  "type": "string",
+                  "maxLength": 96
+                },
+                "content": {
+                  "type": "string",
+                  "maxLength": 200000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "draft",
+                    "published"
+                  ]
+                },
+                "subtitle": {
+                  "type": "string",
+                  "maxLength": 400
+                },
+                "summary": {
+                  "type": "string",
+                  "maxLength": 1200
+                },
+                "category": {
+                  "type": "string"
+                },
+                "format": {
+                  "type": "string"
+                },
+                "authorId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "authorName": {
+                  "type": "string"
+                },
+                "coverImage": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "keyTakeaways": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "featured": {
+                  "type": "boolean"
+                },
+                "artifact": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Artifact"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "id": {
+                  "type": "string"
+                },
+                "likes": {
+                  "type": "integer"
+                },
+                "readTime": {
+                  "type": "string"
+                },
+                "publishedAt": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "insertedAt": {
+                  "type": "string"
+                },
+                "updatedAt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "slug",
+                "status"
+              ]
+            },
+            "CmsComment": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "postId": {
+                  "type": "string"
+                },
+                "postTitle": {
+                  "type": "string"
+                },
+                "authorName": {
+                  "type": "string"
+                },
+                "authorRole": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                },
+                "insertedAt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "postId",
+                "authorName",
+                "content"
+              ]
+            },
+            "ApplicationInput": {
+              "type": "object",
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "enum": [
+                    "github",
+                    "orcid"
+                  ]
+                },
+                "handle": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 160
+                },
+                "displayName": {
+                  "type": "string",
+                  "maxLength": 120
+                },
+                "statement": {
+                  "type": "string",
+                  "maxLength": 1000
+                }
+              },
+              "required": [
+                "provider",
+                "handle"
+              ]
+            },
+            "Application": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "user_id": {
+                  "type": "string"
+                },
+                "provider": {
+                  "type": "string",
+                  "enum": [
+                    "github",
+                    "orcid"
+                  ]
+                },
+                "handle": {
+                  "type": "string"
+                },
+                "display_name": {
+                  "type": "string"
+                },
+                "statement": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "approved",
+                    "rejected"
+                  ]
+                },
+                "reviewed_by": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reviewed_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "review_note": {
+                  "type": "string"
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "updated_at": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "user_id",
+                "provider",
+                "handle",
+                "display_name",
+                "status"
+              ]
+            },
+            "RevalidationWebhook": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "table": {
+                  "type": "string"
+                },
+                "record": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "slug": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "old_record": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "slug": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "path": "/api/articles",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "articles": [
+          {
+            "id": "post-1",
+            "slug": "inside-vllm-and-paged-attention",
+            "title": "Inside vLLM & PagedAttention: Why Memory Fragmentation Was Killing LLM Serving",
+            "subtitle": "A deep architectural code teardown of how virtual memory paging concepts solved KV cache bloat in high-concurrency model servers.",
+            "category": "GitHub Repo Teardowns",
+            "format": "Repo Teardown",
+            "author": {
+              "id": "maya-lin",
+              "name": "Maya Lin",
+              "avatar": "ML",
+              "role": "Staff Infrastructure Architect",
+              "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+              "institution": "Independent Distributed Systems Lab",
+              "github": "https://github.com/mayalin-sys",
+              "twitter": "https://x.com/mayalin_hpc",
+              "website": "https://mayalin.dev",
+              "verifiedVia": "github",
+              "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+              "verifiedTitle": "GitHub Verified Systems Maintainer",
+              "joinedDate": "January 2025",
+              "totalReads": "64.9k",
+              "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+              "articleCount": 19
+            },
+            "publishedAt": "October 22, 2026",
+            "readTime": "9 min read",
+            "coverImage": "/images/folio-code.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "vLLM: Easy, fast, and cheap LLM serving with PagedAttention",
+              "url": "https://github.com/vllm-project/vllm",
+              "identifier": "vllm-project/vllm",
+              "meta": "44.8k Stars · Python / C++ · Apache-2.0"
+            },
+            "summary": "Before vLLM, serving transformers at scale suffered from up to 80% wasted GPU VRAM due to sequential pre-allocation of the KV cache. By adopting classic operating system paging algorithms into custom CUDA kernels, vLLM increased server throughput by 2.5x to 4x.",
+            "keyTakeaways": [
+              "Pre-allocating contiguous KV cache blocks wastes up to 60-80% of scarce GPU memory.",
+              "PagedAttention maps logical tokens to 16-token non-contiguous physical memory blocks with minimal lookup overhead.",
+              "Dynamic memory allocation enables near-optimal batch scheduling, reducing prompt queue latency by up to 73%."
+            ],
+            "tags": [
+              "CUDA",
+              "vLLM",
+              "GPU Inference",
+              "Systems Engineering",
+              "Performance"
+            ],
+            "likes": 342,
+            "commentsCount": 28
+          },
+          {
+            "id": "post-2",
+            "slug": "deconstructing-deepseek-r1-reasoning-without-sft",
+            "title": "Deconstructing DeepSeek-R1: How Pure RL Unlocked Emergent Chain-of-Thought",
+            "subtitle": "Reviewing the breakthrough paper on incentivizing complex multi-step reasoning directly from rule-based reward signals.",
+            "category": "Research Reviews",
+            "format": "Paper Review",
+            "author": {
+              "id": "marcus-vance",
+              "name": "Prof. Marcus Vance",
+              "avatar": "MV",
+              "role": "AI Systems & Verification Fellow",
+              "domain": "Computer Science, LLM Reasoning & Distributed ML",
+              "institution": "University of Cambridge, Computer Laboratory",
+              "orcid": "0000-0001-9234-8812",
+              "github": "https://github.com/vance-cam",
+              "twitter": "https://x.com/vance_ai",
+              "scholar": "https://scholar.google.com",
+              "verifiedVia": "orcid",
+              "verifiedIdentifier": "0000-0001-9234-8812",
+              "verifiedTitle": "ORCID Verified Researcher",
+              "joinedDate": "March 2024",
+              "totalReads": "48.2k",
+              "bio": "Researches autonomous verification protocols, mathematical reasoning models, and neural architecture efficiency. Leads verification benchmarks for open-weights foundational models.",
+              "articleCount": 14
+            },
+            "publishedAt": "October 19, 2026",
+            "readTime": "12 min read",
+            "coverImage": "/images/folio-hero.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "paper",
+              "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+              "url": "https://arxiv.org",
+              "identifier": "arXiv:2501.12948",
+              "meta": "DeepSeek-AI · 32-page technical report"
+            },
+            "summary": "DeepSeek-R1 demonstrated that massive reasoning capabilities can emerge spontaneously through large-scale Reinforcement Learning directly on a base model, without relying on human-annotated chain-of-thought demonstrations.",
+            "keyTakeaways": [
+              "Base models possess latent reasoning patterns that can be unlocked via pure RL without human SFT examples.",
+              "The \"Aha moment\" of self-correction emerges organically when reward signals penalize premature final answers.",
+              "Rule-based verification (math compilers and unit tests) avoids the reward hacking common in neural reward models."
+            ],
+            "tags": [
+              "AI Research",
+              "Reinforcement Learning",
+              "DeepSeek",
+              "Reasoning",
+              "Open Weights"
+            ],
+            "likes": 519,
+            "commentsCount": 46
+          },
+          {
+            "id": "post-3",
+            "slug": "glp-1-receptor-agonists-beyond-diabetes",
+            "title": "GLP-1 Receptor Agonists Beyond Diabetes: Neuroinflammation, Cardiovascular Outcomes & 2026 Trial Data",
+            "subtitle": "Analyzing the landmark clinical trials shifting semaglutide and tirzepatide from weight-loss drugs to broad systemic therapeutics.",
+            "category": "Health & Medicine",
+            "format": "Deep-Dive Essay",
+            "author": {
+              "id": "sarah-chen",
+              "name": "Dr. Sarah Chen, MD",
+              "avatar": "SC",
+              "role": "Clinical Epidemiologist & Physician",
+              "domain": "Preventive Medicine, Metabolic Health & Trial Methodology",
+              "institution": "Johns Hopkins Bloomberg School of Public Health",
+              "orcid": "0000-0003-8120-4491",
+              "twitter": "https://x.com/dr_sarahchen",
+              "verifiedVia": "institution",
+              "verifiedIdentifier": "schen@jhu.edu (Institutional Faculty Verified)",
+              "verifiedTitle": "Institutional Medical Faculty Verified",
+              "joinedDate": "August 2024",
+              "totalReads": "39.4k",
+              "bio": "Translating double-blind randomized clinical trial registries into actionable physiological insights without pharmaceutical industry hype or wellness sensationalism.",
+              "articleCount": 11
+            },
+            "publishedAt": "October 15, 2026",
+            "readTime": "11 min read",
+            "coverImage": "/images/folio-dashboard.jpeg",
+            "featured": false,
+            "reviewedArtifact": {
+              "type": "paper",
+              "title": "Long-term Cardiovascular and Kidney Outcomes in Semaglutide Trials: A Meta-Analysis",
+              "url": "https://nejm.org",
+              "identifier": "NEJM DOI: 10.1056/NEJMoa2307563",
+              "meta": "17,604 participants · Double-blind RCT"
+            },
+            "summary": "The latest cohort data from the SELECT and FLOW clinical trials confirms that GLP-1 and dual GIP/GLP-1 receptor agonists produce substantial cardiovascular and renal protection independent of total kilograms lost.",
+            "keyTakeaways": [
+              "Cardiovascular risk reduction occurs before substantial weight loss, pointing to direct endothelial anti-inflammatory action.",
+              "Dual GIP/GLP-1 agonists (tirzepatide) show enhanced glycemic and lipid profiles compared to single-target molecules.",
+              "Sarcopenia mitigation requires concurrent progressive resistance training and adequate dietary protein intake."
+            ],
+            "tags": [
+              "Medicine",
+              "Clinical Trials",
+              "Pharmacology",
+              "Cardiology",
+              "Longevity"
+            ],
+            "likes": 284,
+            "commentsCount": 31
+          },
+          {
+            "id": "post-4",
+            "slug": "algorithmic-commons-and-at-protocol",
+            "title": "The Algorithmic Commons: Why Feed Personalization Fractured Societal Consensus (And What AT Protocol Gets Right)",
+            "subtitle": "Examining the sociology of feed algorithms, epistemic isolation, and the architectural case for user-chosen recommendation algorithms.",
+            "category": "Sociology & Culture",
+            "format": "Deep-Dive Essay",
+            "author": {
+              "id": "julian-ross",
+              "name": "Julian Ross",
+              "avatar": "JR",
+              "role": "Sociologist of Technology",
+              "domain": "Platform Governance, Digital Labor & Urban Infrastructure",
+              "institution": "Berkman Klein Center for Internet & Society",
+              "orcid": "0000-0002-4019-9812",
+              "github": "https://github.com/julianross",
+              "twitter": "https://x.com/julian_ross",
+              "verifiedVia": "institution",
+              "verifiedIdentifier": "jross@cyber.harvard.edu",
+              "verifiedTitle": "Institutional Academic Verified",
+              "joinedDate": "June 2024",
+              "totalReads": "52.1k",
+              "bio": "Investigates the second-order cultural, psychological, and economic consequences of algorithmic curation, remote work dynamics, and decentralized social protocols.",
+              "articleCount": 16
+            },
+            "publishedAt": "October 11, 2026",
+            "readTime": "14 min read",
+            "coverImage": "/images/folio-process.jpeg",
+            "featured": false,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "Authenticated Transfer (AT) Protocol Specification",
+              "url": "https://github.com/bluesky-social/atproto",
+              "identifier": "bluesky-social/atproto",
+              "meta": "Open Specification · Decentralized Identity"
+            },
+            "summary": "When proprietary platforms optimize solely for per-second engagement, the algorithm inevitably selects for moral outrage and in-group tribal policing. Unbundling identity, hosting, and algorithmic curation offers our best escape hatch.",
+            "keyTakeaways": [
+              "Monolithic social platforms inherently maximize emotional arousal to drive ad impression inventory.",
+              "Unbundling the curation layer from the hosting layer restores user agency over cognitive diet.",
+              "Decentralized identity protocols prevent platform lock-in and allow portable audience relationships."
+            ],
+            "tags": [
+              "Sociology",
+              "AT Protocol",
+              "Platform Design",
+              "Social Media",
+              "Decentralization"
+            ],
+            "likes": 412,
+            "commentsCount": 39
+          },
+          {
+            "id": "post-5",
+            "slug": "why-we-migrated-from-k8s-to-nomad-and-bare-metal",
+            "title": "Why We Migrated from Kubernetes to Nomad and Bare Metal: A 2-Year Post-Mortem",
+            "subtitle": "Real infrastructure numbers: How stripping out K8s YAML complexity and cloud-managed overhead saved $180,000/year with a two-person ops team.",
+            "category": "STEM & Tech",
+            "format": "Field Notes",
+            "author": {
+              "id": "maya-lin",
+              "name": "Maya Lin",
+              "avatar": "ML",
+              "role": "Staff Infrastructure Architect",
+              "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+              "institution": "Independent Distributed Systems Lab",
+              "github": "https://github.com/mayalin-sys",
+              "twitter": "https://x.com/mayalin_hpc",
+              "website": "https://mayalin.dev",
+              "verifiedVia": "github",
+              "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+              "verifiedTitle": "GitHub Verified Systems Maintainer",
+              "joinedDate": "January 2025",
+              "totalReads": "64.9k",
+              "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+              "articleCount": 19
+            },
+            "publishedAt": "October 08, 2026",
+            "readTime": "10 min read",
+            "coverImage": "/images/folio-design.jpeg",
+            "featured": false,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "Nomad: A Simple and Flexible Workload Orchestrator",
+              "url": "https://github.com/hashicorp/nomad",
+              "identifier": "hashicorp/nomad",
+              "meta": "15.6k Stars · Go · MPL-2.0"
+            },
+            "summary": "Kubernetes is fantastic when you have 500 microservices and a dedicated 20-person platform engineering team. For a team of six developers, the cognitive tax of Helm charts, ingress controllers, and cloud egress bills was draining velocity.",
+            "keyTakeaways": [
+              "Managed cloud Kubernetes introduces substantial invisible costs in NAT gateways, cross-AZ traffic, and over-provisioning.",
+              "Nomad's single-binary architecture radically lowers operational complexity for small engineering teams.",
+              "Modern bare-metal servers deliver 3-5x the raw compute and I/O performance of standard cloud vCPUs at a fraction of the price."
+            ],
+            "tags": [
+              "DevOps",
+              "Nomad",
+              "Kubernetes",
+              "Cloud Costs",
+              "Architecture"
+            ],
+            "likes": 673,
+            "commentsCount": 84
+          },
+          {
+            "id": "post-6",
+            "slug": "the-hidden-tax-on-open-science-commercial-apcs",
+            "title": "The Hidden Tax on Open Science: Tracking $2.4B in Public Grant Money Flowing to Publisher APCs",
+            "subtitle": "Data journalism investigation into how Article Processing Charges became a multi-billion dollar tollgate on taxpayer-funded discoveries.",
+            "category": "Data & Policy",
+            "format": "Case Study",
+            "author": {
+              "id": "elena-rostova",
+              "name": "Dr. Elena Rostova",
+              "avatar": "ER",
+              "role": "Open Science Economist",
+              "domain": "Knowledge Commons, Public Funding & Research Policy",
+              "institution": "Institute for Digital Public Goods, Zurich",
+              "orcid": "0000-0002-1825-0097",
+              "github": "https://github.com/erostova",
+              "twitter": "https://x.com/elena_rostova",
+              "verifiedVia": "orcid",
+              "verifiedIdentifier": "0000-0002-1825-0097",
+              "verifiedTitle": "ORCID Verified Scholar",
+              "joinedDate": "November 2023",
+              "totalReads": "78.5k",
+              "bio": "Studies the structural incentives behind commercial academic publishing, open data longevity, and public utility covenants. Advises national science foundations on diamond open access.",
+              "articleCount": 22
+            },
+            "publishedAt": "September 29, 2026",
+            "readTime": "15 min read",
+            "coverImage": "/images/folio-hero.jpeg",
+            "featured": false,
+            "reviewedArtifact": {
+              "type": "dataset",
+              "title": "Global University APC Expenditure Dataset (2020-2025)",
+              "url": "https://zenodo.org",
+              "identifier": "Zenodo DOI: 10.5281/zenodo.1084920",
+              "meta": "Open Data · 45,000 journal records"
+            },
+            "summary": "The transition from subscription paywalls to \"Author Pays\" Open Access has simply inverted the barrier: instead of paywalling readers, commercial giants now charge researchers $3,000 to $11,000 per paper, extracting billions from public science budgets.",
+            "keyTakeaways": [
+              "Commercial APCs ($3,000-$11,000) reflect profit margins up to 40%, not the real computational cost of digital distribution.",
+              "Researchers from lower-income nations are systematically excluded from publishing in prestigious journals due to currency and fee barriers.",
+              "Institutional consortia funding Diamond Open Access offers a provably sustainable, equitable alternative."
+            ],
+            "tags": [
+              "Open Science",
+              "Economics",
+              "Academic Publishing",
+              "Public Policy",
+              "Data Journalism"
+            ],
+            "likes": 488,
+            "commentsCount": 52
+          },
+          {
+            "id": "post-7",
+            "slug": "crispr-cas12f-miniaturization-delivery-bottlenecks",
+            "title": "CRISPR-Cas12f Miniaturization: How Compact Endonucleases Solve in vivo Gene Editing Delivery",
+            "subtitle": "Reviewing recent protein engineering breakthroughs fitting complete CRISPR-Cas machinery inside single AAV viral capsids.",
+            "category": "STEM & Tech",
+            "format": "Paper Review",
+            "author": {
+              "id": "hiroshi-tanaka",
+              "name": "Dr. Hiroshi Tanaka",
+              "avatar": "HT",
+              "role": "Molecular Geneticist & Bioinformatician",
+              "domain": "Synthetic Biology, CRISPR Kinetics & Genomics",
+              "institution": "Kyoto University, Department of Synthetic Biology",
+              "orcid": "0000-0003-1102-4590",
+              "github": "https://github.com/htanaka-crispr",
+              "verifiedVia": "orcid",
+              "verifiedIdentifier": "0000-0003-1102-4590",
+              "verifiedTitle": "ORCID Verified Genomicist",
+              "joinedDate": "April 2025",
+              "totalReads": "27.8k",
+              "bio": "Specializes in computational genomic alignment, compact RNA-guided endonuclease engineering, and in vivo gene therapy delivery vectors.",
+              "articleCount": 8
+            },
+            "publishedAt": "September 24, 2026",
+            "readTime": "8 min read",
+            "coverImage": "/images/folio-code.jpeg",
+            "featured": false,
+            "reviewedArtifact": {
+              "type": "paper",
+              "title": "Engineered miniature CRISPR-Cas12f for efficient in vivo genome editing",
+              "url": "https://nature.com",
+              "identifier": "Nature Biotechnology DOI: 10.1038/s41587-024-02189-y",
+              "meta": "Peer-reviewed research · Structural Biology"
+            },
+            "summary": "Standard SpCas9 proteins are bulky (~1,368 amino acids), making it nearly impossible to package both the Cas nuclease, guide RNA, and repair template inside a single Adeno-Associated Virus (AAV) vector. Compact Cas12f (~400-500 aa) is changing that.",
+            "keyTakeaways": [
+              "AAV viral vectors have a strict 4.7 kb packaging limit that conventional SpCas9 strains exhaust.",
+              "Miniature Cas12f (~400-500 aa) frees up over 3 kb of viral payload for regulatory promoters and multiplexed guides.",
+              "Engineered variants maintain high cleavage kinetics while exhibiting lower off-target propensity in therapeutic cell lines."
+            ],
+            "tags": [
+              "Biotechnology",
+              "CRISPR",
+              "Genomics",
+              "Gene Therapy",
+              "Molecular Biology"
+            ],
+            "likes": 310,
+            "commentsCount": 19
+          },
+          {
+            "id": "post-8",
+            "slug": "async-first-is-broken-when-meetings-become-slack-anxiety",
+            "title": "Async-First Is Broken When Meetings Are Just Replaced by 24/7 Slack Anxiety",
+            "subtitle": "Why remote organizations that banned synchronous meetings ended up with fragmented attention, delayed decisions, and cognitive exhaustion.",
+            "category": "Sociology & Culture",
+            "format": "Deep-Dive Essay",
+            "author": {
+              "id": "julian-ross",
+              "name": "Julian Ross",
+              "avatar": "JR",
+              "role": "Sociologist of Technology",
+              "domain": "Platform Governance, Digital Labor & Urban Infrastructure",
+              "institution": "Berkman Klein Center for Internet & Society",
+              "orcid": "0000-0002-4019-9812",
+              "github": "https://github.com/julianross",
+              "twitter": "https://x.com/julian_ross",
+              "verifiedVia": "institution",
+              "verifiedIdentifier": "jross@cyber.harvard.edu",
+              "verifiedTitle": "Institutional Academic Verified",
+              "joinedDate": "June 2024",
+              "totalReads": "52.1k",
+              "bio": "Investigates the second-order cultural, psychological, and economic consequences of algorithmic curation, remote work dynamics, and decentralized social protocols.",
+              "articleCount": 16
+            },
+            "publishedAt": "September 18, 2026",
+            "readTime": "9 min read",
+            "coverImage": "/images/folio-dashboard.jpeg",
+            "featured": false,
+            "summary": "Eliminating calendar meetings without establishing clear asynchronous decision protocols didn't give workers deep focus—it created an ambient panic of unread Slack threads and ambiguous task ownership.",
+            "keyTakeaways": [
+              "Replacing meetings with continuous instant messaging creates ambient distraction rather than deep focus.",
+              "Asynchronous communication only succeeds when paired with structured narrative documents and clear decision owners.",
+              "High-bandwidth synchronous conversations remain the fastest mechanism for resolving complex interpersonal alignment."
+            ],
+            "tags": [
+              "Workplace Culture",
+              "Remote Work",
+              "Organizational Design",
+              "Productivity",
+              "Sociology"
+            ],
+            "likes": 580,
+            "commentsCount": 63
+          }
+        ],
+        "count": 8
+      }
+    },
+    {
+      "path": "/api/articles",
+      "method": "HEAD",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/api/articles",
+      "method": "OPTIONS",
+      "status": 204,
+      "headers": {
+        "allow": "GET, HEAD, OPTIONS"
+      },
+      "title": null,
+      "canonical": null,
+      "json": null
+    },
+    {
+      "path": "/api/articles?limit=2",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "articles": [
+          {
+            "id": "post-1",
+            "slug": "inside-vllm-and-paged-attention",
+            "title": "Inside vLLM & PagedAttention: Why Memory Fragmentation Was Killing LLM Serving",
+            "subtitle": "A deep architectural code teardown of how virtual memory paging concepts solved KV cache bloat in high-concurrency model servers.",
+            "category": "GitHub Repo Teardowns",
+            "format": "Repo Teardown",
+            "author": {
+              "id": "maya-lin",
+              "name": "Maya Lin",
+              "avatar": "ML",
+              "role": "Staff Infrastructure Architect",
+              "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+              "institution": "Independent Distributed Systems Lab",
+              "github": "https://github.com/mayalin-sys",
+              "twitter": "https://x.com/mayalin_hpc",
+              "website": "https://mayalin.dev",
+              "verifiedVia": "github",
+              "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+              "verifiedTitle": "GitHub Verified Systems Maintainer",
+              "joinedDate": "January 2025",
+              "totalReads": "64.9k",
+              "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+              "articleCount": 19
+            },
+            "publishedAt": "October 22, 2026",
+            "readTime": "9 min read",
+            "coverImage": "/images/folio-code.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "vLLM: Easy, fast, and cheap LLM serving with PagedAttention",
+              "url": "https://github.com/vllm-project/vllm",
+              "identifier": "vllm-project/vllm",
+              "meta": "44.8k Stars · Python / C++ · Apache-2.0"
+            },
+            "summary": "Before vLLM, serving transformers at scale suffered from up to 80% wasted GPU VRAM due to sequential pre-allocation of the KV cache. By adopting classic operating system paging algorithms into custom CUDA kernels, vLLM increased server throughput by 2.5x to 4x.",
+            "keyTakeaways": [
+              "Pre-allocating contiguous KV cache blocks wastes up to 60-80% of scarce GPU memory.",
+              "PagedAttention maps logical tokens to 16-token non-contiguous physical memory blocks with minimal lookup overhead.",
+              "Dynamic memory allocation enables near-optimal batch scheduling, reducing prompt queue latency by up to 73%."
+            ],
+            "tags": [
+              "CUDA",
+              "vLLM",
+              "GPU Inference",
+              "Systems Engineering",
+              "Performance"
+            ],
+            "likes": 342,
+            "commentsCount": 28
+          },
+          {
+            "id": "post-2",
+            "slug": "deconstructing-deepseek-r1-reasoning-without-sft",
+            "title": "Deconstructing DeepSeek-R1: How Pure RL Unlocked Emergent Chain-of-Thought",
+            "subtitle": "Reviewing the breakthrough paper on incentivizing complex multi-step reasoning directly from rule-based reward signals.",
+            "category": "Research Reviews",
+            "format": "Paper Review",
+            "author": {
+              "id": "marcus-vance",
+              "name": "Prof. Marcus Vance",
+              "avatar": "MV",
+              "role": "AI Systems & Verification Fellow",
+              "domain": "Computer Science, LLM Reasoning & Distributed ML",
+              "institution": "University of Cambridge, Computer Laboratory",
+              "orcid": "0000-0001-9234-8812",
+              "github": "https://github.com/vance-cam",
+              "twitter": "https://x.com/vance_ai",
+              "scholar": "https://scholar.google.com",
+              "verifiedVia": "orcid",
+              "verifiedIdentifier": "0000-0001-9234-8812",
+              "verifiedTitle": "ORCID Verified Researcher",
+              "joinedDate": "March 2024",
+              "totalReads": "48.2k",
+              "bio": "Researches autonomous verification protocols, mathematical reasoning models, and neural architecture efficiency. Leads verification benchmarks for open-weights foundational models.",
+              "articleCount": 14
+            },
+            "publishedAt": "October 19, 2026",
+            "readTime": "12 min read",
+            "coverImage": "/images/folio-hero.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "paper",
+              "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+              "url": "https://arxiv.org",
+              "identifier": "arXiv:2501.12948",
+              "meta": "DeepSeek-AI · 32-page technical report"
+            },
+            "summary": "DeepSeek-R1 demonstrated that massive reasoning capabilities can emerge spontaneously through large-scale Reinforcement Learning directly on a base model, without relying on human-annotated chain-of-thought demonstrations.",
+            "keyTakeaways": [
+              "Base models possess latent reasoning patterns that can be unlocked via pure RL without human SFT examples.",
+              "The \"Aha moment\" of self-correction emerges organically when reward signals penalize premature final answers.",
+              "Rule-based verification (math compilers and unit tests) avoids the reward hacking common in neural reward models."
+            ],
+            "tags": [
+              "AI Research",
+              "Reinforcement Learning",
+              "DeepSeek",
+              "Reasoning",
+              "Open Weights"
+            ],
+            "likes": 519,
+            "commentsCount": 46
+          }
+        ],
+        "count": 8
+      }
+    },
+    {
+      "path": "/api/articles?category=Research%20Reviews",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "articles": [
+          {
+            "id": "post-2",
+            "slug": "deconstructing-deepseek-r1-reasoning-without-sft",
+            "title": "Deconstructing DeepSeek-R1: How Pure RL Unlocked Emergent Chain-of-Thought",
+            "subtitle": "Reviewing the breakthrough paper on incentivizing complex multi-step reasoning directly from rule-based reward signals.",
+            "category": "Research Reviews",
+            "format": "Paper Review",
+            "author": {
+              "id": "marcus-vance",
+              "name": "Prof. Marcus Vance",
+              "avatar": "MV",
+              "role": "AI Systems & Verification Fellow",
+              "domain": "Computer Science, LLM Reasoning & Distributed ML",
+              "institution": "University of Cambridge, Computer Laboratory",
+              "orcid": "0000-0001-9234-8812",
+              "github": "https://github.com/vance-cam",
+              "twitter": "https://x.com/vance_ai",
+              "scholar": "https://scholar.google.com",
+              "verifiedVia": "orcid",
+              "verifiedIdentifier": "0000-0001-9234-8812",
+              "verifiedTitle": "ORCID Verified Researcher",
+              "joinedDate": "March 2024",
+              "totalReads": "48.2k",
+              "bio": "Researches autonomous verification protocols, mathematical reasoning models, and neural architecture efficiency. Leads verification benchmarks for open-weights foundational models.",
+              "articleCount": 14
+            },
+            "publishedAt": "October 19, 2026",
+            "readTime": "12 min read",
+            "coverImage": "/images/folio-hero.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "paper",
+              "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+              "url": "https://arxiv.org",
+              "identifier": "arXiv:2501.12948",
+              "meta": "DeepSeek-AI · 32-page technical report"
+            },
+            "summary": "DeepSeek-R1 demonstrated that massive reasoning capabilities can emerge spontaneously through large-scale Reinforcement Learning directly on a base model, without relying on human-annotated chain-of-thought demonstrations.",
+            "keyTakeaways": [
+              "Base models possess latent reasoning patterns that can be unlocked via pure RL without human SFT examples.",
+              "The \"Aha moment\" of self-correction emerges organically when reward signals penalize premature final answers.",
+              "Rule-based verification (math compilers and unit tests) avoids the reward hacking common in neural reward models."
+            ],
+            "tags": [
+              "AI Research",
+              "Reinforcement Learning",
+              "DeepSeek",
+              "Reasoning",
+              "Open Weights"
+            ],
+            "likes": 519,
+            "commentsCount": 46
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "path": "/api/articles?search=vllm",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "articles": [
+          {
+            "id": "post-1",
+            "slug": "inside-vllm-and-paged-attention",
+            "title": "Inside vLLM & PagedAttention: Why Memory Fragmentation Was Killing LLM Serving",
+            "subtitle": "A deep architectural code teardown of how virtual memory paging concepts solved KV cache bloat in high-concurrency model servers.",
+            "category": "GitHub Repo Teardowns",
+            "format": "Repo Teardown",
+            "author": {
+              "id": "maya-lin",
+              "name": "Maya Lin",
+              "avatar": "ML",
+              "role": "Staff Infrastructure Architect",
+              "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+              "institution": "Independent Distributed Systems Lab",
+              "github": "https://github.com/mayalin-sys",
+              "twitter": "https://x.com/mayalin_hpc",
+              "website": "https://mayalin.dev",
+              "verifiedVia": "github",
+              "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+              "verifiedTitle": "GitHub Verified Systems Maintainer",
+              "joinedDate": "January 2025",
+              "totalReads": "64.9k",
+              "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+              "articleCount": 19
+            },
+            "publishedAt": "October 22, 2026",
+            "readTime": "9 min read",
+            "coverImage": "/images/folio-code.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "vLLM: Easy, fast, and cheap LLM serving with PagedAttention",
+              "url": "https://github.com/vllm-project/vllm",
+              "identifier": "vllm-project/vllm",
+              "meta": "44.8k Stars · Python / C++ · Apache-2.0"
+            },
+            "summary": "Before vLLM, serving transformers at scale suffered from up to 80% wasted GPU VRAM due to sequential pre-allocation of the KV cache. By adopting classic operating system paging algorithms into custom CUDA kernels, vLLM increased server throughput by 2.5x to 4x.",
+            "keyTakeaways": [
+              "Pre-allocating contiguous KV cache blocks wastes up to 60-80% of scarce GPU memory.",
+              "PagedAttention maps logical tokens to 16-token non-contiguous physical memory blocks with minimal lookup overhead.",
+              "Dynamic memory allocation enables near-optimal batch scheduling, reducing prompt queue latency by up to 73%."
+            ],
+            "tags": [
+              "CUDA",
+              "vLLM",
+              "GPU Inference",
+              "Systems Engineering",
+              "Performance"
+            ],
+            "likes": 342,
+            "commentsCount": 28
+          }
+        ],
+        "count": 1
+      }
+    },
+    {
+      "path": "/api/articles?author=maya-lin",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "articles": [
+          {
+            "id": "post-1",
+            "slug": "inside-vllm-and-paged-attention",
+            "title": "Inside vLLM & PagedAttention: Why Memory Fragmentation Was Killing LLM Serving",
+            "subtitle": "A deep architectural code teardown of how virtual memory paging concepts solved KV cache bloat in high-concurrency model servers.",
+            "category": "GitHub Repo Teardowns",
+            "format": "Repo Teardown",
+            "author": {
+              "id": "maya-lin",
+              "name": "Maya Lin",
+              "avatar": "ML",
+              "role": "Staff Infrastructure Architect",
+              "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+              "institution": "Independent Distributed Systems Lab",
+              "github": "https://github.com/mayalin-sys",
+              "twitter": "https://x.com/mayalin_hpc",
+              "website": "https://mayalin.dev",
+              "verifiedVia": "github",
+              "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+              "verifiedTitle": "GitHub Verified Systems Maintainer",
+              "joinedDate": "January 2025",
+              "totalReads": "64.9k",
+              "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+              "articleCount": 19
+            },
+            "publishedAt": "October 22, 2026",
+            "readTime": "9 min read",
+            "coverImage": "/images/folio-code.jpeg",
+            "featured": true,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "vLLM: Easy, fast, and cheap LLM serving with PagedAttention",
+              "url": "https://github.com/vllm-project/vllm",
+              "identifier": "vllm-project/vllm",
+              "meta": "44.8k Stars · Python / C++ · Apache-2.0"
+            },
+            "summary": "Before vLLM, serving transformers at scale suffered from up to 80% wasted GPU VRAM due to sequential pre-allocation of the KV cache. By adopting classic operating system paging algorithms into custom CUDA kernels, vLLM increased server throughput by 2.5x to 4x.",
+            "keyTakeaways": [
+              "Pre-allocating contiguous KV cache blocks wastes up to 60-80% of scarce GPU memory.",
+              "PagedAttention maps logical tokens to 16-token non-contiguous physical memory blocks with minimal lookup overhead.",
+              "Dynamic memory allocation enables near-optimal batch scheduling, reducing prompt queue latency by up to 73%."
+            ],
+            "tags": [
+              "CUDA",
+              "vLLM",
+              "GPU Inference",
+              "Systems Engineering",
+              "Performance"
+            ],
+            "likes": 342,
+            "commentsCount": 28
+          },
+          {
+            "id": "post-5",
+            "slug": "why-we-migrated-from-k8s-to-nomad-and-bare-metal",
+            "title": "Why We Migrated from Kubernetes to Nomad and Bare Metal: A 2-Year Post-Mortem",
+            "subtitle": "Real infrastructure numbers: How stripping out K8s YAML complexity and cloud-managed overhead saved $180,000/year with a two-person ops team.",
+            "category": "STEM & Tech",
+            "format": "Field Notes",
+            "author": {
+              "id": "maya-lin",
+              "name": "Maya Lin",
+              "avatar": "ML",
+              "role": "Staff Infrastructure Architect",
+              "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+              "institution": "Independent Distributed Systems Lab",
+              "github": "https://github.com/mayalin-sys",
+              "twitter": "https://x.com/mayalin_hpc",
+              "website": "https://mayalin.dev",
+              "verifiedVia": "github",
+              "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+              "verifiedTitle": "GitHub Verified Systems Maintainer",
+              "joinedDate": "January 2025",
+              "totalReads": "64.9k",
+              "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+              "articleCount": 19
+            },
+            "publishedAt": "October 08, 2026",
+            "readTime": "10 min read",
+            "coverImage": "/images/folio-design.jpeg",
+            "featured": false,
+            "reviewedArtifact": {
+              "type": "github",
+              "title": "Nomad: A Simple and Flexible Workload Orchestrator",
+              "url": "https://github.com/hashicorp/nomad",
+              "identifier": "hashicorp/nomad",
+              "meta": "15.6k Stars · Go · MPL-2.0"
+            },
+            "summary": "Kubernetes is fantastic when you have 500 microservices and a dedicated 20-person platform engineering team. For a team of six developers, the cognitive tax of Helm charts, ingress controllers, and cloud egress bills was draining velocity.",
+            "keyTakeaways": [
+              "Managed cloud Kubernetes introduces substantial invisible costs in NAT gateways, cross-AZ traffic, and over-provisioning.",
+              "Nomad's single-binary architecture radically lowers operational complexity for small engineering teams.",
+              "Modern bare-metal servers deliver 3-5x the raw compute and I/O performance of standard cloud vCPUs at a fraction of the price."
+            ],
+            "tags": [
+              "DevOps",
+              "Nomad",
+              "Kubernetes",
+              "Cloud Costs",
+              "Architecture"
+            ],
+            "likes": 673,
+            "commentsCount": 84
+          }
+        ],
+        "count": 2
+      }
+    },
+    {
+      "path": "/api/articles/post-1",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=30, stale-while-revalidate=300",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "article": {
+          "id": "post-1",
+          "slug": "inside-vllm-and-paged-attention",
+          "title": "Inside vLLM & PagedAttention: Why Memory Fragmentation Was Killing LLM Serving",
+          "subtitle": "A deep architectural code teardown of how virtual memory paging concepts solved KV cache bloat in high-concurrency model servers.",
+          "category": "GitHub Repo Teardowns",
+          "format": "Repo Teardown",
+          "author": {
+            "id": "maya-lin",
+            "name": "Maya Lin",
+            "avatar": "ML",
+            "role": "Staff Infrastructure Architect",
+            "domain": "Cloud Infrastructure, High-Throughput Inference & Linux Internals",
+            "institution": "Independent Distributed Systems Lab",
+            "github": "https://github.com/mayalin-sys",
+            "twitter": "https://x.com/mayalin_hpc",
+            "website": "https://mayalin.dev",
+            "verifiedVia": "github",
+            "verifiedIdentifier": "@mayalin-sys (GitHub Public Key Attested)",
+            "verifiedTitle": "GitHub Verified Systems Maintainer",
+            "joinedDate": "January 2025",
+            "totalReads": "64.9k",
+            "bio": "Writing code for high-throughput distributed systems. Deconstructs open-source database engines, CUDA memory management, and GPU inference kernels.",
+            "articleCount": 19
+          },
+          "publishedAt": "October 22, 2026",
+          "readTime": "9 min read",
+          "coverImage": "/images/folio-code.jpeg",
+          "featured": true,
+          "reviewedArtifact": {
+            "type": "github",
+            "title": "vLLM: Easy, fast, and cheap LLM serving with PagedAttention",
+            "url": "https://github.com/vllm-project/vllm",
+            "identifier": "vllm-project/vllm",
+            "meta": "44.8k Stars · Python / C++ · Apache-2.0"
+          },
+          "summary": "Before vLLM, serving transformers at scale suffered from up to 80% wasted GPU VRAM due to sequential pre-allocation of the KV cache. By adopting classic operating system paging algorithms into custom CUDA kernels, vLLM increased server throughput by 2.5x to 4x.",
+          "content": [
+            "In traditional transformer inference servers, when a user prompt arrived, the model server had to pre-allocate a contiguous memory block for the key-value (KV) cache sized to the maximum possible sequence length (say, 4,096 or 8,192 tokens). If the user asked a 50-token question and received a 200-token answer, 95% of that pre-allocated GPU VRAM sat idle, yet unavailable to concurrent requests.",
+            "This issue, known in operating system theory as internal and external fragmentation, was the single largest constraint on batch size and concurrency in production LLM deployments.",
+            "The genius of the vLLM project (developed originally at UC Berkeley) was realizing that the KV cache doesn't need to reside in contiguous physical VRAM. Just as 1960s operating systems introduced virtual memory and page tables to map fragmented physical DRAM pages into a coherent virtual address space, PagedAttention breaks the KV cache into fixed-size \"blocks\" (typically 16 tokens each).",
+            "When you inspect `csrc/attention/attention_kernels.cu` in the repository, you see how custom CUDA threads map logical sequence tokens to non-contiguous physical page slots on the fly with near-zero latency penalty.",
+            "In our test clusters running Llama 3 70B across 4x A100 SXM GPUs, swapping standard Hugging Face pipeline serving for vLLM immediately increased throughput from 38 req/s to 124 req/s under bursty Poisson arrival distributions."
+          ],
+          "keyTakeaways": [
+            "Pre-allocating contiguous KV cache blocks wastes up to 60-80% of scarce GPU memory.",
+            "PagedAttention maps logical tokens to 16-token non-contiguous physical memory blocks with minimal lookup overhead.",
+            "Dynamic memory allocation enables near-optimal batch scheduling, reducing prompt queue latency by up to 73%."
+          ],
+          "tags": [
+            "CUDA",
+            "vLLM",
+            "GPU Inference",
+            "Systems Engineering",
+            "Performance"
+          ],
+          "likes": 342,
+          "commentsCount": 28
+        }
+      }
+    },
+    {
+      "path": "/api/articles/no-such-id",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Article not found."
+      }
+    },
+    {
+      "path": "/api/authors",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "authors": []
+      }
+    },
+    {
+      "path": "/api/authors/maya-lin",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Author not found"
+      }
+    },
+    {
+      "path": "/api/authors/no-such-author",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Author not found"
+      }
+    },
+    {
+      "path": "/api/papers",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "papers": [],
+        "total": 0
+      }
+    },
+    {
+      "path": "/api/papers?topic=AI%20Infrastructure",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=60, stale-while-revalidate=600",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "papers": [],
+        "total": 0
+      }
+    },
+    {
+      "path": "/api/papers/no-such-paper",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Paper not found"
+      }
+    },
+    {
+      "path": "/api/comments",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=15, stale-while-revalidate=60",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "comments": [
+          {
+            "id": "comm-1",
+            "postId": "post-1",
+            "authorName": "David K., Systems Eng",
+            "authorRole": "Platform Team",
+            "avatar": "DK",
+            "timestamp": "2 days ago",
+            "text": "Brilliant breakdown. The section explaining how contiguous KV cache allocation blocked concurrent requests was eye-opening. We observed the exact same memory exhaustion pattern on our internal vLLM cluster."
+          },
+          {
+            "id": "comm-2",
+            "postId": "post-1",
+            "authorName": "Prof. Li Wei",
+            "authorRole": "Academic Researcher",
+            "avatar": "LW",
+            "timestamp": "1 day ago",
+            "text": "Great synthesis of the empirical trade-offs. Would love to see a follow-up benchmarking chunked prefill vs speculative decoding under varying context windows."
+          },
+          {
+            "id": "comm-3",
+            "postId": "post-2",
+            "authorName": "Aria Sterling",
+            "authorRole": "ML Alignment Researcher",
+            "avatar": "AS",
+            "timestamp": "3 days ago",
+            "text": "The finding that chain-of-thought length expands purely from reinforcement learning rewards without human demonstrations is one of the most consequential shifts of the year."
+          },
+          {
+            "id": "comm-4",
+            "postId": "post-3",
+            "authorName": "Dr. Robert Mendez",
+            "authorRole": "Cardiologist",
+            "avatar": "RM",
+            "timestamp": "4 days ago",
+            "text": "The anti-inflammatory endothelial protection observed within 8 weeks prior to significant weight reduction aligns perfectly with clinical biomarkers we track in post-infarction cohorts."
+          },
+          {
+            "id": "comm-5",
+            "postId": "post-5",
+            "authorName": "Tariq Hassan",
+            "authorRole": "DevOps Lead",
+            "avatar": "TH",
+            "timestamp": "5 days ago",
+            "text": "Can corroborate this 100%. Migrated from 3 EKS clusters to Nomad on bare metal Hetzner nodes last year. Reduced monthly cloud bill by 78% and haven’t had a single CNI outage."
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/comments?postId=post-1",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "public, max-age=15, stale-while-revalidate=60",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "comments": [
+          {
+            "id": "comm-1",
+            "postId": "post-1",
+            "authorName": "David K., Systems Eng",
+            "authorRole": "Platform Team",
+            "avatar": "DK",
+            "timestamp": "2 days ago",
+            "text": "Brilliant breakdown. The section explaining how contiguous KV cache allocation blocked concurrent requests was eye-opening. We observed the exact same memory exhaustion pattern on our internal vLLM cluster."
+          },
+          {
+            "id": "comm-2",
+            "postId": "post-1",
+            "authorName": "Prof. Li Wei",
+            "authorRole": "Academic Researcher",
+            "avatar": "LW",
+            "timestamp": "1 day ago",
+            "text": "Great synthesis of the empirical trade-offs. Would love to see a follow-up benchmarking chunked prefill vs speculative decoding under varying context windows."
+          }
+        ]
+      }
+    },
+    {
+      "path": "/api/cms/posts",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store, max-age=0",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "posts": [],
+        "mode": "local"
+      }
+    },
+    {
+      "path": "/api/cms/comments",
+      "method": "GET",
+      "status": 200,
+      "headers": {
+        "cache-control": "no-store, max-age=0",
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "comments": [],
+        "mode": "local"
+      }
+    },
+    {
+      "path": "/api/cms/posts/1",
+      "method": "GET",
+      "status": 404,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "That article was not found."
+      }
+    },
+    {
+      "path": "/api/dashboard/applications",
+      "method": "GET",
+      "status": 503,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Applications need Supabase. Configure it to accept writer requests."
+      }
+    },
+    {
+      "path": "/api/comments",
+      "method": "POST",
+      "status": 400,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "The comment body could not be read."
+      }
+    },
+    {
+      "path": "/api/comments",
+      "method": "POST",
+      "status": 415,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Send the comment as JSON."
+      }
+    },
+    {
+      "path": "/api/revalidate",
+      "method": "POST",
+      "status": 503,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Revalidation is not configured. Set REVALIDATE_SECRET on the deployment."
+      }
+    },
+    {
+      "path": "/api/revalidate",
+      "method": "POST",
+      "status": 503,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Revalidation is not configured. Set REVALIDATE_SECRET on the deployment."
+      }
+    },
+    {
+      "path": "/api/cms/posts",
+      "method": "POST",
+      "status": 415,
+      "headers": {
+        "content-type": "application/json"
+      },
+      "title": null,
+      "canonical": null,
+      "json": {
+        "error": "Send this request as JSON."
+      }
+    }
+  ]
+}

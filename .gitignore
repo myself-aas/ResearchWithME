@@ -38,3 +38,12 @@ cloudflare-env.d.ts
 .react-email/
 .dev.vars*
 !.dev.vars.example
+
+# Pages spike/migration build output and test artifacts.
+cloudflare-pages/dist/
+cloudflare-pages/.server/
+test-results/
+playwright-report/
+
+# Supabase CLI local state (version check, temp files).
+supabase/.temp/

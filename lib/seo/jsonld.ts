@@ -13,6 +13,19 @@ export interface ArticleJsonLdInput {
   imagePath?: string;
 }
 
+/**
+ * JSON-LD must never carry a raw data URI: structured data is consumed by
+ * crawlers, not browsers, and an embedded base64 image both bloats the
+ * document and produces a useless `/data:...` URL. CMS covers stored as
+ * data URIs are simply omitted from the Article schema.
+ */
+function jsonLdImage(imagePath?: string): string[] | undefined {
+  if (!imagePath) return undefined;
+  const trimmed = imagePath.trim();
+  if (!trimmed || /^data:/i.test(trimmed)) return undefined;
+  return [absoluteUrl(trimmed)];
+}
+
 export function articleJsonLd(input: ArticleJsonLdInput) {
   return {
     '@context': 'https://schema.org',
@@ -20,7 +33,7 @@ export function articleJsonLd(input: ArticleJsonLdInput) {
     headline: input.title,
     description: input.description,
     mainEntityOfPage: absoluteUrl(input.path),
-    image: input.imagePath ? [absoluteUrl(input.imagePath)] : undefined,
+    image: jsonLdImage(input.imagePath),
     author: { '@type': 'Person', name: input.authorName },
     publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     datePublished: input.datePublished,

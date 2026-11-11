@@ -1,0 +1,271 @@
+import { Link, useLoaderData } from 'react-router-dom';
+import { ChevronRight, FileText, GraduationCap, Quote, ShieldCheck } from 'lucide-react';
+import BlogHeader from '@/components/BlogHeader';
+import BlogFooter from '@/components/BlogFooter';
+import ReadingActions from '@/components/ReadingActions';
+import { scholarlyArticleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
+import type { PaperLoaderData } from './data';
+
+const sections = [
+  { key: 'background', heading: '1. Context and research problem' },
+  { key: 'methodology', heading: '2. Methodology and observational setup' },
+  { key: 'findings', heading: '3. Empirical findings and benchmarks' },
+  { key: 'discussion', heading: '4. Technical discussion and trade-offs' },
+  { key: 'implications', heading: '5. Implications for practitioners' },
+] as const;
+
+/**
+ * /paper/:slug — the structured paper record. Ported from
+ * app/paper/[slug]/page.tsx; papers come from the request-scoped
+ * `listPapers` service (the production seed is empty, so the record only
+ * renders when papers are configured for the deployment).
+ */
+export default function PaperRoute() {
+  const { paper } = useLoaderData() as PaperLoaderData;
+
+  const jsonLd = scholarlyArticleJsonLd({
+    title: paper.title,
+    description: paper.abstract,
+    path: `/paper/${paper.slug}`,
+    authors: paper.authors.map((a) => a.name),
+    datePublished: paper.publishedDate,
+    doi: paper.doi,
+    journal: paper.journal,
+  });
+
+  return (
+    <div className="flex min-h-screen flex-col bg-stone-50">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
+      <BlogHeader />
+
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
+          <ol className="flex flex-wrap items-center gap-1.5">
+            <li>
+              <Link to="/" className="hover:text-stone-900 hover:underline">
+                Platform
+              </Link>
+            </li>
+            <li aria-hidden="true">
+              <ChevronRight className="h-4 w-4 text-stone-500" />
+            </li>
+            <li>
+              <Link to="/papers" className="hover:text-stone-900 hover:underline">
+                Papers
+              </Link>
+            </li>
+            <li aria-hidden="true">
+              <ChevronRight className="h-4 w-4 text-stone-500" />
+            </li>
+            <li aria-current="page" className="max-w-[24rem] truncate font-medium text-stone-900">
+              {paper.title}
+            </li>
+          </ol>
+        </nav>
+
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-14">
+          <article aria-labelledby="paper-title" className="min-w-0">
+            <header className="border-b border-stone-200 pb-8">
+              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
+                <span className="font-medium text-brand">{paper.topic}</span>
+                <span aria-hidden="true">·</span>
+                <span>{paper.journal}</span>
+                <span aria-hidden="true">·</span>
+                <span>
+                  Volume {paper.volume}, Issue {paper.issue}
+                </span>
+                <span aria-hidden="true">·</span>
+                <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
+                <span aria-hidden="true">·</span>
+                <span>{paper.readTime}</span>
+              </p>
+
+              <h1 id="paper-title" className="mt-3 font-serif text-3xl font-bold leading-tight tracking-tight text-stone-900 sm:text-4xl lg:text-5xl">
+                {paper.title}
+              </h1>
+
+              {paper.subtitle && <p className="mt-4 max-w-prose text-lg leading-relaxed text-stone-700">{paper.subtitle}</p>}
+
+              <ul className="mt-6 grid gap-4 sm:grid-cols-2">
+                {paper.authors.map((author) => (
+                  <li key={author.name} className="flex items-start gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
+                    >
+                      {author.name
+                        .split(' ')
+                        .map((part) => part[0])
+                        .slice(0, 2)
+                        .join('')}
+                    </span>
+                    <span className="min-w-0 text-sm">
+                      <span className="flex flex-wrap items-center gap-1.5 font-semibold text-stone-900">
+                        <span>{author.name}</span>
+                        {author.orcid && (
+                          <a
+                            href={`https://orcid.org/${author.orcid}`}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                            className="inline-flex items-center gap-1 text-emerald-800 underline-offset-4 hover:underline"
+                          >
+                            <GraduationCap className="h-4 w-4" aria-hidden="true" />
+                            <span className="sr-only">ORCID record for {author.name}</span>
+                          </a>
+                        )}
+                      </span>
+                      <span className="block text-stone-600">{author.affiliation}</span>
+                      <span className="block text-stone-600">{author.role}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-6">
+                <ReadingActions itemId={paper.id} storageKey="rwm_saved_papers" title={paper.title} doi={paper.doi} showPrint />
+              </div>
+            </header>
+
+            <section aria-labelledby="abstract-heading" className="border-b border-stone-200 py-8">
+              <h2 id="abstract-heading" className="font-serif text-2xl font-semibold text-stone-900">
+                Abstract
+              </h2>
+              <p className="mt-3 text-lg leading-relaxed text-stone-800">{paper.abstract}</p>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {paper.keywords.map((keyword) => (
+                  <li key={keyword} className="rounded border border-stone-300 bg-white px-2 py-1 font-mono text-sm text-stone-700">
+                    {keyword}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            <div className="space-y-10 py-8">
+              {sections.map((section) => {
+                const value = paper.fullContent?.[section.key];
+                if (!value) return null;
+                return (
+                  <section key={section.key} aria-labelledby={`section-${section.key}`}>
+                    <h2 id={`section-${section.key}`} className="font-serif text-2xl font-semibold text-stone-900">
+                      {section.heading}
+                    </h2>
+                    {Array.isArray(value) ? (
+                      <ul className="mt-4 space-y-3">
+                        {value.map((item) => (
+                          <li key={item} className="flex gap-3 text-lg leading-relaxed text-stone-800">
+                            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-4 break-words text-lg leading-relaxed text-stone-800">{value}</p>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
+
+            {paper.fullContent?.references && paper.fullContent.references.length > 0 && (
+              <section aria-labelledby="references-heading" className="border-t border-stone-200 py-8">
+                <h2 id="references-heading" className="font-serif text-2xl font-semibold text-stone-900">
+                  References and primary literature
+                </h2>
+                <ol className="mt-4 space-y-3">
+                  {paper.fullContent.references.map((reference, index) => (
+                    <li key={reference} className="flex gap-3 text-base leading-relaxed text-stone-700">
+                      <span className="font-mono text-sm text-stone-600">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="min-w-0 break-words">{reference}</span>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            <footer className="border-t border-stone-200 py-8">
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  to={`/cite?article=${encodeURIComponent(paper.slug)}`}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                >
+                  <Quote className="h-4 w-4" aria-hidden="true" />
+                  <span>Build a citation</span>
+                </Link>
+                <Link
+                  to="/papers"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 px-4 py-2 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
+                >
+                  <FileText className="h-4 w-4" aria-hidden="true" />
+                  <span>Back to the archive</span>
+                </Link>
+              </div>
+            </footer>
+          </article>
+
+          <aside aria-label="Publication record" className="h-fit space-y-6 lg:sticky lg:top-24">
+            <div className="rounded-lg border border-stone-200 bg-white p-5">
+              <h2 className="font-serif text-lg font-semibold text-stone-900">Publication record</h2>
+              <dl className="mt-4 space-y-3 text-sm">
+                <div>
+                  <dt className="text-stone-600">DOI</dt>
+                  <dd className="break-all font-mono text-stone-900">{paper.doi}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-600">Journal</dt>
+                  <dd className="text-stone-900">{paper.journal}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-600">Volume and issue</dt>
+                  <dd className="text-stone-900">
+                    {paper.volume}, {paper.issue}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-stone-600">Pages</dt>
+                  <dd className="text-stone-900">{paper.pages}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-600">License</dt>
+                  <dd className="text-stone-900">{paper.license}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-600">Citations</dt>
+                  <dd className="text-stone-900">{paper.citationCount}</dd>
+                </div>
+                <div>
+                  <dt className="text-stone-600">Data and code</dt>
+                  <dd className="break-all text-stone-900">
+                    {paper.dataUrl ? (
+                      <a
+                        href={paper.dataUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-brand underline underline-offset-4 hover:text-brand-pressed"
+                      >
+                        Repository record
+                      </a>
+                    ) : (
+                      'No public data deposit listed'
+                    )}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rounded-lg border border-stone-200 bg-stone-100 p-5 text-sm leading-relaxed text-stone-700">
+              <p className="flex items-center gap-2 font-semibold text-stone-900">
+                <ShieldCheck className="h-4 w-4 text-emerald-700" aria-hidden="true" />
+                <span>Archive note</span>
+              </p>
+              <p className="mt-2">
+                This record is part of a prototype archive. The DOI and licence values are sample metadata; confirm any production citation against the issuing registry.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <BlogFooter />
+    </div>
+  );
+}

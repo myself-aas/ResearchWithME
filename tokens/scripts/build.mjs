@@ -55,7 +55,12 @@ const flatten = (obj, prefix = []) =>
   );
 
 const cssVars = (tree, prefix) =>
-  flatten(tree).map(([path, value]) => `  --pieme-${prefix}-${path}: ${value};`).join('\n');
+  flatten(tree).map(([path, value]) =>
+    // An empty prefix emits `--pieme-<path>`; a named prefix emits
+    // `--pieme-<prefix>-<path>`. (An earlier `--pieme--<path>` double-dash
+    // spelling left the primitive scales unresolvable from var() consumers.)
+    `  --pieme-${prefix ? `${prefix}-` : ''}${path}: ${value};`,
+  ).join('\n');
 
 const light = resolved.semantic.light;
 const dark = resolved.semantic.dark;

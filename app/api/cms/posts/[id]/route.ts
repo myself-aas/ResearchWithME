@@ -6,7 +6,7 @@ import { normalizePostInput } from '@/lib/cms/schema';
 import { errorResponse, isSameOrigin, noStoreHeaders, readJsonBody } from '@/lib/cms/http';
 import { revalidateArticle } from '@/lib/cms/revalidate';
 import { getEditorCmsStore } from '@/lib/cms/store';
-import { getArticles } from '@/lib/db';
+import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -73,7 +73,16 @@ export async function PATCH(request: Request, props: RouteProps) {
     const value = { ...parsed.value, authorName: author.displayName };
 
     if (value.slug !== existing.slug) {
-      const conflict = getArticles().find((article) => article.slug === parsed.value.slug);
+      let conflict = null;
+      try {
+        conflict = await getPublicLegacyStore().findArticle(value.slug);
+      } catch (error) {
+        console.error('Could not check the legacy catalogue for slug conflicts:', error);
+        return NextResponse.json(
+          { error: 'The public catalogue could not be checked. Try again shortly.' },
+          { status: 503 },
+        );
+      }
       if (conflict) {
         return NextResponse.json(
           { error: 'A catalogue article already uses this URL. Choose a different slug.' },

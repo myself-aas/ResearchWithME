@@ -19,15 +19,22 @@ interface HomeFeedProps {
   initialSearch?: string;
   /** Published contributor profiles, read server-side by app/page.tsx. */
   authors?: Author[];
+  /**
+   * Posts the server already resolved (Pages SSR loader). When absent the
+   * feed starts from the bundled seed posts and fills in from /api/articles
+   * on mount — the Next app's behaviour.
+   */
+  initialPosts?: BlogPost[];
 }
 
 export default function HomeFeed({
   initialCategory = 'All',
   initialSearch = '',
   authors = [],
+  initialPosts,
 }: HomeFeedProps) {
   const router = useRouter();
-  const [posts, setPosts] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
+  const [posts, setPosts] = useState<BlogPost[]>(initialPosts ?? INITIAL_BLOG_POSTS);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedFormat, setSelectedFormat] = useState('All');
   const [searchQuery, setSearchQuery] = useState(initialSearch);

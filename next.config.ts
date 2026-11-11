@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
+import { API_CATALOG_LINK } from './lib/api-catalog';
 
 /**
  * Supabase Storage serves article images from the project's public bucket.
@@ -73,6 +74,10 @@ const nextConfig: NextConfig = {
   output: 'standalone', // switched back to avoid export build issues
   async headers() {
     return [
+      {
+        source: '/',
+        headers: [{ key: 'Link', value: API_CATALOG_LINK }],
+      },
       {
         source: '/:path*',
         headers: securityHeaders,

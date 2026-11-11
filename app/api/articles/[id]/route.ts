@@ -3,7 +3,7 @@ import { cmsPostToArticle } from '@/lib/cms/mapping';
 import { getPublishedCmsPostById } from '@/lib/cms/read';
 import { fromPublicPostId } from '@/lib/cms/schema';
 import { getPublicCmsStore } from '@/lib/cms/store';
-import { getArticleById, getArticleBySlug, incrementLikes } from '@/lib/db';
+import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -29,7 +29,14 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ id: 
       );
     }
 
-    const article = getArticleBySlug(key) ?? getArticleById(key);
+    const legacy = getPublicLegacyStore();
+    let article;
+    try {
+      article = await legacy.findArticle(key);
+    } catch (error) {
+      console.error('Error reading the legacy catalogue:', error);
+      return NextResponse.json({ error: 'The article could not be read.' }, { status: 503 });
+    }
     if (!article) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
 
     return NextResponse.json(
@@ -61,16 +68,33 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
       const post = await getPublishedCmsPostById(cmsPostId);
       if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
 
-      const store = await getPublicCmsStore();
-      const likes = await store.incrementLikes(cmsPostId);
-      return NextResponse.json({ success: true, likes });
+      try {
+        const store = await getPublicCmsStore();
+        const likes = await store.incrementLikes(cmsPostId);
+        return NextResponse.json({ success: true, likes });
+      } catch (error) {
+        console.error('Error updating CMS article likes:', error);
+        return NextResponse.json({ error: 'The reaction could not be recorded.' }, { status: 503 });
+      }
     }
 
-    const article = getArticleBySlug(key) ?? getArticleById(key);
+    const legacy = getPublicLegacyStore();
+    let article;
+    try {
+      article = await legacy.findArticle(key);
+    } catch (error) {
+      console.error('Error reading the legacy catalogue:', error);
+      return NextResponse.json({ error: 'The article could not be read.' }, { status: 503 });
+    }
     if (!article) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
 
-    const likes = incrementLikes(article.id);
-    return NextResponse.json({ success: true, likes });
+    try {
+      const likes = await legacy.incrementLikes(article.id);
+      return NextResponse.json({ success: true, likes });
+    } catch (error) {
+      console.error('Error updating article likes:', error);
+      return NextResponse.json({ error: 'The reaction could not be recorded.' }, { status: 503 });
+    }
   } catch (error) {
     console.error('Error updating article likes:', error);
     return NextResponse.json({ error: 'The reaction could not be recorded.' }, { status: 500 });

@@ -1,4 +1,26 @@
-import type { Metadata } from 'next';
+/**
+ * Structural subset of Next's `Metadata` covering exactly the fields
+ * `pageMetadata` returns. Defined locally so this module (and the Pages
+ * SSR runtime) never imports 'next'; Next layouts/pages keep compiling
+ * because this shape is assignable to Next's `Metadata` until Task 16.
+ */
+export interface PageMetadata {
+  title: string;
+  description: string;
+  alternates: { canonical: string };
+  openGraph: {
+    title: string;
+    description: string;
+    url: string;
+    siteName: string;
+    type: 'website' | 'article';
+  };
+  twitter: {
+    card: 'summary_large_image';
+    title: string;
+    description: string;
+  };
+}
 
 export const SITE_NAME = 'ResearchWithMe';
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').replace(/\/$/, '');
@@ -25,7 +47,7 @@ export function pageMetadata({
   description: string;
   path: string;
   type?: 'website' | 'article';
-}): Metadata {
+}): PageMetadata {
   const url = absoluteUrl(path);
   return {
     title,
