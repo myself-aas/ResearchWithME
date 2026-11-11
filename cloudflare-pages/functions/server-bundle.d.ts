@@ -9,7 +9,7 @@
 declare module '*entry-server.mjs' {
   export const handleRequest: (
     request: Request,
-    env: Record<string, unknown>,
-    runtime: string,
+    env: import('../src/server/context').AppEnv,
+    runtime: import('../src/server/context').RuntimeMode,
   ) => Promise<Response>;
 }
