@@ -1,0 +1,603 @@
+/* Pages SSR stylesheet — the πeme v3.1 design system, ported for the React +
+   Vite Pages target. Identical design intent to app/globals.css (which the
+   Next build uses until Task 16); differences are limited to:
+
+   1. repo-relative @import paths,
+   2. explicit Tailwind v4 source globs (Next auto-detects from app/),
+   3. @font-face/:root for the self-hosted variable faces (next/font/local is
+      unavailable outside Next; files ship from public/fonts/ with OFL texts).
+
+   Do not hand-edit token values — regenerate from tokens/src/*.json
+   (npm run tokens:build) and mirror any app/globals.css change here. */
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "../../tokens/generated/tokens.css";
+@plugin "@tailwindcss/typography";
+
+@source "../../components";
+@source "../../lib";
+@source "../../cloudflare-pages/src";
+
+@font-face {
+  font-family: "Inter Variable";
+  src: url("/fonts/inter-latin-variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Newsreader Variable";
+  src: url("/fonts/newsreader-latin-variable.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-inter: "Inter Variable";
+  --font-newsreader: "Newsreader Variable";
+}
+
+/* πeme Frontend Design System v3.1 — token layer.
+   Source of truth: tokens/src/*.json (normative spec: docs/pieme-design-system-v3.1.md).
+   Three layers per §3: primitives (raw scales), semantic roles, component
+   aliases. Components reference semantic tokens, never primitives. */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  /* Typography — πeme v3.1 §2: editorial (Newsreader) for reading,
+     interface (Inter) for chrome, metadata (JetBrains Mono) for DOI/ORCID/
+     code. Newsreader and Inter are self-hosted via next/font/local
+     (--font-newsreader / --font-inter); JetBrains Mono is requested by name
+     with a system mono fallback. */
+  --font-serif: var(--font-newsreader), Newsreader, Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: var(--font-inter), Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+
+  /* πeme §30 script-specific font stacks (Bangla + Arabic for RTL verification). */
+  --font-bengali-editorial: "Noto Serif Bengali", "Noto Serif", serif;
+  --font-bengali-interface: "Noto Sans Bengali", "Noto Sans", sans-serif;
+  --font-arabic-editorial: "Noto Naskh Arabic", "Noto Naskh", serif;
+  --font-arabic-interface: "Noto Sans Arabic", "Noto Sans", sans-serif;
+
+  /* Primitives — the πeme neutral scale replaces Tailwind's stone scale so
+     every existing stone-* utility renders the πeme neutral ramp. All values
+     reference the generated --pieme-* tokens (tokens/generated/tokens.css). */
+  --color-stone-50: var(--pieme-color-neutral-50);
+  --color-stone-100: var(--pieme-color-neutral-100);
+  --color-stone-200: var(--pieme-color-neutral-200);
+  --color-stone-300: var(--pieme-color-neutral-300);
+  --color-stone-400: var(--pieme-color-neutral-400);
+  --color-stone-500: var(--pieme-color-neutral-500);
+  --color-stone-600: var(--pieme-color-neutral-600);
+  --color-stone-700: var(--pieme-color-neutral-700);
+  --color-stone-800: var(--pieme-color-neutral-800);
+  --color-stone-900: var(--pieme-color-neutral-900);
+  --color-stone-950: var(--pieme-color-neutral-950);
+
+  /* Semantic — light theme values come from tokens/src/semantic-light.json
+     (emitted as --pieme-* at :root, dark overrides under .dark). */
+  --color-canvas: var(--pieme-canvas);
+  --color-surface: var(--pieme-surface);
+  --color-surface-subtle: var(--pieme-surface-subtle);
+  --color-surface-raised: var(--pieme-surface-raised);
+  --color-surface-inverse: var(--pieme-surface-inverse);
+  --color-text-primary: var(--pieme-text-primary);
+  --color-text-secondary: var(--pieme-text-secondary);
+  --color-text-tertiary: var(--pieme-text-tertiary);
+  --color-text-inverse: var(--pieme-text-inverse);
+  --color-border-subtle: var(--pieme-border-subtle);
+  --color-border-strong: var(--pieme-border-strong);
+  --color-focus: var(--pieme-focus);
+  --color-selection: var(--pieme-selection);
+
+  /* Semantic — action roles. */
+  --color-action-primary: var(--pieme-action-primary);
+  --color-action-primary-hover: var(--pieme-action-primary-hover);
+  --color-action-primary-pressed: var(--pieme-action-primary-pressed);
+  --color-on-primary: var(--pieme-action-on-primary);
+  --color-destructive: var(--pieme-action-destructive);
+  --color-link: var(--pieme-action-link);
+  --color-visited: var(--pieme-action-visited);
+
+  /* Semantic — domain palettes and provenance-graph nodes/edges. */
+  --color-knowledge-source: var(--pieme-knowledge-source);
+  --color-knowledge-evidence: var(--pieme-knowledge-evidence);
+  --color-knowledge-insight: var(--pieme-knowledge-insight);
+  --color-knowledge-discussion: var(--pieme-knowledge-discussion);
+  --color-knowledge-contradiction: var(--pieme-knowledge-contradiction);
+  --color-knowledge-publication: var(--pieme-knowledge-publication);
+  --color-knowledge-archive: var(--pieme-knowledge-archive);
+  --color-trust-verified: var(--pieme-trust-verified);
+  --color-trust-replicated: var(--pieme-trust-replicated);
+  --color-trust-peer-reviewed: var(--pieme-trust-peer-reviewed);
+  --color-trust-emerging: var(--pieme-trust-emerging);
+  --color-trust-uncertain: var(--pieme-trust-uncertain);
+  --color-trust-contested: var(--pieme-trust-contested);
+  --color-trust-unknown: var(--pieme-trust-unknown);
+  --color-provenance-direct-source: var(--pieme-provenance-direct-source);
+  --color-provenance-cited-source: var(--pieme-provenance-cited-source);
+  --color-provenance-derived: var(--pieme-provenance-derived);
+  --color-provenance-inferred: var(--pieme-provenance-inferred);
+  --color-provenance-ai-assisted: var(--pieme-provenance-ai-assisted);
+  --color-provenance-unresolved: var(--pieme-provenance-unresolved);
+  --color-workflow-discovered: var(--pieme-workflow-discovered);
+  --color-workflow-extracted: var(--pieme-workflow-extracted);
+  --color-workflow-validated: var(--pieme-workflow-validated);
+  --color-workflow-synthesized: var(--pieme-workflow-synthesized);
+  --color-workflow-reviewed: var(--pieme-workflow-reviewed);
+  --color-workflow-published: var(--pieme-workflow-published);
+  --color-workflow-archived: var(--pieme-workflow-archived);
+  --color-collaboration-comment: var(--pieme-collaboration-comment);
+  --color-collaboration-suggestion: var(--pieme-collaboration-suggestion);
+  --color-collaboration-review: var(--pieme-collaboration-review);
+  --color-collaboration-consensus: var(--pieme-collaboration-consensus);
+  --color-collaboration-disagreement: var(--pieme-collaboration-disagreement);
+  --color-citation-article: var(--pieme-citation-article);
+  --color-citation-dataset: var(--pieme-citation-dataset);
+  --color-citation-book: var(--pieme-citation-book);
+  --color-citation-preprint: var(--pieme-citation-preprint);
+  --color-citation-software: var(--pieme-citation-software);
+  --color-citation-protocol: var(--pieme-citation-protocol);
+  --color-citation-webpage: var(--pieme-citation-webpage);
+  --color-graph-node-source: var(--pieme-graph-node-source);
+  --color-graph-node-evidence: var(--pieme-graph-node-evidence);
+  --color-graph-node-claim: var(--pieme-graph-node-claim);
+  --color-graph-node-discussion: var(--pieme-graph-node-discussion);
+  --color-graph-node-publication: var(--pieme-graph-node-publication);
+  --color-graph-node-archived: var(--pieme-graph-node-archived);
+  --color-graph-edge-cites: var(--pieme-graph-edge-cites);
+  --color-graph-edge-supports: var(--pieme-graph-edge-supports);
+  --color-graph-edge-contradicts: var(--pieme-graph-edge-contradicts);
+  --color-graph-edge-derives: var(--pieme-graph-edge-derives);
+  --color-graph-edge-relates: var(--pieme-graph-edge-relates);
+
+  /* Component aliases over semantic tokens (kept for existing markup). */
+  --color-paper: var(--color-canvas);
+  --color-ink: var(--color-text-primary);
+  --color-ink-muted: var(--color-text-secondary);
+  --color-line: var(--color-border-subtle);
+  --color-brand: var(--color-action-primary);
+  --color-brand-hover: var(--color-action-primary-hover);
+  --color-brand-pressed: var(--color-action-primary-pressed);
+  --color-verified: var(--color-trust-verified);
+
+  /* Radius — πeme v3.1 radius scale (generated). */
+  --radius-xs: var(--pieme-radius-xs);
+  --radius-sm: var(--pieme-radius-sm);
+  --radius-md: var(--pieme-radius-md);
+  --radius-lg: var(--pieme-radius-lg);
+  --radius-xl: var(--pieme-radius-xl);
+  --radius-2xl: var(--pieme-radius-2xl);
+  --radius-full: var(--pieme-radius-full);
+
+  /* Elevation — πeme v3.1 shadow scale (generated). */
+  --shadow-raised: var(--pieme-shadow-raised);
+  --shadow-floating: var(--pieme-shadow-floating);
+  --shadow-dialog: var(--pieme-shadow-dialog);
+
+  /* Breakpoints — πeme v3.1 (sm tightened to 36rem; md–2xl match defaults). */
+  --breakpoint-sm: var(--pieme-layout-breakpoint-sm);
+  --breakpoint-md: var(--pieme-layout-breakpoint-md);
+  --breakpoint-lg: var(--pieme-layout-breakpoint-lg);
+  --breakpoint-xl: var(--pieme-layout-breakpoint-xl);
+  --breakpoint-2xl: var(--pieme-layout-breakpoint-2xl);
+
+  /* Motion — πeme v3.1 easing scale (generated). */
+  --ease-standard: var(--pieme-motion-easing-standard);
+  --ease-enter: var(--pieme-motion-easing-enter);
+  --ease-exit: var(--pieme-motion-easing-exit);
+  --ease-emphasize: var(--pieme-motion-easing-emphasize);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  /* Dark theme — πeme v3.1 color.semantic.dark is emitted by the generated
+     tokens.css under .dark and prefers-color-scheme. */
+  .dark {
+    color-scheme: dark;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+    background-color: var(--color-canvas);
+    color: var(--color-text-primary);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    line-height: 1.625;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-synthesis-weight: none;
+  }
+
+  /* Type scale — πeme v3.1 typography.style: editorial display/title for
+     h1–h2, interface headings for h3–h6. */
+  h1,
+  h2 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: 650;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: 1.375rem;
+    line-height: 1.3;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    line-height: 1.35;
+  }
+
+  h5,
+  h6 {
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  /* Interface chrome is set in the interface face; reading copy stays editorial. */
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  nav,
+  th,
+  figcaption,
+  [role="tab"],
+  [role="status"] {
+    font-family: var(--font-sans);
+  }
+
+  p,
+  li,
+  blockquote,
+  dd {
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+
+  /* body-reading max-line: 72ch */
+  p {
+    max-width: min(100%, 72ch);
+  }
+
+  p[class*="text-xs"],
+  p[class*="text-sm"],
+  p[class*="text-\\[1"],
+  li[class*="text-xs"] {
+    max-width: min(100%, 65ch);
+  }
+
+  p[class*="text-center"],
+  h1[class*="text-center"],
+  h2[class*="text-center"],
+  h3[class*="text-center"] {
+    margin-inline: auto;
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+    text-decoration-thickness: 0.08em;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    letter-spacing: inherit;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  img,
+  video {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  pre,
+  code,
+  kbd,
+  samp,
+  time,
+  .font-mono,
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  ::selection {
+    background-color: var(--color-selection);
+    color: var(--color-text-primary);
+  }
+
+  ::placeholder {
+    opacity: 1;
+  }
+
+  /* Focus — πeme v3.1 focus token: 2px ring, 2px offset. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: var(--color-brand);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-stone-400) var(--color-stone-100);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--color-stone-100);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--color-stone-400);
+    border: 2px solid var(--color-stone-100);
+    border-radius: 999px;
+  }
+}
+
+/* Reading furniture: running text, drop caps, and small-cap bylines. */
+@layer components {
+  /* body-reading: editorial, 1.125rem / 1.7 */
+  .reading-prose {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    hyphens: auto;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    font-variant-ligatures: common-ligatures;
+  }
+
+  .reading-prose :where(table, code, pre, time) {
+    font-variant-numeric: lining-nums tabular-nums;
+  }
+
+  .drop-cap > p:first-of-type::first-letter {
+    float: left;
+    margin: 0.08em 0.1em 0 0;
+    font-family: var(--font-serif);
+    font-size: 3.4em;
+    font-weight: 700;
+    line-height: 0.82;
+    color: var(--color-brand);
+  }
+
+  .small-caps {
+    font-variant-caps: all-small-caps;
+    letter-spacing: 0.04em;
+  }
+}
+
+/* Accessible minimums applied before Tailwind's utility layer. */
+html .text-\[9px\],
+html .text-\[10px\],
+html .text-\[11px\] {
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+html .py-0\.5 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+html .px-1\.5 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+/* Neutral colors on light surfaces must stay AA-legible. */
+html .text-stone-400,
+html .text-stone-500,
+html .placeholder-stone-400,
+html .placeholder-stone-500 {
+  color: var(--color-stone-600);
+}
+
+html .dark-surface .text-stone-400,
+html .dark-surface .text-stone-500,
+html .dark-surface .text-stone-600,
+html .dark-surface .text-stone-700,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-400,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-500,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-600,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-700 {
+  color: var(--color-stone-200);
+}
+
+html :where(input, textarea)::placeholder {
+  color: var(--color-stone-600) !important;
+  opacity: 1;
+}
+
+html :where(input, textarea)[class*="bg-stone-9"]::placeholder,
+html :where(input, textarea)[class*="bg-slate-9"]::placeholder,
+html :where(input, textarea)[class*="bg-zinc-9"]::placeholder,
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(input, textarea)::placeholder {
+  color: var(--color-stone-300) !important;
+}
+
+/* Dark surfaces use the dark focus token (indigo-300). */
+html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(a, button, input, select, textarea, summary):focus-visible {
+  outline-color: var(--color-indigo-300);
+}
+
+html .shadow-xs,
+html .shadow-2xs {
+  --tw-shadow: 0 1px 2px 0 rgb(11 16 15 / 0.05);
+}
+
+/* One restrained route reveal — πeme v3.1 motion pattern "reveal":
+   200ms, standard easing. */
+@keyframes rwm-page-settle {
+  from {
+    opacity: 0.96;
+    transform: translate3d(0, 6px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  main {
+    animation: rwm-page-settle var(--pieme-motion-duration-standard) var(--ease-standard) both;
+  }
+}
+
+/* πeme v3.1 §9 reduced-motion contract. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (pointer: coarse) {
+  :where(button, select, summary, input[type="checkbox"], input[type="radio"]) {
+    min-height: 44px;
+  }
+}
+
+/* Print: the reading surface only, no navigation, chrome, or controls. */
+@media print {
+  html,
+  body {
+    background: #ffffff !important;
+    color: #161c1a !important;
+    font-size: 11.5pt;
+  }
+
+  header,
+  footer,
+  nav[aria-label="Breadcrumb"],
+  [role="progressbar"],
+  form,
+  .dark-surface {
+    display: none !important;
+  }
+
+  main {
+    animation: none !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  main > div,
+  main article,
+  main section {
+    display: block !important;
+    border: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  a {
+    color: #161c1a !important;
+    text-decoration: underline;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    overflow-wrap: anywhere;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  figure,
+  pre,
+  blockquote,
+  li {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* §30 script-scoped stacks: html[lang="bn"] renders the interface and
+   editorial stacks in the Bengali faces; html[lang="ar"] uses the Arabic
+   stacks for RTL verification. Content keeps its own lang attribute —
+   interface locale never changes content language. */
+:root[lang="bn"] {
+  --font-serif: var(--font-bengali-editorial);
+  --font-sans: var(--font-bengali-interface);
+  --font-mono: var(--font-bengali-interface);
+}
+:root[lang="ar"] {
+  --font-serif: var(--font-arabic-editorial);
+  --font-sans: var(--font-arabic-interface);
+}
+
+/* §30: DOI / ORCID / URLs / code stay isolated LTR inside RTL content. */
+[dir="rtl"] code,
+[dir="rtl"] [data-ltr] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

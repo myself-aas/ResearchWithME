@@ -3,7 +3,7 @@ import { cmsCommentToRecord } from '@/lib/cms/mapping';
 import { getPublishedCmsPostById } from '@/lib/cms/read';
 import { fromPublicPostId, normalizeCommentInput } from '@/lib/cms/schema';
 import { getPublicCmsStore } from '@/lib/cms/store';
-import { addComment, getArticleById, getArticleBySlug, getComments } from '@/lib/db';
+import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { isSameOrigin } from '@/lib/cms/http';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
@@ -24,7 +24,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const comments = getComments(postId || undefined).slice(0, 200);
+    let comments;
+    try {
+      comments = (await getPublicLegacyStore().getComments(postId || undefined)).slice(0, 200);
+    } catch (error) {
+      console.error('Error reading legacy comments:', error);
+      return NextResponse.json({ error: 'Comments could not be read.' }, { status: 503 });
+    }
     return NextResponse.json(
       { comments },
       { headers: { 'Cache-Control': 'public, max-age=15, stale-while-revalidate=60' } },
@@ -95,27 +101,31 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const article = getArticleById(postId) ?? getArticleBySlug(postId);
+  const legacy = getPublicLegacyStore();
+  let article;
+  try {
+    article = await legacy.findArticle(postId);
+  } catch (error) {
+    console.error('Error reading the legacy catalogue:', error);
+    return NextResponse.json(
+      { error: 'The comment could not be saved. Your text is still in the form.' },
+      { status: 503 },
+    );
+  }
   if (!article) return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
 
-  const initials = parsed.value.authorName
-    .split(/\s+/)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-
   try {
-    const comment = addComment({
-      postId: article.id,
+    const comment = await legacy.addComment(article.id, {
       authorName: parsed.value.authorName,
       authorRole: parsed.value.authorRole,
-      avatar: initials || 'RD',
-      text: parsed.value.content,
+      content: parsed.value.content,
     });
     return NextResponse.json({ success: true, comment }, { status: 201 });
   } catch (error) {
     console.error('Error in POST /api/comments:', error);
-    return NextResponse.json({ error: 'The comment could not be saved.' }, { status: 503 });
+    return NextResponse.json(
+      { error: 'The comment could not be saved. Your text is still in the form.' },
+      { status: 503 },
+    );
   }
 }

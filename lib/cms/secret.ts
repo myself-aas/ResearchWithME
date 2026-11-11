@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from 'node:crypto';
+import { isValidSecret } from './secret-core';
 
 function configuredSecret() {
   return (process.env.REVALIDATE_SECRET || process.env.MY_SECRET_TOKEN || '').trim();
@@ -9,14 +9,10 @@ export function hasRevalidateSecret() {
 }
 
 /**
- * Constant-time comparison. Both values are hashed first so a length difference
- * cannot leak through timing either.
+ * Constant-time comparison against the configured secret (REVALIDATE_SECRET,
+ * with the legacy MY_SECRET_TOKEN accepted). Kept as the Next-signature
+ * wrapper until Task 16; the Pages webhook uses isValidSecret directly.
  */
 export function isValidRevalidateSecret(provided: string | null): boolean {
-  const expected = configuredSecret();
-  if (!expected || !provided) return false;
-
-  const providedHash = createHash('sha256').update(provided).digest();
-  const expectedHash = createHash('sha256').update(expected).digest();
-  return timingSafeEqual(providedHash, expectedHash);
+  return isValidSecret(provided, configuredSecret());
 }

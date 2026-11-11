@@ -1,8 +1,25 @@
+/**
+ * Legacy demo persistence for the bundled catalogue, kept for backwards
+ * compatibility with the remaining call sites. New code must use the async
+ * legacy bridge instead:
+ *
+ *   import { getPublicLegacyStore } from '@/lib/legacy/store';
+ *   const store = getPublicLegacyStore();
+ *   const likes = await store.incrementLikes(id);
+ *
+ * The bridge (lib/legacy/*) speaks the same RWM_DATA_DIR/data/ contract in
+ * local mode and the durable Task-3 Supabase tables in cloud mode, and it
+ * throws on persistence failures so callers can answer 503 instead of a
+ * false success. This module remains because parts of the app still read
+ * seed content and authors synchronously; do not extend it.
+ */
 import fs from 'node:fs';
 import path from 'node:path';
 import { BlogPost, INITIAL_BLOG_POSTS, Author, AUTHORS } from './blog-data';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+const DATA_DIR = process.env.RWM_DATA_DIR
+  ? path.resolve(process.env.RWM_DATA_DIR)
+  : path.join(process.cwd(), 'data');
 const ARTICLES_FILE = path.join(DATA_DIR, 'articles.json');
 const COMMENTS_FILE = path.join(DATA_DIR, 'comments.json');
 

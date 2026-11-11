@@ -1,20 +1,33 @@
 import 'server-only';
 
-import { INITIAL_BLOG_POSTS, type BlogPost } from '@/lib/blog-data';
-import { getArticles } from '@/lib/db';
+import type { BlogPost } from '@/lib/blog-data';
+import { DEFAULT_LEGACY_SEEDS } from '@/lib/legacy/seeds';
+import { getPublicLegacyStore } from '@/lib/legacy/store';
+import type { LegacyStore } from '@/lib/legacy/types';
 import { cmsPostToArticle } from './mapping';
 import { getCmsCommentCounts, getPublishedCmsPosts } from './read';
+import type { CmsStore } from './types';
 
 /**
- * The single public catalogue: published CMS rows lead, then locally persisted
- * articles, then the bundled seed posts. Duplicate slugs resolve in favour of
- * the CMS so a published edit is never shadowed by a stale build artefact.
+ * The single public catalogue: published CMS rows lead, then the durable
+ * legacy interaction corpus (seed articles with durable counters), then the
+ * bundled seed posts as a last-ditch fallback. Duplicate slugs resolve in
+ * favour of the CMS so a published edit is never shadowed by a stale build
+ * artefact.
+ *
+ * `legacy`/`cms` may be injected by tests; production callers use the public
+ * stores. Legacy failures degrade to the bundled seed posts — a storage
+ * outage must not blank the site — while CMS failures already degrade
+ * inside read.ts.
  *
  * Server-only and intentionally uncached here; callers that render a page wrap
  * it in React's `cache` so metadata and the page body share one read.
  */
-export async function getArticleCatalogue(): Promise<BlogPost[]> {
-  const [posts, commentCounts] = await Promise.all([getPublishedCmsPosts(), getCmsCommentCounts()]);
+export async function getArticleCatalogue(
+  legacy: LegacyStore = getPublicLegacyStore(),
+  cms?: CmsStore,
+): Promise<BlogPost[]> {
+  const [posts, commentCounts] = await Promise.all([getPublishedCmsPosts(cms), getCmsCommentCounts(cms)]);
   const merged = new Map<string, BlogPost>();
 
   for (const post of posts) {
@@ -23,7 +36,16 @@ export async function getArticleCatalogue(): Promise<BlogPost[]> {
     merged.set(article.slug, article);
   }
 
-  for (const article of [...INITIAL_BLOG_POSTS, ...getArticles()]) {
+  let legacyArticles: BlogPost[] = DEFAULT_LEGACY_SEEDS.articles;
+  try {
+    // Store implementations already overlay durable counters onto the seed
+    // corpus, so these articles carry the freshest likes/commentsCount.
+    legacyArticles = await legacy.getArticles();
+  } catch (error) {
+    console.error('Could not load the legacy interaction corpus:', error);
+  }
+
+  for (const article of [...DEFAULT_LEGACY_SEEDS.articles, ...legacyArticles]) {
     if (article?.slug && !merged.has(article.slug)) merged.set(article.slug, article);
   }
 

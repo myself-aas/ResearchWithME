@@ -1,0 +1,98 @@
+[
+  {
+    "path": "/api/articles",
+    "method": "GET"
+  },
+  {
+    "path": "/api/articles/{id}",
+    "method": "GET"
+  },
+  {
+    "path": "/api/articles/{id}",
+    "method": "PATCH"
+  },
+  {
+    "path": "/api/author-avatar",
+    "method": "POST"
+  },
+  {
+    "path": "/api/authors",
+    "method": "GET"
+  },
+  {
+    "path": "/api/authors/{id}",
+    "method": "GET"
+  },
+  {
+    "path": "/api/cms/comments",
+    "method": "GET"
+  },
+  {
+    "path": "/api/cms/comments/{id}",
+    "method": "DELETE"
+  },
+  {
+    "path": "/api/cms/posts",
+    "method": "GET"
+  },
+  {
+    "path": "/api/cms/posts",
+    "method": "POST"
+  },
+  {
+    "path": "/api/cms/posts/{id}",
+    "method": "DELETE"
+  },
+  {
+    "path": "/api/cms/posts/{id}",
+    "method": "GET"
+  },
+  {
+    "path": "/api/cms/posts/{id}",
+    "method": "PATCH"
+  },
+  {
+    "path": "/api/comments",
+    "method": "GET"
+  },
+  {
+    "path": "/api/comments",
+    "method": "POST"
+  },
+  {
+    "path": "/api/dashboard/applications",
+    "method": "GET"
+  },
+  {
+    "path": "/api/dashboard/applications",
+    "method": "POST"
+  },
+  {
+    "path": "/api/dashboard/applications/{id}",
+    "method": "POST"
+  },
+  {
+    "path": "/api/generate",
+    "method": "GET"
+  },
+  {
+    "path": "/api/generate",
+    "method": "POST"
+  },
+  {
+    "path": "/api/papers",
+    "method": "GET"
+  },
+  {
+    "path": "/api/papers/{slug}",
+    "method": "GET"
+  },
+  {
+    "path": "/api/research-assistant",
+    "method": "POST"
+  },
+  {
+    "path": "/api/revalidate",
+    "method": "POST"
+  }
+]

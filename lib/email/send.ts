@@ -53,13 +53,55 @@ export interface SendScenarioOptions {
 const MAX_ATTEMPTS = 4;
 const BACKOFF_BASE_MS = 250;
 
-let client: Resend | null = null;
+export interface EmailSenderHandle {
+  sendScenario(
+    key: string,
+    input: SendScenarioInput,
+    options?: SendScenarioOptions,
+  ): Promise<SendScenarioResult>;
+}
 
-function getClient(): Resend | null {
-  const key = (process.env.RESEND_API_KEY ?? '').trim();
-  if (!key) return null;
-  if (!client) client = new Resend(key);
-  return client;
+/** Reads a single string from the environment bag; non-strings are treated as unset. */
+type EnvReader = (key: string) => string | undefined;
+
+/**
+ * Reads an environment variable bag — the Cloudflare Worker `AppEnv`, Node's
+ * `process.env`, or any plain object — without depending on either platform.
+ * Every call in this module goes through the reader, so the factory is the
+ * single decision point for which secrets a deployment sends mail with.
+ */
+function envReader(env: object): EnvReader {
+  const record = env as Record<string, unknown>;
+  return (key) => {
+    const value = record[key];
+    return typeof value === 'string' ? value : undefined;
+  };
+}
+
+/**
+ * Builds an email sender bound to a specific environment. The Resend client is
+ * memoized inside the closure and rebuilt if the key changes, so repeated
+ * sends reuse one client while key rotation still takes effect.
+ */
+export function createEmailSender(env: object): EmailSenderHandle {
+  const read = envReader(env);
+  let client: Resend | null = null;
+  let clientKeyUsed: string | null = null;
+
+  const clientFor = (): Resend | null => {
+    const key = (read('RESEND_API_KEY') ?? '').trim();
+    if (!key) return null;
+    if (!client || clientKeyUsed !== key) {
+      client = new Resend(key);
+      clientKeyUsed = key;
+    }
+    return client;
+  };
+
+  return {
+    sendScenario: (key, input, options) =>
+      sendScenarioWith(read, clientFor, key, input, options),
+  };
 }
 
 /** Tags are ASCII-only and capped at 256 characters for both name and value. */
@@ -93,7 +135,9 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export async function sendScenario(
+async function sendScenarioWith(
+  read: EnvReader,
+  clientFor: () => Resend | null,
   key: string,
   input: SendScenarioInput,
   options: SendScenarioOptions = {},
@@ -118,7 +162,7 @@ export async function sendScenario(
     return { ok: false, skipped: false, error: identityProblem };
   }
 
-  const resend = getClient();
+  const resend = clientFor();
   if (!resend) {
     return {
       ok: false,
@@ -136,7 +180,7 @@ export async function sendScenario(
     return { ok: false, skipped: false, error: problems.join(' ') };
   }
 
-  const templateId = (process.env[scenario.templateEnv] ?? '').trim();
+  const templateId = (read(scenario.templateEnv) ?? '').trim();
   const mode = options.mode ?? (templateId ? 'template' : 'local');
 
   // `template` is mutually exclusive with `html`, `text` and `react`: sending
@@ -224,6 +268,25 @@ function isRateLimited(error: { name?: string; message?: string; status?: number
   if (error.status === 429) return true;
   const text = `${error.name ?? ''} ${error.message ?? ''}`.toLowerCase();
   return text.includes('429') || text.includes('rate limit') || text.includes('too many requests');
+}
+
+let defaultSender: { key: string; sender: EmailSenderHandle } | null = null;
+
+/** The Next-environment sender, memoized per RESEND_API_KEY so rotation is honoured. */
+function defaultEmailSender(): EmailSenderHandle {
+  const key = (process.env.RESEND_API_KEY ?? '').trim();
+  if (!defaultSender || defaultSender.key !== key) {
+    defaultSender = { key, sender: createEmailSender(process.env) };
+  }
+  return defaultSender.sender;
+}
+
+export async function sendScenario(
+  key: string,
+  input: SendScenarioInput,
+  options: SendScenarioOptions = {},
+): Promise<SendScenarioResult> {
+  return defaultEmailSender().sendScenario(key, input, options);
 }
 
 /**
