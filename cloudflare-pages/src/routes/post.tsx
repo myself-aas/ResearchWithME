@@ -4,7 +4,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import AuthorProfileCard from '@/components/AuthorProfileCard';
 import ArticleInteractions from '@/components/ArticleInteractions';
-import ArticleDiscussion from '@/components/ArticleDiscussion';
+import DeferredDiscussion from '@/components/reader/DeferredDiscussion';
 import ReadingProgress from '@/components/ReadingProgress';
 import MarkdownBody from '@/components/MarkdownBody';
 import VideoEmbed from '@/components/VideoEmbed';
@@ -303,7 +303,7 @@ export default function PostRoute() {
             </div>
 
             <div className="mt-10 reading-column">
-              <ArticleDiscussion postId={article.id} commentCount={article.commentsCount} />
+              <DeferredDiscussion postId={article.id} commentCount={article.commentsCount} />
             </div>
 
             {related.length > 0 && (

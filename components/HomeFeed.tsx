@@ -10,6 +10,7 @@ import AuthorSpotlight from '@/components/AuthorSpotlight';
 import BlogFooter from '@/components/BlogFooter';
 import { Author, BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
+import Reveal from '@/components/motion/Reveal';
 
 interface HomeFeedProps {
   initialCategory?: string;
@@ -177,17 +178,20 @@ export default function HomeFeed({
         />
 
         {showFeatured && featuredPost && (
-          <FeaturedArticle
-            post={featuredPost}
-            isSaved={savedPostIds.includes(featuredPost.id)}
-            onToggleSave={handleToggleSave}
-          />
+          <Reveal variant="mask" amount={0.08} margin="0px 0px -5% 0px">
+            <FeaturedArticle
+              post={featuredPost}
+              isSaved={savedPostIds.includes(featuredPost.id)}
+              onToggleSave={handleToggleSave}
+            />
+          </Reveal>
         )}
 
         <div ref={feedRef}>
           <ArticleFeed
             posts={filteredPosts}
             savedPostIds={savedPostIds}
+            likedPostIds={likedPostIds}
             onToggleSave={handleToggleSave}
             onLikePost={handleLikePost}
             selectedCategory={selectedCategory}
@@ -198,7 +202,14 @@ export default function HomeFeed({
           />
         </div>
 
-        <AuthorSpotlight authors={authors} />
+        {/* Below-the-fold specialist roster: revealed on intersection and
+            skipped by the renderer until it is near the viewport
+            (content-visibility, see globals.css). */}
+        <div data-lazy-section>
+          <Reveal variant="stage" amount={0.05}>
+            <AuthorSpotlight authors={authors} />
+          </Reveal>
+        </div>
       </main>
 
       <BlogFooter />

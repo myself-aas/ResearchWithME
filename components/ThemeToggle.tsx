@@ -1,8 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Moon, Sun } from 'lucide-react';
 import { useLocale } from './i18n/LocaleProvider';
+import { EASING } from '@/lib/motion/tokens';
+import Pressable from './motion/Pressable';
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
@@ -59,18 +63,32 @@ export default function ThemeToggle() {
         : 'Switch to Obsidian dark theme';
 
   return (
-    <button
+    <Pressable
       type="button"
       onClick={toggleTheme}
       aria-label={label}
       title={label}
-      className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle"
+      className="inline-flex min-h-11 min-w-11 items-center justify-center overflow-hidden rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle"
     >
-      {effective === 'dark' ? (
-        <Sun className="h-4 w-4" aria-hidden="true" />
-      ) : (
-        <Moon className="h-4 w-4" aria-hidden="true" />
-      )}
-    </button>
+      {/* Principle 7 (arc) + 8 (secondary action): the outgoing icon rotates
+          away while the incoming one arrives on a short arc. Both are
+          decorative; the accessible name stays on the button. */}
+      <AnimatePresence initial={false} mode="wait">
+        <m.span
+          key={effective}
+          initial={{ rotate: -60, opacity: 0, scale: 0.6, y: 6 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1, y: 0 }}
+          exit={{ rotate: 60, opacity: 0, scale: 0.6, y: -6 }}
+          transition={{ duration: 0.2, ease: [...EASING.emphasize] }}
+          className="inline-flex"
+        >
+          {effective === 'dark' ? (
+            <Sun className="h-4 w-4" aria-hidden="true" />
+          ) : (
+            <Moon className="h-4 w-4" aria-hidden="true" />
+          )}
+        </m.span>
+      </AnimatePresence>
+    </Pressable>
   );
 }

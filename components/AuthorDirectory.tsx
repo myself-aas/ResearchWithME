@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Building2, ExternalLink, GitBranch, GraduationCap, Search, Users } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
+import { Stagger, StaggerItem } from '@/components/motion/Stagger';
 
 type IdentifierFilter = 'All' | 'orcid' | 'github';
 
@@ -129,9 +130,13 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
           </button>
         </div>
       ) : (
-        <ul data-layout-grid="author-cards" className="mt-8 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <Stagger
+          as="ul"
+          data-layout-grid="author-cards"
+          className="mt-8 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+        >
           {filteredAuthors.map((author) => (
-            <li key={author.id} className="flex">
+            <StaggerItem as="li" key={author.id} className="flex">
               <article className="flex w-full flex-col justify-between rounded-sm border border-line bg-surface p-6 transition-colors hover:border-brand">
                 <div>
                   <div className="flex items-start justify-between gap-3">
@@ -208,9 +213,9 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
                   </Link>
                 </div>
               </article>
-            </li>
+            </StaggerItem>
           ))}
-        </ul>
+        </Stagger>
       )}
     </>
   );

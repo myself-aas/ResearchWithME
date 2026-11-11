@@ -6,6 +6,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import ReadingActions from '@/components/ReadingActions';
 import ReadingProgress from '@/components/ReadingProgress';
+import Reveal from '@/components/motion/Reveal';
 import ArticleSmoothScroll from '@/components/reader/ArticleSmoothScroll';
 import ReadingProgressDock from '@/components/reader/ReadingProgressDock';
 import InlineCitationPopover from '@/components/reader/InlineCitationPopover';
@@ -195,7 +196,14 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                 const value = paper.fullContent?.[section.key];
                 if (!value) return null;
                 return (
-                  <section key={section.key} aria-labelledby={`section-${section.key}`}>
+                  <Reveal
+                    as="section"
+                    key={section.key}
+                    aria-labelledby={`section-${section.key}`}
+                    variant="rise"
+                    amount={0.08}
+                    delay={60}
+                  >
                     <h2 id={`section-${section.key}`} className="font-serif text-2xl font-semibold text-ink">
                       {section.heading}
                     </h2>
@@ -213,13 +221,18 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                         {value}
                       </p>
                     )}
-                  </section>
+                  </Reveal>
                 );
               })}
             </div>
 
             {paper.fullContent?.references && paper.fullContent.references.length > 0 && (
-              <section aria-labelledby="references-heading" className="reading-column border-t border-line py-8">
+              <Reveal
+                as="section"
+                variant="stage"
+                aria-labelledby="references-heading"
+                className="reading-column border-t border-line py-8"
+              >
                 <h2 id="references-heading" className="font-serif text-2xl font-semibold text-ink">
                   References and primary literature
                 </h2>
@@ -231,7 +244,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                     </li>
                   ))}
                 </ol>
-              </section>
+              </Reveal>
             )}
 
             <footer className="reading-column border-t border-line py-8">

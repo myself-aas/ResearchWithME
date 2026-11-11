@@ -16,7 +16,14 @@ import {
   Heart,
   MessageSquare,
 } from 'lucide-react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { BlogCategory, BlogPost, categoryToSlug } from '@/lib/blog-data';
+import { MotionItem, MotionList } from './motion/MotionList';
+import Pressable from './motion/Pressable';
+import Reveal from './motion/Reveal';
+import SuccessCheck from './motion/SuccessCheck';
+import { Stagger, StaggerItem } from './motion/Stagger';
 
 interface CategoryMeta {
   thumbnail: string;
@@ -79,6 +86,8 @@ function categoryIcon(category: string): ReactNode {
 interface ArticleFeedProps {
   posts: BlogPost[];
   savedPostIds: string[];
+  /** Post ids the reader has liked on this device (optional; drives feedback). */
+  likedPostIds?: string[];
   onToggleSave: (postId: string) => void;
   onLikePost: (postId: string) => void;
   selectedCategory: string;
@@ -91,6 +100,7 @@ interface ArticleFeedProps {
 export default function ArticleFeed({
   posts,
   savedPostIds,
+  likedPostIds = [],
   onToggleSave,
   onLikePost,
   selectedCategory,
@@ -121,12 +131,16 @@ export default function ArticleFeed({
             </p>
           </div>
 
-          <ul data-layout-grid="category-cards" className="mt-6 grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+          <Stagger
+            as="ul"
+            data-layout-grid="category-cards"
+            className="mt-6 grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+          >
             {Object.entries(CATEGORY_META).map(([category, meta], idx) => {
               const count = posts.filter((post) => post.category === category).length;
               const code = String(idx + 1).padStart(2, '0');
               return (
-                <li key={category}>
+                <StaggerItem as="li" key={category} variant="rise">
                   <Link
                     href={`/category/${categoryToSlug(category)}`}
                     className="group flex h-full flex-col justify-between rounded-sm border border-line bg-surface p-5 transition-colors hover:border-brand hover:bg-surface-subtle"
@@ -158,15 +172,15 @@ export default function ArticleFeed({
                       ))}
                     </div>
                   </Link>
-                </li>
+                </StaggerItem>
               );
             })}
-          </ul>
+          </Stagger>
         </div>
       )}
 
       {activeMeta && activeCategory && (
-        <div className="mb-10 border-y border-line py-6">
+        <Reveal variant="stage" className="mb-10 border-y border-line py-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="font-mono text-xs uppercase tracking-wider text-brand">Active Column</p>
@@ -182,15 +196,15 @@ export default function ArticleFeed({
                 ))}
               </ul>
             </div>
-            <button
+            <Pressable
               type="button"
               onClick={onClearFilters}
               className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-surface-subtle"
             >
               All columns
-            </button>
+            </Pressable>
           </div>
-        </div>
+        </Reveal>
       )}
 
       <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
@@ -206,13 +220,13 @@ export default function ArticleFeed({
         </div>
 
         {hasFilters && (
-          <button
+          <Pressable
             type="button"
             onClick={onClearFilters}
             className="min-h-11 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
           >
             Clear all filters
-          </button>
+          </Pressable>
         )}
       </div>
 
@@ -249,29 +263,30 @@ export default function ArticleFeed({
             )}
           </div>
 
-          <button
+          <Pressable
             type="button"
+            feedback="lift"
             onClick={onClearFilters}
             className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
           >
             Reset filters
-          </button>
+          </Pressable>
         </div>
       ) : (
-        <ul data-layout-grid="article-cards" className="mt-8 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <MotionList data-layout-grid="article-cards" className="mt-8 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
             {posts.map((post) => {
               const isSaved = savedPostIds.includes(post.id) || savedPostIds.includes(post.slug);
               const canonicalDoi = `10.5555/rwm.${post.id}`;
 
               return (
-                <li key={post.id} className="flex min-w-0">
-                  <article className="group flex w-full min-w-0 flex-col justify-between rounded-sm border border-line bg-surface transition-colors hover:border-brand">
+                <MotionItem key={post.id} className="flex min-w-0">
+                  <article className="group flex w-full min-w-0 flex-col justify-between rounded-sm border border-line bg-surface transition-[color,border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5">
                     <div className="flex flex-1 flex-col gap-3 p-5">
                       <div className="flex items-center justify-between gap-2 border-b border-line pb-3">
                         <span className="rounded-xs border border-line bg-canvas px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wider text-ink-secondary">
                           {post.format}
                         </span>
-                        <button
+                        <Pressable
                           type="button"
                           onClick={() => onToggleSave(post.id)}
                           aria-pressed={isSaved}
@@ -281,13 +296,28 @@ export default function ArticleFeed({
                               : 'border-line bg-canvas text-ink-secondary hover:bg-surface-subtle hover:text-ink'
                           }`}
                         >
-                          <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
+                          <AnimatePresence initial={false} mode="wait">
+                            <m.span
+                              key={isSaved ? 'saved' : 'unsaved'}
+                              initial={{ scale: 0.7, opacity: 0, rotate: -12 }}
+                              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                              exit={{ scale: 0.7, opacity: 0, rotate: 12 }}
+                              transition={{ duration: 0.16, ease: 'easeOut' }}
+                              className="inline-flex"
+                            >
+                              {isSaved ? (
+                                <SuccessCheck size={14} quiet />
+                              ) : (
+                                <Bookmark className="h-3.5 w-3.5" aria-hidden="true" />
+                              )}
+                            </m.span>
+                          </AnimatePresence>
                           <span className="sr-only">
                             {isSaved
                               ? `Remove ${post.title} from reading list`
                               : `Save ${post.title} to reading list`}
                           </span>
-                        </button>
+                        </Pressable>
                       </div>
 
                       <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
@@ -347,15 +377,29 @@ export default function ArticleFeed({
                       </Link>
 
                       <div className="flex shrink-0 items-center gap-1.5 font-mono text-xs text-ink-secondary">
-                        <button
+                        <Pressable
                           type="button"
                           onClick={() => onLikePost(post.id)}
+                          aria-pressed={likedPostIds.includes(post.id)}
                           className="inline-flex min-h-9 items-center gap-1 rounded-sm px-1.5 transition-colors hover:text-brand"
                         >
-                          <Heart className="h-3.5 w-3.5" aria-hidden="true" />
+                          <m.span
+                            aria-hidden="true"
+                            className="inline-flex"
+                            animate={
+                              likedPostIds.includes(post.id)
+                                ? { scale: [1, 1.3, 1], rotate: [0, -8, 0] }
+                                : { scale: 1, rotate: 0 }
+                            }
+                            transition={{ duration: 0.38, times: [0, 0.45, 1], ease: 'easeInOut' }}
+                          >
+                            <Heart
+                              className={`h-3.5 w-3.5 ${likedPostIds.includes(post.id) ? 'fill-brand text-brand' : ''}`}
+                            />
+                          </m.span>
                           <span>{post.likes}</span>
                           <span className="sr-only">likes. Add a like to {post.title}</span>
-                        </button>
+                        </Pressable>
                         <Link
                           href={`/post/${post.slug}#discussion`}
                           className="inline-flex min-h-9 items-center gap-1 rounded-sm px-1.5 transition-colors hover:text-ink"
@@ -367,10 +411,10 @@ export default function ArticleFeed({
                       </div>
                     </div>
                   </article>
-                </li>
+                </MotionItem>
               );
             })}
-        </ul>
+        </MotionList>
       )}
 
       <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">

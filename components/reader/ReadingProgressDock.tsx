@@ -1,8 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { AnimatePresence, useTransform } from 'motion/react';
+import * as m from 'motion/react-m';
 import { ArrowUp, Bookmark, MessageSquare } from 'lucide-react';
 import type { CitationSource } from '@/lib/citations';
+import { useScrollProgress } from '@/lib/motion/hooks';
+import { EASING } from '@/lib/motion/tokens';
+import Pressable from '@/components/motion/Pressable';
+import SuccessCheck from '@/components/motion/SuccessCheck';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
 import InlineCitationPopover from './InlineCitationPopover';
 
@@ -34,27 +39,12 @@ export default function ReadingProgressDock({
   const toggleSavedPost = usePreferencesStore((state) => state.toggleSavedPost);
   const toggleSavedPaper = usePreferencesStore((state) => state.toggleSavedPaper);
 
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    let frame = 0;
-    function update() {
-      frame = 0;
-      const total = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(total > 0 ? Math.min(100, Math.max(0, (window.scrollY / total) * 100)) : 0);
-    }
-    function onScroll() {
-      if (frame === 0) frame = window.requestAnimationFrame(update);
-    }
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
+  // The indicator and the remaining-time copy share one spring-smoothed
+  // MotionValue, so the ring and the percentage can never disagree.
+  const { smooth, percent: progress } = useScrollProgress();
+  const RADIUS = 8;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  const ringOffset = useTransform(smooth, (value) => CIRCUMFERENCE * (1 - Math.min(1, Math.max(0, value))));
 
   const totalMins = parseMinutes(readTime);
   const remainingMins = Math.max(1, Math.ceil(totalMins * (1 - progress / 100)));
@@ -83,6 +73,28 @@ export default function ReadingProgressDock({
       className="fixed bottom-5 left-1/2 z-40 -translate-x-1/2 print:hidden"
     >
       <div className="flex items-center gap-2 rounded-sm border border-line bg-surface/95 px-3 py-1.5 text-ink backdrop-blur-xs">
+        {/* Solid drawing: the ring is the same object as the top bar, at a
+            smaller scale — it reads progress without adding a second metric. */}
+        <m.svg
+          viewBox="0 0 20 20"
+          className="h-5 w-5 -rotate-90 text-brand"
+          aria-hidden="true"
+          role="presentation"
+        >
+          <circle cx="10" cy="10" r={RADIUS} fill="none" stroke="currentColor" strokeOpacity="0.16" strokeWidth="2" />
+          <m.circle
+            cx="10"
+            cy="10"
+            r={RADIUS}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={CIRCUMFERENCE}
+            style={{ strokeDashoffset: ringOffset }}
+          />
+        </m.svg>
+
         <span className="font-mono text-xs tabular-nums text-ink-secondary">
           {Math.round(progress)}% · {progress >= 96 ? 'Done' : `${remainingMins}m left`}
         </span>
@@ -91,7 +103,7 @@ export default function ReadingProgressDock({
 
         <InlineCitationPopover label="Cite" source={citationSource} citeHref={citeHref} />
 
-        <button
+        <Pressable
           type="button"
           onClick={handleToggleSave}
           aria-pressed={isSaved}
@@ -102,27 +114,39 @@ export default function ReadingProgressDock({
               : 'border-transparent text-ink-secondary hover:border-line hover:text-ink'
           }`}
         >
-          <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
-        </button>
+          <AnimatePresence initial={false} mode="wait">
+            <m.span
+              key={isSaved ? 'saved' : 'unsaved'}
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.7, opacity: 0 }}
+              transition={{ duration: 0.16, ease: [...EASING.enter] }}
+              className="inline-flex"
+            >
+              {isSaved ? <SuccessCheck size={14} quiet /> : <Bookmark className="h-3.5 w-3.5" aria-hidden="true" />}
+            </m.span>
+          </AnimatePresence>
+        </Pressable>
 
         {discussionAnchor && (
-          <a
+          <m.a
             href={discussionAnchor}
             aria-label="Jump to peer discussion"
+            whileTap={{ scale: 0.94 }}
             className="inline-flex h-9 w-9 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
           >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
-          </a>
+          </m.a>
         )}
 
-        <button
+        <Pressable
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top of manuscript"
           className="inline-flex h-9 w-9 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
         >
           <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
-        </button>
+        </Pressable>
       </div>
     </aside>
   );

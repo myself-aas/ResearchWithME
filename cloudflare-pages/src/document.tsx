@@ -11,6 +11,8 @@ import { clientAssets } from './manifest';
 import { pageMetadata, renderMetadataTags, type PageMetadataOverrides } from './server/metadata';
 import { dirOf } from '@/lib/i18n/locales';
 import LocaleProvider from '@/components/i18n/LocaleProvider';
+import MotionModeProvider from '@/components/motion/MotionModeProvider';
+import MotionScope from '@/components/motion/MotionScope';
 import { getRequestLocale } from './server/locale';
 import {
   createServerRoutes,
@@ -139,7 +141,11 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
 
   const appStream = await renderToReadableStream(
     <LocaleProvider initialLocale={locale}>
-      <StaticRouterProvider router={router} context={queryContext} />
+      <MotionModeProvider>
+        <MotionScope>
+          <StaticRouterProvider router={router} context={queryContext} />
+        </MotionScope>
+      </MotionModeProvider>
     </LocaleProvider>,
     { bootstrapModules: [`/${assets.file}`] },
   );

@@ -522,6 +522,111 @@ html .shadow-2xs {
   }
 }
 
+/* ---------------------------------------------------------------------------
+   πeme v3.1 §9 — motion utility layer.
+
+   The React implementation lives in `lib/motion/*` and `components/motion/*`;
+   these classes exist for the beats that must happen on the very first paint
+   (before hydration) and for content that never loads JavaScript at all.
+   Durations/easings are the generated tokens — never literals.
+--------------------------------------------------------------------------- */
+
+/* Entrance poses mirroring lib/motion/variants.ts. */
+@keyframes pieme-rise-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes pieme-arc-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-9px, 12px, 0) rotate(-0.6deg);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+}
+
+@keyframes pieme-squash-in {
+  from {
+    opacity: 0;
+    transform: scaleX(1.02) scaleY(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
+@keyframes pieme-mask-in {
+  from {
+    opacity: 0;
+    clip-path: inset(0% 0% 100% 0%);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0% 0% 0% 0%);
+  }
+}
+
+/* Apply with data-enter="rise|arc|squash|mask" and optional --enter-delay.
+   Only content that is already in the first viewport should use these: below
+   the fold, `Reveal` handles the beat on intersection. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-enter] {
+    animation-duration: var(--pieme-motion-duration-standard);
+    animation-timing-function: var(--ease-enter);
+    animation-fill-mode: both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+  [data-enter="rise"] {
+    animation-name: pieme-rise-in;
+  }
+  [data-enter="arc"] {
+    animation-name: pieme-arc-in;
+    animation-duration: var(--pieme-motion-duration-standard);
+    animation-timing-function: var(--ease-emphasize);
+  }
+  [data-enter="squash"] {
+    animation-name: pieme-squash-in;
+  }
+  [data-enter="mask"] {
+    animation-name: pieme-mask-in;
+    animation-duration: var(--pieme-motion-duration-deliberate);
+  }
+}
+
+/* Explicit πeme motion modes. `reduced` keeps colour/opacity legibility while
+   removing transform choreography; `static` is the print-grade switch used by
+   the Motion Lab and visual regression runs. */
+[data-motion-mode="reduced"] [data-enter],
+[data-motion-mode="static"] [data-enter] {
+  animation: none !important;
+}
+
+[data-motion-mode="static"] *,
+[data-motion-mode="static"] *::before,
+[data-motion-mode="static"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Native lazy rendering for long, below-the-fold sections. The intrinsic size
+   keeps the scrollbar honest until the section is rendered. */
+[data-lazy-section] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 640px;
+}
+
+
 @media (pointer: coarse) {
   :where(button, select, summary, input[type="checkbox"], input[type="radio"]) {
     min-height: 44px;

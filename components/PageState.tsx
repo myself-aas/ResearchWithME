@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import Reveal from '@/components/motion/Reveal';
 
 interface PageStateProps {
   title: string;
@@ -34,7 +35,10 @@ export default function PageState({
       )}
       aria-labelledby="page-state-title"
     >
-      <section
+      <Reveal
+        as="section"
+        variant="stage"
+        amount={0.1}
         role={role}
         aria-live={role === 'alert' ? 'assertive' : 'polite'}
         className="border-b border-stone-200 pb-12 sm:pb-16"
@@ -74,7 +78,7 @@ export default function PageState({
           )}
         </div>
         {children && <div className="mt-8">{children}</div>}
-      </section>
+      </Reveal>
     </Root>
   );
 }

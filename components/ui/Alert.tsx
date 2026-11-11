@@ -10,6 +10,7 @@
  * Tests: lib/__tests__/ui-primitives.test.ts.
  */
 import type { ReactNode } from 'react';
+import Reveal from '@/components/motion/Reveal';
 
 export type AlertTone = 'info' | 'success' | 'warning' | 'error';
 
@@ -30,7 +31,13 @@ const TONE: Record<AlertTone, { role: 'status' | 'alert'; label: string; classes
 export default function Alert({ tone, title, children, action }: AlertProps) {
   const t = TONE[tone];
   return (
-    <div role={t.role} className={`flex gap-3 rounded-md border border-line px-4 py-3 ${t.classes}`}>
+    <Reveal
+      variant="rise"
+      distance={6}
+      duration={200}
+      role={t.role}
+      className={`flex gap-3 rounded-md border border-line px-4 py-3 ${t.classes}`}
+    >
       <span aria-hidden="true" className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${t.dot}`} />
       <span className="font-sans text-[0.8125rem] font-semibold uppercase tracking-[0.04em]">{t.label}</span>
       <div className="min-w-0">
@@ -38,6 +45,6 @@ export default function Alert({ tone, title, children, action }: AlertProps) {
         {children ? <div className="mt-0.5 font-sans text-sm text-ink-muted">{children}</div> : null}
         {action ? <div className="mt-2">{action}</div> : null}
       </div>
-    </div>
+    </Reveal>
   );
 }
