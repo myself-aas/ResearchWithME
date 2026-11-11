@@ -3,14 +3,12 @@ import React from 'react';
 interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
   showText?: boolean;
-  variant?: 'dark' | 'light' | 'amber';
   className?: string;
 }
 
 export default function BrandLogo({
   size = 'md',
   showText = true,
-  variant = 'dark',
   className = '',
 }: BrandLogoProps) {
   const wordmarkSizes = {
