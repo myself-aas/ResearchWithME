@@ -3,6 +3,8 @@ import { hydrateRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { createBrowserRoutes, HYDRATION_DATA_KEY } from './routes';
 import LocaleProvider from '@/components/i18n/LocaleProvider';
+import MotionModeProvider from '@/components/motion/MotionModeProvider';
+import MotionScope from '@/components/motion/MotionScope';
 import { DEFAULT_LOCALE, resolveLocale, type Locale } from '@/lib/i18n/locales';
 import './globals.css';
 
@@ -34,7 +36,11 @@ hydrateRoot(
   root,
   <StrictMode>
     <LocaleProvider initialLocale={initialLocale}>
-      <RouterProvider router={router} />
+      <MotionModeProvider>
+        <MotionScope>
+          <RouterProvider router={router} />
+        </MotionScope>
+      </MotionModeProvider>
     </LocaleProvider>
   </StrictMode>,
 );

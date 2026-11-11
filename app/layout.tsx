@@ -3,6 +3,9 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
 import LocaleProvider from '@/components/i18n/LocaleProvider';
+import MotionModeProvider from '@/components/motion/MotionModeProvider';
+import MotionScope from '@/components/motion/MotionScope';
+import RouteTransition from '@/components/motion/RouteTransition';
 
 // ResearchWithMe follows the πeme v3.1 design system (docs/pieme-design-system-v3.1.md):
 // Newsreader for editorial reading, Inter for interface chrome, JetBrains Mono
@@ -95,9 +98,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         <LocaleProvider>
-          <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
-            {children}
-          </div>
+          {/* πeme motion runtime: one lazy feature bundle and one reduced-motion
+              policy for the whole app (see components/motion/MotionScope). */}
+          <MotionModeProvider>
+            <MotionScope>
+              <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
+                <RouteTransition>{children}</RouteTransition>
+              </div>
+            </MotionScope>
+          </MotionModeProvider>
         </LocaleProvider>
       </body>
     </html>
