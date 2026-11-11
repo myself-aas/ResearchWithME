@@ -23,7 +23,7 @@ export default function BlogFooter() {
 
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="πeme — ResearchWithMe home">
+            <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="𝞹eme — ResearchWithMe home">
               <BrandLogo size="md" showText={true} />
             </Link>
 

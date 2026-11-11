@@ -6,6 +6,9 @@ import { ImageResponse } from 'next/og';
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
+// Non-italic pi symbol (U+1D70B MATHEMATICAL SANS-SERIF BOLD SMALL PI)
+const piSymbol = '𝜋';
+
 export function brandOgImage(title: string, subtitle: string) {
   return new ImageResponse(
     (
@@ -24,7 +27,7 @@ export function brandOgImage(title: string, subtitle: string) {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', fontSize: 54, letterSpacing: '-0.04em' }}>
-          <span style={{ fontWeight: 700, color: '#4F46E5' }}>π</span>
+                  <span style={{ fontWeight: 700, color: '#4F46E5' }}>{piSymbol}</span>
           <span style={{ fontWeight: 400, color: '#161C1A' }}>eme</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>

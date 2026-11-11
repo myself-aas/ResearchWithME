@@ -1,6 +1,6 @@
 {
   "name": "researchwithme",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "description": "Long-form reviews of published papers and open repositories, written by verified domain specialists. Every claim carries a citation, every artifact has a home, and nothing sits behind a paywall.",
   "homepage": "https://github.com/myself-aas/ResearchWithME#readme",

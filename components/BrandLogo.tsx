@@ -20,15 +20,17 @@ export default function BrandLogo({
     xl: 'text-4xl',
   }[size];
 
-  const textColor = variant === 'light' ? 'text-white' : 'text-stone-900';
+  // Use theme-aware colors: dark mode uses text-ink (light), light mode uses text-stone-900 (dark)
+  // The pi symbol (𝜋 - U+1D70B MATHEMATICAL SANS-SERIF BOLD SMALL PI) is non-italic
+  const piSymbol = '𝜋';
 
   return (
     <div className={`inline-flex items-center ${className}`}>
       <span
-        className={`${wordmarkSizes} font-serif font-semibold leading-none tracking-[-0.04em] ${textColor}`}
-        aria-label={showText ? 'πeme' : 'π'}
+        className={`${wordmarkSizes} font-serif font-semibold leading-none tracking-[-0.04em] text-ink`}
+        aria-label={showText ? `${piSymbol}eme` : piSymbol}
       >
-        {showText ? 'πeme' : 'π'}
+        {showText ? `${piSymbol}eme` : piSymbol}
       </span>
     </div>
   );
