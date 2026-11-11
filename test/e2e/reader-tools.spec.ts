@@ -29,3 +29,11 @@ test('saved bookmarks survive a reload', async ({ page }) => {
   await page.reload();
   await expect(page.getByText(/Inside vLLM/)).toBeVisible();
 });
+
+test('the API reference renders and its group anchors resolve', async ({ page }) => {
+  await page.goto('/api-docs');
+  await expect(page.getByRole('heading', { name: 'ResearchWithMe API' })).toBeVisible();
+  const nav = page.getByRole('navigation', { name: 'API groups' });
+  await nav.getByRole('link', { name: 'Articles' }).click();
+  await expect(page).toHaveURL(/#articles$/);
+});

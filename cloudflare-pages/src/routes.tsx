@@ -22,6 +22,7 @@ import EditorialBoardRoute from './routes/editorial-board';
 import AssistantRoute from './routes/assistant';
 import BookmarksRoute from './routes/bookmarks';
 import CiteRoute from './routes/cite';
+import ApiDocsRoute from './routes/api-docs';
 
 /**
  * Shared route table for the Pages target (Task 10).
@@ -184,6 +185,7 @@ export const ROUTE_DEFINITIONS: ReadonlyArray<RouteDefinition> = [
   { id: 'assistant', path: '/assistant', element: <AssistantRoute /> },
   { id: 'bookmarks', path: '/bookmarks', element: <BookmarksRoute /> },
   { id: 'cite', path: '/cite', element: <CiteRoute /> },
+  { id: 'api-docs', path: '/api-docs', element: <ApiDocsRoute /> },
   { id: 'not-found', path: '*', element: <NotFound /> },
 ];
 

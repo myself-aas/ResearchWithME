@@ -5,6 +5,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { createTestApp } from '@/test/support/pages';
+import { API_GROUPS } from '@/lib/api-catalog';
 
 describe('GET /assistant', () => {
   it('renders the assistant with canonical metadata', async () => {
@@ -61,6 +62,33 @@ describe('GET /cite', () => {
   it('answers through the /__data transport', async () => {
     const app = createTestApp();
     const res = await app.request('/__data?routeId=cite&url=%2Fcite');
+    expect(res.status).toBe(200);
+    expect((await res.json()).kind).toBe('data');
+  });
+});
+
+describe('GET /api-docs', () => {
+  it('renders the API reference with its group anchors and canonical metadata', async () => {
+    const app = createTestApp();
+    const res = await app.request('/api-docs');
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+    const html = await res.text();
+    expect(html).toContain('ResearchWithMe API');
+    expect(html).toContain('<title>API reference — ResearchWithMe</title>');
+    expect(html).toContain('rel="canonical" href="https://researchwith.me/api-docs"');
+    // Every catalog group anchor is present and link targets resolve to it.
+    for (const group of API_GROUPS) {
+      expect(html).toContain(`id="${group.id}"`);
+      expect(html).toContain(`href="#${group.id}"`);
+    }
+    // The catalog lists real operations, not placeholder scaffolding.
+    expect(html).toContain('/api/articles');
+  });
+
+  it('answers through the /__data transport', async () => {
+    const app = createTestApp();
+    const res = await app.request('/__data?routeId=api-docs&url=%2Fapi-docs');
     expect(res.status).toBe(200);
     expect((await res.json()).kind).toBe('data');
   });

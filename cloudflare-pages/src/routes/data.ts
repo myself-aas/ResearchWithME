@@ -95,8 +95,8 @@ export interface StaticArchiveLoaderData {
   metadata: RouteMetadata;
 }
 
-/** Reader-tool routes (12B): metadata only; the tool renders client-side. */
+/** Reader-tool and API-reference routes (12B): metadata only; the body is bundled. */
 export interface ReaderToolLoaderData {
-  kind: 'assistant' | 'bookmarks' | 'cite';
+  kind: 'assistant' | 'bookmarks' | 'cite' | 'api-docs';
   metadata: RouteMetadata;
 }

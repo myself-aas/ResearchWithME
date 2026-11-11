@@ -66,6 +66,7 @@ function serverLoaders(ctx: RequestContext): LoaderMap {
     assistant: publicLoader('assistant'),
     bookmarks: publicLoader('bookmarks'),
     cite: publicLoader('cite'),
+    'api-docs': publicLoader('api-docs'),
   };
 }
 

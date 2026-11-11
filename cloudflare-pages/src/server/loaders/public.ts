@@ -237,6 +237,13 @@ const BOOKMARKS_METADATA: RouteMetadata = {
   path: '/bookmarks',
 };
 
+const API_DOCS_METADATA: RouteMetadata = {
+  title: 'API reference — ResearchWithMe',
+  description: 'Reference for the ResearchWithMe archive, assistant, and editorial HTTP APIs.',
+  type: 'website',
+  path: '/api-docs',
+};
+
 const CITE_METADATA: RouteMetadata = {
   title: 'Build a citation — ResearchWithMe',
   description:
@@ -279,9 +286,15 @@ async function loadAuthorsDirectory(ctx: RequestContext): Promise<AuthorsLoaderD
   return { kind: 'authors', authors, metadata: AUTHORS_METADATA };
 }
 
-function readerTool(kind: 'assistant' | 'bookmarks' | 'cite'): ReaderToolLoaderData {
-  const metadata = kind === 'assistant' ? ASSISTANT_METADATA : kind === 'bookmarks' ? BOOKMARKS_METADATA : CITE_METADATA;
-  return { kind, metadata };
+const TOOL_METADATA = {
+  assistant: ASSISTANT_METADATA,
+  bookmarks: BOOKMARKS_METADATA,
+  cite: CITE_METADATA,
+  'api-docs': API_DOCS_METADATA,
+} as const;
+
+function readerTool(kind: keyof typeof TOOL_METADATA): ReaderToolLoaderData {
+  return { kind, metadata: TOOL_METADATA[kind] };
 }
 
 function staticArchive(kind: 'editions' | 'editorial-board'): StaticArchiveLoaderData {
@@ -324,6 +337,8 @@ export async function loadPublicRoute(
       return readerTool('bookmarks');
     case 'cite':
       return readerTool('cite');
+    case 'api-docs':
+      return readerTool('api-docs');
     default:
       throw new Error(`loadPublicRoute: no public loader registered for route id "${routeId}".`);
   }
