@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { listPublishedAuthors } from '@/lib/author-directory';
 import { AUTHORS, CATEGORIES, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { getPublishedCmsPosts } from '@/lib/cms/read';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
@@ -16,6 +17,9 @@ const staticRoutes = [
   { path: '/assistant', priority: 0.7, changeFrequency: 'weekly' },
   { path: '/bookmarks', priority: 0.5, changeFrequency: 'weekly' },
   { path: '/cite', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/about', priority: 0.7, changeFrequency: 'monthly' },
+  { path: '/contact', priority: 0.6, changeFrequency: 'monthly' },
+  { path: '/privacy', priority: 0.5, changeFrequency: 'yearly' },
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -27,10 +31,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     if (article.slug) articleSlugs.set(article.slug, toDate(article.publishedAt) ?? FALLBACK_DATE);
   }
 
-  // Published CMS articles join the same canonical URLs as the bundled catalogue.
-  const cmsPosts = await getPublishedCmsPosts();
+  const [cmsPosts, publishedAuthors] = await Promise.all([
+    getPublishedCmsPosts(),
+    listPublishedAuthors(),
+  ]);
   for (const post of cmsPosts) {
     articleSlugs.set(post.slug, toDate(post.publishedAt ?? post.insertedAt) ?? FALLBACK_DATE);
+  }
+
+  const authorIds = new Set<string>(Object.keys(AUTHORS));
+  for (const author of publishedAuthors) {
+    authorIds.add(author.id);
   }
 
   return [
@@ -58,7 +69,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
-    ...Object.keys(AUTHORS).map((id) => ({
+    ...[...authorIds].map((id) => ({
       url: new URL(`/author/${id}`, SITE_URL).toString(),
       lastModified: FALLBACK_DATE,
       changeFrequency: 'monthly' as const,

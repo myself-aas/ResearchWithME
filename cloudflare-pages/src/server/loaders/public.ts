@@ -268,6 +268,30 @@ const EDITORIAL_BOARD_METADATA: RouteMetadata = {
   path: '/editorial-board',
 };
 
+const ABOUT_METADATA: RouteMetadata = {
+  title: 'About ResearchWithMe — Editorial Charter',
+  description:
+    'Learn how ResearchWithMe publishes diamond open-access paper reviews, benchmark replications, and repository teardowns by verified domain specialists.',
+  type: 'website',
+  path: '/about',
+};
+
+const CONTACT_METADATA: RouteMetadata = {
+  title: 'Contact the Editorial Office — ResearchWithMe',
+  description:
+    'Contact ResearchWithMe for manuscript pitches, empirical errata, library metadata harvesting, contributor verification, and RFC 9116 security disclosure.',
+  type: 'website',
+  path: '/contact',
+};
+
+const PRIVACY_METADATA: RouteMetadata = {
+  title: 'Privacy Policy — Reader Data Governance',
+  description:
+    'Read the ResearchWithMe privacy policy: zero behavioural tracking, local-first reading lists, minimal contributor verification data, and open-access standards.',
+  type: 'website',
+  path: '/privacy',
+};
+
 /**
  * Papers archive: the shared component renders SSR from the bundled corpus
  * (the production seed is empty) and refreshes from /api/papers on mount.
@@ -297,8 +321,16 @@ function readerTool(kind: keyof typeof TOOL_METADATA): ReaderToolLoaderData {
   return { kind, metadata: TOOL_METADATA[kind] };
 }
 
-function staticArchive(kind: 'editions' | 'editorial-board'): StaticArchiveLoaderData {
-  return { kind, metadata: kind === 'editions' ? EDITIONS_METADATA : EDITORIAL_BOARD_METADATA };
+const STATIC_ARCHIVE_METADATA = {
+  editions: EDITIONS_METADATA,
+  'editorial-board': EDITORIAL_BOARD_METADATA,
+  about: ABOUT_METADATA,
+  contact: CONTACT_METADATA,
+  privacy: PRIVACY_METADATA,
+} as const;
+
+function staticArchive(kind: keyof typeof STATIC_ARCHIVE_METADATA): StaticArchiveLoaderData {
+  return { kind, metadata: STATIC_ARCHIVE_METADATA[kind] };
 }
 
 /**
@@ -331,6 +363,12 @@ export async function loadPublicRoute(
       return staticArchive('editions');
     case 'editorial-board':
       return staticArchive('editorial-board');
+    case 'about':
+      return staticArchive('about');
+    case 'contact':
+      return staticArchive('contact');
+    case 'privacy':
+      return staticArchive('privacy');
     case 'assistant':
       return readerTool('assistant');
     case 'bookmarks':

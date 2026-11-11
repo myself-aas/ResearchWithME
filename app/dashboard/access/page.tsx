@@ -6,10 +6,21 @@ import { getDashboardUser } from '@/lib/cms/auth';
 import type { AuthorApplication as Application } from '@/lib/applications';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  title: 'Apply to write',
-  description: 'Connect a GitHub or ORCID identity and apply to publish on ResearchWithMe.',
+  ...pageMetadata({
+    title: 'Apply to Write — Specialist Verification',
+    description:
+      'Connect a verified GitHub or ORCID identity and apply to publish open-access peer reviews and repository teardowns on ResearchWithMe.',
+    path: '/dashboard/access',
+    type: 'website',
+  }),
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
 };
 
 export const dynamic = 'force-dynamic';
@@ -51,6 +62,7 @@ export default async function ApplyToWritePage({
   if (!isSupabaseConfigured) {
     return (
       <PageState
+        as="div"
         code="Unavailable"
         title="Applications need Supabase"
         description="Writer applications are stored in Postgres and reviewed through row-level security. Configure Supabase to accept them; until then the studio runs in local demo mode."

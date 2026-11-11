@@ -23,6 +23,20 @@ function supabaseImagePattern() {
 
 const supabaseImages = supabaseImagePattern();
 
+const cspDirectives = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' https:",
+  "media-src 'self' https:",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "upgrade-insecure-requests",
+].join('; ');
+
 const securityHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'X-Frame-Options', value: 'DENY' },
@@ -31,30 +45,16 @@ const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
   // Deployed on Cloudflare (HTTPS enforced at the edge); HSTS is safe to send.
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-  // Report-only CSP: tightens over time without breaking Next.js inline
-  // bootstrap scripts. Promote to enforcing once the report shows no violations.
-  {
-    key: 'Content-Security-Policy-Report-Only',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
-      "font-src 'self' data:",
-      "connect-src 'self' https:",
-      "media-src 'self' https:",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "upgrade-insecure-requests",
-    ].join('; '),
-  },
+  { key: 'Content-Security-Policy', value: cspDirectives },
+  { key: 'Content-Security-Policy-Report-Only', value: cspDirectives },
 ];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   compress: true,
+  // Render blocking <head> metadata for all HTTP clients instead of streaming <meta> tags into <body>.
+  htmlLimitedBots: /.*/,
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -69,7 +69,7 @@ const nextConfig: NextConfig = {
     remotePatterns: supabaseImages ? [supabaseImages] : [],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ['lucide-react', 'motion', '@radix-ui/react-popover', '@radix-ui/react-dialog'],
   },
   output: 'standalone', // switched back to avoid export build issues
   async headers() {

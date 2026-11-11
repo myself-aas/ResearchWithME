@@ -41,9 +41,6 @@ export const metadata: Metadata = {
     'repository teardowns',
     'open science',
   ],
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     title: `${SITE_NAME} — Open-Access Research Reviews & Repository Teardowns`,
     description: SITE_DESCRIPTION,
@@ -57,6 +54,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `${SITE_NAME} — Open-Access Research Reviews`,
     description: SITE_DESCRIPTION,
+    images: [absoluteUrl('/opengraph-image')],
   },
   robots: {
     index: true,
@@ -74,17 +72,25 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  colorScheme: 'light',
-  themeColor: '#F8F7F3',
+  colorScheme: 'light dark',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#FAF9F6' },
+    { media: '(prefers-color-scheme: dark)', color: '#0C0D10' },
+  ],
 };
+
+const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('rwm-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.classList.toggle('light',t==='light');}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`}>
-      <body className="bg-stone-50 font-serif text-stone-900 antialiased selection:bg-brand selection:text-white" suppressHydrationWarning>
+    <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
+      <body className="bg-canvas font-sans text-ink antialiased selection:bg-selection selection:text-ink" suppressHydrationWarning>
         <a
           href="#main-content"
-          className="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm focus:not-sr-only focus:fixed"
+          className="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary focus:not-sr-only focus:fixed"
         >
           Skip to main content
         </a>

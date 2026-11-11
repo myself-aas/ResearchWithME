@@ -32,5 +32,21 @@
   "workspace.synthesis": "Synthesis",
   "workspace.inspector": "Inspector",
   "workspace.collapse": "Collapse panel",
-  "workspace.expand": "Expand panel"
+  "workspace.expand": "Expand panel",
+  "cmdk.trigger": "Search catalog",
+  "cmdk.placeholder": "Search teardowns, papers, identifiers, or specialists…",
+  "cmdk.empty": "No matching manuscripts, papers, or verified specialists found",
+  "cmdk.group.articles": "Technical Teardowns and Reviews",
+  "cmdk.group.papers": "Peer-Reviewed Archive",
+  "cmdk.group.specialists": "Verified Specialists",
+  "cmdk.group.routes": "Editorial Destinations",
+  "nav.readingList": "Reading List",
+  "nav.digestSubscribed": "Digest Subscribed",
+  "theme.switchLight": "Switch to Archival Paper light theme",
+  "theme.switchDark": "Switch to Obsidian dark theme",
+  "reader.cite": "Cite reference",
+  "reader.copyBibtex": "Copy BibTeX entry",
+  "reader.copyApa": "Copy APA citation",
+  "reader.copyDoi": "Copy identifier",
+  "reader.copied": "Copied to clipboard"
 }

@@ -64,6 +64,15 @@ describe('GET / (home)', () => {
   });
 });
 
+describe('GET /articles', () => {
+  it('redirects /articles cleanly to / so existing navigation targets never 404', async () => {
+    const app = createTestApp();
+    const res = await app.request('/articles');
+    expect([301, 302, 307, 308]).toContain(res.status);
+    expect(res.headers.get('location')).toBe('/');
+  });
+});
+
 describe('GET /category/:slug', () => {
   it('renders a known field page', async () => {
     const app = createTestApp();

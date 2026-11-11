@@ -91,7 +91,7 @@ export interface AuthorsLoaderData {
 
 /** Static-archive routes: the document needs metadata; the body imports its own bundled data. */
 export interface StaticArchiveLoaderData {
-  kind: 'editions' | 'editorial-board';
+  kind: 'editions' | 'editorial-board' | 'about' | 'contact' | 'privacy';
   metadata: RouteMetadata;
 }
 

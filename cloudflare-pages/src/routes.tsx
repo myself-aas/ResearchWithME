@@ -23,6 +23,9 @@ import AssistantRoute from './routes/assistant';
 import BookmarksRoute from './routes/bookmarks';
 import CiteRoute from './routes/cite';
 import ApiDocsRoute from './routes/api-docs';
+import AboutRoute from './routes/about';
+import ContactRoute from './routes/contact';
+import PrivacyRoute from './routes/privacy';
 
 /**
  * Shared route table for the Pages target (Task 10).
@@ -39,6 +42,7 @@ export type RouteId =
   | 'not-found'
   | 'dashboard-layout'
   | 'home'
+  | 'articles'
   | 'category'
   | 'post'
   | 'papers'
@@ -51,6 +55,9 @@ export type RouteId =
   | 'bookmarks'
   | 'cite'
   | 'api-docs'
+  | 'about'
+  | 'contact'
+  | 'privacy'
   | 'login'
   | 'write'
   | 'dashboard'
@@ -174,6 +181,7 @@ interface RouteDefinition {
  */
 export const ROUTE_DEFINITIONS: ReadonlyArray<RouteDefinition> = [
   { id: 'home', path: '/', element: <HomeRoute /> },
+  { id: 'articles', path: '/articles', element: <HomeRoute /> },
   { id: 'category', path: '/category/:slug', element: <CategoryRoute /> },
   { id: 'post', path: '/post/:slug', element: <PostRoute /> },
   { id: 'paper', path: '/paper/:slug', element: <PaperRoute /> },
@@ -186,6 +194,9 @@ export const ROUTE_DEFINITIONS: ReadonlyArray<RouteDefinition> = [
   { id: 'bookmarks', path: '/bookmarks', element: <BookmarksRoute /> },
   { id: 'cite', path: '/cite', element: <CiteRoute /> },
   { id: 'api-docs', path: '/api-docs', element: <ApiDocsRoute /> },
+  { id: 'about', path: '/about', element: <AboutRoute /> },
+  { id: 'contact', path: '/contact', element: <ContactRoute /> },
+  { id: 'privacy', path: '/privacy', element: <PrivacyRoute /> },
   { id: 'not-found', path: '*', element: <NotFound /> },
 ];
 

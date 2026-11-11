@@ -6,10 +6,16 @@ import BlogFooter from '@/components/BlogFooter';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { safeNextPath } from '@/lib/safe-redirect';
+import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = {
-  title: 'Sign in to the editorial studio',
-  description: 'Sign in to write, review, and publish ResearchWithMe articles.',
+  ...pageMetadata({
+    title: 'Sign in to the editorial studio',
+    description:
+      'Sign in to write, review, and publish open-access ResearchWithMe articles, benchmark replications, and repository teardowns.',
+    path: '/login',
+    type: 'website',
+  }),
   robots: {
     index: false,
     follow: false,

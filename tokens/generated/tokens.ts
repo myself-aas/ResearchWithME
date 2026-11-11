@@ -3,27 +3,28 @@ export const primitive = {
   "color": {
     "neutral": {
       "0": "#FFFFFF",
-      "25": "#FCFCFD",
-      "50": "#F8F7F3",
-      "100": "#F0EEE8",
-      "200": "#DEDCD5",
-      "300": "#C6C4BD",
-      "400": "#9D9C97",
-      "500": "#737571",
-      "600": "#555955",
-      "700": "#3B403D",
-      "800": "#252B29",
-      "900": "#161C1A",
-      "950": "#0B100F"
+      "25": "#F2F2F5",
+      "50": "#FAF9F6",
+      "100": "#F3F1EC",
+      "200": "#E5E3DD",
+      "300": "#C9C8C3",
+      "400": "#9496A1",
+      "500": "#6E6E77",
+      "600": "#5C5C63",
+      "700": "#2A2D36",
+      "800": "#1C1F26",
+      "900": "#14161B",
+      "925": "#121214",
+      "950": "#0C0D10"
     },
     "indigo": {
-      "50": "#EEF2FF",
-      "100": "#E0E7FF",
-      "300": "#A5B4FC",
-      "500": "#6366F1",
-      "600": "#4F46E5",
-      "700": "#4338CA",
-      "900": "#312E81"
+      "50": "#EFF6FF",
+      "100": "#DBEAFE",
+      "300": "#93C5FD",
+      "500": "#3B82F6",
+      "600": "#1D4ED8",
+      "700": "#1E40AF",
+      "900": "#1E3A8A"
     },
     "emerald": {
       "50": "#ECFDF5",
@@ -63,9 +64,9 @@ export const primitive = {
   },
   "typography": {
     "family": {
-      "editorial": "Newsreader, Georgia, serif",
-      "interface": "Inter, system-ui, sans-serif",
-      "metadata": "JetBrains Mono, ui-monospace, monospace"
+      "editorial": "'Newsreader', Georgia, serif",
+      "interface": "'Inter', system-ui, sans-serif",
+      "metadata": "'JetBrains Mono', monospace"
     }
   },
   "space": {
@@ -93,13 +94,13 @@ export const primitive = {
     "full": "9999px"
   },
   "shadow": {
-    "raised": "0 1px 2px rgba(11,16,15,.08), 0 6px 18px rgba(11,16,15,.06)",
-    "floating": "0 4px 12px rgba(11,16,15,.10), 0 20px 48px rgba(11,16,15,.10)",
-    "dialog": "0 12px 32px rgba(11,16,15,.16), 0 36px 80px rgba(11,16,15,.14)"
+    "raised": "none",
+    "floating": "0 8px 24px rgba(18, 18, 20, 0.08)",
+    "dialog": "0 16px 40px rgba(18, 18, 20, 0.14)"
   },
   "layout": {
     "max-width": {
-      "reading": "48rem",
+      "reading": "68ch",
       "workspace": "90rem",
       "graph": "108rem"
     },
@@ -136,8 +137,8 @@ export const primitive = {
   "focus": {
     "width": "2px",
     "offset": "2px",
-    "light": "#4F46E5",
-    "dark": "#A5B4FC"
+    "light": "#1D4ED8",
+    "dark": "#60A5FA"
   },
   "icon": {
     "small": "1rem",
@@ -148,172 +149,172 @@ export const primitive = {
   },
   "graph": {
     "node": {
-      "source": "#4F46E5",
+      "source": "#1D4ED8",
       "evidence": "#059669",
       "claim": "#0891B2",
       "discussion": "#D97706",
-      "publication": "#7C3AED",
-      "archived": "#737571"
+      "publication": "#1E40AF",
+      "archived": "#5C5C63"
     },
     "edge": {
-      "cites": "#6366F1",
+      "cites": "#1D4ED8",
       "supports": "#10B981",
       "contradicts": "#EF4444",
       "derives": "#06B6D4",
-      "relates": "#9D9C97",
+      "relates": "#9496A1",
       "direct-style": "solid",
       "inferred-style": "dashed"
     }
   }
 } as const;
 export const semanticLight = {
-  "canvas": "#F8F7F3",
-  "surface": "#FFFFFF",
-  "surface-subtle": "#F0EEE8",
-  "surface-raised": "#FFFFFF",
-  "surface-inverse": "#161C1A",
-  "text-primary": "#161C1A",
-  "text-secondary": "#555955",
-  "text-tertiary": "#737571",
-  "text-inverse": "#FFFFFF",
-  "border-subtle": "#DEDCD5",
-  "border-strong": "#9D9C97",
-  "focus": "#4F46E5",
-  "selection": "#E0E7FF",
+  "canvas": "#FAF9F6",
+  "surface": "#F3F1EC",
+  "surface-subtle": "#EAE7DF",
+  "surface-raised": "#FAF9F6",
+  "surface-inverse": "#121214",
+  "text-primary": "#121214",
+  "text-secondary": "#5C5C63",
+  "text-tertiary": "#5C5C63",
+  "text-inverse": "#FAF9F6",
+  "border-subtle": "rgba(18, 18, 20, 0.10)",
+  "border-strong": "rgba(18, 18, 20, 0.22)",
+  "focus": "#1D4ED8",
+  "selection": "#DBEAFE",
   "action": {
-    "primary": "#4F46E5",
-    "primary-hover": "#4338CA",
-    "primary-pressed": "#312E81",
+    "primary": "#1D4ED8",
+    "primary-hover": "#1E40AF",
+    "primary-pressed": "#1E3A8A",
     "on-primary": "#FFFFFF",
-    "destructive": "#DC2626",
-    "link": "#4338CA",
-    "visited": "#6D28D9"
+    "destructive": "#B91C1C",
+    "link": "#1D4ED8",
+    "visited": "#1E40AF"
   },
   "knowledge": {
-    "source": "#4F46E5",
+    "source": "#1D4ED8",
     "evidence": "#059669",
     "insight": "#0891B2",
     "discussion": "#D97706",
-    "contradiction": "#DC2626",
-    "publication": "#7C3AED",
-    "archive": "#555955"
+    "contradiction": "#B91C1C",
+    "publication": "#1E40AF",
+    "archive": "#5C5C63"
   },
   "trust": {
-    "verified": "#059669",
+    "verified": "#1D4ED8",
     "replicated": "#047857",
-    "peer-reviewed": "#4F46E5",
+    "peer-reviewed": "#1D4ED8",
     "emerging": "#0891B2",
     "uncertain": "#D97706",
-    "contested": "#DC2626",
-    "unknown": "#737571"
+    "contested": "#B91C1C",
+    "unknown": "#5C5C63"
   },
   "provenance": {
     "direct-source": "#059669",
-    "cited-source": "#4F46E5",
+    "cited-source": "#1D4ED8",
     "derived": "#0891B2",
     "inferred": "#D97706",
-    "ai-assisted": "#7C3AED",
-    "unresolved": "#737571"
+    "ai-assisted": "#1E40AF",
+    "unresolved": "#5C5C63"
   },
   "workflow": {
     "discovered": "#0891B2",
     "extracted": "#0D9488",
     "validated": "#059669",
-    "synthesized": "#4F46E5",
-    "reviewed": "#7C3AED",
-    "published": "#6D28D9",
-    "archived": "#555955"
+    "synthesized": "#1D4ED8",
+    "reviewed": "#1E40AF",
+    "published": "#1D4ED8",
+    "archived": "#5C5C63"
   },
   "collaboration": {
     "comment": "#0891B2",
     "suggestion": "#0D9488",
-    "review": "#7C3AED",
+    "review": "#1E40AF",
     "consensus": "#059669",
-    "disagreement": "#DC2626"
+    "disagreement": "#B91C1C"
   },
   "citation": {
-    "article": "#4F46E5",
+    "article": "#1D4ED8",
     "dataset": "#0891B2",
     "book": "#047857",
     "preprint": "#D97706",
-    "software": "#7C3AED",
+    "software": "#1D4ED8",
     "protocol": "#0D9488",
-    "webpage": "#555955"
+    "webpage": "#5C5C63"
   }
 } as const;
 export const semanticDark = {
-  "canvas": "#0B100F",
-  "surface": "#161C1A",
-  "surface-subtle": "#252B29",
-  "surface-raised": "#2F3633",
-  "surface-inverse": "#F8F7F3",
-  "text-primary": "#F8F7F3",
-  "text-secondary": "#C6C4BD",
-  "text-tertiary": "#9D9C97",
-  "text-inverse": "#161C1A",
-  "border-subtle": "#3B403D",
-  "border-strong": "#737571",
-  "focus": "#A5B4FC",
-  "selection": "#312E81",
+  "canvas": "#0C0D10",
+  "surface": "#14161B",
+  "surface-subtle": "#1B1E25",
+  "surface-raised": "#181B22",
+  "surface-inverse": "#F2F2F5",
+  "text-primary": "#F2F2F5",
+  "text-secondary": "#9496A1",
+  "text-tertiary": "#9496A1",
+  "text-inverse": "#0C0D10",
+  "border-subtle": "rgba(255, 255, 255, 0.10)",
+  "border-strong": "rgba(255, 255, 255, 0.22)",
+  "focus": "#60A5FA",
+  "selection": "#1E3A8A",
   "action": {
-    "primary": "#4F46E5",
-    "primary-hover": "#4338CA",
-    "primary-pressed": "#312E81",
-    "on-primary": "#FFFFFF",
+    "primary": "#60A5FA",
+    "primary-hover": "#93C5FD",
+    "primary-pressed": "#3B82F6",
+    "on-primary": "#0C0D10",
     "destructive": "#F87171",
-    "link": "#A5B4FC",
-    "visited": "#C4B5FD"
+    "link": "#60A5FA",
+    "visited": "#93C5FD"
   },
   "knowledge": {
-    "source": "#4F46E5",
-    "evidence": "#059669",
-    "insight": "#0891B2",
-    "discussion": "#D97706",
-    "contradiction": "#DC2626",
-    "publication": "#7C3AED",
-    "archive": "#555955"
+    "source": "#60A5FA",
+    "evidence": "#10B981",
+    "insight": "#06B6D4",
+    "discussion": "#F59E0B",
+    "contradiction": "#F87171",
+    "publication": "#93C5FD",
+    "archive": "#9496A1"
   },
   "trust": {
-    "verified": "#059669",
-    "replicated": "#047857",
-    "peer-reviewed": "#4F46E5",
-    "emerging": "#0891B2",
-    "uncertain": "#D97706",
-    "contested": "#DC2626",
-    "unknown": "#737571"
+    "verified": "#60A5FA",
+    "replicated": "#10B981",
+    "peer-reviewed": "#60A5FA",
+    "emerging": "#06B6D4",
+    "uncertain": "#F59E0B",
+    "contested": "#F87171",
+    "unknown": "#9496A1"
   },
   "provenance": {
-    "direct-source": "#059669",
-    "cited-source": "#4F46E5",
-    "derived": "#0891B2",
-    "inferred": "#D97706",
-    "ai-assisted": "#7C3AED",
-    "unresolved": "#737571"
+    "direct-source": "#10B981",
+    "cited-source": "#60A5FA",
+    "derived": "#06B6D4",
+    "inferred": "#F59E0B",
+    "ai-assisted": "#93C5FD",
+    "unresolved": "#9496A1"
   },
   "workflow": {
-    "discovered": "#0891B2",
-    "extracted": "#0D9488",
-    "validated": "#059669",
-    "synthesized": "#4F46E5",
-    "reviewed": "#7C3AED",
-    "published": "#6D28D9",
-    "archived": "#555955"
+    "discovered": "#06B6D4",
+    "extracted": "#14B8A6",
+    "validated": "#10B981",
+    "synthesized": "#60A5FA",
+    "reviewed": "#93C5FD",
+    "published": "#60A5FA",
+    "archived": "#9496A1"
   },
   "collaboration": {
-    "comment": "#0891B2",
-    "suggestion": "#0D9488",
-    "review": "#7C3AED",
-    "consensus": "#059669",
-    "disagreement": "#DC2626"
+    "comment": "#06B6D4",
+    "suggestion": "#14B8A6",
+    "review": "#93C5FD",
+    "consensus": "#10B981",
+    "disagreement": "#F87171"
   },
   "citation": {
-    "article": "#4F46E5",
-    "dataset": "#0891B2",
-    "book": "#047857",
-    "preprint": "#D97706",
-    "software": "#7C3AED",
-    "protocol": "#0D9488",
-    "webpage": "#555955"
+    "article": "#60A5FA",
+    "dataset": "#06B6D4",
+    "book": "#10B981",
+    "preprint": "#F59E0B",
+    "software": "#60A5FA",
+    "protocol": "#14B8A6",
+    "webpage": "#9496A1"
   }
 } as const;
 export const motion = {
@@ -374,42 +375,42 @@ export const motion = {
 export const component = {
   "button": {
     "primary": {
-      "background": "#4F46E5",
-      "backgroundHover": "#4338CA",
-      "backgroundPressed": "#312E81",
+      "background": "#1D4ED8",
+      "backgroundHover": "#1E40AF",
+      "backgroundPressed": "#1E3A8A",
       "foreground": "#FFFFFF",
       "radius": "0.5rem",
-      "focusRing": "#4F46E5"
+      "focusRing": "#1D4ED8"
     },
     "destructive": {
-      "background": "#DC2626",
+      "background": "#B91C1C",
       "foreground": "#FFFFFF",
       "radius": "0.5rem"
     }
   },
   "evidenceCard": {
-    "background": "#FFFFFF",
-    "border": "#DEDCD5",
+    "background": "#F3F1EC",
+    "border": "rgba(18, 18, 20, 0.10)",
     "accent": "#059669",
-    "title": "#161C1A",
-    "metadata": "#555955"
+    "title": "#121214",
+    "metadata": "#5C5C63"
   },
   "sourceCard": {
-    "background": "#FFFFFF",
-    "border": "#DEDCD5",
-    "accent": "#4F46E5",
-    "title": "#161C1A",
-    "metadata": "#555955"
+    "background": "#F3F1EC",
+    "border": "rgba(18, 18, 20, 0.10)",
+    "accent": "#1D4ED8",
+    "title": "#121214",
+    "metadata": "#5C5C63"
   },
   "claimCard": {
     "support": "#059669",
-    "contradiction": "#DC2626",
-    "unresolved": "#737571",
-    "background": "#FFFFFF",
-    "border": "#DEDCD5"
+    "contradiction": "#B91C1C",
+    "unresolved": "#5C5C63",
+    "background": "#F3F1EC",
+    "border": "rgba(18, 18, 20, 0.10)"
   },
   "focusRing": {
-    "color": "#4F46E5",
+    "color": "#1D4ED8",
     "width": "2px",
     "offset": "2px"
   }

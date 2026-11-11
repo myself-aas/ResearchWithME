@@ -3,36 +3,48 @@
 import { useEffect, useRef, useState } from 'react';
 import { CheckCircle2, Mail, Send } from 'lucide-react';
 import { isValidEmail } from '@/lib/validation';
-import { readLocalString, removeLocal, writeLocalString } from '@/lib/storage';
+import {
+  DEFAULT_DIGEST_TOPICS,
+  useHydratePreferences,
+  usePreferencesStore,
+  type DigestTopicKey,
+} from '@/lib/stores/preferences-store';
 
-const TOPICS = [
+const TOPICS: ReadonlyArray<{ key: DigestTopicKey; label: string }> = [
   { key: 'teardowns', label: 'Repository teardowns' },
   { key: 'papers', label: 'Paper reviews' },
   { key: 'clinical', label: 'Clinical and health' },
   { key: 'policy', label: 'Data and policy' },
-] as const;
-
-type TopicKey = (typeof TOPICS)[number]['key'];
+];
 
 export default function NewsletterSignup() {
+  const hydrated = useHydratePreferences();
+  const digest = usePreferencesStore((state) => state.digest);
+  const subscribeDigest = usePreferencesStore((state) => state.subscribeDigest);
+  const setDigestTopic = usePreferencesStore((state) => state.setDigestTopic);
+  const unsubscribeDigest = usePreferencesStore((state) => state.unsubscribeDigest);
+
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [topics, setTopics] = useState<Record<TopicKey, boolean>>({
-    teardowns: true,
-    papers: true,
-    clinical: false,
-    policy: false,
+  const [topics, setTopics] = useState<Record<DigestTopicKey, boolean>>({
+    ...DEFAULT_DIGEST_TOPICS,
   });
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    setIsSubscribed(readLocalString('rwm_newsletter_subscribed') === 'true');
+    if (!hydrated) return;
+    if (digest.email) setEmail(digest.email);
+    setTopics({ ...digest.topics });
+  }, [hydrated, digest.email, digest.topics]);
+
+  useEffect(() => {
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
     };
   }, []);
+
+  const isSubscribed = hydrated && digest.subscribed;
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,96 +63,112 @@ export default function NewsletterSignup() {
     setIsSubmitting(true);
 
     timerRef.current = window.setTimeout(() => {
-      // This prototype stores the preference locally; it does not send the address anywhere.
-      const stored = writeLocalString('rwm_newsletter_subscribed', 'true');
-      writeLocalString('rwm_newsletter_email', email.trim());
+      const stored = subscribeDigest(email.trim(), topics);
       setIsSubmitting(false);
       if (!stored) {
-        setError('Your browser blocked local storage, so this subscription was not saved. Enable site data and try again.');
-        return;
+        setError(
+          'Your browser blocked local storage, so this subscription was held in memory for this tab only.',
+        );
       }
-      setIsSubscribed(true);
-    }, 450);
+    }, 300);
+  }
+
+  function handleToggleTopic(key: DigestTopicKey) {
+    const next = !topics[key];
+    setTopics((prev) => ({ ...prev, [key]: next }));
+    if (hydrated && digest.subscribed) {
+      setDigestTopic(key, next);
+    }
   }
 
   function handleReset() {
-    setIsSubscribed(false);
+    unsubscribeDigest();
     setEmail('');
-    removeLocal('rwm_newsletter_subscribed');
-    removeLocal('rwm_newsletter_email');
+    setError(null);
   }
 
   return (
-    <section aria-labelledby="newsletter-title" className="dark-surface border-b border-stone-800 pb-12">
-      <div className="rounded-lg border border-stone-700 bg-stone-950 p-6 sm:p-8">
+    <section aria-labelledby="newsletter-title" className="border-b border-line pb-12">
+      <div className="rounded-sm border border-line bg-canvas p-6 sm:p-8">
         <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <div>
-            <h2 id="newsletter-title" className="font-serif text-2xl font-bold text-white sm:text-3xl">
+            <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+              Weekly Dispatch · No Tracking Pixels
+            </p>
+            <h2 id="newsletter-title" className="mt-2 font-serif text-2xl font-bold text-ink sm:text-3xl">
               The weekly research digest
             </h2>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-stone-300">
-              One Tuesday email with the newest reviews, reproducible notebooks, and corrections. No advertising, no tracking pixels.
+            <p className="mt-3 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
+              One Tuesday dispatch with the newest repository teardowns, reproducible notebooks, and errata notices.
             </p>
-            <p className="mt-3 text-sm text-stone-300">
-              This is a prototype: the address is saved in this browser only and no email is sent.
+            <p className="mt-3 font-sans text-xs text-ink-secondary">
+              Stored locally in your browser preferences — no external marketing tracker receives your address.
             </p>
           </div>
 
           {isSubscribed ? (
-            <div role="status" className="rounded-md border border-emerald-700 bg-emerald-950 p-5">
-              <p className="flex items-center gap-2 font-semibold text-emerald-100">
-                <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+            <div role="status" className="rounded-sm border border-line bg-surface p-5">
+              <p className="flex items-center gap-2 font-sans text-sm font-semibold text-ink">
+                <CheckCircle2 className="h-4 w-4 text-brand" aria-hidden="true" />
                 Saved in this browser
               </p>
-              <p className="mt-2 text-sm leading-relaxed text-emerald-100">
-                The digest preference is stored locally on this device. You can remove it at any time.
+              <p className="mt-2 font-sans text-xs leading-relaxed text-ink-secondary">
+                Digest preferences{digest.email ? ` for ${digest.email}` : ''} are active on this device.
               </p>
+              {error && (
+                <p role="alert" className="mt-2 font-sans text-xs text-danger">
+                  {error}
+                </p>
+              )}
               <button
                 type="button"
                 onClick={handleReset}
-                className="mt-4 min-h-11 text-sm font-medium text-emerald-100 underline underline-offset-4 hover:text-white"
+                className="mt-4 min-h-11 font-sans text-xs font-medium text-ink underline underline-offset-4 hover:text-brand"
               >
                 Remove this preference
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="newsletter-email" className="mb-1.5 block text-sm font-medium text-stone-100">
+                <label htmlFor="newsletter-email" className="mb-1.5 block font-sans text-xs font-medium text-ink">
                   Email address
                 </label>
                 <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-300" aria-hidden="true" />
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" aria-hidden="true" />
                   <input
                     id="newsletter-email"
                     type="email"
                     inputMode="email"
+                    enterKeyHint="send"
                     autoComplete="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     aria-invalid={error ? true : undefined}
                     aria-describedby={error ? 'newsletter-error' : undefined}
                     placeholder="researcher@university.edu"
-                    className="h-11 w-full rounded-md border border-stone-600 bg-stone-900 pl-10 pr-3 text-sm text-stone-100 placeholder:text-stone-300"
+                    className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
                   />
                 </div>
                 {error && (
-                  <p id="newsletter-error" role="alert" className="mt-2 text-sm text-red-200">
+                  <p id="newsletter-error" role="alert" className="mt-2 font-sans text-xs text-danger">
                     {error}
                   </p>
                 )}
               </div>
 
               <fieldset>
-                <legend className="mb-2 text-sm font-medium text-stone-100">Topics</legend>
-                <div className="grid gap-2">
+                <legend className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                  Columns
+                </legend>
+                <div className="grid gap-1.5">
                   {TOPICS.map((topic) => (
-                    <label key={topic.key} className="flex min-h-9 items-center gap-2 text-sm text-stone-200">
+                    <label key={topic.key} className="flex min-h-9 items-center gap-2 font-sans text-xs text-ink">
                       <input
                         type="checkbox"
                         checked={topics[topic.key]}
-                        onChange={() => setTopics((prev) => ({ ...prev, [topic.key]: !prev[topic.key] }))}
-                        className="h-4 w-4 rounded border-stone-500 bg-stone-900 text-amber-600"
+                        onChange={() => handleToggleTopic(topic.key)}
+                        className="h-4 w-4 rounded-xs border-line accent-brand"
                       />
                       <span>{topic.label}</span>
                     </label>
@@ -151,9 +179,9 @@ export default function NewsletterSignup() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-amber-700 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-amber-600 disabled:opacity-60"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                <Send className="h-4 w-4" aria-hidden="true" />
+                <Send className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{isSubmitting ? 'Saving preference…' : 'Subscribe to the digest'}</span>
               </button>
             </form>

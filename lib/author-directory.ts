@@ -1,7 +1,9 @@
 import 'server-only';
 
 import { cache } from 'react';
+import { AUTHORS, type Author } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { DEFAULT_LEGACY_SEEDS } from '@/lib/legacy/seeds';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getSupabasePublicClient } from '@/lib/supabase/server';
 import {
@@ -31,8 +33,38 @@ import {
 export { profileToAuthor } from './author-directory-core';
 export type { AuthorArchive, ProfileRow } from './author-directory-core';
 
+function seedProfiles(slug?: string): ProfileRow[] {
+  const normalizedSlug = slug?.trim().toLowerCase();
+  const byId = new Map<string, Author>();
+  for (const author of Object.values(AUTHORS)) {
+    byId.set(author.id.toLowerCase(), author);
+  }
+  for (const article of DEFAULT_LEGACY_SEEDS.articles) {
+    if (article.author?.id && !byId.has(article.author.id.toLowerCase())) {
+      byId.set(article.author.id.toLowerCase(), article.author);
+    }
+  }
+  return [...byId.values()]
+    .filter((author) => !normalizedSlug || author.id.toLowerCase() === normalizedSlug)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((author) => ({
+      slug: author.id,
+      display_name: author.name,
+      bio: author.bio,
+      role: author.role,
+      domain: author.domain,
+      institution: author.institution ?? '',
+      avatar_url: author.avatar,
+      orcid: author.orcid ?? '',
+      github: author.github ?? '',
+      website: author.website ?? '',
+      scholar: author.scholar ?? '',
+      created_at: '2026-01-01T00:00:00.000Z',
+    }));
+}
+
 async function queryProfiles(slug?: string): Promise<ProfileRow[]> {
-  if (!isSupabaseConfigured) return [];
+  if (!isSupabaseConfigured) return seedProfiles(slug);
   let query = getSupabasePublicClient().from('profiles').select(PROFILE_COLUMNS).eq('published', true);
   if (slug) query = query.eq('slug', slug);
   else query = query.order('display_name', { ascending: true });

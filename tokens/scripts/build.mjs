@@ -118,9 +118,9 @@ const video = {
   font: {
     latin: resolved.primitive.typography.family,
     bengali: {
-      editorial: "'Noto Serif Bengali', serif",
-      interface: "'Noto Sans Bengali', sans-serif",
-      metadata: "'Noto Sans Bengali', sans-serif",
+      editorial: "'Noto Serif Bengali', 'Hind Siliguri', serif",
+      interface: "'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif",
+      metadata: "'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif",
     },
     arabic: {
       editorial: "'Noto Naskh Arabic', serif",

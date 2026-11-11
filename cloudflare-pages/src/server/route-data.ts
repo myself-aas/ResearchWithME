@@ -19,7 +19,7 @@
  * themselves: parent and child loaders can run in parallel, and
  * `queryRoute` can invoke a child alone.
  */
-import { matchRoutes, type LoaderFunction, type RouteObject } from 'react-router-dom';
+import { matchRoutes, redirect, type LoaderFunction, type RouteObject } from 'react-router-dom';
 import { createStaticHandler } from 'react-router-dom/server';
 import type { RequestContext } from './context';
 import { loadPublicRoute } from './loaders/public';
@@ -55,6 +55,7 @@ function serverLoaders(ctx: RequestContext): LoaderMap {
 
   return {
     home: publicLoader('home'),
+    articles: () => redirect('/', 308),
     category: publicLoader('category'),
     post: publicLoader('post'),
     paper: publicLoader('paper'),
@@ -67,6 +68,9 @@ function serverLoaders(ctx: RequestContext): LoaderMap {
     bookmarks: publicLoader('bookmarks'),
     cite: publicLoader('cite'),
     'api-docs': publicLoader('api-docs'),
+    about: publicLoader('about'),
+    contact: publicLoader('contact'),
+    privacy: publicLoader('privacy'),
   };
 }
 

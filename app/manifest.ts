@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Open-access research reviews, reproducible papers, and repository teardowns.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#F8F7F3',
-    theme_color: '#4F46E5',
+    background_color: '#FAF9F6',
+    theme_color: '#FAF9F6',
     lang: 'en',
     categories: ['education', 'books', 'productivity'],
     icons: [
@@ -23,6 +23,24 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: '180x180',
         type: 'image/png',
         purpose: 'any',
+      },
+      {
+        src: '/icon-192.png',
+        sizes: '192x192',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/icon-512.png',
+        sizes: '512x512',
+        type: 'image/png',
+        purpose: 'maskable',
       },
     ],
   };

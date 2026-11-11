@@ -17,24 +17,24 @@ const exploreLinks = [
 
 export default function BlogFooter() {
   return (
-    <footer className="dark-surface mt-16 bg-stone-900 text-stone-200">
+    <footer className="mt-16 border-t border-line bg-surface text-ink">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <NewsletterSignup />
 
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 rounded-md" aria-label="ResearchWithMe home">
-              <BrandLogo variant="light" size="md" showText={true} />
+            <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="πeme — ResearchWithMe home">
+              <BrandLogo size="md" showText={true} />
             </Link>
 
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-stone-300">
-              An independent, open-access platform where expert writers explain research papers, GitHub repositories, and the rest of the literature — across STEM, health, sociology, and research policy.
+            <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-secondary">
+              An independent, open-access platform where verified specialists deconstruct research papers, GitHub repositories, and technical literature across STEM, health, sociology, and policy.
             </p>
 
-            <dl className="mt-5 space-y-1.5 text-sm text-stone-300">
+            <dl className="mt-5 space-y-1.5 font-sans text-xs text-ink-secondary">
               <div>
                 <dt className="sr-only">Identifier</dt>
-                <dd>ISSN 2994-0821 (digital) · DOI prefix 10.5555/rwm</dd>
+                <dd className="font-mono">ISSN 2994-0821 (digital) · DOI prefix 10.5555/rwm</dd>
               </div>
               <div>
                 <dt className="sr-only">License</dt>
@@ -42,38 +42,38 @@ export default function BlogFooter() {
               </div>
               <div>
                 <dt className="sr-only">Funding model</dt>
-                <dd>No paywalls · no behavioural ad trackers · community funded</dd>
+                <dd>Diamond Open Access · no paywalls · no behavioural ad trackers</dd>
               </div>
             </dl>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href="/write"
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-600"
+                className="inline-flex min-h-11 items-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
               >
                 <PenSquare className="h-4 w-4" aria-hidden="true" />
                 <span>Write a review</span>
               </Link>
               <Link
                 href="/dashboard/access"
-                className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-600 px-4 py-2 text-sm font-semibold text-stone-100 transition-colors hover:border-stone-500 hover:bg-stone-800"
+                className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-canvas px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-surface-subtle"
               >
-                <ShieldCheck className="h-4 w-4 text-emerald-400" aria-hidden="true" />
+                <ShieldCheck className="h-4 w-4 text-brand" aria-hidden="true" />
                 <span>Apply to write</span>
               </Link>
             </div>
           </div>
 
           <nav aria-labelledby="footer-domains">
-            <h2 id="footer-domains" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
-              Domains
+            <h2 id="footer-domains" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+              Editorial Columns
             </h2>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-3 space-y-2 font-sans text-sm">
               {CATEGORIES.map((category) => (
                 <li key={category}>
                   <Link
                     href={`/category/${categoryToSlug(category)}`}
-                    className="text-stone-300 underline-offset-4 transition-colors hover:text-white hover:underline"
+                    className="text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
                   >
                     {category}
                   </Link>
@@ -83,15 +83,15 @@ export default function BlogFooter() {
           </nav>
 
           <nav aria-labelledby="footer-explore">
-            <h2 id="footer-explore" className="text-sm font-semibold uppercase tracking-wide text-stone-100">
+            <h2 id="footer-explore" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
               Explore the platform
             </h2>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-3 space-y-2 font-sans text-sm">
               {exploreLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-stone-300 underline-offset-4 transition-colors hover:text-white hover:underline"
+                    className="text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
                   >
                     {link.label}
                   </Link>
@@ -101,18 +101,27 @@ export default function BlogFooter() {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-stone-700 pt-6 text-sm text-stone-300 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 ResearchWithMe Publication Collective. Research published under open access.</p>
+        <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 font-sans text-xs text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 ResearchWithMe Publication Collective. Published under CC BY 4.0 open access.</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link href="/editorial-board" className="underline-offset-4 hover:text-white hover:underline">
+            <Link href="/about" className="underline-offset-4 hover:text-ink hover:underline">
+              About
+            </Link>
+            <Link href="/editorial-board" className="underline-offset-4 hover:text-ink hover:underline">
               Editorial standards
             </Link>
-            <Link href="/cite" className="underline-offset-4 hover:text-white hover:underline">
+            <Link href="/privacy" className="underline-offset-4 hover:text-ink hover:underline">
+              Privacy
+            </Link>
+            <Link href="/contact" className="underline-offset-4 hover:text-ink hover:underline">
+              Contact
+            </Link>
+            <Link href="/cite" className="underline-offset-4 hover:text-ink hover:underline">
               Citation export
             </Link>
-            <Link href="/assistant" className="inline-flex items-center gap-1 underline-offset-4 hover:text-white hover:underline">
-              <span>Assistant</span>
-              <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+            <Link href="/assistant" className="inline-flex items-center gap-1 underline-offset-4 hover:text-ink hover:underline">
+              <span>Synthesis</span>
+              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           </div>
         </div>

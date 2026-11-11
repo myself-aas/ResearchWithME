@@ -32,5 +32,21 @@
   "workspace.synthesis": "সমুলেসিস",
   "workspace.inspector": "পরিদর্শক",
   "workspace.collapse": "প্যানেল থু গন",
-  "workspace.expand": "প্যানেল বাড়াও"
+  "workspace.expand": "প্যানেল বাড়াও",
+  "cmdk.trigger": "আর্কাইভ অনুসন্ধান",
+  "cmdk.placeholder": "প্রবন্ধ, গবেষণাপত্র, ডিওআই, অথবা বিশেষজ্ঞ অনুসন্ধান করুন…",
+  "cmdk.empty": "মিলে যাওয়া কোনো পাণ্ডুলিপি, গবেষণাপত্র বা বিশেষজ্ঞ পাওয়া যায়নি",
+  "cmdk.group.articles": "প্রযুক্তিগত পর্যালোচনা ও বিশ্লেষণ",
+  "cmdk.group.papers": "পিয়ার-রিভিউড আর্কাইভ",
+  "cmdk.group.specialists": "যাচাইকৃত বিশেষজ্ঞবৃন্দ",
+  "cmdk.group.routes": "সম্পাদকীয় বিভাগসমূহ",
+  "nav.readingList": "পাঠতালিকা",
+  "nav.digestSubscribed": "ডাইজেস্ট সক্রিয়",
+  "theme.switchLight": "হালকা আর্কাইভ থিমে যান",
+  "theme.switchDark": "অন্ধকার অবসিডিয়ান থিমে যান",
+  "reader.cite": "উদ্ধৃতি তথ্য",
+  "reader.copyBibtex": "বিবটেক্স কপি করুন",
+  "reader.copyApa": "এপিএ উদ্ধৃতি কপি করুন",
+  "reader.copyDoi": "শনাক্তকারী কপি করুন",
+  "reader.copied": "ক্লিপবোর্ডে কপি হয়েছে"
 }

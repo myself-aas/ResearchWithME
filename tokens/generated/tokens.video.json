@@ -1,40 +1,40 @@
 {
   "color": {
-    "canvas": "#F8F7F3",
-    "surface": "#FFFFFF",
-    "surface-subtle": "#F0EEE8",
-    "text-primary": "#161C1A",
-    "text-secondary": "#555955",
+    "canvas": "#FAF9F6",
+    "surface": "#F3F1EC",
+    "surface-subtle": "#EAE7DF",
+    "text-primary": "#121214",
+    "text-secondary": "#5C5C63",
     "action": {
-      "primary": "#4F46E5",
-      "primary-hover": "#4338CA",
-      "primary-pressed": "#312E81",
+      "primary": "#1D4ED8",
+      "primary-hover": "#1E40AF",
+      "primary-pressed": "#1E3A8A",
       "on-primary": "#FFFFFF",
-      "destructive": "#DC2626",
-      "link": "#4338CA",
-      "visited": "#6D28D9"
+      "destructive": "#B91C1C",
+      "link": "#1D4ED8",
+      "visited": "#1E40AF"
     },
-    "focus": "#4F46E5"
+    "focus": "#1D4ED8"
   },
   "surface": {
-    "background": "#FFFFFF",
-    "raised": "#FFFFFF"
+    "background": "#F3F1EC",
+    "raised": "#FAF9F6"
   },
   "text": {
-    "primary": "#161C1A",
-    "secondary": "#555955",
+    "primary": "#121214",
+    "secondary": "#5C5C63",
     "onAction": "#FFFFFF"
   },
   "font": {
     "latin": {
-      "editorial": "Newsreader, Georgia, serif",
-      "interface": "Inter, system-ui, sans-serif",
-      "metadata": "JetBrains Mono, ui-monospace, monospace"
+      "editorial": "'Newsreader', Georgia, serif",
+      "interface": "'Inter', system-ui, sans-serif",
+      "metadata": "'JetBrains Mono', monospace"
     },
     "bengali": {
-      "editorial": "'Noto Serif Bengali', serif",
-      "interface": "'Noto Sans Bengali', sans-serif",
-      "metadata": "'Noto Sans Bengali', sans-serif"
+      "editorial": "'Noto Serif Bengali', 'Hind Siliguri', serif",
+      "interface": "'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif",
+      "metadata": "'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif"
     },
     "arabic": {
       "editorial": "'Noto Naskh Arabic', serif",
@@ -98,7 +98,7 @@
   },
   "layout": {
     "max-width": {
-      "reading": "48rem",
+      "reading": "68ch",
       "workspace": "90rem",
       "graph": "108rem"
     },

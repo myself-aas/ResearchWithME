@@ -7,6 +7,7 @@ interface PageStateProps {
   code?: string;
   tone?: 'neutral' | 'error' | 'success';
   role?: 'status' | 'alert';
+  as?: 'main' | 'div';
   primaryAction?: { href: string; label: string };
   secondaryAction?: { href: string; label: string };
   children?: ReactNode;
@@ -19,13 +20,14 @@ export default function PageState({
   code,
   tone = 'neutral',
   role = 'status',
+  as: Root = 'main',
   primaryAction = { href: '/', label: 'Return to the platform' },
   secondaryAction,
   children,
   className,
 }: PageStateProps) {
   return (
-    <main
+    <Root
       className={cn(
         'mx-auto flex min-h-[62vh] w-full max-w-3xl flex-col justify-center px-4 py-16 sm:px-6',
         className,
@@ -73,6 +75,6 @@ export default function PageState({
         </div>
         {children && <div className="mt-8">{children}</div>}
       </section>
-    </main>
+    </Root>
   );
 }

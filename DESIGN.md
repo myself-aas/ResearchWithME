@@ -5,53 +5,53 @@ version: 3.1.0
 status: stable-candidate
 updated: 2026-11-09
 colors:
-  canvas: "#F8F7F3" # neutral-50, warm parchment
-  surface: "#FFFFFF" # neutral-0
-  surface-subtle: "#F0EEE8" # neutral-100
-  surface-raised: "#FFFFFF"
-  surface-inverse: "#161C1A" # neutral-900
-  text-primary: "#161C1A" # neutral-900
-  text-secondary: "#555955" # neutral-600, AA on light surfaces
-  text-tertiary: "#737571" # neutral-500
-  text-inverse: "#FFFFFF"
-  border-subtle: "#DEDCD5" # neutral-200
-  border-strong: "#9D9C97" # neutral-400
-  focus: "#4F46E5" # indigo-600
-  selection: "#E0E7FF" # indigo-100
-  primary: "#4F46E5" # indigo-600, action primary
-  primary-hover: "#4338CA" # indigo-700
-  primary-pressed: "#312E81" # indigo-900
+  canvas: "#FAF9F6" # Archival Paper background
+  surface: "#F3F1EC" # Archival Paper surface
+  surface-subtle: "#EAE7DF"
+  surface-raised: "#FAF9F6"
+  surface-inverse: "#121214"
+  text-primary: "#121214" # Ink
+  text-secondary: "#5C5C63" # Muted, AA on light surfaces
+  text-tertiary: "#5C5C63"
+  text-inverse: "#FAF9F6"
+  border-subtle: "rgba(18, 18, 20, 0.10)" # Hairline border
+  border-strong: "rgba(18, 18, 20, 0.22)"
+  focus: "#1D4ED8" # Single accent (Light)
+  selection: "#DBEAFE"
+  primary: "#1D4ED8" # Single accent (Light)
+  primary-hover: "#1E40AF"
+  primary-pressed: "#1E3A8A"
   on-primary: "#FFFFFF"
-  destructive: "#DC2626" # red-600
-  link: "#4338CA" # indigo-700
-  visited: "#6D28D9" # violet-700
-  verified: "#059669" # emerald-600, trust verified
-  replicated: "#047857" # emerald-700
-  knowledge-source: "#4F46E5"
+  destructive: "#B91C1C"
+  link: "#1D4ED8"
+  visited: "#1E40AF"
+  verified: "#1D4ED8"
+  replicated: "#047857"
+  knowledge-source: "#1D4ED8"
   knowledge-evidence: "#059669"
-  knowledge-insight: "#0891B2" # cyan-600
-  knowledge-discussion: "#D97706" # amber-600
-  knowledge-contradiction: "#DC2626"
-  knowledge-publication: "#7C3AED" # violet-600
-  knowledge-archive: "#555955"
-  dark-canvas: "#0B100F" # neutral-950
-  dark-surface: "#161C1A"
-  dark-surface-subtle: "#252B29"
-  dark-surface-raised: "#2F3633"
-  dark-text-primary: "#F8F7F3"
-  dark-text-secondary: "#C6C4BD"
-  dark-text-tertiary: "#9D9C97"
-  dark-border-subtle: "#3B403D"
-  dark-border-strong: "#737571"
-  dark-focus: "#A5B4FC" # indigo-300
-  dark-selection: "#312E81"
+  knowledge-insight: "#0891B2"
+  knowledge-discussion: "#D97706"
+  knowledge-contradiction: "#B91C1C"
+  knowledge-publication: "#1E40AF"
+  knowledge-archive: "#5C5C63"
+  dark-canvas: "#0C0D10" # Obsidian background
+  dark-surface: "#14161B" # Obsidian surface
+  dark-surface-subtle: "#1B1E25"
+  dark-surface-raised: "#181B22"
+  dark-text-primary: "#F2F2F5" # Obsidian ink
+  dark-text-secondary: "#9496A1" # Obsidian muted
+  dark-text-tertiary: "#9496A1"
+  dark-border-subtle: "rgba(255, 255, 255, 0.10)" # Obsidian hairline
+  dark-border-strong: "rgba(255, 255, 255, 0.22)"
+  dark-focus: "#60A5FA" # Single accent (Dark)
+  dark-selection: "#1E3A8A"
 typography:
   editorial:
-    fontFamily: "Newsreader, Georgia, serif"
+    fontFamily: "'Newsreader', Georgia, serif"
   interface:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Inter', system-ui, sans-serif"
   metadata:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontFamily: "'JetBrains Mono', monospace"
   display:
     fontFamily: "Newsreader, Georgia, serif"
     fontSize: "clamp(2.5rem, 5vw, 4.5rem)"

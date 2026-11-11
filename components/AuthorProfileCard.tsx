@@ -10,8 +10,8 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Author } from '@/lib/blog-data';
-
 import AuthorAvatar from '@/components/AuthorAvatar';
+import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
 
 interface AuthorProfileCardProps {
   author: Author;
@@ -55,7 +55,7 @@ function ProfileLinks({ author }: { author: Author }) {
   if (links.length === 0) return null;
 
   return (
-    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+    <ul className="flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs">
       {links.map((link) => (
         <li key={link.href}>
           <a
@@ -100,34 +100,37 @@ export default function AuthorProfileCard({
 
   if (compact) {
     return (
-      <section aria-labelledby="author-compact-heading" className="rounded-lg border border-stone-200 bg-white p-5">
+      <section aria-labelledby="author-compact-heading" className="rounded-sm border border-line bg-surface p-5">
         <div className="flex items-start gap-3">
           <AuthorAvatar author={author} size="md" showControls={false} />
           <div className="min-w-0">
-            <Heading id="author-compact-heading" className="font-serif text-lg font-semibold text-stone-900">
+            <Heading id="author-compact-heading" className="font-serif text-lg font-semibold text-ink">
               <Link href={`/author/${author.id}`} className="hover:text-brand">
                 {author.name}
               </Link>
             </Heading>
-            <p className="text-sm font-medium text-stone-700">{author.role}</p>
-            {author.institution && <p className="text-sm text-stone-600">{author.institution}</p>}
+            <p className="font-mono text-xs font-medium text-brand">{author.role}</p>
+            {author.institution && <p className="mt-0.5 font-sans text-xs text-ink-secondary">{author.institution}</p>}
           </div>
         </div>
 
-        <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-stone-700">{author.bio}</p>
+        <p className="mt-3 font-sans text-sm leading-relaxed text-ink-secondary">
+          {author.bio.length > 180 ? `${author.bio.slice(0, 177)}…` : author.bio}
+        </p>
 
-        {badge && (
-          <p className="mt-3 flex items-start gap-1.5 text-sm text-emerald-900">
-            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>{badge.label}</span>
-          </p>
-        )}
+        <div className="mt-3">
+          <SpecialistBadgePopover author={author} />
+        </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-3 text-sm">
-          <span className="text-stone-600">{metrics?.totalArticles ?? author.articleCount} articles</span>
+        <div className="mt-3">
+          <ProfileLinks author={author} />
+        </div>
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3 font-mono text-xs">
+          <span className="text-ink-secondary">{metrics?.totalArticles ?? author.articleCount} articles</span>
           <Link
             href={`/author/${author.id}`}
-            className="inline-flex min-h-9 items-center gap-1 font-medium text-brand underline-offset-4 hover:underline"
+            className="inline-flex min-h-9 items-center gap-1 font-sans font-medium text-brand underline-offset-4 hover:underline"
           >
             <span>Full profile</span>
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -138,22 +141,25 @@ export default function AuthorProfileCard({
   }
 
   return (
-    <section aria-labelledby="author-profile-heading" className="rounded-lg border border-stone-200 bg-white p-6 sm:p-8">
+    <section aria-labelledby="author-profile-heading" className="rounded-sm border border-line bg-surface p-6 sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
           <AuthorAvatar author={author} size="xl" showControls={true} />
           <div className="min-w-0">
-            <Heading id="author-profile-heading" className="font-serif text-2xl font-bold tracking-tight text-stone-900 sm:text-3xl">
-              {author.name}
-            </Heading>
-            <p className="mt-1 text-base font-medium text-stone-800">{author.role}</p>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Heading id="author-profile-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+                {author.name}
+              </Heading>
+              <SpecialistBadgePopover author={author} />
+            </div>
+            <p className="mt-1 font-mono text-xs font-medium text-brand">{author.role}</p>
             {author.institution && (
-              <p className="mt-1 flex items-start gap-1.5 text-sm text-stone-600">
+              <p className="mt-1 flex items-start gap-1.5 font-sans text-sm text-ink-secondary">
                 <Building2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>{author.institution}</span>
               </p>
             )}
-            <p className="mt-2 max-w-2xl text-sm text-stone-600">{author.domain}</p>
+            <p className="mt-2 max-w-2xl font-sans text-xs text-ink-secondary">{author.domain}</p>
           </div>
         </div>
 
@@ -161,14 +167,14 @@ export default function AuthorProfileCard({
           <button
             type="button"
             onClick={shareProfile}
-            className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400 hover:bg-stone-50"
+            className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-canvas px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
           >
             <Share2 className="h-4 w-4" aria-hidden="true" />
             <span>Share profile</span>
           </button>
           <Link
             href="/write"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+            className="inline-flex min-h-11 items-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
           >
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             <span>Writer studio</span>
@@ -176,69 +182,75 @@ export default function AuthorProfileCard({
         </div>
       </div>
 
-      <p role="status" aria-live="polite" className="mt-2 min-h-5 text-sm text-stone-600">
+      <p role="status" aria-live="polite" className="mt-2 min-h-5 font-sans text-xs text-ink-secondary">
         {shareMessage}
       </p>
 
-      <dl className="mt-6 grid gap-6 border-y border-stone-200 py-5 sm:grid-cols-4">
+      <dl className="mt-6 grid gap-6 border-y border-line py-5 sm:grid-cols-4">
         <div>
-          <dt className="text-sm text-stone-600">Articles</dt>
-          <dd className="mt-1 font-serif text-2xl font-semibold text-stone-900">
+          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Articles</dt>
+          <dd className="mt-1 font-mono text-2xl font-semibold text-ink">
             {metrics?.totalArticles ?? author.articleCount}
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-stone-600">Likes</dt>
-          <dd className="mt-1 font-serif text-2xl font-semibold text-stone-900">
+          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Likes</dt>
+          <dd className="mt-1 font-mono text-2xl font-semibold text-ink">
             {metrics?.totalLikes ?? '—'}
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-stone-600">Comments</dt>
-          <dd className="mt-1 font-serif text-2xl font-semibold text-stone-900">
+          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Comments</dt>
+          <dd className="mt-1 font-mono text-2xl font-semibold text-ink">
             {metrics?.totalComments ?? '—'}
           </dd>
         </div>
         <div>
-          <dt className="text-sm text-stone-600">Contributor since</dt>
-          <dd className="mt-1 text-base font-semibold text-stone-900">{author.joinedDate}</dd>
+          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Contributor since</dt>
+          <dd className="mt-1 font-mono text-sm font-semibold text-ink">{author.joinedDate}</dd>
         </div>
       </dl>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
-          <h2 className="text-sm font-semibold text-stone-900">Research background</h2>
-          <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">{author.bio}</p>
+          <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            Research background
+          </h2>
+          <p className="mt-2 max-w-prose font-sans text-sm leading-relaxed text-ink-secondary">
+            {author.bio}
+          </p>
           <div className="mt-4">
             <ProfileLinks author={author} />
           </div>
         </div>
 
         {badge && (
-        <div>
-          <h2 className="text-sm font-semibold text-stone-900">Verification record</h2>
-          <p className="mt-2 flex items-start gap-1.5 text-sm font-medium text-emerald-900">
-            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-            <span>{badge.label}</span>
-          </p>
-          {badge.detail && (
-            <p className="mt-1 break-all font-mono text-sm text-stone-700">{badge.detail}</p>
-          )}
-          {badge.link && (
-            <a
-              href={badge.link}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="mt-2 inline-flex min-h-9 items-center gap-1 text-sm font-medium text-brand underline-offset-4 hover:underline"
-            >
-              <span>Public record</span>
-              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-            </a>
-          )}
-          <p className="mt-3 text-sm leading-relaxed text-stone-600">
-            Verification is shown as recorded in this prototype. Confirm credentials with the issuing registry before relying on them.
-          </p>
-        </div>
+          <div className="border-t border-line pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
+            <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+              Verification record
+            </h2>
+            <p className="mt-2 flex items-start gap-1.5 font-sans text-xs font-medium text-brand">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{badge.label}</span>
+            </p>
+            {badge.detail && (
+              <p className="mt-1 break-all font-mono text-xs text-ink">{badge.detail}</p>
+            )}
+            {badge.link && (
+              <a
+                href={badge.link}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="mt-2 inline-flex min-h-9 items-center gap-1 font-sans text-xs font-medium text-brand underline-offset-4 hover:underline"
+              >
+                <span>Public record</span>
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+              </a>
+            )}
+            <p className="mt-3 font-sans text-xs leading-relaxed text-ink-secondary">
+              Confirm credentials with the issuing registry when citing formal attestations.
+            </p>
+          </div>
         )}
       </div>
     </section>
