@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
-import AuthorArchive from '@/components/AuthorArchive';
+import AuthorArchiveLayout from '@/components/AuthorArchiveLayout';
 import AuthorImpactRadarChart from '@/components/AuthorImpactRadarChart';
 import AuthorProfileCard from '@/components/AuthorProfileCard';
 import BlogFooter from '@/components/BlogFooter';
@@ -95,7 +95,7 @@ export default async function AuthorDetailPage({ params }: PageProps) {
           totalComments={metrics.totalComments}
         />
 
-        <AuthorArchive articles={articles} />
+        <AuthorArchiveLayout articles={articles} />
 
         <p className="mt-10 border-t border-stone-200 pt-6 text-sm leading-relaxed text-stone-600">
           All reviews, benchmark replications, and technical essays attributed to {author.name} undergo editorial

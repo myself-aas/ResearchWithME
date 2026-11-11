@@ -23,7 +23,7 @@ export default function LocaleSwitcher() {
       <select
         id={selectId}
         dir="ltr"
-        className="min-h-11 rounded-sm border border-line bg-surface px-2.5 font-mono text-xs font-medium text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="min-h-11 max-sm:w-[4.5rem] rounded-sm border border-line bg-surface px-2.5 max-sm:px-1.5 font-mono text-xs font-medium text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         value={locale}
         onChange={(e) => setLocale(e.target.value)}
       >

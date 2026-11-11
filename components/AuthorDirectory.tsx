@@ -129,7 +129,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
           </button>
         </div>
       ) : (
-        <ul className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <ul data-layout-grid="author-cards" className="mt-8 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
           {filteredAuthors.map((author) => (
             <li key={author.id} className="flex">
               <article className="flex w-full flex-col justify-between rounded-sm border border-line bg-surface p-6 transition-colors hover:border-brand">

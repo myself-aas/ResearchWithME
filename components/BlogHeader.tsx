@@ -110,7 +110,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur-xs">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-16 items-center justify-between gap-3">
+        <div className="flex min-h-16 items-center justify-between gap-1.5 sm:gap-3">
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-none"
@@ -138,7 +138,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             </ul>
           </nav>
 
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <button
               type="button"
               onClick={openPalette}

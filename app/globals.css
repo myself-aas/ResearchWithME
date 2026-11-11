@@ -144,12 +144,13 @@
   --shadow-floating: var(--pieme-shadow-floating);
   --shadow-dialog: var(--pieme-shadow-dialog);
 
-  /* Breakpoints — πeme v3.1 (sm tightened to 36rem; md–2xl match defaults). */
-  --breakpoint-sm: var(--pieme-layout-breakpoint-sm);
-  --breakpoint-md: var(--pieme-layout-breakpoint-md);
-  --breakpoint-lg: var(--pieme-layout-breakpoint-lg);
-  --breakpoint-xl: var(--pieme-layout-breakpoint-xl);
-  --breakpoint-2xl: var(--pieme-layout-breakpoint-2xl);
+  /* Breakpoints are literal because Tailwind emits them into media-query prelude values;
+     var() is invalid there. Keep these equal to tokens/src/layout.json. */
+  --breakpoint-sm: 36rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
 
   /* Motion — πeme v3.1 easing scale (generated). */
   --ease-standard: var(--pieme-motion-easing-standard);
