@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Bookmark, Check, FileText, GraduationCap, Quote, Search, Share2 } from 'lucide-react';
-import { AnimatePresence, LayoutGroup, LazyMotion, MotionConfig, domMax, m } from 'motion/react';
+import { LayoutGroup, LazyMotion, MotionConfig, domMax, m } from 'motion/react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { PUBLICATIONS_DATA, Publication } from '@/lib/research-data';
@@ -27,7 +27,6 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
   const savedPaperIds = usePreferencesStore((state) => state.savedPaperIds);
   const toggleSavedPaper = usePreferencesStore((state) => state.toggleSavedPaper);
 
-  const [hasMounted, setHasMounted] = useState(false);
   const [papers, setPapers] = useState<Publication[]>(initialPapers);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +41,6 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
   );
 
   useEffect(() => {
-    setHasMounted(true);
     let active = true;
     async function loadPapers() {
       try {
@@ -262,136 +260,126 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                 </button>
               </div>
             ) : (
-              <m.ul layout className="mt-6 divide-y divide-line border-y border-line">
-                <AnimatePresence mode="popLayout" initial={false}>
-                  {filteredPapers.map((paper) => {
-                    const isSaved = savedIds.includes(paper.id);
-                    const isCopied = copiedDoi === paper.id;
+              <ul data-layout-grid="paper-results" className="mt-6 divide-y divide-line border-y border-line">
+                {filteredPapers.map((paper) => {
+                  const isSaved = savedIds.includes(paper.id);
+                  const isCopied = copiedDoi === paper.id;
 
-                    return (
-                      <m.li
-                        key={paper.id}
-                        layout="position"
-                        initial={hasMounted ? { opacity: 0, y: 8 } : false}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.18, ease: [0.2, 0, 0, 1] }}
-                        className="py-8"
-                      >
-                        <article aria-labelledby={`paper-${paper.id}-title`} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
-                          <div className="min-w-0">
-                            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
-                              <span className="font-semibold text-brand">{paper.topic}</span>
-                              <span aria-hidden="true">·</span>
-                              <span>{paper.journal}</span>
-                              <span aria-hidden="true">·</span>
-                              <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
-                              <span aria-hidden="true">·</span>
-                              <span>{paper.readTime}</span>
+                  return (
+                    <li key={paper.id} className="py-8">
+                      <article aria-labelledby={`paper-${paper.id}-title`} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem]">
+                        <div className="min-w-0">
+                          <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+                            <span className="font-semibold text-brand">{paper.topic}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{paper.journal}</span>
+                            <span aria-hidden="true">·</span>
+                            <time dateTime={paper.publishedDate}>{paper.publishedDate}</time>
+                            <span aria-hidden="true">·</span>
+                            <span>{paper.readTime}</span>
+                          </p>
+
+                          <h2 id={`paper-${paper.id}-title`} className="mt-2 font-serif text-2xl font-semibold leading-snug text-ink sm:text-3xl">
+                            <Link href={`/paper/${paper.slug}`} className="transition-colors hover:text-brand">
+                              {paper.title}
+                            </Link>
+                          </h2>
+
+                          {paper.subtitle && (
+                            <p className="mt-2 max-w-3xl font-sans text-base leading-relaxed text-ink-secondary">
+                              {paper.subtitle}
                             </p>
+                          )}
 
-                            <h2 id={`paper-${paper.id}-title`} className="mt-2 font-serif text-2xl font-semibold leading-snug text-ink sm:text-3xl">
-                              <Link href={`/paper/${paper.slug}`} className="transition-colors hover:text-brand">
-                                {paper.title}
-                              </Link>
-                            </h2>
+                          <p className="mt-4 max-w-[65ch] font-sans text-sm leading-relaxed text-ink-secondary">
+                            {paper.abstract}
+                          </p>
 
-                            {paper.subtitle && (
-                              <p className="mt-2 max-w-3xl font-sans text-base leading-relaxed text-ink-secondary">
-                                {paper.subtitle}
-                              </p>
-                            )}
-
-                            <p className="mt-4 max-w-[65ch] font-sans text-sm leading-relaxed text-ink-secondary">
-                              {paper.abstract}
-                            </p>
-
-                            <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs text-ink-secondary">
-                              <span className="font-semibold text-ink">Authors:</span>
-                              {paper.authors.map((author, index) => (
-                                <span key={`${author.name}-${index}`} className="inline-flex items-center gap-1">
-                                  <span>{author.name}</span>
-                                  {author.orcid && (
-                                    <>
-                                      <GraduationCap className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-                                      <span className="sr-only">ORCID {author.orcid}</span>
-                                    </>
-                                  )}
-                                  {index < paper.authors.length - 1 && <span aria-hidden="true">,</span>}
-                                </span>
-                              ))}
-                            </p>
-                          </div>
-
-                          <div className="flex flex-col gap-4 border-t border-line pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
-                            <dl className="grid grid-cols-2 gap-3 font-mono text-xs lg:grid-cols-1">
-                              <div>
-                                <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
-                                <dd className="mt-0.5 break-all text-ink">{paper.doi}</dd>
-                              </div>
-                              <div>
-                                <dt className="uppercase tracking-wider text-ink-secondary">Citations</dt>
-                                <dd className="mt-0.5 font-semibold text-ink">{paper.citationCount}</dd>
-                              </div>
-                              <div>
-                                <dt className="uppercase tracking-wider text-ink-secondary">License</dt>
-                                <dd className="mt-0.5 text-ink">{paper.license}</dd>
-                              </div>
-                            </dl>
-
-                            <div className="flex flex-wrap items-center gap-2">
-                              <Link
-                                href={`/paper/${paper.slug}`}
-                                className="inline-flex min-h-11 items-center gap-1.5 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
-                              >
-                                <span>Read the paper</span>
-                                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                              </Link>
-                              <button
-                                type="button"
-                                onClick={() => handleToggleSave(paper.id)}
-                                aria-pressed={isSaved}
-                                className={`inline-flex h-11 w-11 items-center justify-center rounded-sm border transition-colors ${
-                                  isSaved
-                                    ? 'border-brand bg-brand text-on-primary'
-                                    : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
-                                }`}
-                              >
-                                <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
-                                <span className="sr-only">
-                                  {isSaved ? 'Remove from reading list' : 'Save to reading list'}
-                                </span>
-                              </button>
-                            </div>
-
-                            <div className="flex flex-wrap items-center gap-3 font-sans text-xs">
-                              <button
-                                type="button"
-                                onClick={() => handleCopyDoi(paper.doi, paper.id)}
-                                className="inline-flex min-h-10 items-center gap-1.5 font-medium text-ink-secondary underline-offset-4 hover:text-ink hover:underline"
-                              >
-                                {isCopied ? (
-                                  <Check className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-                                ) : (
-                                  <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-xs text-ink-secondary">
+                            <span className="font-semibold text-ink">Authors:</span>
+                            {paper.authors.map((author, index) => (
+                              <span key={`${author.name}-${index}`} className="inline-flex items-center gap-1">
+                                <span>{author.name}</span>
+                                {author.orcid && (
+                                  <>
+                                    <GraduationCap className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+                                    <span className="sr-only">ORCID {author.orcid}</span>
+                                  </>
                                 )}
-                                <span>{isCopied ? 'DOI copied' : 'Copy DOI link'}</span>
-                              </button>
-                              <Link
-                                href={`/cite?article=${encodeURIComponent(paper.slug)}`}
-                                className="inline-flex min-h-10 items-center gap-1.5 font-medium text-ink-secondary underline-offset-4 hover:text-ink hover:underline"
-                              >
-                                <Quote className="h-3.5 w-3.5" aria-hidden="true" />
-                                <span>Cite</span>
-                              </Link>
+                                {index < paper.authors.length - 1 && <span aria-hidden="true">,</span>}
+                              </span>
+                            ))}
+                          </p>
+                        </div>
+
+                        <div className="flex flex-col gap-4 border-t border-line pt-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0">
+                          <dl className="grid grid-cols-2 gap-3 font-mono text-xs lg:grid-cols-1">
+                            <div>
+                              <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
+                              <dd className="mt-0.5 break-all text-ink">{paper.doi}</dd>
                             </div>
+                            <div>
+                              <dt className="uppercase tracking-wider text-ink-secondary">Citations</dt>
+                              <dd className="mt-0.5 font-semibold text-ink">{paper.citationCount}</dd>
+                            </div>
+                            <div>
+                              <dt className="uppercase tracking-wider text-ink-secondary">License</dt>
+                              <dd className="mt-0.5 text-ink">{paper.license}</dd>
+                            </div>
+                          </dl>
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Link
+                              href={`/paper/${paper.slug}`}
+                              className="inline-flex min-h-11 items-center gap-1.5 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+                            >
+                              <span>Read the paper</span>
+                              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => handleToggleSave(paper.id)}
+                              aria-pressed={isSaved}
+                              className={`inline-flex h-11 w-11 items-center justify-center rounded-sm border transition-colors ${
+                                isSaved
+                                  ? 'border-brand bg-brand text-on-primary'
+                                  : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
+                              }`}
+                            >
+                              <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} aria-hidden="true" />
+                              <span className="sr-only">
+                                {isSaved ? 'Remove from reading list' : 'Save to reading list'}
+                              </span>
+                            </button>
                           </div>
-                        </article>
-                      </m.li>
-                    );
-                  })}
-                </AnimatePresence>
-              </m.ul>
+
+                          <div className="flex flex-wrap items-center gap-3 font-sans text-xs">
+                            <button
+                              type="button"
+                              onClick={() => handleCopyDoi(paper.doi, paper.id)}
+                              className="inline-flex min-h-10 items-center gap-1.5 font-medium text-ink-secondary underline-offset-4 hover:text-ink hover:underline"
+                            >
+                              {isCopied ? (
+                                <Check className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+                              ) : (
+                                <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
+                              )}
+                              <span>{isCopied ? 'DOI copied' : 'Copy DOI link'}</span>
+                            </button>
+                            <Link
+                              href={`/cite?article=${encodeURIComponent(paper.slug)}`}
+                              className="inline-flex min-h-10 items-center gap-1.5 font-medium text-ink-secondary underline-offset-4 hover:text-ink hover:underline"
+                            >
+                              <Quote className="h-3.5 w-3.5" aria-hidden="true" />
+                              <span>Cite</span>
+                            </Link>
+                          </div>
+                        </div>
+                      </article>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
 
             <section aria-labelledby="papers-methodology-heading" className="mt-14 border-t border-line pt-8">

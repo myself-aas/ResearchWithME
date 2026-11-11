@@ -1,6 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import AuthorArchive from '@/components/AuthorArchive';
+import AuthorArchiveLayout from '@/components/AuthorArchiveLayout';
 import AuthorImpactRadarChart from '@/components/AuthorImpactRadarChart';
 import AuthorProfileCard from '@/components/AuthorProfileCard';
 import BlogFooter from '@/components/BlogFooter';
@@ -53,7 +53,7 @@ export default function AuthorRoute() {
           totalComments={metrics.totalComments}
         />
 
-        <AuthorArchive articles={articles} />
+        <AuthorArchiveLayout articles={articles} />
       </main>
 
       <BlogFooter />

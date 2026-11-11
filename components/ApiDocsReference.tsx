@@ -7,6 +7,7 @@
 import BlogFooter from '@/components/BlogFooter';
 import BlogHeader from '@/components/BlogHeader';
 import { API_CATALOG_PATH, API_GROUPS, OPENAPI_PATH } from '@/lib/api-catalog';
+import SectionNavigation from '@/components/layout/SectionNavigation';
 import { API_OPERATIONS, OPENAPI_DOCUMENT, type ApiOperation } from '@/lib/openapi';
 import { SITE_URL } from '@/lib/seo';
 
@@ -43,7 +44,7 @@ export default function ApiDocsReference() {
   return (
     <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-stone-200 pb-8">
           <p className="font-sans text-xs font-semibold uppercase tracking-widest text-brand">Developer reference</p>
           <h1 className="mt-3 font-serif text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl">ResearchWithMe API</h1>
@@ -68,64 +69,66 @@ export default function ApiDocsReference() {
           <pre className="mt-2 overflow-x-auto rounded-md bg-stone-900 p-4 text-xs leading-relaxed text-stone-100"><code>{`curl '${SITE_URL}/api/articles?limit=5'`}</code></pre>
         </section>
 
-        <nav aria-label="API groups" className="border-b border-stone-200 py-7">
-          <h2 className="font-serif text-2xl font-bold text-stone-900">On this page</h2>
-          <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-2 font-sans text-sm">
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem]">
+          <div className="order-1 self-start lg:sticky lg:top-24 lg:col-start-2 lg:order-2">
+            <SectionNavigation
+              items={API_GROUPS.map((group) => ({ id: group.id, label: group.name }))}
+              ariaLabel="API groups"
+              heading="API groups"
+            />
+          </div>
+          <div data-layout-content="reading" className="order-2 min-w-0 max-w-[48rem] lg:col-start-1 lg:order-1">
             {API_GROUPS.map((group) => (
-              <li key={group.id}><a href={`#${group.id}`} className="text-brand underline underline-offset-4">{group.name}</a></li>
-            ))}
-          </ul>
-        </nav>
-
-        {API_GROUPS.map((group) => (
-          <section key={group.id} id={group.id} aria-labelledby={`${group.id}-heading`} className="scroll-mt-6 border-b border-stone-200 py-9">
-            <h2 id={`${group.id}-heading`} className="font-serif text-3xl font-bold text-stone-900">{group.name}</h2>
-            <p className="mt-2 font-sans text-sm leading-relaxed text-stone-700">{group.description}</p>
-            <div className="mt-6 space-y-6">
-              {API_OPERATIONS.filter((operation) => operation.group === group.id).map((operation) => {
-                const fields = requestFields(operation);
-                return (
-                  <article key={`${operation.method}-${operation.path}`} className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
-                    <h3 className="font-serif text-xl font-bold text-stone-900">{operation.summary}</h3>
-                    <p className="mt-2 break-all font-mono text-sm font-semibold text-brand">{operation.method.toUpperCase()} {operation.path}</p>
-                    <p className="mt-3 font-sans text-sm leading-relaxed text-stone-700">{operation.description}</p>
-                    {operation.parameters && (
-                      <div className="mt-4 font-sans text-sm text-stone-700">
-                        <h4 className="font-semibold text-stone-900">Parameters</h4>
-                        <ul className="mt-1.5 list-disc space-y-1 pl-5">
-                          {operation.parameters.map((parameter) => (
-                            <li key={`${parameter.in}-${parameter.name}`}>
-                              <code>{parameter.name}</code> ({parameter.in}{parameter.required ? ', required' : ', optional'}): {parameter.description}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {operation.requestBody && (
-                      <div className="mt-4 font-sans text-sm text-stone-700">
-                        <h4 className="font-semibold text-stone-900">JSON body{operation.requestBody.required ? '' : ' (optional)'}</h4>
-                        <p className="mt-1.5">{operation.requestBody.description}</p>
-                        {fields.length > 0 && (
-                          <ul className="mt-1.5 list-disc space-y-1 pl-5">
-                            {fields.map((field) => (
-                              <li key={field.name}><code>{field.name}</code> ({field.type}{field.required ? ', required' : ', optional'})</li>
-                            ))}
-                          </ul>
+              <section key={group.id} id={group.id} aria-labelledby={`${group.id}-heading`} className="scroll-mt-6 border-b border-stone-200 py-9">
+                <h2 id={`${group.id}-heading`} className="font-serif text-3xl font-bold text-stone-900">{group.name}</h2>
+                <p className="mt-2 font-sans text-sm leading-relaxed text-stone-700">{group.description}</p>
+                <div className="mt-6 space-y-6">
+                  {API_OPERATIONS.filter((operation) => operation.group === group.id).map((operation) => {
+                    const fields = requestFields(operation);
+                    return (
+                      <article key={`${operation.method}-${operation.path}`} className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
+                        <h3 className="font-serif text-xl font-bold text-stone-900">{operation.summary}</h3>
+                        <p className="mt-2 break-all font-mono text-sm font-semibold text-brand">{operation.method.toUpperCase()} {operation.path}</p>
+                        <p className="mt-3 font-sans text-sm leading-relaxed text-stone-700">{operation.description}</p>
+                        {operation.parameters && (
+                          <div className="mt-4 font-sans text-sm text-stone-700">
+                            <h4 className="font-semibold text-stone-900">Parameters</h4>
+                            <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                              {operation.parameters.map((parameter) => (
+                                <li key={`${parameter.in}-${parameter.name}`}>
+                                  <code>{parameter.name}</code> ({parameter.in}{parameter.required ? ', required' : ', optional'}): {parameter.description}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         )}
-                      </div>
-                    )}
-                    <div className="mt-4 font-sans text-sm text-stone-700">
-                      <h4 className="font-semibold text-stone-900">Responses</h4>
-                      <ul className="mt-1.5 list-disc space-y-1 pl-5">
-                        {Object.entries(operation.responses).map(([code, response]) => <li key={code}><code>{code}</code> — {response.description}</li>)}
-                      </ul>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-        ))}
+                        {operation.requestBody && (
+                          <div className="mt-4 font-sans text-sm text-stone-700">
+                            <h4 className="font-semibold text-stone-900">JSON body{operation.requestBody.required ? '' : ' (optional)'}</h4>
+                            <p className="mt-1.5">{operation.requestBody.description}</p>
+                            {fields.length > 0 && (
+                              <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                                {fields.map((field) => (
+                                  <li key={field.name}><code>{field.name}</code> ({field.type}{field.required ? ', required' : ', optional'})</li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        )}
+                        <div className="mt-4 font-sans text-sm text-stone-700">
+                          <h4 className="font-semibold text-stone-900">Responses</h4>
+                          <ul className="mt-1.5 list-disc space-y-1 pl-5">
+                            {Object.entries(operation.responses).map(([code, response]) => <li key={code}><code>{code}</code> — {response.description}</li>)}
+                          </ul>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+          </div>
+        </div>
       </main>
       <BlogFooter />
     </div>
