@@ -46,7 +46,6 @@ export function dynamic<P extends object>(
           alive = false;
         };
         // Import once per mounted instance; the module itself is cached by the bundler.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
       if (!Loaded) return Loading ? <Loading /> : null;
       return <Loaded {...props} />;

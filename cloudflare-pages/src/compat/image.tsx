@@ -36,6 +36,7 @@ export function ImageShim({
     : style;
 
   return (
+    // eslint-disable-next-line @next/next/no-img-element -- deliberate: the Pages build has no next/image optimizer
     <img
       src={src}
       alt={alt}

@@ -10,9 +10,17 @@ import kvNextTagCache from '@opennextjs/cloudflare/overrides/tag-cache/kv-next-t
  * eventually consistent, so a revalidation can take up to ~60 s to apply.
  * The memory queue regenerates stale pages through WORKER_SELF_REFERENCE.
  */
-export default defineCloudflareConfig({
+// The production Worker build must not depend on bun: OpenNext otherwise
+// auto-detects bun.lock and shells out to `bun run build`, which requires
+// bun on PATH (exit 127 on hosts without it — Node hosts always have npm).
+// `defineCloudflareConfig` only passes through the keys it knows, so the
+// buildCommand override is spread ON TOP of its result.
+export default {
+  ...defineCloudflareConfig({
   incrementalCache: kvIncrementalCache,
   tagCache: kvNextTagCache,
   queue: memoryQueue,
   enableCacheInterception: true,
-});
+  }),
+  buildCommand: 'npm run build',
+};

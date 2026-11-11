@@ -5,7 +5,7 @@
  * next/navigation and next/dynamic to cloudflare-pages/src/compat/*.
  */
 import { describe, expect, it } from 'vitest';
-import { act, createElement, useState } from 'react';
+import { act, createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createRoot } from 'react-dom/client';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';

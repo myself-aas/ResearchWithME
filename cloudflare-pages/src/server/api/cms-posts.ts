@@ -1,4 +1,3 @@
-import type { RequestContext } from '../context';
 import { rateLimit } from '../context';
 import {
   clientKey,

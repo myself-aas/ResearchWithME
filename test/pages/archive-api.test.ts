@@ -176,7 +176,7 @@ describe('GET /api/papers', () => {
   it('filters by topic and search, including the DOI', async () => {
     const app = createTestApp();
     app.seedPaper({ slug: 'compression-paper', title: 'Efficient Compression for Model Serving', doi: '10.5555/rw.compression.1', citationCount: 42 });
-    app.seedPaper({ slug: 'bias-paper', title: 'Measurement Bias in Citations', doi: '10.5555/rw.bias.1', topic: 'Data & Policy', citationCount: 97 });
+    app.seedPaper({ slug: 'bias-paper', title: 'Measurement Bias in Citations', doi: '10.5555/rw.bias.1', topic: 'Climate & Policy', citationCount: 97 });
 
     const byTopic = await (await app.request('/api/papers?topic=Scholarly%20Tech')).json();
     expect(byTopic.total).toBe(1);

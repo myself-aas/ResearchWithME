@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function NotFound() {
   return (
     <main
@@ -27,9 +29,9 @@ export default function NotFound() {
         The page you were looking for does not exist or was moved.
       </p>
       <p style={{ marginTop: '2rem' }}>
-        <a href="/" style={{ color: '#4F46E5' }}>
+        <Link href="/" style={{ color: '#4F46E5' }}>
           Back to the journal
-        </a>
+        </Link>
       </p>
     </main>
   );
