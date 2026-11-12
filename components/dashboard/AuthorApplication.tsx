@@ -22,9 +22,9 @@ const PROVIDERS: Array<{ id: LinkableProviderId; label: string; blurb: string }>
 ];
 
 const STATUS_COPY = {
-  pending: { label: 'Under review', tone: 'bg-indigo-50 text-brand border-indigo-300', Icon: Clock },
-  approved: { label: 'Approved', tone: 'bg-emerald-50 text-emerald-900 border-emerald-300', Icon: CheckCircle2 },
-  rejected: { label: 'Not approved', tone: 'bg-stone-100 text-stone-800 border-stone-300', Icon: XCircle },
+  pending: { label: 'Under review', tone: 'bg-brand/5 text-brand border-brand/40', Icon: Clock },
+  approved: { label: 'Approved', tone: 'bg-success/5 text-success border-success/30', Icon: CheckCircle2 },
+  rejected: { label: 'Not approved', tone: 'bg-surface text-ink border-border-strong', Icon: XCircle },
 } as const;
 
 export default function AuthorApplication({
@@ -103,8 +103,8 @@ export default function AuthorApplication({
   return (
     <div className="space-y-6">
       {error && (
-        <div role="alert" className="border-l-2 border-red-700 bg-red-50 px-4 py-3">
-          <p className="flex items-start gap-2 text-sm font-medium text-red-900">
+        <div role="alert" className="border-l-2 border-destructive bg-destructive/5 px-4 py-3">
+          <p className="flex items-start gap-2 text-sm font-medium text-destructive">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </p>
@@ -112,8 +112,8 @@ export default function AuthorApplication({
       )}
 
       {isEditor && (
-        <p className={cn(panelClass, 'flex items-start gap-2 px-4 py-3 text-sm text-stone-700')}>
-          <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
+        <p className={cn(panelClass, 'flex items-start gap-2 px-4 py-3 text-sm text-ink')}>
+          <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" />
           <span>
             This account already has publishing access.{' '}
             <a href="/dashboard" className="font-semibold underline underline-offset-4">
@@ -125,10 +125,10 @@ export default function AuthorApplication({
       )}
 
       <section aria-labelledby="identities-heading" className={cn(panelClass, 'p-5 sm:p-6')}>
-        <h2 id="identities-heading" className="font-serif text-xl font-bold text-stone-900">
+        <h2 id="identities-heading" className="font-serif text-xl font-bold text-ink">
           1. Connect a scholarly identity
         </h2>
-        <p className="mt-2 max-w-prose text-sm leading-relaxed text-stone-600">
+        <p className="mt-2 max-w-prose text-sm leading-relaxed text-ink-secondary">
           Connecting attaches the account to the one you are signed in with. It does not sign you out
           or change how you log in.
         </p>
@@ -137,15 +137,15 @@ export default function AuthorApplication({
           {PROVIDERS.map(({ id, label, blurb }) => {
             const match = linked.find((item) => item.provider === id);
             return (
-              <li key={id} className="rounded-md border border-stone-200 p-4">
-                <p className="flex items-center gap-2 text-sm font-semibold text-stone-900">
+              <li key={id} className="rounded-md border border-line p-4">
+                <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                   <GitBranch className="h-4 w-4 text-brand-hover" aria-hidden="true" />
                   {label}
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-stone-600">{blurb}</p>
+                <p className="mt-1 text-sm leading-relaxed text-ink-secondary">{blurb}</p>
 
                 {match ? (
-                  <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-emerald-800">
+                  <p className="mt-3 flex items-center gap-1.5 text-sm font-medium text-success">
                     <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
                     <span className="break-all">{match.handle ? match.handle : 'Connected'}</span>
                   </p>
@@ -167,36 +167,36 @@ export default function AuthorApplication({
 
       {current ? (
         <section aria-labelledby="status-heading" className={cn(panelClass, 'p-5 sm:p-6')}>
-          <h2 id="status-heading" className="font-serif text-xl font-bold text-stone-900">
+          <h2 id="status-heading" className="font-serif text-xl font-bold text-ink">
             Your application
           </h2>
           <StatusBadge status={current.status} />
           <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="font-medium text-stone-900">Identity</dt>
-              <dd className="mt-0.5 break-all text-stone-600">
+              <dt className="font-medium text-ink">Identity</dt>
+              <dd className="mt-0.5 break-all text-ink-secondary">
                 {current.provider} · {current.handle}
               </dd>
             </div>
             <div>
-              <dt className="font-medium text-stone-900">Publishing as</dt>
-              <dd className="mt-0.5 text-stone-600">{current.display_name}</dd>
+              <dt className="font-medium text-ink">Publishing as</dt>
+              <dd className="mt-0.5 text-ink-secondary">{current.display_name}</dd>
             </div>
             {current.statement && (
               <div className="sm:col-span-2">
-                <dt className="font-medium text-stone-900">What you write about</dt>
-                <dd className="mt-0.5 leading-relaxed text-stone-600">{current.statement}</dd>
+                <dt className="font-medium text-ink">What you write about</dt>
+                <dd className="mt-0.5 leading-relaxed text-ink-secondary">{current.statement}</dd>
               </div>
             )}
             {current.review_note && (
               <div className="sm:col-span-2">
-                <dt className="font-medium text-stone-900">Reviewer note</dt>
-                <dd className="mt-0.5 leading-relaxed text-stone-600">{current.review_note}</dd>
+                <dt className="font-medium text-ink">Reviewer note</dt>
+                <dd className="mt-0.5 leading-relaxed text-ink-secondary">{current.review_note}</dd>
               </div>
             )}
           </dl>
           {current.status === 'pending' && (
-            <p className="mt-4 text-sm leading-relaxed text-stone-600">
+            <p className="mt-4 text-sm leading-relaxed text-ink-secondary">
               An editor reviews applications personally. You can update the details below while it is
               open.
             </p>
@@ -209,12 +209,12 @@ export default function AuthorApplication({
         </section>
       ) : (
         <section aria-labelledby="apply-heading" className={cn(panelClass, 'p-5 sm:p-6')}>
-          <h2 id="apply-heading" className="font-serif text-xl font-bold text-stone-900">
+          <h2 id="apply-heading" className="font-serif text-xl font-bold text-ink">
             2. Apply to write
           </h2>
 
           {rejected && (
-            <p className="mt-3 border-l-2 border-stone-300 bg-stone-50 px-3 py-2 text-sm leading-relaxed text-stone-700">
+            <p className="mt-3 border-l-2 border-border-strong bg-canvas px-3 py-2 text-sm leading-relaxed text-ink">
               A previous application was not approved{rejected.review_note ? `: ${rejected.review_note}` : '.'}{' '}
               You can apply again with updated details.
             </p>

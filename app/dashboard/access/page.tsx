@@ -74,15 +74,15 @@ export default async function ApplyToWritePage({
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 sm:py-10">
       <header className="mb-6">
-        <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+        <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Apply to write
         </h1>
-        <p className="mt-3 max-w-prose text-base leading-relaxed text-stone-700">
+        <p className="mt-3 max-w-prose text-base leading-relaxed text-ink">
           Signing in gives you a reader account. Publishing needs a person on the editorial board to
           approve you, so every article carries a byline someone stands behind.
         </p>
         {params.error === 'not-editor' && (
-          <p className="mt-4 border-l-2 border-indigo-300 bg-indigo-50 px-3 py-2 text-sm leading-relaxed text-brand">
+          <p className="mt-4 border-l-2 border-brand/40 bg-brand/5 px-3 py-2 text-sm leading-relaxed text-brand">
             This account does not have publishing access yet. Apply below and an editor will review
             it.
           </p>

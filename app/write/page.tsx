@@ -16,6 +16,9 @@ import { readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { useSession } from '@/lib/supabase/use-session';
 import dynamic from 'next/dynamic';
+import { Text } from '@/components/primitives';
+import { WorkflowDisclosure } from '@/components/workflows';
+import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
 
 const MarkdownEditor = dynamic(() => import('@/components/cms/MarkdownEditor'), {
   ssr: false,
@@ -68,7 +71,7 @@ const emptyDraft: Draft = {
 };
 
 const fieldClass =
-  'h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600';
+  'h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink placeholder:text-ink-secondary';
 
 export default function WritePage() {
   const router = useRouter();
@@ -264,12 +267,12 @@ export default function WritePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
         {isSupabaseConfigured && (
-          <div className="mb-6 border-l-2 border-amber-700 bg-indigo-50 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
+          <div className="mb-6 border-l-2 border-trust-uncertain bg-brand/5 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
             <p className="font-semibold">Publishing now happens in the editorial studio</p>
             <p className="mt-1 max-w-2xl">
               This prototype form still autosaves a draft in your browser, but publishing is disabled because the site
@@ -281,22 +284,22 @@ export default function WritePage() {
             </p>
           </div>
         )}
-        <div className="flex flex-col gap-4 border-b border-stone-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">Writer studio</h1>
-            <p className="mt-2 text-base text-stone-700">
-              Signed in as <span className="font-medium text-stone-900">{user?.name}</span>. {saveStatus}
+            <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">Writer studio</h1>
+            <p className="mt-2 text-base text-ink">
+              Signed in as <span className="font-medium text-ink">{user?.name}</span>. {saveStatus}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div role="group" aria-label="Editor mode" className="flex rounded-md border border-stone-300 bg-white p-1">
+            <div role="group" aria-label="Editor mode" className="flex rounded-md border border-border-strong bg-surface-raised p-1">
               <button
                 type="button"
                 onClick={() => setTab('editor')}
                 aria-pressed={tab === 'editor'}
                 className={`inline-flex min-h-9 items-center gap-1.5 rounded px-3 text-sm font-medium ${
-                  tab === 'editor' ? 'bg-stone-900 text-white' : 'text-stone-700 hover:bg-stone-100'
+                  tab === 'editor' ? 'bg-surface-inverse text-text-inverse' : 'text-ink hover:bg-surface'
                 }`}
               >
                 <PenSquare className="h-4 w-4" aria-hidden="true" />
@@ -307,7 +310,7 @@ export default function WritePage() {
                 onClick={() => setTab('preview')}
                 aria-pressed={tab === 'preview'}
                 className={`inline-flex min-h-9 items-center gap-1.5 rounded px-3 text-sm font-medium ${
-                  tab === 'preview' ? 'bg-stone-900 text-white' : 'text-stone-700 hover:bg-stone-100'
+                  tab === 'preview' ? 'bg-surface-inverse text-text-inverse' : 'text-ink hover:bg-surface'
                 }`}
               >
                 <Eye className="h-4 w-4" aria-hidden="true" />
@@ -319,7 +322,7 @@ export default function WritePage() {
               <button
                 type="button"
                 onClick={discardDraft}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-2 text-sm font-medium text-stone-700 transition-colors hover:border-red-300 hover:text-red-800"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-sm font-medium text-ink transition-colors hover:border-destructive/40 hover:text-destructive"
               >
                 <Trash2 className="h-4 w-4" aria-hidden="true" />
                 <span>Discard draft</span>
@@ -329,7 +332,7 @@ export default function WritePage() {
         </div>
 
         {error && (
-          <div role="alert" className="mt-6 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+          <div role="alert" className="mt-6 border-l-2 border-destructive bg-destructive/5 px-4 py-3 text-sm text-destructive">
             <p className="flex items-start gap-2">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{error}</span>
@@ -339,17 +342,17 @@ export default function WritePage() {
 
         {tab === 'preview' ? (
           <article aria-labelledby="preview-title" className="mt-8 max-w-3xl">
-            <p className="text-sm text-stone-600">
+            <p className="text-sm text-ink-secondary">
               {draft.category} · {draft.format} · {readTime} min read
             </p>
-            <h2 id="preview-title" className="mt-2 font-serif text-3xl font-bold leading-tight text-stone-900 sm:text-4xl">
+            <h2 id="preview-title" className="mt-2 font-serif text-3xl font-bold leading-tight text-ink sm:text-4xl">
               {draft.title || 'Untitled review'}
             </h2>
-            {draft.subtitle && <p className="mt-3 font-serif text-xl leading-relaxed text-stone-700">{draft.subtitle}</p>}
-            <p className="mt-4 text-sm text-stone-600">By {user?.name}</p>
+            {draft.subtitle && <p className="mt-3 font-serif text-xl leading-relaxed text-ink">{draft.subtitle}</p>}
+            <p className="mt-4 text-sm text-ink-secondary">By {user?.name}</p>
 
             {draft.coverImage && (
-              <div className="mt-6 overflow-hidden rounded-lg border border-stone-200 bg-stone-900">
+              <div className="mt-6 overflow-hidden rounded-lg border border-line bg-surface-inverse">
                 <picture>
                   <source srcSet={draft.coverImage} type="image/avif" />
                   <img
@@ -362,22 +365,22 @@ export default function WritePage() {
             )}
 
             {draft.summary && (
-              <section aria-labelledby="preview-summary" className="mt-8 border-y border-stone-200 py-5">
-                <h3 id="preview-summary" className="font-serif text-xl font-semibold text-stone-900">
+              <section aria-labelledby="preview-summary" className="mt-8 border-y border-line py-5">
+                <Text id="preview-summary" as="h3" variant="card-title">
                   Summary
-                </h3>
-                <p className="mt-2 text-lg leading-relaxed text-stone-800">{draft.summary}</p>
+                </Text>
+                <p className="mt-2 text-lg leading-relaxed text-ink">{draft.summary}</p>
               </section>
             )}
 
             {draft.takeaways.filter(Boolean).length > 0 && (
               <section aria-labelledby="preview-takeaways" className="mt-8">
-                <h3 id="preview-takeaways" className="font-serif text-xl font-semibold text-stone-900">
+                <Text id="preview-takeaways" as="h3" variant="card-title">
                   Key takeaways
-                </h3>
+                </Text>
                 <ul className="mt-2 space-y-2">
                   {draft.takeaways.filter(Boolean).map((takeaway, index) => (
-                    <li key={`${takeaway}-${index}`} className="flex gap-2 text-base leading-relaxed text-stone-800">
+                    <li key={`${takeaway}-${index}`} className="flex gap-2 text-base leading-relaxed text-ink">
                       <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-hover" />
                       <span>{takeaway}</span>
                     </li>
@@ -389,19 +392,19 @@ export default function WritePage() {
             <div className="mt-8 space-y-4">
               {previewParagraphs.length > 0 ? (
                 previewParagraphs.map((paragraph, index) => (
-                  <p key={`${index}-${paragraph.slice(0, 20)}`} className="max-w-prose text-lg leading-relaxed text-stone-800">
+                  <p key={`${index}-${paragraph.slice(0, 20)}`} className="max-w-prose text-lg leading-relaxed text-ink">
                     {paragraph}
                   </p>
                 ))
               ) : (
-                <p className="text-base text-stone-600">The article body will appear here as you write.</p>
+                <p className="text-base text-ink-secondary">The article body will appear here as you write.</p>
               )}
             </div>
 
             {parsedTags.length > 0 && (
               <ul className="mt-8 flex flex-wrap gap-2">
                 {parsedTags.map((tag) => (
-                  <li key={tag} className="rounded border border-stone-300 bg-white px-2 py-1 font-mono text-sm text-stone-700">
+                  <li key={tag} className="rounded border border-border-strong bg-surface-raised px-2 py-1 font-mono text-sm text-ink">
                     #{tag}
                   </li>
                 ))}
@@ -411,11 +414,11 @@ export default function WritePage() {
         ) : (
           <form onSubmit={publish} className="mt-8 space-y-10">
             <fieldset className="space-y-4">
-              <legend className="font-serif text-xl font-semibold text-stone-900">Article</legend>
+              <Text as="legend" variant="card-title">Article</Text>
 
               <div>
-                <label htmlFor="write-title" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Title <span className="text-stone-600">(required)</span>
+                <label htmlFor="write-title" className="mb-1.5 block text-sm font-medium text-ink">
+                  Title <span className="text-ink-secondary">(required)</span>
                 </label>
                 <input
                   id="write-title"
@@ -431,8 +434,8 @@ export default function WritePage() {
               </div>
 
               <div>
-                <label htmlFor="write-subtitle" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Subtitle <span className="text-stone-600">(optional)</span>
+                <label htmlFor="write-subtitle" className="mb-1.5 block text-sm font-medium text-ink">
+                  Subtitle <span className="text-ink-secondary">(optional)</span>
                 </label>
                 <input
                   id="write-subtitle"
@@ -447,7 +450,7 @@ export default function WritePage() {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="write-category" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  <label htmlFor="write-category" className="mb-1.5 block text-sm font-medium text-ink">
                     Editorial column
                   </label>
                   <select
@@ -465,7 +468,7 @@ export default function WritePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="write-author" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  <label htmlFor="write-author" className="mb-1.5 block text-sm font-medium text-ink">
                     Published under
                   </label>
                   <select
@@ -482,13 +485,13 @@ export default function WritePage() {
                       </option>
                     ))}
                   </select>
-                  <p className="mt-1 text-xs text-stone-500">
+                  <p className="mt-1 text-xs text-ink-secondary">
                     Articles are attributed to a verified profile in the catalogue.
                   </p>
                 </div>
 
                 <div>
-                  <label htmlFor="write-format" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  <label htmlFor="write-format" className="mb-1.5 block text-sm font-medium text-ink">
                     Format
                   </label>
                   <select
@@ -513,8 +516,8 @@ export default function WritePage() {
               </div>
 
               <div>
-                <label htmlFor="write-summary" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Executive summary <span className="text-stone-600">(required)</span>
+                <label htmlFor="write-summary" className="mb-1.5 block text-sm font-medium text-ink">
+                  Executive summary <span className="text-ink-secondary">(required)</span>
                 </label>
                 <textarea
                   id="write-summary"
@@ -525,31 +528,31 @@ export default function WritePage() {
                   maxLength={LIMITS.summary}
                   aria-invalid={errorField === 'write-summary' ? true : undefined}
                   placeholder="Summarize the research question, evidence, and key finding in two or three sentences."
-                  className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
+                  className="w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
                 />
-                <p className="mt-1 text-sm text-stone-600">
+                <p className="mt-1 text-sm text-ink-secondary">
                   {draft.summary.length} of {LIMITS.summary} characters
                 </p>
               </div>
             </fieldset>
 
-            <fieldset className="space-y-4 border-t border-stone-200 pt-8">
-              <legend className="font-serif text-xl font-semibold text-stone-900">Reviewed artifact</legend>
+            <fieldset className="space-y-4 border-t border-line pt-8">
+              <Text as="legend" variant="card-title">Reviewed artifact</Text>
 
-              <label className="flex items-start gap-3 text-base text-stone-800">
+              <label className="flex items-start gap-3 text-base text-ink">
                 <input
                   type="checkbox"
                   checked={draft.hasArtifact}
                   onChange={(event) => update('hasArtifact', event.target.checked)}
-                  className="mt-1 h-5 w-5 rounded border-stone-400 text-brand-hover"
+                  className="mt-1 h-5 w-5 rounded border-border-strong text-brand-hover"
                 />
                 <span>This article reviews a paper, repository, or dataset.</span>
               </label>
 
               {draft.hasArtifact && (
-                <div className="space-y-4 rounded-lg border border-stone-200 bg-white p-5">
+                <div className="space-y-4 rounded-lg border border-line bg-surface-raised p-5">
                   <div>
-                    <label htmlFor="write-artifact-type" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    <label htmlFor="write-artifact-type" className="mb-1.5 block text-sm font-medium text-ink">
                       Artifact type
                     </label>
                     <select
@@ -565,8 +568,8 @@ export default function WritePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="write-artifact-identifier" className="mb-1.5 block text-sm font-medium text-stone-800">
-                      Identifier <span className="text-stone-600">(required when the block is on)</span>
+                    <label htmlFor="write-artifact-identifier" className="mb-1.5 block text-sm font-medium text-ink">
+                      Identifier <span className="text-ink-secondary">(required when the block is on)</span>
                     </label>
                     <input
                       id="write-artifact-identifier"
@@ -581,7 +584,7 @@ export default function WritePage() {
                   </div>
 
                   <div>
-                    <label htmlFor="write-artifact-title" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    <label htmlFor="write-artifact-title" className="mb-1.5 block text-sm font-medium text-ink">
                       Artifact title
                     </label>
                     <input
@@ -597,7 +600,7 @@ export default function WritePage() {
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="write-artifact-url" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      <label htmlFor="write-artifact-url" className="mb-1.5 block text-sm font-medium text-ink">
                         Source URL
                       </label>
                       <input
@@ -611,7 +614,7 @@ export default function WritePage() {
                       />
                     </div>
                     <div>
-                      <label htmlFor="write-artifact-meta" className="mb-1.5 block text-sm font-medium text-stone-800">
+                      <label htmlFor="write-artifact-meta" className="mb-1.5 block text-sm font-medium text-ink">
                         Version or metadata
                       </label>
                       <input
@@ -629,11 +632,11 @@ export default function WritePage() {
               )}
             </fieldset>
 
-            <fieldset className="space-y-4 border-t border-stone-200 pt-8">
+            <fieldset className="space-y-4 border-t border-line pt-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <legend className="font-serif text-xl font-semibold text-stone-900">Cover image</legend>
-                  <p className="mt-1 text-sm text-stone-600">
+                  <Text as="legend" variant="card-title">Cover image</Text>
+                  <p className="mt-1 text-sm text-ink-secondary">
                     Editorial 16:9 header image. Generate artwork with your Qwen 2.1 Hugging Face Space (AVIF) or select presets.
                   </p>
                 </div>
@@ -641,7 +644,7 @@ export default function WritePage() {
                 <button
                   type="button"
                   onClick={() => setShowAiCover(!showAiCover)}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
                   <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate Cover with Qwen 2.1 (AVIF)'}</span>
@@ -649,8 +652,8 @@ export default function WritePage() {
               </div>
 
               {draft.coverImage ? (
-                <div className="rounded-lg border border-stone-200 bg-white p-4">
-                  <div className="overflow-hidden rounded-md border border-stone-200 bg-stone-900">
+                <div className="rounded-lg border border-line bg-surface-raised p-4">
+                  <div className="overflow-hidden rounded-md border border-line bg-surface-inverse">
                     <picture>
                       <source srcSet={draft.coverImage} type="image/avif" />
                       <img
@@ -661,13 +664,13 @@ export default function WritePage() {
                     </picture>
                   </div>
                   <div className="mt-2.5 flex items-center justify-between">
-                    <span className="font-mono text-xs text-stone-600">
+                    <span className="font-mono text-xs text-ink-secondary">
                       {draft.coverImage.startsWith('data:') ? 'AVIF Base64 Data Stream' : draft.coverImage}
                     </span>
                     <button
                       type="button"
                       onClick={() => update('coverImage', '')}
-                      className="inline-flex items-center gap-1 text-xs text-stone-600 hover:text-red-700"
+                      className="inline-flex items-center gap-1 text-xs text-ink-secondary hover:text-destructive"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                       <span>Remove cover</span>
@@ -675,7 +678,7 @@ export default function WritePage() {
                   </div>
                 </div>
               ) : (
-                <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+                <p className="border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">
                   No custom cover image applied yet. The platform will use default editorial photography if published without one.
                 </p>
               )}
@@ -693,12 +696,12 @@ export default function WritePage() {
               )}
             </fieldset>
 
-            <fieldset className="space-y-4 border-t border-stone-200 pt-8">
-              <legend className="font-serif text-xl font-semibold text-stone-900">Body</legend>
+            <fieldset className="space-y-4 border-t border-line pt-8">
+              <Text as="legend" variant="card-title">Body</Text>
 
               <div>
-                <label htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Article body <span className="text-stone-600">(required)</span>
+                <label htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-ink">
+                  Article body <span className="text-ink-secondary">(required)</span>
                 </label>
                 <div className="mt-1">
                   <MarkdownEditor
@@ -708,7 +711,7 @@ export default function WritePage() {
                     error={errorField === 'write-content' ? (error ?? undefined) : undefined}
                   />
                 </div>
-                <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-stone-600">
+                <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-ink-secondary">
                   <span>Separate paragraphs with an empty line. Estimated reading time: {readTime} min.</span>
                   <span>
                     {draft.content.length} of {LIMITS.body} characters
@@ -717,13 +720,13 @@ export default function WritePage() {
               </div>
 
               <div>
-                <p id="takeaway-label" className="mb-1.5 text-sm font-medium text-stone-800">
-                  Key takeaways <span className="text-stone-600">(at least one)</span>
+                <p id="takeaway-label" className="mb-1.5 text-sm font-medium text-ink">
+                  Key takeaways <span className="text-ink-secondary">(at least one)</span>
                 </p>
                 <ul aria-labelledby="takeaway-label" className="space-y-3">
                   {draft.takeaways.map((takeaway, index) => (
                     <li key={index} className="flex items-start gap-2">
-                      <span className="mt-3 font-mono text-sm text-stone-600">{String(index + 1).padStart(2, '0')}</span>
+                      <span className="mt-3 font-mono text-sm text-ink-secondary">{String(index + 1).padStart(2, '0')}</span>
                       <div className="flex-1">
                         <label htmlFor={`takeaway-${index}`} className="sr-only">
                           Key takeaway {index + 1}
@@ -742,7 +745,7 @@ export default function WritePage() {
                       <button
                         type="button"
                         onClick={() => removeTakeaway(index)}
-                        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-stone-300 bg-white text-stone-600 transition-colors hover:border-red-300 hover:text-red-800"
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-border-strong bg-surface-raised text-ink-secondary transition-colors hover:border-destructive/40 hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" aria-hidden="true" />
                         <span className="sr-only">Remove takeaway {index + 1}</span>
@@ -753,7 +756,7 @@ export default function WritePage() {
                 <button
                   type="button"
                   onClick={addTakeaway}
-                  className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
+                  className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border-strong bg-surface-raised px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-border-strong"
                 >
                   <Plus className="h-4 w-4" aria-hidden="true" />
                   <span>Add a takeaway</span>
@@ -761,8 +764,8 @@ export default function WritePage() {
               </div>
 
               <div>
-                <label htmlFor="write-tags" className="mb-1.5 block text-sm font-medium text-stone-800">
-                  Tags <span className="text-stone-600">(comma separated, up to eight)</span>
+                <label htmlFor="write-tags" className="mb-1.5 block text-sm font-medium text-ink">
+                  Tags <span className="text-ink-secondary">(comma separated, up to eight)</span>
                 </label>
                 <input
                   id="write-tags"
@@ -776,23 +779,23 @@ export default function WritePage() {
               </div>
             </fieldset>
 
-            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-stone-200 pt-6">
-              <p className="flex items-center gap-2 text-sm text-stone-600">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
+              <p className="flex items-center gap-2 text-sm text-ink-secondary">
                 <Save className="h-4 w-4" aria-hidden="true" />
                 <span>{saveStatus}</span>
               </p>
               <button
                 type="submit"
                 disabled={publishing}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-6 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-60"
               >
                 <Send className="h-4 w-4" aria-hidden="true" />
                 <span>{publishing ? 'Publishing…' : 'Publish review'}</span>
               </button>
             </div>
 
-            <p className="flex items-start gap-2 border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
+            <p className="flex items-start gap-2 border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" />
               <span>
                 {isSupabaseConfigured
                   ? 'Publishing is disabled on this prototype form while the Supabase studio is active. Your draft stays in this browser.'
@@ -801,6 +804,10 @@ export default function WritePage() {
             </p>
           </form>
         )}
+
+        <section aria-label="How methodology design works" className="mt-12 border-t border-line pt-8">
+          <WorkflowDisclosure workflow={RESEARCH_WORKFLOWS.methodology} heading="h2" summary="How a review's methodology is designed" />
+        </section>
       </main>
 
       <BlogFooter />

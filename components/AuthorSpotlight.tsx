@@ -3,6 +3,7 @@ import { ArrowRight, GitBranch, GraduationCap } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
 import Reveal from '@/components/motion/Reveal';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
+import { Text } from '@/components/primitives';
 
 function IdentifierLinks({ author }: { author: Author }) {
   const shared = { className: 'h-3.5 w-3.5 text-brand', 'aria-hidden': true as const };
@@ -29,9 +30,9 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
           className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between"
         >
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            <Text as="p" variant="eyebrow" color="secondary">
               Verified Specialists
-            </p>
+            </Text>
             <h2
               id="contributors-title"
               className="mt-1 font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl"

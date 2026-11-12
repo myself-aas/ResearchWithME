@@ -25,7 +25,7 @@ const TONE: Record<AlertTone, { role: 'status' | 'alert'; label: string; classes
   info: { role: 'status', label: 'Notice', classes: 'border-border-subtle bg-surface-subtle text-ink', dot: 'bg-knowledge-insight' },
   success: { role: 'status', label: 'Verified', classes: 'border-trust-verified/40 bg-surface text-ink', dot: 'bg-trust-verified' },
   warning: { role: 'status', label: 'Caution', classes: 'border-trust-uncertain/40 bg-surface text-ink', dot: 'bg-trust-uncertain' },
-  error: { role: 'alert', label: 'Error', classes: 'border-action-destructive/40 bg-surface text-ink', dot: 'bg-action-destructive' },
+  error: { role: 'alert', label: 'Error', classes: 'border-destructive/40 bg-surface text-ink', dot: 'bg-destructive' },
 };
 
 export default function Alert({ tone, title, children, action }: AlertProps) {
@@ -36,7 +36,7 @@ export default function Alert({ tone, title, children, action }: AlertProps) {
       distance={6}
       duration={200}
       role={t.role}
-      className={`flex gap-3 rounded-md border border-line px-4 py-3 ${t.classes}`}
+      className={`flex gap-3 rounded-md border px-4 py-3 ${t.classes}`}
     >
       <span aria-hidden="true" className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${t.dot}`} />
       <span className="font-sans text-[0.8125rem] font-semibold uppercase tracking-[0.04em]">{t.label}</span>

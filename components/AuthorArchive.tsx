@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Bookmark, FileText, MessageSquare, Quote, Search } from 'lucide-react';
 import type { BlogPost } from '@/lib/blog-data';
 import { readStringArray, writeLocal } from '@/lib/storage';
+import { Text } from '@/components/primitives';
 
 type SortKey = 'newest' | 'likes' | 'readTime';
 
@@ -77,29 +78,29 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
 
   return (
     <section aria-labelledby="author-archive" className="mt-10">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-4">
-        <h2 id="author-archive" className="font-serif text-2xl font-bold text-stone-900 sm:text-3xl">
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
+        <Text id="author-archive" as="h2" variant="page-title">
           Publication archive
-        </h2>
-        <p className="text-sm text-stone-600">
+        </Text>
+        <p className="text-sm text-ink-secondary">
           {filteredArticles.length} of {articles.length}{' '}
           {articles.length === 1 ? 'article' : 'articles'}
         </p>
       </div>
 
       {articles.length === 0 ? (
-        <div className="mt-6 border border-stone-200 bg-white p-8">
-          <FileText className="h-8 w-8 text-stone-500" aria-hidden="true" />
-          <h3 className="mt-3 font-serif text-xl font-semibold text-stone-900">
+        <div className="mt-6 border border-line bg-surface-raised p-8">
+          <FileText className="h-8 w-8 text-ink-secondary" aria-hidden="true" />
+          <Text as="h3" variant="card-title" className="mt-3">
             No articles published yet
-          </h3>
-          <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
+          </Text>
+          <p className="mt-2 max-w-xl text-base leading-relaxed text-ink">
             This contributor has a profile but no published reviews in the current archive. Check
             back after the next editorial cycle.
           </p>
           <Link
             href="/"
-            className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+            className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
           >
             Browse the latest reviews
           </Link>
@@ -108,31 +109,31 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
         <>
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="sm:col-span-2 lg:col-span-1">
-              <label htmlFor="author-article-search" className="mb-1.5 block text-sm font-medium text-stone-800">
+              <label htmlFor="author-article-search" className="mb-1.5 block text-sm font-medium text-ink">
                 Search this archive
               </label>
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-600" aria-hidden="true" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" aria-hidden="true" />
                 <input
                   id="author-article-search"
                   type="search"
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Title, tag, or artifact"
-                  className="h-11 w-full rounded-md border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 placeholder:text-stone-600"
+                  className="h-11 w-full rounded-md border border-border-strong bg-surface-raised pl-9 pr-3 text-sm text-ink placeholder:text-ink-secondary"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="author-category" className="mb-1.5 block text-sm font-medium text-stone-800">
+              <label htmlFor="author-category" className="mb-1.5 block text-sm font-medium text-ink">
                 Category
               </label>
               <select
                 id="author-category"
                 value={selectedCategory}
                 onChange={(event) => setSelectedCategory(event.target.value)}
-                className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900"
+                className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
               >
                 <option value="All">All categories</option>
                 {categories.map((category) => (
@@ -144,14 +145,14 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
             </div>
 
             <div>
-              <label htmlFor="author-format" className="mb-1.5 block text-sm font-medium text-stone-800">
+              <label htmlFor="author-format" className="mb-1.5 block text-sm font-medium text-ink">
                 Format
               </label>
               <select
                 id="author-format"
                 value={selectedFormat}
                 onChange={(event) => setSelectedFormat(event.target.value)}
-                className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900"
+                className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
               >
                 <option value="All">All formats</option>
                 {formats.map((format) => (
@@ -163,14 +164,14 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
             </div>
 
             <div>
-              <label htmlFor="author-sort" className="mb-1.5 block text-sm font-medium text-stone-800">
+              <label htmlFor="author-sort" className="mb-1.5 block text-sm font-medium text-ink">
                 Sort
               </label>
               <select
                 id="author-sort"
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value as SortKey)}
-                className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900"
+                className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
               >
                 <option value="newest">Newest first</option>
                 <option value="likes">Most liked</option>
@@ -180,17 +181,17 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
           </div>
 
           {saveMessage && (
-            <p role="status" className="mt-4 border-l-2 border-brand-hover bg-indigo-50 px-4 py-3 text-sm text-brand-pressed">
+            <p role="status" className="mt-4 border-l-2 border-brand-hover bg-brand/5 px-4 py-3 text-sm text-brand-pressed">
               {saveMessage}
             </p>
           )}
 
           {filteredArticles.length === 0 ? (
-            <div className="mt-6 border border-stone-200 bg-white p-8">
-              <h3 className="font-serif text-xl font-semibold text-stone-900">
+            <div className="mt-6 border border-line bg-surface-raised p-8">
+              <Text as="h3" variant="card-title">
                 No articles match those filters
-              </h3>
-              <p className="mt-2 max-w-xl text-base leading-relaxed text-stone-700">
+              </Text>
+              <p className="mt-2 max-w-xl text-base leading-relaxed text-ink">
                 Clear the search text and filters to see this contributor&apos;s full archive.
               </p>
               <button
@@ -200,19 +201,19 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                   setSelectedCategory('All');
                   setSelectedFormat('All');
                 }}
-                className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+                className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
               >
                 Clear filters
               </button>
             </div>
           ) : (
-            <ul className="mt-6 divide-y divide-stone-200 border-y border-stone-200">
+            <ul className="mt-6 divide-y divide-line border-y border-line">
               {filteredArticles.map((post) => {
                 const isSaved = savedIds.includes(post.id);
                 return (
                   <li key={post.id} className="py-6">
                     <article>
-                      <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-stone-600">
+                      <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-secondary">
                         <span className="font-medium text-brand">{post.category}</span>
                         <span aria-hidden="true">·</span>
                         <span>{post.format}</span>
@@ -221,15 +222,15 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                         <span aria-hidden="true">·</span>
                         <span>{post.readTime}</span>
                       </p>
-                      <h3 className="mt-2 font-serif text-2xl font-semibold leading-snug text-stone-900">
+                      <h3 className="mt-2 font-serif text-2xl font-semibold leading-snug text-ink">
                         <Link href={`/post/${post.slug}`} className="hover:text-brand">
                           {post.title}
                         </Link>
                       </h3>
-                      <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">{post.subtitle}</p>
+                      <p className="mt-2 max-w-prose text-base leading-relaxed text-ink">{post.subtitle}</p>
 
                       {post.reviewedArtifact && (
-                        <p className="mt-3 break-all font-mono text-sm text-stone-600">
+                        <p className="mt-3 break-all font-mono text-sm text-ink-secondary">
                           Artifact: {post.reviewedArtifact.identifier}
                         </p>
                       )}
@@ -243,12 +244,12 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                         </Link>
                         <Link
                           href={`/cite?article=${encodeURIComponent(post.slug)}`}
-                          className="inline-flex min-h-10 items-center gap-1.5 text-stone-700 underline-offset-4 hover:text-stone-900 hover:underline"
+                          className="inline-flex min-h-10 items-center gap-1.5 text-ink underline-offset-4 hover:text-ink hover:underline"
                         >
                           <Quote className="h-4 w-4" aria-hidden="true" />
                           <span>Cite</span>
                         </Link>
-                        <span className="inline-flex items-center gap-1.5 text-stone-600">
+                        <span className="inline-flex items-center gap-1.5 text-ink-secondary">
                           <MessageSquare className="h-4 w-4" aria-hidden="true" />
                           <span>{post.commentsCount} comments</span>
                         </span>
@@ -256,7 +257,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                           type="button"
                           onClick={() => toggleSave(post.id)}
                           aria-pressed={isSaved}
-                          className="inline-flex min-h-10 items-center gap-1.5 text-stone-700 underline-offset-4 hover:text-stone-900 hover:underline"
+                          className="inline-flex min-h-10 items-center gap-1.5 text-ink underline-offset-4 hover:text-ink hover:underline"
                         >
                           <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-brand text-brand' : ''}`} aria-hidden="true" />
                           <span>{isSaved ? 'Saved' : 'Save'}</span>

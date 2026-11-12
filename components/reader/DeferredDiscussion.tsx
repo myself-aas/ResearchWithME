@@ -16,6 +16,7 @@
 import LazyMount from '@/components/motion/LazyMount';
 import { SkeletonShard } from '@/components/motion/LoadingState';
 import { lazyWidget } from '@/lib/motion/lazy';
+import { Card } from '@/components/primitives';
 
 const Discussion = lazyWidget(() => import('@/components/ArticleDiscussion'), {
   label: 'Loading the discussion panel',
@@ -33,12 +34,12 @@ export default function DeferredDiscussion({ postId, commentCount }: DeferredDis
       label="Loading the discussion panel"
       minHeight={220}
       fallback={
-        <div className="rounded-sm border border-line bg-surface p-6" aria-hidden="true">
+        <Card padding="xl" aria-hidden="true">
           <SkeletonShard height={20} width="35%" />
           <div className="mt-5">
             <SkeletonShard lines={3} />
           </div>
-        </div>
+        </Card>
       }
     >
       <Discussion postId={postId} commentCount={commentCount} />

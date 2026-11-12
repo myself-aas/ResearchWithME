@@ -5,7 +5,7 @@ import path from 'node:path';
 import { createLocalLegacyStore } from '@/lib/legacy/local-store';
 import { createSupabaseLegacyStore } from '@/lib/legacy/supabase-store';
 import type { LegacyStore } from '@/lib/legacy/types';
-import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { getArticleCatalogue, getFeedArticles } from '@/lib/cms/catalogue';
 import { createSupabaseLegacyFixture } from '@/test/fixtures/legacy';
 import type { CmsPost, CmsStore } from '@/lib/cms/types';
 
@@ -227,5 +227,22 @@ describe('getArticleCatalogue bridge', () => {
     const catalogue = await getArticleCatalogue(failingLegacy, cms);
     // The bundled seed corpus keeps the pages renderable.
     expect(catalogue.length).toBeGreaterThanOrEqual(8);
+  });
+});
+
+describe('getFeedArticles (server-rendered feed)', () => {
+  it('returns the whole catalogue as metadata-only cards, so the feed is never empty in server HTML', async () => {
+    const fixture = createSupabaseLegacyFixture();
+    const legacy = createSupabaseLegacyStore(fixture.client, fixture.seeds);
+    const cms = stubCmsStore([publishedPost({})], { 'cms-1': 4 });
+
+    const [catalogue, feed] = await Promise.all([getArticleCatalogue(legacy, cms), getFeedArticles(legacy, cms)]);
+    expect(feed.length).toBeGreaterThan(0);
+    expect(feed.map((article) => article.slug)).toEqual(catalogue.map((article) => article.slug));
+    for (const article of feed) {
+      expect(article.content).toEqual([]);
+      expect(article).not.toHaveProperty('bodyMarkdown');
+      expect(article.title).toBeTruthy();
+    }
   });
 });

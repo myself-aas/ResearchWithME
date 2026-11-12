@@ -56,7 +56,7 @@ export function graphEdges(relationships: KnowledgeRelationship[]): GraphEdgeVie
     to: r.toId,
     label: EDGE_LABEL[r.label] ?? r.label,
     inferred: r.inferred,
-    lineClass: r.inferred ? 'stroke-dasharray-4' : 'stroke-solid',
+    lineClass: r.inferred ? '[stroke-dasharray:4]' : '',
     explanation: r.explanation,
   }));
 }

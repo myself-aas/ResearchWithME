@@ -46,7 +46,7 @@ export default function ConfirmDelete({
 
   return (
     <span role="group" aria-label="Confirm deletion" className="inline-flex flex-wrap items-center gap-2">
-      <span className="text-sm font-medium text-red-800">{question}</span>
+      <span className="text-sm font-medium text-destructive">{question}</span>
       <button ref={confirmRef} type="button" onClick={onConfirm} disabled={busy} className={dangerButtonClass}>
         {busy ? busyLabel : 'Yes, delete'}
       </button>

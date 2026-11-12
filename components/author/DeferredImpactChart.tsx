@@ -18,6 +18,7 @@ import LazyMount from '@/components/motion/LazyMount';
 import { SkeletonShard } from '@/components/motion/LoadingState';
 import { lazyWidget } from '@/lib/motion/lazy';
 import type { Author } from '@/lib/blog-data';
+import { Card } from '@/components/primitives';
 
 const Chart = lazyWidget(() => import('@/components/AuthorImpactRadarChart'), {
   label: 'Loading impact radar',
@@ -39,12 +40,12 @@ export default function DeferredImpactChart(props: DeferredImpactChartProps) {
       label="Loading impact radar"
       minHeight={340}
       fallback={
-        <div className="mt-6 rounded-sm border border-line bg-surface p-6" aria-hidden="true">
+        <Card padding="xl" className="mt-6" aria-hidden="true">
           <SkeletonShard height={18} width="40%" />
           <div className="mt-6 flex items-center justify-center">
             <SkeletonShard height={240} width={240} rounded="rounded-full" />
           </div>
-        </div>
+        </Card>
       }
     >
       <Chart {...props} />

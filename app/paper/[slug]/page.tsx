@@ -15,6 +15,7 @@ import type { CitationSource } from '@/lib/citations';
 import { PUBLICATIONS_DATA } from '@/lib/research-data';
 import { pageMetadata } from '@/lib/seo';
 import { scholarlyArticleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
+import { Card, Text } from '@/components/primitives';
 
 export function generateStaticParams() {
   return PUBLICATIONS_DATA.map((paper) => ({ slug: paper.slug }));
@@ -178,9 +179,9 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             </header>
 
             <section aria-labelledby="abstract-heading" className="reading-column border-b border-line py-8">
-              <h2 id="abstract-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+              <Text id="abstract-heading" as="h2" variant="eyebrow" weight="semibold">
                 Abstract
-              </h2>
+              </Text>
               <p className="mt-3 font-serif text-lg leading-relaxed text-ink">{paper.abstract}</p>
               <ul className="mt-4 flex flex-wrap gap-2">
                 {paper.keywords.map((keyword) => (
@@ -204,9 +205,9 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                     amount={0.08}
                     delay={60}
                   >
-                    <h2 id={`section-${section.key}`} className="font-serif text-2xl font-semibold text-ink">
+                    <Text id={`section-${section.key}`} as="h2" variant="section-title">
                       {section.heading}
-                    </h2>
+                    </Text>
                     {Array.isArray(value) ? (
                       <ul className="mt-4 space-y-3">
                         {value.map((item) => (
@@ -233,9 +234,9 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                 aria-labelledby="references-heading"
                 className="reading-column border-t border-line py-8"
               >
-                <h2 id="references-heading" className="font-serif text-2xl font-semibold text-ink">
+                <Text id="references-heading" as="h2" variant="section-title">
                   References and primary literature
-                </h2>
+                </Text>
                 <ol className="mt-4 space-y-3">
                   {paper.fullContent.references.map((reference, index) => (
                     <li key={reference} className="flex gap-3 font-sans text-sm leading-relaxed text-ink-secondary">
@@ -271,10 +272,10 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
             aria-label="Publication record"
             className="h-fit space-y-6 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
           >
-            <div className="rounded-sm border border-line bg-surface p-5">
-              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            <Card padding="lg">
+              <Text as="h2" variant="eyebrow" weight="semibold">
                 Publication record
-              </h2>
+              </Text>
               <dl className="mt-4 space-y-3 font-mono text-xs">
                 <div>
                   <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
@@ -330,9 +331,9 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
                   </dd>
                 </div>
               </dl>
-            </div>
+            </Card>
 
-            <div className="rounded-sm border border-line bg-surface p-5 font-sans text-xs leading-relaxed text-ink-secondary">
+            <Card padding="lg" className="font-sans text-xs leading-relaxed text-ink-secondary">
               <p className="flex items-center gap-2 font-mono uppercase tracking-wider text-ink">
                 <ShieldCheck className="h-4 w-4 text-brand" aria-hidden="true" />
                 <span>Archive note</span>
@@ -340,7 +341,7 @@ export default async function PaperDetailPage({ params }: { params: Promise<{ sl
               <p className="mt-2">
                 Confirm formal DOI registrations and dataset checksums against the upstream repository when citing in peer-reviewed venues.
               </p>
-            </div>
+            </Card>
           </aside>
         </div>
       </main>

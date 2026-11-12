@@ -64,14 +64,14 @@ export default function DashboardShell({ children, configured, user }: Dashboard
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10">
-          <div className="-mx-4 border-b border-stone-200 px-4 py-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:border-b-0 lg:border-r lg:px-0 lg:py-8 lg:pr-6">
+          <div className="-mx-4 border-b border-line px-4 py-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:border-b-0 lg:border-r lg:px-0 lg:py-8 lg:pr-6">
             <nav aria-label="Editorial studio">
-              <p className="hidden text-xs font-semibold uppercase tracking-wider text-stone-600 lg:block">
+              <p className="hidden text-xs font-semibold uppercase tracking-wider text-ink-secondary lg:block">
                 Editorial studio
               </p>
               <ul className="flex flex-wrap gap-1 lg:sticky lg:top-6 lg:mt-3 lg:flex-col lg:py-0">
@@ -86,8 +86,8 @@ export default function DashboardShell({ children, configured, user }: Dashboard
                         className={cn(
                           'inline-flex min-h-11 w-full items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors',
                           active
-                            ? 'bg-stone-900 text-white'
-                            : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900',
+                            ? 'bg-surface-inverse text-text-inverse'
+                            : 'text-ink hover:bg-surface hover:text-ink',
                         )}
                       >
                         <Icon className="h-4 w-4" aria-hidden="true" />
@@ -100,9 +100,9 @@ export default function DashboardShell({ children, configured, user }: Dashboard
             </nav>
 
             {configured && user && (
-              <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-stone-200 pt-3 text-sm lg:mt-6">
+              <div className="mt-2 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-3 text-sm lg:mt-6">
                 <span
-                  className="min-w-0 max-w-full truncate text-stone-600 lg:max-w-[10rem]"
+                  className="min-w-0 max-w-full truncate text-ink-secondary lg:max-w-[10rem]"
                   title={user.email}
                 >
                   {user.name}
@@ -119,7 +119,7 @@ export default function DashboardShell({ children, configured, user }: Dashboard
               </div>
             )}
             {signOutError && (
-              <p role="alert" className="mt-2 text-sm font-medium text-red-800">
+              <p role="alert" className="mt-2 text-sm font-medium text-destructive">
                 {signOutError}
               </p>
             )}
@@ -127,7 +127,7 @@ export default function DashboardShell({ children, configured, user }: Dashboard
 
           <main className="min-w-0 py-6 sm:py-8">
             {!configured && (
-              <div className="mb-6 border-l-2 border-amber-700 bg-indigo-50 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
+              <div className="mb-6 border-l-2 border-trust-uncertain bg-brand/5 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
                 <p className="font-semibold">Local demo mode</p>
                 <p className="mt-1 max-w-2xl">
                   Articles and comments on this studio are saved to <code className="font-mono">data/cms-*.json</code> on

@@ -47,3 +47,6 @@ playwright-report/
 
 # Supabase CLI local state (version check, temp files).
 supabase/.temp/
+
+# Visual parity captures (npm run parity)
+.parity/

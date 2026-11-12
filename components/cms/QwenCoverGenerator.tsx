@@ -152,33 +152,33 @@ export default function QwenCoverGenerator({
   }
 
   return (
-    <div className="rounded-lg border border-stone-200 bg-stone-50 p-5 sm:p-6 space-y-5">
+    <div className="rounded-lg border border-line bg-canvas p-5 sm:p-6 space-y-5">
       {/* Header with Title and Connection Status */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200 pb-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-4">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand">
+            <span className="inline-flex items-center gap-1 rounded-md bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand">
               <Sparkles className="h-3.5 w-3.5 text-brand-hover" aria-hidden="true" />
               <span>Qwen 2.1 Storage Bucket</span>
             </span>
-            <span className="rounded-md bg-stone-200 px-2 py-0.5 font-mono text-xs font-semibold text-stone-700">
+            <span className="rounded-md bg-surface-subtle px-2 py-0.5 font-mono text-xs font-semibold text-ink">
               AVIF ZeroGPU
             </span>
             {serverStatus?.configured ? (
-              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-900">
+              <span className="inline-flex items-center gap-1 rounded-md bg-success/10 px-2.5 py-0.5 text-xs font-semibold text-success">
                 <Check className="h-3 w-3" />
                 <span>HF Secrets Active</span>
               </span>
             ) : serverStatus ? (
-              <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-brand">
+              <span className="inline-flex items-center gap-1 rounded-md bg-brand/10 px-2.5 py-0.5 text-xs font-medium text-brand">
                 <span>Space Not Configured</span>
               </span>
             ) : null}
           </div>
-          <h3 className="mt-2 font-serif text-lg font-bold text-stone-900">
+          <h3 className="mt-2 font-serif text-lg font-bold text-ink">
             Generate Editorial Cover Image
           </h3>
-          <p className="mt-0.5 text-xs text-stone-600">
+          <p className="mt-0.5 text-xs text-ink-secondary">
             Render high-fidelity, compressed AVIF cover artwork directly via your private Hugging Face Space.
           </p>
         </div>
@@ -186,7 +186,7 @@ export default function QwenCoverGenerator({
         <button
           type="button"
           onClick={() => setShowSettings(!showSettings)}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors"
+          className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-border-strong bg-surface-raised px-3 py-1.5 text-xs font-medium text-ink hover:bg-canvas transition-colors"
         >
           <Key className="h-3.5 w-3.5 text-brand-hover" aria-hidden="true" />
           <span>Space Config</span>
@@ -195,12 +195,12 @@ export default function QwenCoverGenerator({
 
       {/* Hugging Face Space configuration notice */}
       {showSettings && (
-        <div className="rounded-lg border border-indigo-200 bg-indigo-50/70 p-4 space-y-3">
+        <div className="rounded-lg border border-brand/25 bg-brand/5 p-4 space-y-3">
           <div className="flex items-start justify-between">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-brand">
               Hugging Face Space Credentials
             </h4>
-            <span className="text-xs text-stone-500">ZeroGPU Gradio SDK</span>
+            <span className="text-xs text-ink-secondary">ZeroGPU Gradio SDK</span>
           </div>
           <p className="text-xs text-brand-pressed leading-relaxed">
             Cover generation runs against the private Hugging Face Space named by the deployment.
@@ -208,19 +208,19 @@ export default function QwenCoverGenerator({
             sent from, or stored in this browser.
           </p>
           <dl className="grid gap-2 text-xs sm:grid-cols-2">
-            <div className="rounded-md border border-indigo-200 bg-white px-3 py-2">
-              <dt className="font-medium text-stone-600">Space</dt>
-              <dd className="font-mono text-stone-900">{serverStatus?.spaceName ?? 'Not configured'}</dd>
+            <div className="rounded-md border border-brand/25 bg-surface-raised px-3 py-2">
+              <dt className="font-medium text-ink-secondary">Space</dt>
+              <dd className="font-mono text-ink">{serverStatus?.spaceName ?? 'Not configured'}</dd>
             </div>
-            <div className="rounded-md border border-indigo-200 bg-white px-3 py-2">
-              <dt className="font-medium text-stone-600">Token present</dt>
-              <dd className="text-stone-900">{serverStatus?.hasToken ? 'Yes' : 'No'}</dd>
+            <div className="rounded-md border border-brand/25 bg-surface-raised px-3 py-2">
+              <dt className="font-medium text-ink-secondary">Token present</dt>
+              <dd className="text-ink">{serverStatus?.hasToken ? 'Yes' : 'No'}</dd>
             </div>
           </dl>
-          <p className="flex items-center gap-1 text-xs text-stone-600">
+          <p className="flex items-center gap-1 text-xs text-ink-secondary">
             <HelpCircle className="h-3 w-3" />
-            Set <code className="rounded bg-indigo-100 px-1 py-0.5">HF_SPACE_NAME</code> and{' '}
-            <code className="rounded bg-indigo-100 px-1 py-0.5">HF_TOKEN</code> as Worker variables, then redeploy.
+            Set <code className="rounded bg-brand/10 px-1 py-0.5">HF_SPACE_NAME</code> and{' '}
+            <code className="rounded bg-brand/10 px-1 py-0.5">HF_TOKEN</code> as Worker variables, then redeploy.
           </p>
         </div>
       )}
@@ -229,7 +229,7 @@ export default function QwenCoverGenerator({
       <form onSubmit={handleGenerate} className="space-y-4">
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label htmlFor="qwen-prompt" className="text-xs font-semibold text-stone-800">
+            <label htmlFor="qwen-prompt" className="text-xs font-semibold text-ink">
               Visual Artwork Prompt
             </label>
             <button
@@ -247,7 +247,7 @@ export default function QwenCoverGenerator({
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Describe the conceptual cover image (e.g. 'A sleek architectural representation of distributed neural weights, copper traces on obsidian stone, soft volumetric studio lighting, 8k resolution')..."
-            className="w-full rounded-md border border-stone-300 bg-white p-3 text-xs text-stone-900 placeholder:text-stone-600 focus:outline-none focus:ring-2 focus:ring-brand-hover font-sans"
+            className="w-full rounded-md border border-border-strong bg-surface-raised p-3 text-xs text-ink placeholder:text-ink-secondary focus:outline-none focus:ring-2 focus:ring-brand-hover font-sans"
             disabled={loading}
           />
         </div>
@@ -255,7 +255,7 @@ export default function QwenCoverGenerator({
         {/* Aspect Ratio & Basic Tuning */}
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
-            <label htmlFor="qwen-dimensions" className="block text-xs font-medium text-stone-700 mb-1">
+            <label htmlFor="qwen-dimensions" className="block text-xs font-medium text-ink mb-1">
               Aspect Ratio / Dimensions
             </label>
             <select
@@ -266,7 +266,7 @@ export default function QwenCoverGenerator({
                 setWidth(w);
                 setHeight(h);
               }}
-              className="w-full rounded-md border border-stone-300 bg-white px-2.5 py-2 text-xs text-stone-900"
+              className="w-full rounded-md border border-border-strong bg-surface-raised px-2.5 py-2 text-xs text-ink"
               disabled={loading}
             >
               <option value="1024x576">16:9 Editorial Header (1024 × 576)</option>
@@ -277,8 +277,8 @@ export default function QwenCoverGenerator({
           </div>
 
           <div>
-            <label htmlFor="qwen-steps" className="block text-xs font-medium text-stone-700 mb-1">
-              Inference Steps: <span className="font-semibold text-stone-900">{steps}</span>
+            <label htmlFor="qwen-steps" className="block text-xs font-medium text-ink mb-1">
+              Inference Steps: <span className="font-semibold text-ink">{steps}</span>
             </label>
             <input
               id="qwen-steps"
@@ -294,8 +294,8 @@ export default function QwenCoverGenerator({
           </div>
 
           <div>
-            <label htmlFor="qwen-quality" className="block text-xs font-medium text-stone-700 mb-1">
-              AVIF Quality: <span className="font-semibold text-stone-900">{quality}%</span>
+            <label htmlFor="qwen-quality" className="block text-xs font-medium text-ink mb-1">
+              AVIF Quality: <span className="font-semibold text-ink">{quality}%</span>
             </label>
             <input
               id="qwen-quality"
@@ -316,16 +316,16 @@ export default function QwenCoverGenerator({
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-stone-700 hover:text-stone-900"
+            className="inline-flex items-center gap-1 text-xs font-medium text-ink hover:text-ink"
           >
             <Sliders className="h-3 w-3" />
             <span>{showAdvanced ? 'Hide advanced settings' : 'Show advanced options (Negative prompt, seed, guidance)'}</span>
           </button>
 
           {showAdvanced && (
-            <div className="mt-3 rounded-md border border-stone-200 bg-white p-3.5 space-y-3">
+            <div className="mt-3 rounded-md border border-line bg-surface-raised p-3.5 space-y-3">
               <div>
-                <label htmlFor="qwen-negative-prompt" className="block text-xs font-medium text-stone-700 mb-1">
+                <label htmlFor="qwen-negative-prompt" className="block text-xs font-medium text-ink mb-1">
                   Negative Prompt
                 </label>
                 <input
@@ -333,14 +333,14 @@ export default function QwenCoverGenerator({
                   type="text"
                   value={negativePrompt}
                   onChange={(e) => setNegativePrompt(e.target.value)}
-                  className="w-full rounded-md border border-stone-300 px-2.5 py-1.5 text-xs text-stone-900"
+                  className="w-full rounded-md border border-border-strong px-2.5 py-1.5 text-xs text-ink"
                   disabled={loading}
                 />
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="qwen-guidance" className="block text-xs font-medium text-stone-700 mb-1">
+                  <label htmlFor="qwen-guidance" className="block text-xs font-medium text-ink mb-1">
                     Guidance Scale ({guidanceScale})
                   </label>
                   <input
@@ -362,10 +362,10 @@ export default function QwenCoverGenerator({
                     type="checkbox"
                     checked={randomizeSeed}
                     onChange={(e) => setRandomizeSeed(e.target.checked)}
-                    className="h-4 w-4 rounded border-stone-300 text-brand focus:ring-brand-hover"
+                    className="h-4 w-4 rounded border-border-strong text-brand focus:ring-brand-hover"
                     disabled={loading}
                   />
-                  <label htmlFor="random-seed" className="text-xs font-medium text-stone-700">
+                  <label htmlFor="random-seed" className="text-xs font-medium text-ink">
                     Randomize Seed
                   </label>
                   {!randomizeSeed && (
@@ -373,7 +373,7 @@ export default function QwenCoverGenerator({
                       type="number"
                       value={seed}
                       onChange={(e) => setSeed(Number(e.target.value))}
-                      className="ml-2 w-28 rounded border border-stone-300 px-2 py-1 text-xs text-stone-900"
+                      className="ml-2 w-28 rounded border border-border-strong px-2 py-1 text-xs text-ink"
                       aria-label="Custom seed number"
                     />
                   )}
@@ -388,7 +388,7 @@ export default function QwenCoverGenerator({
           <button
             type="submit"
             disabled={loading || !prompt.trim()}
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-50"
           >
             {loading ? (
               <>
@@ -404,7 +404,7 @@ export default function QwenCoverGenerator({
           </button>
 
           {serverStatus?.spaceName && (
-            <span className="text-xs text-stone-600 font-mono">
+            <span className="text-xs text-ink-secondary font-mono">
               Target: {serverStatus.spaceName}
             </span>
           )}
@@ -413,13 +413,13 @@ export default function QwenCoverGenerator({
 
       {/* Error Feedback */}
       {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 p-4 text-xs text-red-900 flex items-start gap-2">
-          <AlertCircle className="h-4 w-4 text-red-700 shrink-0 mt-0.5" />
+        <div className="rounded-md border border-destructive/25 bg-destructive/5 p-4 text-xs text-destructive flex items-start gap-2">
+          <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
           <div className="space-y-1">
             <p className="font-semibold">Generation encountered an error:</p>
             <p className="leading-relaxed">{error}</p>
-            <p className="text-stone-700 pt-1">
-              Ensure your Hugging Face Space is online, your <code className="bg-red-100 px-1 py-0.5 rounded">HF_TOKEN</code> is authorized, and the Space exposes the <code className="bg-red-100 px-1 py-0.5 rounded">/generate_avif</code> API endpoint.
+            <p className="text-ink pt-1">
+              Ensure your Hugging Face Space is online, your <code className="bg-destructive/10 px-1 py-0.5 rounded">HF_TOKEN</code> is authorized, and the Space exposes the <code className="bg-destructive/10 px-1 py-0.5 rounded">/generate_avif</code> API endpoint.
             </p>
           </div>
         </div>
@@ -427,14 +427,14 @@ export default function QwenCoverGenerator({
 
       {/* Generated Image Result Display */}
       {generatedUri && (
-        <div className="rounded-lg border border-stone-200 bg-white p-4 space-y-4">
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 pb-2.5">
+        <div className="rounded-lg border border-line bg-surface-raised p-4 space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line pb-2.5">
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-900">
+              <span className="inline-flex items-center gap-1 rounded bg-success/10 px-2 py-0.5 text-xs font-semibold text-success">
                 <Check className="h-3 w-3" />
                 <span>AVIF Rendered</span>
               </span>
-              <span className="text-xs text-stone-600 font-mono">
+              <span className="text-xs text-ink-secondary font-mono">
                 {width} × {height} px · Seed {generatedSeed ?? 'random'}
               </span>
             </div>
@@ -443,7 +443,7 @@ export default function QwenCoverGenerator({
               <a
                 href={generatedUri}
                 download={`qwen_cover_${Date.now()}.avif`}
-                className="inline-flex min-h-8 items-center gap-1 rounded border border-stone-300 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 hover:bg-stone-50 transition-colors"
+                className="inline-flex min-h-8 items-center gap-1 rounded border border-border-strong bg-surface-raised px-2.5 py-1 text-xs font-medium text-ink hover:bg-canvas transition-colors"
                 title="Download AVIF file"
               >
                 <Download className="h-3.5 w-3.5" />
@@ -454,7 +454,7 @@ export default function QwenCoverGenerator({
                 type="button"
                 onClick={handleApply}
                 disabled={applied}
-                className="inline-flex min-h-8 items-center gap-1.5 rounded bg-brand px-3.5 py-1 text-xs font-semibold text-white hover:bg-brand-hover disabled:bg-emerald-800 transition-colors"
+                className="inline-flex min-h-8 items-center gap-1.5 rounded bg-brand px-3.5 py-1 text-xs font-semibold text-on-primary hover:bg-brand-hover disabled:bg-success transition-colors"
               >
                 {applied ? (
                   <>
@@ -472,7 +472,7 @@ export default function QwenCoverGenerator({
           </div>
 
           {/* Native HTML <picture> Tag Rendering AVIF Data Stream */}
-          <div className="relative overflow-hidden rounded-md border border-stone-200 bg-stone-900 flex items-center justify-center">
+          <div className="relative overflow-hidden rounded-md border border-line bg-surface-inverse flex items-center justify-center">
             <picture className="w-full">
               <source srcSet={generatedUri} type="image/avif" />
               <img
@@ -483,7 +483,7 @@ export default function QwenCoverGenerator({
             </picture>
           </div>
 
-          <div className="flex items-center justify-between text-xs text-stone-600 font-mono">
+          <div className="flex items-center justify-between text-xs text-ink-secondary font-mono">
             <span>Encoding: Native AVIF Base64 Data Stream</span>
             <span>ZeroGPU Accelerated</span>
           </div>

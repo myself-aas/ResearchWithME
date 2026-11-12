@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import HomeFeed from '@/components/HomeFeed';
+import { getCachedFeedArticles } from '@/lib/cms/catalogue';
 import { CATEGORIES, categoryToSlug, slugToCategory } from '@/lib/blog-data';
 import { CATEGORY_META } from '@/components/ArticleFeed';
 import { pageMetadata } from '@/lib/seo';
@@ -41,6 +42,8 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
 
   const search = searchParams ? (await searchParams).search ?? '' : '';
 
-  return <HomeFeed initialCategory={category} initialSearch={search} />;
+  const posts = await getCachedFeedArticles();
+
+  return <HomeFeed initialCategory={category} initialSearch={search} initialPosts={posts} />;
 }
 

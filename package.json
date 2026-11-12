@@ -52,7 +52,9 @@
     "capture:next-contract": "tsx scripts/capture-next-contract.ts",
     "build:pages": "vite build --config cloudflare-pages/vite.config.ts && vite build --config cloudflare-pages/vite.config.server.ts",
     "test:pages": "playwright test --project=e2e --config test/playwright.config.ts",
-    "test:staging": "playwright test --project=staging --config test/playwright.config.ts"
+    "test:staging": "playwright test --project=staging --config test/playwright.config.ts",
+    "docs:workflows": "tsx scripts/build-workflow-docs.ts",
+    "parity": "node scripts/visual-parity.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -70,6 +72,7 @@
     "cmdk": "^1.1.1",
     "fuse.js": "^7.5.0",
     "lenis": "^1.3.27",
+    "lottie-web": "5.13.0",
     "lucide-react": "^0.553.0",
     "motion": "^14.12.0",
     "next": "15.5.28",

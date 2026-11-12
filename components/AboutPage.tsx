@@ -2,6 +2,7 @@ import Link from 'next/link';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import SectionNavigation from '@/components/layout/SectionNavigation';
+import { Card, Text, Link as TextLink } from '@/components/primitives';
 
 const aboutSections = [
   { id: 'mission-heading', label: 'Editorial mission and diamond open access' },
@@ -17,9 +18,9 @@ export default function AboutPage() {
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-8">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+          <Text as="p" variant="eyebrow" color="brand" weight="semibold">
             Colophon &amp; Institutional Charter
-          </p>
+          </Text>
           <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
             About ResearchWithMe
           </h1>
@@ -35,9 +36,9 @@ export default function AboutPage() {
           </div>
           <div data-layout-content="reading" className="order-2 min-w-0 max-w-[48rem] space-y-10 lg:order-1 font-sans text-base leading-relaxed text-ink">
             <section aria-labelledby="mission-heading" className="space-y-4">
-              <h2 id="mission-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="mission-heading" as="h2" variant="section-title">
                 Editorial mission and diamond open access
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 Modern technical literature moves faster than traditional journal review cycles, yet informal commentary
                 rarely preserves reproducible citations or verifiable reviewer credentials. ResearchWithMe bridges that
@@ -49,60 +50,60 @@ export default function AboutPage() {
                 Every published review links directly to its primary scholarly artifact—whether an arXiv preprint, a
                 clinical trial registry record, or a tagged GitHub release—and pairs narrative critique with formal
                 bibliographic metadata in the{' '}
-                <Link href="/papers" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/papers" >
                   indexed paper archive
-                </Link>{' '}
+                </TextLink>{' '}
                 and printable{' '}
-                <Link href="/editions" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/editions" >
                   quarterly PDF editions
-                </Link>
+                </TextLink>
                 .
               </p>
             </section>
 
             <section aria-labelledby="verification-heading" className="space-y-4 border-t border-line pt-8">
-              <h2 id="verification-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="verification-heading" as="h2" variant="section-title">
                 Specialist verification and review standards
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 Bylines in the{' '}
-                <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/authors" >
                   contributors and specialists directory
-                </Link>{' '}
+                </TextLink>{' '}
                 require cryptographic or institutional provenance: ORCID iDs for academic researchers, verified repository
                 maintainership on GitHub for systems engineers, or institutional domain attestation overseen by our{' '}
-                <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/editorial-board" >
                   independent editorial board
-                </Link>
+                </TextLink>
                 .
               </p>
               <p className="text-ink-secondary">
                 Readers can audit claims interactively with the{' '}
-                <Link href="/assistant" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/assistant" >
                   research synthesis assistant
-                </Link>
+                </TextLink>
                 , export formatted BibTeX, RIS, APA, MLA, and Chicago references from the{' '}
-                <Link href="/cite" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/cite" >
                   citation builder
-                </Link>
+                </TextLink>
                 , and curate offline bibliographies in their local{' '}
-                <Link href="/bookmarks" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/bookmarks" >
                   saved reading list
-                </Link>{' '}
+                </TextLink>{' '}
                 without creating an account.
               </p>
             </section>
 
             <section aria-labelledby="representative-heading" className="space-y-4 border-t border-line pt-8">
-              <h2 id="representative-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="representative-heading" as="h2" variant="section-title">
                 Representative reviews across disciplines
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 Our editorial columns span systems engineering, life sciences, organizational sociology, and open-science
                 economics. Recent peer reviews and repository teardowns include:
               </p>
               <ul className="grid gap-3 sm:grid-cols-2">
-                <li className="rounded-sm border border-line bg-surface p-4">
+                <Card as="li">
                   <Link
                     href="/post/inside-vllm-and-paged-attention"
                     className="font-serif text-lg font-semibold text-ink hover:text-brand"
@@ -112,8 +113,8 @@ export default function AboutPage() {
                   <p className="mt-1 font-sans text-xs text-ink-secondary">
                     Systems teardown of virtual memory paging for high-throughput LLM serving.
                   </p>
-                </li>
-                <li className="rounded-sm border border-line bg-surface p-4">
+                </Card>
+                <Card as="li">
                   <Link
                     href="/post/why-we-migrated-from-k8s-to-nomad-and-bare-metal"
                     className="font-serif text-lg font-semibold text-ink hover:text-brand"
@@ -123,8 +124,8 @@ export default function AboutPage() {
                   <p className="mt-1 font-sans text-xs text-ink-secondary">
                     Two-year infrastructure post-mortem on cluster scheduling and cost telemetry.
                   </p>
-                </li>
-                <li className="rounded-sm border border-line bg-surface p-4">
+                </Card>
+                <Card as="li">
                   <Link
                     href="/post/crispr-cas12f-miniaturization-delivery-bottlenecks"
                     className="font-serif text-lg font-semibold text-ink hover:text-brand"
@@ -134,8 +135,8 @@ export default function AboutPage() {
                   <p className="mt-1 font-sans text-xs text-ink-secondary">
                     Molecular biology review of compact endonucleases for in vivo gene editing.
                   </p>
-                </li>
-                <li className="rounded-sm border border-line bg-surface p-4">
+                </Card>
+                <Card as="li">
                   <Link
                     href="/post/the-hidden-tax-on-open-science-commercial-apcs"
                     className="font-serif text-lg font-semibold text-ink hover:text-brand"
@@ -145,8 +146,8 @@ export default function AboutPage() {
                   <p className="mt-1 font-sans text-xs text-ink-secondary">
                     Empirical policy audit of $2.4B in public research grants paid to commercial publishers.
                   </p>
-                </li>
-                <li className="rounded-sm border border-line bg-surface p-4">
+                </Card>
+                <Card as="li">
                   <Link
                     href="/post/async-first-is-broken-when-meetings-become-slack-anxiety"
                     className="font-serif text-lg font-semibold text-ink hover:text-brand"
@@ -156,8 +157,8 @@ export default function AboutPage() {
                   <p className="mt-1 font-sans text-xs text-ink-secondary">
                     Sociological analysis of narrative decision protocols in distributed research teams.
                   </p>
-                </li>
-                <li className="rounded-sm border border-line bg-surface p-4">
+                </Card>
+                <Card as="li">
                   <Link
                     href="/post/deconstructing-deepseek-r1-reasoning-without-sft"
                     className="font-serif text-lg font-semibold text-ink hover:text-brand"
@@ -167,25 +168,25 @@ export default function AboutPage() {
                   <p className="mt-1 font-sans text-xs text-ink-secondary">
                     Replication notes on reinforcement learning incentives for chain-of-thought verification.
                   </p>
-                </li>
+                </Card>
               </ul>
             </section>
 
             <section aria-labelledby="governance-heading" className="space-y-3 border-t border-line pt-8">
-              <h2 id="governance-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="governance-heading" as="h2" variant="section-title">
                 Corrections, ethics, and correspondence
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 Substantive methodological corrections are appended directly to the canonical record with a timestamped
                 editorial note rather than silently overwritten. To propose a review, report an erratum, or inspect our
                 data-handling guarantees, visit the{' '}
-                <Link href="/contact" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/contact" >
                   editorial contact office
-                </Link>{' '}
+                </TextLink>{' '}
                 or read our{' '}
-                <Link href="/privacy" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/privacy" >
                   reader privacy policy
-                </Link>
+                </TextLink>
                 .
               </p>
             </section>

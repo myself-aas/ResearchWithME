@@ -69,10 +69,10 @@ export default function AuthorAvatar({
 
   return (
     <div className="flex flex-col items-center sm:items-start gap-2">
-      <div className={`relative shrink-0 overflow-hidden rounded-xl border border-stone-200 bg-stone-900 shadow-sm ${dimensions}`}>
+      <div className={`relative shrink-0 overflow-hidden rounded-xl border border-line bg-surface-inverse shadow-sm ${dimensions}`}>
         {loading ? (
-          <div className="flex h-full w-full items-center justify-center bg-stone-900 text-stone-300">
-            <RefreshCw className="h-6 w-6 animate-spin text-amber-500" />
+          <div className="flex h-full w-full items-center justify-center bg-surface-inverse text-text-inverse/70">
+            <RefreshCw className="h-6 w-6 animate-spin text-trust-uncertain" />
           </div>
         ) : svgContent ? (
           // Rendered through an <img> data URI rather than inline markup: an
@@ -90,7 +90,7 @@ export default function AuthorAvatar({
             height={200}
           />
         ) : (
-          <span className="flex h-full w-full items-center justify-center font-serif font-bold text-stone-100">
+          <span className="flex h-full w-full items-center justify-center font-serif font-bold text-text-inverse">
             {author.avatar}
           </span>
         )}
@@ -102,14 +102,14 @@ export default function AuthorAvatar({
             type="button"
             onClick={() => generateAvatar(true)}
             disabled={loading}
-            className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-stone-200 bg-white px-2.5 py-1 text-xs font-medium text-stone-700 transition-colors hover:border-amber-700 hover:text-brand disabled:opacity-50"
+            className="inline-flex min-h-8 items-center gap-1.5 rounded-md border border-line bg-surface-raised px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:border-trust-uncertain hover:text-brand disabled:opacity-50"
             title="Generate custom AI profile avatar based on author domain"
           >
             <Sparkles className="h-3 w-3 text-brand-hover" />
             <span>{loading ? 'Synthesizing...' : 'Regenerate AI Avatar'}</span>
           </button>
           {sourceInfo && !notice && (
-            <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-800" title="Avatar source">
+            <span className="inline-flex items-center gap-1 text-xs font-medium text-success" title="Avatar source">
               <CheckCircle2 className="h-3 w-3" />
               <span>{sourceInfo}</span>
             </span>
@@ -118,7 +118,7 @@ export default function AuthorAvatar({
       )}
 
       {notice && (
-        <p role="status" className="text-xs text-stone-600">
+        <p role="status" className="text-xs text-ink-secondary">
           {notice}
         </p>
       )}

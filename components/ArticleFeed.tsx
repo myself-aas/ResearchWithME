@@ -24,6 +24,7 @@ import Pressable from './motion/Pressable';
 import Reveal from './motion/Reveal';
 import SuccessCheck from './motion/SuccessCheck';
 import { Stagger, StaggerItem } from './motion/Stagger';
+import { Text } from '@/components/primitives';
 
 interface CategoryMeta {
   thumbnail: string;
@@ -119,9 +120,9 @@ export default function ArticleFeed({
         <div className="mb-14">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-4">
             <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+              <Text as="p" variant="eyebrow" color="secondary">
                 Six Specialist Columns
-              </p>
+              </Text>
               <h2 id="columns-heading" className="mt-1 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
                 Browse by editorial column
               </h2>
@@ -183,8 +184,8 @@ export default function ArticleFeed({
         <Reveal variant="stage" className="mb-10 border-y border-line py-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="font-mono text-xs uppercase tracking-wider text-brand">Active Column</p>
-              <h2 className="mt-1 font-serif text-2xl font-bold text-ink sm:text-3xl">{activeCategory}</h2>
+              <Text as="p" variant="eyebrow" color="brand">Active Column</Text>
+              <Text as="h2" variant="page-title" className="mt-1">{activeCategory}</Text>
               <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
                 {activeMeta.description}
               </p>
@@ -232,12 +233,12 @@ export default function ArticleFeed({
 
       {posts.length === 0 ? (
         <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
-          <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+          <Text as="p" variant="eyebrow" color="secondary">
             Diagnostic Empty State · Zero Matches
-          </p>
-          <h3 className="mt-2 font-serif text-2xl font-semibold text-ink">
+          </Text>
+          <Text as="h3" variant="section-title" className="mt-2">
             No manuscripts match the active filter constraints
-          </h3>
+          </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
             No published review satisfies all of the constraints below simultaneously. Relax a filter or reset the index to view the complete specialist catalog.
           </p>
@@ -283,9 +284,9 @@ export default function ArticleFeed({
                   <article className="group flex w-full min-w-0 flex-col justify-between rounded-sm border border-line bg-surface transition-[color,border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5">
                     <div className="flex flex-1 flex-col gap-3 p-5">
                       <div className="flex items-center justify-between gap-2 border-b border-line pb-3">
-                        <span className="rounded-xs border border-line bg-canvas px-2 py-0.5 font-mono text-xs font-medium uppercase tracking-wider text-ink-secondary">
+                        <Text as="span" variant="eyebrow" color="secondary" weight="medium" className="rounded-xs border border-line bg-canvas px-2 py-0.5">
                           {post.format}
-                        </span>
+                        </Text>
                         <Pressable
                           type="button"
                           onClick={() => onToggleSave(post.id)}

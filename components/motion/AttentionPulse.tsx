@@ -15,8 +15,8 @@
  * Lab's exaggeration demo.
  */
 
-import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
+import { useHydratedReducedMotion } from '@/lib/motion/hooks';
 import { MotionBoundary } from './MotionScope';
 
 export interface AttentionPulseProps {
@@ -37,7 +37,7 @@ export default function AttentionPulse({
   children,
   className,
 }: AttentionPulseProps) {
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
   const ceiling = Math.min(scale, 1.15);
   const pulses = Math.max(1, Math.min(cycles, 3));
 

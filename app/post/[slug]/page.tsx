@@ -21,6 +21,9 @@ import { buildArticleCitationMap, renderWithInlineCitations } from '@/lib/citati
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
 import { articleJsonLd, jsonLdScript, videoJsonLd } from '@/lib/seo/jsonld';
+import { Card, Text } from '@/components/primitives';
+import { WorkflowDisclosure } from '@/components/workflows';
+import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
 
 export const revalidate = 30;
 
@@ -252,9 +255,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </section>
 
             <section aria-labelledby="takeaways-heading" className="mt-10 reading-column border-y border-line py-6">
-              <h2 id="takeaways-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+              <Text id="takeaways-heading" as="h2" variant="eyebrow" weight="semibold">
                 Key takeaways
-              </h2>
+              </Text>
               <ul className="mt-3 space-y-2.5">
                 {article.keyTakeaways.map((takeaway) => (
                   <li key={takeaway} className="flex gap-3 font-serif text-base leading-relaxed text-ink">
@@ -287,14 +290,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             )}
 
             {article.reviewedArtifact && (
-              <section
+              <Card
                 aria-labelledby="artifact-heading"
-                className="mt-10 reading-column rounded-sm border border-line bg-surface p-5"
+                as="section" padding="lg" className="mt-10 reading-column"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 id="artifact-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+                  <Text id="artifact-heading" as="h2" variant="eyebrow" weight="semibold">
                     Artifact under review
-                  </h2>
+                  </Text>
                   <InlineCitationPopover
                     label="[1]"
                     source={citationMap['1']}
@@ -320,7 +323,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 >
                   Open the reviewed artifact
                 </a>
-              </section>
+              </Card>
             )}
 
             <div className="mt-10 reading-column flex flex-wrap gap-2">
@@ -376,10 +379,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             aria-label="Article tools"
             className="h-fit space-y-6 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
           >
-            <div className="rounded-sm border border-line bg-surface p-5">
-              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            <Card padding="lg">
+              <Text as="h2" variant="eyebrow" weight="semibold">
                 Cite this review
-              </h2>
+              </Text>
               <p className="mt-2 font-sans text-xs leading-relaxed text-ink-secondary">
                 Export APA, MLA, Chicago, IEEE, BibTeX, or RIS records, or inspect inline references directly.
               </p>
@@ -397,12 +400,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <Quote className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Open citation builder</span>
               </Link>
-            </div>
+            </Card>
 
-            <div className="rounded-sm border border-line bg-surface p-5">
-              <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            <Card padding="lg">
+              <Text as="h2" variant="eyebrow" weight="semibold">
                 Archival Record
-              </h2>
+              </Text>
               <dl className="mt-3 space-y-3 font-mono text-xs">
                 <div>
                   <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
@@ -429,9 +432,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   <dd className="mt-0.5 text-ink">CC BY 4.0</dd>
                 </div>
               </dl>
-            </div>
+            </Card>
 
-            <div className="rounded-sm border border-line bg-surface p-5 font-sans text-xs leading-relaxed text-ink-secondary">
+            <Card padding="lg">
+              <WorkflowDisclosure workflow={RESEARCH_WORKFLOWS.publication} summary="How this review was published" />
+            </Card>
+
+            <Card padding="lg" className="font-sans text-xs leading-relaxed text-ink-secondary">
               <p className="flex items-center gap-2 font-mono uppercase tracking-wider text-ink">
                 <BookOpen className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
                 <span>Verification note</span>
@@ -439,7 +446,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <p className="mt-2">
                 Verify primary equations, benchmarks, and commits against the linked upstream artifact when citing in formal manuscripts.
               </p>
-            </div>
+            </Card>
           </aside>
         </div>
       </main>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import * as Popover from '@radix-ui/react-popover';
 import { Check, CheckCircle2, Copy, ExternalLink, GitBranch, GraduationCap } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
+import { Text } from '@/components/primitives';
 
 export interface SpecialistBadgePopoverProps {
   author: Pick<
@@ -98,14 +99,14 @@ export default function SpecialistBadgePopover({ author }: SpecialistBadgePopove
           onPointerLeave={scheduleClose}
           className="z-50 w-80 max-w-[92vw] rounded-sm border border-line bg-surface-raised p-4 text-left text-ink focus:outline-none"
         >
-          <div className="flex items-center gap-1.5 border-b border-line pb-2 font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+          <Text as="div" variant="eyebrow" color="brand" weight="semibold" className="flex items-center gap-1.5 border-b border-line pb-2">
             {viaOrcid ? (
               <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
             ) : (
               <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
             )}
             <span>{badgeLabel} Specialist</span>
-          </div>
+          </Text>
 
           <div className="mt-2.5 space-y-1">
             <p className="font-serif text-base font-semibold text-ink">{author.name}</p>

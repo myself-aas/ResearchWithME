@@ -17,6 +17,7 @@ import { MotionItem, MotionList } from './motion/MotionList';
 import Pressable from './motion/Pressable';
 import SuccessCheck from './motion/SuccessCheck';
 import { EASING } from '@/lib/motion/tokens';
+import { Text, Link as TextLink } from '@/components/primitives';
 
 interface PapersArchiveProps {
   /** Bundled records server-side; the client refreshes from /api/papers on mount. */
@@ -113,9 +114,9 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
 
           <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
             <header className="border-b border-line pb-8">
-              <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+              <Text as="p" variant="eyebrow" color="secondary">
                 Peer-Reviewed Archive · Diamond Open Access
-              </p>
+              </Text>
               <h1 className="mt-2 max-w-4xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
                 Papers, methods, and reproducible artifacts
               </h1>
@@ -130,9 +131,9 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
               </h2>
               <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto]">
                 <div>
-                  <label htmlFor="paper-search" className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                  <Text htmlFor="paper-search" as="label" variant="eyebrow" color="secondary" className="mb-1.5 block">
                     Search papers
-                  </label>
+                  </Text>
                   <div className="relative">
                     <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" aria-hidden="true" />
                     <input
@@ -147,9 +148,9 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
                 </div>
 
                 <div className="sm:min-w-56">
-                  <label htmlFor="paper-sort" className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                  <Text htmlFor="paper-sort" as="label" variant="eyebrow" color="secondary" className="mb-1.5 block">
                     Sort by
-                  </label>
+                  </Text>
                   <select
                     id="paper-sort"
                     value={sortBy}
@@ -164,9 +165,9 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
               </div>
 
               <div className="mt-4">
-                <p id="topic-label" className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                <Text id="topic-label" as="p" variant="eyebrow" color="secondary" className="mb-2">
                   Research topic
-                </p>
+                </Text>
                 <LayoutGroup id="paper-topics">
                   <div role="group" aria-labelledby="topic-label" className="flex flex-wrap gap-1.5">
                     {TOPICS.map((topic) => {
@@ -225,7 +226,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
               </p>
             )}
             {copyError && (
-              <p role="alert" className="mt-4 border-l-2 border-danger bg-surface px-4 py-3 font-sans text-sm text-danger">
+              <p role="alert" className="mt-4 border-l-2 border-destructive bg-surface px-4 py-3 font-sans text-sm text-destructive">
                 {copyError}
               </p>
             )}
@@ -233,7 +234,7 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
             {filteredPapers.length === 0 ? (
               <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
                 <FileText className="h-7 w-7 text-ink-secondary" aria-hidden="true" />
-                <h2 className="mt-4 font-serif text-2xl font-semibold text-ink">No papers match those filters</h2>
+                <Text as="h2" variant="section-title" className="mt-4">No papers match those filters</Text>
                 <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
                   Try a broader search, or clear the topic filter to browse the full archive.
                 </p>
@@ -413,32 +414,32 @@ export default function PapersArchive({ initialPapers = PUBLICATIONS_DATA }: Pap
             )}
 
             <section aria-labelledby="papers-methodology-heading" className="mt-14 border-t border-line pt-8">
-              <h2 id="papers-methodology-heading" className="font-serif text-xl font-semibold text-ink">
+              <Text id="papers-methodology-heading" as="h2" variant="card-title">
                 Indexing criteria and open bibliographic metadata
-              </h2>
+              </Text>
               <p className="mt-2 max-w-3xl font-sans text-sm leading-relaxed text-ink-secondary">
                 Every entry in the ResearchWithMe paper archive carries persistent DOI linkage, ORCID-verified author
                 attribution, and open licensing under Creative Commons Attribution 4.0 International. Papers indexed
                 here are paired with independent technical reviews by our{' '}
-                <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/authors" >
                   verified domain specialists
-                </Link>{' '}
+                </TextLink>{' '}
                 and compiled into{' '}
-                <Link href="/editions" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/editions" >
                   printable quarterly PDF compendiums
-                </Link>
+                </TextLink>
                 . You can generate formatted BibTeX, RIS, APA, MLA, or Chicago references in the{' '}
-                <Link href="/cite" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/cite" >
                   citation builder
-                </Link>
+                </TextLink>
                 , synthesize findings across venues with the{' '}
-                <Link href="/assistant" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/assistant" >
                   research assistant
-                </Link>
+                </TextLink>
                 , or review our indexing charter on the{' '}
-                <Link href="/about" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/about" >
                   About page
-                </Link>
+                </TextLink>
                 .
               </p>
             </section>

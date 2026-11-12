@@ -17,15 +17,21 @@ import { EASING } from '@/lib/motion/tokens';
 import { MotionItem, MotionList } from './motion/MotionList';
 import Pressable from './motion/Pressable';
 import SuccessCheck from './motion/SuccessCheck';
+import { Text, Link as TextLink } from '@/components/primitives';
 
-export default function BookmarksPanel() {
+/**
+ * `initialArticles` — the catalogue from the server (metadata only), so the
+ * route's HTML is complete without JavaScript. Optional: the Cloudflare Pages
+ * build renders this without it and falls back to the client fetch below.
+ */
+export default function BookmarksPanel({ initialArticles }: { initialArticles?: BlogPost[] } = {}) {
   const hydrated = useHydratePreferences();
   const savedPostIds = usePreferencesStore((state) => state.savedPostIds);
   const removeSavedPost = usePreferencesStore((state) => state.removeSavedPost);
   const clearSavedPosts = usePreferencesStore((state) => state.clearSavedPosts);
   const storagePersisted = usePreferencesStore((state) => state.storagePersisted);
 
-  const [articles, setArticles] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
+  const [articles, setArticles] = useState<BlogPost[]>(initialArticles ?? INITIAL_BLOG_POSTS);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -129,9 +135,9 @@ export default function BookmarksPanel() {
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-line pb-8">
-          <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+          <Text as="p" variant="eyebrow" color="secondary">
             Local Archive · Persisted on Device
-          </p>
+          </Text>
           <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Your reading list
           </h1>
@@ -144,7 +150,7 @@ export default function BookmarksPanel() {
         </header>
 
         {!storagePersisted && !error && (
-          <p role="alert" className="mt-4 border-l-2 border-danger bg-surface px-4 py-3 font-sans text-sm text-danger">
+          <p role="alert" className="mt-4 border-l-2 border-destructive bg-surface px-4 py-3 font-sans text-sm text-destructive">
             Browser storage is currently restricted — changes apply to this tab session only.
           </p>
         )}
@@ -152,7 +158,7 @@ export default function BookmarksPanel() {
         {savedArticles.length === 0 ? (
           <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
             <Bookmark className="h-7 w-7 text-ink-secondary" aria-hidden="true" />
-            <h2 className="mt-4 font-serif text-2xl font-semibold text-ink">Nothing saved yet</h2>
+            <Text as="h2" variant="section-title" className="mt-4">Nothing saved yet</Text>
             <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
               Use the bookmark button on any teardown or paper to queue it here for uninterrupted study.
             </p>
@@ -205,7 +211,7 @@ export default function BookmarksPanel() {
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: -4 }}
                       transition={{ duration: 0.16, ease: [...EASING.standard] }}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" aria-hidden="true" />
                       <span>Clear list</span>
@@ -223,7 +229,7 @@ export default function BookmarksPanel() {
                       <button
                         type="button"
                         onClick={handleClearAll}
-                        className="min-h-9 font-semibold text-danger underline underline-offset-4"
+                        className="min-h-9 font-semibold text-destructive underline underline-offset-4"
                       >
                         Yes, clear
                       </button>
@@ -257,14 +263,14 @@ export default function BookmarksPanel() {
               )}
             </AnimatePresence>
             {error && (
-              <p role="alert" className="mt-4 border-l-2 border-danger bg-surface px-4 py-3 font-sans text-sm text-danger">
+              <p role="alert" className="mt-4 border-l-2 border-destructive bg-surface px-4 py-3 font-sans text-sm text-destructive">
                 {error}
               </p>
             )}
 
             {filteredArticles.length === 0 ? (
               <div className="mt-6 rounded-sm border border-line bg-surface p-8">
-                <h2 className="font-serif text-xl font-semibold text-ink">No saved articles in this column</h2>
+                <Text as="h2" variant="card-title">No saved articles in this column</Text>
                 <p className="mt-2 font-sans text-sm text-ink-secondary">Choose another column or show the full list.</p>
                 <Pressable
                   type="button"
@@ -310,7 +316,7 @@ export default function BookmarksPanel() {
                         <Pressable
                           type="button"
                           onClick={() => handleRemove(article)}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-danger"
+                          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-destructive"
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           <span>Remove</span>
@@ -325,28 +331,28 @@ export default function BookmarksPanel() {
         )}
 
         <section aria-labelledby="reading-list-privacy-heading" className="mt-14 border-t border-line pt-8">
-          <h2 id="reading-list-privacy-heading" className="font-serif text-xl font-semibold text-ink">
+          <Text id="reading-list-privacy-heading" as="h2" variant="card-title">
             Local-first bibliography storage and offline export
-          </h2>
+          </Text>
           <p className="mt-2 max-w-3xl font-sans text-sm leading-relaxed text-ink-secondary">
             Your saved reading list stays entirely in your browser storage—no account registration or cloud telemetry is
             required to bookmark reviews from the{' '}
-            <Link href="/" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/" >
               editorial catalog
-            </Link>{' '}
+            </TextLink>{' '}
             or records from the{' '}
-            <Link href="/papers" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/papers" >
               indexed paper archive
-            </Link>
+            </TextLink>
             . Export saved items as clean Markdown notes for Obsidian, Notion, or lab notebooks, generate structured
             BibTeX and RIS files in the{' '}
-            <Link href="/cite" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/cite" >
               citation builder
-            </Link>
+            </TextLink>
             , or inspect our zero-tracking guarantees in the{' '}
-            <Link href="/privacy" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/privacy" >
               reader privacy policy
-            </Link>
+            </TextLink>
             . Saved items persist across sessions on this device so you can assemble seminar packets, replication queues,
             and literature review checklists at your own pace without exposing reading habits to third-party servers.
           </p>

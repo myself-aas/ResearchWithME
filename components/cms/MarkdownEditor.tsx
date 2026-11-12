@@ -57,7 +57,7 @@ export default function MarkdownEditor({ id, value, onChange, error, disabled = 
   const readMinutes = Math.max(1, Math.round(words / 220));
 
   if (!mounted) {
-    return <div className="h-[500px] bg-stone-100 animate-pulse rounded-md border border-stone-300" />;
+    return <div className="h-[500px] bg-surface animate-pulse rounded-md border border-border-strong" />;
   }
 
   return (
@@ -67,8 +67,8 @@ export default function MarkdownEditor({ id, value, onChange, error, disabled = 
       </label>
       
       <div className={cn(
-        "prose prose-stone max-w-none border rounded-md bg-white min-h-[500px] overflow-hidden",
-        error ? "border-red-700" : "border-stone-300",
+        "prose prose-stone max-w-none border rounded-md bg-surface-raised min-h-[500px] overflow-hidden",
+        error ? "border-destructive" : "border-border-strong",
         disabled && "opacity-50 pointer-events-none"
       )}>
         <MDXEditor

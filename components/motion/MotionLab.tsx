@@ -29,7 +29,7 @@ import {
 } from '@/lib/motion/tokens';
 import { PRINCIPLES, easingToCss, type PrincipleId, type PrincipleSpec } from '@/lib/motion/principles';
 import { revealVariants } from '@/lib/motion/variants';
-import { useDelayedLoading } from '@/lib/motion/hooks';
+import { useDelayedLoading, useHydrated } from '@/lib/motion/hooks';
 import { useMotionMode } from './MotionModeProvider';
 import LazyMount from './LazyMount';
 import { SkeletonShard } from './LoadingState';
@@ -38,6 +38,11 @@ import Reveal from './Reveal';
 import SuccessCheck from './SuccessCheck';
 import { Stagger, StaggerItem } from './Stagger';
 import type { MotionMode } from '@/lib/motion/mode';
+import { AttentionMark, ConnectMark, SynthesizeMark, VerifyMark, type MicroInteractionProps } from '@/components/lottie';
+import { WorkflowDiagram } from '@/components/workflows';
+import { LOTTIE_ANIMATIONS, lottieDurationMs, type LottieAnimationName } from '@/lib/lottie/animations';
+import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
+import { Card, Text } from '@/components/primitives';
 
 // ---------------------------------------------------------------------------
 // Shared demo scaffolding
@@ -245,9 +250,9 @@ function SlowInOutDemo() {
       <div className="space-y-3 rounded-sm border border-line bg-canvas p-4">
         {rows.map((row) => (
           <div key={row.label} className="flex items-center gap-3">
-            <span className="w-20 shrink-0 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            <Text as="span" variant="eyebrow" color="secondary" className="w-20 shrink-0">
               {row.label}
-            </span>
+            </Text>
             <div className="relative h-3 flex-1 rounded-full bg-surface-subtle">
               <m.div
                 animate={controls}
@@ -333,9 +338,9 @@ function TimingDemo() {
       <div className="space-y-2 rounded-sm border border-line bg-canvas p-4">
         {durations.map((name) => (
           <div key={name} className="flex items-center gap-3">
-            <span className="w-20 shrink-0 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            <Text as="span" variant="eyebrow" color="secondary" className="w-20 shrink-0">
               {name}
-            </span>
+            </Text>
             <div className="relative h-2 flex-1 rounded-full bg-surface-subtle">
               <m.div
                 animate={controls}
@@ -407,7 +412,7 @@ function SolidDrawingDemo() {
           className="flex h-20 w-32 items-center justify-center rounded-sm border border-line bg-surface text-ink shadow-raised"
           style={{ transformStyle: 'preserve-3d' }}
         >
-          <span className="font-mono text-xs uppercase tracking-wider">plane</span>
+          <Text as="span" variant="eyebrow" color="inherit">plane</Text>
         </m.div>
       </Stage>
       <Replay onPlay={play} />
@@ -424,7 +429,7 @@ function AppealDemo() {
         transition={SPRING.lift}
         className="w-40 rounded-sm border border-line bg-surface p-4"
       >
-        <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Hover me</p>
+        <Text as="p" variant="eyebrow" color="secondary">Hover me</Text>
         <p className="mt-1 font-serif text-sm font-semibold text-ink">A composed card</p>
       </m.div>
     </Stage>
@@ -460,9 +465,9 @@ function PrincipleCard({ spec }: { spec: PrincipleSpec }) {
             <span className="mr-2 font-mono text-xs text-ink-secondary">{String(spec.number).padStart(2, '0')}</span>
             {spec.name}
           </h3>
-          <span className="shrink-0 rounded-xs border border-line bg-canvas px-1.5 py-0.5 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+          <Text as="span" variant="eyebrow" color="secondary" className="shrink-0 rounded-xs border border-line bg-canvas px-1.5 py-0.5">
             {spec.pattern}
-          </span>
+          </Text>
         </div>
         <p className="mt-2 font-sans text-xs leading-relaxed text-ink-secondary">{spec.intent}</p>
       </header>
@@ -507,10 +512,10 @@ function ModeSwitch() {
   const { mode, setMode } = useMotionMode();
   const active = MODES.find((entry) => entry.id === mode) ?? MODES[0];
   return (
-    <div className="rounded-sm border border-line bg-surface p-4">
+    <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Motion mode (πeme §10)</p>
+          <Text as="p" variant="eyebrow" color="secondary">Motion mode (πeme §10)</Text>
           <p className="mt-1 font-sans text-xs text-ink-secondary">{active.description}</p>
         </div>
         <div role="group" aria-label="Motion mode" className="flex gap-1.5">
@@ -535,7 +540,7 @@ function ModeSwitch() {
         persisted as <code className="rounded-xs bg-canvas px-1">rwm-motion-mode</code> · mirrored to{' '}
         <code className="rounded-xs bg-canvas px-1">html[data-motion-mode]</code>
       </p>
-    </div>
+    </Card>
   );
 }
 
@@ -549,7 +554,7 @@ function LoadingContractDemo() {
 
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      <div className="rounded-sm border border-line bg-surface p-4">
+      <Card>
         <h3 className="font-sans text-sm font-semibold text-ink">Delayed indicator</h3>
         <p className="mt-1 font-sans text-xs leading-relaxed text-ink-secondary">
           Appears after 200ms and stays at least 500ms. A 120ms response never flashes a spinner.
@@ -562,13 +567,13 @@ function LoadingContractDemo() {
           >
             {loading ? 'Cancel' : 'Start loading'}
           </Pressable>
-          <span className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+          <Text as="span" variant="eyebrow" color="secondary">
             state: {loading ? 'pending' : 'idle'} · indicator: {visible ? 'shown' : 'hidden'}
-          </span>
+          </Text>
         </div>
-      </div>
+      </Card>
 
-      <div className="rounded-sm border border-line bg-surface p-4">
+      <Card>
         <h3 className="font-sans text-sm font-semibold text-ink">Skeleton shard</h3>
         <p className="mt-1 font-sans text-xs leading-relaxed text-ink-secondary">
           Bounded shimmer (three cycles, 1500ms each) shaped like the content it replaces.
@@ -578,7 +583,7 @@ function LoadingContractDemo() {
           <div className="h-2" />
           <SkeletonShard lines={3} />
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -591,6 +596,45 @@ function HeavyWidget() {
         In production this slot holds a code-split widget (Recharts, a provenance graph, an editor). The skeleton above
         reserved its height, so nothing below moved when it arrived.
       </p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Lottie micro-interactions + lifecycle diagrams
+// ---------------------------------------------------------------------------
+
+const LOTTIE_DEMOS: Array<{ name: LottieAnimationName; label: string; use: string; Mark: React.ComponentType<MicroInteractionProps> }> = [
+  { name: 'verify', label: 'Verify', use: 'peer-verified, saved, copied', Mark: VerifyMark },
+  { name: 'connect', label: 'Connect', use: 'citation or provenance link made', Mark: ConnectMark },
+  { name: 'synthesize', label: 'Synthesize', use: 'evidence gathered into one result', Mark: SynthesizeMark },
+  { name: 'attention', label: 'Attention', use: 'a count changed — three cycles, then rests', Mark: AttentionMark },
+];
+
+function LottieDemos() {
+  const [plays, setPlays] = useState<Record<LottieAnimationName, number>>({ verify: 0, connect: 0, synthesize: 0, attention: 0 });
+
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {LOTTIE_DEMOS.map(({ name, label, use, Mark }) => (
+        <Card key={name} className="flex flex-col">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h3 className="font-sans text-sm font-semibold text-ink">{label}</h3>
+              <p className="mt-1 font-sans text-xs leading-relaxed text-ink-secondary">{use}</p>
+            </div>
+            <span className="font-mono text-xs tabular-nums text-ink-secondary">
+              {lottieDurationMs(LOTTIE_ANIMATIONS[name])}ms
+            </span>
+          </div>
+          <div className="mt-4 flex flex-1 items-center justify-center rounded-sm border border-dashed border-line bg-canvas py-6 text-ink">
+            <Mark size={48} autoplay={false} playKey={plays[name]} />
+          </div>
+          <div className="mt-3">
+            <Replay onPlay={() => setPlays((current) => ({ ...current, [name]: current[name] + 1 }))} />
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }
@@ -674,6 +718,9 @@ function TokenTables() {
 
 export default function MotionLab() {
   const reduce = useReducedMotion();
+  // useReducedMotion() reads matchMedia on the client's first render, so the
+  // badge must render the server's value ("unknown") until hydration is done.
+  const hydrated = useHydrated();
   const [accordion, setAccordion] = useState<'none' | 'rise' | 'arc' | 'squash' | 'mask'>('arc');
 
   return (
@@ -683,17 +730,17 @@ export default function MotionLab() {
       <section aria-labelledby="principles-heading" className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-3">
           <div>
-            <h2 id="principles-heading" className="font-serif text-2xl font-bold text-ink sm:text-3xl">
+            <Text id="principles-heading" as="h2" variant="page-title">
               Twelve principles, twelve live demos
-            </h2>
+            </Text>
             <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
               Canonical order. Each card names the πeme pattern it belongs to, the exact duration and easing it may
               use, and the guardrail that keeps it out of decoration.
             </p>
           </div>
-          <span className="rounded-sm border border-line bg-surface px-2.5 py-1 font-mono text-xs uppercase tracking-wider text-ink-secondary">
-            os reduced-motion: {reduce === null ? 'unknown' : reduce ? 'reduce' : 'no-preference'}
-          </span>
+          <Text as="span" variant="eyebrow" color="secondary" className="rounded-sm border border-line bg-surface px-2.5 py-1">
+            os reduced-motion: {!hydrated || reduce === null ? 'unknown' : reduce ? 'reduce' : 'no-preference'}
+          </Text>
         </div>
 
         <Stagger as="div" className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -707,9 +754,9 @@ export default function MotionLab() {
 
       <section aria-labelledby="reveal-heading" className="space-y-4">
         <div className="border-b border-line pb-3">
-          <h2 id="reveal-heading" className="font-serif text-2xl font-bold text-ink sm:text-3xl">
+          <Text id="reveal-heading" as="h2" variant="page-title">
             Reveal variants on demand
-          </h2>
+          </Text>
           <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
             Scroll reveals normally fire once when content enters the viewport. In the lab the same variants are
             mounted on demand so you can compare them.
@@ -742,9 +789,9 @@ export default function MotionLab() {
               exit={{ opacity: 0, transition: { duration: 0.12 } }}
               className="mx-auto flex max-w-md flex-col gap-2 rounded-sm border border-line bg-surface p-5"
             >
-              <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+              <Text as="p" variant="eyebrow" color="secondary">
                 variant · {accordion}
-              </p>
+              </Text>
               <p className="font-serif text-lg font-semibold text-ink">A card that knows how it arrived</p>
               <p className="font-sans text-xs leading-relaxed text-ink-secondary">
                 The same markup is used for source details, annotations, and evidence cards across the product.
@@ -756,9 +803,9 @@ export default function MotionLab() {
 
       <section aria-labelledby="loading-heading" className="space-y-4">
         <div className="border-b border-line pb-3">
-          <h2 id="loading-heading" className="font-serif text-2xl font-bold text-ink sm:text-3xl">
+          <Text id="loading-heading" as="h2" variant="page-title">
             Loading & lazy loading
-          </h2>
+          </Text>
           <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
             Spinners wait 200ms, stay 500ms, and skeletons stop shimmering after three cycles. Widgets mount when they
             approach the viewport, never on page load.
@@ -767,7 +814,7 @@ export default function MotionLab() {
 
         <LoadingContractDemo />
 
-        <div className="rounded-sm border border-line bg-surface p-4">
+        <Card>
           <h3 className="font-sans text-sm font-semibold text-ink">Viewport-gated mount</h3>
           <p className="mt-1 font-sans text-xs leading-relaxed text-ink-secondary">
             Scroll this box into view (or reload this page with it off-screen) to watch the skeleton hand over.
@@ -788,14 +835,30 @@ export default function MotionLab() {
               <HeavyWidget />
             </LazyMount>
           </div>
+        </Card>
+      </section>
+
+      <section aria-labelledby="lottie-heading" className="space-y-4">
+        <div className="border-b border-line pb-3">
+          <Text id="lottie-heading" as="h2" variant="page-title">
+            Lottie micro-interactions
+          </Text>
+          <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+            Composed in code from the same tokens, recoloured to the current text colour, and loaded only when first
+            played. In reduced and static modes, and without JavaScript, each shows its resting frame.
+          </p>
         </div>
+        <LottieDemos />
+        <Card padding="lg">
+          <WorkflowDiagram workflow={RESEARCH_WORKFLOWS.discovery} heading="h3" />
+        </Card>
       </section>
 
       <section aria-labelledby="tokens-heading" className="space-y-4">
         <div className="border-b border-line pb-3">
-          <h2 id="tokens-heading" className="font-serif text-2xl font-bold text-ink sm:text-3xl">
+          <Text id="tokens-heading" as="h2" variant="page-title">
             Token tables
-          </h2>
+          </Text>
           <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
             Rendered from <code className="font-mono text-xs">lib/motion/tokens.ts</code>, which mirrors the generated
             πeme tokens. Nothing here is typed by hand at a call site.
@@ -804,7 +867,7 @@ export default function MotionLab() {
         <TokenTables />
       </section>
 
-      <section aria-labelledby="reset-heading" className="rounded-sm border border-line bg-surface p-5">
+      <Card aria-labelledby="reset-heading" as="section" padding="lg">
         <h2 id="reset-heading" className="font-serif text-lg font-semibold text-ink">
           Reset
         </h2>
@@ -826,7 +889,7 @@ export default function MotionLab() {
           <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
           Clear stored motion mode
         </Pressable>
-      </section>
+      </Card>
     </div>
   );
 }

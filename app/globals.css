@@ -124,11 +124,17 @@
   --color-paper: var(--color-canvas);
   --color-ink: var(--color-text-primary);
   --color-ink-muted: var(--color-text-secondary);
+  /* `text-ink-secondary` is used ~260 times but had no token, so it silently
+     inherited primary ink. Alias it to the secondary text role it names. */
+  --color-ink-secondary: var(--color-text-secondary);
   --color-line: var(--color-border-subtle);
   --color-brand: var(--color-action-primary);
   --color-brand-hover: var(--color-action-primary-hover);
   --color-brand-pressed: var(--color-action-primary-pressed);
   --color-verified: var(--color-trust-verified);
+  /* Success states (saved, approved, published). Replicated is the emerald
+     trust role that clears AA on every surface in both themes. */
+  --color-success: var(--color-trust-replicated);
 
   /* Radius — πeme v3.1 radius scale (generated). */
   --radius-xs: var(--pieme-radius-xs);
@@ -590,6 +596,41 @@ html .shadow-2xs {
 [data-lazy-section] {
   content-visibility: auto;
   contain-intrinsic-size: auto 640px;
+}
+
+/* Lottie micro-interactions (components/lottie). Compositions are painted in
+   placeholder ink; recolour every stroke and fill to the caller's text colour
+   so one asset serves both themes. Opacity attributes are left untouched. */
+.pieme-lottie svg [stroke]:not([stroke="none"]) {
+  stroke: currentColor;
+}
+.pieme-lottie svg [fill]:not([fill="none"]) {
+  fill: currentColor;
+}
+
+/* MDXEditor (third-party, /write and the studio) paints Select placeholders in
+   its slate-8 (#b9bbc6), 1.9:1 on white. Use the editor's own body-text
+   variable (slate-11) so it tracks the editor's theme rather than the page's
+   — the editor surface stays light in dark mode. [role] raises specificity
+   above the editor's CSS-module rule. */
+.mdxeditor [role="combobox"][data-placeholder] > span:first-child {
+  color: var(--baseText);
+}
+
+/* Research lifecycle diagrams (components/workflows): the connector between
+   stages is drawn with the `connect` pattern once, on first paint. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-workflow-connector] {
+    transform-origin: top;
+    animation: pieme-workflow-connect var(--pieme-motion-duration-connect) var(--ease-emphasize) both;
+  }
+}
+[data-motion-mode="reduced"] [data-workflow-connector] {
+  animation: none;
+}
+@keyframes pieme-workflow-connect {
+  from { transform: scaleY(0.2); }
+  to { transform: scaleY(1); }
 }
 
 

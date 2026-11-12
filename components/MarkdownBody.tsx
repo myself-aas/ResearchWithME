@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { CitationSource } from '@/lib/citations';
 import { renderWithInlineCitations } from '@/lib/citations-inline';
+import { Link as TextLink } from '@/components/primitives';
 
 function isExternal(href: string | undefined) {
   return Boolean(href && /^https?:\/\//i.test(href));
@@ -62,13 +63,12 @@ export default function MarkdownBody({ markdown, citations, citeHref }: Markdown
             </p>
           ),
           a: ({ href, children }) => (
-            <a
+            <TextLink
               href={href}
               {...(isExternal(href) ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
-              className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
             >
               {children}
-            </a>
+            </TextLink>
           ),
           ul: ({ children }) => (
             <ul className="mt-5 list-disc space-y-2 pl-6 font-serif text-lg leading-relaxed text-ink">

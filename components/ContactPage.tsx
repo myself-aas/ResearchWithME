@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
+import { Card, Text, Link as TextLink } from '@/components/primitives';
 
 export default function ContactPage() {
   return (
@@ -9,9 +9,9 @@ export default function ContactPage() {
 
       <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-8">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+          <Text as="p" variant="eyebrow" color="brand" weight="semibold">
             Editorial Correspondence
-          </p>
+          </Text>
           <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
             Contact the Editorial Office
           </h1>
@@ -27,11 +27,11 @@ export default function ContactPage() {
               Editorial desks
             </h2>
 
-            <div className="rounded-sm border border-line bg-surface p-6">
-              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+            <Card padding="xl">
+              <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Submissions &amp; Peer Review
-              </p>
-              <h3 className="mt-2 font-serif text-xl font-semibold text-ink">Editorial Desk</h3>
+              </Text>
+              <Text as="h3" variant="card-title" className="mt-2">Editorial Desk</Text>
               <p className="mt-2 text-sm text-ink-secondary">
                 Pitch technical paper reviews, benchmark replications, or repository teardowns. Include the target DOI
                 or repository commit hash and your domain credentials.
@@ -41,13 +41,13 @@ export default function ContactPage() {
                   editorial@researchwith.me
                 </a>
               </p>
-            </div>
+            </Card>
 
-            <div className="rounded-sm border border-line bg-surface p-6">
-              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+            <Card padding="xl">
+              <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Errata &amp; Replications
-              </p>
-              <h3 className="mt-2 font-serif text-xl font-semibold text-ink">Corrections Committee</h3>
+              </Text>
+              <Text as="h3" variant="card-title" className="mt-2">Corrections Committee</Text>
               <p className="mt-2 text-sm text-ink-secondary">
                 Report factual inaccuracies, broken artifact links, citation metadata discrepancies, or conflicting
                 experimental reproductions in any published review.
@@ -57,13 +57,13 @@ export default function ContactPage() {
                   corrections@researchwith.me
                 </a>
               </p>
-            </div>
+            </Card>
 
-            <div className="rounded-sm border border-line bg-surface p-6">
-              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+            <Card padding="xl">
+              <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Libraries &amp; Open Metadata
-              </p>
-              <h3 className="mt-2 font-serif text-xl font-semibold text-ink">Archival Indexing</h3>
+              </Text>
+              <Text as="h3" variant="card-title" className="mt-2">Archival Indexing</Text>
               <p className="mt-2 text-sm text-ink-secondary">
                 Questions regarding ISSN 2994-0821 harvesting, OpenAPI 3.1 catalog feeds, BibTeX/RIS bulk exports, or
                 quarterly print-ready compendiums.
@@ -73,13 +73,13 @@ export default function ContactPage() {
                   archive@researchwith.me
                 </a>
               </p>
-            </div>
+            </Card>
 
-            <div className="rounded-sm border border-line bg-surface p-6">
-              <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+            <Card padding="xl">
+              <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 RFC 9116 Disclosure
-              </p>
-              <h3 className="mt-2 font-serif text-xl font-semibold text-ink">Security &amp; Abuse</h3>
+              </Text>
+              <Text as="h3" variant="card-title" className="mt-2">Security &amp; Abuse</Text>
               <p className="mt-2 text-sm text-ink-secondary">
                 Report platform vulnerabilities or credential-verification issues under coordinated disclosure. See our
                 machine-readable{' '}
@@ -93,38 +93,38 @@ export default function ContactPage() {
                   security@researchwith.me
                 </a>
               </p>
-            </div>
+            </Card>
           </section>
 
           <section aria-labelledby="process-heading" className="space-y-4 border-t border-line pt-8">
-            <h2 id="process-heading" className="font-serif text-2xl font-semibold text-ink">
+            <Text id="process-heading" as="h2" variant="section-title">
               Response timelines and contributor onboarding
-            </h2>
+            </Text>
             <p className="text-ink-secondary">
               The editorial collective reviews incoming correspondence Monday through Friday (UTC). Errata affecting
               published empirical figures or bibliography records in the{' '}
-              <Link href="/papers" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              <TextLink href="/papers" >
                 paper archive
-              </Link>{' '}
+              </TextLink>{' '}
               are triaged within 48 hours and logged alongside our{' '}
-              <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              <TextLink href="/editorial-board" >
                 editorial board governance standards
-              </Link>
+              </TextLink>
               .
             </p>
             <p className="text-ink-secondary">
               Researchers and open-source maintainers who wish to join our{' '}
-              <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              <TextLink href="/authors" >
                 verified contributor roster
-              </Link>{' '}
+              </TextLink>{' '}
               can read more{' '}
-              <Link href="/about" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              <TextLink href="/about" >
                 about ResearchWithMe
-              </Link>{' '}
+              </TextLink>{' '}
               and review how contributor records are handled in our{' '}
-              <Link href="/privacy" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+              <TextLink href="/privacy" >
                 privacy policy
-              </Link>
+              </TextLink>
               .
             </p>
           </section>

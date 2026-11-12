@@ -19,6 +19,7 @@ import { LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import { SPRING } from '@/lib/motion/tokens';
 import { MotionBoundary } from './MotionScope';
+import { Text } from '@/components/primitives';
 
 export interface MotionPillOption {
   id: string;
@@ -61,7 +62,7 @@ export default function MotionPillGroup({
     <MotionBoundary>
       <div>
         {caption ? (
-          <p className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">{caption}</p>
+          <Text as="p" variant="eyebrow" color="secondary" className="mb-2">{caption}</Text>
         ) : null}
         <LayoutGroup id={groupId}>
           <div role="group" aria-label={label} className={`flex flex-wrap gap-1.5 ${className}`}>

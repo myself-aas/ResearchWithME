@@ -19,7 +19,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react';
+import { useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion/react';
 import { SPRING } from './tokens';
 
 export interface DelayedLoadingOptions {
@@ -146,4 +146,24 @@ export function useCanHover(): boolean {
     return () => query.removeEventListener?.('change', update);
   }, []);
   return canHover;
+}
+
+/**
+ * `useReducedMotion()` that is safe to branch render output on.
+ *
+ * On the server the reader's preference is unknown (`useReducedMotion()` is
+ * `null`), so markup is rendered as if motion is allowed. A client that
+ * prefers reduced motion would otherwise render different `animate` targets
+ * on its first pass and trip a hydration attribute mismatch. This returns
+ * `false` until hydration — matching the server — and the real preference
+ * afterwards. Motion values are still suppressed globally by MotionConfig
+ * `reducedMotion`, so nothing animates in that first frame.
+ *
+ * Use it wherever the result changes JSX (props such as `animate`); effects
+ * can keep using `useReducedMotion()` directly.
+ */
+export function useHydratedReducedMotion(): boolean {
+  const reduce = useReducedMotion();
+  const hydrated = useHydrated();
+  return hydrated && Boolean(reduce);
 }

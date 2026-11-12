@@ -6,6 +6,7 @@ import * as m from 'motion/react-m';
 import { ArticleFormat, CATEGORIES } from '@/lib/blog-data';
 import Pressable from './motion/Pressable';
 import { EASING } from '@/lib/motion/tokens';
+import { Text } from '@/components/primitives';
 
 interface BlogHeroProps {
   searchQuery: string;
@@ -42,13 +43,13 @@ export default function BlogHero({
           <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-16">
               <div>
-                <p
+                <Text
                   data-enter="rise"
                   style={{ '--enter-delay': '0ms' } as React.CSSProperties}
-                  className="font-mono text-xs uppercase tracking-wider text-ink-secondary"
+                  as="p" variant="eyebrow" color="secondary"
                 >
                   ISSN 2994-0821 · Diamond Open Access · Verified Specialist Monograph
-                </p>
+                </Text>
                 <h1
                   id="platform-title"
                   data-enter="rise"
@@ -70,9 +71,9 @@ export default function BlogHero({
                   style={{ '--enter-delay': '180ms' } as React.CSSProperties}
                   className="mt-8 max-w-2xl"
                 >
-                  <label htmlFor="catalog-search" className="mb-2 block font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                  <Text htmlFor="catalog-search" as="label" variant="eyebrow" color="secondary" className="mb-2 block">
                     Filter catalog by keyword, DOI, or repository
-                  </label>
+                  </Text>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <div className="relative flex-1">
                       <Search
@@ -117,9 +118,9 @@ export default function BlogHero({
                     data-enter="rise"
                     style={{ '--enter-delay': '240ms' } as React.CSSProperties}
                   >
-                    <p id="column-label" className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                    <Text id="column-label" as="p" variant="eyebrow" color="secondary" className="mb-2">
                       Editorial Column
-                    </p>
+                    </Text>
                     <LayoutGroup id="hero-columns">
                       <div role="group" aria-labelledby="column-label" className="flex flex-wrap gap-1.5">
                         {columns.map((column) => {
@@ -153,9 +154,9 @@ export default function BlogHero({
                 )}
 
                 <div className="mt-5">
-                  <p id="format-label" className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                  <Text id="format-label" as="p" variant="eyebrow" color="secondary" className="mb-2">
                     Manuscript Format
-                  </p>
+                  </Text>
                   <LayoutGroup id="hero-formats">
                     <div role="group" aria-labelledby="format-label" className="flex flex-wrap gap-1.5">
                       {formats.map((format) => {
@@ -194,19 +195,19 @@ export default function BlogHero({
               >
                 <dl className="grid grid-cols-2 gap-x-6 gap-y-5 divide-y-0 lg:grid-cols-1 lg:divide-y lg:divide-line">
                   <div className="lg:pb-4">
-                    <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Published reviews</dt>
+                    <Text as="dt" variant="eyebrow" color="secondary">Published reviews</Text>
                     <dd className="mt-1 font-mono text-2xl font-semibold text-ink">{totalArticles}</dd>
                   </div>
                   <div className="lg:py-4">
-                    <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Verified specialists</dt>
+                    <Text as="dt" variant="eyebrow" color="secondary">Verified specialists</Text>
                     <dd className="mt-1 font-mono text-2xl font-semibold text-ink">6</dd>
                   </div>
                   <div className="lg:py-4">
-                    <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Access model</dt>
+                    <Text as="dt" variant="eyebrow" color="secondary">Access model</Text>
                     <dd className="mt-1 font-sans text-sm font-semibold text-ink">Diamond open access</dd>
                   </div>
                   <div className="lg:pt-4">
-                    <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">License</dt>
+                    <Text as="dt" variant="eyebrow" color="secondary">License</Text>
                     <dd className="mt-1 font-mono text-sm font-semibold text-ink">CC BY 4.0</dd>
                   </div>
                 </dl>
