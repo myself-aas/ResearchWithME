@@ -18,7 +18,7 @@ import InlineCitationPopover from '@/components/reader/InlineCitationPopover';
 import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
 import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
 import { buildArticleCitationMap, renderWithInlineCitations } from '@/lib/citations-inline';
-import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { getCachedArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
 import { articleJsonLd, jsonLdScript, videoJsonLd } from '@/lib/seo/jsonld';
 import { Card, Text } from '@/components/primitives';
@@ -27,7 +27,7 @@ import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
 
 export const revalidate = 30;
 
-const catalogue = cache(getArticleCatalogue);
+const catalogue = cache(getCachedArticleCatalogue);
 
 async function findArticle(slug: string) {
   const articles = await catalogue();

@@ -78,6 +78,18 @@ export const CATALOGUE_TAG = 'catalogue';
  * 30 s matches the article pages' ISR window; a studio publish invalidates the
  * tag immediately, and the client refresh after hydration updates counters.
  */
+/**
+ * The full catalogue (with bodies) through the incremental cache, for the
+ * article reader and its OG image. `/post/[slug]` must stay dynamically
+ * rendered — under ISR an unknown slug is served as a cached 200 instead of a
+ * real 404 (verified 2026-11-12) — so caching the data read is what keeps
+ * TTFB low. Same 30 s window and tag as the feed.
+ */
+export const getCachedArticleCatalogue = unstable_cache(() => getArticleCatalogue(), ['article-catalogue'], {
+  revalidate: 30,
+  tags: [CATALOGUE_TAG],
+});
+
 export const getCachedFeedArticles = unstable_cache(() => getFeedArticles(), ['feed-articles'], {
   revalidate: 30,
   tags: [CATALOGUE_TAG],

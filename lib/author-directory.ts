@@ -1,5 +1,6 @@
 import 'server-only';
 
+import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 import { AUTHORS, type Author } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
@@ -80,6 +81,18 @@ const directory = createAuthorDirectory({
 });
 
 export const listPublishedAuthors = cache(directory.listPublishedAuthors);
+
+/**
+ * The published directory through the incremental cache, for the home page.
+ * `/` is dynamic by design (it reads `searchParams` for legacy redirects and
+ * search), so without this every request waited on two Supabase reads
+ * (profiles + catalogue). Tagged `catalogue` so a studio publish refreshes the
+ * article counts; 60 s otherwise.
+ */
+export const getCachedPublishedAuthors = unstable_cache(() => directory.listPublishedAuthors(), ['published-authors'], {
+  revalidate: 60,
+  tags: ['catalogue', 'authors'],
+});
 
 /**
  * One published profile, or null when no such profile exists.

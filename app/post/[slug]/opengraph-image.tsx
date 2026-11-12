@@ -1,12 +1,12 @@
 import { cache } from 'react';
 import { brandOgImage } from '@/lib/og/brand-image';
-import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { getCachedArticleCatalogue } from '@/lib/cms/catalogue';
 
 export const alt = 'ResearchWithMe article';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-const catalogue = cache(getArticleCatalogue);
+const catalogue = cache(getCachedArticleCatalogue);
 
 export default async function PostOgImage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
