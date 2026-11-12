@@ -157,24 +157,24 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
   }
 
   return (
-    <section id="discussion" aria-labelledby="discussion-heading" className="border-t border-stone-200 pt-10">
+    <section id="discussion" aria-labelledby="discussion-heading" className="border-t border-line pt-10">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
-        <h2 id="discussion-heading" className="flex items-center gap-2 font-serif text-2xl font-bold text-stone-900">
+        <h2 id="discussion-heading" className="flex items-center gap-2 font-serif text-2xl font-bold text-ink">
           <MessageSquare className="h-5 w-5 text-brand-hover" aria-hidden="true" />
           <span>Peer discussion</span>
         </h2>
-        <p className="text-sm text-stone-600">
+        <p className="text-sm text-ink-secondary">
           {loading ? 'Loading comments…' : `${comments.length || commentCount} notes`}
         </p>
       </div>
 
-      <p className="mt-2 max-w-2xl text-base leading-relaxed text-stone-700">
+      <p className="mt-2 max-w-2xl text-base leading-relaxed text-ink">
         Comments are public. Critique the method, reproduce a result, or ask a precise question.
       </p>
 
-      <form onSubmit={submit} className="mt-6 space-y-4 rounded-lg border border-stone-200 bg-white p-5">
+      <form onSubmit={submit} className="mt-6 space-y-4 rounded-lg border border-line bg-surface-raised p-5">
         <div>
-          <label htmlFor="comment-name" className="mb-1.5 block text-sm font-medium text-stone-800">
+          <label htmlFor="comment-name" className="mb-1.5 block text-sm font-medium text-ink">
             Name and role
           </label>
           <input
@@ -185,12 +185,12 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
             maxLength={LIMITS.name}
             autoComplete="name"
             placeholder="Alex V., systems engineer"
-            className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900 placeholder:text-stone-600"
+            className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink placeholder:text-ink-secondary"
           />
         </div>
 
         <div>
-          <label htmlFor="comment-text" className="mb-1.5 block text-sm font-medium text-stone-800">
+          <label htmlFor="comment-text" className="mb-1.5 block text-sm font-medium text-ink">
             Comment
           </label>
           <textarea
@@ -200,20 +200,20 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
             onChange={(event) => setNameText(event.target.value)}
             maxLength={LIMITS.comment}
             placeholder="Describe the result you reproduced, or the part of the method that needs clarification."
-            className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
+            className="w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
           />
-          <p className="mt-1 text-sm text-stone-600">
+          <p className="mt-1 text-sm text-ink-secondary">
             {text.length} of {LIMITS.comment} characters
           </p>
         </div>
 
         {formError && (
-          <p role="alert" className="border-l-2 border-red-800 bg-red-50 px-3 py-2 text-sm text-red-900">
+          <p role="alert" className="border-l-2 border-destructive bg-destructive/5 px-3 py-2 text-sm text-destructive">
             {formError}
           </p>
         )}
         {status && (
-          <p role="status" className="border-l-2 border-emerald-700 bg-emerald-50 px-3 py-2 text-sm text-emerald-950">
+          <p role="status" className="border-l-2 border-success bg-success/5 px-3 py-2 text-sm text-success">
             {status}
           </p>
         )}
@@ -221,41 +221,41 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
+          className="inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-60"
         >
           {submitting ? 'Posting…' : 'Post comment'}
         </button>
       </form>
 
       {loadError && (
-        <p role="status" className="mt-4 border-l-2 border-brand-hover bg-indigo-50 px-3 py-2 text-sm text-brand-pressed">
+        <p role="status" className="mt-4 border-l-2 border-brand-hover bg-brand/5 px-3 py-2 text-sm text-brand-pressed">
           {loadError}
         </p>
       )}
 
-      <ul className="mt-6 divide-y divide-stone-200 border-t border-stone-200">
+      <ul className="mt-6 divide-y divide-line border-t border-line">
         {comments.map((comment) => (
           <li key={comment.id} className="flex gap-3 py-5">
             <span
               aria-hidden="true"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-stone-900 font-serif text-sm font-bold text-stone-50"
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-inverse font-serif text-sm font-bold text-text-inverse"
             >
               {comment.avatar || safeInitials(comment.authorName)}
             </span>
             <div className="min-w-0">
               <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
-                <span className="font-semibold text-stone-900">{comment.authorName}</span>
-                {comment.authorRole && <span className="text-stone-600">{comment.authorRole}</span>}
-                <span className="text-stone-600">· {comment.timestamp}</span>
+                <span className="font-semibold text-ink">{comment.authorName}</span>
+                {comment.authorRole && <span className="text-ink-secondary">{comment.authorRole}</span>}
+                <span className="text-ink-secondary">· {comment.timestamp}</span>
               </p>
-              <p className="mt-1 max-w-prose text-base leading-relaxed text-stone-800">{comment.text}</p>
+              <p className="mt-1 max-w-prose text-base leading-relaxed text-ink">{comment.text}</p>
             </div>
           </li>
         ))}
       </ul>
 
       {!loading && comments.length === 0 && !loadError && (
-        <p className="border-t border-stone-200 py-6 text-base text-stone-700">
+        <p className="border-t border-line py-6 text-base text-ink">
           No comments yet. A precise question is a useful first note.
         </p>
       )}

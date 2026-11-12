@@ -9,13 +9,17 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
-import { ArrowRight, Copy, FileText, Send, Sparkles } from 'lucide-react';
+import { ArrowRight, Copy, FileText, Send } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
 import { EASING } from '@/lib/motion/tokens';
 import { Spinner } from '@/components/motion/LoadingState';
 import SuccessCheck from '@/components/motion/SuccessCheck';
+import { Text } from '@/components/primitives';
+import { WorkflowDisclosure } from '@/components/workflows';
+import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
+import { SynthesizeMark } from '@/components/lottie';
 
 interface Citation {
   id: string;
@@ -31,13 +35,18 @@ const SAMPLE_QUESTIONS = [
   'Why did the engineering team move from Kubernetes to Nomad on bare metal?',
 ];
 
-export default function AssistantPanel() {
+/**
+ * `initialArticles` — the catalogue from the server (metadata only), so the
+ * route's HTML is complete without JavaScript. Optional: the Cloudflare Pages
+ * build renders this without it and falls back to the client fetch below.
+ */
+export default function AssistantPanel({ initialArticles }: { initialArticles?: BlogPost[] } = {}) {
   const [query, setQuery] = useState('');
   const [scope, setScope] = useState('all');
   const [loading, setLoading] = useState(false);
   const [answer, setAnswer] = useState<string | null>(null);
   const [citations, setCitations] = useState<Citation[]>([]);
-  const [articles, setArticles] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
+  const [articles, setArticles] = useState<BlogPost[]>(initialArticles ?? INITIAL_BLOG_POSTS);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const answerRef = useRef<HTMLDivElement>(null);
@@ -115,15 +124,15 @@ export default function AssistantPanel() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+        <header className="border-b border-line pb-8">
+          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Ask the archive a question
           </h1>
-          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
+          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-ink">
             The assistant answers from this platform&apos;s own catalog. Without a configured model key it returns a deterministic, cited summary; with one, the model receives the same catalog text and is asked to cite its sources.
           </p>
         </header>
@@ -142,7 +151,7 @@ export default function AssistantPanel() {
           >
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_18rem]">
               <div>
-                <label htmlFor="assistant-query" className="mb-1.5 block text-sm font-medium text-stone-800">
+                <label htmlFor="assistant-query" className="mb-1.5 block text-sm font-medium text-ink">
                   Question
                 </label>
                 <textarea
@@ -152,12 +161,12 @@ export default function AssistantPanel() {
                   onChange={(event) => setQuery(event.target.value)}
                   disabled={loading}
                   placeholder="What evidence supports the claim that paged attention improves throughput?"
-                  className="w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-base text-stone-900 placeholder:text-stone-600"
+                  className="w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
                 />
               </div>
 
               <div>
-                <label htmlFor="assistant-scope" className="mb-1.5 block text-sm font-medium text-stone-800">
+                <label htmlFor="assistant-scope" className="mb-1.5 block text-sm font-medium text-ink">
                   Scope
                 </label>
                 <select
@@ -165,7 +174,7 @@ export default function AssistantPanel() {
                   value={scope}
                   onChange={(event) => setScope(event.target.value)}
                   disabled={loading}
-                  className="h-11 w-full rounded-md border border-stone-300 bg-white px-3 text-sm text-stone-900"
+                  className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
                 >
                   <option value="all">Entire catalog ({articles.length} articles)</option>
                   {articles.map((article) => (
@@ -174,7 +183,7 @@ export default function AssistantPanel() {
                     </option>
                   ))}
                 </select>
-                <p className="mt-2 text-sm leading-relaxed text-stone-600">
+                <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
                   Narrowing the scope keeps the answer anchored to one review.
                 </p>
               </div>
@@ -184,21 +193,21 @@ export default function AssistantPanel() {
               <button
                 type="submit"
                 disabled={loading || !query.trim()}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-50"
               >
                 {loading ? (
-                  <Spinner size={16} className="text-white" />
+                  <Spinner size={16} className="text-on-primary" />
                 ) : (
                   <Send className="h-4 w-4" aria-hidden="true" />
                 )}
                 <span>{loading ? 'Searching the archive…' : 'Ask the archive'}</span>
               </button>
-              <p className="text-sm text-stone-600">Answers summarize published work; verify claims against the linked article.</p>
+              <p className="text-sm text-ink-secondary">Answers summarize published work; verify claims against the linked article.</p>
             </div>
           </form>
 
           <div className="mt-8">
-            <h2 className="text-sm font-semibold text-stone-900">Try one of these</h2>
+            <h2 className="text-sm font-semibold text-ink">Try one of these</h2>
             <div className="mt-3 flex flex-wrap gap-2">
               {SAMPLE_QUESTIONS.map((question) => (
                 <button
@@ -209,7 +218,7 @@ export default function AssistantPanel() {
                     setQuery(question);
                     runQuery(question);
                   }}
-                  className="max-w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-left text-sm text-stone-800 transition-colors hover:border-stone-400 disabled:opacity-50"
+                  className="max-w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-left text-sm text-ink transition-colors hover:border-border-strong disabled:opacity-50"
                 >
                   {question}
                 </button>
@@ -218,7 +227,7 @@ export default function AssistantPanel() {
           </div>
 
           {error && (
-            <div role="alert" className="mt-6 border-l-2 border-red-800 bg-red-50 px-4 py-3 text-sm text-red-900">
+            <div role="alert" className="mt-6 border-l-2 border-destructive bg-destructive/5 px-4 py-3 text-sm text-destructive">
               <p className="font-medium">The request did not complete.</p>
               <p className="mt-1">{error}</p>
               <button
@@ -240,7 +249,7 @@ export default function AssistantPanel() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: 0.18, ease: [...EASING.standard] }}
-                className="mt-6 flex items-center gap-2 text-sm text-stone-600"
+                className="mt-6 flex items-center gap-2 text-sm text-ink-secondary"
               >
                 <Spinner size={16} className="text-brand" />
                 <span>Reading the catalog and drafting a cited answer…</span>
@@ -259,17 +268,18 @@ export default function AssistantPanel() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.32, ease: [...EASING.enter] }}
-              className="mt-8 rounded-lg border border-stone-200 bg-white"
+              className="mt-8 rounded-lg border border-line bg-surface-raised"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 px-5 py-3">
-                <h2 id="answer-heading" className="flex items-center gap-2 font-serif text-lg font-semibold text-stone-900">
-                  <Sparkles className="h-4 w-4 text-brand-hover" aria-hidden="true" />
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
+                <h2 id="answer-heading" className="flex items-center gap-2 font-serif text-lg font-semibold text-ink">
+                  {/* Synthesize pattern: plays once per new answer (evidence → result). */}
+                  <SynthesizeMark size={16} playKey={answer} className="text-brand-hover" />
                   <span>Answer</span>
                 </h2>
                 <button
                   type="button"
                   onClick={copyAnswer}
-                  className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-stone-300 px-3 py-1.5 text-sm font-medium text-stone-800 transition-colors hover:border-stone-400"
+                  className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:border-border-strong"
                 >
                   <AnimatePresence initial={false} mode="wait">
                     <m.span
@@ -278,7 +288,7 @@ export default function AssistantPanel() {
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.7, opacity: 0 }}
                       transition={{ duration: 0.16, ease: [...EASING.emphasize] }}
-                      className="inline-flex text-emerald-700"
+                      className="inline-flex text-success"
                       aria-hidden="true"
                     >
                       {copied ? <SuccessCheck size={16} /> : <Copy className="h-4 w-4" />}
@@ -288,27 +298,27 @@ export default function AssistantPanel() {
                 </button>
               </div>
 
-              <div className="whitespace-pre-line px-5 py-5 text-base leading-relaxed text-stone-800">{answer}</div>
+              <div className="whitespace-pre-line px-5 py-5 text-base leading-relaxed text-ink">{answer}</div>
 
               {citations.length > 0 && (
-                <div className="border-t border-stone-200 px-5 py-4">
-                  <h3 className="text-sm font-semibold text-stone-900">Sources in this answer</h3>
-                  <ul className="mt-2 divide-y divide-stone-200">
+                <div className="border-t border-line px-5 py-4">
+                  <h3 className="text-sm font-semibold text-ink">Sources in this answer</h3>
+                  <ul className="mt-2 divide-y divide-line">
                     {citations.map((citation) => {
                       const slug = articles.find((article) => article.id === citation.id)?.slug ?? citation.id;
                       return (
                         <li key={citation.id}>
                           <Link
                             href={`/post/${slug}`}
-                            className="group flex items-start justify-between gap-3 py-2 text-sm text-stone-800 transition-colors hover:text-brand"
+                            className="group flex items-start justify-between gap-3 py-2 text-sm text-ink transition-colors hover:text-brand"
                           >
                             <span>
                               <span className="font-medium">{citation.title}</span>
-                              <span className="mt-0.5 block text-stone-600">
+                              <span className="mt-0.5 block text-ink-secondary">
                                 {citation.author} · {citation.category}
                               </span>
                             </span>
-                            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-stone-500 group-hover:text-brand" aria-hidden="true" />
+                            <ArrowRight className="mt-0.5 h-4 w-4 shrink-0 text-ink-secondary group-hover:text-brand" aria-hidden="true" />
                           </Link>
                         </li>
                       );
@@ -321,11 +331,11 @@ export default function AssistantPanel() {
           </AnimatePresence>
         </section>
 
-        <section aria-labelledby="assistant-limits" className="border-t border-stone-200 py-8">
-          <h2 id="assistant-limits" className="font-serif text-xl font-semibold text-stone-900">
+        <section aria-labelledby="assistant-limits" className="border-t border-line py-8">
+          <Text id="assistant-limits" as="h2" variant="card-title">
             What this tool does and does not do
-          </h2>
-          <ul className="mt-3 grid gap-3 text-base leading-relaxed text-stone-700 sm:grid-cols-2">
+          </Text>
+          <ul className="mt-3 grid gap-3 text-base leading-relaxed text-ink sm:grid-cols-2">
             <li className="flex gap-2">
               <FileText className="mt-1 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
               <span>It searches the published catalog and links every cited article.</span>
@@ -343,6 +353,10 @@ export default function AssistantPanel() {
               <span>It stores nothing you type and keeps no conversation history.</span>
             </li>
           </ul>
+        </section>
+
+        <section aria-label="How discovery works" className="border-t border-line py-8">
+          <WorkflowDisclosure workflow={RESEARCH_WORKFLOWS.discovery} heading="h2" summary="How discovery and synthesis work" />
         </section>
       </main>
 

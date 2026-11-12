@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, Building2, ExternalLink, GitBranch, GraduationCap, Search, Users } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
+import { Text } from '@/components/primitives';
 
 type IdentifierFilter = 'All' | 'orcid' | 'github';
 
@@ -44,9 +45,9 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
         </h2>
         <div className="grid gap-4 md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:items-end">
           <div>
-            <label htmlFor="author-search" className="mb-1.5 block font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            <Text htmlFor="author-search" as="label" variant="eyebrow" color="secondary" className="mb-1.5 block">
               Search contributors
-            </label>
+            </Text>
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" aria-hidden="true" />
               <input
@@ -61,9 +62,9 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
           </div>
 
           <div>
-            <p id="identifier-label" className="mb-1.5 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            <Text id="identifier-label" as="p" variant="eyebrow" color="secondary" className="mb-1.5">
               Linked identifier
-            </p>
+            </Text>
             <div role="group" aria-labelledby="identifier-label" className="flex flex-wrap gap-1.5">
               {FILTERS.map((filter) => {
                 const active = identifierFilter === filter.value;
@@ -97,9 +98,9 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
       {authors.length === 0 ? (
         <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
           <Users className="h-7 w-7 text-ink-secondary" aria-hidden="true" />
-          <h2 className="mt-3 font-serif text-2xl font-semibold text-ink">
+          <Text as="h2" variant="section-title" className="mt-3">
             No published contributors yet
-          </h2>
+          </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
             Contributor profiles appear here once their authors publish them. Until then the archive is still open for reading.
           </p>
@@ -112,9 +113,9 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
         </div>
       ) : filteredAuthors.length === 0 ? (
         <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
-          <h2 className="font-serif text-2xl font-semibold text-ink">
+          <Text as="h2" variant="section-title">
             No contributors match those filters
-          </h2>
+          </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
             Try a different name or clear the identifier filter to see the full directory.
           </p>
@@ -151,11 +152,11 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
                     </span>
                   </div>
 
-                  <h2 className="mt-4 font-serif text-xl font-semibold text-ink">
+                  <Text as="h2" variant="card-title" className="mt-4">
                     <Link href={`/author/${author.id}`} className="transition-colors hover:text-brand">
                       {author.name}
                     </Link>
-                  </h2>
+                  </Text>
                   {author.role && <p className="mt-1 font-mono text-xs font-medium text-brand">{author.role}</p>}
                   {author.institution && (
                     <p className="mt-1 flex items-start gap-1.5 font-sans text-xs text-ink-secondary">

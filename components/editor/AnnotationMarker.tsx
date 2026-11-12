@@ -25,9 +25,9 @@ export default function AnnotationMarker({ annotation }: AnnotationMarkerProps) 
     <aside
       className={`rounded-md border p-3 font-sans text-sm ${
         unresolved
-          ? 'border-workflow-error bg-surface'
+          ? 'border-destructive bg-surface'
           : drifted
-            ? 'border-workflow-warning bg-surface'
+            ? 'border-trust-uncertain bg-surface'
             : 'border-line bg-surface'
       }`}
       aria-describedby={`anchor-state-${annotation.id}`}
@@ -35,7 +35,7 @@ export default function AnnotationMarker({ annotation }: AnnotationMarkerProps) 
       <p className="text-text-primary">{annotation.body}</p>
       <p
         id={`anchor-state-${annotation.id}`}
-        className={`mt-1 text-xs ${unresolved || drifted ? 'font-semibold text-workflow-error' : 'text-text-tertiary'}`}
+        className={`mt-1 text-xs ${unresolved || drifted ? 'font-semibold text-destructive' : 'text-text-tertiary'}`}
       >
         {STATE_LABEL[annotation.anchorState]}
         {unresolved ? (

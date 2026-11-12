@@ -33,6 +33,7 @@ import BrandLogo from './BrandLogo';
 import LocaleSwitcher from './i18n/LocaleSwitcher';
 import { useLocale } from './i18n/LocaleProvider';
 import ThemeToggle from './ThemeToggle';
+import { Card, Text } from '@/components/primitives';
 
 const CommandPalette = dynamic(() => import('./search/CommandPalette'), { ssr: false });
 
@@ -273,7 +274,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               transition={{ duration: 0.22, ease: [...EASING.standard] }}
               className="overflow-hidden lg:hidden"
             >
-              <div className="mb-4 rounded-sm border border-line bg-surface p-4">
+              <Card className="mb-4">
           {setSearchQuery && (
             <div className="mb-4">
               <label htmlFor="mobile-search" className="mb-1.5 block font-sans text-xs font-medium text-ink">
@@ -313,10 +314,10 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           </nav>
 
           <nav aria-label="Research tools" className="mt-4 border-t border-line pt-4">
-            <p className="mb-2 flex items-center gap-1.5 font-mono text-xs font-medium uppercase tracking-wider text-ink-secondary">
+            <Text as="p" variant="eyebrow" color="secondary" weight="medium" className="mb-2 flex items-center gap-1.5">
               <ChevronDown className="h-4 w-4" aria-hidden="true" />
               Research tools
-            </p>
+            </Text>
             <ul className="grid gap-1">
               {secondaryNav.map((item) => (
                 <li key={item.href}>
@@ -350,7 +351,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                     : 'Reader mode. Apply to write to publish reviews.'}
                 </span>
               </p>
-              </div>
+              </Card>
             </m.div>
           ) : null}
         </AnimatePresence>

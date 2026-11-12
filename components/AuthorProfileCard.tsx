@@ -12,6 +12,7 @@ import {
 import { Author } from '@/lib/blog-data';
 import AuthorAvatar from '@/components/AuthorAvatar';
 import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
+import { Card, Text } from '@/components/primitives';
 
 interface AuthorProfileCardProps {
   author: Author;
@@ -100,7 +101,7 @@ export default function AuthorProfileCard({
 
   if (compact) {
     return (
-      <section aria-labelledby="author-compact-heading" className="rounded-sm border border-line bg-surface p-5">
+      <Card aria-labelledby="author-compact-heading" as="section" padding="lg">
         <div className="flex items-start gap-3">
           <AuthorAvatar author={author} size="md" showControls={false} />
           <div className="min-w-0">
@@ -136,12 +137,12 @@ export default function AuthorProfileCard({
             <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
         </div>
-      </section>
+      </Card>
     );
   }
 
   return (
-    <section aria-labelledby="author-profile-heading" className="rounded-sm border border-line bg-surface p-6 sm:p-8">
+    <Card aria-labelledby="author-profile-heading" as="section" padding="xl" className="sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
           <AuthorAvatar author={author} size="xl" showControls={true} />
@@ -188,34 +189,34 @@ export default function AuthorProfileCard({
 
       <dl className="mt-6 grid gap-6 border-y border-line py-5 sm:grid-cols-4">
         <div>
-          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Articles</dt>
+          <Text as="dt" variant="eyebrow" color="secondary">Articles</Text>
           <dd className="mt-1 font-mono text-2xl font-semibold text-ink">
             {metrics?.totalArticles ?? author.articleCount}
           </dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Likes</dt>
+          <Text as="dt" variant="eyebrow" color="secondary">Likes</Text>
           <dd className="mt-1 font-mono text-2xl font-semibold text-ink">
             {metrics?.totalLikes ?? '—'}
           </dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Comments</dt>
+          <Text as="dt" variant="eyebrow" color="secondary">Comments</Text>
           <dd className="mt-1 font-mono text-2xl font-semibold text-ink">
             {metrics?.totalComments ?? '—'}
           </dd>
         </div>
         <div>
-          <dt className="font-mono text-xs uppercase tracking-wider text-ink-secondary">Contributor since</dt>
+          <Text as="dt" variant="eyebrow" color="secondary">Contributor since</Text>
           <dd className="mt-1 font-mono text-sm font-semibold text-ink">{author.joinedDate}</dd>
         </div>
       </dl>
 
       <div className="mt-6 grid gap-6 sm:grid-cols-[minmax(0,1fr)_18rem]">
         <div>
-          <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+          <Text as="h2" variant="eyebrow" weight="semibold">
             Research background
-          </h2>
+          </Text>
           <p className="mt-2 max-w-prose font-sans text-sm leading-relaxed text-ink-secondary">
             {author.bio}
           </p>
@@ -226,9 +227,9 @@ export default function AuthorProfileCard({
 
         {badge && (
           <div className="border-t border-line pt-4 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0">
-            <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            <Text as="h2" variant="eyebrow" weight="semibold">
               Verification record
-            </h2>
+            </Text>
             <p className="mt-2 flex items-start gap-1.5 font-sans text-xs font-medium text-brand">
               <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
               <span>{badge.label}</span>
@@ -253,6 +254,6 @@ export default function AuthorProfileCard({
           </div>
         )}
       </div>
-    </section>
+    </Card>
   );
 }

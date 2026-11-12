@@ -4,7 +4,7 @@ import PageState from '@/components/PageState';
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
       <PageState
         role="alert"

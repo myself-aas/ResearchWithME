@@ -16,9 +16,9 @@
  * "not-yet-drawn", so the check is complete for clients without JavaScript.
  */
 
-import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
 import { EASING, SPRING } from '@/lib/motion/tokens';
+import { useHydratedReducedMotion } from '@/lib/motion/hooks';
 import { MotionBoundary } from './MotionScope';
 
 export interface SuccessCheckProps {
@@ -30,7 +30,7 @@ export interface SuccessCheckProps {
 }
 
 export default function SuccessCheck({ size = 16, className = '', quiet = false }: SuccessCheckProps) {
-  const reduce = useReducedMotion();
+  const reduce = useHydratedReducedMotion();
 
   return (
     <MotionBoundary>

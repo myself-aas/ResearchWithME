@@ -11,6 +11,7 @@ import { t } from '@/lib/i18n';
 import { useLocale } from '@/components/i18n/LocaleProvider';
 import { EASING } from '@/lib/motion/tokens';
 import SuccessCheck from '@/components/motion/SuccessCheck';
+import { Text } from '@/components/primitives';
 
 export interface InlineCitationPopoverProps {
   label: string;
@@ -116,10 +117,10 @@ export default function InlineCitationPopover({
             transition={{ duration: 0.18, ease: [...EASING.emphasize] }}
           >
           <div className="flex items-start justify-between gap-2 border-b border-line pb-2.5">
-            <span className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+            <Text as="span" variant="eyebrow" color="brand" weight="semibold" className="inline-flex items-center gap-1.5">
               <Quote className="h-3.5 w-3.5" aria-hidden="true" />
               <span>{t(locale, 'reader.cite')}</span>
-            </span>
+            </Text>
             <Popover.Close asChild>
               <button
                 type="button"

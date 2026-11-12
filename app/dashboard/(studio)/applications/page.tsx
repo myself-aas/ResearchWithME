@@ -59,10 +59,10 @@ export default async function ApplicationQueuePage() {
   return (
     <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:px-6 sm:py-10">
       <header className="mb-6">
-        <h1 className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+        <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
           Writer applications
         </h1>
-        <p className="mt-3 max-w-prose text-base leading-relaxed text-stone-700">
+        <p className="mt-3 max-w-prose text-base leading-relaxed text-ink">
           Approving an application adds the applicant to the editor allowlist immediately. Rejecting
           leaves a note they can read, and they may apply again.
         </p>

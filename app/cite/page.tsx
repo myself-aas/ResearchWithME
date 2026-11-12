@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import CitationTool from '@/components/CitationTool';
-import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { getArticleCatalogue, getCachedFeedArticles } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
 
 interface CitePageProps {
@@ -39,6 +39,6 @@ export async function generateMetadata({ searchParams }: CitePageProps): Promise
   });
 }
 
-export default function CitePage() {
-  return <CitationTool />;
+export default async function CitePage() {
+  return <CitationTool initialArticles={await getCachedFeedArticles()} />;
 }

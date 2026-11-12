@@ -7,19 +7,26 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Check, Copy, Download, Quote } from 'lucide-react';
+import { ArrowLeft, Copy, Download, Quote } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
 import { CITATION_FORMATS, CitationFormat, buildCitation, citationFileExtension } from '@/lib/citations';
 import { cleanText, safeExternalUrl, slugify } from '@/lib/validation';
+import { Text, Link as TextLink } from '@/components/primitives';
+import { VerifyMark } from '@/components/lottie';
 
 const inputClass =
-  'w-full rounded-md border border-stone-300 bg-white px-3 py-2.5 text-sm text-stone-900 transition-colors focus:border-brand-hover';
+  'w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-sm text-ink transition-colors focus:border-brand-hover';
 
-export default function CitationTool() {
-  const [articles, setArticles] = useState<BlogPost[]>(INITIAL_BLOG_POSTS);
-  const [selectedSlug, setSelectedSlug] = useState<string>(INITIAL_BLOG_POSTS[0]?.slug ?? '');
+/**
+ * `initialArticles` — the catalogue from the server (metadata only), so the
+ * route's HTML is complete without JavaScript. Optional: the Cloudflare Pages
+ * build renders this without it and falls back to the client fetch below.
+ */
+export default function CitationTool({ initialArticles }: { initialArticles?: BlogPost[] } = {}) {
+  const [articles, setArticles] = useState<BlogPost[]>(initialArticles ?? INITIAL_BLOG_POSTS);
+  const [selectedSlug, setSelectedSlug] = useState<string>((initialArticles ?? INITIAL_BLOG_POSTS)[0]?.slug ?? '');
   const [format, setFormat] = useState<CitationFormat>('apa');
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState<string | null>(null);
@@ -96,24 +103,24 @@ export default function CitationTool() {
   const doiLink = safeExternalUrl(`https://doi.org/${source.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')}`);
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-stone-600">
-          <Link href="/" className="inline-flex items-center gap-1.5 hover:text-stone-900 hover:underline">
+        <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-ink-secondary">
+          <Link href="/" className="inline-flex items-center gap-1.5 hover:text-ink hover:underline">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             <span>Platform</span>
           </Link>
-          <span aria-hidden="true" className="text-stone-400">/</span>
+          <span aria-hidden="true" className="text-ink-secondary">/</span>
           <span className="font-medium text-brand">Citation builder</span>
         </nav>
 
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+        <header className="border-b border-line pb-8">
+          <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Build a citation that travels
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-stone-700">
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink">
             Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same verified metadata.
           </p>
         </header>
@@ -121,7 +128,7 @@ export default function CitationTool() {
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_20rem]">
           <form className="space-y-8" onSubmit={(event) => event.preventDefault()}>
             <fieldset className="space-y-3">
-              <legend className="text-sm font-semibold text-stone-900">1. Choose the source</legend>
+              <legend className="text-sm font-semibold text-ink">1. Choose the source</legend>
 
               <div className="flex flex-wrap gap-2">
                 <button
@@ -130,8 +137,8 @@ export default function CitationTool() {
                   aria-pressed={!isCustomPaper}
                   className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
                     !isCustomPaper
-                      ? 'border-stone-900 bg-stone-900 text-white'
-                      : 'border-stone-300 bg-white text-stone-800 hover:border-stone-400'
+                      ? 'border-ink bg-surface-inverse text-text-inverse'
+                      : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
                   }`}
                 >
                   Published in ResearchWithMe
@@ -142,8 +149,8 @@ export default function CitationTool() {
                   aria-pressed={isCustomPaper}
                   className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
                     isCustomPaper
-                      ? 'border-stone-900 bg-stone-900 text-white'
-                      : 'border-stone-300 bg-white text-stone-800 hover:border-stone-400'
+                      ? 'border-ink bg-surface-inverse text-text-inverse'
+                      : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
                   }`}
                 >
                   External paper or DOI
@@ -152,7 +159,7 @@ export default function CitationTool() {
 
               {!isCustomPaper ? (
                 <div>
-                  <label htmlFor="citation-source" className="mb-1.5 block text-sm font-medium text-stone-800">
+                  <label htmlFor="citation-source" className="mb-1.5 block text-sm font-medium text-ink">
                     Publication
                   </label>
                   <select
@@ -167,15 +174,15 @@ export default function CitationTool() {
                       </option>
                     ))}
                   </select>
-                  <p className="mt-2 max-w-xl text-sm text-stone-600">
+                  <p className="mt-2 max-w-xl text-sm text-ink-secondary">
                     {currentArticle?.category ?? 'Research'} · {currentArticle?.publishedAt ?? 'Published'} · {currentArticle?.readTime ?? 'Reading time available on the article'}
                   </p>
                 </div>
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="sm:col-span-2">
-                    <label htmlFor="custom-title" className="mb-1.5 block text-sm font-medium text-stone-800">
-                      Paper title <span className="text-stone-600">(required)</span>
+                    <label htmlFor="custom-title" className="mb-1.5 block text-sm font-medium text-ink">
+                      Paper title <span className="text-ink-secondary">(required)</span>
                     </label>
                     <input
                       id="custom-title"
@@ -189,7 +196,7 @@ export default function CitationTool() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="custom-author" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    <label htmlFor="custom-author" className="mb-1.5 block text-sm font-medium text-ink">
                       Author
                     </label>
                     <input
@@ -203,7 +210,7 @@ export default function CitationTool() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="custom-year" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    <label htmlFor="custom-year" className="mb-1.5 block text-sm font-medium text-ink">
                       Year
                     </label>
                     <input
@@ -218,7 +225,7 @@ export default function CitationTool() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="custom-journal" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    <label htmlFor="custom-journal" className="mb-1.5 block text-sm font-medium text-ink">
                       Journal or venue
                     </label>
                     <input
@@ -231,7 +238,7 @@ export default function CitationTool() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="custom-doi" className="mb-1.5 block text-sm font-medium text-stone-800">
+                    <label htmlFor="custom-doi" className="mb-1.5 block text-sm font-medium text-ink">
                       DOI or arXiv identifier
                     </label>
                     <input
@@ -249,7 +256,7 @@ export default function CitationTool() {
             </fieldset>
 
             <fieldset className="space-y-3">
-              <legend className="text-sm font-semibold text-stone-900">2. Choose a style</legend>
+              <legend className="text-sm font-semibold text-ink">2. Choose a style</legend>
               <div className="flex flex-wrap gap-2">
                 {CITATION_FORMATS.map((item) => (
                   <button
@@ -259,8 +266,8 @@ export default function CitationTool() {
                     aria-pressed={format === item}
                     className={`min-h-11 rounded-md border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
                       format === item
-                        ? 'border-brand bg-brand text-white'
-                        : 'border-stone-300 bg-white text-stone-700 hover:border-stone-400'
+                        ? 'border-brand bg-brand text-on-primary'
+                        : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
                     }`}
                   >
                     {item}
@@ -271,10 +278,10 @@ export default function CitationTool() {
 
             <div className="space-y-3">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <label htmlFor="citation-output" className="text-sm font-semibold text-stone-900">
+                <label htmlFor="citation-output" className="text-sm font-semibold text-ink">
                   3. Review and copy
                 </label>
-                <span className="font-mono text-sm text-stone-600">{format.toUpperCase()} · UTF-8</span>
+                <span className="font-mono text-sm text-ink-secondary">{format.toUpperCase()} · UTF-8</span>
               </div>
               <textarea
                 id="citation-output"
@@ -282,16 +289,16 @@ export default function CitationTool() {
                 rows={format === 'bibtex' || format === 'ris' ? 10 : 5}
                 value={citationEmpty ? '' : citationText}
                 aria-describedby="citation-hint"
-                className="w-full resize-y rounded-lg border border-stone-300 bg-white p-4 font-mono text-sm leading-relaxed text-stone-900"
+                className="w-full resize-y rounded-lg border border-border-strong bg-surface-raised p-4 font-mono text-sm leading-relaxed text-ink"
               />
-              <p id="citation-hint" className="text-sm text-stone-600">
+              <p id="citation-hint" className="text-sm text-ink-secondary">
                 {citationEmpty
                   ? 'Add a paper title to generate a citation.'
                   : 'Always confirm the DOI and page numbers against the publisher record before submitting.'}
               </p>
 
               {copyError && (
-                <p role="alert" className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-900">
+                <p role="alert" className="rounded-md border border-destructive/25 bg-destructive/5 px-3 py-2 text-sm text-destructive">
                   {copyError}
                 </p>
               )}
@@ -301,9 +308,9 @@ export default function CitationTool() {
                   type="button"
                   onClick={handleCopy}
                   disabled={citationEmpty}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover disabled:opacity-50"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-50"
                 >
-                  {copied ? <Check className="h-4 w-4" aria-hidden="true" /> : <Copy className="h-4 w-4" aria-hidden="true" />}
+                  {copied ? <VerifyMark size={16} /> : <Copy className="h-4 w-4" aria-hidden="true" />}
                   <span>{copied ? 'Copied to clipboard' : 'Copy citation'}</span>
                 </button>
 
@@ -312,7 +319,7 @@ export default function CitationTool() {
                     type="button"
                     onClick={handleDownloadFile}
                     disabled={citationEmpty}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-md border border-stone-300 bg-white px-5 py-2.5 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 disabled:opacity-50"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border-strong bg-surface-raised px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong disabled:opacity-50"
                   >
                     <Download className="h-4 w-4" aria-hidden="true" />
                     <span>Download .{citationFileExtension(format)}</span>
@@ -331,27 +338,27 @@ export default function CitationTool() {
             </div>
           </form>
 
-          <aside aria-label="Citation details" className="h-fit space-y-4 rounded-lg border border-stone-200 bg-white p-5">
-            <div className="flex items-center gap-2 text-sm font-semibold text-stone-900">
+          <aside aria-label="Citation details" className="h-fit space-y-4 rounded-lg border border-line bg-surface-raised p-5">
+            <div className="flex items-center gap-2 text-sm font-semibold text-ink">
               <Quote className="h-4 w-4 text-brand-hover" aria-hidden="true" />
               <span>Record details</span>
             </div>
             <dl className="space-y-3 text-sm">
               <div>
-                <dt className="text-stone-600">Author</dt>
-                <dd className="font-medium text-stone-900">{source.author}</dd>
+                <dt className="text-ink-secondary">Author</dt>
+                <dd className="font-medium text-ink">{source.author}</dd>
               </div>
               <div>
-                <dt className="text-stone-600">Year</dt>
-                <dd className="font-medium text-stone-900">{source.year}</dd>
+                <dt className="text-ink-secondary">Year</dt>
+                <dd className="font-medium text-ink">{source.year}</dd>
               </div>
               <div>
-                <dt className="text-stone-600">Venue</dt>
-                <dd className="font-medium text-stone-900">{source.journal}</dd>
+                <dt className="text-ink-secondary">Venue</dt>
+                <dd className="font-medium text-ink">{source.journal}</dd>
               </div>
               <div>
-                <dt className="text-stone-600">DOI</dt>
-                <dd className="break-words font-mono text-stone-900">{source.doi || 'Not assigned'}</dd>
+                <dt className="text-ink-secondary">DOI</dt>
+                <dd className="break-words font-mono text-ink">{source.doi || 'Not assigned'}</dd>
               </div>
             </dl>
             {doiLink && (
@@ -364,36 +371,36 @@ export default function CitationTool() {
                 Resolve DOI at doi.org
               </a>
             )}
-            <p className="border-t border-stone-200 pt-4 text-sm leading-relaxed text-stone-600">
+            <p className="border-t border-line pt-4 text-sm leading-relaxed text-ink-secondary">
               Prefer reusable metadata? Choose BibTeX or RIS and download the file for your reference manager.
             </p>
           </aside>
         </div>
 
-        <section aria-labelledby="citation-standards-heading" className="mt-12 border-t border-stone-200 pt-8">
-          <h2 id="citation-standards-heading" className="font-serif text-xl font-semibold text-stone-900">
+        <section aria-labelledby="citation-standards-heading" className="mt-12 border-t border-line pt-8">
+          <Text id="citation-standards-heading" as="h2" variant="card-title">
             Scholarly provenance and reference verification
-          </h2>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-stone-600">
+          </Text>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-secondary">
             Every formatted reference generated here draws from verified publication dates, persistent Digital Object
             Identifiers, and contributor records maintained by our{' '}
-            <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/authors" >
               domain specialists
-            </Link>{' '}
+            </TextLink>{' '}
             and{' '}
-            <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/editorial-board" >
               editorial board
-            </Link>
+            </TextLink>
             . Downloaded <code className="font-mono text-xs">.bib</code> and{' '}
             <code className="font-mono text-xs">.ris</code> records import directly into Zotero, JabRef, Mendeley, and
             LaTeX workflows; you can also browse full volumes in{' '}
-            <Link href="/editions" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/editions" >
               printable PDF editions
-            </Link>{' '}
+            </TextLink>{' '}
             or query primary sources in the{' '}
-            <Link href="/assistant" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+            <TextLink href="/assistant" >
               research synthesis assistant
-            </Link>
+            </TextLink>
             .
           </p>
         </section>

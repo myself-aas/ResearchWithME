@@ -8,13 +8,13 @@ export default function StatusBadge({ status }: { status: 'draft' | 'published' 
       className={cn(
         badgeBaseClass,
         published
-          ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
-          : 'border-indigo-200 bg-indigo-50 text-brand',
+          ? 'border-success/30 bg-success/5 text-success'
+          : 'border-brand/25 bg-brand/5 text-brand',
       )}
     >
       <span
         aria-hidden="true"
-        className={cn('h-1.5 w-1.5 rounded-full', published ? 'bg-emerald-700' : 'bg-amber-700')}
+        className={cn('h-1.5 w-1.5 rounded-full', published ? 'bg-success' : 'bg-trust-uncertain')}
       />
       {published ? 'Published' : 'Draft'}
     </span>

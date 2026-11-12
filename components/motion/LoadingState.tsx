@@ -17,9 +17,8 @@
  * `prefers-reduced-motion` the shimmer stops and a static surface remains.
  */
 
-import { useReducedMotion } from 'motion/react';
 import * as m from 'motion/react-m';
-import { useDelayedLoading } from '@/lib/motion/hooks';
+import { useDelayedLoading, useHydratedReducedMotion } from '@/lib/motion/hooks';
 import { DURATION_MS } from '@/lib/motion/tokens';
 import { MotionBoundary } from './MotionScope';
 
@@ -80,7 +79,7 @@ export function SkeletonShard({
   lines = 1,
   rounded = 'rounded-sm',
 }: SkeletonShardProps) {
-  const reduce = useReducedMotion();
+  const shimmer = !useHydratedReducedMotion();
   const shards = Array.from({ length: lines }, (_, index) => {
     const isLast = index === lines - 1 && lines > 1;
     return (
@@ -97,13 +96,9 @@ export function SkeletonShard({
           backgroundSize: '200% 100%',
         }}
         initial={false}
-        animate={
-          reduce
-            ? undefined
-            : { backgroundPosition: ['200% 0%', '-200% 0%'] }
-        }
+        animate={shimmer ? { backgroundPosition: ['200% 0%', '-200% 0%'] } : undefined}
         transition={
-          reduce
+          !shimmer
             ? undefined
             : {
                 duration: DURATION_MS.synthesize * 2.15 / 1000,

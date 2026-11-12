@@ -22,7 +22,8 @@ Reader -> app/post/[slug]/page.tsx (ISR, revalidate = 30)
        -> getPublicCmsStore()                   [lib/cms/store.ts]
             |-- Supabase configured: stateless anon client -> Postgres (RLS: status='published')
             |-- otherwise:           local JSON archive    [lib/cms/local-store.ts]
-       -> merge: CMS rows first, then INITIAL_BLOG_POSTS, then data/articles.json (dedupe by slug)
+       -> merge: CMS rows first, then the legacy corpus (Supabase legacy_articles or local JSON),
+          then DEFAULT_LEGACY_SEEDS as the outage fallback (dedupe by slug, CMS wins)
        -> cmsPostToArticle() mapping            [lib/cms/mapping.ts]
        -> notFound() if no match -> app/not-found.tsx (real HTTP 404)
        -> MarkdownBody / AuthorProfileCard / ArticleDiscussion render
@@ -149,3 +150,114 @@ Two divergences recorded above have been closed, and one behaviour changed:
 
 `/write` also now requires the author to select a verified profile from
 `AUTHORS` instead of the page synthesising a byline from the session.
+
+## Diagrams (2026-11-12)
+
+The text flows above remain the evidence; these diagrams are the overview. They use Mermaid's
+default theme (no hard-coded fills) so they read in GitHub's light and dark modes.
+
+### System context
+
+```mermaid
+flowchart LR
+    reader([Reader])
+    writer([Approved writer / editor])
+    platform["ResearchWithMe<br/>researchwith.me"]
+    supabase[("Supabase<br/>Postgres + RLS, Auth,<br/>Storage, Realtime")]
+    gemini["Gemini API<br/>(optional)"]
+    hf["Hugging Face Space<br/>cover generation (optional)"]
+    resend["Resend<br/>transactional email"]
+
+    reader -->|HTTPS| platform
+    writer -->|HTTPS + session| platform
+    platform -->|anon reads, session writes| supabase
+    platform -->|assistant answers| gemini
+    platform -->|/api/generate| hf
+    platform -->|application notices| resend
+    writer -.->|studio live updates| supabase
+```
+
+Without Supabase credentials every data path falls back to the local JSON archive, so the app runs
+for review with no cloud services at all. Gemini and the Hugging Face Space are optional: the
+assistant degrades to a deterministic, cited summary and cover generation reports itself as not
+configured.
+
+### Containers and bindings
+
+```mermaid
+flowchart TB
+    subgraph worker["Cloudflare Worker: researchwithme (OpenNext, nodejs_compat)"]
+        mw["middleware.ts<br/>session refresh, /dashboard guard"]
+        app["Next.js App Router<br/>pages + /api routes"]
+        assets["ASSETS<br/>.open-next/assets"]
+        queue["memory queue<br/>ISR regeneration"]
+    end
+    kv[("KV namespace (one, disjoint prefixes)<br/>NEXT_INC_CACHE_KV, NEXT_TAG_CACHE_KV,<br/>RATE_LIMIT_KV")]
+    self["WORKER_SELF_REFERENCE"]
+    supa[("Supabase")]
+    json[("Local JSON archive<br/>demo mode only")]
+
+    mw --> app
+    app -->|incremental cache, tags| kv
+    app -->|rate limits| kv
+    queue --> self --> app
+    app -->|configured| supa
+    app -.->|not configured| json
+```
+
+A second build target (`npm run build:pages`, Vite under `cloudflare-pages/`) renders the same
+shared components for the in-progress Pages port; see `docs/migration-baseline.md`. It aliases
+`next/link`, `next/image`, `next/navigation` and `next/dynamic` to `cloudflare-pages/src/compat/`.
+
+### Feed render (home, category, cite, assistant, bookmarks)
+
+```mermaid
+sequenceDiagram
+    participant R as Reader
+    participant W as Worker (page)
+    participant C as getFeedArticles()
+    participant S as CMS + legacy stores
+    participant API as /api/articles
+
+    R->>W: GET /
+    W->>C: catalogue, bodies stripped
+    C->>S: published CMS rows, legacy corpus
+    S-->>C: merged by slug (CMS wins)
+    C-->>W: metadata-only BlogPost[]
+    W-->>R: HTML with the full feed (works without JS)
+    R->>API: client refresh after hydration
+    API-->>R: same shape, applied only if non-empty
+```
+
+Until 2026-11-12 these pages seeded client state from an empty array and relied on the client
+fetch, so crawlers and no-JS readers saw an empty journal ("No manuscripts match…"). Server pages
+now pass `initialPosts` / `initialArticles`; the Pages build omits the prop and keeps the fetch.
+
+### Research assistant
+
+```mermaid
+sequenceDiagram
+    participant U as Reader
+    participant P as AssistantPanel
+    participant A as /api/research-assistant
+    participant K as RATE_LIMIT_KV
+    participant C as Catalogue
+    participant G as Gemini
+
+    U->>P: question + scope
+    P->>A: POST
+    A->>K: 12 requests / 60 s per client
+    alt over limit
+        A-->>P: 429
+    end
+    A->>C: getArticleCatalogue()
+    alt GEMINI_API_KEY set
+        A->>G: catalogue text + "cite your sources"
+        G-->>A: answer
+        A-->>P: answer, citations, mode: model
+    else no key, or model failure
+        A-->>P: deterministic cited summary (+ notice on failure)
+    end
+    P-->>U: answer, SynthesizeMark plays once
+```
+

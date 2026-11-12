@@ -21,18 +21,18 @@ interface AuthorsDirectoryPageProps {
  */
 export default function AuthorsDirectoryPage({ authors }: AuthorsDirectoryPageProps) {
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
       <main
         id="main-content"
         className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8"
       >
-        <header className="border-b border-stone-200 pb-8">
-          <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+        <header className="border-b border-line pb-8">
+          <h1 className="max-w-4xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             The reviewers behind the archive
           </h1>
-          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-stone-700">
+          <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-ink">
             Each profile records what a contributor studies, where they work, and everything they
             have reviewed here, so you can judge the expertise behind a piece. Linked ORCID and
             GitHub identifiers are shown as the contributor supplied them.

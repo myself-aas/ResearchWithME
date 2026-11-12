@@ -338,3 +338,63 @@ npx vitest run lib/__tests__/motion-system.test.tsx
 placeholder's `role="status"`, and the reduced-motion rendering path.
 
 Manual review lives at `/motion` (`noindex`), linked from the footer.
+
+---
+
+## 12. Lottie micro-interactions
+
+Four decorative state glyphs, each bound to one §9 pattern. They supplement
+the `m.*` primitives; they do not replace `SuccessCheck` or `AttentionPulse`.
+
+| Component        | Pattern    | Length            | Use                                      |
+|------------------|------------|-------------------|------------------------------------------|
+| `VerifyMark`     | verify     | 467ms (≤ connect) | peer-verified, saved, copied             |
+| `ConnectMark`    | connect    | 467ms (≤ connect) | citation or provenance link made         |
+| `SynthesizeMark` | synthesize | 700ms             | evidence gathered into one result        |
+| `AttentionMark`  | attention  | 3 × 700ms, stops  | a count changed                          |
+
+**Compositions are code, not exports.** `lib/lottie/compose.ts` builds
+Bodymovin JSON from `DURATION_MS` (floored to whole 60fps frames, so a
+composition never overruns its token) and the four `EASING` curves.
+`lib/lottie/animations.ts` holds the four compositions. Do not add an After
+Effects export: it would bypass the token contract and bake in colours.
+
+**Theme.** Shapes are painted in placeholder ink. `.pieme-lottie` in
+`globals.css` recolours strokes and fills to `currentColor`, so colour a glyph
+with a `text-*` token.
+
+**Runtime.** `LottiePlayer` imports `lottie-web`'s SVG-only light build
+(~46 KB gzip) on first play, in its own chunk. Nothing Lottie-related ships
+with the shell.
+
+**Static first.** Every glyph server-renders its resting frame as inline SVG.
+That frame is what readers see without JavaScript, in `reduced` and `static`
+modes, and under `prefers-reduced-motion`; the runtime is never requested in
+those cases.
+
+**Playback.** Never loops. `autoplay={false}` keeps the static frame and loads
+nothing until `playKey` first changes; each later change replays in place.
+
+```tsx
+import { VerifyMark } from '@/components/lottie';
+
+const [saves, setSaves] = useState(0);
+<button onClick={() => { save(); setSaves((n) => n + 1); }}>
+  <VerifyMark size={16} autoplay={false} playKey={saves} />
+  <span>{saves ? 'Saved' : 'Save'}</span>
+</button>
+```
+
+Verification: `npx vitest run lib/__tests__/lottie.test.ts` (token easings,
+duration budget, SSR fallback); live demos at `/motion` → "Lottie
+micro-interactions".
+
+### Research lifecycle diagrams
+
+`components/workflows/WorkflowDiagram` renders the four lifecycles in
+`lib/workflows/research-workflows.ts` as an ordered list of stages. Opening a
+stage's capability disclosure is the only trigger; the stage glyph plays its
+pattern once. Each capability is marked `live` (with the shipping component)
+or `planned`, and a test fails if a `live` reference does not exist. For
+Markdown docs, `toMermaid(workflow)` emits the same diagram as a theme-neutral
+Mermaid flowchart.

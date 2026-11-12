@@ -62,7 +62,7 @@ export default function AIProvenanceDisclosure({
           </div>
         ))}
       </dl>
-      <p className={`mt-2 font-sans text-xs ${provenance.humanApproval ? 'text-trust-verified' : 'text-action-destructive'}`}>
+      <p className={`mt-2 font-sans text-xs ${provenance.humanApproval ? 'text-trust-verified' : 'text-destructive'}`}>
         {view.approvalLabel}
       </p>
       {view.blockers.length > 0 ? (

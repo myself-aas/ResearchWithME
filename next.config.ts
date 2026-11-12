@@ -23,9 +23,15 @@ function supabaseImagePattern() {
 
 const supabaseImages = supabaseImagePattern();
 
+// `next dev` evaluates its module bundles with eval() (webpack eval source
+// maps + React Refresh). Without 'unsafe-eval' no route hydrates in dev.
+// Production (`next build`, OpenNext worker) never sets NODE_ENV=development,
+// so the shipped policy stays eval-free.
+const isDev = process.env.NODE_ENV === 'development';
+
 const cspDirectives = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",

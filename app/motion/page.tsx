@@ -4,6 +4,7 @@ import BlogFooter from '@/components/BlogFooter';
 import BlogHeader from '@/components/BlogHeader';
 import MotionLab from '@/components/motion/MotionLab';
 import { pageMetadata } from '@/lib/seo';
+import { Text, Link as TextLink } from '@/components/primitives';
 
 export const metadata: Metadata = {
   ...pageMetadata({
@@ -36,23 +37,22 @@ export default function MotionLabPage() {
         </nav>
 
         <header className="border-b border-line pb-8">
-          <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+          <Text as="p" variant="eyebrow" color="secondary">
             πeme v3.1 §9 · Interface Motion · Design System Lab
-          </p>
+          </Text>
           <h1 className="mt-2 max-w-4xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Motion that explains, never decorates
           </h1>
           <p className="mt-4 max-w-[70ch] font-sans text-base leading-relaxed text-ink-secondary">
             Every animation in the product is drawn from six durations, four easings, and Disney&apos;s twelve
             principles, as catalogued by{' '}
-            <a
+            <TextLink
               href="https://github.com/dylantarre/animation-principles"
-              className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed"
               rel="noreferrer noopener"
               target="_blank"
             >
               animation-principles
-            </a>
+            </TextLink>
             . This page renders one live demo per principle plus the loading, lazy-loading, and token contracts.
             Nothing on this page should be copied into a surface without also copying its guardrail.
           </p>

@@ -54,7 +54,7 @@ function polarityOf(dimension: string, value: string): TrustDimensionView['polar
 
 const TONE: Record<TrustDimensionView['polarity'], string> = {
   positive: 'text-trust-verified',
-  negative: 'text-action-destructive',
+  negative: 'text-destructive',
   'not-assessed': 'text-text-tertiary italic',
 };
 

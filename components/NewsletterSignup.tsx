@@ -9,6 +9,7 @@ import {
   usePreferencesStore,
   type DigestTopicKey,
 } from '@/lib/stores/preferences-store';
+import { Card, Text } from '@/components/primitives';
 
 const TOPICS: ReadonlyArray<{ key: DigestTopicKey; label: string }> = [
   { key: 'teardowns', label: 'Repository teardowns' },
@@ -92,12 +93,12 @@ export default function NewsletterSignup() {
       <div className="rounded-sm border border-line bg-canvas p-6 sm:p-8">
         <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">
+            <Text as="p" variant="eyebrow" color="secondary">
               Weekly Dispatch · No Tracking Pixels
-            </p>
-            <h2 id="newsletter-title" className="mt-2 font-serif text-2xl font-bold text-ink sm:text-3xl">
+            </Text>
+            <Text id="newsletter-title" as="h2" variant="page-title" className="mt-2">
               The weekly research digest
-            </h2>
+            </Text>
             <p className="mt-3 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
               One Tuesday dispatch with the newest repository teardowns, reproducible notebooks, and errata notices.
             </p>
@@ -107,7 +108,7 @@ export default function NewsletterSignup() {
           </div>
 
           {isSubscribed ? (
-            <div role="status" className="rounded-sm border border-line bg-surface p-5">
+            <Card role="status" padding="lg">
               <p className="flex items-center gap-2 font-sans text-sm font-semibold text-ink">
                 <CheckCircle2 className="h-4 w-4 text-brand" aria-hidden="true" />
                 Saved in this browser
@@ -116,7 +117,7 @@ export default function NewsletterSignup() {
                 Digest preferences{digest.email ? ` for ${digest.email}` : ''} are active on this device.
               </p>
               {error && (
-                <p role="alert" className="mt-2 font-sans text-xs text-danger">
+                <p role="alert" className="mt-2 font-sans text-xs text-destructive">
                   {error}
                 </p>
               )}
@@ -127,7 +128,7 @@ export default function NewsletterSignup() {
               >
                 Remove this preference
               </button>
-            </div>
+            </Card>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -151,16 +152,16 @@ export default function NewsletterSignup() {
                   />
                 </div>
                 {error && (
-                  <p id="newsletter-error" role="alert" className="mt-2 font-sans text-xs text-danger">
+                  <p id="newsletter-error" role="alert" className="mt-2 font-sans text-xs text-destructive">
                     {error}
                   </p>
                 )}
               </div>
 
               <fieldset>
-                <legend className="mb-2 font-mono text-xs uppercase tracking-wider text-ink-secondary">
+                <Text as="legend" variant="eyebrow" color="secondary" className="mb-2">
                   Columns
-                </legend>
+                </Text>
                 <div className="grid gap-1.5">
                   {TOPICS.map((topic) => (
                     <label key={topic.key} className="flex min-h-9 items-center gap-2 font-sans text-xs text-ink">

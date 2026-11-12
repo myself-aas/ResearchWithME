@@ -119,11 +119,11 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
   if (!configured) {
     return (
-      <section aria-labelledby="connect-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
-        <h2 id="connect-heading" className="font-serif text-2xl font-bold text-stone-900">
+      <section aria-labelledby="connect-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+        <h2 id="connect-heading" className="font-serif text-2xl font-bold text-ink">
           Supabase is not connected
         </h2>
-        <p className="mt-2 max-w-prose text-base leading-relaxed text-stone-700">
+        <p className="mt-2 max-w-prose text-base leading-relaxed text-ink">
           The editorial studio still works: it saves articles and comments to the JSON archive on this server. Cloud
           accounts, media uploads, and realtime updates turn on when credentials are configured.
         </p>
@@ -138,11 +138,11 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
           </Link>
         </div>
 
-        <details className="mt-6 border-t border-stone-200 pt-4">
-          <summary className="min-h-11 cursor-pointer text-sm font-semibold text-stone-900">
+        <details className="mt-6 border-t border-line pt-4">
+          <summary className="min-h-11 cursor-pointer text-sm font-semibold text-ink">
             How to connect Supabase
           </summary>
-          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-stone-700">
+          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-ink">
             <li>
               Add <code className="font-mono">NEXT_PUBLIC_SUPABASE_URL</code> and{' '}
               <code className="font-mono">NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code> to{' '}
@@ -157,7 +157,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
               Restart the build because <code className="font-mono">NEXT_PUBLIC_*</code> values are inlined.
             </li>
           </ol>
-          <p className="mt-3 text-sm leading-relaxed text-stone-600">
+          <p className="mt-3 text-sm leading-relaxed text-ink-secondary">
             The repository guide <code className="font-mono">docs/supabase-cms.md</code> covers the webhook, storage
             bucket, and redirect URLs.
           </p>
@@ -168,20 +168,20 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
   if (user && !user.isEditor) {
     return (
-      <section aria-labelledby="no-access-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
-        <h2 id="no-access-heading" className="font-serif text-2xl font-bold text-stone-900">
+      <section aria-labelledby="no-access-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+        <h2 id="no-access-heading" className="font-serif text-2xl font-bold text-ink">
           Signed in, without editor access
         </h2>
-        <p className="mt-2 text-base leading-relaxed text-stone-700">
+        <p className="mt-2 text-base leading-relaxed text-ink">
           {user.name}
           {user.email ? (
             <>
               {' '}
-              <span className="break-all font-mono text-sm text-stone-600">{user.email}</span>
+              <span className="break-all font-mono text-sm text-ink-secondary">{user.email}</span>
             </>
           ) : null}
         </p>
-        <p className="mt-3 max-w-prose text-sm leading-relaxed text-stone-600">
+        <p className="mt-3 max-w-prose text-sm leading-relaxed text-ink-secondary">
           Your account can read, save, and cite. Writing and publishing needs an approved writer
           application, which you can submit from your dashboard.
         </p>
@@ -211,16 +211,16 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
 
   if (user) {
     return (
-      <section aria-labelledby="signed-in-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
-        <h2 id="signed-in-heading" className="font-serif text-2xl font-bold text-stone-900">
+      <section aria-labelledby="signed-in-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+        <h2 id="signed-in-heading" className="font-serif text-2xl font-bold text-ink">
           You are signed in
         </h2>
-        <p className="mt-2 text-base leading-relaxed text-stone-700">
+        <p className="mt-2 text-base leading-relaxed text-ink">
           {user.name}
           {user.email ? (
             <>
               {' '}
-              <span className="break-all font-mono text-sm text-stone-600">{user.email}</span>
+              <span className="break-all font-mono text-sm text-ink-secondary">{user.email}</span>
             </>
           ) : null}
         </p>
@@ -246,18 +246,18 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
   }
 
   return (
-    <section aria-labelledby="signin-heading" className="rounded-lg border border-stone-200 bg-white p-5 sm:p-6">
-      <h2 id="signin-heading" className="font-serif text-2xl font-bold text-stone-900">
+    <section aria-labelledby="signin-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+      <h2 id="signin-heading" className="font-serif text-2xl font-bold text-ink">
         Sign in
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-stone-600">
+      <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
         Two ways in: your email and password, or your Google account. Publishing access is granted
         separately, from your dashboard.
       </p>
 
       {error && (
-        <div ref={errorRef} tabIndex={-1} role="alert" className="mt-4 border-l-2 border-red-700 bg-red-50 px-3 py-2">
-          <p className="flex items-start gap-2 text-sm font-medium text-red-900">
+        <div ref={errorRef} tabIndex={-1} role="alert" className="mt-4 border-l-2 border-destructive bg-destructive/5 px-3 py-2">
+          <p className="flex items-start gap-2 text-sm font-medium text-destructive">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </p>
@@ -313,10 +313,10 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
         </button>
       </form>
 
-      <div className="mt-5 border-t border-stone-200 pt-4">
-        <p className="text-sm leading-relaxed text-stone-600">
+      <div className="mt-5 border-t border-line pt-4">
+        <p className="text-sm leading-relaxed text-ink-secondary">
           Signing in gives you a reader account: bookmarks, comments, and citations.{' '}
-          <Link href="/dashboard/access" className="font-semibold text-stone-900 underline underline-offset-4">
+          <Link href="/dashboard/access" className="font-semibold text-ink underline underline-offset-4">
             Applying to write
           </Link>{' '}
           is a separate step inside your dashboard, where you connect a GitHub or ORCID identity and

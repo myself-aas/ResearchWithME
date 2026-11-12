@@ -35,7 +35,7 @@ export interface ToastProps {
 const TONE_DOT: Record<NonNullable<ToastProps['tone']>, string> = {
   info: 'bg-knowledge-insight',
   success: 'bg-trust-verified',
-  error: 'bg-action-destructive',
+  error: 'bg-destructive',
 };
 
 export function Toast({ message, tone = 'info', duration = 4000, onDismiss }: ToastProps) {

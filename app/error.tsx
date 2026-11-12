@@ -11,7 +11,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
       <PageState
         role="alert"
@@ -25,7 +25,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         <button
           type="button"
           onClick={reset}
-          className="inline-flex min-h-11 items-center justify-center rounded-md bg-stone-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-stone-800"
+          className="inline-flex min-h-11 items-center justify-center rounded-md bg-surface-inverse px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-surface-inverse/90"
         >
           Try again
         </button>

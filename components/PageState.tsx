@@ -41,37 +41,37 @@ export default function PageState({
         amount={0.1}
         role={role}
         aria-live={role === 'alert' ? 'assertive' : 'polite'}
-        className="border-b border-stone-200 pb-12 sm:pb-16"
+        className="border-b border-line pb-12 sm:pb-16"
       >
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-          <h1 id="page-state-title" className="font-serif text-3xl font-bold tracking-tight text-stone-900 sm:text-5xl">
+          <h1 id="page-state-title" className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             {title}
           </h1>
           {code && (
             <span
               className={cn(
                 'rounded-md px-2.5 py-1 font-mono text-sm font-semibold',
-                tone === 'error' && 'bg-red-50 text-red-900',
-                tone === 'success' && 'bg-emerald-50 text-emerald-900',
-                tone === 'neutral' && 'bg-indigo-50 text-brand',
+                tone === 'error' && 'bg-destructive/5 text-destructive',
+                tone === 'success' && 'bg-success/5 text-success',
+                tone === 'neutral' && 'bg-brand/5 text-brand',
               )}
             >
               {code}
             </span>
           )}
         </div>
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-stone-700 sm:text-lg">{description}</p>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-ink sm:text-lg">{description}</p>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
             href={primaryAction.href}
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
           >
             {primaryAction.label}
           </a>
           {secondaryAction && (
             <a
               href={secondaryAction.href}
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-stone-300 px-5 py-2.5 text-sm font-semibold text-stone-800 transition-colors hover:border-stone-400 hover:bg-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border-strong px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong hover:bg-surface-raised"
             >
               {secondaryAction.label}
             </a>

@@ -17,6 +17,7 @@
  */
 
 import Skeleton from '@/components/ui/Skeleton';
+import { Card } from '@/components/primitives';
 
 export type RouteSkeletonVariant = 'article' | 'archive' | 'profile';
 
@@ -55,14 +56,14 @@ export default function RouteSkeleton({ variant = 'article', label = 'Loading pa
           </div>
           <ul data-layout-grid="route-skeleton-cards" className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {Array.from({ length: 6 }, (_, index) => (
-              <li key={index} className="rounded-sm border border-line bg-surface p-5">
+              <Card key={index} as="li" padding="lg">
                 <div className="h-3 w-20 animate-pulse rounded-sm bg-surface-subtle" />
                 <div className="mt-3 h-5 w-4/5 animate-pulse rounded-sm bg-surface-subtle" />
                 <div className="mt-3 space-y-2">
                   <div className="h-3 w-full animate-pulse rounded-sm bg-surface-subtle" />
                   <div className="h-3 w-2/3 animate-pulse rounded-sm bg-surface-subtle" />
                 </div>
-              </li>
+              </Card>
             ))}
           </ul>
         </div>

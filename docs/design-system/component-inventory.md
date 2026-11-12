@@ -1,5 +1,7 @@
 # Component Inventory and Classification — Stage 0
 
+> **2026-11-12:** shared primitives (`Text`, `Link`, `Card`, `Stack`, `Icon`, form controls) and the semantic-token rules are documented in [primitives.md](./primitives.md).
+
 Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** · **Wrap temporarily** · **Replace** · **Deprecate** · **Remove after migration**.
 "Retokenized" = already migrated to πeme v3.1 token classes in `c522005` (amber brand → `brand`/indigo, stone → πeme neutral).
 

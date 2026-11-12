@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import { Award, Sparkles } from 'lucide-react';
 import { Author } from '@/lib/blog-data';
+import { Text } from '@/components/primitives';
 
 export interface ImpactMetrics {
   articleQuality: number;
@@ -89,36 +90,36 @@ export default function AuthorImpactRadarChart({
   return (
     <section
       aria-labelledby="author-impact-heading"
-      className="mt-8 rounded-lg border border-stone-200 bg-white p-6 sm:p-8"
+      className="mt-8 rounded-lg border border-line bg-surface-raised p-6 sm:p-8"
     >
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-stone-200 pb-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-line pb-5">
         <div>
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1 rounded-md bg-indigo-100 px-2.5 py-1 text-xs font-semibold text-brand">
+            <span className="inline-flex items-center gap-1 rounded-md bg-brand/10 px-2.5 py-1 text-xs font-semibold text-brand">
               <Sparkles className="h-3.5 w-3.5 text-brand-hover" aria-hidden="true" />
               <span>Scholarly Assessment</span>
             </span>
-            <span className="text-xs text-stone-600 font-mono">ID: {author.id}</span>
+            <span className="text-xs text-ink-secondary font-mono">ID: {author.id}</span>
           </div>
-          <h2
+          <Text
             id="author-impact-heading"
-            className="mt-2 font-serif text-2xl font-bold text-stone-900 sm:text-3xl"
+            as="h2" variant="page-title" className="mt-2"
           >
             Author Impact & Research Metrics
-          </h2>
-          <p className="mt-1 text-sm text-stone-600">
+          </Text>
+          <p className="mt-1 text-sm text-ink-secondary">
             Multi-axis KPI analysis assessing peer review rigor, community discussion, and reproducible artifact citations.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 rounded-lg border border-indigo-200/80 bg-indigo-50/60 p-3.5 sm:px-5">
+        <div className="flex items-center gap-3 rounded-lg border border-brand/25 bg-brand/5 p-3.5 sm:px-5">
           <Award className="h-8 w-8 text-brand shrink-0" aria-hidden="true" />
           <div>
             <div className="text-xs font-semibold text-brand uppercase tracking-wider">
               Composite Impact Rating
             </div>
-            <div className="font-serif text-2xl font-bold text-stone-900">
-              {overallScore} <span className="text-xs font-sans font-normal text-stone-600">/ 100</span>
+            <div className="font-serif text-2xl font-bold text-ink">
+              {overallScore} <span className="text-xs font-sans font-normal text-ink-secondary">/ 100</span>
             </div>
           </div>
         </div>
@@ -126,7 +127,7 @@ export default function AuthorImpactRadarChart({
 
       <div className="mt-6 grid gap-8 lg:grid-cols-12 lg:items-center">
         {/* Radar Chart Container — animated video for authors with a rendered composition */}
-        <div className="lg:col-span-7 bg-stone-50/80 rounded-lg overflow-hidden border border-stone-200/80 flex flex-col items-center justify-center min-h-[320px]">
+        <div className="lg:col-span-7 bg-canvas rounded-lg overflow-hidden border border-line flex flex-col items-center justify-center min-h-[320px]">
           {mounted ? (
             <div className="w-full h-[320px] p-4">
               <ResponsiveContainer width="100%" height="100%">
@@ -146,8 +147,8 @@ export default function AuthorImpactRadarChart({
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="rounded-md border border-stone-200 bg-white p-2.5 shadow-md text-xs font-sans">
-                            <p className="font-semibold text-stone-900">{data.subject}</p>
+                          <div className="rounded-md border border-line bg-surface-raised p-2.5 shadow-md text-xs font-sans">
+                            <p className="font-semibold text-ink">{data.subject}</p>
                             <p className="text-brand font-serif font-bold text-sm mt-0.5">
                               {data.score} / 100
                             </p>
@@ -168,7 +169,7 @@ export default function AuthorImpactRadarChart({
               </ResponsiveContainer>
             </div>
           ) : (
-            <div className="flex h-[320px] items-center justify-center text-sm text-stone-500">
+            <div className="flex h-[320px] items-center justify-center text-sm text-ink-secondary">
               Loading impact radar...
             </div>
           )}
@@ -176,59 +177,59 @@ export default function AuthorImpactRadarChart({
 
         {/* Detailed KPI Breakdown Cards */}
         <div className="lg:col-span-5 space-y-3.5">
-          <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
+          <div className="flex items-center justify-between p-3 rounded-md border border-line bg-surface-raised shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-brand-hover" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Article Quality</span>
-                <span className="text-xs text-stone-600">Depth & peer-review evaluations</span>
+                <span className="text-xs font-semibold text-ink block">Article Quality</span>
+                <span className="text-xs text-ink-secondary">Depth & peer-review evaluations</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-stone-900">{metrics.articleQuality}%</span>
+            <span className="font-serif text-lg font-bold text-ink">{metrics.articleQuality}%</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
+          <div className="flex items-center justify-between p-3 rounded-md border border-line bg-surface-raised shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="h-2 w-2 rounded-full bg-amber-700" />
+              <div className="h-2 w-2 rounded-full bg-trust-uncertain" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Community Engagement</span>
-                <span className="text-xs text-stone-600">Reader responses & technical discussions</span>
+                <span className="text-xs font-semibold text-ink block">Community Engagement</span>
+                <span className="text-xs text-ink-secondary">Reader responses & technical discussions</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-stone-900">{metrics.communityEngagement}%</span>
+            <span className="font-serif text-lg font-bold text-ink">{metrics.communityEngagement}%</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
+          <div className="flex items-center justify-between p-3 rounded-md border border-line bg-surface-raised shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="h-2 w-2 rounded-full bg-emerald-700" />
+              <div className="h-2 w-2 rounded-full bg-success" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Methodology Rigor</span>
-                <span className="text-xs text-stone-600">Code artifacts & reproducible datasets</span>
+                <span className="text-xs font-semibold text-ink block">Methodology Rigor</span>
+                <span className="text-xs text-ink-secondary">Code artifacts & reproducible datasets</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-emerald-900">{metrics.methodologyRigor}%</span>
+            <span className="font-serif text-lg font-bold text-success">{metrics.methodologyRigor}%</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
+          <div className="flex items-center justify-between p-3 rounded-md border border-line bg-surface-raised shadow-2xs">
             <div className="flex items-center gap-2.5">
               <div className="h-2 w-2 rounded-full bg-brand" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Citation Impact</span>
-                <span className="text-xs text-stone-600">Scholarly citations & public interest</span>
+                <span className="text-xs font-semibold text-ink block">Citation Impact</span>
+                <span className="text-xs text-ink-secondary">Scholarly citations & public interest</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-stone-900">{metrics.citationImpact}%</span>
+            <span className="font-serif text-lg font-bold text-ink">{metrics.citationImpact}%</span>
           </div>
 
-          <div className="flex items-center justify-between p-3 rounded-md border border-stone-200 bg-white shadow-2xs">
+          <div className="flex items-center justify-between p-3 rounded-md border border-line bg-surface-raised shadow-2xs">
             <div className="flex items-center gap-2.5">
-              <div className="h-2 w-2 rounded-full bg-emerald-800" />
+              <div className="h-2 w-2 rounded-full bg-success" />
               <div>
-                <span className="text-xs font-semibold text-stone-900 block">Open Science & Verification</span>
-                <span className="text-xs text-stone-600">ORCID/GitHub public key attestation</span>
+                <span className="text-xs font-semibold text-ink block">Open Science & Verification</span>
+                <span className="text-xs text-ink-secondary">ORCID/GitHub public key attestation</span>
               </div>
             </div>
-            <span className="font-serif text-lg font-bold text-emerald-900">{metrics.openTransparency}%</span>
+            <span className="font-serif text-lg font-bold text-success">{metrics.openTransparency}%</span>
           </div>
         </div>
       </div>

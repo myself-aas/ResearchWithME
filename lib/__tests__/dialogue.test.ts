@@ -143,9 +143,9 @@ describe('provenance graph (§27.5)', () => {
   it('every edge is labeled; inferred edges are dashed AND explained', () => {
     const edges = graphEdges([rel({}), rel({ id: UUID3, label: 'derives-from', inferred: true, explanation: 'via shared method' })]);
     expect(edges[0].label).toBe('supports');
-    expect(edges[0].lineClass).toBe('stroke-solid');
+    expect(edges[0].lineClass).toBe(''); // solid is the SVG default
     expect(edges[1].label).toBe('derives from');
-    expect(edges[1].lineClass).toBe('stroke-dasharray-4');
+    expect(edges[1].lineClass).toBe('[stroke-dasharray:4]');
     expect(edges[1].explanation).toBeTruthy();
   });
 

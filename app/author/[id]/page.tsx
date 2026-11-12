@@ -10,6 +10,7 @@ import BlogHeader from '@/components/BlogHeader';
 import { getAuthorArchive } from '@/lib/author-directory';
 import { pageMetadata } from '@/lib/seo';
 import { jsonLdScript, personJsonLd } from '@/lib/seo/jsonld';
+import { Link as TextLink } from '@/components/primitives';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -57,30 +58,30 @@ export default async function AuthorDetailPage({ params }: PageProps) {
   const { author, articles, metrics } = archive;
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="flex min-h-screen flex-col bg-canvas">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(personJsonLd(author)) }} />
       <BlogHeader />
 
       <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
-        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
+        <nav aria-label="Breadcrumb" className="mb-6 text-sm text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
-              <Link href="/" className="hover:text-stone-900 hover:underline">
+              <Link href="/" className="hover:text-ink hover:underline">
                 Platform
               </Link>
             </li>
             <li aria-hidden="true">
-              <ChevronRight className="h-4 w-4 text-stone-500" />
+              <ChevronRight className="h-4 w-4 text-ink-secondary" />
             </li>
             <li>
-              <Link href="/authors" className="hover:text-stone-900 hover:underline">
+              <Link href="/authors" className="hover:text-ink hover:underline">
                 Authors
               </Link>
             </li>
             <li aria-hidden="true">
-              <ChevronRight className="h-4 w-4 text-stone-500" />
+              <ChevronRight className="h-4 w-4 text-ink-secondary" />
             </li>
-            <li aria-current="page" className="font-medium text-stone-900">
+            <li aria-current="page" className="font-medium text-ink">
               {author.name}
             </li>
           </ol>
@@ -97,17 +98,17 @@ export default async function AuthorDetailPage({ params }: PageProps) {
 
         <AuthorArchiveLayout articles={articles} />
 
-        <p className="mt-10 border-t border-stone-200 pt-6 text-sm leading-relaxed text-stone-600">
+        <p className="mt-10 border-t border-line pt-6 text-sm leading-relaxed text-ink-secondary">
           All reviews, benchmark replications, and technical essays attributed to {author.name} undergo editorial
           provenance checks against the contributor&apos;s verified registry credentials and are published openly under
           Creative Commons Attribution 4.0 International. Browse all{' '}
-          <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+          <TextLink href="/authors" >
             contributors and domain reviewers
-          </Link>{' '}
+          </TextLink>{' '}
           or read our{' '}
-          <Link href="/editorial-board" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+          <TextLink href="/editorial-board" >
             editorial board review standards
-          </Link>
+          </TextLink>
           .
         </p>
       </main>

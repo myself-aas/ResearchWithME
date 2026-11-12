@@ -3,6 +3,7 @@ import { ArrowUpRight, PenSquare, ShieldCheck } from 'lucide-react';
 import { CATEGORIES, categoryToSlug } from '@/lib/blog-data';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import BrandLogo from '@/components/BrandLogo';
+import { Text, Link as TextLink } from '@/components/primitives';
 
 const exploreLinks = [
   { href: '/papers', label: 'Paper archive' },
@@ -65,36 +66,36 @@ export default function BlogFooter() {
           </div>
 
           <nav aria-labelledby="footer-domains">
-            <h2 id="footer-domains" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            <Text id="footer-domains" as="h2" variant="eyebrow" weight="semibold">
               Editorial Columns
-            </h2>
+            </Text>
             <ul className="mt-3 space-y-2 font-sans text-sm">
               {CATEGORIES.map((category) => (
                 <li key={category}>
-                  <Link
+                  <TextLink
                     href={`/category/${categoryToSlug(category)}`}
-                    className="text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
+                    variant="muted"
                   >
                     {category}
-                  </Link>
+                  </TextLink>
                 </li>
               ))}
             </ul>
           </nav>
 
           <nav aria-labelledby="footer-explore">
-            <h2 id="footer-explore" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+            <Text id="footer-explore" as="h2" variant="eyebrow" weight="semibold">
               Explore the platform
-            </h2>
+            </Text>
             <ul className="mt-3 space-y-2 font-sans text-sm">
               {exploreLinks.map((link) => (
                 <li key={link.href}>
-                  <Link
+                  <TextLink
                     href={link.href}
-                    className="text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
+                    variant="muted"
                   >
                     {link.label}
-                  </Link>
+                  </TextLink>
                 </li>
               ))}
             </ul>
@@ -104,28 +105,28 @@ export default function BlogFooter() {
         <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 font-sans text-xs text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 ResearchWithMe Publication Collective. Published under CC BY 4.0 open access.</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <Link href="/about" className="underline-offset-4 hover:text-ink hover:underline">
+            <TextLink href="/about" variant="quiet">
               About
-            </Link>
-            <Link href="/editorial-board" className="underline-offset-4 hover:text-ink hover:underline">
+            </TextLink>
+            <TextLink href="/editorial-board" variant="quiet">
               Editorial standards
-            </Link>
-            <Link href="/privacy" className="underline-offset-4 hover:text-ink hover:underline">
+            </TextLink>
+            <TextLink href="/privacy" variant="quiet">
               Privacy
-            </Link>
-            <Link href="/contact" className="underline-offset-4 hover:text-ink hover:underline">
+            </TextLink>
+            <TextLink href="/contact" variant="quiet">
               Contact
-            </Link>
-            <Link href="/cite" className="underline-offset-4 hover:text-ink hover:underline">
+            </TextLink>
+            <TextLink href="/cite" variant="quiet">
               Citation export
-            </Link>
-            <Link href="/assistant" className="inline-flex items-center gap-1 underline-offset-4 hover:text-ink hover:underline">
+            </TextLink>
+            <TextLink href="/assistant" variant="quiet" className="inline-flex items-center gap-1">
               <span>Synthesis</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
-            <Link href="/motion" className="underline-offset-4 hover:text-ink hover:underline">
+            </TextLink>
+            <TextLink href="/motion" variant="quiet">
               Motion system
-            </Link>
+            </TextLink>
           </div>
         </div>
       </div>

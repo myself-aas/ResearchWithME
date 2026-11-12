@@ -11,7 +11,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
 
   return (
     <html lang="en">
-      <body className="bg-stone-50 font-serif text-stone-900 antialiased">
+      <body className="bg-canvas font-serif text-ink antialiased">
         <PageState
           role="alert"
           tone="error"
@@ -23,7 +23,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           <button
             type="button"
             onClick={reset}
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-stone-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-stone-800"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-surface-inverse px-5 py-2.5 text-sm font-semibold text-text-inverse transition-colors hover:bg-surface-inverse/90"
           >
             Retry
           </button>

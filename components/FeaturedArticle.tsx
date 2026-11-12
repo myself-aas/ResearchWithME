@@ -7,6 +7,7 @@ import { BlogPost, categoryToSlug } from '@/lib/blog-data';
 import Pressable from '@/components/motion/Pressable';
 import SuccessCheck from '@/components/motion/SuccessCheck';
 import { EASING } from '@/lib/motion/tokens';
+import { Text } from '@/components/primitives';
 
 interface FeaturedArticleProps {
   post: BlogPost;
@@ -41,9 +42,9 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
               className="object-cover"
             />
           )}
-          <span className="absolute left-4 top-4 rounded-sm border border-line bg-canvas/95 px-2.5 py-1 font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+          <Text as="span" variant="eyebrow" weight="semibold" className="absolute left-4 top-4 rounded-sm border border-line bg-canvas/95 px-2.5 py-1">
             Lead Monograph · 10.5555/rwm.{post.id}
-          </span>
+          </Text>
         </div>
 
         <div className="flex flex-col justify-between gap-8 p-6 sm:p-10">
@@ -74,9 +75,9 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             </p>
 
             <div className="mt-6 border-l-2 border-brand pl-4">
-              <h3 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
+              <Text as="h3" variant="eyebrow" weight="semibold">
                 Empirical Findings
-              </h3>
+              </Text>
               <ul className="mt-2 space-y-2 font-sans text-sm leading-relaxed text-ink-secondary">
                 {post.keyTakeaways.slice(0, 2).map((takeaway) => (
                   <li key={takeaway} className="flex gap-2">

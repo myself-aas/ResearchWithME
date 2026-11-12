@@ -23,7 +23,7 @@ export default function ConflictPanel({ sides, onResolve }: ConflictPanelProps) 
   const canResolve = rationale.trim().length > 0 && keys.every((k) => k in selected);
 
   return (
-    <section aria-label="Sync conflict" className="rounded-md border border-workflow-warning bg-surface p-4 font-sans text-sm">
+    <section aria-label="Sync conflict" className="rounded-md border border-trust-uncertain bg-surface p-4 font-sans text-sm">
       <h3 className="font-semibold text-text-primary">Sync conflict — both versions preserved</h3>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
         {sides.map((side) => (
@@ -74,7 +74,7 @@ export default function ConflictPanel({ sides, onResolve }: ConflictPanelProps) 
       <button
         type="button"
         disabled={!canResolve}
-        className="mt-3 min-h-11 rounded-sm bg-[var(--pieme-action-primary)] px-4 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="mt-3 min-h-11 rounded-sm bg-brand px-4 font-semibold text-on-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         onClick={() => onResolve(selected, rationale)}
       >
         Resolve conflict

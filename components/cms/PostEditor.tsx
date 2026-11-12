@@ -40,6 +40,7 @@ import {
   subtleButtonClass,
   textareaClass,
 } from './styles';
+import { Text } from '@/components/primitives';
 
 const COVER_PRESETS = [
   '/images/folio-hero.jpeg',
@@ -382,10 +383,10 @@ export default function PostEditor({
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
             <span>All articles</span>
           </Link>
-          <h1 className="mt-2 break-words font-serif text-3xl font-bold tracking-tight text-stone-900">
+          <h1 className="mt-2 break-words font-serif text-3xl font-bold tracking-tight text-ink">
             {mode === 'create' && !postId ? 'New article' : form.title || 'Untitled article'}
           </h1>
-          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-stone-600">
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-secondary">
             <StatusBadge status={status} />
             <span>
               {dirty
@@ -395,7 +396,7 @@ export default function PostEditor({
                   : 'Not saved yet'}
             </span>
             {status === 'published' && form.slug && (
-              <span className="font-mono text-stone-600">/post/{form.slug}</span>
+              <span className="font-mono text-ink-secondary">/post/{form.slug}</span>
             )}
           </div>
         </div>
@@ -422,7 +423,7 @@ export default function PostEditor({
       {notice && (
         <p
           role="status"
-          className="mt-5 flex items-start gap-2 border-l-2 border-emerald-700 bg-emerald-50 px-4 py-3 text-sm text-emerald-950"
+          className="mt-5 flex items-start gap-2 border-l-2 border-success bg-success/5 px-4 py-3 text-sm text-success"
         >
           <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{notice}</span>
@@ -434,14 +435,14 @@ export default function PostEditor({
           ref={errorRef}
           tabIndex={-1}
           role="alert"
-          className="mt-5 border-l-2 border-red-700 bg-red-50 px-4 py-3"
+          className="mt-5 border-l-2 border-destructive bg-destructive/5 px-4 py-3"
         >
-          <p className="flex items-start gap-2 text-sm font-semibold text-red-900">
+          <p className="flex items-start gap-2 text-sm font-semibold text-destructive">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
             <span>{error}</span>
           </p>
           {errorKeys.length > 0 && (
-            <ul className="mt-2 list-disc space-y-1 pl-9 text-sm text-red-900">
+            <ul className="mt-2 list-disc space-y-1 pl-9 text-sm text-destructive">
               {errorKeys.map((key) => (
                 <li key={key}>
                   <a href={`#${FIELD_DOM_IDS[key] ?? 'post-title'}`} className="underline underline-offset-4">
@@ -455,13 +456,13 @@ export default function PostEditor({
       )}
 
       <form
-        className="mt-6 divide-y divide-stone-200 rounded-lg border border-stone-200 bg-white"
+        className="mt-6 divide-y divide-line rounded-lg border border-line bg-surface-raised"
         onSubmit={(event) => event.preventDefault()}
       >
         <section aria-labelledby="record-heading" className="space-y-5 p-5 sm:p-6">
-          <h2 id="record-heading" className="font-serif text-xl font-semibold text-stone-900">
+          <Text id="record-heading" as="h2" variant="card-title">
             The record
-          </h2>
+          </Text>
 
           <div>
             <label htmlFor="post-title" className={labelClass}>
@@ -477,7 +478,7 @@ export default function PostEditor({
               aria-invalid={fieldErrors.title ? true : undefined}
               aria-describedby={`post-title-hint${fieldErrors.title ? ' post-title-error' : ''}`}
               placeholder="What did you find, and why does it matter?"
-              className={cn(fieldClass, 'h-12 font-serif text-lg', fieldErrors.title && 'border-red-700')}
+              className={cn(fieldClass, 'h-12 font-serif text-lg', fieldErrors.title && 'border-destructive')}
             />
             <p id="post-title-hint" className={hintClass}>
               At least 8 characters. The title becomes the URL unless you change the slug.
@@ -492,7 +493,7 @@ export default function PostEditor({
             <div className="flex">
               <span
                 aria-hidden="true"
-                className="inline-flex h-11 items-center rounded-l-md border border-r-0 border-stone-300 bg-stone-100 px-3 font-mono text-sm text-stone-600"
+                className="inline-flex h-11 items-center rounded-l-md border border-r-0 border-border-strong bg-surface px-3 font-mono text-sm text-ink-secondary"
               >
                 /post/
               </span>
@@ -506,7 +507,7 @@ export default function PostEditor({
                 maxLength={96}
                 aria-invalid={fieldErrors.slug ? true : undefined}
                 aria-describedby={`post-slug-hint${fieldErrors.slug ? ' post-slug-error' : ''}`}
-                className={cn(fieldClass, 'rounded-l-none font-mono', fieldErrors.slug && 'border-red-700')}
+                className={cn(fieldClass, 'rounded-l-none font-mono', fieldErrors.slug && 'border-destructive')}
                 autoComplete="off"
                 spellCheck={false}
               />
@@ -521,7 +522,7 @@ export default function PostEditor({
 
           <div>
             <label htmlFor="post-subtitle" className={labelClass}>
-              Standfirst <span className="font-normal text-stone-600">(optional)</span>
+              Standfirst <span className="font-normal text-ink-secondary">(optional)</span>
             </label>
             <input
               id="post-subtitle"
@@ -547,7 +548,7 @@ export default function PostEditor({
               aria-invalid={fieldErrors.summary ? true : undefined}
               aria-describedby={`post-summary-hint${fieldErrors.summary ? ' post-summary-error' : ''}`}
               placeholder="What the review covers, what was tested, and what a reader should take away."
-              className={cn(textareaClass, fieldErrors.summary && 'border-red-700')}
+              className={cn(textareaClass, fieldErrors.summary && 'border-destructive')}
             />
             <p id="post-summary-hint" className={cn(hintClass, 'flex flex-wrap justify-between gap-2')}>
               <span>Shown in the platform feed. At least 40 characters to publish.</span>
@@ -558,10 +559,10 @@ export default function PostEditor({
         </section>
 
         <section aria-labelledby="byline-heading" className="space-y-5 p-5 sm:p-6">
-          <h2 id="byline-heading" className="font-serif text-xl font-semibold text-stone-900">
+          <Text id="byline-heading" as="h2" variant="card-title">
             Byline and classification
-          </h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-stone-600">
+          </Text>
+          <p className="max-w-2xl text-sm leading-relaxed text-ink-secondary">
             Bylines must map to a verified author profile so every published article has a credential the reader can
             inspect.
           </p>
@@ -577,7 +578,7 @@ export default function PostEditor({
                 onChange={(event) => update('authorId', event.target.value)}
                 aria-invalid={fieldErrors.authorId ? true : undefined}
                 aria-describedby={fieldErrors.authorId ? 'post-author-error' : undefined}
-                className={cn(fieldClass, fieldErrors.authorId && 'border-red-700')}
+                className={cn(fieldClass, fieldErrors.authorId && 'border-destructive')}
               >
                 {selectableAuthors.map((author) => (
                   <option key={author.id} value={author.id}>
@@ -634,7 +635,7 @@ export default function PostEditor({
 
             <div>
               <label htmlFor="post-tags" className={labelClass}>
-                Tags <span className="font-normal text-stone-600">(comma separated, up to eight)</span>
+                Tags <span className="font-normal text-ink-secondary">(comma separated, up to eight)</span>
               </label>
               <input
                 id="post-tags"
@@ -650,10 +651,10 @@ export default function PostEditor({
         </section>
 
         <section aria-labelledby="cover-heading" className="space-y-4 p-5 sm:p-6">
-          <h2 id="cover-heading" className="font-serif text-xl font-semibold text-stone-900">
+          <Text id="cover-heading" as="h2" variant="card-title">
             Cover image
-          </h2>
-          <p className="max-w-2xl text-sm leading-relaxed text-stone-600">
+          </Text>
+          <p className="max-w-2xl text-sm leading-relaxed text-ink-secondary">
             Covers use the 16:9 editorial frame at the top of the article. Upload a new image to the media library, or
             choose a bundled photograph.
           </p>
@@ -667,10 +668,10 @@ export default function PostEditor({
                 width={640}
                 height={360}
                 fetchPriority="high"
-                className="h-40 w-full rounded-md border border-stone-200 object-cover"
+                className="h-40 w-full rounded-md border border-line object-cover"
               />
               <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
-                <span className="break-all font-mono text-sm text-stone-600">{form.coverImage}</span>
+                <span className="break-all font-mono text-sm text-ink-secondary">{form.coverImage}</span>
                 <button type="button" onClick={() => update('coverImage', '')} className={subtleButtonClass}>
                   <Trash2 className="h-4 w-4" aria-hidden="true" />
                   <span>Remove cover</span>
@@ -678,7 +679,7 @@ export default function PostEditor({
               </div>
             </div>
           ) : (
-            <p className="border-l-2 border-stone-300 pl-4 text-sm leading-relaxed text-stone-600">
+            <p className="border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">
               No cover selected. The default editorial image is used if this article is published without one.
             </p>
           )}
@@ -687,7 +688,7 @@ export default function PostEditor({
             <button
               type="button"
               onClick={() => setShowAiCover(!showAiCover)}
-              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
+              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
             >
               <Sparkles className="h-4 w-4" aria-hidden="true" />
               <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate with Qwen 2.1 (AVIF)'}</span>
@@ -763,7 +764,7 @@ export default function PostEditor({
                   'h-16 w-24 overflow-hidden rounded-md border-2 transition-colors',
                   form.coverImage === preset
                     ? 'border-brand'
-                    : 'border-transparent hover:border-stone-400',
+                    : 'border-transparent hover:border-border-strong',
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -784,10 +785,10 @@ export default function PostEditor({
 
         <section aria-labelledby="takeaways-heading" className="space-y-4 p-5 sm:p-6">
           <div>
-            <h2 id="takeaways-heading" className="font-serif text-xl font-semibold text-stone-900">
+            <Text id="takeaways-heading" as="h2" variant="card-title">
               Key takeaways
-            </h2>
-            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-stone-600">
+            </Text>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-secondary">
               At least one is required before publishing. These appear above the body in the reader.
             </p>
           </div>
@@ -795,7 +796,7 @@ export default function PostEditor({
           <ul aria-labelledby="takeaways-heading" className="space-y-3">
             {form.keyTakeaways.map((takeaway, index) => (
               <li key={index} className="flex items-start gap-2">
-                <span className="mt-3 w-7 shrink-0 font-mono text-sm text-stone-600">
+                <span className="mt-3 w-7 shrink-0 font-mono text-sm text-ink-secondary">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <div className="flex-1">
@@ -811,13 +812,13 @@ export default function PostEditor({
                     aria-invalid={fieldErrors.keyTakeaways && index === 0 ? true : undefined}
                     aria-describedby={fieldErrors.keyTakeaways && index === 0 ? 'post-takeaways-error' : undefined}
                     placeholder="The one result a reader should remember"
-                    className={cn(fieldClass, fieldErrors.keyTakeaways && index === 0 && 'border-red-700')}
+                    className={cn(fieldClass, fieldErrors.keyTakeaways && index === 0 && 'border-destructive')}
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => removeTakeaway(index)}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-stone-300 bg-white text-stone-600 transition-colors hover:border-red-300 hover:text-red-800"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-border-strong bg-surface-raised text-ink-secondary transition-colors hover:border-destructive/40 hover:text-destructive"
                 >
                   <Trash2 className="h-4 w-4" aria-hidden="true" />
                   <span className="sr-only">Remove key takeaway {index + 1}</span>
@@ -834,9 +835,9 @@ export default function PostEditor({
         </section>
 
         <section aria-labelledby="body-heading" className="space-y-4 p-5 sm:p-6">
-          <h2 id="body-heading" className="font-serif text-xl font-semibold text-stone-900">
+          <Text id="body-heading" as="h2" variant="card-title">
             Body
-          </h2>
+          </Text>
           <MarkdownEditor
             id="post-content"
             value={form.content}
@@ -846,31 +847,31 @@ export default function PostEditor({
         </section>
 
         <section aria-labelledby="publishing-heading" className="space-y-4 p-5 sm:p-6">
-          <h2 id="publishing-heading" className="font-serif text-xl font-semibold text-stone-900">
+          <Text id="publishing-heading" as="h2" variant="card-title">
             Publishing
-          </h2>
+          </Text>
           <label
             htmlFor="post-featured"
-            className="flex min-h-11 cursor-pointer items-start gap-3 rounded-md border border-stone-200 bg-stone-50 px-4 py-3"
+            className="flex min-h-11 cursor-pointer items-start gap-3 rounded-md border border-line bg-canvas px-4 py-3"
           >
             <input
               id="post-featured"
               type="checkbox"
               checked={form.featured}
               onChange={(event) => update('featured', event.target.checked)}
-              className="mt-1 h-4 w-4 rounded border-stone-400 text-brand"
+              className="mt-1 h-4 w-4 rounded border-border-strong text-brand"
             />
-            <span className="text-sm leading-relaxed text-stone-800">
+            <span className="text-sm leading-relaxed text-ink">
               <span className="block font-medium">Feature on the platform home page</span>
-              <span className="block text-stone-600">
+              <span className="block text-ink-secondary">
                 The featured article occupies the lead slot. Use it for at most one live article at a time.
               </span>
             </span>
           </label>
         </section>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 bg-stone-50 p-5 sm:p-6">
-          <p aria-live="polite" className="text-sm text-stone-600">
+        <div className="flex flex-wrap items-center justify-between gap-3 bg-canvas p-5 sm:p-6">
+          <p aria-live="polite" className="text-sm text-ink-secondary">
             {saving
               ? 'Saving…'
               : error
@@ -905,14 +906,14 @@ export default function PostEditor({
       </form>
 
       {!postId && (
-        <p className="mt-4 flex items-start gap-2 text-sm leading-relaxed text-stone-600">
+        <p className="mt-4 flex items-start gap-2 text-sm leading-relaxed text-ink-secondary">
           <ImagePlus className="mt-0.5 h-4 w-4 shrink-0 text-brand-hover" aria-hidden="true" />
           <span>Nothing is public until you publish. Drafts stay in the studio.</span>
         </p>
       )}
 
       {postId && status === 'published' && (
-        <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-stone-600">
+        <p className="mt-4 flex flex-wrap items-center gap-2 text-sm text-ink-secondary">
           <Link href={`/dashboard/comments`} className="font-medium text-brand underline underline-offset-4">
             Moderate the discussion
           </Link>
@@ -922,13 +923,13 @@ export default function PostEditor({
       )}
 
       {postId && status === 'draft' && (
-        <p className="mt-4 text-sm leading-relaxed text-stone-600">
+        <p className="mt-4 text-sm leading-relaxed text-ink-secondary">
           This draft is not visible on the platform. Publishing revalidates the home page and its reader URL.
         </p>
       )}
 
       <p className={cn(hintClass, 'mt-4 flex items-center gap-2')}>
-        <Info className="h-4 w-4 shrink-0 text-stone-600" aria-hidden="true" />
+        <Info className="h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />
         <span>Markdown source is stored as-is. The reader ignores raw HTML.</span>
       </p>
     </div>

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import HomeFeed from '@/components/HomeFeed';
-import { listPublishedAuthors } from '@/lib/author-directory';
+import { getCachedFeedArticles } from '@/lib/cms/catalogue';
+import { getCachedPublishedAuthors } from '@/lib/author-directory';
 import { categoryToSlug, slugToCategory } from '@/lib/blog-data';
 import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl, clampSeoDescription, clampSeoTitle } from '@/lib/seo';
 import { jsonLdScript, websiteJsonLd } from '@/lib/seo/jsonld';
@@ -72,14 +73,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     }
   }
 
-  const authors = await listPublishedAuthors();
+  const [authors, posts] = await Promise.all([getCachedPublishedAuthors(), getCachedFeedArticles()]);
 
   return (
     <>
       {!search && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
       )}
-      <HomeFeed initialCategory="All" initialSearch={search} authors={authors} />
+      <HomeFeed initialCategory="All" initialSearch={search} authors={authors} initialPosts={posts} />
     </>
   );
 }

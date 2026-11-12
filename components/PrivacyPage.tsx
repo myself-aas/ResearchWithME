@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import SectionNavigation from '@/components/layout/SectionNavigation';
+import { Text, Link as TextLink } from '@/components/primitives';
 
 const privacySections = [
   { id: 'principles-heading', label: 'Zero-tracking open-access reading' },
@@ -17,9 +17,9 @@ export default function PrivacyPage() {
 
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-8">
-          <p className="font-mono text-xs font-semibold uppercase tracking-wider text-brand">
+          <Text as="p" variant="eyebrow" color="brand" weight="semibold">
             Reader Trust &amp; Data Governance
-          </p>
+          </Text>
           <h1 className="mt-2 font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">
             Privacy Policy
           </h1>
@@ -35,36 +35,36 @@ export default function PrivacyPage() {
           </div>
           <div data-layout-content="reading" className="order-2 min-w-0 max-w-[48rem] space-y-10 lg:order-1 font-sans text-base leading-relaxed text-ink">
             <section aria-labelledby="principles-heading" className="space-y-4">
-              <h2 id="principles-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="principles-heading" as="h2" variant="section-title">
                 1. Zero-tracking open-access reading
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 You can read every article, inspect{' '}
-                <Link href="/papers" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/papers" >
                   archived research papers
-                </Link>
+                </TextLink>
                 , download{' '}
-                <Link href="/editions" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/editions" >
                   quarterly PDF editions
-                </Link>
+                </TextLink>
                 , and export citations from the{' '}
-                <Link href="/cite" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/cite" >
                   citation builder
-                </Link>{' '}
+                </TextLink>{' '}
                 without registering an account. We do not load third-party ad networks, session-replay scripts, or
                 fingerprinting beacons on any page of the journal.
               </p>
             </section>
 
             <section aria-labelledby="local-storage-heading" className="space-y-4 border-t border-line pt-8">
-              <h2 id="local-storage-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="local-storage-heading" as="h2" variant="section-title">
                 2. Browser-local preferences and reading lists
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 Reader convenience features—including your{' '}
-                <Link href="/bookmarks" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/bookmarks" >
                   saved reading list
-                </Link>
+                </TextLink>
                 , light or dark archival paper theme selection, and interface language preference (English or বাংলা)—are
                 stored locally in your browser via first-party <code className="font-mono text-sm">localStorage</code>{' '}
                 keys and a strictly functional locale cookie (<code className="font-mono text-sm">rwm_locale</code>).
@@ -73,9 +73,9 @@ export default function PrivacyPage() {
             </section>
 
             <section aria-labelledby="accounts-heading" className="space-y-4 border-t border-line pt-8">
-              <h2 id="accounts-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="accounts-heading" as="h2" variant="section-title">
                 3. Optional digest subscriptions, comments, and contributor accounts
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 When you voluntarily subscribe to the weekly editorial digest, post a public discussion comment, or sign
                 in as a contributor, we process only the minimum information required to fulfill that action:
@@ -88,9 +88,9 @@ export default function PrivacyPage() {
                 <li>
                   <strong>Contributor verification:</strong> Public scholarly identifiers (ORCID iD, GitHub handle, and
                   institutional affiliation) displayed on{' '}
-                  <Link href="/authors" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                  <TextLink href="/authors" >
                     contributor and domain reviewer profiles
-                  </Link>{' '}
+                  </TextLink>{' '}
                   to substantiate review provenance.
                 </li>
                 <li>
@@ -101,20 +101,20 @@ export default function PrivacyPage() {
             </section>
 
             <section aria-labelledby="rights-heading" className="space-y-4 border-t border-line pt-8">
-              <h2 id="rights-heading" className="font-serif text-2xl font-semibold text-ink">
+              <Text id="rights-heading" as="h2" variant="section-title">
                 4. Data retention, open licensing, and contact
-              </h2>
+              </Text>
               <p className="text-ink-secondary">
                 Published scholarly reviews and bibliographic metadata remain part of the permanent open-access scholarly
                 record under CC BY 4.0, as detailed{' '}
-                <Link href="/about" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/about" >
                   about ResearchWithMe
-                </Link>
+                </TextLink>
                 . Account holders and digest subscribers may request access, correction, or deletion of private account
                 records at any time through our{' '}
-                <Link href="/contact" className="font-medium text-brand underline underline-offset-4 hover:text-brand-pressed">
+                <TextLink href="/contact" >
                   editorial contact office
-                </Link>{' '}
+                </TextLink>{' '}
                 at{' '}
                 <a href="mailto:privacy@researchwith.me" className="font-medium text-brand underline underline-offset-4">
                   privacy@researchwith.me
