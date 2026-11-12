@@ -28,7 +28,14 @@ export async function getArticleCatalogue(
   legacy: LegacyStore = getPublicLegacyStore(),
   cms?: CmsStore,
 ): Promise<BlogPost[]> {
-  const [posts, commentCounts] = await Promise.all([getPublishedCmsPosts(cms), getCmsCommentCounts(cms)]);
+  const [posts, commentCounts, legacyArticles] = await Promise.all([
+    getPublishedCmsPosts(cms),
+    getCmsCommentCounts(cms),
+    Promise.resolve().then(() => legacy.getArticles()).catch((error) => {
+      console.error('Could not load the legacy interaction corpus:', error);
+      return DEFAULT_LEGACY_SEEDS.articles;
+    }),
+  ]);
   const merged = new Map<string, BlogPost>();
 
   for (const post of posts) {
@@ -37,16 +44,8 @@ export async function getArticleCatalogue(
     merged.set(article.slug, article);
   }
 
-  let legacyArticles: BlogPost[] = DEFAULT_LEGACY_SEEDS.articles;
-  try {
-    // Store implementations already overlay durable counters onto the seed
-    // corpus, so these articles carry the freshest likes/commentsCount.
-    legacyArticles = await legacy.getArticles();
-  } catch (error) {
-    console.error('Could not load the legacy interaction corpus:', error);
-  }
-
-  for (const article of [...DEFAULT_LEGACY_SEEDS.articles, ...legacyArticles]) {
+  // Store implementations overlay durable counters onto the seed corpus.
+  for (const article of [...legacyArticles, ...DEFAULT_LEGACY_SEEDS.articles]) {
     if (article?.slug && !merged.has(article.slug)) merged.set(article.slug, article);
   }
 

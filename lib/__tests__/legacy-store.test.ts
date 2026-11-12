@@ -214,6 +214,34 @@ describe('getArticleCatalogue bridge', () => {
     expect(legacyOnly).toBeDefined();
   });
 
+  it('starts the legacy read while the CMS read is still pending', async () => {
+    let releaseCms!: () => void;
+    const cmsPending = new Promise<void>((resolve) => { releaseCms = resolve; });
+    const cms = stubCmsStore([]);
+    cms.listPosts = async () => { await cmsPending; return []; };
+    const fixture = createSupabaseLegacyFixture();
+    const legacy = createSupabaseLegacyStore(fixture.client, fixture.seeds);
+    const readArticles = legacy.getArticles;
+    let legacyStarted = false;
+    legacy.getArticles = () => { legacyStarted = true; return readArticles(); };
+
+    const result = getArticleCatalogue(legacy, cms);
+    await Promise.resolve();
+    const startedBeforeCmsCompleted = legacyStarted;
+    releaseCms();
+    await result;
+    expect(startedBeforeCmsCompleted).toBe(true);
+  });
+
+  it('shows durable legacy counters instead of stale bundled counters', async () => {
+    const fixture = createSupabaseLegacyFixture();
+    const legacy = createSupabaseLegacyStore(fixture.client, fixture.seeds);
+    await legacy.incrementLikes('post-1');
+
+    const catalogue = await getArticleCatalogue(legacy, stubCmsStore([]));
+    expect(catalogue.find((article) => article.id === 'post-1')?.likes).toBe(343);
+  });
+
   it('degrades to the bundled seed posts when the legacy store fails', async () => {
     const failingLegacy: LegacyStore = {
       kind: 'supabase',
