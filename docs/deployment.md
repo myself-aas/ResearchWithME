@@ -101,7 +101,7 @@ Two facts worth knowing before you change anything:
 | --- | --- | --- |
 | GitHub Actions `Quality` | lint, `tsc`, the Vitest suite, Impeccable detector, `next build` | deployments |
 | Cloudflare Workers Builds | build + deploy on the dashboard path, previews per branch, check runs | tests |
-| GitHub Actions `Deploy` (PR #5) | production deploy after `Quality`, PR preview version | tests |
+| GitHub Actions `Deploy` (PR #5, removed in `85465ce`) | historical: production deploy after `Quality`, PR preview version | tests |
 | Worker | SSR, route handlers, middleware, image optimizer, cache | persistence |
 | Supabase | content, comments, auth, image storage, realtime fan-out | HTML |
 | KV | OpenNext incremental cache + tag cache | anything that must be immediately consistent |
@@ -191,7 +191,7 @@ Three environments, three sets of values, one repository.
 | **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
 | **Preview-only runtime** | the same secrets | `wrangler preview secret put`, or the preview *base config* | previews do not inherit the Worker's secrets |
 
-Both Workers Builds and GitHub Actions therefore need the `NEXT_PUBLIC_*` values as **build**
+Workers Builds therefore needs the `NEXT_PUBLIC_*` values as **build**
 variables. The deploy guard (`npm run deploy-guard`) fails loudly when they are missing, because a
 Worker built without them runs in unauthenticated local demo mode with a read-only filesystem.
 
@@ -490,7 +490,7 @@ subscribes to `push` and `pull_request` and reports back as a check run named
 
 | Setting | Value | Why |
 | --- | --- | --- |
-| Build command | `npx @opennextjs/cloudflare build` (or `npm run build:worker`) | produces `.open-next/worker.js` + assets |
+| Build command | `npx @opennextjs/cloudflare build` (or `npm run build`, `npm run build:worker`) | produces `.open-next/worker.js` + assets. `scripts/build-next-or-worker.mjs` runs `scripts/check-production-env.mjs` first on `WORKERS_CI`, for both `npm run build` and `npx @opennextjs/cloudflare build` (its inner `npm run build`) |
 | Deploy command — production | `npx wrangler deploy` | a *production* deployment; previews branch from it |
 | Deploy command — preview | `npx wrangler preview` | a branch of the Worker with its own URL |
 | Production branch | `main` | everything else is a preview |
@@ -656,6 +656,8 @@ to Actions secrets.
 
 ### 9.2 GitHub → GitHub Actions (`workflow_run`)
 
+> **Historical:** `deploy.yml` was removed in `85465ce`; Workers Builds is the deploy path.
+
 Not a webhook you configure — an event relationship between two workflows.
 
 ```yaml
@@ -767,8 +769,8 @@ lands on `/login` with `error_description` — never as a 500.
 2. Cloudflare's app receives the `push` and starts a build with the production-branch rules applied
    to a non-production branch → `npx wrangler preview`.
 3. A preview URL appears: `<branch>-researchwithme.hazardnet.workers.dev`.
-4. If `deploy.yml` is on the default branch, its `preview` job also uploads a version under the alias
-   `pr-<n>` (only for pull requests) and comments the URL once.
+4. (Historical, `deploy.yml` removed in `85465ce`: its `preview` job also uploaded a version under the alias
+   `pr-<n>` and commented the URL.)
 
 ### Pull request
 
@@ -781,9 +783,7 @@ lands on `/login` with `error_description` — never as a 500.
 
 1. `Quality` runs on `main`.
 2. Cloudflare's production build runs `wrangler deploy` → new version → traffic moves immediately.
-3. With `deploy.yml` merged, its `deploy` job starts after Quality reports success, re-runs the guard
-   and the build, deploys again, then smoke-tests `/` and `/sitemap.xml`.
-   **This is the double-deploy scenario — pick one owner (§15).**
+3. (Historical: with `deploy.yml` merged, a second `deploy` job ran after Quality and deployed again. The workflow was removed in `85465ce`, so Workers Builds is the only deployer.)
 4. KV receives fresh entries under the new build id; old entries expire on their TTL.
 
 ### Manual deploy
