@@ -1,5 +1,5 @@
 /**
- * πeme v3.1 — motion mode contract (spec §10 `MotionMode`).
+ * reme v3.1 — motion mode contract (spec §10 `MotionMode`).
  *
  * The design system defines three modes: `full`, `reduced`, `static`.
  * `reduced` mirrors the OS `prefers-reduced-motion` preference; `static`
@@ -27,7 +27,7 @@ export function isMotionSuppressed(mode: MotionMode): boolean {
   return mode !== 'full';
 }
 
-/** `MotionConfig.reducedMotion` equivalent for a πeme mode. */
+/** `MotionConfig.reducedMotion` equivalent for a reme mode. */
 export function reducedMotionFor(mode: MotionMode): 'user' | 'always' {
   return mode === 'full' ? 'user' : 'always';
 }

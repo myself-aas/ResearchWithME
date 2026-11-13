@@ -1,5 +1,5 @@
 /**
- * Trust presentation logic — πeme v3.1 §23 (pure, unit-tested).
+ * Trust presentation logic — reme v3.1 §23 (pure, unit-tested).
  * Dimensions are rendered independently; "not assessed" is visually and
  * semantically distinct from a negative result; no aggregate score is computed.
  */

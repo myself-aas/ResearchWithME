@@ -1,11 +1,11 @@
 <template>
   <style>
-    /* πeme generated video tokens (tokens/generated/tokens.video.css) */
+    /* reme generated video tokens (tokens/generated/tokens.video.css) */
     @import url("../../../tokens/generated/tokens.video.css");
     #scene-problem {
       position: absolute;
       inset: 0;
-      background: var(--pieme-video-color-canvas);
+      background: var(--reme-video-color-canvas);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -13,12 +13,12 @@
       gap: 0;
     }
     #p-label {
-      font-family: var(--pieme-video-font-latin-interface);
+      font-family: var(--reme-video-font-latin-interface);
       font-size: 20px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--pieme-video-color-text-secondary);
+      color: var(--reme-video-color-text-secondary);
       margin-bottom: 56px;
     }
     #p-columns {
@@ -33,60 +33,60 @@
       padding: 56px 60px;
     }
     #p-col-old {
-      background: var(--pieme-video-color-canvas);
-      border: 2px solid var(--pieme-video-color-surface-subtle);
+      background: var(--reme-video-color-canvas);
+      border: 2px solid var(--reme-video-color-surface-subtle);
     }
     #p-col-new {
-      background: var(--pieme-video-color-text-primary);
-      border: 2px solid var(--pieme-video-color-text-primary);
+      background: var(--reme-video-color-text-primary);
+      border: 2px solid var(--reme-video-color-text-primary);
     }
     .p-col-tag {
-      font-family: var(--pieme-video-font-latin-interface);
+      font-family: var(--reme-video-font-latin-interface);
       font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       margin-bottom: 28px;
     }
-    #p-col-old  .p-col-tag { color: var(--pieme-video-color-text-secondary); }
-    #p-col-new  .p-col-tag { color: var(--pieme-video-color-action-primary); }
+    #p-col-old  .p-col-tag { color: var(--reme-video-color-text-secondary); }
+    #p-col-new  .p-col-tag { color: var(--reme-video-color-action-primary); }
     .p-col-title {
-      font-family: var(--pieme-video-font-latin-editorial);
+      font-family: var(--reme-video-font-latin-editorial);
       font-size: 42px;
       font-weight: 700;
       line-height: 1.2;
       margin-bottom: 32px;
     }
-    #p-col-old  .p-col-title { color: var(--pieme-video-color-text-primary); }
-    #p-col-new  .p-col-title { color: var(--pieme-video-color-canvas); }
+    #p-col-old  .p-col-title { color: var(--reme-video-color-text-primary); }
+    #p-col-new  .p-col-title { color: var(--reme-video-color-canvas); }
     .p-col-detail {
-      font-family: var(--pieme-video-font-latin-interface);
+      font-family: var(--reme-video-font-latin-interface);
       font-size: 24px;
       font-weight: 400;
       line-height: 1.55;
     }
-    #p-col-old  .p-col-detail { color: var(--pieme-video-color-text-secondary); }
-    #p-col-new  .p-col-detail { color: var(--pieme-video-color-surface-subtle); }
+    #p-col-old  .p-col-detail { color: var(--reme-video-color-text-secondary); }
+    #p-col-new  .p-col-detail { color: var(--reme-video-color-surface-subtle); }
     .p-col-stat {
       margin-top: 36px;
-      font-family: var(--pieme-video-font-latin-interface);
+      font-family: var(--reme-video-font-latin-interface);
       font-size: 52px;
       font-weight: 700;
     }
-    #p-col-old  .p-col-stat { color: var(--pieme-video-color-text-primary); }
-    #p-col-new  .p-col-stat { color: var(--pieme-video-color-action-primary); }
+    #p-col-old  .p-col-stat { color: var(--reme-video-color-text-primary); }
+    #p-col-new  .p-col-stat { color: var(--reme-video-color-action-primary); }
     .p-col-stat-label {
       font-size: 18px;
       font-weight: 500;
       letter-spacing: 0.02em;
       margin-top: 4px;
     }
-    #p-col-old  .p-col-stat-label { color: var(--pieme-video-color-text-secondary); }
-    #p-col-new  .p-col-stat-label { color: var(--pieme-video-color-text-secondary); }
+    #p-col-old  .p-col-stat-label { color: var(--reme-video-color-text-secondary); }
+    #p-col-new  .p-col-stat-label { color: var(--reme-video-color-text-secondary); }
     #p-divider {
       width: 2px;
       align-self: stretch;
-      background: linear-gradient(to bottom, transparent, var(--pieme-video-color-surface-subtle) 20%, var(--pieme-video-color-surface-subtle) 80%, transparent);
+      background: linear-gradient(to bottom, transparent, var(--reme-video-color-surface-subtle) 20%, var(--reme-video-color-surface-subtle) 80%, transparent);
       flex-shrink: 0;
     }
     #p-arrow {
@@ -96,14 +96,14 @@
       transform: translate(-50%, -50%);
       width: 56px;
       height: 56px;
-      background: var(--pieme-video-color-canvas);
-      border: 2px solid var(--pieme-video-color-surface-subtle);
+      background: var(--reme-video-color-canvas);
+      border: 2px solid var(--reme-video-color-surface-subtle);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    #p-arrow svg { color: var(--pieme-video-color-text-primary); }
+    #p-arrow svg { color: var(--reme-video-color-text-primary); }
   </style>
   <div id="scene-problem" data-composition-id="scene-problem" data-width="1920" data-height="1080">
     <div id="p-label" class="clip" data-start="0.3" data-duration="14.7" data-track-index="1">The Breakthrough</div>

@@ -1,19 +1,19 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
-/* πeme v3.1 generated tokens — single source of truth: tokens/src/*.json
+/* reme v3.1 generated tokens — single source of truth: tokens/src/*.json
    (build: npm run tokens:build). Do not hand-edit token values here. */
 @import "../tokens/generated/tokens.css";
 
-/* πeme Frontend Design System v3.1 — token layer.
-   Source of truth: tokens/src/*.json (normative spec: docs/pieme-design-system-v3.1.md).
+/* reme Frontend Design System v3.1 — token layer.
+   Source of truth: tokens/src/*.json (normative spec: docs/reme-design-system-v3.1.md).
    Three layers per §3: primitives (raw scales), semantic roles, component
    aliases. Components reference semantic tokens, never primitives. */
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  /* Typography — πeme v3.1 §2: the Aptos family leads each stack, requested by
+  /* Typography — reme v3.1 §2: the Aptos family leads each stack, requested by
      installed name only (never bundled, no CDN): Aptos Serif for reading,
      Aptos for interface chrome, Aptos Mono for DOI/ORCID/code. Fallbacks when
      Aptos is not installed: Newsreader and Inter, self-hosted via
@@ -23,97 +23,97 @@
   --font-sans: 'Aptos', var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: 'Aptos Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
-  /* Primitives — the πeme neutral scale replaces Tailwind's stone scale so
-     every existing stone-* utility renders the πeme neutral ramp. All values
-     reference the generated --pieme-* tokens (tokens/generated/tokens.css). */
-  --color-stone-50: var(--pieme-color-neutral-50);
-  --color-stone-100: var(--pieme-color-neutral-100);
-  --color-stone-200: var(--pieme-color-neutral-200);
-  --color-stone-300: var(--pieme-color-neutral-300);
-  --color-stone-400: var(--pieme-color-neutral-400);
-  --color-stone-500: var(--pieme-color-neutral-500);
-  --color-stone-600: var(--pieme-color-neutral-600);
-  --color-stone-700: var(--pieme-color-neutral-700);
-  --color-stone-800: var(--pieme-color-neutral-800);
-  --color-stone-900: var(--pieme-color-neutral-900);
-  --color-stone-950: var(--pieme-color-neutral-950);
+  /* Primitives — the reme neutral scale replaces Tailwind's stone scale so
+     every existing stone-* utility renders the reme neutral ramp. All values
+     reference the generated --reme-* tokens (tokens/generated/tokens.css). */
+  --color-stone-50: var(--reme-color-neutral-50);
+  --color-stone-100: var(--reme-color-neutral-100);
+  --color-stone-200: var(--reme-color-neutral-200);
+  --color-stone-300: var(--reme-color-neutral-300);
+  --color-stone-400: var(--reme-color-neutral-400);
+  --color-stone-500: var(--reme-color-neutral-500);
+  --color-stone-600: var(--reme-color-neutral-600);
+  --color-stone-700: var(--reme-color-neutral-700);
+  --color-stone-800: var(--reme-color-neutral-800);
+  --color-stone-900: var(--reme-color-neutral-900);
+  --color-stone-950: var(--reme-color-neutral-950);
 
   /* Semantic — light theme values come from tokens/src/semantic-light.json
-     (emitted as --pieme-* at :root, dark overrides under .dark). */
-  --color-canvas: var(--pieme-canvas);
-  --color-surface: var(--pieme-surface);
-  --color-surface-subtle: var(--pieme-surface-subtle);
-  --color-surface-raised: var(--pieme-surface-raised);
-  --color-surface-inverse: var(--pieme-surface-inverse);
-  --color-text-primary: var(--pieme-text-primary);
-  --color-text-secondary: var(--pieme-text-secondary);
-  --color-text-tertiary: var(--pieme-text-tertiary);
-  --color-text-inverse: var(--pieme-text-inverse);
-  --color-border-subtle: var(--pieme-border-subtle);
-  --color-border-strong: var(--pieme-border-strong);
-  --color-focus: var(--pieme-focus);
-  --color-selection: var(--pieme-selection);
+     (emitted as --reme-* at :root, dark overrides under .dark). */
+  --color-canvas: var(--reme-canvas);
+  --color-surface: var(--reme-surface);
+  --color-surface-subtle: var(--reme-surface-subtle);
+  --color-surface-raised: var(--reme-surface-raised);
+  --color-surface-inverse: var(--reme-surface-inverse);
+  --color-text-primary: var(--reme-text-primary);
+  --color-text-secondary: var(--reme-text-secondary);
+  --color-text-tertiary: var(--reme-text-tertiary);
+  --color-text-inverse: var(--reme-text-inverse);
+  --color-border-subtle: var(--reme-border-subtle);
+  --color-border-strong: var(--reme-border-strong);
+  --color-focus: var(--reme-focus);
+  --color-selection: var(--reme-selection);
 
   /* Semantic — action roles. */
-  --color-action-primary: var(--pieme-action-primary);
-  --color-action-primary-hover: var(--pieme-action-primary-hover);
-  --color-action-primary-pressed: var(--pieme-action-primary-pressed);
-  --color-on-primary: var(--pieme-action-on-primary);
-  --color-destructive: var(--pieme-action-destructive);
-  --color-link: var(--pieme-action-link);
-  --color-visited: var(--pieme-action-visited);
+  --color-action-primary: var(--reme-action-primary);
+  --color-action-primary-hover: var(--reme-action-primary-hover);
+  --color-action-primary-pressed: var(--reme-action-primary-pressed);
+  --color-on-primary: var(--reme-action-on-primary);
+  --color-destructive: var(--reme-action-destructive);
+  --color-link: var(--reme-action-link);
+  --color-visited: var(--reme-action-visited);
 
   /* Semantic — domain palettes and provenance-graph nodes/edges. */
-  --color-knowledge-source: var(--pieme-knowledge-source);
-  --color-knowledge-evidence: var(--pieme-knowledge-evidence);
-  --color-knowledge-insight: var(--pieme-knowledge-insight);
-  --color-knowledge-discussion: var(--pieme-knowledge-discussion);
-  --color-knowledge-contradiction: var(--pieme-knowledge-contradiction);
-  --color-knowledge-publication: var(--pieme-knowledge-publication);
-  --color-knowledge-archive: var(--pieme-knowledge-archive);
-  --color-trust-verified: var(--pieme-trust-verified);
-  --color-trust-replicated: var(--pieme-trust-replicated);
-  --color-trust-peer-reviewed: var(--pieme-trust-peer-reviewed);
-  --color-trust-emerging: var(--pieme-trust-emerging);
-  --color-trust-uncertain: var(--pieme-trust-uncertain);
-  --color-trust-contested: var(--pieme-trust-contested);
-  --color-trust-unknown: var(--pieme-trust-unknown);
-  --color-provenance-direct-source: var(--pieme-provenance-direct-source);
-  --color-provenance-cited-source: var(--pieme-provenance-cited-source);
-  --color-provenance-derived: var(--pieme-provenance-derived);
-  --color-provenance-inferred: var(--pieme-provenance-inferred);
-  --color-provenance-ai-assisted: var(--pieme-provenance-ai-assisted);
-  --color-provenance-unresolved: var(--pieme-provenance-unresolved);
-  --color-workflow-discovered: var(--pieme-workflow-discovered);
-  --color-workflow-extracted: var(--pieme-workflow-extracted);
-  --color-workflow-validated: var(--pieme-workflow-validated);
-  --color-workflow-synthesized: var(--pieme-workflow-synthesized);
-  --color-workflow-reviewed: var(--pieme-workflow-reviewed);
-  --color-workflow-published: var(--pieme-workflow-published);
-  --color-workflow-archived: var(--pieme-workflow-archived);
-  --color-collaboration-comment: var(--pieme-collaboration-comment);
-  --color-collaboration-suggestion: var(--pieme-collaboration-suggestion);
-  --color-collaboration-review: var(--pieme-collaboration-review);
-  --color-collaboration-consensus: var(--pieme-collaboration-consensus);
-  --color-collaboration-disagreement: var(--pieme-collaboration-disagreement);
-  --color-citation-article: var(--pieme-citation-article);
-  --color-citation-dataset: var(--pieme-citation-dataset);
-  --color-citation-book: var(--pieme-citation-book);
-  --color-citation-preprint: var(--pieme-citation-preprint);
-  --color-citation-software: var(--pieme-citation-software);
-  --color-citation-protocol: var(--pieme-citation-protocol);
-  --color-citation-webpage: var(--pieme-citation-webpage);
-  --color-graph-node-source: var(--pieme-graph-node-source);
-  --color-graph-node-evidence: var(--pieme-graph-node-evidence);
-  --color-graph-node-claim: var(--pieme-graph-node-claim);
-  --color-graph-node-discussion: var(--pieme-graph-node-discussion);
-  --color-graph-node-publication: var(--pieme-graph-node-publication);
-  --color-graph-node-archived: var(--pieme-graph-node-archived);
-  --color-graph-edge-cites: var(--pieme-graph-edge-cites);
-  --color-graph-edge-supports: var(--pieme-graph-edge-supports);
-  --color-graph-edge-contradicts: var(--pieme-graph-edge-contradicts);
-  --color-graph-edge-derives: var(--pieme-graph-edge-derives);
-  --color-graph-edge-relates: var(--pieme-graph-edge-relates);
+  --color-knowledge-source: var(--reme-knowledge-source);
+  --color-knowledge-evidence: var(--reme-knowledge-evidence);
+  --color-knowledge-insight: var(--reme-knowledge-insight);
+  --color-knowledge-discussion: var(--reme-knowledge-discussion);
+  --color-knowledge-contradiction: var(--reme-knowledge-contradiction);
+  --color-knowledge-publication: var(--reme-knowledge-publication);
+  --color-knowledge-archive: var(--reme-knowledge-archive);
+  --color-trust-verified: var(--reme-trust-verified);
+  --color-trust-replicated: var(--reme-trust-replicated);
+  --color-trust-peer-reviewed: var(--reme-trust-peer-reviewed);
+  --color-trust-emerging: var(--reme-trust-emerging);
+  --color-trust-uncertain: var(--reme-trust-uncertain);
+  --color-trust-contested: var(--reme-trust-contested);
+  --color-trust-unknown: var(--reme-trust-unknown);
+  --color-provenance-direct-source: var(--reme-provenance-direct-source);
+  --color-provenance-cited-source: var(--reme-provenance-cited-source);
+  --color-provenance-derived: var(--reme-provenance-derived);
+  --color-provenance-inferred: var(--reme-provenance-inferred);
+  --color-provenance-ai-assisted: var(--reme-provenance-ai-assisted);
+  --color-provenance-unresolved: var(--reme-provenance-unresolved);
+  --color-workflow-discovered: var(--reme-workflow-discovered);
+  --color-workflow-extracted: var(--reme-workflow-extracted);
+  --color-workflow-validated: var(--reme-workflow-validated);
+  --color-workflow-synthesized: var(--reme-workflow-synthesized);
+  --color-workflow-reviewed: var(--reme-workflow-reviewed);
+  --color-workflow-published: var(--reme-workflow-published);
+  --color-workflow-archived: var(--reme-workflow-archived);
+  --color-collaboration-comment: var(--reme-collaboration-comment);
+  --color-collaboration-suggestion: var(--reme-collaboration-suggestion);
+  --color-collaboration-review: var(--reme-collaboration-review);
+  --color-collaboration-consensus: var(--reme-collaboration-consensus);
+  --color-collaboration-disagreement: var(--reme-collaboration-disagreement);
+  --color-citation-article: var(--reme-citation-article);
+  --color-citation-dataset: var(--reme-citation-dataset);
+  --color-citation-book: var(--reme-citation-book);
+  --color-citation-preprint: var(--reme-citation-preprint);
+  --color-citation-software: var(--reme-citation-software);
+  --color-citation-protocol: var(--reme-citation-protocol);
+  --color-citation-webpage: var(--reme-citation-webpage);
+  --color-graph-node-source: var(--reme-graph-node-source);
+  --color-graph-node-evidence: var(--reme-graph-node-evidence);
+  --color-graph-node-claim: var(--reme-graph-node-claim);
+  --color-graph-node-discussion: var(--reme-graph-node-discussion);
+  --color-graph-node-publication: var(--reme-graph-node-publication);
+  --color-graph-node-archived: var(--reme-graph-node-archived);
+  --color-graph-edge-cites: var(--reme-graph-edge-cites);
+  --color-graph-edge-supports: var(--reme-graph-edge-supports);
+  --color-graph-edge-contradicts: var(--reme-graph-edge-contradicts);
+  --color-graph-edge-derives: var(--reme-graph-edge-derives);
+  --color-graph-edge-relates: var(--reme-graph-edge-relates);
 
   /* Component aliases over semantic tokens (kept for existing markup). */
   --color-paper: var(--color-canvas);
@@ -131,19 +131,19 @@
      trust role that clears AA on every surface in both themes. */
   --color-success: var(--color-trust-replicated);
 
-  /* Radius — πeme v3.1 radius scale (generated). */
-  --radius-xs: var(--pieme-radius-xs);
-  --radius-sm: var(--pieme-radius-sm);
-  --radius-md: var(--pieme-radius-md);
-  --radius-lg: var(--pieme-radius-lg);
-  --radius-xl: var(--pieme-radius-xl);
-  --radius-2xl: var(--pieme-radius-2xl);
-  --radius-full: var(--pieme-radius-full);
+  /* Radius — reme v3.1 radius scale (generated). */
+  --radius-xs: var(--reme-radius-xs);
+  --radius-sm: var(--reme-radius-sm);
+  --radius-md: var(--reme-radius-md);
+  --radius-lg: var(--reme-radius-lg);
+  --radius-xl: var(--reme-radius-xl);
+  --radius-2xl: var(--reme-radius-2xl);
+  --radius-full: var(--reme-radius-full);
 
-  /* Elevation — πeme v3.1 shadow scale (generated). */
-  --shadow-raised: var(--pieme-shadow-raised);
-  --shadow-floating: var(--pieme-shadow-floating);
-  --shadow-dialog: var(--pieme-shadow-dialog);
+  /* Elevation — reme v3.1 shadow scale (generated). */
+  --shadow-raised: var(--reme-shadow-raised);
+  --shadow-floating: var(--reme-shadow-floating);
+  --shadow-dialog: var(--reme-shadow-dialog);
 
   /* Breakpoints are literal because Tailwind emits them into media-query prelude values;
      var() is invalid there. Keep these equal to tokens/src/layout.json. */
@@ -153,11 +153,11 @@
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 96rem;
 
-  /* Motion — πeme v3.1 easing scale (generated). */
-  --ease-standard: var(--pieme-motion-easing-standard);
-  --ease-enter: var(--pieme-motion-easing-enter);
-  --ease-exit: var(--pieme-motion-easing-exit);
-  --ease-emphasize: var(--pieme-motion-easing-emphasize);
+  /* Motion — reme v3.1 easing scale (generated). */
+  --ease-standard: var(--reme-motion-easing-standard);
+  --ease-enter: var(--reme-motion-easing-enter);
+  --ease-exit: var(--reme-motion-easing-exit);
+  --ease-emphasize: var(--reme-motion-easing-emphasize);
 }
 
 @layer base {
@@ -165,7 +165,7 @@
     color-scheme: light;
   }
 
-  /* Dark theme — πeme v3.1 color.semantic.dark is emitted by the generated
+  /* Dark theme — reme v3.1 color.semantic.dark is emitted by the generated
      tokens.css under .dark and prefers-color-scheme. */
   .dark {
     color-scheme: dark;
@@ -192,7 +192,7 @@
     font-synthesis-weight: none;
   }
 
-  /* Type scale — πeme v3.1 typography.style: editorial display/title for
+  /* Type scale — reme v3.1 typography.style: editorial display/title for
      h1–h2, interface headings for h3–h6. */
   h1,
   h2 {
@@ -328,7 +328,7 @@
     opacity: 1;
   }
 
-  /* Focus — πeme v3.1 focus token: 2px ring, 2px offset. */
+  /* Focus — reme v3.1 focus token: 2px ring, 2px offset. */
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
@@ -458,7 +458,7 @@ html .shadow-2xs {
   --tw-shadow: 0 1px 2px 0 rgb(11 16 15 / 0.05);
 }
 
-/* One restrained route reveal — πeme v3.1 motion pattern "reveal":
+/* One restrained route reveal — reme v3.1 motion pattern "reveal":
    200ms, standard easing. */
 @keyframes rwm-page-settle {
   from {
@@ -473,11 +473,11 @@ html .shadow-2xs {
 
 @media (prefers-reduced-motion: no-preference) {
   main {
-    animation: rwm-page-settle var(--pieme-motion-duration-standard) var(--ease-standard) both;
+    animation: rwm-page-settle var(--reme-motion-duration-standard) var(--ease-standard) both;
   }
 }
 
-/* πeme v3.1 §9 reduced-motion contract. */
+/* reme v3.1 §9 reduced-motion contract. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -490,7 +490,7 @@ html .shadow-2xs {
 }
 
 /* ---------------------------------------------------------------------------
-   πeme v3.1 §9 — motion utility layer.
+   reme v3.1 §9 — motion utility layer.
 
    The React implementation lives in `lib/motion/*` and `components/motion/*`;
    these classes exist for the beats that must happen on the very first paint
@@ -499,7 +499,7 @@ html .shadow-2xs {
 --------------------------------------------------------------------------- */
 
 /* Entrance poses mirroring lib/motion/variants.ts. */
-@keyframes pieme-rise-in {
+@keyframes reme-rise-in {
   from {
     opacity: 0;
     transform: translate3d(0, 12px, 0) scale(0.995);
@@ -510,7 +510,7 @@ html .shadow-2xs {
   }
 }
 
-@keyframes pieme-arc-in {
+@keyframes reme-arc-in {
   from {
     opacity: 0;
     transform: translate3d(-9px, 12px, 0) rotate(-0.6deg);
@@ -521,7 +521,7 @@ html .shadow-2xs {
   }
 }
 
-@keyframes pieme-squash-in {
+@keyframes reme-squash-in {
   from {
     opacity: 0;
     transform: scaleX(1.02) scaleY(0.94);
@@ -532,7 +532,7 @@ html .shadow-2xs {
   }
 }
 
-@keyframes pieme-mask-in {
+@keyframes reme-mask-in {
   from {
     opacity: 0;
     clip-path: inset(0% 0% 100% 0%);
@@ -548,29 +548,29 @@ html .shadow-2xs {
    the fold, `Reveal` handles the beat on intersection. */
 @media (prefers-reduced-motion: no-preference) {
   [data-enter] {
-    animation-duration: var(--pieme-motion-duration-standard);
+    animation-duration: var(--reme-motion-duration-standard);
     animation-timing-function: var(--ease-enter);
     animation-fill-mode: both;
     animation-delay: var(--enter-delay, 0ms);
   }
   [data-enter="rise"] {
-    animation-name: pieme-rise-in;
+    animation-name: reme-rise-in;
   }
   [data-enter="arc"] {
-    animation-name: pieme-arc-in;
-    animation-duration: var(--pieme-motion-duration-standard);
+    animation-name: reme-arc-in;
+    animation-duration: var(--reme-motion-duration-standard);
     animation-timing-function: var(--ease-emphasize);
   }
   [data-enter="squash"] {
-    animation-name: pieme-squash-in;
+    animation-name: reme-squash-in;
   }
   [data-enter="mask"] {
-    animation-name: pieme-mask-in;
-    animation-duration: var(--pieme-motion-duration-deliberate);
+    animation-name: reme-mask-in;
+    animation-duration: var(--reme-motion-duration-deliberate);
   }
 }
 
-/* Explicit πeme motion modes. `reduced` keeps colour/opacity legibility while
+/* Explicit reme motion modes. `reduced` keeps colour/opacity legibility while
    removing transform choreography; `static` is the print-grade switch used by
    the Motion Lab and visual regression runs. */
 [data-motion-mode="reduced"] [data-enter],
@@ -596,10 +596,10 @@ html .shadow-2xs {
 /* Lottie micro-interactions (components/lottie). Compositions are painted in
    placeholder ink; recolour every stroke and fill to the caller's text colour
    so one asset serves both themes. Opacity attributes are left untouched. */
-.pieme-lottie svg [stroke]:not([stroke="none"]) {
+.reme-lottie svg [stroke]:not([stroke="none"]) {
   stroke: currentColor;
 }
-.pieme-lottie svg [fill]:not([fill="none"]) {
+.reme-lottie svg [fill]:not([fill="none"]) {
   fill: currentColor;
 }
 
@@ -617,13 +617,13 @@ html .shadow-2xs {
 @media (prefers-reduced-motion: no-preference) {
   [data-workflow-connector] {
     transform-origin: top;
-    animation: pieme-workflow-connect var(--pieme-motion-duration-connect) var(--ease-emphasize) both;
+    animation: reme-workflow-connect var(--reme-motion-duration-connect) var(--ease-emphasize) both;
   }
 }
 [data-motion-mode="reduced"] [data-workflow-connector] {
   animation: none;
 }
-@keyframes pieme-workflow-connect {
+@keyframes reme-workflow-connect {
   from { transform: scaleY(0.2); }
   to { transform: scaleY(1); }
 }

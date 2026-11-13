@@ -1,4 +1,4 @@
-# Risk Register — πeme v3.1 migration (ten highest-risk issues first)
+# Risk Register — reme v3.1 migration (ten highest-risk issues first)
 
 | # | Risk | Impact | Likelihood | Mitigation |
 |---|---|---|---|---|
@@ -8,7 +8,7 @@
 | R-04 | Scholarly schemas (Evidence/Claim/trust) are new domain code; wrong validation could corrupt research-integrity semantics | High severity if wrong | Medium | §22 validators with strict runtime rejection + unit tests; EvidenceCard reference implementation; never last-write-wins |
 | R-05 | Authorization must remain server-enforced; UI refactor must not leak RLS/service-key assumptions into client | Security | Low (current design is server-mediated) | Keep `/api/*` mediation; add permission tests; never ship service-role key |
 | R-06 | Retraction/correction propagation touches posts/comments data — data-loss risk if mishandled | High | Medium | Idempotent workflows, preserve original versions, migration-tested on copies; block publication on unresolved impact |
-| R-07 | `stone-*` utilities alias πeme neutral — future rename could break 100+ class strings | Medium | Medium | Keep alias until stage 6; codemod then; sync test guards values |
+| R-07 | `stone-*` utilities alias reme neutral — future rename could break 100+ class strings | Medium | Medium | Keep alias until stage 6; codemod then; sync test guards values |
 | R-08 | No i18n/RTL today; adding Bangla + RTL later can break layout (logical props not audited) | Medium | High when added | Use CSS logical properties from stage 2; pseudo-localization (35% expansion) tests before Bangla ships |
 | R-09 | Performance budgets (≤200KB gzip shell, LCP/INP/CLS) unenforced; new components (graph/editor/video) are heavy | Perf regression | Medium | Route-level code splitting, virtualization >200 rows, budget checks in CI (stage 7) |
 | R-10 | AI-assisted features (assistant, cover generator) lack provenance disclosure/approval records per spec §26 | Research-integrity / trust | Medium | AIProvenanceDisclosure component + server-side approval records before publication blockers enforced |

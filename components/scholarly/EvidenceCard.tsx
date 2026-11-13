@@ -1,5 +1,5 @@
 /**
- * EvidenceCard — πeme v3.1 first reference component (spec §7, §27.2).
+ * EvidenceCard — reme v3.1 first reference component (spec §7, §27.2).
  *
  * Purpose: shows one piece of evidence with its exact source location, source,
  * extractor/AI label, and trust state — traceable in one interaction.

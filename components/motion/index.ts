@@ -1,5 +1,5 @@
 /**
- * πeme motion primitives — public surface.
+ * reme motion primitives — public surface.
  *
  * Import from `@/components/motion` so a future refactor can move an
  * implementation without touching every caller.

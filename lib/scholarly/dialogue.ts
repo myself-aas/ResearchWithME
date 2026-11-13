@@ -1,5 +1,5 @@
 /**
- * Scholarly dialogue presentation logic — πeme v3.1 §7 (pure, unit-tested).
+ * Scholarly dialogue presentation logic — reme v3.1 §7 (pure, unit-tested).
  * Comment / Suggestion / Review / Rebuttal / Decision each get a distinct
  * label and collaboration token; reviewer anonymity is respected in labels.
  */

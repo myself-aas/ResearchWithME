@@ -3,7 +3,7 @@
  * route and the Pages author-avatar handler. Pure string building; no Node APIs,
  * no network. Every interpolated value is XML-escaped.
  *
- * Colors are drawn from the πeme design-system palette (lib/tokens) via the
+ * Colors are drawn from the reme design-system palette (lib/tokens) via the
  * brand #1D4ED8 anchor rather than ad-hoc indigo/slate/emerald hexes.
  */
 
@@ -17,7 +17,7 @@ function escapeXml(value: string): string {
     .replace(/'/g, '&apos;');
 }
 
-// πeme-tone palette used by fallback avatars. These match the semantic colors
+// reme-tone palette used by fallback avatars. These match the semantic colors
 // declared in lib/tokens so an avatar never introduces a stray hex.
 const TONES = {
   brand:       { start: '#1D4ED8', end: '#1E3A8A', accent: '#60A5FA', motif: '⚡' }, // anchor blue

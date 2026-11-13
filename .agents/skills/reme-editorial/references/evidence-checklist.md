@@ -1,4 +1,4 @@
-# Evidence review for πeme
+# Evidence review for reme
 
 Use the human CITABLE checklist in `docs/ResearchWithMe_Template.md`. For each consequential claim, ask:
 

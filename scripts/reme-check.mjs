@@ -36,7 +36,7 @@ function main(args) {
   const tracked = () => execFileSync('git', ['ls-files', '-z', '--', 'docs/articles'],
     { cwd: root, encoding: 'utf8' }).split('\0').filter((path) => path.endsWith('.md'));
   const paths = files.length ? files : all ? [...new Set([...tracked(), ...changedDrafts()])] : changedDrafts();
-  if (!paths.length) { console.log(`πeme: no ${all ? 'article drafts' : 'changed article drafts'} to check.`); return; }
+  if (!paths.length) { console.log(`reme: no ${all ? 'article drafts' : 'changed article drafts'} to check.`); return; }
   let failures = 0;
   for (const file of paths) {
     const full = resolve(root, file);
@@ -50,5 +50,5 @@ function main(args) {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try { main(process.argv.slice(2)); }
-  catch (error) { console.error(`πeme check failed: ${error.message}`); process.exitCode = 1; }
+  catch (error) { console.error(`reme check failed: ${error.message}`); process.exitCode = 1; }
 }

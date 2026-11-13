@@ -1,5 +1,5 @@
 /**
- * Search modes — πeme v3.1 §28. Lexical, exact-identifier, semantic, and
+ * Search modes — reme v3.1 §28. Lexical, exact-identifier, semantic, and
  * AI-expanded modes are distinct and labeled; AI-expanded results are always
  * marked and never presented as lexical results.
  */

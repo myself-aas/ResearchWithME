@@ -1,6 +1,6 @@
-# πeme archive lookup (read-only)
+# reme archive lookup (read-only)
 
-1. Load `.agents/skills/pieme-archive/SKILL.md` and `.agents/skills/pieme-archive/references/mcp-contract.md`.
+1. Load `.agents/skills/reme-archive/SKILL.md` and `.agents/skills/reme-archive/references/mcp-contract.md`.
 2. If the MCP client has connected to the server card endpoint, list its tools/resources; call `search_reviews` with the user's topic. Otherwise use `GET /api/articles?search=TERM` for public discovery. Do not guess that production is deployed from repository code.
 3. Read the full published article via its returned link before making detailed scientific claims. Check original primary sources where possible and separate article assertions from verified evidence.
 4. Respond with article title, author, canonical URL, relevant answer, limitations and whether the server/primary source was actually reachable. If no results, say the archive returned no matches—not that no research exists.

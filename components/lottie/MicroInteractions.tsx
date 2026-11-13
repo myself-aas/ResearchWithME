@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * πeme Lottie micro-interactions — named, decorative state glyphs.
+ * reme Lottie micro-interactions — named, decorative state glyphs.
  *
  * Each component pairs one composition from `lib/lottie/animations.ts` with
  * its resting frame drawn as inline SVG. The SVG is what renders on the

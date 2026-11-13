@@ -7,7 +7,7 @@
  * `planned`. The diagram labels planned nodes as such; it never presents an
  * unbuilt capability as available.
  *
- * Each stage names the πeme §9 motion pattern its state change uses, so the
+ * Each stage names the reme §9 motion pattern its state change uses, so the
  * UI picks the matching Lottie micro-interaction instead of inventing one.
  *
  * Inert data: safe in server components, tests, and docs tooling.

@@ -1,5 +1,5 @@
 /**
- * Annotation anchor revalidation + conflict helpers — πeme v3.1 §29/§34 (pure logic).
+ * Annotation anchor revalidation + conflict helpers — reme v3.1 §29/§34 (pure logic).
  */
 import type { AnnotationAnchor } from '@/lib/schemas/annotations';
 

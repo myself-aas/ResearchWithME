@@ -1,5 +1,5 @@
 /**
- * ReviewThread — πeme v3.1 §7 Scholarly Dialogue (stage 3, beta).
+ * ReviewThread — reme v3.1 §7 Scholarly Dialogue (stage 3, beta).
  *
  * Renders Comment / Suggestion / Review / Rebuttal / Decision items in
  * chronological order. Suggestions expose accept/reject (capability-checked);

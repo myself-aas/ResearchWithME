@@ -15,7 +15,7 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-const BANNED_PATTERN = /Bengali|Hind Siliguri|lang="bn"|lang="ar"|pieme-locale|LocaleSwitcher|useLocale|[ঀ-৿]/;
+const BANNED_PATTERN = /Bengali|Hind Siliguri|lang="bn"|lang="ar"|reme-locale|LocaleSwitcher|useLocale|[ঀ-৿]/;
 
 describe('English-only', () => {
   it('has no i18n modules', () => {

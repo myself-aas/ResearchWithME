@@ -45,7 +45,7 @@ All seven HyperFrames skills are installed globally. Read `/hyperframes` **first
 - Supabase migrations are idempotent SQL in `supabase/migrations/`.
 
 ## Motion system
-All interface motion is governed by `docs/motion-system.md` (πeme §9/§10). Read it before adding any animation.
+All interface motion is governed by `docs/motion-system.md` (reme §9/§10). Read it before adding any animation.
 
 - Tokens only: `lib/motion/tokens.ts` (no ad-hoc durations/easings).
 - Primitives: `Reveal`, `Stagger`, `Pressable`, `MotionList`, `MotionPillGroup`, `SuccessCheck`, `AttentionPulse`, `LoadingState`, `LazyMount`, `RouteTransition` from `@/components/motion`.

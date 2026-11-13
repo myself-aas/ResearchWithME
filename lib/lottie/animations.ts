@@ -1,5 +1,5 @@
 /**
- * πeme Lottie library — four micro-animations, each bound to a §9 pattern.
+ * reme Lottie library — four micro-animations, each bound to a §9 pattern.
  *
  * | Animation    | Pattern     | Length                | Used for                                 |
  * |--------------|-------------|-----------------------|------------------------------------------|
@@ -49,7 +49,7 @@ const F = {
  */
 function buildVerify(): LottieComposition {
   return composition({
-    name: 'pieme-verify',
+    name: 'reme-verify',
     size: SIZE,
     frames: F.connect,
     layers: [
@@ -93,7 +93,7 @@ function buildVerify(): LottieComposition {
 function buildConnect(): LottieComposition {
   const arrive = framesFor(DURATION_MS.connect - DURATION_MS.fast);
   return composition({
-    name: 'pieme-connect',
+    name: 'reme-connect',
     size: SIZE,
     frames: F.connect,
     layers: [
@@ -148,7 +148,7 @@ function buildSynthesize(): LottieComposition {
   });
 
   return composition({
-    name: 'pieme-synthesize',
+    name: 'reme-synthesize',
     size: SIZE,
     frames: F.synthesize,
     layers: [
@@ -205,7 +205,7 @@ function buildAttention(): LottieComposition {
   scaleStops.push([end, [100, 100]]);
 
   return composition({
-    name: 'pieme-attention',
+    name: 'reme-attention',
     size: SIZE,
     frames: end,
     layers: [

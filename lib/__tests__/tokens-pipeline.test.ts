@@ -9,7 +9,7 @@ const flatten = (obj: Record<string, unknown>, prefix: string[] = []): Array<[st
     v !== null && typeof v === 'object' ? flatten(v as Record<string, unknown>, [...prefix, k]) : [[[...prefix, k].join('.'), v]],
   );
 
-describe('πeme token pipeline (tokens/generated)', () => {
+describe('reme token pipeline (tokens/generated)', () => {
   it('has no unresolved {references} in generated output', () => {
     const flat = flatten(tokens as unknown as Record<string, unknown>);
     const unresolved = flat.filter(([, v]) => typeof v === 'string' && /\{[a-z0-9.\-]+\}/i.test(v));
@@ -66,10 +66,10 @@ describe('πeme token pipeline (tokens/generated)', () => {
   it('globals.css consumes generated tokens (no duplicated literals for semantic colors)', () => {
     const css = readFileSync(join(process.cwd(), 'app/globals.css'), 'utf8');
     expect(css).toContain('@import "../tokens/generated/tokens.css"');
-    expect(css).toContain('--color-canvas: var(--pieme-canvas)');
+    expect(css).toContain('--color-canvas: var(--reme-canvas)');
     expect(css).toContain('--color-brand: var(--color-action-primary)');
-    // stone scale is an alias over the generated πeme neutral ramp
-    expect(css).toContain('--color-stone-50: var(--pieme-color-neutral-50)');
+    // stone scale is an alias over the generated reme neutral ramp
+    expect(css).toContain('--color-stone-50: var(--reme-color-neutral-50)');
   });
 
   it('emits exact Archival Paper (light) and Obsidian (dark) palette tokens', () => {

@@ -1,8 +1,8 @@
 /**
- * πeme v3.1 — motion variant library.
+ * reme v3.1 — motion variant library.
  *
  * Every variant set encodes one or more of Disney's twelve principles as
- * documented by `dylantarre/animation-principles`, inside πeme's restraint
+ * documented by `dylantarre/animation-principles`, inside reme's restraint
  * budget (≤ 700 ms, no infinite decorative loops, no cursor-follow).
  *
  * Naming contract:

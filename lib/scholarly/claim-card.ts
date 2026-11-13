@@ -1,5 +1,5 @@
 /**
- * ClaimCard presentation logic — πeme v3.1 §27.4 (pure, unit-tested).
+ * ClaimCard presentation logic — reme v3.1 §27.4 (pure, unit-tested).
  */
 import type { Claim, PermissionDecision } from '@/lib/schemas/scholarly';
 import { component } from '@/tokens/generated/tokens';
@@ -20,11 +20,11 @@ export function evidenceCounts(supporting: number, contradicting: number): strin
 }
 
 export const claimCardTokens = {
-  background: `bg-[var(--pieme-component-claim-card-background)]`,
-  border: `border-[var(--pieme-component-claim-card-border)]`,
-  support: `text-[var(--pieme-component-claim-card-support)]`,
-  contradiction: `text-[var(--pieme-component-claim-card-contradiction)]`,
-  unresolved: `text-[var(--pieme-component-claim-card-unresolved)]`,
+  background: `bg-[var(--reme-component-claim-card-background)]`,
+  border: `border-[var(--reme-component-claim-card-border)]`,
+  support: `text-[var(--reme-component-claim-card-support)]`,
+  contradiction: `text-[var(--reme-component-claim-card-contradiction)]`,
+  unresolved: `text-[var(--reme-component-claim-card-unresolved)]`,
 } as const;
 
 export const claimCardComponentTokens = component.claimCard;

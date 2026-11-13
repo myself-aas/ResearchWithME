@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /**
- * Automated accessibility tests — πeme v3.1 §4/§17: axe-core against the
+ * Automated accessibility tests — reme v3.1 §4/§17: axe-core against the
  * rendered markup of the scholarly components (WCAG 2.2 AA target; axe
  * reports 2.1 A/AA rules, which is the enforced subset here).
  */

@@ -54,8 +54,8 @@
     "test:pages": "playwright test --project=e2e --config test/playwright.config.ts",
     "test:staging": "playwright test --project=staging --config test/playwright.config.ts",
     "docs:workflows": "tsx scripts/build-workflow-docs.ts",
-    "pieme:check": "node scripts/pieme-check.mjs --all",
-    "pieme:test": "node --test test/pieme-check.test.mjs",
+    "reme:check": "node scripts/reme-check.mjs --all",
+    "reme:test": "node --test test/reme-check.test.mjs test/reme-name.test.mjs",
     "parity": "node scripts/visual-parity.mjs",
     "preinstall": "node scripts/ensure-npm.mjs"
   },

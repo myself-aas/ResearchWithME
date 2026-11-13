@@ -1,4 +1,4 @@
-# SourceCard · ClaimCard · TrustAssessmentSummary — contracts (πeme v3.1 §23, §27.3–27.4)
+# SourceCard · ClaimCard · TrustAssessmentSummary — contracts (reme v3.1 §23, §27.3–27.4)
 
 Status: **beta** (stage 3). Implementations: `components/scholarly/{SourceCard,ClaimCard,TrustAssessmentSummary}.tsx`; logic: `lib/scholarly/{source-card,claim-card,trust}.ts`; schemas: `lib/schemas/scholarly.ts`.
 

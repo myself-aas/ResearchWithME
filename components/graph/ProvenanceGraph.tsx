@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * ProvenanceGraph — πeme v3.1 §7 / §27.5 (stage 4 entry, beta).
+ * ProvenanceGraph — reme v3.1 §7 / §27.5 (stage 4 entry, beta).
  *
  * - Every relationship is labeled (cites / supports / contradicts /
  *   derives from / relates to); direct edges solid, inferred edges dashed

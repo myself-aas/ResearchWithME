@@ -1,4 +1,4 @@
-# πeme operating context
+# reme operating context
 
 ResearchWithMe is a research-review publication, not a general web-search engine. Its public `/mcp` is stateless and read-only: `search_reviews` returns linked summaries; the `/api/articles` resource returns at most 100 published metadata records. `GET /mcp` is not an SSE feed; the server supports JSON-RPC `POST` and has no MCP prompts. See `docs/mcp.md` and `lib/mcp.ts` for the actual version and contract. The first-party archive skill is at `/.well-known/agent-skills/researchwithme-archive/SKILL.md`; its index and SHA-256 digest are at `/.well-known/agent-skills/index.json`. Installing a skill in an MCP **client** does not load it into this server.
 

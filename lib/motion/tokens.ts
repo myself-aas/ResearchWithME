@@ -1,5 +1,5 @@
 /**
- * πeme v3.1 — Interface motion tokens (spec §9) in the shape Motion consumes.
+ * reme v3.1 — Interface motion tokens (spec §9) in the shape Motion consumes.
  *
  * The design system speaks in milliseconds (`instant 0`, `fast 120`,
  * `standard 200`, `deliberate 320`, `connect 480`, `synthesize 700`) and four
@@ -46,7 +46,7 @@ export const DURATION_S = {
 /** Cubic-bézier tuple accepted by `motion`'s `ease` option. */
 export type BezierEasing = readonly [number, number, number, number];
 
-/** πeme v3.1 §9 easings (mirrors the `--ease-*` custom properties in globals.css). */
+/** reme v3.1 §9 easings (mirrors the `--ease-*` custom properties in globals.css). */
 export const EASING = {
   /** Long, calm departure and landing. Default for reveals and settles. */
   standard: [0.2, 0, 0, 1],
@@ -63,7 +63,7 @@ export type MotionEasingName = keyof typeof EASING;
 const asEase = (easing: BezierEasing): BezierEasing => easing;
 
 /**
- * Tween presets mapped 1:1 to the five πeme motion patterns:
+ * Tween presets mapped 1:1 to the five reme motion patterns:
  * reveal → source details, connect → provenance relationship,
  * verify → confirmed state, synthesize → evidence-to-draft, archive → de-emphasis.
  */
@@ -85,7 +85,7 @@ export const TRANSITION = {
 export type MotionPatternName = keyof typeof TRANSITION;
 
 /**
- * Spring presets. πeme treats springs as *timing with follow-through*: the
+ * Spring presets. reme treats springs as *timing with follow-through*: the
  * duration tokens tell you the intended read time, the spring constants deliver
  * that read time with the correct overshoot.
  */

@@ -1,5 +1,5 @@
 /**
- * SourceCard — πeme v3.1 §27.3 (stage 3, beta).
+ * SourceCard — reme v3.1 §27.3 (stage 3, beta).
  *
  * MUST display: source type, title, contributors, date, identifier, version,
  * language, access state, integrity state, correction/retraction notice when

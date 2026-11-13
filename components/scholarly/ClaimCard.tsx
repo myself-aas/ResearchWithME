@@ -1,5 +1,5 @@
 /**
- * ClaimCard — πeme v3.1 §27.4 (stage 3, beta).
+ * ClaimCard — reme v3.1 §27.4 (stage 3, beta).
  *
  * MUST show: claim type, lifecycle, author/version, supporting/contradicting
  * evidence counts, assessment dimensions, unresolved integrity impacts,

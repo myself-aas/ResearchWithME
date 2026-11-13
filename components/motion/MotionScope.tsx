@@ -10,7 +10,7 @@
  * the page.
  *
  * `MotionConfig` carries three system-wide decisions:
- *  - `reducedMotion` from the reader's πeme motion mode (full/reduced/static);
+ *  - `reducedMotion` from the reader's reme motion mode (full/reduced/static);
  *  - the default transition (`reveal`, 200ms, standard easing) so a primitive
  *    that forgets to name one still lands inside the §9 budget;
  *  - `transition.layout` for shared-layout moves (slow in/slow out).

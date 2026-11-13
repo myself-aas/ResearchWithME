@@ -1,6 +1,6 @@
-# ResearchWithMe article template — πeme
+# ResearchWithMe article template — reme
 
-> Version 3.0 · Editorial guide, not a CMS schema or a claim of search-engine ranking. Use with [πeme's editorial skill](../.agents/skills/pieme-editorial/SKILL.md) and [review workflow](../.agents/workflows/pieme-editorial.md).
+> Version 3.0 · Editorial guide, not a CMS schema or a claim of search-engine ranking. Use with [reme's editorial skill](../.agents/skills/reme-editorial/SKILL.md) and [review workflow](../.agents/workflows/reme-editorial.md).
 
 ## What is live today?
 
@@ -57,7 +57,7 @@ The headings are **examples**, not a compulsory question-only hierarchy. Choose 
 - **L — Locators:** Are citations precise enough to audit? Stable paragraph IDs are optional, not automatically injected.
 - **E — Extraction:** Does the published HTML/Markdown remain comprehensible without interactive charts?
 
-Any unsupported or invented citation blocks publication. The local `npm run pieme:check -- --file docs/articles/your-draft.md` checks only **mechanical draft structure**; it cannot certify evidence, authorship, schema eligibility, accessibility, indexing, or quality. The editor records the human decision before publishing.
+Any unsupported or invented citation blocks publication. The local `npm run reme:check -- --file docs/articles/your-draft.md` checks only **mechanical draft structure**; it cannot certify evidence, authorship, schema eligibility, accessibility, indexing, or quality. The editor records the human decision before publishing.
 
 ## From approved draft to published article
 
@@ -69,4 +69,4 @@ Any unsupported or invented citation blocks publication. The local `npm run piem
 
 ## Optional future work — not shipped
 
-Structured editorial fields, an automated citation resolver, claim-anchor injection, arXiv conversion, IndexNow, and analytics dashboards require separate design, security review and tests. Never run account registration, email delivery, DNS writes, or publication as a side effect of drafting or auditing. See [πeme's operational boundaries](../.agents/contexts/pieme.context.md).
+Structured editorial fields, an automated citation resolver, claim-anchor injection, arXiv conversion, IndexNow, and analytics dashboards require separate design, security review and tests. Never run account registration, email delivery, DNS writes, or publication as a side effect of drafting or auditing. See [reme's operational boundaries](../.agents/contexts/reme.context.md).

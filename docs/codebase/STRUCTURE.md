@@ -21,7 +21,7 @@
 | `scripts/` | Build wrapper, deploy guard, budgets, release gate, email sync/verify, parity, contract capture | 10 files | `package.json` scripts |
 | `data/` | Seed JSON (`articles.json`, `comments.json`) for local mode | 2 files | `lib/db.ts` |
 | `videos/` | HyperFrames compositions (`explainer`, `edition-trailer`, `radar-chart`). Not part of the web build | 47 files | `CLAUDE.md` |
-| `docs/` | Deployment, CMS, motion system, πeme design system, audits, this folder | 31 files | — |
+| `docs/` | Deployment, CMS, motion system, reme design system, audits, this folder | 31 files | — |
 | `public/` | Static assets, self-hosted fonts, `_headers`/`_routes.json` (Pages), `security.txt`, `AGENTS.md` | 14 files | — |
 | Root | `middleware.ts`, configs, `README.md`, `PRODUCT.md`, `DESIGN.md`, `CLAUDE.md`, `INTEGRATION_PLAN.md`, `implementation-plan.md` | — | — |
 

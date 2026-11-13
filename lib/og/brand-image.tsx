@@ -1,6 +1,6 @@
 /**
  * Shared branded OG image renderer for file-convention opengraph-image routes.
- * πeme palette: canvas #F8F7F3, text #161C1A, action #1D4ED8.
+ * reme palette: canvas #F8F7F3, text #161C1A, action #1D4ED8.
  */
 import { ImageResponse } from 'next/og';
 

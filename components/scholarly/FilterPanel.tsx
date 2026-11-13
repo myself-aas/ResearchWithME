@@ -1,5 +1,5 @@
 /**
- * FilterPanel — πeme v3.1 §28 (stage 4, beta).
+ * FilterPanel — reme v3.1 §28 (stage 4, beta).
  *
  * Checkboxes allow many, radios one (§7 Forms). Every control has a visible
  * label; the panel is a <fieldset> with a <legend>. Token mapping: semantic
@@ -38,7 +38,7 @@ export default function FilterPanel({ title, options, selected, onChange, multip
               <input
                 type={multiple ? 'checkbox' : 'radio'}
                 name={title}
-                className="h-4 w-4 accent-[var(--pieme-action-primary)]"
+                className="h-4 w-4 accent-[var(--reme-action-primary)]"
                 checked={selected.includes(o.value)}
                 onChange={() => toggle(o.value)}
               />

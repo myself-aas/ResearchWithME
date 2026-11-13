@@ -8,7 +8,7 @@
 
 **Tech Stack:** React 19, Vite 7 (`cloudflare-pages/`), Next.js 15 (`app/`), TypeScript 5.9, Tailwind CSS v4, `motion`, `cmdk`, `fuse.js`, `@radix-ui/react-popover`, `@radix-ui/react-dialog`, `zustand` (`persist`), `lenis`, Vitest 3 + `axe-core`.
 
-**Spec:** `DESIGN.md`, `PRODUCT.md`, `docs/pieme-design-system-v3.1.md`, `docs/migration-baseline.md`
+**Spec:** `DESIGN.md`, `PRODUCT.md`, `docs/reme-design-system-v3.1.md`, `docs/migration-baseline.md`
 
 ## Global Constraints
 
@@ -80,7 +80,7 @@
 - Consumes: `tokens/src/*.json` raw JSON schemas.
 - Produces:
   - `compositeOverHex(color: string, backdropHex?: string): string` and `contrastRatio(fg: string, bg: string): number` in `lib/tokens/contrast.ts` (accepts `#RRGGBB` and `rgba(r, g, b, a)`).
-  - Regenerated `tokens/generated/tokens.{css,ts,json,scss,video.css,video.json}` with `--pieme-canvas`, `--pieme-surface`, `--pieme-text-primary`, `--pieme-text-secondary`, `--pieme-border-subtle`, `--pieme-action-primary`, `--pieme-action-on-primary`.
+  - Regenerated `tokens/generated/tokens.{css,ts,json,scss,video.css,video.json}` with `--reme-canvas`, `--reme-surface`, `--reme-text-primary`, `--reme-text-secondary`, `--reme-border-subtle`, `--reme-action-primary`, `--reme-action-on-primary`.
 
 - [ ] **Step 1: Write the failing token & RGBA contrast assertions**
 
@@ -113,7 +113,7 @@ it('computes contrast for rgba() hairline tokens composited over canvas and enfo
 });
 
 // In lib/__tests__/i18n-wiring.test.ts:41:
-expect(videoCss).toContain('--pieme-video-color-action-primary: #1D4ED8');
+expect(videoCss).toContain('--reme-video-color-action-primary: #1D4ED8');
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -153,7 +153,7 @@ git commit -m "feat(tokens): adopt archival paper and obsidian editorial token p
 - Create: `lib/__tests__/theme-typography.test.tsx`
 
 **Interfaces:**
-- Consumes: `--pieme-*` CSS variables from `tokens/generated/tokens.css` (Task 1).
+- Consumes: `--reme-*` CSS variables from `tokens/generated/tokens.css` (Task 1).
 - Produces:
   - `export type ThemePreference = 'light' | 'dark' | 'system'`
   - `export function resolveEffectiveTheme(pref: ThemePreference, prefersDark: boolean): 'light' | 'dark'` in `components/ThemeToggle.tsx`

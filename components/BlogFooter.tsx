@@ -74,7 +74,7 @@ export default function BlogFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 font-sans text-xs text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
-          <p>ResearchWithMe (πeme) · Edited by Ashif Ahmed Shuvo</p>
+          <p>ResearchWithMe (reme) · Edited by Ashif Ahmed Shuvo</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <ThemeToggle />
             <TextLink href="/assistant" variant="quiet" className="inline-flex items-center gap-1">

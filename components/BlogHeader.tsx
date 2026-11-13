@@ -138,7 +138,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
-            <LayoutGroup id="pieme-primary-nav">
+            <LayoutGroup id="reme-primary-nav">
               <ul className="flex items-center gap-0.5">
                 {primaryNav.map((item) => {
                   const active = item.match(pathname);
@@ -152,7 +152,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                         <span>{item.label}</span>
                         {active ? (
                           <m.span
-                            layoutId="pieme-nav-underline"
+                            layoutId="reme-nav-underline"
                             aria-hidden="true"
                             className="absolute inset-x-2 -bottom-[2px] h-0.5 rounded-full bg-ink"
                             transition={{ layout: TRANSITION.reveal }}
@@ -282,7 +282,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         <AnimatePresence initial={false}>
           {menuOpen ? (
             <m.div
-              key="pieme-mobile-menu"
+              key="reme-mobile-menu"
               ref={menuRef}
               id={menuId}
               initial={{ height: 0, opacity: 0 }}

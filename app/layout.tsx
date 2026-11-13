@@ -6,7 +6,7 @@ import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
 
-// ResearchWithMe follows the πeme v3.1 design system (docs/pieme-design-system-v3.1.md):
+// ResearchWithMe follows the reme v3.1 design system (docs/reme-design-system-v3.1.md):
 // the Aptos family (Aptos Serif / Aptos / Aptos Mono) leads each stack and is
 // requested by installed name only in globals.css, never bundled. Newsreader
 // and Inter are the self-hosted OFL fallbacks loaded here via next/font/local;
@@ -96,7 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        {/* πeme motion runtime: one lazy feature bundle and one reduced-motion
+        {/* reme motion runtime: one lazy feature bundle and one reduced-motion
             policy for the whole app (see components/motion/MotionScope). */}
         <MotionModeProvider>
           <MotionScope>

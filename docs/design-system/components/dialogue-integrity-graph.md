@@ -1,4 +1,4 @@
-# ReviewThread · IntegrityNotice · AIProvenanceDisclosure · ProvenanceGraph — contracts (πeme v3.1 §7, §25, §26, §27.5)
+# ReviewThread · IntegrityNotice · AIProvenanceDisclosure · ProvenanceGraph — contracts (reme v3.1 §7, §25, §26, §27.5)
 
 Status: **beta** (stage 3/4 boundary). Implementations: `components/scholarly/{ReviewThread,IntegrityNotice,AIProvenanceDisclosure}.tsx`, `components/graph/ProvenanceGraph.tsx`; logic: `lib/scholarly/{dialogue,ai-provenance,graph}.ts`; schemas: `lib/schemas/scholarly.ts`.
 

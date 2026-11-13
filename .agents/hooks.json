@@ -27,9 +27,9 @@
           },
           {
             "type": "command",
-            "command": "node scripts/pieme-check.mjs --changed",
+            "command": "node scripts/reme-check.mjs --changed",
             "timeout": 10,
-            "statusMessage": "Checking changed πeme article drafts (no network or writes)"
+            "statusMessage": "Checking changed reme article drafts (no network or writes)"
           }
         ]
       }

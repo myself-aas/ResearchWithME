@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * πeme token pipeline — WCAG contrast gate. Fails (exit 1) when a required
+ * reme token pipeline — WCAG contrast gate. Fails (exit 1) when a required
  * semantic pair falls below 4.5:1 (normal text) or 3:1 (focus ring / large text).
  */
 import { readFileSync } from 'node:fs';

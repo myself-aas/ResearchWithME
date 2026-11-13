@@ -1,5 +1,5 @@
 ---
-name: πeme
+name: reme
 product: researchwith.me
 version: 3.1.0
 status: stable-candidate
@@ -114,13 +114,13 @@ graph:
   edge: {cites: '#6366F1', supports: '#10B981', contradicts: '#EF4444', derives: '#06B6D4', relates: '#9D9C97', direct-style: solid, inferred-style: dashed}
 ---
 
-# πeme Frontend Design System v3.1
+# reme Frontend Design System v3.1
 
 > **2026-11-13:** the Aptos family leads each font stack (Aptos Serif, Aptos, Aptos Mono, requested by installed name only); the faces named below (Newsreader, Inter, JetBrains Mono) are now fallbacks.
 
-πeme is the frontend design system for **researchwith.me**, a scholarly workspace for discovering, evaluating, connecting, discussing, producing, and preserving knowledge. It combines editorial clarity with modern research tooling while avoiding the visual language of a developer console.
+reme is the frontend design system for **researchwith.me**, a scholarly workspace for discovering, evaluating, connecting, discussing, producing, and preserving knowledge. It combines editorial clarity with modern research tooling while avoiding the visual language of a developer console.
 
-> **Manifesto:** πeme makes knowledge traceable, trust visible, scholarship active, collaboration constructive, and the scholarly record enduring.
+> **Manifesto:** reme makes knowledge traceable, trust visible, scholarship active, collaboration constructive, and the scholarly record enduring.
 
 ## 1. Core Principles
 
@@ -171,7 +171,7 @@ Knowledge evolves without losing history, meaning, or identifiers.
 
 ## 2. Visual Identity
 
-πeme has two registers:
+reme has two registers:
 
 1. **Editorial:** Newsreader, parchment reading surfaces, restrained spacing, and long-form hierarchy for papers, abstracts, synthesis, and publishing.
 2. **Workspace:** Inter, compact controls, structured panels, and explicit states for search, review, collaboration, and knowledge management.
@@ -192,21 +192,21 @@ Components must not reference primitive values directly. Tokens use lowercase ke
 
 ```css
 :root {
-  --pieme-canvas: #f8f7f3;
-  --pieme-surface: #fff;
-  --pieme-text-primary: #161c1a;
-  --pieme-text-secondary: #555955;
-  --pieme-source: #4f46e5;
-  --pieme-evidence: #059669;
-  --pieme-insight: #0891b2;
-  --pieme-discussion: #d97706;
-  --pieme-contradiction: #dc2626;
-  --pieme-publication: #7c3aed;
-  --pieme-border: #dedcd5;
-  --pieme-focus: #4f46e5;
-  --pieme-font-editorial: "Newsreader", Georgia, serif;
-  --pieme-font-interface: "Inter", system-ui, sans-serif;
-  --pieme-font-metadata: "JetBrains Mono", ui-monospace, monospace;
+  --reme-canvas: #f8f7f3;
+  --reme-surface: #fff;
+  --reme-text-primary: #161c1a;
+  --reme-text-secondary: #555955;
+  --reme-source: #4f46e5;
+  --reme-evidence: #059669;
+  --reme-insight: #0891b2;
+  --reme-discussion: #d97706;
+  --reme-contradiction: #dc2626;
+  --reme-publication: #7c3aed;
+  --reme-border: #dedcd5;
+  --reme-focus: #4f46e5;
+  --reme-font-editorial: "Newsreader", Georgia, serif;
+  --reme-font-interface: "Inter", system-ui, sans-serif;
+  --reme-font-metadata: "JetBrains Mono", ui-monospace, monospace;
 }
 ```
 
@@ -214,7 +214,7 @@ Color never carries meaning alone. Pair it with a label, icon, shape, line style
 
 ## 4. Accessibility Baseline
 
-πeme targets **WCAG 2.2 AA** as the release minimum.
+reme targets **WCAG 2.2 AA** as the release minimum.
 
 - Normal text contrast: at least 4.5:1.
 - Large text and essential graphics: at least 3:1.
@@ -408,7 +408,7 @@ import {EvidenceSynthesis} from './EvidenceSynthesis';
 import {research} from './research-data';
 
 export const RemotionRoot = () => (
-  <Folder name="pieme">
+  <Folder name="reme">
     <Composition
       id="EvidenceSynthesis"
       component={EvidenceSynthesis}
@@ -548,7 +548,7 @@ if (mode === 'static') {
     .fromTo(q('claim'), {opacity:0}, {opacity:1, duration:.5}, 9)
     .fromTo(q('limitation'), {opacity:0, y:distance}, {opacity:1, y:0, duration:.7}, 16)
     .fromTo(q('citation'), {opacity:0}, {opacity:1, duration:.4}, 24);
-  window.piemeTimeline = timeline; // register through the installed Hyperframes adapter
+  window.remeTimeline = timeline; // register through the installed Hyperframes adapter
 }
 ```
 
@@ -592,7 +592,7 @@ export const captions = [
 ];
 ```
 
-Citation cards remain visible for at least five seconds. Captions match narration verbatim. Store a provenance record with composition ID/version, πeme version, renderer/version, render date, input/asset/output SHA-256 checksums, locale, citations, reviewer, captions, transcript, and motion mode.
+Citation cards remain visible for at least five seconds. Captions match narration verbatim. Store a provenance record with composition ID/version, reme version, renderer/version, render date, input/asset/output SHA-256 checksums, locale, citations, reviewer, captions, transcript, and motion mode.
 
 ## 15. Research Integrity and Security
 
@@ -706,22 +706,22 @@ The requirements in this part are normative. Where Part I conflicts with Part II
 
 ## 21. Conformance Model
 
-An implementation may claim πeme v3.1 conformance only when it satisfies the relevant profile:
+An implementation may claim reme v3.1 conformance only when it satisfies the relevant profile:
 
 | Profile | Required scope |
 |---|---|
-| `pieme-core` | Tokens, accessibility baseline, localization, security, error handling |
-| `pieme-scholarly` | Core plus source, evidence, claim, citation, review, provenance contracts |
-| `pieme-ai` | Scholarly plus AI disclosure, citation validation, approval, provider controls |
-| `pieme-motion` | Core plus Remotion/Hyperframes metadata, captions, provenance, render security |
-| `pieme-full` | All profiles |
+| `reme-core` | Tokens, accessibility baseline, localization, security, error handling |
+| `reme-scholarly` | Core plus source, evidence, claim, citation, review, provenance contracts |
+| `reme-ai` | Scholarly plus AI disclosure, citation validation, approval, provider controls |
+| `reme-motion` | Core plus Remotion/Hyperframes metadata, captions, provenance, render security |
+| `reme-full` | All profiles |
 
 Every conforming package MUST publish:
 
 ```json
 {
-  "piemeVersion": "3.1.0",
-  "profiles": ["pieme-core", "pieme-scholarly"],
+  "remeVersion": "3.1.0",
+  "profiles": ["reme-core", "reme-scholarly"],
   "packageVersion": "1.0.0",
   "buildTimestamp": "2026-11-09T16:05:00Z",
   "tokenChecksum": "sha256:<calculated-value>"
@@ -1253,9 +1253,9 @@ The server SHOULD render the resolved theme attribute to avoid hydration flash. 
 
 ```css
 @media (forced-colors: active) {
-  .pieme-status,
-  .pieme-knowledge-node,
-  .pieme-graph-edge {
+  .reme-status,
+  .reme-knowledge-node,
+  .reme-graph-edge {
     forced-color-adjust: auto;
     border: 1px solid CanvasText;
   }
@@ -1431,15 +1431,15 @@ Implementations MUST supply typed `EvidencePath`, `LimitationPanel`, and `Citati
 <main id="main" data-composition-id="evidence-synthesis-001"
   data-start="0" data-duration="30" data-width="1920" data-height="1080">
   <section data-hf-id="title" data-start="0" data-duration="3">
-    <p class="pieme-eyebrow">Evidence synthesis</p>
+    <p class="reme-eyebrow">Evidence synthesis</p>
     <h1 data-field="title"></h1>
   </section>
   <section data-hf-id="provenance" data-start="3" data-duration="13">
-    <article class="pieme-node pieme-node--source" data-hf-id="source"></article>
-    <div class="pieme-edge" data-hf-id="source-evidence" aria-label="Source supports evidence"></div>
-    <article class="pieme-node pieme-node--evidence" data-hf-id="evidence"></article>
-    <div class="pieme-edge" data-hf-id="evidence-claim" aria-label="Evidence supports claim"></div>
-    <article class="pieme-node pieme-node--claim" data-hf-id="claim"></article>
+    <article class="reme-node reme-node--source" data-hf-id="source"></article>
+    <div class="reme-edge" data-hf-id="source-evidence" aria-label="Source supports evidence"></div>
+    <article class="reme-node reme-node--evidence" data-hf-id="evidence"></article>
+    <div class="reme-edge" data-hf-id="evidence-claim" aria-label="Evidence supports claim"></div>
+    <article class="reme-node reme-node--claim" data-hf-id="claim"></article>
   </section>
   <aside data-hf-id="limitation" data-start="16" data-duration="8"></aside>
   <section data-hf-id="citation" data-start="24" data-duration="6"></section>
@@ -1477,7 +1477,7 @@ export interface RenderProvenance {
   artifactId: string;
   compositionId: string;
   compositionVersion: string;
-  piemeVersion: '3.1.0';
+  remeVersion: '3.1.0';
   renderEngine: 'remotion'|'hyperframes';
   rendererVersion: string;
   renderedAt: ISODateTime;
@@ -1615,7 +1615,7 @@ Every change MUST include affected tokens/components, accessibility impact, loca
 
 ## 44. Stable Release Gate
 
-πeme v3.1 MUST NOT be marked stable until:
+reme v3.1 MUST NOT be marked stable until:
 
 ### Domain and integrity
 
@@ -1659,10 +1659,10 @@ Every change MUST include affected tokens/components, accessibility impact, loca
 
 ## 45. Final Product Principle
 
-> A πeme interface is complete only when a researcher can understand what is shown, trace where it came from, judge how much to trust it, challenge or extend it, recover from failure, and preserve the resulting scholarly record.
+> A reme interface is complete only when a researcher can understand what is shown, trace where it came from, judge how much to trust it, challenge or extend it, recover from failure, and preserve the resulting scholarly record.
 ## 46. Final Implementation Checklist
 
-Use this checklist as the final engineering, design, research-integrity, accessibility, security, localization, and release sign-off for πeme v3.1. Each item requires verifiable evidence such as a pull request, test report, Storybook story, audit record, Architecture Decision Record, or release artifact. An unchecked release-blocking item prevents promotion to `stable`.
+Use this checklist as the final engineering, design, research-integrity, accessibility, security, localization, and release sign-off for reme v3.1. Each item requires verifiable evidence such as a pull request, test report, Storybook story, audit record, Architecture Decision Record, or release artifact. An unchecked release-blocking item prevents promotion to `stable`.
 
 ### 46.1 Program governance and ownership
 
@@ -1673,7 +1673,7 @@ Use this checklist as the final engineering, design, research-integrity, accessi
 - [ ] Component maturity labels are published and match implementation status.
 - [ ] Deprecation and migration timelines comply with the six-month or one-major-release support policy.
 - [ ] Release notes identify breaking changes, accessibility impact, localization impact, research-integrity impact, and required migrations.
-- [ ] The final conformance manifest lists the implemented πeme profiles and a calculated token checksum.
+- [ ] The final conformance manifest lists the implemented reme profiles and a calculated token checksum.
 
 **Required evidence:** governance approval, ADR index, conformance manifest, release notes, migration guide.
 
@@ -1918,7 +1918,7 @@ Use this checklist as the final engineering, design, research-integrity, accessi
 
 ### 46.17 Remotion implementation
 
-- [ ] Remotion compositions import generated πeme tokens rather than raw values.
+- [ ] Remotion compositions import generated reme tokens rather than raw values.
 - [ ] Inputs validate through Zod, JSON Schema, or an equivalent runtime validator.
 - [ ] Duration derives from frames and fps or is checked for equality.
 - [ ] `useCurrentFrame()` and `useVideoConfig()` are the time source.
@@ -1936,7 +1936,7 @@ Use this checklist as the final engineering, design, research-integrity, accessi
 ### 46.18 HeyGen Hyperframes implementation
 
 - [ ] Hyperframes projects are self-contained and include only required HTML, CSS, JavaScript, fonts, assets, data, citations, and manifest files.
-- [ ] Generated `hyperframes.css` tokens are used instead of raw πeme values.
+- [ ] Generated `hyperframes.css` tokens are used instead of raw reme values.
 - [ ] GSAP and Hyperframes versions are pinned.
 - [ ] A documented adapter registers seekable timelines.
 - [ ] Timelines remain paused and renderer-controlled rather than using wall-clock playback.
@@ -1962,7 +1962,7 @@ Use this checklist as the final engineering, design, research-integrity, accessi
 - [ ] Video and animation never alter axes, hide missing data, overstate uncertainty, convert association to causation, or imply peer review.
 - [ ] Generated imagery is not presented as observational evidence.
 - [ ] Limitations, citations, and source identifiers remain visible and available in transcripts.
-- [ ] Inputs, assets, output, renderer version, πeme version, reviewer, and SHA-256 checksums are retained.
+- [ ] Inputs, assets, output, renderer version, reme version, reviewer, and SHA-256 checksums are retained.
 - [ ] Restricted or embargoed material is redacted or blocked according to policy.
 
 **Required evidence:** sandbox configuration, penetration test, sample provenance record, integrity review.
@@ -2070,4 +2070,4 @@ The release manager MUST attach all required evidence and obtain the following a
 - [ ] The final conformance manifest and checksums are published.
 - [ ] `status` may now change from `stable-candidate` to `stable`.
 
-> **Final acceptance rule:** πeme v3.1 is ready only when researchers can trace knowledge to its source, understand uncertainty and integrity, work accessibly in their language and device context, recover from failure, challenge or extend scholarly objects, and preserve an auditable record of every consequential change.
+> **Final acceptance rule:** reme v3.1 is ready only when researchers can trace knowledge to its source, understand uncertainty and integrity, work accessibly in their language and device context, recover from failure, challenge or extend scholarly objects, and preserve an auditable record of every consequential change.

@@ -1,5 +1,5 @@
 /**
- * TrustAssessmentSummary — πeme v3.1 §23 component.
+ * TrustAssessmentSummary — reme v3.1 §23 component.
  *
  * Purpose: show the five trust dimensions independently — review, replication,
  * certainty, consensus, source integrity. NEVER one aggregate score/badge.
