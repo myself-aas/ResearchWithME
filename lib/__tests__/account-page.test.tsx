@@ -3,6 +3,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AccountPage, { metadata } from '@/app/dashboard/account/page';
+import { subscriptionStatusLabel } from '@/lib/billing/status';
 
 const getEntitlement = vi.fn();
 
@@ -56,8 +57,9 @@ describe('/dashboard/account', () => {
   it('keeps access while a payment is past due, and says why (D2)', async () => {
     getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'past_due', aiCredits: 40, currentPeriodEnd: '2026-12-13T00:00:00.000Z' });
     const html = await render();
-    expect(html.toLowerCase()).toContain('past due');
-    expect(html.toLowerCase()).toContain('still');
+    // The state word comes from the shared label; the reassurance is the page's.
+    expect(html).toContain(subscriptionStatusLabel('past_due'));
+    expect(html.toLowerCase()).toContain('still on');
   });
 
   it('shows a one-time purchase as bought, not as a lapsed plan', async () => {
@@ -69,6 +71,22 @@ describe('/dashboard/account', () => {
     // fact list: "Also available" legitimately names the co-pilot further down.
     const facts = html.slice(0, html.indexOf('Purchases'));
     expect(facts).not.toContain('Research Co-Pilot');
+  });
+
+  it('uses the shared status wording rather than a second copy of it', async () => {
+    // lib/billing/status.ts owns this vocabulary; a page-local table drifted
+    // from it (the page said "Ended" where the shared label says the same thing
+    // differently, and neither was the other's source of truth).
+    for (const status of ['on_trial', 'active', 'paused', 'past_due', 'cancelled', 'unpaid', 'expired'] as const) {
+      getEntitlement.mockResolvedValue({
+        plan: 'copilot',
+        status,
+        aiCredits: 0,
+        currentPeriodEnd: '2026-12-13T00:00:00.000Z',
+      });
+      const html = await render();
+      expect(html).toContain(subscriptionStatusLabel(status));
+    }
   });
 
   it('stays out of search results', () => {

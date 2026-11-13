@@ -6,7 +6,7 @@ import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
 import { BILLING_PRODUCTS } from '@/lib/billing/catalogue';
 import { getBillingStore, type Entitlement } from '@/lib/billing/store';
-import { hasPremiumAccess, type SubscriptionStatus } from '@/lib/billing/status';
+import { hasPremiumAccess, subscriptionStatusLabel, type SubscriptionStatus } from '@/lib/billing/status';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { pageMetadata } from '@/lib/seo';
 
@@ -35,27 +35,25 @@ export const metadata: Metadata = {
 
 export const dynamic = 'force-dynamic';
 
-const STATUS_COPY: Record<SubscriptionStatus, { label: string; note: string; alert: boolean }> = {
-  none: { label: 'No plan', note: '', alert: false },
-  on_trial: { label: 'Active', note: 'Your trial is running.', alert: false },
-  active: { label: 'Active', note: '', alert: false },
+/**
+ * The page contributes only what the shared label cannot: a sentence about what
+ * happens next, and whether that sentence deserves `role="alert"`. The status
+ * *wording* comes from `subscriptionStatusLabel` in `lib/billing/status.ts`, so
+ * there is one vocabulary for a state rather than two that drift.
+ */
+const STATUS_NOTE: Partial<Record<SubscriptionStatus, { note: string; alert: boolean }>> = {
+  on_trial: { note: 'Your trial is running.', alert: false },
   past_due: {
-    label: 'Past due',
     note: 'Your last payment did not go through. Your access is still on while Lemon Squeezy retries the card.',
     alert: true,
   },
+  paused: { note: 'Access resumes when the subscription is resumed.', alert: false },
+  cancelled: { note: 'You keep access until the period you paid for runs out.', alert: false },
   unpaid: {
-    label: 'Unpaid',
     note: 'Access has stopped: Lemon Squeezy stopped retrying your last payment. Updating the card in your receipt email restarts the plan.',
     alert: true,
   },
-  paused: { label: 'Paused', note: 'Your subscription is paused. Access resumes when it is resumed.', alert: false },
-  cancelled: {
-    label: 'Ended',
-    note: 'Your subscription has ended. You keep access until the period you paid for runs out.',
-    alert: false,
-  },
-  expired: { label: 'Ended', note: 'Your subscription has ended.', alert: false },
+  expired: { note: 'Your subscription has ended.', alert: false },
 };
 
 function formatDate(iso: string | null): string {
@@ -74,7 +72,8 @@ export default async function AccountPage() {
     console.error('Could not read the account entitlement:', error);
   }
 
-  const status = STATUS_COPY[entitlement.status] ?? STATUS_COPY.none;
+  const status = STATUS_NOTE[entitlement.status] ?? { note: '', alert: false };
+  const statusLabel = subscriptionStatusLabel(entitlement.status);
   const active = hasPremiumAccess(entitlement.status);
   const hasOneTimePurchase = entitlement.plan === 'purchases';
   const hasPurchases = entitlement.plan !== 'none' || entitlement.status !== 'none';
@@ -86,7 +85,7 @@ export default async function AccountPage() {
       : hasOneTimePurchase
         ? 'Purchased'
         : 'None';
-  const statusLabel = hasOneTimePurchase && !active ? 'One-time purchase' : status.label;
+  const shownStatus = hasOneTimePurchase && !active ? 'One-time purchase' : statusLabel;
   const periodEnd = formatDate(entitlement.currentPeriodEnd);
   const ownedKeys = new Set(entitlement.plan === 'copilot' ? ['copilot'] : []);
   const onSale = BILLING_PRODUCTS.filter((product) => !(ownedKeys.has(product.key) && active));
@@ -110,7 +109,7 @@ export default async function AccountPage() {
           <dl className="mt-4 grid gap-4 sm:grid-cols-3">
             <div>
               <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Status</dt>
-              <dd className="mt-1 font-serif text-lg text-ink">{statusLabel}</dd>
+              <dd className="mt-1 font-serif text-lg text-ink">{shownStatus}</dd>
             </div>
             <div>
               <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Plan</dt>

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { normaliseBillingEvent } from '@/lib/billing/events';
+import { billingEventIgnoredReason, normaliseBillingEvent } from '@/lib/billing/events';
 import { verifyLemonSignature } from '@/lib/billing/signature';
 import { getBillingStore, isBillingConfigured } from '@/lib/billing/store';
 
@@ -73,6 +73,19 @@ export async function POST(request: Request) {
   try {
     const store = await getBillingStore();
     const outcome = await store.applyEvent(event);
+
+    if (outcome === 'ignored') {
+      // 200, so Lemon Squeezy stops retrying — but the reason is the only trail
+      // an owner has for "a purchase happened and nothing was written". The
+      // `missing_user_id` case is the one that matters: a checkout link made
+      // outside the app, or a legacy link, lands here.
+      console.warn(
+        `Lemon Squeezy webhook ${event.eventId} (${event.eventName}) was ignored: ${
+          billingEventIgnoredReason(event) ?? 'unknown'
+        }`,
+      );
+    }
+
     return NextResponse.json({ received: true, outcome });
   } catch (error) {
     console.error(

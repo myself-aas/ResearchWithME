@@ -77,6 +77,12 @@ export function variantIdFor(
   return value || null;
 }
 
+/**
+ * `Object.hasOwn`, not `in`: `in` walks the prototype chain, so `'toString'`,
+ * `'constructor'` and `'__proto__'` all passed this guard and reached the
+ * checkout path. They failed later (no variant id, so a 503) but a guard that
+ * says yes to `__proto__` is a guard that cannot be reasoned about.
+ */
 export function isBillingProductKey(value: unknown): value is BillingProductKey {
-  return typeof value === 'string' && value in VARIANT_ENV;
+  return typeof value === 'string' && Object.hasOwn(VARIANT_ENV, value);
 }

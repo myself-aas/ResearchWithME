@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BILLING_PRODUCTS, variantIdFor } from '@/lib/billing/catalogue';
+import { BILLING_PRODUCTS, isBillingProductKey, variantIdFor } from '@/lib/billing/catalogue';
 import { hasPremiumAccess, isSubscriptionStatus } from '@/lib/billing/status';
 
 describe('billing catalogue', () => {
@@ -32,5 +32,21 @@ describe('billing catalogue', () => {
     expect(isSubscriptionStatus('trialing')).toBe(false);
     expect(isSubscriptionStatus(undefined)).toBe(false);
     expect(isSubscriptionStatus('active')).toBe(true);
+  });
+
+  it('rejects inherited Object.prototype names as products', () => {
+    // `value in VARIANT_ENV` walks the prototype chain, so any of these used to
+    // pass the guard and reach the checkout path.
+    for (const name of ['toString', 'constructor', 'hasOwnProperty', 'valueOf', '__proto__', 'isPrototypeOf']) {
+      expect(isBillingProductKey(name)).toBe(false);
+    }
+  });
+
+  it('accepts exactly the three real product keys', () => {
+    for (const key of ['teardown', 'copilot', 'editing']) {
+      expect(isBillingProductKey(key)).toBe(true);
+    }
+    expect(isBillingProductKey('')).toBe(false);
+    expect(isBillingProductKey('TEARDOWN')).toBe(false);
   });
 });

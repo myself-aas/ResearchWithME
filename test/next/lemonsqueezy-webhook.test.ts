@@ -51,6 +51,26 @@ describe('POST /api/webhooks/lemonsqueezy', () => {
     const other = JSON.stringify({ meta: { event_name: 'license_key_created' }, data: { id: '1', type: 'license-keys', attributes: {} } });
     expect((await post({ body: other, signature: sign(other) })).status).toBe(200);
   });
+  it('says in the log why an event changed nothing', async () => {
+    // Review Focus item 2: a checkout made outside the app has no
+    // meta.custom_data.user_id. It is acknowledged (200) but nothing is written,
+    // and the owner's only trail is this log line — "ignored" alone does not say
+    // which of the three reasons applied.
+    const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    // The real store reaches the RPC and the RPC reports `ignored`; stand in for
+    // that reply so this test is about the route's logging, not the database.
+    applyEvent.mockResolvedValue('ignored');
+    const noUser = JSON.stringify({ meta: { event_name: 'order_created' }, data: { id: '5', type: 'orders', attributes: { status: 'paid' } } });
+
+    const res = await post({ body: noUser, signature: sign(noUser) });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ received: true, outcome: 'ignored' });
+    const logged = spy.mock.calls.map((call) => call.join(' ')).join('\n');
+    expect(logged).toContain('missing_user_id');
+    spy.mockRestore();
+  });
+
   it('rejects an unreadable JSON body with 400', async () => {
     expect((await post({ body: 'not json', signature: sign('not json') })).status).toBe(400);
   });
