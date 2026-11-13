@@ -3,10 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Trash2 } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import QwenCoverGenerator from '@/components/cms/QwenCoverGenerator';
 import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES } from '@/lib/blog-data';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import type { CmsPost } from '@/lib/cms/types';
@@ -84,7 +83,6 @@ export default function WritePage() {
   const [errorField, setErrorField] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
   const [restored, setRestored] = useState(false);
-  const [showAiCover, setShowAiCover] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -637,18 +635,9 @@ export default function WritePage() {
                 <div>
                   <Text as="legend" variant="card-title">Cover image</Text>
                   <p className="mt-1 text-sm text-ink-secondary">
-                    Editorial 16:9 header image. Generate artwork with your Qwen 2.1 Hugging Face Space (AVIF) or select presets.
+                    Editorial 16:9 header image.
                   </p>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => setShowAiCover(!showAiCover)}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
-                >
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate Cover with Qwen 2.1 (AVIF)'}</span>
-                </button>
               </div>
 
               {draft.coverImage ? (
@@ -681,18 +670,6 @@ export default function WritePage() {
                 <p className="border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">
                   No custom cover image applied yet. The platform will use default editorial photography if published without one.
                 </p>
-              )}
-
-              {showAiCover && (
-                <div className="pt-2">
-                  <QwenCoverGenerator
-                    currentCover={draft.coverImage}
-                    articleTitle={draft.title}
-                    articleSubtitle={draft.subtitle}
-                    articleCategory={draft.category}
-                    onApplyCover={(imageUri) => update('coverImage', imageUri)}
-                  />
-                </div>
               )}
             </fieldset>
 

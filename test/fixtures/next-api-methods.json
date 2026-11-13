@@ -12,10 +12,6 @@
     "method": "PATCH"
   },
   {
-    "path": "/api/author-avatar",
-    "method": "POST"
-  },
-  {
     "path": "/api/authors",
     "method": "GET"
   },
@@ -69,14 +65,6 @@
   },
   {
     "path": "/api/dashboard/applications/{id}",
-    "method": "POST"
-  },
-  {
-    "path": "/api/generate",
-    "method": "GET"
-  },
-  {
-    "path": "/api/generate",
     "method": "POST"
   },
   {

@@ -15,7 +15,7 @@ Single CSS source: `app/globals.css` (`@theme inline` + base layers). The πeme 
 ## Raw / duplicated values still present
 
 - `emails/support-reply.tsx` has two inline hexes (now πeme values, but still literals — should reference shared constants).
-- `app/api/author-avatar/route.ts` domain gradient themes (slate/emerald/teal/fuchsia…) are per-domain avatar art, not UI tokens — intentional, documented inline.
+- `lib/avatar-fallback.ts` domain gradient themes (slate/emerald/teal/fuchsia…) are per-domain avatar art, not UI tokens — intentional, documented inline.
 - `app/opengraph-image.tsx` inline styles use πeme hexes (image route can't read CSS vars — acceptable, guarded by Impeccable schema).
 - Legacy `--color-stone-*` override means the *name* "stone" is now an alias for the πeme neutral ramp; a future rename to `neutral-*` is a migration item (R-07).
 

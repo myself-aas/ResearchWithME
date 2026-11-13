@@ -12,12 +12,10 @@ import {
   Info,
   Plus,
   Send,
-  Sparkles,
   Trash2,
   Upload,
 } from 'lucide-react';
 import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
-import QwenCoverGenerator from './QwenCoverGenerator';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import { ARTICLE_FORMATS, normalizePostInput } from '@/lib/cms/schema';
 import type { CmsArtifact, CmsPost, FieldErrors } from '@/lib/cms/types';
@@ -135,7 +133,6 @@ export default function PostEditor({
   const [deleting, setDeleting] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [showAiCover, setShowAiCover] = useState(false);
   const [authorOptions, setAuthorOptions] = useState<AuthorOption[]>([]);
   const [authorsError, setAuthorsError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
@@ -685,15 +682,6 @@ export default function PostEditor({
           )}
 
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setShowAiCover(!showAiCover)}
-              className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
-            >
-              <Sparkles className="h-4 w-4" aria-hidden="true" />
-              <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate with Qwen 2.1 (AVIF)'}</span>
-            </button>
-
             {isSupabaseConfigured && (
               <>
                 <input
@@ -720,21 +708,6 @@ export default function PostEditor({
               </>
             )}
           </div>
-
-          {showAiCover && (
-            <div className="pt-2">
-              <QwenCoverGenerator
-                currentCover={form.coverImage}
-                articleTitle={form.title}
-                articleSubtitle={form.subtitle}
-                articleCategory={form.category}
-                onApplyCover={(imageUri) => {
-                  update('coverImage', imageUri);
-                  setUploadError(null);
-                }}
-              />
-            </div>
-          )}
 
           {uploadError && (
             <p role="alert" className={inlineErrorClass}>

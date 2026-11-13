@@ -28,7 +28,7 @@ Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** 
 
 | Component | Classification | Notes |
 |---|---|---|
-| `components/AuthorAvatar.tsx` | Retokenized; Retain | SVG avatars via `/api/author-avatar`. |
+| `components/AuthorAvatar.tsx` | Retokenized; Retain | Uploaded profile photo, or a deterministic domain SVG fallback; no network calls. |
 | `components/AuthorDirectory.tsx`, `AuthorArchive.tsx`, `AuthorProfileCard.tsx`, `AuthorSpotlight.tsx` | Retokenized; Retain/Refactor | Directory → FilterPanel + SearchResult mapping. |
 | `components/AuthorImpactRadarChart.tsx` | Refactor → accessible chart | recharts radar; needs table alternative + keyboard access per spec §32 (data viz). |
 
@@ -39,7 +39,6 @@ Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** 
 | `components/cms/DashboardShell.tsx`, `PostEditor.tsx`, `MarkdownEditor.tsx` | Retokenized; Refactor → editor package | Autosave exists; add annotations, citation anchoring, conflict states per spec §29. |
 | `components/cms/StatusBadge.tsx` | Refactor → TrustAssessmentSummary | draft/published → lifecycle + trust dimensions (independent). |
 | `components/cms/ConfirmDelete.tsx` | Retokenized; Retain | Inline two-step confirm (good pattern). |
-| `components/cms/QwenCoverGenerator.tsx` | Wrap temporarily | AI-generated covers; needs AIProvenanceDisclosure labeling per spec §26. |
 | `components/cms/styles.ts` | Retokenize → component tokens | Shared class strings; move to token-mapped component classes. |
 | `components/dashboard/ApplicationQueue.tsx`, `AuthorApplication.tsx` | Retokenized; Retain | Server-enforced approval flow preserved. |
 

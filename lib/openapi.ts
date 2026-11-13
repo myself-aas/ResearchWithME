@@ -32,7 +32,6 @@ export type ApiOperation = {
 };
 
 const text = { type: 'string' };
-const number = { type: 'number' };
 const integer = { type: 'integer' };
 const boolean = { type: 'boolean' };
 const strings = { type: 'array', items: text };
@@ -140,23 +139,6 @@ export const API_OPERATIONS: ApiOperation[] = [
     responses: { 200: json('Answer and citations.', object({ answer: text, citations: array(ref('AssistantCitation')), mode: { type: 'string', enum: ['catalog', 'model'] }, notice: text }, ['answer', 'citations', 'mode'])), ...errors(400, 415, 429) },
   },
   {
-    group: 'author-avatar', method: 'post', path: '/api/author-avatar', operationId: 'createAuthorAvatar',
-    summary: 'Generate an author avatar', description: 'Send name and domain, with optional role, bio, authorId, and forceAi. The default is a local SVG; when forceAi is requested and a model is configured, an editor session is required.',
-    requestBody: jsonBody(ref('AvatarInput'), 'Author details and optional model request.'),
-    responses: { 200: json('SVG avatar.', object({ svg: text, authorId: text, source: { type: 'string', enum: ['gemini', 'domain-fallback'] } }, ['svg', 'authorId', 'source'])), ...errors(400, 403, 429) },
-  },
-  {
-    group: 'generate', method: 'get', path: '/api/generate', operationId: 'getCoverGenerator',
-    summary: 'Inspect cover generation configuration', description: 'Editor-only. Returns whether the generator and token are configured; no token value is exposed.',
-    security: session, responses: { 200: json('Generator configuration.', object({ configured: boolean, spaceName: { type: ['string', 'null'] }, hasToken: boolean, engine: text, endpoint: text }, ['configured', 'spaceName', 'hasToken', 'engine', 'endpoint'])), ...errors(401, 403) },
-  },
-  {
-    group: 'generate', method: 'post', path: '/api/generate', operationId: 'generateCover',
-    summary: 'Generate an article cover', description: 'Editor-only and rate limited. Send a prompt plus optional generation settings; browser requests with an Origin must be same-origin. Availability depends on the configured Hugging Face Space.',
-    security: session, requestBody: jsonBody(ref('CoverInput'), 'Cover prompt and generation settings.'),
-    responses: { 200: json('Generated image URI and seed.', object({ success: boolean, imageUri: text, seed: number, format: { type: 'string', const: 'avif' } }, ['success', 'imageUri', 'seed', 'format'])), ...errors(400, 401, 403, 429, 502, 503) },
-  },
-  {
     group: 'cms-posts', method: 'get', path: '/api/cms/posts', operationId: 'listEditorialPosts',
     summary: 'List editorial posts', description: 'Editor-only. Includes drafts as well as published posts.',
     security: session, responses: { 200: json('Editorial posts and storage mode.', object({ posts: array(ref('CmsPost')), mode: text }, ['posts', 'mode'])), ...errors(401, 403, 500, 503) },
@@ -236,8 +218,6 @@ const schemas: Record<string, Schema> = {
   Comment: object({ id: text, postId: text, authorName: text, authorRole: text, avatar: text, timestamp: text, text }, ['id', 'postId', 'authorName', 'avatar', 'timestamp', 'text']),
   CommentInput: object({ postId: { type: 'string', minLength: 1, maxLength: 120 }, authorName: { type: 'string', minLength: 2, maxLength: 120 }, authorRole: { type: 'string', maxLength: 80 }, text: { type: 'string', minLength: 2, maxLength: 4000 } }, ['postId', 'authorName', 'text']),
   AssistantCitation: object({ id: text, title: text, author: text, category: text }, ['id', 'title', 'author', 'category']),
-  AvatarInput: object({ name: { type: 'string', minLength: 1, maxLength: 120 }, domain: { type: 'string', minLength: 1, maxLength: 120 }, role: { type: 'string', maxLength: 120 }, bio: { type: 'string', maxLength: 400 }, authorId: { type: 'string', maxLength: 80 }, forceAi: { oneOf: [boolean, { type: 'string', enum: ['true', 'false'] }] } }, ['name', 'domain']),
-  CoverInput: object({ prompt: { type: 'string', minLength: 1, maxLength: 1000 }, negative_prompt: { type: 'string', maxLength: 500 }, seed: number, randomize_seed: boolean, width: number, height: number, guidance_scale: number, steps: number, quality: number }, ['prompt']),
   CmsPostInput: object(cmsPostProperties, ['title', 'authorId']),
   CmsPostPatch: object(cmsPostProperties),
   CmsPost: object({ ...cmsPostProperties, id: text, authorId: { type: ['string', 'null'] }, likes: integer, readTime: text, publishedAt: { type: ['string', 'null'] }, insertedAt: text, updatedAt: text }, ['id', 'title', 'slug', 'status']),

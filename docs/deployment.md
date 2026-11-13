@@ -180,7 +180,6 @@ Three environments, three sets of values, one repository.
 | `REVALIDATE_SECRET` | any 32-byte hex | Worker secret | Worker secret |
 | `GEMINI_API_KEY` | optional | Worker secret | Worker secret |
 | `GEMINI_MODEL` | optional (`gemini-3.8-flash` default) | Worker var | Worker var |
-| `HF_TOKEN`, `HF_SPACE_NAME` | optional | Worker secret | Worker secret |
 
 ### 3.1 Build-time vs runtime — the distinction that breaks deploys
 
@@ -188,7 +187,7 @@ Three environments, three sets of values, one repository.
 | --- | --- | --- | --- |
 | **Build-time / inlined** | every `NEXT_PUBLIC_*` | shell running `next build`, or the Workers Builds *build* variables, or GitHub Actions job `env` | Next.js substitutes the literal string into the client and server bundles |
 | **Runtime var (not secret)** | `RESEND_TPL_*` (one per email scenario) | Worker variables in the dashboard, or set from `npm run email:template:sync` | read at request time; not confidential. Senders come from `lib/email/scenarios.ts`, not from env. See `docs/email-scenarios.md` |
-| **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
+| **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
 | **Preview-only runtime** | the same secrets | `wrangler preview secret put`, or the preview *base config* | previews do not inherit the Worker's secrets |
 
 Workers Builds therefore needs the `NEXT_PUBLIC_*` values as **build**
@@ -210,24 +209,23 @@ already excludes `.env*` except `.env.example`.
 | 4 | `CLOUDFLARE_ACCOUNT_ID` | semi (identifier) | CI, wrangler | Cloudflare dashboard URL, or `npx wrangler whoami` | GitHub secret, Workers Builds env |
 | 5 | `CLOUDFLARE_API_TOKEN` | **yes** | CI, wrangler | Cloudflare → My Profile → API Tokens | GitHub secret only |
 | 6 | `REVALIDATE_SECRET` | **yes** | `/api/revalidate`, Supabase webhook | `openssl rand -hex 32` | Worker secret + Supabase webhook header |
-| 7 | `GEMINI_API_KEY` | **yes** | `/api/research-assistant`, `/api/author-avatar` | Google AI Studio → API keys | Worker secret, `.env.local` |
+| 7 | `GEMINI_API_KEY` | **yes** | `/api/research-assistant` | Google AI Studio → API keys | Worker secret, `.env.local` |
 | 8 | `GEMINI_MODEL` | no | same routes | model id you have access to | Worker var, `.env.local` |
-| 9 | `HF_TOKEN`, `HF_SPACE_NAME` | token **yes**, space name no | `/api/generate` (video/cover generation) | Hugging Face → Settings → Access Tokens; the Space id (`owner/space`) | Worker secret / var |
 
 Already present in the repository (confirm under **Settings → Secrets and variables → Actions**):
-`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `GEMINI_API_KEY`, `GEMINI_MODEL`, `HF_SPACE_NAME`,
-`HF_TOKEN`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `GEMINI_API_KEY`, `GEMINI_MODEL`,
+`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
 `NEXT_PUBLIC_SUPABASE_URL`, `REVALIDATE_SECRET`.
 
 ### 4.1 Where to put them, exactly
 
 | Location | Path in the UI | Holds | Notes |
 | --- | --- | --- | --- |
-| GitHub repository secrets | Settings → Secrets and variables → **Actions** → *Secrets* | items 1–9 | masked in logs; available to every workflow |
+| GitHub repository secrets | Settings → Secrets and variables → **Actions** → *Secrets* | items 1–8 | masked in logs; available to every workflow |
 | GitHub environment secrets | Settings → Environments → **production** → *Environment secrets* | optional, same names | only readable by jobs that declare `environment: production`; add required reviewers here for a manual gate |
 | Cloudflare build variables | Workers & Pages → `researchwithme` → Settings → **Build** → *Variables and secrets* | `NEXT_PUBLIC_*` as plaintext, keys as secrets | consumed by Workers Builds only |
-| Cloudflare Worker secrets | Workers & Pages → `researchwithme` → Settings → **Variables and secrets** (runtime) | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN` | available to the Worker at request time |
-| Local machine | `.env.local` (git-ignored) | items 1–9 | copied from `.env.example` |
+| Cloudflare Worker secrets | Workers & Pages → `researchwithme` → Settings → **Variables and secrets** (runtime) | `REVALIDATE_SECRET`, `GEMINI_API_KEY` | available to the Worker at request time |
+| Local machine | `.env.local` (git-ignored) | items 1–8 | copied from `.env.example` |
 
 ### 4.2 Supabase URL and publishable key
 
@@ -288,14 +286,12 @@ wrong-length guess leaks nothing. `MY_SECRET_TOKEN` is accepted as a fallback na
 Rotate by setting the new Worker secret first, then editing the webhook — during the gap the webhook
 returns `401` and only the webhook's cache eviction is affected.
 
-### 4.6 Gemini and Hugging Face
+### 4.6 Gemini
 
 - `GEMINI_API_KEY`: Google AI Studio → **Get API key** → create in the Cloud project you want billed.
-  Used by `/api/research-assistant` and `/api/author-avatar`; absent, those routes degrade instead of
+  Used by `/api/research-assistant`; absent, the assistant answers from the catalogue instead of
   failing the build.
 - `GEMINI_MODEL`: optional; defaults to `gemini-3.8-flash`. Set it to a model your key can call.
-- `HF_TOKEN` + `HF_SPACE_NAME`: Hugging Face → Settings → Access Tokens (fine-grained, *inference*
-  scope is enough) and the Space identifier `owner/space-name` used by `/api/generate`.
 
 These are runtime reads, so they belong to the Worker, not the build. Set all of them in one go:
 
@@ -452,10 +448,7 @@ certificate is Cloudflare's Universal SSL and needs no action.
 npx wrangler secret list
 npx wrangler secret put REVALIDATE_SECRET
 npx wrangler secret put GEMINI_API_KEY
-npx wrangler secret put HF_TOKEN
-# GEMINI_MODEL / HF_SPACE_NAME are plaintext vars — either
-npx wrangler secret put HF_SPACE_NAME      # fine as a secret
-# or add them as Worker variables in the dashboard
+# GEMINI_MODEL is a plaintext var — add it as a Worker variable in the dashboard
 ```
 
 Secrets survive a deploy; they are per-Worker, not per-version.
@@ -496,7 +489,7 @@ subscribes to `push` and `pull_request` and reports back as a check run named
 | Production branch | `main` | everything else is a preview |
 | Root directory | `/` | repository root |
 | Build variables | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL` | inlined at build time |
-| Build secrets | `HF_TOKEN`, `HF_SPACE_NAME`, `GEMINI_API_KEY`, `GEMINI_MODEL` | same, for values that must be masked |
+| Build secrets | `GEMINI_API_KEY`, `GEMINI_MODEL` | same, for values that must be masked |
 
 Leave the deploy commands at `wrangler preview` for production and the Worker never gains a
 deployment; every branch then fails with *This Worker does not exist on your account* (§13).
@@ -535,7 +528,7 @@ request:
 | typecheck | `npm run typecheck` |
 | tests | `npm test` (Vitest) |
 | design detector | `npx impeccable detect app components` |
-| build | `npm run build`, with `HF_SPACE_NAME` and `HF_TOKEN` from secrets |
+| build | `npm run build` |
 
 It does not deploy, does not need Cloudflare credentials, and takes about two minutes. Do not edit it
 to add deploys — that is what `deploy.yml` is for.
@@ -576,8 +569,6 @@ env:
   NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me' }}
   NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-  HF_SPACE_NAME: ${{ secrets.HF_SPACE_NAME }}
-  HF_TOKEN: ${{ secrets.HF_TOKEN }}
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
@@ -933,7 +924,7 @@ npx wrangler login
 npx wrangler kv namespace list                          # reuse or create the namespace
 $EDITOR wrangler.jsonc                                  # account_id, KV ids, routes
 npm run deploy-guard && npm run build:worker && npx wrangler deploy
-npx wrangler secret bulk .dev.vars                      # REVALIDATE_SECRET, GEMINI_API_KEY, HF_TOKEN
+npx wrangler secret bulk .dev.vars                      # REVALIDATE_SECRET, GEMINI_API_KEY
 ```
 
 Then, in the dashboard: reconnect Workers Builds (§7.1), re-add the GitHub secrets (§8.4), re-create
