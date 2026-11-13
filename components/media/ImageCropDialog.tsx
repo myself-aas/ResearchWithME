@@ -14,7 +14,7 @@
  * (16:9, rectangle) and avatars (1:1, round). Load it through
  * `LazyImageCropDialog`; the cropper is an interactive-only widget.
  */
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useReducer, useState } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
 import Cropper from 'react-easy-crop';
 import { AlertCircle, RotateCw, Undo2, Upload, X } from 'lucide-react';
@@ -41,9 +41,48 @@ const COPY: Record<ImageKind, { title: string; frame: string }> = {
   avatar: { title: 'Upload profile photo', frame: 'a square profile photo' },
 };
 
-const INITIAL_CROP = { x: 0, y: 0 };
-
 type Source = { file: File; url: string };
+
+export type CropEdits = {
+  crop: { x: number; y: number };
+  zoom: number;
+  rotation: Rotation;
+  /** The cropper's latest reported `croppedAreaPixels`; null until it reports one for the current photo. */
+  area: PixelArea | null;
+};
+
+export type CropAction =
+  | { type: 'crop'; crop: { x: number; y: number } }
+  | { type: 'zoom'; zoom: number }
+  | { type: 'rotate' }
+  | { type: 'area'; area: PixelArea }
+  | { type: 'reset' }
+  | { type: 'newPhoto' };
+
+export const INITIAL_EDITS: CropEdits = { crop: { x: 0, y: 0 }, zoom: 1, rotation: 0, area: null };
+
+/**
+ * Crop editing state. `reset` restores position, zoom and rotation but keeps
+ * the last reported area: react-easy-crop only re-reports when something
+ * actually changes, so clearing it would leave Save disabled. Only a new
+ * photo clears the area.
+ */
+export function cropReducer(state: CropEdits, action: CropAction): CropEdits {
+  switch (action.type) {
+    case 'crop':
+      return { ...state, crop: action.crop };
+    case 'zoom':
+      return { ...state, zoom: action.zoom };
+    case 'rotate':
+      return { ...state, rotation: ((state.rotation + 90) % 360) as Rotation };
+    case 'area':
+      return { ...state, area: action.area };
+    case 'reset':
+      return { ...INITIAL_EDITS, area: state.area };
+    case 'newPhoto':
+      return INITIAL_EDITS;
+  }
+}
 
 export default function ImageCropDialog({ kind, open, onCancel, onConfirm }: ImageCropDialogProps) {
   // The Portal only renders while open, so every visit starts fresh at the choose stage.
@@ -64,15 +103,13 @@ export default function ImageCropDialog({ kind, open, onCancel, onConfirm }: Ima
 function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onConfirm'>) {
   const inputId = useId();
   const zoomId = useId();
-  const hintId = useId();
+  const inputHintId = useId();
   const policy = IMAGE_POLICY[kind];
   const copy = COPY[kind];
 
   const [source, setSource] = useState<Source | null>(null);
-  const [crop, setCrop] = useState(INITIAL_CROP);
-  const [zoom, setZoom] = useState(1);
-  const [rotation, setRotation] = useState<Rotation>(0);
-  const [area, setArea] = useState<PixelArea | null>(null);
+  const [edits, dispatch] = useReducer(cropReducer, INITIAL_EDITS);
+  const { crop, zoom, rotation, area } = edits;
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
@@ -82,13 +119,6 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
     if (!source) return;
     return () => URL.revokeObjectURL(source.url);
   }, [source]);
-
-  function resetEdits() {
-    setCrop(INITIAL_CROP);
-    setZoom(1);
-    setRotation(0);
-    setArea(null);
-  }
 
   async function handleFile(file: File | undefined) {
     setError(null);
@@ -100,7 +130,7 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
       setError(problem);
       return;
     }
-    resetEdits();
+    dispatch({ type: 'newPhoto' });
     setSource({ file, url: URL.createObjectURL(file) });
   }
 
@@ -144,7 +174,7 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
             </button>
           </Dialog.Close>
         </div>
-        <Dialog.Description id={hintId} className={hintClass}>
+        <Dialog.Description className={hintClass}>
           Choose a JPG or JPEG photo up to {maxKb} KB, then crop it to {copy.frame}. The crop must cover at least{' '}
           {policy.minCrop.width} × {policy.minCrop.height} px. Location and camera data are removed when it is saved.
         </Dialog.Description>
@@ -161,9 +191,10 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
                 cropShape={kind === 'avatar' ? 'round' : 'rect'}
                 minZoom={1}
                 maxZoom={3}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
-                onCropComplete={(_, pixels) => setArea(pixels)}
+                onCropChange={(next) => dispatch({ type: 'crop', crop: next })}
+                onZoomChange={(next) => dispatch({ type: 'zoom', zoom: next })}
+                onCropAreaChange={(_, pixels) => dispatch({ type: 'area', area: pixels })}
+                onCropComplete={(_, pixels) => dispatch({ type: 'area', area: pixels })}
               />
             </div>
 
@@ -179,7 +210,7 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
                 step={0.01}
                 value={zoom}
                 disabled={busy}
-                onChange={(event) => setZoom(Number(event.target.value))}
+                onChange={(event) => dispatch({ type: 'zoom', zoom: Number(event.target.value) })}
                 className="w-full accent-brand"
               />
             </div>
@@ -188,13 +219,13 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
               <button
                 type="button"
                 disabled={busy}
-                onClick={() => setRotation((current) => ((current + 90) % 360) as Rotation)}
+                onClick={() => dispatch({ type: 'rotate' })}
                 className={secondaryButtonClass}
               >
                 <RotateCw className="h-4 w-4" aria-hidden="true" />
                 <span>Rotate 90°</span>
               </button>
-              <button type="button" disabled={busy} onClick={resetEdits} className={secondaryButtonClass}>
+              <button type="button" disabled={busy} onClick={() => dispatch({ type: 'reset' })} className={secondaryButtonClass}>
                 <Undo2 className="h-4 w-4" aria-hidden="true" />
                 <span>Reset</span>
               </button>
@@ -202,6 +233,7 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
                 type="button"
                 disabled={busy}
                 onClick={() => {
+                  dispatch({ type: 'newPhoto' });
                   setSource(null);
                   setError(null);
                   setStatus('');
@@ -234,7 +266,7 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
               id={inputId}
               type="file"
               accept=".jpg,.jpeg,image/jpeg"
-              aria-describedby={hintId}
+              aria-describedby={inputHintId}
               onChange={(event) => {
                 const input = event.currentTarget;
                 void handleFile(input.files?.[0]).finally(() => {
@@ -243,6 +275,9 @@ function CropPanel({ kind, onConfirm }: Pick<ImageCropDialogProps, 'kind' | 'onC
               }}
               className="block w-full text-sm text-ink file:mr-3 file:min-h-11 file:rounded-md file:border file:border-border-strong file:bg-surface file:px-4 file:text-sm file:font-semibold file:text-ink"
             />
+            <p id={inputHintId} className={hintClass}>
+              JPG or JPEG only, up to {maxKb} KB.
+            </p>
           </div>
         )}
 
