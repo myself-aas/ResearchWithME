@@ -89,8 +89,8 @@ export default async function ApplyToWritePage({
           Apply to write
         </h1>
         <p className="mt-3 max-w-prose text-base leading-relaxed text-ink">
-          Signing in gives you a reader account. Publishing needs a person on the editorial board to
-          approve you, so every article carries a byline someone stands behind.
+          Signing in gives you a reader account. Publishing access is granted by the editor after a
+          short review, so every article carries a byline someone stands behind.
         </p>
         {params.error === 'not-editor' && (
           <p className="mt-4 border-l-2 border-brand/40 bg-brand/5 px-3 py-2 text-sm leading-relaxed text-brand">

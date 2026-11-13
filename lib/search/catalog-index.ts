@@ -26,6 +26,7 @@ export function normalizeIdentifierQuery(raw: string): string {
     .replace(/^https?:\/\/(www\.)?orcid\.org\//i, '')
     .replace(/^orcid:\s*/i, '')
     .replace(/^@+/, '')
+    .replace(/\/+$/, '')
     .replace(/[.,;)\]]+$/, '')
     .trim()
     .toLowerCase();

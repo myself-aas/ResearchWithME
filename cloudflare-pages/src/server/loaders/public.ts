@@ -215,9 +215,9 @@ const PAPERS_METADATA: RouteMetadata = {
 };
 
 const AUTHORS_METADATA: RouteMetadata = {
-  title: 'Contributors — ResearchWithMe',
+  title: 'Writers — ResearchWithMe',
   description:
-    'The reviewers behind the archive: their research domains, institutions, and complete publication records.',
+    'The writers behind ResearchWithMe: their research domains, institutions, and published reviews.',
   type: 'website',
   path: '/authors',
 };
@@ -261,25 +261,25 @@ const EDITIONS_METADATA: RouteMetadata = {
 };
 
 const EDITORIAL_BOARD_METADATA: RouteMetadata = {
-  title: 'Editorial board — ResearchWithMe',
+  title: 'Editor — ResearchWithMe',
   description:
-    'The independent collective of researchers, systems engineers, clinicians, and data librarians who set the review standard.',
+    'Editor-in-chief Ashif Ahmed Shuvo and editorial policy for ResearchWithMe reviews.',
   type: 'website',
   path: '/editorial-board',
 };
 
 const ABOUT_METADATA: RouteMetadata = {
-  title: 'About ResearchWithMe — Editorial Charter',
+  title: 'About ResearchWithMe',
   description:
-    'Learn how ResearchWithMe publishes diamond open-access paper reviews, benchmark replications, and repository teardowns by verified domain specialists.',
+    'ResearchWithMe publishes open-access article reviews, benchmark replications, and repository teardowns written by contributors with verifiable ORCID or GitHub identities.',
   type: 'website',
   path: '/about',
 };
 
 const CONTACT_METADATA: RouteMetadata = {
-  title: 'Contact the Editorial Office — ResearchWithMe',
+  title: 'Contact — ResearchWithMe',
   description:
-    'Contact ResearchWithMe for manuscript pitches, empirical errata, library metadata harvesting, contributor verification, and RFC 9116 security disclosure.',
+    'Contact ResearchWithMe about article pitches, corrections, contributor verification, and RFC 9116 security disclosure.',
   type: 'website',
   path: '/contact',
 };

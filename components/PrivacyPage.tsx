@@ -39,20 +39,9 @@ export default function PrivacyPage() {
                 1. Zero-tracking open-access reading
               </Text>
               <p className="text-ink-secondary">
-                You can read every article, inspect{' '}
-                <TextLink href="/papers" >
-                  archived research papers
-                </TextLink>
-                , download{' '}
-                <TextLink href="/editions" >
-                  quarterly PDF editions
-                </TextLink>
-                , and export citations from the{' '}
-                <TextLink href="/cite" >
-                  citation builder
-                </TextLink>{' '}
-                without registering an account. We do not load third-party ad networks, session-replay scripts, or
-                fingerprinting beacons on any page of the journal.
+                You can read every article and export citations from the{' '}
+                <TextLink href="/cite">citation builder</TextLink> without registering an account. We do not load
+                third-party ad networks, session-replay scripts, or fingerprinting beacons on any page of the site.
               </p>
             </section>
 

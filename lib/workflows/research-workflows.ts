@@ -208,10 +208,10 @@ export const RESEARCH_WORKFLOWS: Readonly<Record<WorkflowId, ResearchWorkflow>> 
       {
         id: 'impact',
         label: 'Impact tracking',
-        summary: 'Report citations and reading time without tracking readers.',
+        summary: 'Report reading time without tracking readers.',
         pattern: 'synthesize',
         details: [
-          { id: 'impact-citations', label: 'Citation counts', status: 'live', component: 'PapersArchive' },
+          { id: 'impact-citations', label: 'Primary DOI links on reviewed artifacts', status: 'live', component: 'ArticleFeed' },
           { id: 'impact-reading', label: 'Reading-time estimates', status: 'live', component: 'ArticleFeed' },
         ],
       },

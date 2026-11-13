@@ -18,20 +18,17 @@ export function buildArticleCitationMap(
   >,
 ): Record<string, CitationSource> {
   const year = extractYear(article.publishedAt);
-  const canonicalDoi = `10.5555/rwm.${article.id}`;
+  const canonicalPath = `/post/${article.slug}`;
   const selfSource: CitationSource = {
     title: article.title,
     author: article.author.name,
     year,
     journal: 'ResearchWithMe',
-    doi: canonicalDoi,
-    url: `https://researchwith.me/post/${article.slug}`,
+    url: `https://researchwith.me${canonicalPath}`,
   };
 
   const map: Record<string, CitationSource> = {
     rwm: selfSource,
-    [canonicalDoi]: selfSource,
-    [canonicalDoi.toLowerCase()]: selfSource,
   };
 
   if (article.reviewedArtifact) {

@@ -26,10 +26,10 @@ describe('PATCH /api/articles/:id (likes)', () => {
     expect((await second.json()).likes).toBe(2);
   });
 
-  it('returns 503 for an unconfigured deployment', async () => {
+  it('returns 503 for an unconfigured deployment when a reaction cannot be recorded', async () => {
     const app = createTestApp({ configured: false });
     expect((await app.request('/api/articles')).status).toBe(200);
-    expect((await app.request('/api/articles/post-1', { method: 'PATCH' })).status).toBe(404);
+    expect((await app.request('/api/articles/post-1', { method: 'PATCH' })).status).toBe(503);
   });
 
   it('limits one client to 30 likes a minute', async () => {

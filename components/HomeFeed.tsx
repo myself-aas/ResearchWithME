@@ -93,7 +93,7 @@ export default function HomeFeed({
         post.author.name,
         post.category,
         post.format,
-        `10.5555/rwm.${post.id}`,
+        post.slug,
         ...post.tags,
         post.reviewedArtifact?.identifier ?? '',
         post.reviewedArtifact?.title ?? '',
@@ -175,6 +175,7 @@ export default function HomeFeed({
           selectedCategory={selectedCategory}
           setSelectedCategory={handleSelectCategoryInPlace}
           totalArticles={posts.length}
+          totalWriters={authors.length}
         />
 
         {showFeatured && featuredPost && (

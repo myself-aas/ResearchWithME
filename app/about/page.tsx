@@ -3,9 +3,9 @@ import { pageMetadata } from '@/lib/seo';
 import { aboutPageJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 
 export const metadata = pageMetadata({
-  title: 'About ResearchWithMe — Editorial Charter',
+  title: 'About ResearchWithMe',
   description:
-    'Learn how ResearchWithMe publishes diamond open-access paper reviews, benchmark replications, and repository teardowns by verified domain specialists.',
+    'ResearchWithMe publishes open-access article reviews, benchmark replications, and repository teardowns written by contributors with verifiable ORCID or GitHub identities.',
   path: '/about',
   type: 'website',
 });

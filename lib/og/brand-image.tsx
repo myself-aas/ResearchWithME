@@ -38,7 +38,7 @@ export function brandOgImage(title: string, subtitle: string) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: '#555955' }}>
           <span>researchwith.me</span>
-          <span>CC BY 4.0 · Diamond Open Access</span>
+          <span>CC BY 4.0 · Open access</span>
         </div>
       </div>
     ),

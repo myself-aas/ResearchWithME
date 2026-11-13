@@ -3,9 +3,9 @@ import { pageMetadata } from '@/lib/seo';
 import { contactPageJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 
 export const metadata = pageMetadata({
-  title: 'Contact the Editorial Office',
+  title: 'Contact',
   description:
-    'Contact ResearchWithMe for manuscript pitches, empirical errata, library metadata harvesting, contributor verification, and RFC 9116 security disclosure.',
+    'Contact ResearchWithMe about article pitches, corrections, contributor verification, and RFC 9116 security disclosure.',
   path: '/contact',
   type: 'website',
 });

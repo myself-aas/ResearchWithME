@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   ...pageMetadata({
     title: 'Writer Studio — Compose Review',
     description:
-      'Compose and submit an open-access technical review, benchmark replication, or repository teardown with verified specialist attribution.',
+      'Compose and submit an open-access technical review, benchmark replication, or repository teardown with attributed authorship.',
     path: '/write',
     type: 'website',
   }),

@@ -7,7 +7,7 @@
 web
 
 ## Users
-Academic researchers, computational scientists, graduate scholars, independent open-science investigators, and peer reviewers seeking rigorous technical analyses, reproducible code artifacts, dataset manifests, and open research reviews across computational neuroscience, distributed systems, climate telemetry, and diamond open-access publishing models.
+Academic researchers, computational scientists, graduate scholars, independent open-science investigators, and reviewers seeking rigorous technical analyses, reproducible code artifacts, dataset manifests, and open-access reviews across computational neuroscience, distributed systems, and climate telemetry.
 
 ## Product Purpose
 ResearchWithMe is an open-access research platform delivering rigorous, long-form technical syntheses, reproducible code artifacts, dataset manifests, and open peer-review threads without paywalls, commercial metric gamification, or disruptive pop-up modals.
@@ -33,8 +33,8 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 - Palette: Warm archival stone background, deep amber/ochre accents, emerald verification indicators, high-contrast ink text.
 
 ## Evidence on Hand
-- Published articles across 6 domains: Computational Neuroscience, Distributed ML Infrastructure, Climate Telemetry, Diamond Open Access, Quantum Algorithms, and Genomic Pipelines.
-- Real DOI records, author credentials, citation counts, reading time estimates, and tag metadata.
+- Published articles across domains including Computational Neuroscience, Distributed ML Infrastructure, Climate Telemetry, Quantum Algorithms, and Genomic Pipelines.
+- Real author credentials, reading time estimates, tags, and the primary DOI or identifier of each reviewed work.
 
 ## Product Principles
 1. Content-first reading: The article is sacred; zero intrusive modals or obstructive overlays.

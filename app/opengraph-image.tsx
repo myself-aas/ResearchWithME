@@ -33,12 +33,12 @@ export default function OpengraphImage() {
             Open science, reviewed in public.
           </div>
           <div style={{ fontSize: 30, color: '#555955', fontFamily: 'Inter, system-ui, sans-serif' }}>
-            Scholarly reviews · reproducible papers · repository teardowns
+            Article reviews · reproducible research · repository teardowns
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: '#555955' }}>
           <span>researchwith.me</span>
-          <span>CC BY 4.0 · Diamond Open Access</span>
+          <span>CC BY 4.0 · Open access</span>
         </div>
       </div>
     ),
