@@ -4,7 +4,7 @@ import { getPublicCmsStore } from './store';
 import type { CmsPost, CmsStore } from './types';
 
 /**
- * Public reads are best-effort: a storage outage must degrade to the bundled
+ * Public reads are best-effort: a storage outage must degrade to an empty
  * catalogue, never to a broken page. Failures are logged for the operator.
  */
 export async function getPublishedCmsPosts(cms?: CmsStore): Promise<CmsPost[]> {

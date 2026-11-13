@@ -5,7 +5,6 @@ import { normalizePostInput } from '@/lib/cms/schema';
 import { errorResponse, isSameOrigin, noStoreHeaders, readJsonBody } from '@/lib/cms/http';
 import { revalidateArticle } from '@/lib/cms/revalidate';
 import { getEditorCmsStore } from '@/lib/cms/store';
-import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -66,23 +65,6 @@ export async function POST(request: Request) {
     if (existingCmsPost) {
       return NextResponse.json(
         { error: 'An article already uses this URL. Change the title or slug.' },
-        { status: 409 },
-      );
-    }
-
-    let catalogueConflict = null;
-    try {
-      catalogueConflict = await getPublicLegacyStore().findArticle(value.slug);
-    } catch (error) {
-      console.error('Could not check the legacy catalogue for slug conflicts:', error);
-      return NextResponse.json(
-        { error: 'The public catalogue could not be checked. Try again shortly.' },
-        { status: 503 },
-      );
-    }
-    if (catalogueConflict) {
-      return NextResponse.json(
-        { error: 'A catalogue article already uses this URL. Choose a different slug.' },
         { status: 409 },
       );
     }

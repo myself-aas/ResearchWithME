@@ -34,6 +34,12 @@ describe('PATCH /api/articles/[id] (like)', () => {
     expect((await like('no-such-id')).status).toBe(404);
   });
 
+  it('returns 404 for a former seed id', async () => {
+    const res = await like('post-1');
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: 'Article not found.' });
+  });
+
   it('limits one client to 30 likes a minute', async () => {
     const headers = { 'x-forwarded-for': '203.0.113.7' };
     for (let i = 0; i < 30; i += 1) {

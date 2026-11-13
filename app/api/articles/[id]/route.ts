@@ -3,7 +3,6 @@ import { cmsPostToArticle } from '@/lib/cms/mapping';
 import { getPublishedCmsPostById } from '@/lib/cms/read';
 import { fromPublicPostId } from '@/lib/cms/schema';
 import { getPublicCmsStore } from '@/lib/cms/store';
-import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -19,28 +18,14 @@ export async function GET(_request: NextRequest, props: { params: Promise<{ id: 
     const key = normalizeId(id);
     if (!key) return NextResponse.json({ error: 'An article id is required.' }, { status: 400 });
 
+    // Every public article is a CMS post; any other id names nothing.
     const cmsPostId = fromPublicPostId(key);
-    if (cmsPostId) {
-      const post = await getPublishedCmsPostById(cmsPostId);
-      if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
-      return NextResponse.json(
-        { article: cmsPostToArticle(post) },
-        { headers: { 'Cache-Control': 'public, max-age=30, stale-while-revalidate=300' } },
-      );
-    }
+    if (!cmsPostId) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
 
-    const legacy = getPublicLegacyStore();
-    let article;
-    try {
-      article = await legacy.findArticle(key);
-    } catch (error) {
-      console.error('Error reading the legacy catalogue:', error);
-      return NextResponse.json({ error: 'The article could not be read.' }, { status: 503 });
-    }
-    if (!article) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
-
+    const post = await getPublishedCmsPostById(cmsPostId);
+    if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
     return NextResponse.json(
-      { article },
+      { article: cmsPostToArticle(post) },
       { headers: { 'Cache-Control': 'public, max-age=30, stale-while-revalidate=300' } },
     );
   } catch (error) {
@@ -64,35 +49,17 @@ export async function PATCH(request: NextRequest, props: { params: Promise<{ id:
     if (!key) return NextResponse.json({ error: 'An article id is required.' }, { status: 400 });
 
     const cmsPostId = fromPublicPostId(key);
-    if (cmsPostId) {
-      const post = await getPublishedCmsPostById(cmsPostId);
-      if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
+    if (!cmsPostId) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
 
-      try {
-        const store = await getPublicCmsStore();
-        const likes = await store.incrementLikes(cmsPostId);
-        return NextResponse.json({ success: true, likes });
-      } catch (error) {
-        console.error('Error updating CMS article likes:', error);
-        return NextResponse.json({ error: 'The reaction could not be recorded.' }, { status: 503 });
-      }
-    }
-
-    const legacy = getPublicLegacyStore();
-    let article;
-    try {
-      article = await legacy.findArticle(key);
-    } catch (error) {
-      console.error('Error reading the legacy catalogue:', error);
-      return NextResponse.json({ error: 'The article could not be read.' }, { status: 503 });
-    }
-    if (!article) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
+    const post = await getPublishedCmsPostById(cmsPostId);
+    if (!post) return NextResponse.json({ error: 'Article not found.' }, { status: 404 });
 
     try {
-      const likes = await legacy.incrementLikes(article.id);
+      const store = await getPublicCmsStore();
+      const likes = await store.incrementLikes(cmsPostId);
       return NextResponse.json({ success: true, likes });
     } catch (error) {
-      console.error('Error updating article likes:', error);
+      console.error('Error updating CMS article likes:', error);
       return NextResponse.json({ error: 'The reaction could not be recorded.' }, { status: 503 });
     }
   } catch (error) {

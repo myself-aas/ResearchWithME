@@ -2,54 +2,32 @@ import 'server-only';
 
 import { unstable_cache } from 'next/cache';
 import type { BlogPost } from '@/lib/blog-data';
-import { DEFAULT_LEGACY_SEEDS } from '@/lib/legacy/seeds';
-import { getPublicLegacyStore } from '@/lib/legacy/store';
-import type { LegacyStore } from '@/lib/legacy/types';
 import { cmsPostToArticle } from './mapping';
 import { getCmsCommentCounts, getPublishedCmsPosts } from './read';
 import type { CmsStore } from './types';
 
 /**
- * The single public catalogue: published CMS rows lead, then the durable
- * legacy interaction corpus (seed articles with durable counters), then the
- * bundled seed posts as a last-ditch fallback. Duplicate slugs resolve in
- * favour of the CMS so a published edit is never shadowed by a stale build
- * artefact.
+ * The single public catalogue: published CMS posts, nothing else. When no
+ * post is published the catalogue is honestly empty and the pages show their
+ * empty states.
  *
- * `legacy`/`cms` may be injected by tests; production callers use the public
- * stores. Legacy failures degrade to the bundled seed posts — a storage
- * outage must not blank the site — while CMS failures already degrade
- * inside read.ts.
+ * `cms` may be injected by tests; production callers use the public store.
+ * CMS failures already degrade to an empty list inside read.ts.
  *
  * Server-only and intentionally uncached here; callers that render a page wrap
  * it in React's `cache` so metadata and the page body share one read.
  */
-export async function getArticleCatalogue(
-  legacy: LegacyStore = getPublicLegacyStore(),
-  cms?: CmsStore,
-): Promise<BlogPost[]> {
-  const [posts, commentCounts, legacyArticles] = await Promise.all([
-    getPublishedCmsPosts(cms),
-    getCmsCommentCounts(cms),
-    Promise.resolve().then(() => legacy.getArticles()).catch((error) => {
-      console.error('Could not load the legacy interaction corpus:', error);
-      return DEFAULT_LEGACY_SEEDS.articles;
-    }),
-  ]);
-  const merged = new Map<string, BlogPost>();
+export async function getArticleCatalogue(cms?: CmsStore): Promise<BlogPost[]> {
+  const [posts, commentCounts] = await Promise.all([getPublishedCmsPosts(cms), getCmsCommentCounts(cms)]);
+  const bySlug = new Map<string, BlogPost>();
 
   for (const post of posts) {
     const article = cmsPostToArticle(post);
     article.commentsCount = commentCounts[post.id] ?? 0;
-    merged.set(article.slug, article);
+    bySlug.set(article.slug, article);
   }
 
-  // Store implementations overlay durable counters onto the seed corpus.
-  for (const article of [...legacyArticles, ...DEFAULT_LEGACY_SEEDS.articles]) {
-    if (article?.slug && !merged.has(article.slug)) merged.set(article.slug, article);
-  }
-
-  return [...merged.values()];
+  return [...bySlug.values()];
 }
 
 /**
@@ -57,13 +35,10 @@ export async function getArticleCatalogue(
  * same shape `GET /api/articles` returns without `?full=1`). Server pages pass
  * this to `HomeFeed` as `initialPosts`, so the feed is in the server HTML —
  * crawlers and readers without JavaScript see the journal, and nobody sees a
- * flash of the "no manuscripts" empty state while the client fetch runs.
+ * flash of the empty state while the client fetch runs.
  */
-export async function getFeedArticles(
-  legacy: LegacyStore = getPublicLegacyStore(),
-  cms?: CmsStore,
-): Promise<BlogPost[]> {
-  const articles = await getArticleCatalogue(legacy, cms);
+export async function getFeedArticles(cms?: CmsStore): Promise<BlogPost[]> {
+  const articles = await getArticleCatalogue(cms);
   return articles.map(({ bodyMarkdown: _bodyMarkdown, ...article }) => ({ ...article, content: [] }));
 }
 

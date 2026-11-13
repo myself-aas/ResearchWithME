@@ -6,7 +6,6 @@ import { normalizePostInput } from '@/lib/cms/schema';
 import { errorResponse, isSameOrigin, noStoreHeaders, readJsonBody } from '@/lib/cms/http';
 import { revalidateArticle } from '@/lib/cms/revalidate';
 import { getEditorCmsStore } from '@/lib/cms/store';
-import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
@@ -71,25 +70,6 @@ export async function PATCH(request: Request, props: RouteProps) {
     // byline to something the profile does not say.
     const author = await resolvePublishableAuthor(parsed.value.authorId);
     const value = { ...parsed.value, authorName: author.displayName };
-
-    if (value.slug !== existing.slug) {
-      let conflict = null;
-      try {
-        conflict = await getPublicLegacyStore().findArticle(value.slug);
-      } catch (error) {
-        console.error('Could not check the legacy catalogue for slug conflicts:', error);
-        return NextResponse.json(
-          { error: 'The public catalogue could not be checked. Try again shortly.' },
-          { status: 503 },
-        );
-      }
-      if (conflict) {
-        return NextResponse.json(
-          { error: 'A catalogue article already uses this URL. Choose a different slug.' },
-          { status: 409 },
-        );
-      }
-    }
 
     const post = await store.updatePost(id, value);
 
