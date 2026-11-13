@@ -11,6 +11,7 @@ export const API_GROUPS = [
   { id: 'cms-comments', name: 'Comment moderation', path: '/api/cms/comments', description: 'Moderate comments. Editor access is required.' },
   { id: 'applications', name: 'Writer applications', path: '/api/dashboard/applications', description: 'Manage writer applications. A signed-in session is required; reviews require editor access.' },
   { id: 'revalidate', name: 'Cache revalidation', path: '/api/revalidate', description: 'Receive database webhooks that invalidate cached pages. A shared secret is required.' },
+  { id: 'billing', name: 'Billing', path: '/api/billing/entitlement', description: 'Read the signed-in account’s plan and purchase credits. A session is required.' },
   { id: 'webhooks', name: 'Billing webhook', path: '/api/webhooks/lemonsqueezy', description: 'Receive signed Lemon Squeezy billing events. A webhook signing secret is required.' },
 ] as const;
 

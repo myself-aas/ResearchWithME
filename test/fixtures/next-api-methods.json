@@ -4,6 +4,7 @@
   { "path": "/api/articles/{id}", "method": "PATCH" },
   { "path": "/api/authors", "method": "GET" },
   { "path": "/api/authors/{id}", "method": "GET" },
+  { "path": "/api/billing/entitlement", "method": "GET" },
   { "path": "/api/cms/comments", "method": "GET" },
   { "path": "/api/cms/comments/{id}", "method": "DELETE" },
   { "path": "/api/cms/posts", "method": "GET" },

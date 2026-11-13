@@ -206,6 +206,16 @@ export const API_OPERATIONS: ApiOperation[] = [
     responses: { 200: json('Revalidation result.', object({ revalidated: boolean, table: { type: ['string', 'null'] }, paths: strings, now: integer }, ['revalidated', 'table', 'paths', 'now'])), ...errors(401, 429, 500, 503) },
   },
   {
+    group: 'billing', method: 'get', path: '/api/billing/entitlement', operationId: 'getBillingEntitlement',
+    summary: 'Read the signed-in account plan',
+    description: 'Returns the caller’s plan, subscription state, purchase credits, and the current period end. Uncacheable: a purchase is visible on the next request. Test-mode purchases are excluded.',
+    security: session,
+    responses: {
+      200: json('The caller’s entitlement.', object({ entitlement: ref('Entitlement') }, ['entitlement'])),
+      ...errors(401, 500, 503),
+    },
+  },
+  {
     group: 'webhooks', method: 'post', path: '/api/webhooks/lemonsqueezy', operationId: 'receiveLemonSqueezyWebhook',
     summary: 'Receive a Lemon Squeezy billing event',
     description: 'Lemon Squeezy posts orders and subscription changes here. The X-Signature header is an HMAC-SHA256 of the raw request body and is the only credential; there is no session. Unhandled event names and unattributable purchases are acknowledged with 200 and recorded as ignored, so the sender stops retrying. Replayed event ids are acknowledged without being applied twice.',
@@ -238,6 +248,12 @@ const schemas: Record<string, Schema> = {
   Comment: object({ id: text, postId: text, authorName: text, authorRole: text, avatar: text, timestamp: text, text }, ['id', 'postId', 'authorName', 'avatar', 'timestamp', 'text']),
   CommentInput: object({ postId: { type: 'string', minLength: 1, maxLength: 120 }, authorName: { type: 'string', minLength: 2, maxLength: 120 }, authorRole: { type: 'string', maxLength: 80 }, text: { type: 'string', minLength: 2, maxLength: 4000 } }, ['postId', 'authorName', 'text']),
   AssistantCitation: object({ id: text, title: text, author: text, category: text }, ['id', 'title', 'author', 'category']),
+  Entitlement: object({
+    plan: { type: 'string', enum: ['none', 'copilot'] },
+    status: { type: 'string', enum: ['none', 'on_trial', 'active', 'paused', 'past_due', 'unpaid', 'cancelled', 'expired'] },
+    aiCredits: integer,
+    currentPeriodEnd: { type: ['string', 'null'] },
+  }, ['plan', 'status', 'aiCredits']),
   CmsPostInput: object(cmsPostProperties, ['title', 'authorId']),
   CmsPostPatch: object(cmsPostProperties),
   CmsPost: object({ ...cmsPostProperties, id: text, authorId: { type: ['string', 'null'] }, likes: integer, readTime: text, publishedAt: { type: ['string', 'null'] }, insertedAt: text, updatedAt: text }, ['id', 'title', 'slug', 'status']),
