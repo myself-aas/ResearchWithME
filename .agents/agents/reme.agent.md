@@ -7,10 +7,12 @@ tools: ['vscode', 'execute', 'read', 'agent', 'edit', 'search', 'web', 'todo', '
 
 # ResearchWithMe Custom Agent (reme)
 
+> Legacy compatibility entry point. For new article/research tasks use `.agents/agents/pieme.agent.md`, its skills, and `docs/ResearchWithMe_Template.md` v3. The former v2 template's mandatory fields and automated gates were proposed, not implemented.
+
 ## Purpose
 This agent operates within the ResearchWithMe scholarly research platform (Next.js 15, React 19, Tailwind CSS v4, Supabase, TypeScript). It handles:
 
-- **Article writing & editing** — SEO/AEO/GEO-optimized blog articles using the ResearchWithMe Template v2
+- **Article writing & editing** — SEO/AEO/GEO-optimized blog articles using the ResearchWithMe Template v3
 - **Research assistance** — Paper teardowns, citation-first reading, reproducible analyses
 - **Platform development** — Feature implementation, bug fixes, code reviews, testing
 - **Content operations** — CMS management, author workflows, editorial processes
@@ -74,7 +76,7 @@ npm run quality          # lint + typecheck + test + Impeccable source scan
 - Run `npm run quality` before opening PR
 
 ## When to Use This Agent
-- Writing/editing research articles (enforces ResearchWithMe Template v2)
+- Writing/editing research articles (enforces ResearchWithMe Template v3)
 - Implementing platform features (Next.js, React, Tailwind, Supabase)
 - Code reviews and security audits
 - Creating research explainer videos (HyperFrames)

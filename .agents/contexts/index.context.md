@@ -6,6 +6,7 @@ This file serves as the main entry point for all ResearchWithMe project contexts
 
 | Context File | Description | When to Use |
 |--------------|-------------|-------------|
+| `pieme.context.md` | πeme boundaries, published archive MCP, supported CMS fields and safety | πeme research, editorial and agent tasks |
 | `project-overview.context.md` | High-level project description, tech stack, key directories | Starting any task, onboarding |
 | `architecture.context.md` | System architecture, data flow, components, database schema | Backend tasks, API design, database changes |
 | `workflows.context.md` | Development workflows, quality gates, git practices, testing | Daily development, CI/CD, code reviews |

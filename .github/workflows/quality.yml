@@ -21,6 +21,8 @@ jobs:
         run: npm run tokens:build && npm run tokens:check
       - name: Lint, typecheck, tests, Impeccable source scan
         run: npm run lint && npm run typecheck && npm run test && npm run impeccable:source
+      - name: πeme offline draft checks
+        run: npm run pieme:check && npm run pieme:test
       - name: Production build
         run: npm run build
       - name: Performance budgets (§18)
