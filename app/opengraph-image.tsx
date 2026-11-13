@@ -21,10 +21,10 @@ export default function OpengraphImage() {
           color: '#161C1A',
           padding: '72px 84px',
           borderTop: '18px solid #1D4ED8',
-          fontFamily: 'Georgia, serif',
+          fontFamily: 'ui-serif, Georgia, serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'Georgia, serif', fontSize: 54, letterSpacing: '-0.04em' }}>
+        <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'ui-serif, Georgia, serif', fontSize: 54, letterSpacing: '-0.04em' }}>
                   <span style={{ fontWeight: 700, color: '#1D4ED8' }}>{piSymbol}</span>
           <span style={{ fontWeight: 400, color: '#161C1A' }}>eme</span>
         </div>
@@ -32,11 +32,11 @@ export default function OpengraphImage() {
           <div style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 940 }}>
             Open science, reviewed in public.
           </div>
-          <div style={{ fontSize: 30, color: '#555955', fontFamily: 'Inter, system-ui, sans-serif' }}>
+          <div style={{ fontSize: 30, color: '#5C5C63', fontFamily: 'Inter, system-ui, sans-serif' }}>
             Article reviews · reproducible research · repository teardowns
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: '#555955' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: '#5C5C63' }}>
           <span>researchwith.me</span>
           <span>CC BY 4.0 · Open access</span>
         </div>
