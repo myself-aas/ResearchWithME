@@ -38,7 +38,7 @@ Supabase Storage enforces type and size server-side through bucket limits and RL
 | 11 | False claims | **Remove**:<br>• ISSN `2994-0821`<br>• "DOI prefix 10.5555/rwm" and every generated `10.5555/rwm.*` DOI (10.5555 is Crossref's test prefix)<br>• journal language: "diamond open access", "monograph", "verified specialist", "editorial board/office", "peer-reviewed preprint"<br>• `OVERVIEW_STATS`<br>• the four fictional editors<br>• the hash-derived `AuthorImpactRadarChart`<br>• the empty placeholder archives `/papers`, `/paper/[slug]`, `/editions` and `/api/papers*`<br><br>**Keep** the CC BY 4.0 licence statement, worded as the site's own licence |
 | 12 | Editors | **One person:** Ashif Ahmed Shuvo, Editor-in-Chief, linked to the live profile `/author/myself-aas`. In the database, keep only the university account's `public.editors` row; the Gmail account becomes a reader |
 | 13 | Live database | **Reconcile in place.** Drift found:<br>• the migration log lists 14 migrations (`00001`–`00014`) from an older project<br>• only 5 tables exist (`posts`, `comments`, `editors`, `author_applications`, `profiles`)<br>• `legacy_*` is missing<br>• 10 policies call `private.is_editor()`, which is identical to `public.is_editor()` but not in the repo<br>• the empty private bucket `researchwith-me-media` is orphaned<br><br>Fix: back up, mark the old log reverted, re-push every repo migration (all idempotent), then add one reconcile migration, so the live schema equals the repo. The profile, editor and application rows are kept |
-| 14 | Language | **English only.** Remove Bangla entirely, along with the language toggle and the i18n layer (`lib/i18n/`, `components/i18n/`, the `pieme-locale` cookie, Bengali and Arabic font stacks and `[lang]` CSS, the Bengali video tokens). Strings are inlined from `lib/i18n/messages/en.json` |
+| 14 | Language | **English only.** Remove Bangla entirely, along with the language toggle and the i18n layer (`lib/i18n/`, `components/i18n/`, the `reme-locale` cookie, Bengali and Arabic font stacks and `[lang]` CSS, the Bengali video tokens). Strings are inlined from `lib/i18n/messages/en.json` |
 | 15 | Header | **Brand + menu items + search icon + one CTA.** Menu items: Articles, Writers, Assistant, Reading list, About. The search is an icon button with no `⌘K` badge or text label (the shortcut still works but isn't advertised). CTA: `Start writing` for visitors and readers, `Open studio` for editors. Theme toggle, citation builder, Editor page and sign-in move to the footer or the CTA flow. The locale switcher, digest badge, saved-count pulse and secondary nav leave the header |
 
 ## Global Constraints
@@ -336,7 +336,7 @@ git commit -m "chore: make npm the only package manager"
   - `app/layout.tsx:11-14` (comment)
   - `DESIGN.md` (:50-114 frontmatter, :152 prose)
   - `README.md` (Fonts)
-  - `docs/pieme-design-system-v3.1.md` (one-line note)
+  - `docs/reme-design-system-v3.1.md` (one-line note)
   - `CLAUDE.md`, `PRODUCT.md`
 - Test: `lib/__tests__/theme-typography.test.tsx`
 
@@ -355,7 +355,7 @@ git commit -m "chore: make npm the only package manager"
 - [ ] **Step 3: Implement** the three variables and comment blocks, leaving `[lang="bn"]`, `[lang="ar"]` and `next/font/local` as they are. Docs:
   - `DESIGN.md`: each `fontFamily` leads with the Aptos name and keeps the old stack; update :152.
   - `README.md` Fonts: same.
-  - `docs/pieme-design-system-v3.1.md`: add "2026-11-13: Aptos family leads each stack; these faces are fallbacks".
+  - `docs/reme-design-system-v3.1.md`: add "2026-11-13: Aptos family leads each stack; these faces are fallbacks".
   - `CLAUDE.md`: "Aptos Serif is primary (headings + reading copy)".
   - `PRODUCT.md`: confirm it matches.
 - [ ] **Step 4: Verify**
@@ -374,7 +374,7 @@ Without Aptos, Newsreader / Inter / JetBrains Mono render as today. Push and con
 - [ ] **Step 6: Commit**
 
 ```bash
-git add app/globals.css cloudflare-pages/src/globals.css app/layout.tsx DESIGN.md README.md docs/pieme-design-system-v3.1.md CLAUDE.md PRODUCT.md lib/__tests__/theme-typography.test.tsx
+git add app/globals.css cloudflare-pages/src/globals.css app/layout.tsx DESIGN.md README.md docs/reme-design-system-v3.1.md CLAUDE.md PRODUCT.md lib/__tests__/theme-typography.test.tsx
 git commit -m "feat: lead font stacks with the Aptos family, keeping self-hosted faces as fallbacks"
 ```
 
@@ -817,7 +817,7 @@ git commit -m "refactor: remove the fictional seed corpus and legacy storage lay
     - The citation venue is `'ResearchWithMe'`, and `CitationTool`'s custom-venue default becomes `''`.
     - DOIs supplied by users for external papers (custom citations) are still allowed.
   - **Licence line (exact copy):** `Articles are published under CC BY 4.0.`
-  - **Footer identity line (exact copy):** `ResearchWithMe (πeme) · Edited by Ashif Ahmed Shuvo`.
+  - **Footer identity line (exact copy):** `ResearchWithMe (reme) · Edited by Ashif Ahmed Shuvo`.
 
 - [ ] **Step 1: Write the failing test** `lib/__tests__/truthful-copy.test.ts`
 
@@ -1021,8 +1021,8 @@ git commit -m "docs: record the live Supabase reconciliation"
   - `app/globals.css` and `cloudflare-pages/src/globals.css`: delete `--font-bengali-*`, `--font-arabic-*` and the `:root[lang="bn"]` / `[lang="ar"]` blocks (around `:26-29`, `:705-730`)
   - `tokens/scripts/build.mjs` (`:121-123`: the Bengali video font group), then `npm run tokens:build` regenerates `tokens/generated/tokens.video.{css,json}`
   - `lib/__tests__/theme-typography.test.tsx`: delete the `Hind Siliguri`, `Noto Serif Bengali` and `bn line-height` assertions, and the `LocaleProvider` wrapper in the ThemeToggle render
-  - `test/e2e/archive-routes.spec.ts` (`:30-32`), `test/pages/archive-routes.test.ts` (`:57-59`): replace the bn-cookie cases with `ignores a pieme-locale cookie and serves lang="en"`
-  - `DESIGN.md`, `README.md`, `CLAUDE.md`, `docs/pieme-design-system-v3.1.md`: remove the bn/pseudo-localization requirements; add one line, "English only"
+  - `test/e2e/archive-routes.spec.ts` (`:30-32`), `test/pages/archive-routes.test.ts` (`:57-59`): replace the bn-cookie cases with `ignores a reme-locale cookie and serves lang="en"`
+  - `DESIGN.md`, `README.md`, `CLAUDE.md`, `docs/reme-design-system-v3.1.md`: remove the bn/pseudo-localization requirements; add one line, "English only"
 - Test: `lib/__tests__/english-only.test.ts` (new)
 
 **Interfaces:**
@@ -1030,18 +1030,18 @@ git commit -m "docs: record the live Supabase reconciliation"
 
 - [ ] **Step 1: Write the failing test** `lib/__tests__/english-only.test.ts`
   - `has no i18n modules` → `existsSync('lib/i18n')` and `existsSync('components/i18n')` are both `false`
-  - `ships no Bengali or Arabic support`: across tracked files in `app/`, `components/`, `lib/` (excluding `__tests__`), `cloudflare-pages/src/` and `tokens/`, no match for `/Bengali|Hind Siliguri|lang="bn"|lang="ar"|pieme-locale|LocaleSwitcher|useLocale|[ঀ-৿]/`. `[ঀ-৿]` is the Bengali Unicode block.
+  - `ships no Bengali or Arabic support`: across tracked files in `app/`, `components/`, `lib/` (excluding `__tests__`), `cloudflare-pages/src/` and `tokens/`, no match for `/Bengali|Hind Siliguri|lang="bn"|lang="ar"|reme-locale|LocaleSwitcher|useLocale|[ঀ-৿]/`. `[ঀ-৿]` is the Bengali Unicode block.
   - `renders lang="en"` → `readFileSync('app/layout.tsx')` contains `lang="en"`
 - [ ] **Step 2: Run it** with `npx vitest run lib/__tests__/english-only.test.ts` → FAIL.
 - [ ] **Step 3: Implement** the deletions and edits above. Copy the English strings verbatim from `en.json` before deleting it.
 - [ ] **Step 4: Verify**
   - `npm run quality` → PASS. This includes `tokens:check`, and Task 6's `--font-*` assertions still pass.
   - `npm run build:pages` → exit 0
-  - `npm run dev`: no language control anywhere; a `pieme-locale=bn` cookie has no effect
+  - `npm run dev`: no language control anywhere; a `reme-locale=bn` cookie has no effect
 - [ ] **Step 5: Commit**
 
 ```bash
-git add -A lib components app cloudflare-pages tokens test DESIGN.md README.md CLAUDE.md docs/pieme-design-system-v3.1.md
+git add -A lib components app cloudflare-pages tokens test DESIGN.md README.md CLAUDE.md docs/reme-design-system-v3.1.md
 git commit -m "refactor: make the site English-only and remove the language toggle"
 ```
 

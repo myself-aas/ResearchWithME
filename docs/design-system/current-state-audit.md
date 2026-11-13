@@ -1,7 +1,7 @@
 # Current-State Audit — ResearchWithME (Stage 0)
 
-Date: 2026-11-09. Spec: `docs/pieme-design-system-v3.1.md` (πeme v3.1, stable-candidate).
-Branch: `arena/d5fd6236-researchwithme`. Token-layer retokenization to πeme v3.1 already landed (`c522005`, `6932467`).
+Date: 2026-11-09. Spec: `docs/reme-design-system-v3.1.md` (reme v3.1, stable-candidate).
+Branch: `arena/d5fd6236-researchwithme`. Token-layer retokenization to reme v3.1 already landed (`c522005`, `6932467`).
 
 ## Framework and versions
 
@@ -10,7 +10,7 @@ Branch: `arena/d5fd6236-researchwithme`. Token-layer retokenization to πeme v3.
 - **Package manager:** `bun@1.4.4` per `packageManager` (`bun.lock` canonical; a stale `package-lock.json` also exists — flagged as risk R-01). Node ≥20.9.
 - **Backend/DB:** Supabase (Postgres + RLS + storage + realtime) via `@supabase/ssr`; local JSON adapters (`data/cms-posts.json`) when env vars are absent. Tables: `posts`, `comments`, `profiles`, `editors`, `author_applications`.
 - **Deploy:** Cloudflare Workers via `@opennextjs/cloudflare` (OpenNext), `wrangler.jsonc`, KV cache namespace. `output: 'standalone'`.
-- **Email:** React Email 6 + Resend (`emails/`, `lib/email/`), templates now on πeme palette.
+- **Email:** React Email 6 + Resend (`emails/`, `lib/email/`), templates now on reme palette.
 - **Video:** HeyGen Hyperframes projects under `videos/*` (`.hyperframes`, compositions); no Remotion dependency yet. `components/VideoEmbed.tsx` embeds them.
 - **AI:** `/api/research-assistant` (Gemini via `@google/genai`, catalog-grounded, deterministic fallback).
 - **Editor:** `@mdxeditor/editor` in `components/cms/MarkdownEditor.tsx`; autosave in `/write`.
@@ -35,13 +35,13 @@ Branch: `arena/d5fd6236-researchwithme`. Token-layer retokenization to πeme v3.
 - **No CI workflows** (`.github/workflows/` absent despite README references) — risk R-02.
 - Prior full audit: `docs/audit-2026-10-25.md` — axe WCAG 2.1 A/AA 0 violations on 14 routes, CLS 0, LCP 80–390 ms local, Impeccable 20/20 after remediation.
 
-## Gaps vs πeme v3.1 (summary; details in sibling docs)
+## Gaps vs reme v3.1 (summary; details in sibling docs)
 
 - No token build pipeline (single source of truth → CSS/TS/JSON/SCSS outputs) — tokens live inline in `globals.css`.
 - No scholarly domain schemas (Source/SourceVersion/Evidence/Claim/…): CMS model is posts/comments only.
 - No trust model dimensions, provenance graph, review threads, integrity events, retraction propagation.
 - No i18n (English only; no locale routing, no Bangla, no RTL).
-- No dark/system theme toggle (only `.dark-surface` components; πeme dark tokens defined but no UI switch); no forced-colors testing.
+- No dark/system theme toggle (only `.dark-surface` components; reme dark tokens defined but no UI switch); no forced-colors testing.
 - No offline/conflict handling beyond localStorage; no idempotency keys on writes.
 - No axe-core in test suite (manual audit only); no visual regression; no e2e.
 - No `packages/` monorepo — modular structure must live under existing source dirs.

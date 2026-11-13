@@ -1,4 +1,4 @@
-# πeme (@researchwith.me) Webapp Upgrade — Integration Plan
+# reme (@researchwith.me) Webapp Upgrade — Integration Plan
 
 **Generated:** 2026-11-12  
 **Based on:** Full codebase audit + loaded skills (building-components, minimalist-ui, hyperframes, design-doc-mermaid, documentation-writer, writing-guidelines, lottie, motion-design)
@@ -7,8 +7,8 @@
 
 ## Executive Summary
 
-The πeme codebase is already a sophisticated, production-ready scholarly platform with:
-- **πeme v3.1 design system** (Archival Paper/Obsidian themes, Newsreader/Inter/JetBrains Mono)
+The reme codebase is already a sophisticated, production-ready scholarly platform with:
+- **reme v3.1 design system** (Archival Paper/Obsidian themes, Newsreader/Inter/JetBrains Mono)
 - **Comprehensive motion system** (12 Disney principles, 6 duration tokens, 4 easings, 5 pattern presets)
 - **Rich component library** (70+ components across scholarly, reader, workspace, dashboard, motion, UI)
 - **Dual-runtime architecture** (Next.js + Cloudflare Pages via shared components)
@@ -248,7 +248,7 @@ flowchart TD
 ### Current State Analysis
 
 **Strengths:**
-- Excellent motion system (πeme v3.1 §9-10)
+- Excellent motion system (reme v3.1 §9-10)
 - Comprehensive component library (70+ components)
 - Strong accessibility baseline (WCAG 2.1 AA, 0 axe violations)
 - Good token architecture (primitives → semantic → component aliases)
@@ -270,7 +270,7 @@ flowchart TD
 components/primitives/
 ├── index.ts
 ├── Box.tsx              # Layout primitive (replaces most divs)
-├── Text.tsx             # Typography primitive (enforces πeme scales)
+├── Text.tsx             # Typography primitive (enforces reme scales)
 ├── Stack.tsx            # Vertical/horizontal spacing primitive
 ├── Inline.tsx           # Horizontal flow primitive
 ├── Card.tsx             # Surface primitive (hairline border, no shadow)
@@ -319,7 +319,7 @@ export function Box({ as: Component = 'div', padding = 'none', margin = 'none', 
 }
 ```
 
-**Text.tsx** — Typography primitive enforcing πeme scales:
+**Text.tsx** — Typography primitive enforcing reme scales:
 ```tsx
 'use client';
 import { cn } from '@/lib/utils';
@@ -469,8 +469,8 @@ Card.Footer = CardFooter;
 ### Current Documentation State
 - `README.md` — Good overview, routes table, deployment
 - `PRODUCT.md` — Product schema, principles, capabilities
-- `DESIGN.md` — πeme v3.1 front-matter + summary
-- `docs/pieme-design-system-v3.1.md` — Full normative spec (98KB)
+- `DESIGN.md` — reme v3.1 front-matter + summary
+- `docs/reme-design-system-v3.1.md` — Full normative spec (98KB)
 - `docs/motion-system.md` — Motion system documentation
 - `docs/audit-2026-10-25.md` — Audit report
 - `docs/deployment.md` — Deployment guide
@@ -522,7 +522,7 @@ docs/
 # System Architecture
 
 ## Purpose
-Describes the πeme platform's high-level structure, runtime targets, and data flows.
+Describes the reme platform's high-level structure, runtime targets, and data flows.
 
 ## Prerequisites
 - Familiarity with Next.js App Router, React 19, Tailwind CSS v4
@@ -533,7 +533,7 @@ Describes the πeme platform's high-level structure, runtime targets, and data f
 ### System Context (C4 Level 1)
 ```mermaid
 graph TD
-    Reader[Researcher/Reader] -->|HTTPS| Platform[πeme Platform]
+    Reader[Researcher/Reader] -->|HTTPS| Platform[reme Platform]
     Writer[Approved Writer] -->|HTTPS + Auth| Platform
     Editor[Editor] -->|HTTPS + Auth| Platform
     
@@ -641,7 +641,7 @@ sequenceDiagram
 # Research Lifecycle Visualizations
 
 ## Overview
-Four interactive visualizations mapping core scholarly workflows on the πeme platform.
+Four interactive visualizations mapping core scholarly workflows on the reme platform.
 
 ## 1. Discovery & Literature Synthesis
 **Location:** `/assistant` page, `/workflows/discovery`
@@ -822,7 +822,7 @@ export function PageTransitionLottie({ className, onComplete }: { className?: st
 |------|-------------|--------|
 | `MermaidDiagram` rendering in the app | `WorkflowDiagram`: semantic `<ol>` + native `<details>`, server-rendered | Mermaid adds several hundred KB, renders through `innerHTML` with `securityLevel: 'loose'`, and bakes hex fills that break the Obsidian theme. The HTML version is crawlable, keyboard-accessible without JS, and costs no bundle. `toMermaid()` still emits Mermaid for Markdown docs (Week 6). |
 | Hard-coded `classDef fill:#F3F1EC` | Theme-neutral Mermaid (`stroke-dasharray` for planned) | Hex fills are unreadable in GitHub dark mode. |
-| Lottie JSON files in `public/animations/` | `lib/lottie/compose.ts` builds Bodymovin JSON from `DURATION_MS` / `EASING` | Keeps the "tokens only" rule; one asset serves both themes (`.pieme-lottie` recolours to `currentColor`). |
+| Lottie JSON files in `public/animations/` | `lib/lottie/compose.ts` builds Bodymovin JSON from `DURATION_MS` / `EASING` | Keeps the "tokens only" rule; one asset serves both themes (`.reme-lottie` recolours to `currentColor`). |
 | `skeleton-wave.json`, `page-transition.json` | Not built | `SkeletonShard` and `RouteTransition` already do this in CSS/`m` at zero cost; Lottie cannot animate the route itself. Built `verify`, `connect`, `synthesize`, `attention` instead (one per §9 pattern used by the workflows). |
 | Workflow detail nodes as written | Each node marked `live` (with shipping component) or `planned` | "Semantic embedding", "Topic modeling", "Power calculation", "Git-based branching", "Reading time analytics" don't exist (and analytics contradicts PRODUCT.md's no-tracking rule). A test fails if a `live` reference doesn't resolve to a file. |
 | `/workspace` route | Methodology workflow attaches to `/write` | There is no `/workspace` route; `ResearchWorkspace` is a component. |

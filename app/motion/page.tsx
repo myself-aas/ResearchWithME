@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   ...pageMetadata({
     title: 'Motion Lab',
     description:
-      'Interactive reference for the πeme motion system: twelve animation principles, token tables, loading contracts, and lazy-loading primitives.',
+      'Interactive reference for the reme motion system: twelve animation principles, token tables, loading contracts, and lazy-loading primitives.',
     path: '/motion',
   }),
   robots: { index: false, follow: true },
@@ -38,7 +38,7 @@ export default function MotionLabPage() {
 
         <header className="border-b border-line pb-8">
           <Text as="p" variant="eyebrow" color="secondary">
-            πeme v3.1 §9 · Interface Motion · Design System Lab
+            reme v3.1 §9 · Interface Motion · Design System Lab
           </Text>
           <h1 className="mt-2 max-w-4xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Motion that explains, never decorates

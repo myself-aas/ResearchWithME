@@ -77,7 +77,7 @@ export function citationFileExtension(format: CitationFormat) {
   return 'txt';
 }
 
-// ── πeme v3.1 Citation component additions (§7): short/full/machine views + CSL-JSON ──
+// ── reme v3.1 Citation component additions (§7): short/full/machine views + CSL-JSON ──
 
 export type CitationView = 'short' | 'full' | 'machine';
 

@@ -1,5 +1,5 @@
 /**
- * AIProvenanceDisclosure — πeme v3.1 §26 (stage 3, beta).
+ * AIProvenanceDisclosure — reme v3.1 §26 (stage 3, beta).
  *
  * Makes AI assistance inspectable, editable, rejectable, and reversible:
  * shows provider/model, operation, source set, tool calls, generation time,

@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * MotionLab — the interactive half of the πeme motion system.
+ * MotionLab — the interactive half of the reme motion system.
  *
  * This is a design-system surface, not a marketing page: every demo below is
  * the same variant/token pair the product ships, so changing a demo changes
@@ -10,7 +10,7 @@
  * can test them without hunting for a page that happens to use them.
  *
  * Twelve principles → twelve demos, in Disney's canonical order, each with its
- * πeme pattern, duration, easing, guardrail, and the primitives that implement
+ * reme pattern, duration, easing, guardrail, and the primitives that implement
  * it. Below the grid: the loading contract, the lazy boundary, and the raw
  * token tables.
  */
@@ -515,7 +515,7 @@ function ModeSwitch() {
     <Card>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <Text as="p" variant="eyebrow" color="secondary">Motion mode (πeme §10)</Text>
+          <Text as="p" variant="eyebrow" color="secondary">Motion mode (reme §10)</Text>
           <p className="mt-1 font-sans text-xs text-ink-secondary">{active.description}</p>
         </div>
         <div role="group" aria-label="Motion mode" className="flex gap-1.5">
@@ -734,7 +734,7 @@ export default function MotionLab() {
               Twelve principles, twelve live demos
             </Text>
             <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
-              Canonical order. Each card names the πeme pattern it belongs to, the exact duration and easing it may
+              Canonical order. Each card names the reme pattern it belongs to, the exact duration and easing it may
               use, and the guardrail that keeps it out of decoration.
             </p>
           </div>
@@ -861,7 +861,7 @@ export default function MotionLab() {
           </Text>
           <p className="mt-1 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
             Rendered from <code className="font-mono text-xs">lib/motion/tokens.ts</code>, which mirrors the generated
-            πeme tokens. Nothing here is typed by hand at a call site.
+            reme tokens. Nothing here is typed by hand at a call site.
           </p>
         </div>
         <TokenTables />

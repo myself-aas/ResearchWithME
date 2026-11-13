@@ -107,8 +107,10 @@ describe('GET /post/:slug', () => {
     expect(html).toContain('<title>Reader probe article</title>');
     expect(html).toContain('rel="canonical" href="https://researchwith.me/post/reader-probe"');
     expect(html).toContain('property="og:type" content="article"');
-    // Structured data is embedded for crawlers.
+    // Article schema is present, but do not claim an explainer video until the video exists.
     expect(html).toContain('application/ld+json');
+    expect(html).toContain('schema.org');
+    expect(html).not.toContain('"@type":"VideoObject"');
     // Single-article CMS probe has no related entries, so the Related reviews block is not forced.
   });
 

@@ -1,4 +1,4 @@
-# πeme v3.1 §44/§46 — Stable Release Gate Status
+# reme v3.1 §44/§46 — Stable Release Gate Status
 
 Machine-checkable items are enforced by `scripts/release-gate.mjs` (CI job
 `release-gate`); latest machine manifest: `release-manifest.json` (same folder).

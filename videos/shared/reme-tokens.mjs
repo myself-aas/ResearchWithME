@@ -1,4 +1,4 @@
-// πeme v3.1 video token consumer — §44: Remotion/Hyperframes MUST use generated tokens.
+// reme v3.1 video token consumer — §44: Remotion/Hyperframes MUST use generated tokens.
 // Loads tokens/generated/tokens.video.json (emitted by `npm run tokens:build`)
 // and exposes typed access for compositions. Static HTML compositions reference
 // the same values as CSS vars from tokens/generated/tokens.video.css.

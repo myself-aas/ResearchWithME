@@ -54,6 +54,7 @@ const errorDescriptions: Record<number, string> = {
   403: 'Insufficient privileges or a disallowed cross-site request.',
   404: 'The requested record does not exist.',
   409: 'The request conflicts with an existing record.',
+  413: 'The request body is too large.',
   415: 'The request must be sent as application/json.',
   422: 'The selected author cannot be used for publication.',
   429: 'Too many requests; retry later.',
@@ -122,6 +123,26 @@ export const API_OPERATIONS: ApiOperation[] = [
     summary: 'Ask the research assistant', description: 'Send a JSON query (up to 600 characters). The answer uses the published catalog and falls back to a deterministic answer when the language model is unavailable.',
     requestBody: jsonBody(object({ query: { type: 'string', minLength: 1, maxLength: 600 } }, ['query']), 'Question about the archive.'),
     responses: { 200: json('Answer and citations.', object({ answer: text, citations: array(ref('AssistantCitation')), mode: { type: 'string', enum: ['catalog', 'model'] }, notice: text }, ['answer', 'citations', 'mode'])), ...errors(400, 415, 429) },
+  },
+  {
+    group: 'a2a', method: 'post', path: '/api/a2a', operationId: 'sendA2aMessage',
+    summary: 'Search reviews with the A2A agent',
+    description: 'A2A JSON-RPC 1.0 SendMessage. Supply a unique messageId, ROLE_USER, and one text part (up to 600 characters). Synchronous read-only replies; no task retrieval or streaming.',
+    requestBody: jsonBody(object({
+      jsonrpc: { type: 'string', enum: ['2.0'] },
+      id: { oneOf: [text, integer] },
+      method: { type: 'string', enum: ['SendMessage'] },
+      params: object({ message: object({ messageId: text, role: { type: 'string', enum: ['ROLE_USER'] },
+        parts: array(object({ text }, ['text'])) }, ['messageId', 'role', 'parts']) }, ['message']),
+    }, ['jsonrpc', 'id', 'method', 'params']), 'A2A JSON-RPC SendMessage request.'),
+    responses: {
+      200: json('JSON-RPC response with a textual agent message, or a JSON-RPC error.', object({
+        jsonrpc: text, id: { oneOf: [text, integer] }, result: object({ message: object({
+          messageId: text, contextId: text, role: text, parts: array(object({ text }, ['text'])),
+        }, ['messageId', 'contextId', 'role', 'parts']) }, ['message']),
+      }, ['jsonrpc', 'id'])),
+      ...errors(413, 415, 429, 503),
+    },
   },
   {
     group: 'cms-posts', method: 'get', path: '/api/cms/posts', operationId: 'listEditorialPosts',

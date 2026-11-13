@@ -6,6 +6,7 @@ import { cmsPostsRoutes } from './cms-posts';
 import { cmsCommentsRoutes } from './cms-comments';
 import { applicationsRoutes } from './applications';
 import { assistantRoutes } from './assistant';
+import { a2aRoutes } from './a2a';
 import { revalidateRoutes } from './revalidate';
 
 export type ApiHandler = (ctx: RequestContext, params: Record<string, string>) => Promise<Response>;
@@ -33,6 +34,7 @@ export const API_ROUTES: readonly ApiRoute[] = [
   ...cmsCommentsRoutes,
   ...applicationsRoutes,
   ...assistantRoutes,
+  ...a2aRoutes,
   ...revalidateRoutes,
 ];
 

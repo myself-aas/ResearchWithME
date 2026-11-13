@@ -5,7 +5,7 @@
  *
  * Two entry points:
  *
- * - `lazyWidget()` wraps `next/dynamic` with a πeme-shaped skeleton and a
+ * - `lazyWidget()` wraps `next/dynamic` with a reme-shaped skeleton and a
  *   human label, so every lazy boundary looks and announces the same thing.
  *   `ssr: false` is the default for widgets that only exist to be touched
  *   (graph canvases, chart libraries, editors, players); pass `ssr: true` for

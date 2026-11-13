@@ -1,11 +1,11 @@
-# πeme Motion System v1
+# reme Motion System v1
 
 > Interface motion for ResearchWithME, built on [`motion`](https://motion.dev)
 > (the package formerly published as Framer Motion) and Disney's twelve
 > animation principles as catalogued by
 > [`dylantarre/animation-principles`](https://github.com/dylantarre/animation-principles).
 >
-> Normative parent: [`pieme-design-system-v3.1.md`](./pieme-design-system-v3.1.md) §9
+> Normative parent: [`reme-design-system-v3.1.md`](./reme-design-system-v3.1.md) §9
 > (Interface Motion) and §10 (`MotionMode`). This document does not add
 > durations or easings — it explains how the existing ones are applied.
 
@@ -13,7 +13,7 @@
 
 ## 1. Why a motion system
 
-πeme motion has one job: **explain a change**. A filter that reorders a
+reme motion has one job: **explain a change**. A filter that reorders a
 catalogue, a citation that opens, a save that is confirmed, a page that was
 replaced — each of those is a relationship or a state, and motion is how the
 reader sees it. Anything else is decoration, and §9 rules decoration out:
@@ -359,7 +359,7 @@ composition never overruns its token) and the four `EASING` curves.
 `lib/lottie/animations.ts` holds the four compositions. Do not add an After
 Effects export: it would bypass the token contract and bake in colours.
 
-**Theme.** Shapes are painted in placeholder ink. `.pieme-lottie` in
+**Theme.** Shapes are painted in placeholder ink. `.reme-lottie` in
 `globals.css` recolours strokes and fills to `currentColor`, so colour a glyph
 with a `text-*` token.
 

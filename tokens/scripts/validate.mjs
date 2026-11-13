@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * πeme token pipeline — validate. Exits non-zero on:
+ * reme token pipeline — validate. Exits non-zero on:
  *  - unresolved or circular {references}
  *  - dark theme missing a key that light defines (except action/domain shared maps)
  *  - component tokens referencing unknown paths

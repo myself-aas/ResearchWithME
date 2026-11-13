@@ -1,5 +1,5 @@
 /**
- * EvidenceCard presentation logic — πeme v3.1 §27.2 (pure, unit-tested).
+ * EvidenceCard presentation logic — reme v3.1 §27.2 (pure, unit-tested).
  * Maps a validated Evidence + SourceVersion + permissions to the card's
  * state, precedence-ordered notices, calibrated assessment text, and
  * token-mapped class names. No rendering here.
@@ -82,11 +82,11 @@ export function evidenceCardLabel(evidence: Evidence, source: Source): string {
 
 /** Token mapping for the card (component tokens from the generated pipeline). */
 export const evidenceCardTokens = {
-  background: `bg-[var(--pieme-component-evidence-card-background)]`,
-  border: `border-[var(--pieme-component-evidence-card-border)]`,
-  accentDot: `bg-[var(--pieme-component-evidence-card-accent)]`,
-  title: `text-[var(--pieme-component-evidence-card-title)]`,
-  metadata: `text-[var(--pieme-component-evidence-card-metadata)]`,
+  background: `bg-[var(--reme-component-evidence-card-background)]`,
+  border: `border-[var(--reme-component-evidence-card-border)]`,
+  accentDot: `bg-[var(--reme-component-evidence-card-accent)]`,
+  title: `text-[var(--reme-component-evidence-card-title)]`,
+  metadata: `text-[var(--reme-component-evidence-card-metadata)]`,
 } as const;
 
 export const evidenceCardComponentTokens = component.evidenceCard;

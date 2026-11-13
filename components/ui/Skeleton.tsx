@@ -1,5 +1,5 @@
 /**
- * Skeleton — πeme v3.1 accessible primitive (spec §7 Feedback).
+ * Skeleton — reme v3.1 accessible primitive (spec §7 Feedback).
  *
  * Purpose: loading placeholder that mirrors the final layout; must not shimmer indefinitely.
  * Anatomy: aria-hidden blocks shaped like the content they replace.

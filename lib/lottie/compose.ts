@@ -1,14 +1,14 @@
 /**
- * Lottie composition builders — πeme motion tokens → Bodymovin JSON.
+ * Lottie composition builders — reme motion tokens → Bodymovin JSON.
  *
- * πeme Lottie files are not exported from After Effects. They are composed in
+ * reme Lottie files are not exported from After Effects. They are composed in
  * code from `lib/motion/tokens.ts`, which keeps three guarantees the motion
  * system already makes (docs/motion-system.md):
  *
  *  - **Tokens only.** Every duration is a `DURATION_MS` value converted to
  *    frames, and every keyframe easing is one of the four `EASING` curves.
  *  - **Theme-safe.** Shapes are painted in a placeholder ink and the player
- *    recolours them to `currentColor` with CSS (`.pieme-lottie` in
+ *    recolours them to `currentColor` with CSS (`.reme-lottie` in
  *    globals.css), so the Archival Paper and Obsidian themes need no second
  *    asset.
  *  - **Deterministic.** Builders are pure; the same call returns the same
@@ -20,10 +20,10 @@
 
 import type { BezierEasing } from '@/lib/motion/tokens';
 
-/** Playback rate for every πeme composition. */
+/** Playback rate for every reme composition. */
 export const LOTTIE_FPS = 60;
 
-/** Placeholder ink. Recoloured to `currentColor` by `.pieme-lottie`. */
+/** Placeholder ink. Recoloured to `currentColor` by `.reme-lottie`. */
 const INK: [number, number, number, number] = [0, 0, 0, 1];
 
 /**
@@ -105,7 +105,7 @@ export function still<T = Scalar>(k: T): LottieStaticValue<T> {
 
 /**
  * Keyframed value. `stops` are `[frame, value]` pairs in ascending frame
- * order; each segment uses `easing` (a πeme `EASING` tuple), or the matching
+ * order; each segment uses `easing` (a reme `EASING` tuple), or the matching
  * entry when an array of easings is given.
  */
 export function keyframes(

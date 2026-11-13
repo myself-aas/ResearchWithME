@@ -1,5 +1,5 @@
 /**
- * External identifier normalization and validation — πeme v3.1 §22.2.
+ * External identifier normalization and validation — reme v3.1 §22.2.
  * Schemes: doi, orcid, pmid, pmcid, isbn, issn, arxiv, handle, ror, rrid,
  * accession, url. Pure functions; no I/O. Validators return the repo's
  * discriminated-union shape ({ ok: true; value } | { ok: false; message }).

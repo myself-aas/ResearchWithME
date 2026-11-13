@@ -14,7 +14,7 @@ import InlineCitationPopover from '@/components/reader/InlineCitationPopover';
 import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
 import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
 import { buildArticleCitationMap, renderWithInlineCitations } from '@/lib/citations-inline';
-import { articleJsonLd, jsonLdScript, videoJsonLd } from '@/lib/seo/jsonld';
+import { articleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 import type { PostLoaderData } from './data';
 
 /**
@@ -62,18 +62,10 @@ export default function PostRoute() {
     imagePath: article.coverImage,
   });
 
-  const explainerVideoLd = videoJsonLd({
-    name: `Visual explainer: ${article.title}`,
-    description: article.summary,
-    contentPath: `/videos/explainer-${article.slug}.mp4`,
-    thumbnailPath: coverPath,
-    uploadDate: article.dateISO ?? article.publishedAt,
-  });
-
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      {/* Only claim Article schema: explainer videos are not published assets yet. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(explainerVideoLd) }} />
       <ReadingProgress />
       <ArticleSmoothScroll />
       <BlogHeader />

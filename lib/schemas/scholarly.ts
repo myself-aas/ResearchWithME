@@ -1,5 +1,5 @@
 /**
- * Canonical scholarly domain schemas — πeme v3.1 §22 (normative Part II).
+ * Canonical scholarly domain schemas — reme v3.1 §22 (normative Part II).
  * Runtime-validated, framework-free, following repo conventions
  * (discriminated-union results, no exceptions for validation).
  *

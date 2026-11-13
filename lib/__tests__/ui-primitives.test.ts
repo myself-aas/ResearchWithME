@@ -19,8 +19,8 @@ describe('Dialog primitive', () => {
     );
     expect(html).toContain('role="dialog"');
     expect(html).toContain('aria-modal="true"');
-    expect(html).toContain('aria-labelledby="pieme-dialog-title"');
-    expect(html).toContain('aria-describedby="pieme-dialog-desc"');
+    expect(html).toContain('aria-labelledby="reme-dialog-title"');
+    expect(html).toContain('aria-describedby="reme-dialog-desc"');
     expect(html).toContain('Delete draft');
     expect(html).toContain('shadow-dialog');
   });

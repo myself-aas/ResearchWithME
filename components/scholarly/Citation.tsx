@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Citation — πeme v3.1 §7 component (stage 3, beta).
+ * Citation — reme v3.1 §7 component (stage 3, beta).
  *
  * Purpose: short, full, and machine-readable citation views for a source,
  * with DOI, BibTeX, RIS, CSL-JSON, and a stable internal identifier.

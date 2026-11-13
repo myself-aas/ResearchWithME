@@ -24,6 +24,12 @@
             "commandWindows": "cmd /c if exist \".agents\\skills\\impeccable\\scripts\\impeccable.cmd\" \".agents\\skills\\impeccable\\scripts\\impeccable.cmd\" hook",
             "timeout": 30,
             "statusMessage": "Design deep pass"
+          },
+          {
+            "type": "command",
+            "command": "node scripts/reme-check.mjs --changed",
+            "timeout": 10,
+            "statusMessage": "Checking changed reme article drafts (no network or writes)"
           }
         ]
       }

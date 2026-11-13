@@ -184,7 +184,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, cited-work identifiers, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
+The interface follows the reme v3.1 design system ([`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, cited-work identifiers, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
 
 ## Contributing
 

@@ -1,5 +1,5 @@
 /**
- * ConflictPanel — πeme v3.1 §34 conflict recovery UI.
+ * ConflictPanel — reme v3.1 §34 conflict recovery UI.
  *
  * Shows BOTH versions side by side (conflicts preserve both versions),
  * requires a rationale before resolving, and records author + timestamp via
@@ -52,7 +52,7 @@ export default function ConflictPanel({ sides, onResolve }: ConflictPanelProps) 
                 <input
                   type="radio"
                   name={`conflict-${k}`}
-                  className="h-4 w-4 accent-[var(--pieme-action-primary)]"
+                  className="h-4 w-4 accent-[var(--reme-action-primary)]"
                   checked={selected[k] === sides[i].values[k]}
                   onChange={() => pick(k, i)}
                 />

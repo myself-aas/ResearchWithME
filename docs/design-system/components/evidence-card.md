@@ -1,4 +1,4 @@
-# EvidenceCard — component contract (πeme v3.1 §27.2)
+# EvidenceCard — component contract (reme v3.1 §27.2)
 
 Status: **beta** (first reference component, stage 3 entry). Implementation: `components/scholarly/EvidenceCard.tsx`; presentation logic: `lib/scholarly/evidence-card.ts`; schemas: `lib/schemas/scholarly.ts`.
 

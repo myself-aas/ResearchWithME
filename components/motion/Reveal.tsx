@@ -7,7 +7,7 @@
  * (variant="squash"), staging (variant="mask"/"stage"), slow in/out (tokens),
  * follow-through (delay/index), appeal (the sum).
  *
- * **Why animation controls instead of `initial`:** πeme renders content
+ * **Why animation controls instead of `initial`:** reme renders content
  * without JavaScript (SSR, print, crawlers), so the first paint must never be
  * hidden by the animation. `useArmedReveal` measures the element on mount and
  * only adopts the hidden pose when it is genuinely below the fold — via
@@ -19,7 +19,7 @@
  *  - threshold 15–20% visible; trigger margin keeps the reveal ahead of the
  *    reader rather than under their eyes;
  *  - one-shot by default (`once`) — content never re-hides while scrolling;
- *  - `prefers-reduced-motion` / πeme `reduced`+`static` modes skip arming
+ *  - `prefers-reduced-motion` / reme `reduced`+`static` modes skip arming
  *    entirely, so the element simply is.
  */
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * πeme v3.1 §44/§46 stable release gate — machine-checkable items.
+ * reme v3.1 §44/§46 stable release gate — machine-checkable items.
  *
  * Verifies the automatable release-blocking checks and writes
  * docs/design-system/release-manifest.json with a token checksum.
@@ -27,7 +27,7 @@ const check = (id, description, fn) => {
 };
 const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
 
-console.log('πeme release gate (§44/§46) — machine-checkable items');
+console.log('reme release gate (§44/§46) — machine-checkable items');
 
 // Design system
 check('DS-1', 'token pipeline builds from tokens/src', () => {
@@ -106,7 +106,7 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {
-  gate: 'πeme v3.1 §44/§46 stable release gate',
+  gate: 'reme v3.1 §44/§46 stable release gate',
   generatedAt: new Date().toISOString(),
   tokenChecksum: results.find((r) => r.id === 'DS-2')?.evidence,
   results,

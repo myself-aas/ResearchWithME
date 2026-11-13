@@ -63,7 +63,7 @@ import { Text } from '@/components/primitives';
 | `card-title` | `font-serif text-xl font-semibold` | card and panel headings |
 | `section-title` | `font-serif text-2xl font-semibold` | section headings |
 | `page-title` | `font-serif text-2xl font-bold sm:text-3xl` | page headings in the studio and tools |
-| `display` … `metadata` | πeme v3.1 §2 scale | new surfaces |
+| `display` … `metadata` | reme v3.1 §2 scale | new surfaces |
 
 `color`: `primary` (default, `text-ink`), `secondary`, `tertiary`, `inverse`, `brand`, `verified`,
 `success`, `destructive`, `inherit`. `weight`: `normal`, `medium`, `semibold`, `bold`.
@@ -141,7 +141,7 @@ token, so it rendered as primary ink) now has its token; `text-danger`,
 
 ## Related
 
-- `DESIGN.md` and `docs/pieme-design-system-v3.1.md`: the design system
+- `DESIGN.md` and `docs/reme-design-system-v3.1.md`: the design system
 - `docs/motion-system.md`: motion and the Lottie micro-interactions
 - `docs/research-workflows.md`: the lifecycle diagrams (generated)
 - `docs/design-system/component-inventory.md`: the component inventory

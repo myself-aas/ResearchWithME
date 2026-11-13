@@ -98,7 +98,7 @@ CI (`quality.yml`) runs: tokens → lint, typecheck, test, impeccable → `build
 | `RWM_DATA_DIR` | Local/test | `lib/db.ts`, `lib/cms/local-store.ts`, `lib/legacy/local-store.ts` |
 | `DISABLE_HMR` | Dev only (AI Studio artefact) | `next.config.ts` |
 
-Build/tooling-only variables: `WORKERS_CI`, `RWM_SKIP_WORKER_WRAPPER`, `NEXT_PRIVATE_STANDALONE`, `RWM_BUILD_TARGET`, `ALLOW_DEMO_DEPLOY`, `PIEME_BUDGET_SHELL_KB`, `PARITY_*`, `BASE_URL`, `TEMPLATE_ENV_OUTPUT`. `RATE_LIMIT_KV` is a **KV binding**, not an env var, even though `.env.example` lists it.
+Build/tooling-only variables: `WORKERS_CI`, `RWM_SKIP_WORKER_WRAPPER`, `NEXT_PRIVATE_STANDALONE`, `RWM_BUILD_TARGET`, `ALLOW_DEMO_DEPLOY`, `REME_BUDGET_SHELL_KB`, `PARITY_*`, `BASE_URL`, `TEMPLATE_ENV_OUTPUT`. `RATE_LIMIT_KV` is a **KV binding**, not an env var, even though `.env.example` lists it.
 
 **Deployment constraints:**
 - `NEXT_PUBLIC_*` are compiled into the bundle, so changing one means rebuilding. `.env.production` commits the public Supabase URL and publishable key (no secrets).
