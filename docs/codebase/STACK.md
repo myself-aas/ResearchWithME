@@ -1,133 +1,116 @@
 # Technology Stack
 
+> Regenerated 2026-11-13 against `944f45c` (48 commits, full history). Supersedes every earlier
+> version of this file, including its "Updated" appendices.
+
 ## Core Sections (Required)
 
 ### 1) Runtime Summary
 
 | Area | Value | Evidence |
 |------|-------|----------|
-| Primary language | TypeScript (strict mode, `target: ES2017`, `moduleResolution: bundler`) | `tsconfig.json`, `package.json` (`typescript: ^5.9.3`) |
-| Runtime + version | Node.js `>=20.9.0` (declared engine). Verified locally on v22.22.3 | `package.json` `engines.node`; `node -v` output |
-| Package manager | **Ambiguous — both npm and Bun lockfiles are committed.** CI uses Bun 1.4.4; README documents `npm install` | `package-lock.json`, `bun.lock`, `.github/workflows/quality.yml`, `README.md` |
-| Module/build system | Next.js 15.5.28 (`next build`), output `standalone`; production bundle via OpenNext Cloudflare adapter | `package.json`, `next.config.ts`, `open-next.config.ts` |
-| Production platform | Cloudflare Workers (not a Node server) | `wrangler.jsonc` (`main: .open-next/worker.js`), `README.md` "Deploy" |
+| Primary language | TypeScript 5.9, `strict: true`, `target: ES2017`, `moduleResolution: bundler` | `tsconfig.json`, `package.json` |
+| Runtime + version | Node `>=20.9.0` declared; CI pins Node 22; production runs on **Cloudflare Workers** (`nodejs_compat`), not Node | `package.json` `engines`, `.github/workflows/quality.yml`, `wrangler.jsonc` |
+| Package manager | **Bun is declared canonical, but npm is also in use.** `packageManager: "bun@1.4.4"` and CI installs with `bun install --frozen-lockfile`, yet `package-lock.json` is tracked again, and the Worker build is forced to `npm run build` | `package.json`, `bun.lock`, `package-lock.json`, `open-next.config.ts` (`buildCommand: 'npm run build'`) |
+| Module/build system | Next.js 15.5.28 App Router (`output: 'standalone'`) bundled for Workers by `@opennextjs/cloudflare` 1.20.14. Second target: a Vite 7 build in `cloudflare-pages/` | `next.config.ts`, `open-next.config.ts`, `cloudflare-pages/vite.config.ts` |
 
-TypeScript strictness is maximal at the compiler level: `strict: true`, `noEmit: true`, `isolatedModules: true`, and `typescript.ignoreBuildErrors: false` in `next.config.ts`, so type errors fail the build.
+`package.json` still declares `"type": "commonjs"` and `"main": "index.js"`. Neither applies to this app, and no `index.js` exists.
 
 ### 2) Production Frameworks and Dependencies
 
-From `package.json` `dependencies` only. These are what ship to production.
+Only `dependencies`. Everything else is tooling (§3).
 
-| Dependency | Version (declared) | Role in system | Evidence |
+| Dependency | Version | Role in system | Evidence |
 |------------|---------|----------------|----------|
-| `next` | `15.5.28` (exact pin) | App Router framework: routing, RSC, metadata routes, API route handlers | `package.json` |
-| `react` / `react-dom` | `^19.2.1` | UI runtime. Resolved to 19.3.1 on install | `package.json`; `node_modules/react/package.json` |
-| `@supabase/supabase-js` | `^2.118.0` | Supabase client (Postgres, Auth, Storage, Realtime) | `package.json`, `lib/supabase/*` |
-| `@supabase/ssr` | `^0.12.7` | Cookie-aware SSR/browser clients + PKCE auth | `lib/supabase/server.ts`, `lib/supabase/client.ts`, `middleware.ts` |
-| `@google/genai` | `^2.4.0` | Gemini text generation (research assistant, avatar SVG) | `app/api/research-assistant/route.ts:1`, `app/api/author-avatar/route.ts:1` |
-| `@gradio/client` | `^2.7.1` | Client for a Hugging Face Space (Qwen cover-image generation) | `app/api/generate/route.ts:2` |
-| `@mdxeditor/editor` | `^4.3.4` | Rich Markdown editor in the studio | `components/cms/MarkdownEditor.tsx` |
-| `react-markdown` + `remark-gfm` | `^10.1.0` / `^4.0.1` | Render article bodies (GFM tables/strikethrough) | `components/MarkdownBody.tsx` |
-| `recharts` | `^3.10.1` | Author impact radar chart | `components/AuthorImpactRadarChart.tsx` |
-| `lucide-react` | `^0.553.0` | Icon set; tree-shaken via `experimental.optimizePackageImports` | `next.config.ts`, `app/post/[slug]/page.tsx:6` |
-| `tailwindcss` + `@tailwindcss/typography` | `^4.1.11` / `^0.5.20` | Styling (v4, CSS-first) and prose typography | `postcss.config.mjs`, `app/globals.css` |
-| `clsx` + `tailwind-merge` | `^2.1.1` / `^3.3.1` | Conditional class composition via `cn()` | `lib/format.ts:1` |
-| `server-only` | `^0.0.1` | Compile-time guard preventing client import of server modules | 5 files under `lib/cms/` and `lib/supabase/server.ts` |
-| `postcss` | `^8.5.31` | Also pinned via `overrides.next.postcss` to force one version | `package.json` `overrides` |
+| `next` | `15.5.28` (exact) | App Router, RSC, route handlers, metadata routes | `package.json` |
+| `react`, `react-dom` | `^19.2.1` | UI runtime | `package.json` |
+| `@opennextjs/cloudflare` | `1.20.14` (exact) | Next→Worker adapter, KV cache overrides, `getCloudflareContext()` | `open-next.config.ts`, `lib/rate-limit.ts` |
+| `@supabase/supabase-js`, `@supabase/ssr` | `^2.118.0`, `^0.12.7` | Postgres (PostgREST), Auth (PKCE), Storage, Realtime | `lib/supabase/*`, `middleware.ts` |
+| `@google/genai` | `^2.4.0` | Gemini: research assistant, editor-only avatar SVG | `app/api/research-assistant/route.ts:145`, `app/api/author-avatar/route.ts:145` |
+| `@gradio/client` | `^2.7.1` | Hugging Face Space cover generation | `app/api/generate/route.ts:117` |
+| `resend`, `@react-email/components`, `@react-email/render` | `^6.37.0`, `1.0.12`, `^2.2.0` | Transactional email (built, see INTEGRATIONS §1) | `lib/email/send.ts:95`, `emails/*.tsx` |
+| `@mdxeditor/editor` | `^4.3.4` | Studio Markdown editor | `components/cms/` |
+| `react-markdown`, `remark-gfm` | `^10.1.0`, `^4.0.1` | Article body rendering | `components/` |
+| `tailwindcss`, `@tailwindcss/typography`, `postcss` | `^4.1.11`, `^0.5.20`, `^8.5.31` | Styling (v4, CSS-first); `postcss` also forced via `overrides` | `postcss.config.mjs`, `package.json` `overrides` |
+| `motion`, `lenis`, `lottie-web` | `^14.12.0`, `^1.3.27`, `5.13.0` | Interface motion, reader smooth scroll, Lottie playback | `lib/motion/`, `components/motion/`, `components/lottie/` |
+| `cmdk`, `fuse.js` | `^1.1.1`, `^7.5.0` | Command palette and fuzzy catalogue search | `lib/search/catalog-index.ts` |
+| `zustand` | `^5.1.0` | Persisted reader preferences (reading list, digest) | `lib/stores/preferences-store.ts` |
+| `@radix-ui/react-dialog`, `@radix-ui/react-popover` | `^1.3.1` | Accessible dialog and popover primitives | `components/` |
+| `recharts` | `^3.10.1` | Author impact radar chart | `components/` |
+| `lucide-react`, `clsx`, `tailwind-merge`, `server-only` | — | Icons, class composition, server-module guard | `next.config.ts` `optimizePackageImports` |
 
-There is **no ORM**. Supabase is accessed directly through its JS client with hand-written SQL in `supabase/migrations/`. There is no Prisma/Drizzle/TypeORM dependency.
+There is **no ORM**. Postgres is reached only through the Supabase JS client, and the schema lives in hand-written SQL under `supabase/migrations/`.
 
 ### 3) Development Toolchain
 
 | Tool | Purpose | Evidence |
 |------|---------|----------|
-| ESLint 9.39.1 + `eslint-config-next` | Lint. Flat config: `next/core-web-vitals` + `next/typescript` | `eslint.config.mjs`, `package.json` `scripts.lint` |
-| `typescript` 5.9.3 | Typecheck (`tsc --noEmit`) | `package.json` `scripts.typecheck` |
-| Vitest (declared `^3.2.4`, resolved 3.2.7) | Unit tests | `vitest.config.ts`, `package.json` `scripts.test` |
-| `impeccable` (declared `^4.7.0`, resolved 4.8.0) | Design-system / accessibility detector over `app components` | `package.json` `scripts.impeccable:source`, `.impeccable/config.json` |
-| `@opennextjs/cloudflare` 1.20.14 | Adapts the Next.js build to a Cloudflare Worker | `open-next.config.ts`, `package.json` `scripts.build:worker` |
-| `wrangler` 4.154.0 | Worker deploy/preview, KV binding types | `wrangler.jsonc`, `package.json` `scripts.cf-typegen` |
-| `@tailwindcss/postcss`, `autoprefixer`, `tw-animate-css` | CSS pipeline | `postcss.config.mjs` |
-| `@types/node`, `@types/react`, `@types/react-dom` | Type declarations | `package.json` `devDependencies` |
-| GitHub Actions | CI: lint → typecheck → test → impeccable → build | `.github/workflows/quality.yml` |
+| ESLint 9.39.1 + `eslint-config-next` 15.5.28 | Flat config: `next/core-web-vitals` + `next/typescript` + stricter rules | `eslint.config.mjs` |
+| TypeScript 5.9 | `tsc --noEmit` | `package.json` `typecheck` |
+| Vitest `^3.2.4` + `jsdom` `^31` + `axe-core` | Unit and in-process page/API tests; 9 files opt into jsdom per file | `vitest.config.ts` |
+| Playwright `^1.65.0` | Browser tests against the **Pages** build under `wrangler pages dev` | `test/playwright.config.ts` |
+| Supabase CLI `^3.1.0` | Local DB and pgTAP (`supabase test db --local`) | `supabase/tests/*.sql` |
+| `impeccable` `^4.7.0` | Design anti-pattern detector over `app components` | `package.json` `impeccable:source` |
+| `wrangler` 4.154.0 | Deploy, preview, KV, `cf-typegen` | `wrangler.jsonc` |
+| Vite 7.3.0 + `@vitejs/plugin-react` | The `cloudflare-pages/` build target | `package.json` `build:pages` |
+| `react-email` 6.11.8 | Email preview/export (`email dev` on :3001) | `package.json` `email:*` |
+| `tsx` | Runs the TypeScript scripts in `scripts/` | `package.json` |
+| Token pipeline | `tokens/src/*.json` → `tokens/generated/*` (css/scss/ts/json/video), with validation and a contrast check | `tokens/scripts/*.mjs` |
+| GitHub Actions | `Quality` workflow only (no deploy workflow, see CONCERNS) | `.github/workflows/quality.yml` |
 
-No Prettier or EditorConfig file exists at the repo root (verified: `ls -a | grep -iE "prettier|editorconfig"` returns nothing). Formatting is convention-based, enforced only by ESLint style rules.
+There is no Prettier, Biome or EditorConfig file. ESLint is the only style enforcement.
 
 ### 4) Key Commands
 
 ```bash
-npm install                      # README's documented install
-npm run dev                      # next dev -p 3000 -H 0.0.0.0
-npm run build                    # next build
-npm test                         # vitest run
-npm run lint                     # eslint .
-npm run typecheck                # tsc --noEmit
-npm run quality                  # lint + typecheck + test + impeccable:source
-npm run impeccable:source        # impeccable detect app components
-npm run build:worker             # opennextjs-cloudflare build
-npm run preview                  # OpenNext build + local workerd preview (:8787)
-npm run deploy                   # predeploy guard, then OpenNext build + wrangler deploy
-npm run deploy-guard             # scripts/check-production-env.mjs alone
-npm run cf-typegen               # regenerate cloudflare-env.d.ts from wrangler bindings
-npm run clean                    # remove .next
+bun install                 # canonical install (CI: --frozen-lockfile)
+npm run dev                 # next dev on 0.0.0.0:3000
+npm run quality             # tokens:build → tokens:check → lint → typecheck → test → impeccable:source
+npm test                    # vitest run
+npm run build               # scripts/build-next-or-worker.mjs: next build, or OpenNext when WORKERS_CI=1
+npm run build:worker        # opennextjs-cloudflare build
+npm run preview             # OpenNext build + local workerd (:8787)
+npm run deploy              # predeploy guard → OpenNext build → deploy
+npm run deploy-guard        # scripts/check-production-env.mjs alone
+npm run budgets             # scripts/check-budgets.mjs (/ shell JS budget)
+npm run release:gate        # scripts/release-gate.mjs
+npm run build:pages         # Vite client + server builds for cloudflare-pages/
+npm run test:pages          # Playwright e2e against the Pages build
+npm run cf-typegen          # regenerate the gitignored cloudflare-env.d.ts
 ```
 
-**Verified in this workspace:** `npm install` → 1011 packages added; `npm test` → 65 tests / 10 files passed (exit 0); `npm run typecheck` → exit 0, no output; `npm run lint` → exit 0, no output; `npm run impeccable:source` → 0 anti-patterns, 1 advisory; `npm run build` → exit 0, 46 static pages.
+CI (`quality.yml`) runs: tokens → lint, typecheck, test, impeccable → `build` → `budgets` → `release:gate`.
 
 ### 5) Environment and Config
 
-**Config sources:** `package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`, `.eslintrc.json`, `vitest.config.ts`, `open-next.config.ts`, `wrangler.jsonc`, `.env.example`, `.env.production`, `.impeccable/config.json`, `.github/workflows/quality.yml`.
+**Config files:** `package.json`, `tsconfig.json`, `next.config.ts`, `open-next.config.ts`, `wrangler.jsonc`, `cloudflare-pages/wrangler.jsonc`, `cloudflare-pages/vite.config*.ts`, `eslint.config.mjs`, `postcss.config.mjs`, `vitest.config.ts`, `test/playwright.config.ts`, `supabase/config.toml`, `squirrel.toml`, `.env.example`, `.env.production`.
 
-**Environment variables actually read by the code** (from `grep -rho "process\.env\.[A-Z_0-9]*"` across `app/ lib/ middleware.ts scripts/ next.config.ts`):
+**Runtime env vars read by app code** (`git grep "process.env."` over `app lib middleware.ts next.config.ts cloudflare-pages/src`):
 
-| Variable | In `.env.example`? | Read at | Purpose |
-|---|---|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | yes | `lib/supabase/config.ts:10`, `next.config.ts` | Project URL; build-time inlined |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes | `lib/supabase/config.ts:12` | Publishable/anon key |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | no | `lib/supabase/config.ts:13` | Legacy fallback name |
-| `NEXT_PUBLIC_SITE_URL` | yes | `lib/seo.ts:4`, `lib/cms/http.ts` | Canonical origin + origin allowlist |
-| `REVALIDATE_SECRET` | yes | `lib/cms/secret.ts:4` | Webhook shared secret |
-| `GEMINI_API_KEY` | **no — missing** | `app/api/research-assistant/route.ts`, `app/api/author-avatar/route.ts` | Enables Gemini calls |
-| `GEMINI_MODEL` | yes | same two routes | Defaults to `gemini-3.8-flash` |
-| `HF_SPACE_NAME` | yes | `app/api/generate/route.ts` | Hugging Face Space to call |
-| `HF_TOKEN` | yes | `app/api/generate/route.ts` | Private Space auth |
-| `MY_SECRET_TOKEN` | no | `lib/cms/secret.ts:4` | Legacy alias for `REVALIDATE_SECRET` |
-| `RWM_DATA_DIR` | no | `lib/cms/local-store.ts:63` | Override the demo JSON data dir (used by tests) |
-| `ALLOW_DEMO_DEPLOY` | no | `scripts/check-production-env.mjs:60` | Bypass the deploy guard |
-| `DISABLE_HMR` | no | `next.config.ts` webpack hook | AI Studio editing artefact |
-| `NODE_ENV` | n/a | `next.config.ts` | Standard |
+| Variable | Kind | Read at |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (legacy alias `NEXT_PUBLIC_SUPABASE_ANON_KEY`) | Build-time, inlined | `lib/supabase/config.ts`, `next.config.ts` |
+| `NEXT_PUBLIC_SITE_URL` | Build-time | `lib/seo.ts`, `lib/cms/http.ts` |
+| `REVALIDATE_SECRET` (legacy alias `MY_SECRET_TOKEN`) | Worker secret | `lib/cms/secret*.ts` |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Worker secret / var | assistant + avatar routes |
+| `HF_SPACE_NAME`, `HF_TOKEN` | Worker secret | `app/api/generate/route.ts` |
+| `RESEND_API_KEY`, `RESEND_TPL_*` (6) | Worker secret | `lib/email/send.ts` |
+| `RWM_DATA_DIR` | Local/test | `lib/db.ts`, `lib/cms/local-store.ts`, `lib/legacy/local-store.ts` |
+| `DISABLE_HMR` | Dev only (AI Studio artefact) | `next.config.ts` |
 
-**Gap:** `GEMINI_API_KEY` is documented in `README.md`'s environment table but is absent from `.env.example` (verified by comparing `cut -d= -f1 .env.example` against the README table). `[ASK USER 3]`
+Build/tooling-only variables: `WORKERS_CI`, `RWM_SKIP_WORKER_WRAPPER`, `NEXT_PRIVATE_STANDALONE`, `RWM_BUILD_TARGET`, `ALLOW_DEMO_DEPLOY`, `PIEME_BUDGET_SHELL_KB`, `PARITY_*`, `BASE_URL`, `TEMPLATE_ENV_OUTPUT`. `RATE_LIMIT_KV` is a **KV binding**, not an env var, even though `.env.example` lists it.
 
-**Deployment/runtime constraints:**
-- `NEXT_PUBLIC_*` values are **compiled into the browser bundle at build time**. Changing one requires a rebuild; a Worker runtime variable of the same name has no effect (`README.md`, `scripts/check-production-env.mjs`).
-- The production target is a Cloudflare Worker with a **read-only, non-persistent filesystem**, so the local JSON adapters (`lib/db.ts`, `lib/cms/local-store.ts`) cannot persist anything there. Supabase must be configured in production (`README.md`).
-- `wrangler.jsonc` sets `compatibility_flags: ["nodejs_compat", "global_fetch_strictly_public"]`. Many route handlers declare `export const runtime = 'nodejs'`.
-- Free-tier KV: one namespace `researchwithme-opennext-cache` (`8d2dc8f0b1bb4839962ae63df8296b31`) is bound twice, as both incremental and tag cache (`wrangler.jsonc`, `open-next.config.ts`).
-- No Dockerfile or compose file exists (scan: "No containerization configs detected"), despite `output: 'standalone'` enabling a container.
+**Deployment constraints:**
+- `NEXT_PUBLIC_*` are compiled into the bundle, so changing one means rebuilding. `.env.production` commits the public Supabase URL and publishable key (no secrets).
+- The Worker filesystem is read-only, so the JSON adapters (`data/`) only work locally. Production must have Supabase configured, and `scripts/check-production-env.mjs` refuses `deploy`/`upload` otherwise.
+- KV: one namespace (`8d2dc8f0…`) is bound three times (`NEXT_INC_CACHE_KV`, `NEXT_TAG_CACHE_KV`, `RATE_LIMIT_KV`), and `previews` reuses it. The free plan's 1,000 writes/day is shared by all of them.
+- README: OpenNext builds are only partly supported on Windows. Use WSL or CI for release builds.
 
 ### 6) Evidence
 
-- `package.json` — scripts, dependencies, devDependencies, engines, overrides
-- `package-lock.json`, `bun.lock` — two committed lockfiles
-- `tsconfig.json` — strictness, `paths: { "@/*": ["./*"] }`
-- `next.config.ts` — `output: 'standalone'`, security headers, image patterns, `optimizePackageImports`
-- `open-next.config.ts`, `wrangler.jsonc` — Cloudflare Worker target and bindings
-- `.env.example`, `.env.production` — env template and committed public values
-- `.github/workflows/quality.yml` — CI pipeline
-- `docs/codebase/.codebase-scan.txt` — CODE METRICS (363 files, 45,607 LOC), CI/CD, container and security sections
-
----
-
-## Updated 2026-11-08
-
-- **Bun only.** `package-lock.json` was deleted and `package.json` pins
-  `packageManager: "bun@1.4.4"`.
-- **`@opennextjs/cloudflare` moved from `devDependencies` to `dependencies`**,
-  because `npm run build:worker` (used by CI) needs it at build time.
-- **`wrangler.jsonc` binds three names.** The same KV namespace is bound as
-  `NEXT_INC_CACHE_KV`, `NEXT_TAG_CACHE_KV`, and now `RATE_LIMIT_KV`. On the free
-  plan the 1,000-writes-per-day allowance is shared across all three.
-- **`cloudflare-env.d.ts` is gitignored.** `npm run cf-typegen` regenerates it
-  (~626 KB of workerd types), so it was removed from the index instead of
-  committed.
+- `package.json`: scripts, dependencies, `packageManager`, `engines`, `overrides`
+- `bun.lock`, `package-lock.json`: both tracked (`git ls-files`); `package-lock.json` re-added in `0b799fc` after its deletion in `322ad72`
+- `tsconfig.json`, `next.config.ts`, `open-next.config.ts`, `wrangler.jsonc`, `cloudflare-pages/wrangler.jsonc`
+- `.github/workflows/quality.yml`: the only workflow
+- `.env.example`, `.env.production`, `scripts/build-next-or-worker.mjs`, `scripts/check-production-env.mjs`
+- `docs/codebase/.codebase-scan.txt`: manifests, env template, CI detection. **Its CODE METRICS and TODO sections are polluted by build output** (`.open-next/`, `.wrangler/tmp/`), which `scan.py` doesn't exclude. Use the source-only figures in STRUCTURE.md.
