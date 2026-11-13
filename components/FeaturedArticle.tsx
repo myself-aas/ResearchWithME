@@ -47,7 +47,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             />
           )}
           <Text as="span" variant="eyebrow" weight="semibold" className="absolute left-4 top-4 rounded-sm border border-line bg-canvas/95 px-2.5 py-1">
-            Lead Monograph · 10.5555/rwm.{post.id}
+            Featured review
           </Text>
         </div>
 

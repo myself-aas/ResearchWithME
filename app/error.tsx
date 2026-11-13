@@ -18,9 +18,9 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
         tone="error"
         code="Error"
         title="We could not open this page"
-        description="The request did not complete. Your reading list and drafts are stored separately, so you can retry without losing them."
-        primaryAction={{ href: '/', label: 'Return to the platform' }}
-        secondaryAction={{ href: '/papers', label: 'Browse the paper archive' }}
+        description="The request did not complete. Your reading list is stored locally, so you can retry without losing saved items."
+        primaryAction={{ href: '/', label: 'Return home' }}
+        secondaryAction={{ href: '/authors', label: 'Browse writers' }}
       >
         <button
           type="button"

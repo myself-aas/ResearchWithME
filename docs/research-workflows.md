@@ -133,7 +133,7 @@ flowchart TD
     publication_metadata -.- metadata_formats["APA, BibTeX and RIS citations"]
     publication_publish -.- publish_reader["Canonical reader page"]
     publication_publish -.- publish_crawl["Sitemap, robots and manifest"]
-    publication_impact -.- impact_citations["Citation counts"]
+    publication_impact -.- impact_citations["Primary DOI links on reviewed artifacts"]
     publication_impact -.- impact_reading["Reading-time estimates"]
     classDef stage stroke-width:2px;
     classDef planned stroke-dasharray: 5 5;
@@ -146,7 +146,7 @@ flowchart TD
 | Metadata tagging | APA, BibTeX and RIS citations | live | `CitationTool` | connect |
 | Open-access publishing | Canonical reader page | live | `/post/[slug]` | verify |
 | Open-access publishing | Sitemap, robots and manifest | live | `app/sitemap.ts` | verify |
-| Impact tracking | Citation counts | live | `PapersArchive` | synthesize |
+| Impact tracking | Primary DOI links on reviewed artifacts | live | `ArticleFeed` | synthesize |
 | Impact tracking | Reading-time estimates | live | `ArticleFeed` | synthesize |
 
 **Outcome — Indexed knowledge** (live): The review joins the provenance graph and its trust assessment.

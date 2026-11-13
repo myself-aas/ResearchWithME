@@ -10,10 +10,10 @@ export default function NotFound() {
         role="alert"
         tone="neutral"
         code="404"
-        title="This page is not in the archive"
-        description="The address may have changed, or this piece may no longer be available. Browse the platform or search the paper archive to continue."
+        title="This page could not be found"
+        description="The address may have changed, or this piece may no longer be available. Return home to browse latest articles."
         primaryAction={{ href: '/', label: 'Browse latest articles' }}
-        secondaryAction={{ href: '/papers', label: 'Search papers' }}
+        secondaryAction={{ href: '/authors', label: 'Browse writers' }}
       />
       <BlogFooter />
     </div>

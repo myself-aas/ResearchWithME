@@ -9,9 +9,9 @@ const nextApiMethods: Array<{ path: string; method: string }> = JSON.parse(
 );
 
 describe('Next.js API baseline inventory', () => {
-  it('records exactly the existing 21 operations', () => {
+  it('records exactly the existing 19 operations', () => {
     const actual = collectNextApiMethods('app/api');
-    expect(actual).toHaveLength(21);
+    expect(actual).toHaveLength(19);
     expect(actual).toEqual(nextApiMethods);
   });
 });

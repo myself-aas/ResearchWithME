@@ -10,8 +10,15 @@ const JSON_HEADERS = { 'content-type': 'application/json' };
 const GEMINI_ENV = { GEMINI_API_KEY: 'test-gemini-key' } as const;
 
 describe('POST /api/research-assistant', () => {
-  it('keeps the offline fallback answering from the catalogue', async () => {
+  it('keeps the offline fallback answering from the CMS catalogue', async () => {
     const app = createTestApp();
+    await app.seedPost({
+      slug: 'inside-vllm-paged-attention',
+      status: 'published',
+      title: 'Inside vLLM & PagedAttention',
+      summary: 'Teardown of PagedAttention in vLLM.',
+      tags: ['vllm', 'llm-serving'],
+    });
     const a = await app.request('/api/research-assistant', {
       method: 'POST',
       headers: JSON_HEADERS,
@@ -20,9 +27,9 @@ describe('POST /api/research-assistant', () => {
     expect(a.status).toBe(200);
     const body = await a.json();
     expect(body.mode).toBe('catalog');
-    expect(body.answer).toContain('vLLM');
+    expect(body.answer.toLowerCase()).toContain('vllm');
+    expect(body.citations.length).toBeGreaterThan(0);
     expect(body.citations[0].title).toMatch(/vllm/i);
-    expect(body.citations[0]).toMatchObject({ id: 'post-1', author: expect.any(String), category: expect.any(String) });
   });
 
   it('answers honestly when nothing matches and the catalogue is the only source', async () => {

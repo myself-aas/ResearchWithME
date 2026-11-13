@@ -20,7 +20,6 @@ const listArticles: ApiHandler = async (ctx: RequestContext) => {
     const limit = Number.isFinite(limitParam) ? Math.min(Math.max(limitParam, 1), 100) : 100;
     const full = searchParams.get('full') === '1';
 
-    // Live CMS posts lead the feed; bundled and local articles follow.
     let articles = await getPublicArticleCatalogue(ctx);
 
     if (category && category !== 'All') {
@@ -50,7 +49,6 @@ const listArticles: ApiHandler = async (ctx: RequestContext) => {
       );
     }
 
-    // Feed consumers only need metadata; the full body is served by the article route.
     const page = articles.slice(0, limit);
     const payload = full
       ? page
@@ -76,41 +74,22 @@ const getArticle: ApiHandler = async (ctx: RequestContext, params) => {
     if (!key) return json({ error: 'An article id is required.' }, { status: 400 });
 
     const cmsPostId = fromPublicPostId(key);
-    if (cmsPostId) {
-      let post: CmsPost | null = null;
-      try {
-        const store = await ctx.services.publicCms(ctx);
-        const candidate = await store.getPost(cmsPostId);
-        post = candidate?.status === 'published' ? candidate : null;
-      } catch (error) {
-        // A CMS outage degrades to a 404 (as in lib/cms/read.ts), never to a 5xx for the feed.
-        console.error('Error reading the CMS article:', error);
-        post = null;
-      }
-      if (!post) return json({ error: 'Article not found.' }, { status: 404 });
-      return json(
-        { article: cmsPostToArticle(post) },
-        { headers: { 'cache-control': ARTICLE_CACHE } },
-      );
-    }
+    if (!cmsPostId) return json({ error: 'Article not found.' }, { status: 404 });
 
-    let legacy;
+    let post: CmsPost | null = null;
     try {
-      legacy = await ctx.services.legacy(ctx);
+      const store = await ctx.services.publicCms(ctx);
+      const candidate = await store.getPost(cmsPostId);
+      post = candidate?.status === 'published' ? candidate : null;
     } catch (error) {
-      console.error('Error reading the legacy catalogue:', error);
-      return json({ error: 'The article could not be read.' }, { status: 503 });
+      console.error('Error reading the CMS article:', error);
+      post = null;
     }
-    let article;
-    try {
-      article = await legacy.findArticle(key);
-    } catch (error) {
-      console.error('Error reading the legacy catalogue:', error);
-      return json({ error: 'The article could not be read.' }, { status: 503 });
-    }
-    if (!article) return json({ error: 'Article not found.' }, { status: 404 });
-
-    return json({ article }, { headers: { 'cache-control': ARTICLE_CACHE } });
+    if (!post) return json({ error: 'Article not found.' }, { status: 404 });
+    return json(
+      { article: cmsPostToArticle(post) },
+      { headers: { 'cache-control': ARTICLE_CACHE } },
+    );
   } catch (error) {
     console.error('Error fetching article:', error);
     return json({ error: 'The article could not be read.' }, { status: 500 });
@@ -118,8 +97,6 @@ const getArticle: ApiHandler = async (ctx: RequestContext, params) => {
 };
 
 const patchArticle: ApiHandler = async (ctx: RequestContext, params) => {
-  // Deployment capability first: never spend rate-limit budget on a write
-  // this deployment cannot persist.
   const readOnly = readOnlyDeploymentResponse(ctx);
   if (readOnly) return readOnly;
 
@@ -136,50 +113,26 @@ const patchArticle: ApiHandler = async (ctx: RequestContext, params) => {
     if (!key) return json({ error: 'An article id is required.' }, { status: 400 });
 
     const cmsPostId = fromPublicPostId(key);
-    if (cmsPostId) {
-      try {
-        const store = await ctx.services.publicCms(ctx);
-        const candidate = await store.getPost(cmsPostId).catch((error: unknown) => {
-          console.error('Error reading the CMS article for a reaction:', error);
-          return null;
-        });
-        const post = candidate?.status === 'published' ? candidate : null;
-        if (!post) return json({ error: 'Article not found.' }, { status: 404 });
+    if (!cmsPostId) return json({ error: 'Article not found.' }, { status: 404 });
 
-        try {
-          const likes = await store.incrementLikes(cmsPostId);
-          return json({ success: true, likes });
-        } catch (error) {
-          console.error('Error updating CMS article likes:', error);
-          return json({ error: 'The reaction could not be recorded.' }, { status: 503 });
-        }
+    try {
+      const store = await ctx.services.publicCms(ctx);
+      const candidate = await store.getPost(cmsPostId).catch((error: unknown) => {
+        console.error('Error reading the CMS article for a reaction:', error);
+        return null;
+      });
+      const post = candidate?.status === 'published' ? candidate : null;
+      if (!post) return json({ error: 'Article not found.' }, { status: 404 });
+
+      try {
+        const likes = await store.incrementLikes(cmsPostId);
+        return json({ success: true, likes });
       } catch (error) {
         console.error('Error updating CMS article likes:', error);
         return json({ error: 'The reaction could not be recorded.' }, { status: 503 });
       }
-    }
-
-    let legacy;
-    try {
-      legacy = await ctx.services.legacy(ctx);
     } catch (error) {
-      console.error('Error reading the legacy catalogue:', error);
-      return json({ error: 'The article could not be read.' }, { status: 503 });
-    }
-    let article;
-    try {
-      article = await legacy.findArticle(key);
-    } catch (error) {
-      console.error('Error reading the legacy catalogue:', error);
-      return json({ error: 'The article could not be read.' }, { status: 503 });
-    }
-    if (!article) return json({ error: 'Article not found.' }, { status: 404 });
-
-    try {
-      const likes = await legacy.incrementLikes(article.id);
-      return json({ success: true, likes });
-    } catch (error) {
-      console.error('Error updating article likes:', error);
+      console.error('Error updating CMS article likes:', error);
       return json({ error: 'The reaction could not be recorded.' }, { status: 503 });
     }
   } catch (error) {

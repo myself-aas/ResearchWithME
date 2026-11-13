@@ -108,7 +108,7 @@ export default function ReadingProgressDock({
           onClick={handleToggleSave}
           aria-pressed={isSaved}
           aria-label={isSaved ? 'Remove from reading list' : 'Save to reading list'}
-          className={`inline-flex h-9 w-9 items-center justify-center rounded-xs border transition-colors ${
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-xs border transition-colors ${
             isSaved
               ? 'border-brand bg-brand text-on-primary'
               : 'border-transparent text-ink-secondary hover:border-line hover:text-ink'
@@ -133,7 +133,7 @@ export default function ReadingProgressDock({
             href={discussionAnchor}
             aria-label="Jump to peer discussion"
             whileTap={{ scale: 0.94 }}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
           >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
           </m.a>
@@ -143,7 +143,7 @@ export default function ReadingProgressDock({
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top of manuscript"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
         >
           <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
         </Pressable>

@@ -3,6 +3,7 @@ version: 1
 slug: "app-paper-slug-page-tsx"
 primary_target: "app/paper/[slug]/page.tsx"
 related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx"]
+status: retired
 ---
 
 # Paper Reader

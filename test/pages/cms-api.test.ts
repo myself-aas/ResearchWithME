@@ -164,30 +164,7 @@ describe('POST /api/cms/posts', () => {
     expect((await res.json()).error).toContain('already uses this URL');
   });
 
-  it('rejects a slug used by a catalogue article with 409', async () => {
-    const app = EDITOR_APP();
-    const res = await app.request('/api/cms/posts', {
-      as: 'editor',
-      method: 'POST',
-      headers: SITE_HEADERS,
-      body: JSON.stringify(validPostBody({ slug: 'inside-vllm-and-paged-attention' })),
-    });
-    expect(res.status).toBe(409);
-    expect((await res.json()).error).toContain('catalogue article');
-  });
 
-  it('returns 503 when the public catalogue cannot be checked', async () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    const app = createTestApp({ legacyFails: true, profileRows: [MAYA_PROFILE] });
-    const res = await app.request('/api/cms/posts', {
-      as: 'editor',
-      method: 'POST',
-      headers: SITE_HEADERS,
-      body: JSON.stringify(validPostBody()),
-    });
-    expect(res.status).toBe(503);
-    expect((await res.json()).error).toContain('catalogue could not be checked');
-  });
 
   it('rate-limits the twenty-first save in a minute with Retry-After', async () => {
     const app = EDITOR_APP();
@@ -241,8 +218,9 @@ describe('PATCH /api/cms/posts/:id', () => {
     expect((await res.json()).error).toContain('not found');
   });
 
-  it('rejects a slug change that collides with the catalogue with 409', async () => {
+  it('rejects a slug change that collides with a published CMS post with 409', async () => {
     const app = EDITOR_APP();
+    await app.seedPost({ slug: 'inside-vllm-and-paged-attention', status: 'published', title: 'Existing' });
     const seeded = await app.seedPost({ slug: 'a-perfectly-fine-slug', status: 'draft' });
     const res = await app.request(postPath(seeded.id), {
       as: 'editor',
@@ -251,7 +229,7 @@ describe('PATCH /api/cms/posts/:id', () => {
       body: JSON.stringify({ slug: 'inside-vllm-and-paged-attention' }),
     });
     expect(res.status).toBe(409);
-    expect((await res.json()).error).toContain('catalogue article');
+    expect((await res.json()).error).toContain('already uses this URL');
   });
 });
 

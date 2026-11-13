@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
-import LocaleProvider from '@/components/i18n/LocaleProvider';
 import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
@@ -97,17 +96,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <LocaleProvider>
-          {/* πeme motion runtime: one lazy feature bundle and one reduced-motion
-              policy for the whole app (see components/motion/MotionScope). */}
-          <MotionModeProvider>
-            <MotionScope>
-              <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
-                <RouteTransition>{children}</RouteTransition>
-              </div>
-            </MotionScope>
-          </MotionModeProvider>
-        </LocaleProvider>
+        {/* πeme motion runtime: one lazy feature bundle and one reduced-motion
+            policy for the whole app (see components/motion/MotionScope). */}
+        <MotionModeProvider>
+          <MotionScope>
+            <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
+              <RouteTransition>{children}</RouteTransition>
+            </div>
+          </MotionScope>
+        </MotionModeProvider>
       </body>
     </html>
   );

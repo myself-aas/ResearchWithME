@@ -3,6 +3,7 @@ version: 1
 slug: "app-papers-page-tsx"
 primary_target: "app/papers/page.tsx"
 related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx"]
+status: retired
 ---
 
 # Paper Archive

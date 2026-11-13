@@ -68,7 +68,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     .map((entry) => entry.article);
 
   const paragraphs = article.content.flatMap((block) => block.split(/\n{2,}/)).filter(Boolean);
-  const canonicalDoi = `10.5555/rwm.${article.id}`;
+  const canonicalUrl = `/post/${article.slug}`;
   const citeHref = `/cite?article=${encodeURIComponent(article.slug)}`;
   const citationMap = buildArticleCitationMap(article);
 
@@ -155,8 +155,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <time dateTime={article.dateISO ?? article.publishedAt}>{article.publishedAt}</time>
                 <span aria-hidden="true">·</span>
                 <span>{article.readTime}</span>
-                <span aria-hidden="true">·</span>
-                <span>DOI {canonicalDoi}</span>
               </p>
 
               <h1 id="article-title" className="mt-3 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
@@ -388,7 +386,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </p>
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <InlineCitationPopover
-                  label={canonicalDoi}
+                  label="Cite"
                   source={citationMap.rwm}
                   citeHref={citeHref}
                 />
@@ -408,12 +406,16 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </Text>
               <dl className="mt-3 space-y-3 font-mono text-xs">
                 <div>
-                  <dt className="uppercase tracking-wider text-ink-secondary">DOI</dt>
-                  <dd className="mt-0.5 break-all text-ink">{canonicalDoi}</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">URL</dt>
+                  <dd className="mt-0.5 break-all text-ink">
+                    <Link href={canonicalUrl} className="underline-offset-4 hover:underline">
+                      researchwith.me{canonicalUrl}
+                    </Link>
+                  </dd>
                 </div>
                 <div>
-                  <dt className="uppercase tracking-wider text-ink-secondary">ISSN</dt>
-                  <dd className="mt-0.5 text-ink">2994-0821</dd>
+                  <dt className="uppercase tracking-wider text-ink-secondary">Licence</dt>
+                  <dd className="mt-0.5 text-ink">CC BY 4.0</dd>
                 </div>
                 <div>
                   <dt className="uppercase tracking-wider text-ink-secondary">Column</dt>

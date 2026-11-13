@@ -25,7 +25,7 @@ export async function GET() {
       `- **Summary:** ${article.summary}`,
       '',
     ]),
-    '## Verified Domain Specialists',
+    '## Writers',
     '',
     ...authors.map(
       (author) =>
@@ -35,9 +35,9 @@ export async function GET() {
     '## Navigation & Machine Endpoints',
     '',
     `- [LLM Index (/llms.txt)](${absoluteUrl('/llms.txt')})`,
-    `- [Papers Archive (/papers)](${absoluteUrl('/papers')})`,
-    `- [Citation Builder (/cite)](${absoluteUrl('/cite')})`,
-    `- [About (/about)](${absoluteUrl('/about')}) · [Contact (/contact)](${absoluteUrl('/contact')}) · [Privacy (/privacy)](${absoluteUrl('/privacy')})`,
+    `- [Writers (/authors)](${absoluteUrl('/authors')})`,
+    `- [Cite (/cite)](${absoluteUrl('/cite')})`,
+    `- [About (/about)](${absoluteUrl('/about')}) · [Contact (/contact)](${absoluteUrl('/contact')}) · [Privacy (/privacy)](${absoluteUrl('/privacy')}) · [Editor (/editorial-board)](${absoluteUrl('/editorial-board')})`,
     '',
   ];
 

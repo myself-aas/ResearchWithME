@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import {
   Activity,
-  ArrowRight,
   BarChart3,
   Bookmark,
   BookOpen,
@@ -234,13 +233,17 @@ export default function ArticleFeed({
       {posts.length === 0 ? (
         <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
           <Text as="p" variant="eyebrow" color="secondary">
-            Diagnostic Empty State · Zero Matches
+            {hasFilters ? 'Diagnostic Empty State · Zero Matches' : 'Empty Catalogue'}
           </Text>
           <Text as="h3" variant="section-title" className="mt-2">
-            No manuscripts match the active filter constraints
+            {hasFilters
+              ? 'No articles match these filters.'
+              : 'No articles have been published yet.'}
           </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
-            No published review satisfies all of the constraints below simultaneously. Relax a filter or reset the index to view the complete specialist catalog.
+            {hasFilters
+              ? 'No published article satisfies all of the constraints below simultaneously. Relax a filter or reset to view the full catalogue.'
+              : 'New writing will appear here once it is published through the studio.'}
           </p>
 
           <div
@@ -277,7 +280,6 @@ export default function ArticleFeed({
         <MotionList data-layout-grid="article-cards" className="mt-8 grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
             {posts.map((post) => {
               const isSaved = savedPostIds.includes(post.id) || savedPostIds.includes(post.slug);
-              const canonicalDoi = `10.5555/rwm.${post.id}`;
 
               return (
                 <MotionItem key={post.id} className="flex min-w-0">
@@ -356,7 +358,7 @@ export default function ArticleFeed({
                             <span className="truncate">{post.reviewedArtifact.identifier}</span>
                           </p>
                         )}
-                        <p className="truncate">DOI {canonicalDoi}</p>
+                        <p className="truncate">{post.format} · {post.readTime}</p>
                       </div>
                     </div>
 
@@ -420,15 +422,8 @@ export default function ArticleFeed({
 
       <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
         <p className="font-mono text-xs text-ink-secondary">
-          Every review is open access under CC BY 4.0 · ISSN 2994-0821.
+          Every review is open access under CC BY 4.0.
         </p>
-        <Link
-          href="/papers"
-          className="inline-flex min-h-11 items-center gap-2 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
-        >
-          <span>Browse the paper archive</span>
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </Link>
       </div>
     </section>
   );

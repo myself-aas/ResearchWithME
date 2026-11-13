@@ -1,6 +1,10 @@
 # ResearchWithMe
 
-An open-access research platform: long-form explanations of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
+An open-access review platform: long-form article reviews, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
+
+- Interface language: English only (Bengali/Arabic i18n was removed in 2026-11).
+- Identifiers: the platform issues no periodical identifier number, book identifier, or resolver prefix of its own; every review links out to its primary artifact (a resolver identifier, preprint, tagged release, etc.) rather than minting handles.
+- Editor: Ashif Ahmed Shuvo is the sole editor-in-chief. Articles are published under CC BY 4.0.
 
 The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) and uses the [Impeccable](https://impeccable.style) workflow and detector. Product context lives in [`PRODUCT.md`](./PRODUCT.md); per-route briefs live in [`.impeccable/surfaces/`](./.impeccable/surfaces).
 
@@ -18,23 +22,23 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 
 | Route | Mode | What it does |
 | --- | --- | --- |
-| `/` | Persuade | Searchable article feed, field browser, featured review, contributor roster |
-| `/post/[slug]` | Read | Server-rendered article with takeaways, artifact record, discussion, related reviews |
-| `/papers` | Operate | Filterable paper archive with DOI and citation actions |
-| `/paper/[slug]` | Read | Structured paper with abstract, methods, findings, references, publication record |
-| `/authors`, `/author/[id]` | Operate / Read | Contributor directory and profile with verification record and archive |
-| `/editions` | Operate | Quarterly compendiums with browser print-to-PDF |
-| `/editorial-board` | Read | Editors and editorial standards |
-| `/assistant` | Operate | Catalog-grounded research assistant with citations |
+| `/` | Persuade | Searchable article feed, category browser, featured review, writer roster |
+| `/post/[slug]` | Read | Server-rendered article with key takeaways, reviewed-artifact record, discussion, cite tool |
+| `/authors`, `/author/[id]` | Operate / Read | Writer directory and profile with public ORCID/GitHub attribution and article archive |
+| `/editorial-board` | Read | Editor-in-chief and editorial policy |
+| `/assistant` | Operate | Catalog-grounded research assistant with inline citations |
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
-| `/login` | Operate | Sign in with email and password, or Google; setup guide in demo mode |
-| `/dashboard/access` | Operate | Connect a GitHub or ORCID identity and apply to write |
-| `/write` | Operate | Draft autosave, validation, preview, and publish through the CMS store |
-| `/dashboard` | Operate | Studio: new article with Markdown editor, cover library, takeaways |
-| `/dashboard/manage` | Operate | Search, filter, publish/revert, delete, live status |
-| `/dashboard/edit/[id]` | Operate | Edit a draft or published article |
-| `/dashboard/comments` | Operate | Comment moderation with realtime updates |
+| `/about` / `/contact` / `/privacy` | Read | Mission, contact channels, reader privacy policy |
+| `/login` | Operate | Email / OAuth sign-in; demo-mode setup guide when Supabase is not configured |
+| `/dashboard/access` | Operate | Connect an ORCID or GitHub identity and apply to write |
+| `/write` | Operate | Autosaved draft editor, preview, and publish through the CMS store (editor access) |
+| `/dashboard` | Operate | Studio landing: drafts, published articles, applications |
+| `/dashboard/(studio)/manage` | Operate | Search, filter, publish/revert, delete, live status |
+| `/dashboard/(studio)/edit/[id]` | Operate | Edit a draft or published article |
+| `/dashboard/(studio)/comments` | Operate | Comment moderation with realtime updates |
+
+Retired routes (`/papers`, `/paper/[slug]`, `/editions`) return 404; their surface briefs are kept under `.impeccable/surfaces/` with `status: retired` for history but no code serves them.
 
 Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
@@ -180,7 +184,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, DOIs, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
+The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, cited-work identifiers, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
 
 ## Contributing
 

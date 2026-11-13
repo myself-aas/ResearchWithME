@@ -31,7 +31,7 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
         >
           <div>
             <Text as="p" variant="eyebrow" color="secondary">
-              Verified Specialists
+              Writers
             </Text>
             <h2
               id="contributors-title"

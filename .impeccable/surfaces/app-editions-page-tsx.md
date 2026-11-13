@@ -3,6 +3,7 @@ version: 1
 slug: "app-editions-page-tsx"
 primary_target: "app/editions/page.tsx"
 related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx"]
+status: retired
 ---
 
 # PDF Editions

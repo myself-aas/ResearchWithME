@@ -13,11 +13,8 @@ import NotFound from './not-found';
 import HomeRoute from './routes/home';
 import CategoryRoute from './routes/category';
 import PostRoute from './routes/post';
-import PaperRoute from './routes/paper';
 import AuthorRoute from './routes/author';
-import PapersRoute from './routes/papers';
 import AuthorsRoute from './routes/authors';
-import EditionsRoute from './routes/editions';
 import EditorialBoardRoute from './routes/editorial-board';
 import AssistantRoute from './routes/assistant';
 import BookmarksRoute from './routes/bookmarks';
@@ -45,11 +42,8 @@ export type RouteId =
   | 'articles'
   | 'category'
   | 'post'
-  | 'papers'
-  | 'paper'
   | 'authors'
   | 'author'
-  | 'editions'
   | 'editorial-board'
   | 'assistant'
   | 'bookmarks'
@@ -184,11 +178,8 @@ export const ROUTE_DEFINITIONS: ReadonlyArray<RouteDefinition> = [
   { id: 'articles', path: '/articles', element: <HomeRoute /> },
   { id: 'category', path: '/category/:slug', element: <CategoryRoute /> },
   { id: 'post', path: '/post/:slug', element: <PostRoute /> },
-  { id: 'paper', path: '/paper/:slug', element: <PaperRoute /> },
   { id: 'author', path: '/author/:id', element: <AuthorRoute /> },
-  { id: 'papers', path: '/papers', element: <PapersRoute /> },
   { id: 'authors', path: '/authors', element: <AuthorsRoute /> },
-  { id: 'editions', path: '/editions', element: <EditionsRoute /> },
   { id: 'editorial-board', path: '/editorial-board', element: <EditorialBoardRoute /> },
   { id: 'assistant', path: '/assistant', element: <AssistantRoute /> },
   { id: 'bookmarks', path: '/bookmarks', element: <BookmarksRoute /> },

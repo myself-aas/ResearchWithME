@@ -67,8 +67,6 @@ const createPost: ApiHandler = async (ctx) => {
   }
 
   try {
-    // Attribution is server-derived. The byline text comes from the profile, so
-    // a request body cannot claim an author name that is not on the profile.
     const author = await resolvePublishableAuthor(ctx, parsed.value.authorId);
     const value = { ...parsed.value, authorName: author.displayName };
 
@@ -81,27 +79,7 @@ const createPost: ApiHandler = async (ctx) => {
       );
     }
 
-    let catalogueConflict = null;
-    try {
-      const legacy = await ctx.services.legacy(ctx);
-      catalogueConflict = await legacy.findArticle(value.slug);
-    } catch (error) {
-      console.error('Could not check the legacy catalogue for slug conflicts:', error);
-      return json(
-        { error: 'The public catalogue could not be checked. Try again shortly.' },
-        { status: 503 },
-      );
-    }
-    if (catalogueConflict) {
-      return json(
-        { error: 'A catalogue article already uses this URL. Choose a different slug.' },
-        { status: 409 },
-      );
-    }
-
     const post = await store.createPost(value);
-    // No revalidation hook: there is no ISR tag layer in the Pages spike, and
-    // public reads carry a short max-age. Documented as a deliberate omission.
     return json({ post, mode: gate.mode }, { status: 201, headers: noStoreHeaders() });
   } catch (error) {
     return cmsErrorResponse(error);
@@ -140,26 +118,14 @@ const patchPost: ApiHandler = async (ctx, params) => {
       return json({ error: parsed.message, fieldErrors: parsed.fieldErrors }, { status: 400 });
     }
 
-    // Same server-derived attribution as on create; a client cannot rename the
-    // byline to something the profile does not say.
     const author = await resolvePublishableAuthor(ctx, parsed.value.authorId);
     const value = { ...parsed.value, authorName: author.displayName };
 
     if (value.slug !== existing.slug) {
-      let conflict = null;
-      try {
-        const legacy = await ctx.services.legacy(ctx);
-        conflict = await legacy.findArticle(value.slug);
-      } catch (error) {
-        console.error('Could not check the legacy catalogue for slug conflicts:', error);
-        return json(
-          { error: 'The public catalogue could not be checked. Try again shortly.' },
-          { status: 503 },
-        );
-      }
+      const conflict = await store.getPostBySlug(value.slug);
       if (conflict) {
         return json(
-          { error: 'A catalogue article already uses this URL. Choose a different slug.' },
+          { error: 'An article already uses this URL. Change the title or slug.' },
           { status: 409 },
         );
       }

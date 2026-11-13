@@ -54,7 +54,8 @@
     "test:pages": "playwright test --project=e2e --config test/playwright.config.ts",
     "test:staging": "playwright test --project=staging --config test/playwright.config.ts",
     "docs:workflows": "tsx scripts/build-workflow-docs.ts",
-    "parity": "node scripts/visual-parity.mjs"
+    "parity": "node scripts/visual-parity.mjs",
+    "preinstall": "node scripts/ensure-npm.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -120,5 +121,6 @@
     "next": {
       "postcss": "^8.5.31"
     }
-  }
+  },
+  "packageManager": "npm@10.9.8"
 }

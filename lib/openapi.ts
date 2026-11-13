@@ -106,21 +106,6 @@ export const API_OPERATIONS: ApiOperation[] = [
     parameters: [authorId], responses: { 200: json('Author and archive.', object({ author: ref('Author'), articles: array(ref('Article')), metrics: ref('AuthorMetrics') }, ['author', 'articles', 'metrics'])), ...errors(400, 404, 500) },
   },
   {
-    group: 'papers', method: 'get', path: '/api/papers', operationId: 'listPapers',
-    summary: 'Search papers', description: 'Returns all matching papers and their total. The archive may be empty.',
-    parameters: [
-      query('topic', 'Case-insensitive exact topic, All, or All Fields.'),
-      query('q', 'Search title, abstract, DOI, authors, affiliations, or keywords; up to 120 characters.'),
-      query('sort', 'Sort by date (default), citations, or title.', { type: 'string', enum: ['date', 'citations', 'title'] }),
-    ],
-    responses: { 200: json('Matching papers.', object({ papers: array(ref('Paper')), total: integer }, ['papers', 'total'])), ...errors(500) },
-  },
-  {
-    group: 'papers', method: 'get', path: '/api/papers/{slug}', operationId: 'getPaper',
-    summary: 'Get a paper', description: 'Finds a paper by slug, ID, or a matching DOI fragment.',
-    parameters: [path('slug', 'Paper slug, ID, or DOI fragment.')], responses: { 200: json('Paper record.', object({ paper: ref('Paper') }, ['paper'])), ...errors(400, 404, 500) },
-  },
-  {
     group: 'comments', method: 'get', path: '/api/comments', operationId: 'listComments',
     summary: 'List comments', description: 'Returns comments for a post ID. Without postId, returns up to 200 locally stored comments.',
     parameters: [query('postId', 'Article ID, including a CMS public post ID when applicable.')],

@@ -5,11 +5,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { Command } from 'cmdk';
 import * as m from 'motion/react-m';
 import { useRouter } from 'next/navigation';
-import { ArrowUpRight, BookOpen, CheckCircle2, Compass, FileText, Search, X } from 'lucide-react';
+import { ArrowUpRight, CheckCircle2, Compass, FileText, Search, X } from 'lucide-react';
 import type { Author, BlogPost } from '@/lib/blog-data';
-import type { Publication } from '@/lib/research-data';
-import { t } from '@/lib/i18n';
-import { useLocale } from '@/components/i18n/LocaleProvider';
 import { useDelayedLoading } from '@/lib/motion/hooks';
 import { EASING, SPRING } from '@/lib/motion/tokens';
 import Pressable from '@/components/motion/Pressable';
@@ -30,7 +27,6 @@ export interface CommandPaletteProps {
 
 interface LoadedCorpus {
   articles: BlogPost[];
-  papers: Publication[];
   authors: Author[];
 }
 
@@ -43,7 +39,6 @@ export default function CommandPalette({
   initialQuery = '',
 }: CommandPaletteProps) {
   const router = useRouter();
-  const { locale } = useLocale();
   const [query, setQuery] = useState(initialQuery);
   const [corpus, setCorpus] = useState<LoadedCorpus | null>(cachedCorpus);
   // Loading contract: no skeleton for the first 200ms (cached corpus is
@@ -60,18 +55,13 @@ export default function CommandPalette({
 
     Promise.allSettled([
       fetch('/api/articles').then((res) => (res.ok ? res.json() : null)),
-      fetch('/api/papers').then((res) => (res.ok ? res.json() : null)),
       fetch('/api/authors').then((res) => (res.ok ? res.json() : null)),
-    ]).then(([articlesRes, papersRes, authorsRes]) => {
+    ]).then(([articlesRes, authorsRes]) => {
       if (!active) return;
       const articles: BlogPost[] =
         articlesRes.status === 'fulfilled' && Array.isArray(articlesRes.value?.articles)
           ? articlesRes.value.articles
           : initialArticles;
-      const papers: Publication[] =
-        papersRes.status === 'fulfilled' && Array.isArray(papersRes.value?.papers)
-          ? papersRes.value.papers
-          : [];
       const authors: Author[] =
         authorsRes.status === 'fulfilled' && Array.isArray(authorsRes.value?.authors)
           ? authorsRes.value.authors
@@ -79,10 +69,9 @@ export default function CommandPalette({
 
       const anySucceeded =
         (articlesRes.status === 'fulfilled' && articlesRes.value !== null) ||
-        (papersRes.status === 'fulfilled' && papersRes.value !== null) ||
         (authorsRes.status === 'fulfilled' && authorsRes.value !== null);
 
-      const loaded: LoadedCorpus = { articles, papers, authors };
+      const loaded: LoadedCorpus = { articles, authors };
       if (anySucceeded) {
         cachedCorpus = loaded;
       }
@@ -96,11 +85,10 @@ export default function CommandPalette({
 
   const index = useMemo(() => {
     const articles = corpus?.articles.length ? corpus.articles : initialArticles;
-    const papers = corpus?.papers ?? [];
     const authors = corpus?.authors.length
       ? corpus.authors
       : articles.map((post) => post.author);
-    return buildCatalogIndex({ articles, papers, authors });
+    return buildCatalogIndex({ articles, authors });
   }, [corpus, initialArticles]);
 
   const results = useMemo(() => searchCatalog(query, index, 24), [query, index]);
@@ -108,7 +96,6 @@ export default function CommandPalette({
   const grouped = useMemo(() => {
     const buckets: Record<CatalogEntityKind, CatalogSearchItem[]> = {
       article: [],
-      paper: [],
       specialist: [],
       route: [],
     };
@@ -127,8 +114,6 @@ export default function CommandPalette({
     switch (kind) {
       case 'article':
         return <FileText className="h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />;
-      case 'paper':
-        return <BookOpen className="h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />;
       case 'specialist':
         return <CheckCircle2 className="h-4 w-4 shrink-0 text-brand" aria-hidden="true" />;
       case 'route':
@@ -137,10 +122,9 @@ export default function CommandPalette({
   }
 
   const sections: Array<{ kind: CatalogEntityKind; heading: string }> = [
-    { kind: 'article', heading: t(locale, 'cmdk.group.articles') },
-    { kind: 'paper', heading: t(locale, 'cmdk.group.papers') },
-    { kind: 'specialist', heading: t(locale, 'cmdk.group.specialists') },
-    { kind: 'route', heading: t(locale, 'cmdk.group.routes') },
+    { kind: 'article', heading: 'Articles' },
+    { kind: 'specialist', heading: 'Writers' },
+    { kind: 'route', heading: 'Pages' },
   ];
 
   return (
@@ -161,18 +145,18 @@ export default function CommandPalette({
             animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
             transition={SPRING.panel}
           >
-          <Dialog.Title className="sr-only">{t(locale, 'cmdk.trigger')}</Dialog.Title>
+          <Dialog.Title className="sr-only">Search articles</Dialog.Title>
           <Dialog.Description className="sr-only">
-            {t(locale, 'cmdk.placeholder')}
+            Search articles, writers, and pages…
           </Dialog.Description>
 
-          <Command label={t(locale, 'cmdk.trigger')} shouldFilter={false} loop className="flex flex-col">
+          <Command label="Search articles" shouldFilter={false} loop className="flex flex-col">
             <div className="flex items-center gap-3 border-b border-line bg-surface px-4 py-3">
               <Search className="h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />
               <Command.Input
                 value={query}
                 onValueChange={setQuery}
-                placeholder={t(locale, 'cmdk.placeholder')}
+                placeholder="Search articles, writers, and pages…"
                 className="w-full bg-transparent font-sans text-sm text-ink placeholder:text-ink-secondary focus:outline-none"
               />
               {query && (
@@ -217,7 +201,7 @@ export default function CommandPalette({
 
               {!showSkeleton && results.length === 0 && (
                 <Command.Empty className="px-4 py-10 text-center font-sans text-sm text-ink-secondary">
-                  {t(locale, 'cmdk.empty')}
+                  No matches found.
                 </Command.Empty>
               )}
 
