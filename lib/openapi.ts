@@ -66,6 +66,7 @@ const errors = (...codes: number[]): Record<string, ApiResponse> =>
   Object.fromEntries(codes.map((code) => [String(code), json(errorDescriptions[code], ref('Error'))]));
 const session: Security = [{ SessionCookie: [] }];
 const webhookSecret: Security = [{ RevalidateSecret: [] }];
+const billingWebhook: Security = [{ BillingWebhookSignature: [] }];
 const articleId = path('id', 'Published article ID or slug.');
 const authorId = path('id', 'Published author profile ID.');
 const cmsId = path('id', 'Editorial record ID.');
@@ -204,6 +205,19 @@ export const API_OPERATIONS: ApiOperation[] = [
     security: webhookSecret, requestBody: jsonBody(ref('RevalidationWebhook'), 'Optional Supabase database webhook.', false),
     responses: { 200: json('Revalidation result.', object({ revalidated: boolean, table: { type: ['string', 'null'] }, paths: strings, now: integer }, ['revalidated', 'table', 'paths', 'now'])), ...errors(401, 429, 500, 503) },
   },
+  {
+    group: 'webhooks', method: 'post', path: '/api/webhooks/lemonsqueezy', operationId: 'receiveLemonSqueezyWebhook',
+    summary: 'Receive a Lemon Squeezy billing event',
+    description: 'Lemon Squeezy posts orders and subscription changes here. The X-Signature header is an HMAC-SHA256 of the raw request body and is the only credential; there is no session. Unhandled event names and unattributable purchases are acknowledged with 200 and recorded as ignored, so the sender stops retrying. Replayed event ids are acknowledged without being applied twice.',
+    security: billingWebhook,
+    responses: {
+      200: json('The event was applied, was a duplicate, or was ignored.', object({
+        received: boolean,
+        outcome: { type: 'string', enum: ['applied', 'duplicate', 'ignored'] },
+      }, ['received', 'outcome'])),
+      ...errors(400, 401, 413, 500, 503),
+    },
+  },
 ];
 
 const cmsPostProperties: Record<string, Schema> = {
@@ -262,6 +276,10 @@ export const OPENAPI_DOCUMENT = {
       RevalidateSecret: {
         type: 'apiKey', in: 'header', name: 'x-revalidate-secret',
         description: 'Shared secret configured for database revalidation webhooks.',
+      },
+      BillingWebhookSignature: {
+        type: 'apiKey', in: 'header', name: 'x-signature',
+        description: 'Hex HMAC-SHA256 of the raw request body, signed with the Lemon Squeezy webhook signing secret.',
       },
     },
     schemas,
