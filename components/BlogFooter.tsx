@@ -81,8 +81,8 @@ export default function BlogFooter() {
               <span>Assistant</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </TextLink>
-            <TextLink href="/about" variant="quiet">
-              About
+            <TextLink href="/motion" variant="quiet">
+              Motion system
             </TextLink>
           </div>
         </div>
