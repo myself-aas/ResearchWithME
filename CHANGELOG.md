@@ -36,6 +36,16 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   owner runbook (`supabase/MIGRATION-RECONCILE-2026-11-13.md`).
 - Npm-only package-manager enforcement (`packageManager` + preinstall guard).
 - Full-stack Impeccable audit report (`audit-report.md`, score 15/20).
+- Lemon Squeezy billing: `/pricing` and `/dashboard/account` surfaces, a
+  server-created checkout (`app/api/billing/checkout`), the signed webhook
+  (`app/api/webhooks/lemonsqueezy`), and the entitlement read
+  (`app/api/billing/entitlement`). Reading stays un-gated.
+- Billing schema (`supabase/migrations/20261113000300_billing.sql`): customers,
+  subscriptions, orders, and an idempotency log, written through one
+  `SECURITY DEFINER` function guarded by a bridge secret — no service-role key.
+- Lemon.js overlay loading on the two surfaces that sell, with the CSP allowance
+  pinned by a test.
+- Owner runbook for billing configuration and go-live (`docs/billing.md`).
 
 ### Fixed
 - Mobile search placeholder no longer references "DOI".

@@ -1,7 +1,6 @@
 import 'server-only';
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { NormalisedBillingEvent } from './events';
 import { hasPremiumAccess, isSubscriptionStatus, type SubscriptionStatus } from './status';
