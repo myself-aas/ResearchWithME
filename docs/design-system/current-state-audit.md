@@ -12,7 +12,7 @@ Branch: `arena/d5fd6236-researchwithme`. Token-layer retokenization to πeme v3.
 - **Deploy:** Cloudflare Workers via `@opennextjs/cloudflare` (OpenNext), `wrangler.jsonc`, KV cache namespace. `output: 'standalone'`.
 - **Email:** React Email 6 + Resend (`emails/`, `lib/email/`), templates now on πeme palette.
 - **Video:** HeyGen Hyperframes projects under `videos/*` (`.hyperframes`, compositions); no Remotion dependency yet. `components/VideoEmbed.tsx` embeds them.
-- **AI:** `/api/research-assistant` (Gemini via `@google/genai`, catalog-grounded, deterministic fallback), `/api/generate` + `QwenCoverGenerator` (HF Space via `@gradio/client`).
+- **AI:** `/api/research-assistant` (Gemini via `@google/genai`, catalog-grounded, deterministic fallback).
 - **Editor:** `@mdxeditor/editor` in `components/cms/MarkdownEditor.tsx`; autosave in `/write`.
 - **Charts:** `recharts` in `AuthorImpactRadarChart.tsx`.
 

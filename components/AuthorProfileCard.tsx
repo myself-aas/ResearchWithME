@@ -103,7 +103,7 @@ export default function AuthorProfileCard({
     return (
       <Card aria-labelledby="author-compact-heading" as="section" padding="lg">
         <div className="flex items-start gap-3">
-          <AuthorAvatar author={author} size="md" showControls={false} />
+          <AuthorAvatar author={author} size="md" />
           <div className="min-w-0">
             <Heading id="author-compact-heading" className="font-serif text-lg font-semibold text-ink">
               <Link href={`/author/${author.id}`} className="hover:text-brand">
@@ -145,7 +145,7 @@ export default function AuthorProfileCard({
     <Card aria-labelledby="author-profile-heading" as="section" padding="xl" className="sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
-          <AuthorAvatar author={author} size="xl" showControls={true} />
+          <AuthorAvatar author={author} size="xl" />
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2.5">
               <Heading id="author-profile-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">

@@ -24,7 +24,6 @@ application flow, and there is no submission lifecycle to notify about.
 | `verify-email` | `Research With Me Accounts <accounts@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_VERIFY_EMAIL` | DISPLAY_NAME?, VERIFY_URL, EXPIRES_IN? |
 | `password-reset` | `Research With Me Security <security@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_PASSWORD_RESET` | DISPLAY_NAME?, RESET_URL, EXPIRES_IN?, REQUESTED_FROM? |
 | `security-alert` | `Research With Me Security <security@researchwith.me>` | `security@researchwith.me` | `RESEND_TPL_SECURITY_ALERT` | DISPLAY_NAME?, EVENT_TYPE, EVENT_TIME, EVENT_LOCATION?, ACTION_URL? |
-| `billing-receipt` | `Research With Me Billing <billing@researchwith.me>` | `billing@researchwith.me` | `RESEND_TPL_BILLING_RECEIPT` | INVOICE_NUMBER, AMOUNT, CURRENCY, PERIOD?, BILLED_ON?, RECEIPT_URL? |
 | `support-reply` | `Research With Me Support <support@researchwith.me>` | `support@researchwith.me` | `RESEND_TPL_SUPPORT_REPLY` | TICKET_ID, SUBJECT?, REPLY_BODY, AGENT_NAME?, TICKET_URL? |
 
 `?` marks an optional variable: it carries an empty-string fallback and the
@@ -88,20 +87,6 @@ Idempotency: `password-reset/<user-id>` · Tag: `category=password-reset`
 Subject: `Security alert: New sign-in`
 Idempotency: `security-alert/<event-id>` · Tag: `category=security-alert`
 
-### billing-receipt
-
-| Variable | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `INVOICE_NUMBER` | string | yes | send fails without it |
-| `AMOUNT` | string | yes | send fails without it |
-| `CURRENCY` | string | yes | send fails without it |
-| `PERIOD` | string | no | empty string fallback; row hidden |
-| `BILLED_ON` | string | no | empty string fallback; row hidden |
-| `RECEIPT_URL` | string | no | empty string fallback; row hidden |
-
-Subject: `Receipt RWM-INV-2026-0142 from ResearchWithMe`
-Idempotency: `billing-receipt/<invoice-number>` · Tag: `category=billing-receipt`
-
 ### support-reply
 
 | Variable | Type | Required | Notes |
@@ -118,7 +103,7 @@ Idempotency: `support-reply/<ticket-id>-<reply-id>` · Tag: `category=support-re
 
 ## Layout
 
-All six share `emails/_layout.tsx`: header, footer, brand colours from
+All five share `emails/_layout.tsx`: header, footer, brand colours from
 `DESIGN.md`, and block-level structure so the plain-text conversion reads
 properly. `FieldTable` hides empty rows; `StatusPill` always renders its text
 label alongside the colour, because `DESIGN.md` requires status colour never to
@@ -233,7 +218,7 @@ npm run email:export   # rendered HTML in .email-export/
 `researchwith.me` is verified in Resend: the Resend-Supabase integration is
 configured against it with `team@researchwith.me` as the sender, and reports
 *Ready to send*. Any username on a verified domain sends without being created
-first, which is why the six senders here need no per-address setup.
+first, which is why the five senders here need no per-address setup.
 
 `sendScenario` still refuses an off-domain sender, but that guard catches typos
 and dashboard edits. It is not the domain check, and it would not catch an

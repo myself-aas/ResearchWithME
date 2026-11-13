@@ -34,8 +34,6 @@ export interface AppEnv {
   RATE_LIMIT_KV?: KvNamespaceLike;
   GEMINI_API_KEY?: string;
   GEMINI_MODEL?: string;
-  HF_SPACE_NAME?: string;
-  HF_TOKEN?: string;
   RESEND_API_KEY?: string;
   REVALIDATE_SECRET?: string;
   /** Legacy name, still accepted. */
@@ -44,7 +42,6 @@ export interface AppEnv {
   RESEND_TPL_VERIFY_EMAIL?: string;
   RESEND_TPL_PASSWORD_RESET?: string;
   RESEND_TPL_SECURITY_ALERT?: string;
-  RESEND_TPL_BILLING_RECEIPT?: string;
   RESEND_TPL_SUPPORT_REPLY?: string;
   /** 'production' enables the fail-closed production guard. Anything else is preview/local. */
   RWM_DEPLOY_ENV?: 'preview' | 'production';
@@ -52,12 +49,6 @@ export interface AppEnv {
 
 export interface ModelServices {
   generateText(input: { apiKey: string; model: string; prompt: string; timeoutMs: number }): Promise<string>;
-  generateCover(input: {
-    space: string;
-    token?: string;
-    params: Record<string, JsonValue>;
-    timeoutMs: number;
-  }): Promise<{ data: unknown }>;
 }
 
 export interface EmailSender {
@@ -261,7 +252,6 @@ function unconfiguredServices(): RuntimeServices {
     listPapers: () => [] as readonly Publication[],
     models: {
       generateText: () => Promise.reject(new Error('Models are not wired in this build.')),
-      generateCover: () => Promise.reject(new Error('Models are not wired in this build.')),
     },
     email: () => ({
       sendScenario: () => {

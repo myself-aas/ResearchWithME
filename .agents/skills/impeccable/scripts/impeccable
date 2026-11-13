@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+# Lightweight launcher for the project-local Impeccable CLI.
+# It prefers the pinned devDependency and falls back to npx for contributors
+# who have not installed optional tooling yet.
+set -eu
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+PROJECT_ROOT=$(CDPATH= cd -- "$SCRIPT_DIR/../../../.." && pwd)
+LOCAL_BIN="$PROJECT_ROOT/node_modules/.bin/impeccable"
+
+if [ -x "$LOCAL_BIN" ]; then
+  exec "$LOCAL_BIN" "$@"
+fi
+
+exec npx --yes impeccable@4.7.0 "$@"

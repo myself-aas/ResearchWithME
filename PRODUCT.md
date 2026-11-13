@@ -49,7 +49,7 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 - Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
 - GitHub and ORCID are identity links on an existing account, not sign-in methods. Connecting one never replaces the session the reader applied from.
 - The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
-- Newsletter and reading-list preferences are stored locally in the browser. No email is sent and no behavioral tracking is used.
+- Newsletter and reading-list preferences are stored locally in the browser. No email is sent at runtime. A Resend scenario library exists in `lib/email/` and `emails/`, but no route calls it. No behavioral tracking is used.
 
 ## Accessibility & Inclusion
 - Strict adherence to WCAG 2.1 AA contrast ratios (>= 4.5:1 for body text, >= 3:1 for large display text).

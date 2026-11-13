@@ -19,6 +19,17 @@ const isInnerBuild =
 
 const args = process.argv.slice(2);
 
+// Workers Builds may run `npm run build` (outer wrapper) or
+// `npx @opennextjs/cloudflare build`, which calls `npm run build` as an inner
+// build. Guard on both entry points, before any build starts. The outer wrapper
+// sets RWM_ENV_GUARD_DONE for its OpenNext child so the guard runs once per build.
+if (isWorkersCI && process.env.RWM_ENV_GUARD_DONE !== '1') {
+  execFileSync(process.execPath, [join(root, 'scripts', 'check-production-env.mjs')], {
+    cwd: root,
+    stdio: 'inherit',
+  });
+}
+
 if (isWorkersCI && !isInnerBuild) {
   console.log(
     '[build] WORKERS_CI detected — running opennextjs-cloudflare build so .open-next/ is ready for preview/deploy.',
@@ -35,6 +46,7 @@ if (isWorkersCI && !isInnerBuild) {
     env: {
       ...process.env,
       RWM_SKIP_WORKER_WRAPPER: '1',
+      RWM_ENV_GUARD_DONE: '1',
     },
   });
 } else {

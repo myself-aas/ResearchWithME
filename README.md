@@ -7,12 +7,12 @@ The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) a
 ## Run it
 
 ```bash
-bun install
+npm ci
 npm run dev        # http://localhost:3000
 npm run build && npm start
 ```
 
-Node 20.9 or newer, and [Bun](https://bun.sh) 1.4 or newer — `bun.lock` is the only lockfile, and CI installs with `bun install --frozen-lockfile`. `next.config.ts` sets `output: 'standalone'`, so a production container can run `node .next/standalone/server.js`; `next start` is used for local verification.
+Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs with `npm ci`. `next.config.ts` sets `output: 'standalone'`, so a production container can run `node .next/standalone/server.js`; `next start` is used for local verification.
 
 ## Routes
 
@@ -88,7 +88,8 @@ npm run cf-typegen  # regenerate cloudflare-env.d.ts after binding changes
 
 - Runs on the Workers free plan. One KV namespace (`researchwithme-opennext-cache`) backs both the incremental cache and the tag cache, so studio `revalidatePath` calls refresh static routes such as `/sitemap.xml` without a redeploy. KV is eventually consistent, so a revalidation can take up to about 60 s to show. Each deploy writes about 33 cache entries, well within KV's free 1,000 writes a day. `next/image` serves original files because there is no Images binding.
 - The namespace ID is set on both `kv_namespaces` entries in `wrangler.jsonc`. To move to another account, create a new namespace with `npx wrangler kv namespace create researchwithme-opennext-cache` and replace both IDs.
-- `NEXT_PUBLIC_*` values are compiled into the build. The checked-in `.env.production` supplies the public Supabase project URL and publishable key for production builds (including Worker previews); build environment variables or `.env.production.local` can override them. Never put a service-role key or other secrets in this file. Server-only values (`GEMINI_API_KEY`, `HF_TOKEN`, `REVALIDATE_SECRET`, …) are Worker **secrets**. Rebuild and redeploy after changing public values; Wrangler runtime bindings alone cannot update the browser bundle.
+- Deploys run through Cloudflare Workers Builds: `main` deploys to production and every other branch gets a preview. There is no GitHub deploy workflow (removed in `85465ce`). The Workers CI build runs `scripts/check-production-env.mjs` first, on both `npm run build` and `npx @opennextjs/cloudflare build` (which calls `npm run build` internally), and fails if the public Supabase values are missing.
+- `NEXT_PUBLIC_*` values are compiled into the build. The checked-in `.env.production` supplies the public Supabase project URL and publishable key for production builds (including Worker previews); build environment variables or `.env.production.local` can override them. Never put a service-role key or other secrets in this file. Server-only values (`GEMINI_API_KEY`, `REVALIDATE_SECRET`, …) are Worker **secrets**. Rebuild and redeploy after changing public values; Wrangler runtime bindings alone cannot update the browser bundle.
 - The Worker filesystem is read-only and doesn't persist, so the local JSON fallback can't save anything there. Configure Supabase in production.
 - `npm run deploy` and `npm run upload` refuse to build when `NEXT_PUBLIC_SUPABASE_URL` or the publishable key is missing, or when `NEXT_PUBLIC_SITE_URL` still points at localhost: a Worker built that way serves the studio unauthenticated and cannot save a draft. `ALLOW_DEMO_DEPLOY=1` overrides the guard on purpose. Run the same check alone with `npm run deploy-guard`.
 - `wrangler.jsonc` names the account and claims both hostnames — `researchwith.me` and `www.researchwith.me` — as custom domains, so a local `wrangler deploy` and a dashboard build land in the same Worker and own the same hostnames. `www` serves the same Worker rather than redirecting; canonical links stay on the apex through `NEXT_PUBLIC_SITE_URL`. A hostname can belong to only one thing: while an old Pages project still lists `researchwith.me`, the deploy stops with a domain conflict, and the fix is to remove the custom domain there, not to edit this file.
@@ -106,7 +107,7 @@ Workers & Pages → `researchwithme` → Settings → Builds:
 | Production branch | `main` |
 | Root directory | `/` |
 
-If the production deploy command is left at `npx wrangler preview`, `main` only ever produces previews: the Worker never gains a production deployment, and every branch keeps failing with `Preview creation failed: This Worker does not exist on your account` — previews branch *from* the deployed Worker. The GitHub Actions `Deploy` workflow is on `main`, so turn Cloudflare Workers Builds off (Workers & Pages → `researchwithme` → Settings → Builds); leaving both on runs `wrangler deploy` twice on every merge.
+If the production deploy command is left at `npx wrangler preview`, `main` only ever produces previews: the Worker never gains a production deployment, and every branch keeps failing with `Preview creation failed: This Worker does not exist on your account` — previews branch *from* the deployed Worker. Workers Builds is the deploy path: production on `main`, previews on every other branch. There is no GitHub deploy workflow (removed in `85465ce`). The environment guard (`scripts/check-production-env.mjs`) runs first whichever build command is configured, `npm run build` or `npx @opennextjs/cloudflare build`.
 
 ### First production deployment
 
@@ -158,8 +159,6 @@ Environment variables:
 | `REVALIDATE_SECRET` | Optional. Shared secret for the `/api/revalidate` webhook. |
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-3.8-flash`. |
-| `HF_SPACE_NAME` | Optional. Private Hugging Face ZeroGPU Space serving Qwen 2.1 AVIF diffusion. |
-| `HF_TOKEN` | Optional. Hugging Face user access token for private Space authorization. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
 
 ## Project layout
@@ -181,7 +180,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)): Newsreader for editorial reading, Inter for interface chrome, JetBrains Mono for code, DOIs, and metadata. Newsreader and Inter are self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift. Both are licensed under the SIL Open Font License 1.1; the licence texts ship next to the files. JetBrains Mono is requested by installed name only, with a system mono fallback — it is not bundled.
+The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, DOIs, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
 
 ## Contributing
 

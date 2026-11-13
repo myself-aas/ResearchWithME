@@ -1,160 +1,108 @@
 # Architecture
 
+> Regenerated 2026-11-13 against `944f45c`. Supersedes the earlier version and its appendices.
+
 ## Core Sections (Required)
 
 ### 1) Architectural Style
 
-- **Primary style:** Next.js App Router with a **server/client split over an adapter (strategy) data layer**. Routes are feature-grouped under `app/`; the CMS is isolated behind a `CmsStore` interface with two interchangeable implementations.
-- **Why this classification:** `lib/cms/types.ts:73-90` defines a `CmsStore` interface with 13 methods; `lib/cms/local-store.ts` (`kind: 'local'`) and `lib/cms/supabase-store.ts` (`kind: 'supabase'`) implement it; `lib/cms/store.ts` selects between them at runtime based on `isSupabaseConfigured`. Nothing above that layer knows which backend is live. This is not Clean/Hexagonal architecture — there are no `domain/` or `data/` directories, and `app/api/**/route.ts` files contain HTTP *and* orchestration logic directly.
-- **Primary constraints shaping the design:**
-  1. **Dual-mode operation.** The app must run with zero cloud credentials for review, and with Supabase in production. Every data path forks on `isSupabaseConfigured` (`lib/supabase/config.ts:32`).
-  2. **Cloudflare Worker target.** No persistent writable filesystem, no long-lived process, no Images binding. This is why caching goes through KV (`open-next.config.ts`) and why the JSON fallback is documented as demo-only.
-  3. **One canonical reader surface.** Published CMS rows are merged into the same URLs as the bundled catalogue rather than exposed at a separate `/blog` (`lib/cms/catalogue.ts`, `README.md` "Editorial CMS").
+- **Primary style:** a Next.js App Router monolith deployed as **one Cloudflare Worker** (OpenNext). The data layer is split into **adapter interfaces with two backends each**: local JSON for credential-free demo/dev, and Supabase for production. A second, parallel build target (`cloudflare-pages/`, Vite + Pages Functions) re-implements the server layer behind a `RuntimeServices` interface and reuses `components/` and `lib/`.
+- **Why this classification:**
+  - `CmsStore` (`lib/cms/types.ts`) → `createLocalCmsStore` / `createSupabaseCmsStore`, chosen in `lib/cms/store.ts` by `isSupabaseConfigured`.
+  - `LegacyStore` (`lib/legacy/types.ts`) → `lib/legacy/local-store.ts` / `lib/legacy/supabase-store.ts`, for durable counters on the seed corpus.
+  - `RateLimitStore` (`lib/rate-limit-core.ts`) → KV when the `RATE_LIMIT_KV` binding exists, memory otherwise (`lib/rate-limit.ts`).
+  - There are no `domain/` or `data/` layers. Route handlers own HTTP and orchestration directly.
+- **Primary constraints:**
+  1. **Runs with zero credentials.** Every data path forks on `isSupabaseConfigured` (`lib/supabase/config.ts`). Middleware, the editor gate and the stores all have a local branch.
+  2. **Workers runtime.** Read-only FS, no long-lived process, KV-backed ISR cache and tags (`open-next.config.ts`), and `nodejs_compat`.
+  3. **One canonical reader.** CMS posts and the seed catalogue are merged into the same URLs. There is no separate `/blog` (`lib/cms/catalogue.ts`).
+  4. **Content must exist without JavaScript.** Server pages pass `initialPosts`/`initialArticles` so feeds render in HTML (`lib/cms/catalogue.ts` `getFeedArticles` comment). `CLAUDE.md` forbids `initial={{ opacity: 0 }}` on crawlable content.
 
 ### 2) System Flow
 
-**Flow A — public article read (`GET /post/[slug]`):**
+**Flow A: public article read (`GET /post/[slug]`)**
 
 ```text
-Reader -> app/post/[slug]/page.tsx (ISR, revalidate = 30)
-       -> cache(getArticleCatalogue)            [lib/cms/catalogue.ts, React cache() dedupe]
-       -> Promise.all(getPublishedCmsPosts, getCmsCommentCounts)   [lib/cms/read.ts]
-       -> getPublicCmsStore()                   [lib/cms/store.ts]
-            |-- Supabase configured: stateless anon client -> Postgres (RLS: status='published')
-            |-- otherwise:           local JSON archive    [lib/cms/local-store.ts]
-       -> merge: CMS rows first, then the legacy corpus (Supabase legacy_articles or local JSON),
-          then DEFAULT_LEGACY_SEEDS as the outage fallback (dedupe by slug, CMS wins)
-       -> cmsPostToArticle() mapping            [lib/cms/mapping.ts]
-       -> notFound() if no match -> app/not-found.tsx (real HTTP 404)
-       -> MarkdownBody / AuthorProfileCard / ArticleDiscussion render
+app/post/[slug]/page.tsx   (revalidate = 30; no generateStaticParams, so unknown slugs give a real 404)
+  -> cache(getCachedArticleCatalogue)                React cache: metadata + body share one read
+  -> unstable_cache(..., tags:['catalogue'], 30 s)   KV incremental cache on Workers
+  -> getArticleCatalogue()                           lib/cms/catalogue.ts
+       Promise.all(
+         getPublishedCmsPosts()   -> getPublicCmsStore()  cookie-free anon client (RLS: published only) | local JSON
+         getCmsCommentCounts()
+         legacy.getArticles()     -> getPublicLegacyStore()   (on error: DEFAULT_LEGACY_SEEDS)
+       )
+       merge by slug: CMS first, then legacy corpus, then bundled seeds
+  -> notFound() -> app/not-found.tsx
 ```
 
-Six steps: (1) the route declares `export const revalidate = 30` and deliberately omits `generateStaticParams` so an unknown slug is a real 404 rather than a cached 200 shell (`app/post/[slug]/page.tsx:19-24`); (2) `cache(getArticleCatalogue)` dedupes the read between `generateMetadata` and the page body (`app/post/[slug]/page.tsx:27`); (3) `lib/cms/read.ts` wraps every read in try/catch and degrades to `[]` on failure; (4) `getPublicCmsStore()` returns a memoised store built on a **cookie-free** client so ISR pages never call `cookies()` and never become dynamic (`lib/supabase/server.ts:47-66`); (5) `lib/cms/catalogue.ts` merges three sources with CMS winning slug collisions; (6) `cmsPostToArticle` normalises a DB row into the `BlogPost` shape the reader already understands.
+The CMS readers in `lib/cms/read.ts` catch errors and return empty results, so a Supabase outage degrades the page to the bundled catalogue instead of breaking it.
 
-**Flow B — studio write (`POST /api/cms/posts`):**
+**Flow B: studio write (`POST /api/cms/posts`)**
 
 ```text
-PostEditor -> cmsFetch('/api/cms/posts')       [lib/cms/client-api.ts]
-          -> isSameOrigin(request)              [lib/cms/http.ts:6-28]   403 if cross-site
-          -> requireEditor()                    [lib/cms/auth.ts:76-92]  401 unauth / 403 non-editor
-          -> rateLimit(clientKey(req,'cms:create'), 20, 60_000)          429
-          -> readJsonBody() -> normalizePostInput()  [lib/cms/schema.ts] 400 + fieldErrors
-          -> slug collision check vs CMS store AND vs lib/db.ts catalogue 409
-          -> getEditorCmsStore().createPost()   [session-scoped client, RLS re-enforces]
-          -> revalidateArticle(slug) if published  [lib/cms/revalidate.ts]
-          -> 201 { post, mode }
+PostEditor / write page -> lib/cms/client-api.ts cmsFetch
+  -> isSameOrigin(request)                      403
+  -> requireEditor()                            401 anon / 403 not in public.editors (local mode: allow)
+  -> rateLimit('cms:create', 20 / 60 s)          429 + Retry-After
+  -> readJsonBody -> normalizePostInput          400 / 415 + fieldErrors
+  -> resolvePublishableAuthor(authorId)          422 unless a *published* profile; byline overwritten from profile
+  -> store.getPostBySlug  +  legacy.findArticle  409 on either collision; 503 if legacy check fails
+  -> getEditorCmsStore().createPost              session-scoped client; RLS re-checks is_editor()
+  -> revalidateArticle(slug) if published        invalidates path + 'catalogue' tag
+  -> 201 { post, mode }
 ```
+
+**Flow C: writer access.** A reader signs in (email/password or Google, PKCE via `/auth/callback`) → links GitHub/ORCID → `POST /api/dashboard/applications` → an editor approves via `POST /api/dashboard/applications/[id]` → the approval writes `public.editors` (`supabase/migrations/20261108000300_author_applications.sql`).
 
 ### 3) Layer/Module Responsibilities
 
 | Layer or module | Owns | Must not own | Evidence |
 |-----------------|------|--------------|----------|
-| `middleware.ts` | Session-cookie refresh; `/dashboard/**` redirect to `/login` | Authorization decisions (that is `requireEditor`); anything outside `/dashboard/:path*` | `middleware.ts:47-49` |
-| `app/**/page.tsx` | Route rendering, `generateMetadata`, 404 resolution | Writes; validation | `app/post/[slug]/page.tsx` |
-| `app/api/**/route.ts` | HTTP: origin, rate limit, body parse, status mapping | Persistence details | `app/api/cms/posts/route.ts` |
-| `lib/cms/schema.ts` | Input normalisation + field errors; `toPublicPostId`/`fromPublicPostId` namespacing | I/O | `lib/cms/schema.ts:87-166` |
-| `lib/cms/store.ts` | Backend selection and memoisation | Queries | `lib/cms/store.ts` |
-| `lib/cms/supabase-store.ts` | Row↔domain mapping, PostgREST calls, error translation | HTTP responses | `lib/cms/supabase-store.ts` |
-| `lib/cms/local-store.ts` | Atomic JSON writes, in-process write serialisation | Concurrency across processes | `lib/cms/local-store.ts:64-70` |
-| `lib/cms/read.ts` | Best-effort public reads with graceful degradation | Throwing to the page | `lib/cms/read.ts:6-19` |
-| `lib/cms/auth.ts` | Editor gate; fails **closed** when the allowlist RPC errors | Route-level HTTP | `lib/cms/auth.ts:56-59` |
-| `lib/supabase/config.ts` | Single source of truth for credentials + `isSupabaseConfigured` | Client construction | `lib/supabase/config.ts` |
-| `lib/db.ts` | Legacy seed catalogue + JSON article/comment persistence | CMS posts (those are `lib/cms/`) | `lib/db.ts` |
-| `supabase/migrations/` | Schema, RLS, triggers, `is_editor()` RPC | Application code | `supabase/migrations/*.sql` |
+| `middleware.ts` | Session refresh; `/dashboard/**` → `/login` for anonymous users | Editor authorisation (that is `requireEditor`) | `middleware.ts` |
+| `app/**/page.tsx` | Rendering, metadata, 404 resolution | Writes | `app/post/[slug]/page.tsx` |
+| `app/api/**/route.ts` | Origin, rate limit, auth gate, parsing, status mapping | Storage details | `app/api/cms/posts/route.ts` |
+| `lib/cms/schema.ts` | Input normalisation, field errors, public-ID namespacing (`cms-<id>`) | I/O | `lib/cms/schema.ts` |
+| `lib/cms/store.ts` | Backend selection; memoised public store; per-request editor store | Queries | `lib/cms/store.ts` |
+| `lib/cms/catalogue.ts` | Merging CMS + legacy + seeds; cached variants tagged `catalogue` | Writes | `lib/cms/catalogue.ts` |
+| `lib/cms/auth.ts` | `getDashboardUser`, `requireEditor`; `is_editor()` RPC **fails closed** | HTTP responses | `lib/cms/auth.ts` |
+| `lib/legacy/*` | Durable likes/comments for seed articles; throws on persistence failure so callers return 503 | New content | `lib/db.ts` header |
+| `lib/supabase/*` | Credentials, browser/server/public clients, OAuth, storage upload, `useSession` | Queries | `lib/supabase/config.ts` |
+| `lib/email/*` | Scenario registry, rendering, Resend sender, off-domain sender refusal | Choosing when to send | `lib/email/send.ts` |
+| `cloudflare-pages/src/server/*` | The same API surface for the Pages target, written against injectable `RuntimeServices` | `next/*` imports | `cloudflare-pages/src/server/context.ts` |
+| `supabase/migrations/` | Schema, RLS, `is_editor()`, application RPCs | App code | 9 SQL files |
 
 ### 4) Reused Patterns
 
 | Pattern | Where found | Why it exists |
 |---------|-------------|---------------|
-| **Adapter / Strategy** | `CmsStore` interface (`lib/cms/types.ts:73`) with `createLocalCmsStore` / `createSupabaseCmsStore` | Lets the app run credential-free for review and on Supabase in production without changing callers |
-| **Lazy module-level singleton** | `publicClient` (`lib/supabase/server.ts:44`), `browserClient` (`lib/supabase/client.ts:7`), `localStore`/`publicStore` (`lib/cms/store.ts:9-10`), `rateLimit` buckets (`lib/rate-limit.ts:3`) | Avoids re-creating clients per request; safe because these are cookie-free or request-scoped by construction |
-| **Explicit request-scoped non-singleton** | `createSupabaseServerClient()` — *"Always create a new one per request — never cache it"* | The session client touches cookies; caching would leak sessions |
-| **Result object / discriminated union instead of throwing** | `normalizePostInput` → `{ok:true,value} \| {ok:false,message,fieldErrors}` (`lib/cms/schema.ts:80-83`); `EditorGate` (`lib/cms/auth.ts:9-11`) | Field-level errors must reach the form, so exceptions are the wrong channel |
-| **Typed error hierarchy mapped to HTTP status** | `CmsError` (500) → `CmsValidationError` (400) / `CmsConflictError` (409) / `CmsNotFoundError` (404) / `CmsUnavailableError` (503); `toCmsError()` normalises anything else (`lib/cms/errors.ts`) | One `errorResponse()` call per route produces the right status and body (`lib/cms/http.ts:58-64`) |
-| **Graceful degradation** | `lib/cms/read.ts` returns `[]`/`{}`/`null` on any error; the assistant falls back to a deterministic catalogue answer when Gemini fails (`app/api/research-assistant/route.ts:152-160`) | A storage or model outage must degrade to the bundled catalogue, never to a broken page |
-| **Atomic write with temp-file rename** | `writeJsonAtomic` (`lib/db.ts:10-25`), `writeArrayAtomic` (`lib/cms/local-store.ts:28-43`), | A crash cannot leave a half-written JSON document |
-| **In-process promise queue** | `serialise()` in `lib/cms/local-store.ts:64-70` | Serialises JSON writes so read-modify-write races cannot interleave within one process |
-| **React `cache()` request dedupe** | `const catalogue = cache(getArticleCatalogue)` (`app/post/[slug]/page.tsx:27`) | `generateMetadata` and the page body share one CMS read |
-| **Idempotent SQL migrations** | Every migration is wrapped in `begin/commit` with `create … if not exists`, `drop policy if exists`, `on conflict do update` | Safe to re-run; stated in `CLAUDE.md` |
-| **Namespaced public IDs** | `toPublicPostId` → `cms-<id>`; `fromPublicPostId` validates `/^\d{1,19}$/` (`lib/cms/schema.ts:191-198`) | Prevents CMS numeric ids colliding with seed ids like `post-1` |
+| Adapter/strategy with an env switch | `CmsStore`, `LegacyStore`, `RateLimitStore` | Same callers in demo and production |
+| Pure core + platform shell | `rate-limit-core.ts`/`rate-limit.ts`, `cms/secret-core.ts`/`secret.ts`, `author-directory-core.ts`/`author-directory.ts` | Core logic runs in both build targets and in tests without Next or Worker context |
+| Injectable runtime services | `RuntimeServices` + `createTestApp()` (`test/support/pages.ts`) | Pages handlers are tested in-process with fakes |
+| Discriminated-union results | `normalizePostInput` → `{ok:true,value} \| {ok:false,…fieldErrors}`; `EditorGate` | Field errors reach forms without exceptions |
+| Typed error → HTTP mapping | `Cms*Error` hierarchy + `errorResponse()` (`lib/cms/errors.ts`, `lib/cms/http.ts`) | One mapping for every route |
+| Graceful degradation | `lib/cms/read.ts`; legacy → seeds; assistant → deterministic answer | Outages never blank the site |
+| Two-level caching | React `cache()` per request + `unstable_cache` (KV) per 30 s, invalidated by tag | Low TTFB while keeping real 404s |
+| Lazy module singletons vs request-scoped clients | Public client/store memoised; `createSupabaseServerClient()` never cached | Never leak sessions |
+| Idempotent SQL | `if not exists`, `drop policy if exists`, `on conflict` | `CLAUDE.md` rule; safe re-runs |
 
 ### 5) Known Architectural Risks
 
-- **Two parallel write paths for articles.** `lib/db.ts` writes `data/articles.json` (used by `/api/articles`, `/api/comments`, `/write`) while `lib/cms/*` writes the CMS store (used by `/api/cms/*`, `/dashboard`). `app/api/cms/posts/route.ts:67` has to cross-check the *other* path for slug collisions (`getArticles().find(...)`), which is direct evidence the two can drift. **Partial mitigation:** the legacy write path is deliberately disabled once Supabase is configured — `app/api/articles/route.ts:73-81` returns 403 with *"This deployment publishes through the Supabase editorial studio"* when `isLocalCmsMode()` is false. So the divergence risk is confined to local/demo mode, but the two stores still both feed the *read* path (`lib/cms/catalogue.ts:26`). See CONCERNS.md.
-- **In-memory rate limiting on a multi-isolate runtime.** `lib/rate-limit.ts:3` keeps buckets in a module-level `Map`. On Cloudflare Workers each isolate has its own map, so the effective limit is `limit × isolate count`, and it resets on isolate eviction. `MAX_KEYS = 5_000` also means the whole map is cleared when full (`lib/rate-limit.ts:11`), resetting every client's budget at once.
-- **Schema drift between two allowlist tables.** `supabase/migrations/20261025000300_cms_storage.sql` creates `public.editor_memberships`; the later `20261028000100_editor_allowlist.sql` creates `public.editors` and rewrites every storage/posts policy to `public.is_editor()`, which reads `public.editors`. `editor_memberships` is referenced by no other file. An administrator who grants access via the older table gets nothing.
-- **Local demo mode is fully unauthenticated by design.** `requireEditor()` returns `{ ok: true, user: null, mode: 'local' }` whenever Supabase is unconfigured (`lib/cms/auth.ts:78-80`), and `middleware.ts:14-16` skips protection entirely. Deliberate, but it means a misconfigured production deploy silently serves an open CMS — which is exactly what `scripts/check-production-env.mjs` exists to prevent.
-- **Forgeable local session cookie.** `/api/auth/session` POST stores a **client-supplied, unsigned** JSON object in the `rwm_session` cookie with `sameSite: 'none'` (`app/api/auth/session/route.ts:30-36`), and `getDashboardUser()` trusts it in local mode, returning `isEditor: true` (`lib/cms/auth.ts:31-45`).
-- **Unauthenticated outbound-cost endpoints.** `/api/generate` and `/api/author-avatar` have no auth gate and no rate limit, yet both spend server-side credentials (HF token, Gemini key).
+- **Two server implementations of one API.** `app/api/` (17 files, the production Worker) and `cloudflare-pages/src/server/api/` (12 files, the Pages port) implement the same operations separately. They already differ: client-IP keying for rate limits uses `cf-connecting-ip` in Pages (`cloudflare-pages/src/server/http.ts:17`) but the first `x-forwarded-for` entry in Next (`lib/rate-limit.ts` `clientKey`). The behavioural test suite (`test/pages/*`) exercises **only the Pages copy**. See TESTING and CONCERNS.
+- **Unfinished migration.** `docs/migration-baseline.md` describes a Next → Pages port. Production still deploys the Next build (`wrangler.jsonc`), and the Pages project (`researchwithme-pages`) has no deploy step in CI. Until one target is retired, every API change has to be made twice.
+- **Local mode is unauthenticated by design.** `requireEditor()` allows everything when Supabase is unconfigured, and middleware skips the guard. `scripts/check-production-env.mjs` is the only protection, and it runs on `npm run deploy`/`upload`. It is not wired into the Workers Builds path (`scripts/build-next-or-worker.mjs`).
+- **One KV namespace for three jobs.** ISR cache, tag cache and rate-limit counters share namespace `8d2dc8f0…` and the free plan's 1,000 writes/day, with previews included.
+- **Build-time configuration.** `NEXT_PUBLIC_*` are inlined, so the editor gate's mode is fixed per build.
 
 ### 6) Evidence
 
-- `middleware.ts` — the only middleware and its matcher
-- `lib/cms/types.ts` — the `CmsStore` contract
-- `lib/cms/store.ts` — backend selection (`getPublicCmsStore`, `getEditorCmsStore`, `isLocalCmsMode`)
-- `lib/cms/catalogue.ts` — the single merged public catalogue
-- `lib/cms/supabase-store.ts`, `lib/cms/local-store.ts` — the two adapters
-- `lib/cms/errors.ts`, `lib/cms/http.ts` — error→HTTP mapping and origin checks
-- `app/api/cms/posts/route.ts` — the full write pipeline in one readable file
-- `lib/supabase/server.ts`, `lib/supabase/client.ts`, `lib/supabase/config.ts` — client strategy
-- `supabase/migrations/*.sql` — schema, RLS, and the allowlist RPC
-- `open-next.config.ts`, `wrangler.jsonc` — the Worker runtime and KV cache
-- `docs/codebase/.codebase-scan.txt` — CODE METRICS section
+- `lib/cms/{types,store,catalogue,read,auth,http,errors}.ts`, `lib/legacy/*`, `lib/rate-limit{,-core}.ts`
+- `app/post/[slug]/page.tsx`, `app/api/cms/posts/route.ts`, `middleware.ts`
+- `open-next.config.ts`, `wrangler.jsonc`, `scripts/build-next-or-worker.mjs`, `scripts/check-production-env.mjs`
+- `cloudflare-pages/src/server/{context,dispatch,http}.ts`, `docs/migration-baseline.md`
+- `supabase/migrations/*.sql`
 
 ## Extended Sections
-
-### Initialisation order requirements
-
-There is no explicit boot sequence, but three orderings are load-bearing:
-
-1. `lib/supabase/config.ts` reads `process.env.NEXT_PUBLIC_SUPABASE_*` **at module load**, and Next.js inlines those at build time. Nothing can change them at runtime.
-2. `next.config.ts` calls `initOpenNextCloudflareForDev()` at the bottom of the module, only when `NODE_ENV === 'development'`, inside `try/catch` so a non-wrangler dev server still starts.
-3. `lib/cms/local-store.ts` resolves its data directory once per store instance (`process.env.RWM_DATA_DIR ?? <cwd>/data`), so `RWM_DATA_DIR` must be set before the first `getLocalCmsStore()` call. Tests exploit this.
-
-### Failure-mode posture
-
-| Failure | Behaviour | Evidence |
-|---|---|---|
-| Supabase unreachable on a public read | Page renders from the bundled catalogue; error logged | `lib/cms/read.ts:15-18` |
-| Supabase unreachable in the studio | `CmsUnavailableError` → 503 with a retry message | `lib/cms/errors.ts:43-47` |
-| Gemini unavailable or returns empty | Deterministic catalogue answer + a `notice` field | `app/api/research-assistant/route.ts:152-160` |
-| HF Space returns no image | 500 with the raw error message surfaced to the client | `app/api/generate/route.ts:107-114` |
-| Local JSON not writable (e.g. read-only Worker FS) | `CmsUnavailableError` → 503 with a retry message | `lib/cms/errors.ts:43-47` |
-| `is_editor()` RPC errors | User treated as **non**-editor (fails closed) | `lib/cms/auth.ts:56-59` |
-| Cookie write inside a Server Component | Swallowed; middleware handles refresh | `lib/supabase/server.ts:31-36` |
-| Render throws | `app/error.tsx` (route) / `app/global-error.tsx` (root) | `app/error.tsx`, `app/global-error.tsx` |
-
-There are **no retries and no explicit timeouts** on any outbound integration call. Verified: `grep -rn "AbortSignal\|AbortController\|signal:\|timeout" app/api lib` returns nothing outside tests, and the only `retry` matches in the codebase are `Retry-After` response headers emitted by the rate limiter. A hung Gemini or Hugging Face call therefore runs until the Worker's own CPU/wall-clock limit kills it.
-
----
-
-## Updated 2026-11-08
-
-Two divergences recorded above have been closed, and one behaviour changed:
-
-- **The two article write paths are now one.** `/write` publishes through
-  `/api/cms/posts` exactly like `/dashboard`. The legacy `POST /api/articles`
-  handler and `lib/db.addArticle()` were removed, so the slug cross-check in
-  `app/api/cms/posts/route.ts` is no longer guarding a live second writer.
-  `lib/db.ts` remains the read path for the seed archive in demo mode.
-- **The allowlist schema drift is resolved.** Migration
-  `20261108000100_consolidate_editor_allowlist.sql` copies any
-  `public.editor_memberships` rows into `public.editors` and drops the old
-  table. `public.is_editor()` was already the only authorization predicate, so
-  the RLS policies needed no change.
-- **Model-backed generation is now editor-only.** `/api/generate` requires an
-  editor session, and `/api/author-avatar` only calls Gemini when the request
-  carries `forceAi: true` from an editor. Reader pages render the deterministic
-  SVG. This is a deliberate capability reduction: the public avatar endpoint no
-  longer spends `GEMINI_API_KEY`.
-
-`/write` also now requires the author to select a verified profile from
-`AUTHORS` instead of the page synthesising a byline from the session.
-
-## Diagrams (2026-11-12)
-
-The text flows above remain the evidence; these diagrams are the overview. They use Mermaid's
-default theme (no hard-coded fills) so they read in GitHub's light and dark modes.
 
 ### System context
 
@@ -162,102 +110,32 @@ default theme (no hard-coded fills) so they read in GitHub's light and dark mode
 flowchart LR
     reader([Reader])
     writer([Approved writer / editor])
-    platform["ResearchWithMe<br/>researchwith.me"]
+    platform["ResearchWithMe Worker<br/>researchwith.me"]
     supabase[("Supabase<br/>Postgres + RLS, Auth,<br/>Storage, Realtime")]
     gemini["Gemini API<br/>(optional)"]
-    hf["Hugging Face Space<br/>cover generation (optional)"]
-    resend["Resend<br/>transactional email"]
+    hf["Hugging Face Space<br/>(optional, editor-only)"]
+    kv[("Cloudflare KV<br/>cache, tags, rate limits")]
 
     reader -->|HTTPS| platform
     writer -->|HTTPS + session| platform
     platform -->|anon reads, session writes| supabase
-    platform -->|assistant answers| gemini
+    platform -->|assistant, editor avatars| gemini
     platform -->|/api/generate| hf
-    platform -->|application notices| resend
-    writer -.->|studio live updates| supabase
+    platform --> kv
+    writer -.->|studio realtime| supabase
 ```
 
-Without Supabase credentials every data path falls back to the local JSON archive, so the app runs
-for review with no cloud services at all. Gemini and the Hugging Face Space are optional: the
-assistant degrades to a deterministic, cited summary and cover generation reports itself as not
-configured.
+Resend isn't shown because the production Next build has no code path that sends email today (see INTEGRATIONS §1). Without Supabase credentials, every store falls back to local JSON.
 
-### Containers and bindings
+### Failure-mode posture
 
-```mermaid
-flowchart TB
-    subgraph worker["Cloudflare Worker: researchwithme (OpenNext, nodejs_compat)"]
-        mw["middleware.ts<br/>session refresh, /dashboard guard"]
-        app["Next.js App Router<br/>pages + /api routes"]
-        assets["ASSETS<br/>.open-next/assets"]
-        queue["memory queue<br/>ISR regeneration"]
-    end
-    kv[("KV namespace (one, disjoint prefixes)<br/>NEXT_INC_CACHE_KV, NEXT_TAG_CACHE_KV,<br/>RATE_LIMIT_KV")]
-    self["WORKER_SELF_REFERENCE"]
-    supa[("Supabase")]
-    json[("Local JSON archive<br/>demo mode only")]
-
-    mw --> app
-    app -->|incremental cache, tags| kv
-    app -->|rate limits| kv
-    queue --> self --> app
-    app -->|configured| supa
-    app -.->|not configured| json
-```
-
-A second build target (`npm run build:pages`, Vite under `cloudflare-pages/`) renders the same
-shared components for the in-progress Pages port; see `docs/migration-baseline.md`. It aliases
-`next/link`, `next/image`, `next/navigation` and `next/dynamic` to `cloudflare-pages/src/compat/`.
-
-### Feed render (home, category, cite, assistant, bookmarks)
-
-```mermaid
-sequenceDiagram
-    participant R as Reader
-    participant W as Worker (page)
-    participant C as getFeedArticles()
-    participant S as CMS + legacy stores
-    participant API as /api/articles
-
-    R->>W: GET /
-    W->>C: catalogue, bodies stripped
-    C->>S: published CMS rows, legacy corpus
-    S-->>C: merged by slug (CMS wins)
-    C-->>W: metadata-only BlogPost[]
-    W-->>R: HTML with the full feed (works without JS)
-    R->>API: client refresh after hydration
-    API-->>R: same shape, applied only if non-empty
-```
-
-Until 2026-11-12 these pages seeded client state from an empty array and relied on the client
-fetch, so crawlers and no-JS readers saw an empty journal ("No manuscripts match…"). Server pages
-now pass `initialPosts` / `initialArticles`; the Pages build omits the prop and keeps the fetch.
-
-### Research assistant
-
-```mermaid
-sequenceDiagram
-    participant U as Reader
-    participant P as AssistantPanel
-    participant A as /api/research-assistant
-    participant K as RATE_LIMIT_KV
-    participant C as Catalogue
-    participant G as Gemini
-
-    U->>P: question + scope
-    P->>A: POST
-    A->>K: 12 requests / 60 s per client
-    alt over limit
-        A-->>P: 429
-    end
-    A->>C: getArticleCatalogue()
-    alt GEMINI_API_KEY set
-        A->>G: catalogue text + "cite your sources"
-        G-->>A: answer
-        A-->>P: answer, citations, mode: model
-    else no key, or model failure
-        A-->>P: deterministic cited summary (+ notice on failure)
-    end
-    P-->>U: answer, SynthesizeMark plays once
-```
-
+| Failure | Behaviour | Evidence |
+|---|---|---|
+| Supabase read fails (public) | Empty CMS result, page renders from legacy/seed catalogue | `lib/cms/read.ts`, `lib/cms/catalogue.ts` |
+| Legacy store fails | `DEFAULT_LEGACY_SEEDS` | `lib/cms/catalogue.ts` |
+| Legacy check fails during create | 503, no write | `app/api/cms/posts/route.ts:73-81` |
+| `is_editor()` RPC errors | Treated as non-editor | `lib/cms/auth.ts` |
+| Gemini missing/failing | Deterministic cited answer + `notice` | `app/api/research-assistant/route.ts` |
+| HF Space slow | `withTimeout()` race at 60 s (the Gradio call itself isn't cancelled), generic 502 | `app/api/generate/route.ts:10,27,115` |
+| Gemini slow | `AbortSignal.timeout(MODEL_TIMEOUT_MS)` | `app/api/research-assistant/route.ts:149`, `app/api/author-avatar/route.ts:162` |
+| KV rate-limit read error | Fails open | `lib/__tests__/rate-limit.test.ts` |

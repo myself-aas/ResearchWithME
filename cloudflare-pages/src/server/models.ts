@@ -12,7 +12,7 @@ export const SPACE_TIMEOUT_MS = 60_000;
  * the deployment layer (Tasks 14–16) decides when the edge build may spend
  * provider quota, by passing `createModelServices()` into handleRequest.
  *
- * Timeouts match the Next handlers exactly (20s Gemini, 60s cover Space);
+ * Timeouts match the Next handlers exactly (20s Gemini);
  * provider failures throw and the callers map them onto catalog fallbacks,
  * local avatars, or 502s — they never leak provider internals to the browser.
  */
@@ -28,36 +28,5 @@ export function createModelServices(): ModelServices {
       });
       return response.text ?? '';
     },
-
-    async generateCover({ space, token, params, timeoutMs }) {
-      const { Client } = await import('@gradio/client');
-      return withTimeout(
-        (async () => {
-          const client = await Client.connect(space, {
-            hf_token: token as `hf_${string}` | undefined,
-          });
-          // Calls the /generate_avif endpoint defined in the Space's app.py.
-          return client.predict('/generate_avif', params) as Promise<{ data: unknown }>;
-        })(),
-        timeoutMs,
-      );
-    },
   };
-}
-
-/** Bounds a call that has no cancellation support of its own (Gradio client). */
-function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
-  return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error('timeout')), ms);
-    work.then(
-      (value) => {
-        clearTimeout(timer);
-        resolve(value);
-      },
-      (error: unknown) => {
-        clearTimeout(timer);
-        reject(error);
-      },
-    );
-  });
 }

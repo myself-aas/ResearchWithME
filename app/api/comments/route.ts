@@ -3,7 +3,6 @@ import { cmsCommentToRecord } from '@/lib/cms/mapping';
 import { getPublishedCmsPostById } from '@/lib/cms/read';
 import { fromPublicPostId, normalizeCommentInput } from '@/lib/cms/schema';
 import { getPublicCmsStore } from '@/lib/cms/store';
-import { getPublicLegacyStore } from '@/lib/legacy/store';
 import { isSameOrigin } from '@/lib/cms/http';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 
@@ -15,24 +14,13 @@ export async function GET(request: NextRequest) {
     const postId = request.nextUrl.searchParams.get('postId')?.slice(0, 120);
     const cmsPostId = postId ? fromPublicPostId(postId) : null;
 
-    if (cmsPostId) {
-      const store = await getPublicCmsStore();
-      const comments = await store.listCommentsForPost(cmsPostId);
-      return NextResponse.json(
-        { comments: comments.map(cmsCommentToRecord) },
-        { headers: { 'Cache-Control': 'public, max-age=15, stale-while-revalidate=60' } },
-      );
-    }
+    // Comments belong to CMS posts; any other id (or none) names no article.
+    if (!cmsPostId) return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
 
-    let comments;
-    try {
-      comments = (await getPublicLegacyStore().getComments(postId || undefined)).slice(0, 200);
-    } catch (error) {
-      console.error('Error reading legacy comments:', error);
-      return NextResponse.json({ error: 'Comments could not be read.' }, { status: 503 });
-    }
+    const store = await getPublicCmsStore();
+    const comments = await store.listCommentsForPost(cmsPostId);
     return NextResponse.json(
-      { comments },
+      { comments: comments.map(cmsCommentToRecord) },
       { headers: { 'Cache-Control': 'public, max-age=15, stale-while-revalidate=60' } },
     );
   } catch (error) {
@@ -81,48 +69,21 @@ export async function POST(request: NextRequest) {
   }
 
   // CMS articles live in Supabase (or the local CMS archive in demo mode).
+  // Any id that is not a CMS post names no article.
   const cmsPostId = fromPublicPostId(postId);
-  if (cmsPostId) {
-    try {
-      const post = await getPublishedCmsPostById(cmsPostId);
-      if (!post) {
-        return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
-      }
+  if (!cmsPostId) return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
 
-      const store = await getPublicCmsStore();
-      const comment = await store.createComment(cmsPostId, parsed.value);
-      return NextResponse.json({ success: true, comment: cmsCommentToRecord(comment) }, { status: 201 });
-    } catch (error) {
-      console.error('Error saving a CMS comment:', error);
-      return NextResponse.json(
-        { error: 'The comment could not be saved. Your text is still in the form.' },
-        { status: 503 },
-      );
+  try {
+    const post = await getPublishedCmsPostById(cmsPostId);
+    if (!post) {
+      return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
     }
-  }
 
-  const legacy = getPublicLegacyStore();
-  let article;
-  try {
-    article = await legacy.findArticle(postId);
+    const store = await getPublicCmsStore();
+    const comment = await store.createComment(cmsPostId, parsed.value);
+    return NextResponse.json({ success: true, comment: cmsCommentToRecord(comment) }, { status: 201 });
   } catch (error) {
-    console.error('Error reading the legacy catalogue:', error);
-    return NextResponse.json(
-      { error: 'The comment could not be saved. Your text is still in the form.' },
-      { status: 503 },
-    );
-  }
-  if (!article) return NextResponse.json({ error: 'That article does not exist.' }, { status: 404 });
-
-  try {
-    const comment = await legacy.addComment(article.id, {
-      authorName: parsed.value.authorName,
-      authorRole: parsed.value.authorRole,
-      content: parsed.value.content,
-    });
-    return NextResponse.json({ success: true, comment }, { status: 201 });
-  } catch (error) {
-    console.error('Error in POST /api/comments:', error);
+    console.error('Error saving a CMS comment:', error);
     return NextResponse.json(
       { error: 'The comment could not be saved. Your text is still in the form.' },
       { status: 503 },

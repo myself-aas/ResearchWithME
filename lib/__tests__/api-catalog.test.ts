@@ -108,15 +108,13 @@ describe('OpenAPI and human-readable reference', () => {
     const html = renderToStaticMarkup(createElement(ApiDocsPage));
     for (const group of API_GROUPS) expect(html).toContain(`id="${group.id}"`);
     for (const operation of API_OPERATIONS) expect(html).toContain(operation.summary);
-    expect(html).toContain('<code>forceAi</code> (boolean or string, optional)');
     expect(html).toContain('<code>approve</code> (boolean, required)');
   });
 
   it('identifies restricted operations without claiming anonymous access', () => {
-    for (const operation of API_OPERATIONS.filter(({ group }) => ['generate', 'cms-posts', 'cms-comments', 'applications'].includes(group))) {
+    for (const operation of API_OPERATIONS.filter(({ group }) => ['cms-posts', 'cms-comments', 'applications'].includes(group))) {
       expect(operation.security).toEqual([{ SessionCookie: [] }]);
     }
     expect(API_OPERATIONS.find(({ group }) => group === 'revalidate')?.security).toEqual([{ RevalidateSecret: [] }]);
-    expect(API_OPERATIONS.find(({ operationId }) => operationId === 'createAuthorAvatar')?.description).toContain('editor session is required');
   });
 });

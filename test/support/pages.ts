@@ -56,8 +56,6 @@ export interface TestApp {
   seedPost(post: Partial<CmsPost> & Pick<CmsPost, 'slug' | 'status'>): Promise<CmsPost>;
   updatePost(id: string, patch: Partial<CmsPost>): Promise<void>;
   seedPaper(paper: Partial<Publication> & Pick<Publication, 'slug' | 'title'>): void;
-  /** The exact input the cover-space stand-in last received (params, token source). */
-  lastCoverInput: { space: string; token?: string; params: Record<string, unknown>; timeoutMs: number } | null;
 }
 
 export interface TestAppOptions {
@@ -80,10 +78,6 @@ export interface TestAppOptions {
   modelText?: string;
   /** Make the Gemini stand-in throw the way a provider outage would. */
   modelTextThrows?: boolean;
-  /** `data` array returned by the cover-space stand-in ([file, dataUri, seed]); default faked. */
-  coverData?: unknown;
-  /** Make the cover-space stand-in throw the way a Space outage would. */
-  coverThrows?: boolean;
   /** The fake session client "refreshes" each request into two role-specific cookies. */
   expiredSessions?: boolean;
   /** Published rows the fake `profiles` table serves to the public client. Default: empty directory. */
@@ -495,7 +489,6 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
   tempDirs.push(directory);
   const applications = (options.applications ?? []).map((entry) => ({ ...entry }));
   const sharedOptions: TestAppOptions = { ...options, applications, applicationsFail };
-  const coverCapture: { current: TestApp['lastCoverInput'] } = { current: null };
 
   const cmsStore: CmsStore = createLocalCmsStore({ dataDir: directory });
 
@@ -545,16 +538,6 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
         generateText: async () => {
           if (options.modelTextThrows) throw new Error('fake model outage');
           return options.modelText ?? 'Deterministic fake model output.';
-        },
-        generateCover: async (input) => {
-          coverCapture.current = {
-            space: input.space,
-            token: input.token,
-            params: input.params as Record<string, unknown>,
-            timeoutMs: input.timeoutMs,
-          };
-          if (options.coverThrows) throw new Error('fake space outage');
-          return { data: options.coverData ?? ['fake-path', 'data:image/avif;base64,RkFLRQ==', 1234] };
         },
       },
       email: () => ({
@@ -637,10 +620,6 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
         artifact: patch.artifact ?? existing.artifact,
       };
       await cmsStore.updatePost(id, payload);
-    },
-
-    get lastCoverInput() {
-      return coverCapture.current;
     },
 
     seedPaper(input) {

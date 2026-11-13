@@ -3,10 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Sparkles, Trash2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Trash2, Upload } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import QwenCoverGenerator from '@/components/cms/QwenCoverGenerator';
 import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES } from '@/lib/blog-data';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import type { CmsPost } from '@/lib/cms/types';
@@ -15,6 +14,9 @@ import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
 import { readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { useSession } from '@/lib/supabase/use-session';
+import { uploadCover } from '@/lib/supabase/storage';
+import type { EncodedImage } from '@/lib/images/process';
+import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
 import dynamic from 'next/dynamic';
 import { Text } from '@/components/primitives';
 import { WorkflowDisclosure } from '@/components/workflows';
@@ -84,7 +86,7 @@ export default function WritePage() {
   const [errorField, setErrorField] = useState<string | null>(null);
   const [publishing, setPublishing] = useState(false);
   const [restored, setRestored] = useState(false);
-  const [showAiCover, setShowAiCover] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -133,6 +135,13 @@ export default function WritePage() {
       field?.focus();
       field?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
+  }
+
+  async function handleCoverImages(images: EncodedImage[]) {
+    // Errors propagate to the dialog, which shows them and keeps the crop.
+    const url = await uploadCover(images);
+    update('coverImage', url);
+    setCropOpen(false);
   }
 
   function updateTakeaway(index: number, value: string) {
@@ -637,19 +646,31 @@ export default function WritePage() {
                 <div>
                   <Text as="legend" variant="card-title">Cover image</Text>
                   <p className="mt-1 text-sm text-ink-secondary">
-                    Editorial 16:9 header image. Generate artwork with your Qwen 2.1 Hugging Face Space (AVIF) or select presets.
+                    Editorial 16:9 header image. Upload a JPG or JPEG (up to 512 KB) to crop and compress it.
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowAiCover(!showAiCover)}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
-                >
-                  <Sparkles className="h-4 w-4" aria-hidden="true" />
-                  <span>{showAiCover ? 'Hide Qwen 2.1 Generator' : 'Generate Cover with Qwen 2.1 (AVIF)'}</span>
-                </button>
+                {isSupabaseConfigured && user && (
+                  <button
+                    type="button"
+                    onClick={() => setCropOpen(true)}
+                    aria-haspopup="dialog"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-md border border-border-strong bg-surface-raised px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-canvas"
+                  >
+                    <Upload className="h-4 w-4" aria-hidden="true" />
+                    <span>Upload banner</span>
+                  </button>
+                )}
               </div>
+
+              {cropOpen && (
+                <LazyImageCropDialog
+                  kind="banner"
+                  open={cropOpen}
+                  onCancel={() => setCropOpen(false)}
+                  onConfirm={handleCoverImages}
+                />
+              )}
 
               {draft.coverImage ? (
                 <div className="rounded-lg border border-line bg-surface-raised p-4">
@@ -681,18 +702,6 @@ export default function WritePage() {
                 <p className="border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">
                   No custom cover image applied yet. The platform will use default editorial photography if published without one.
                 </p>
-              )}
-
-              {showAiCover && (
-                <div className="pt-2">
-                  <QwenCoverGenerator
-                    currentCover={draft.coverImage}
-                    articleTitle={draft.title}
-                    articleSubtitle={draft.subtitle}
-                    articleCategory={draft.category}
-                    onApplyCover={(imageUri) => update('coverImage', imageUri)}
-                  />
-                </div>
               )}
             </fieldset>
 

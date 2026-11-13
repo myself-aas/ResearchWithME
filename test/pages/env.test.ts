@@ -164,8 +164,6 @@ describe('vite define allowlist (client and SSR configs)', () => {
     }
     for (const secret of [
       'GEMINI_API_KEY',
-      'HF_TOKEN',
-      'HF_SPACE_NAME',
       'RESEND_API_KEY',
       'REVALIDATE_SECRET',
       'MY_SECRET_TOKEN',
@@ -200,7 +198,6 @@ describe('built asset secret hygiene', () => {
   const serverDir = path.resolve(__dirname, '../../cloudflare-pages/.server');
   const SECRET_NAMES = [
     'GEMINI_API_KEY',
-    'HF_TOKEN',
     'RESEND_API_KEY',
     'REVALIDATE_SECRET',
     'MY_SECRET_TOKEN',

@@ -1,0 +1,29 @@
+{
+  "enabledPlugins": {
+    "superpowers@anthropic-plugin-directory": true,
+    "frontend-design@anthropic-plugin-directory": true,
+    "design@anthropic-plugin-directory": true,
+    "marketing@anthropic-plugin-directory": true,
+    "engineering@anthropic-plugin-directory": true,
+    "data@anthropic-plugin-directory": true,
+    "remotion@anthropic-plugin-directory": true,
+    "legal@anthropic-plugin-directory": true,
+    "pr-review-toolkit@anthropic-plugin-directory": true,
+    "humanizer-blader@anthropic-plugin-directory": true,
+    "sales@anthropic-plugin-directory": true,
+    "social-media-skills@anthropic-plugin-directory": true,
+    "bio-research@anthropic-plugin-directory": true,
+    "telegram@anthropic-plugin-directory": true,
+    "claude-security@anthropic-plugin-directory": true,
+    "caveman@anthropic-plugin-directory": true,
+    "image-generation@anthropic-plugin-directory": true,
+    "design-skills@anthropic-plugin-directory": true,
+    "apify@anthropic-plugin-directory": true,
+    "pdf-viewer@anthropic-plugin-directory": true,
+    "brand-voice@anthropic-plugin-directory": true,
+    "motion-reel@anthropic-plugin-directory": true,
+    "superdesign@anthropic-plugin-directory": true,
+    "github@anthropic-plugin-directory": true,
+    "cloudflare@anthropic-plugin-directory": true
+  }
+}

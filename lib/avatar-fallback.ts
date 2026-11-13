@@ -1,5 +1,5 @@
 /**
- * Deterministic, domain-customized SVG avatars — shared by the Next author-avatar
+ * Deterministic, domain-customized SVG avatars — used by the Next author-avatar
  * route (until Task 16) and the Pages author-avatar handler. Pure string building;
  * no Node APIs, no network. Every interpolated value is XML-escaped.
  */

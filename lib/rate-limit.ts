@@ -1,5 +1,5 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { createKvRateLimitStore, createMemoryRateLimitStore } from './rate-limit-core';
+import { clientIp, createKvRateLimitStore, createMemoryRateLimitStore } from './rate-limit-core';
 import type { KvNamespaceLike, RateLimitOutcome, RateLimitStore } from './rate-limit-core';
 
 export type { KvNamespaceLike, RateLimitOutcome, RateLimitStore } from './rate-limit-core';
@@ -49,7 +49,5 @@ export async function rateLimit(key: string, limit: number, windowMs: number): P
 }
 
 export function clientKey(request: Request, scope: string) {
-  const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  const address = forwarded || request.headers.get('x-real-ip') || 'local';
-  return `${scope}:${address}`;
+  return `${scope}:${clientIp(request)}`;
 }

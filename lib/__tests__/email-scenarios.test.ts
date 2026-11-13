@@ -21,7 +21,6 @@ describe('scenario registry', () => {
   it('declares every proposed scenario', () => {
     expect(keys.sort()).toEqual(
       [
-        'billing-receipt',
         'password-reset',
         'security-alert',
         'support-reply',

@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
+import CoverImage from '@/components/media/CoverImage';
 import { notFound } from 'next/navigation';
 import { BookOpen, ChevronRight, FileText, GitBranch, Quote } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
@@ -224,7 +224,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     />
                   </picture>
                 ) : (
-                  <Image
+                  <CoverImage
                     src={coverPath}
                     alt=""
                     width={1280}

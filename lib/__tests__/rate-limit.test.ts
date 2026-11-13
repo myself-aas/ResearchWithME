@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createKvRateLimitStore,
   createMemoryRateLimitStore,
+  clientKey,
   type KvNamespaceLike,
 } from '@/lib/rate-limit';
 
@@ -180,5 +181,29 @@ describe('memory rate limit store', () => {
 
     await store.hit('new:ip', 5, 60_000);
     expect((await store.hit('keep:ip', 5, 60_000)).remaining).toBe(2); // budget preserved
+  });
+});
+
+describe('clientKey', () => {
+  const req = (headers: Record<string, string>) => new Request('https://researchwith.me/api/x', { headers });
+
+  it('prefers cf-connecting-ip over x-forwarded-for', () => {
+    const request = req({ 'cf-connecting-ip': '203.0.113.7', 'x-forwarded-for': '10.0.0.1' });
+    expect(clientKey(request, 'likes')).toBe('likes:203.0.113.7');
+  });
+
+  it('falls back to the first x-forwarded-for entry', () => {
+    const request = req({ 'x-forwarded-for': ' 198.51.100.1 , 10.0.0.1' });
+    expect(clientKey(request, 'likes')).toBe('likes:198.51.100.1');
+  });
+
+  it('falls back to x-real-ip, then local', () => {
+    expect(clientKey(req({ 'x-real-ip': '192.0.2.5' }), 'likes')).toBe('likes:192.0.2.5');
+    expect(clientKey(req({}), 'likes')).toBe('likes:local');
+  });
+
+  it('truncates to 64 characters', () => {
+    const key = clientKey(req({ 'cf-connecting-ip': 'a'.repeat(100) }), 'likes');
+    expect(key.length).toBe('likes:'.length + 64);
   });
 });

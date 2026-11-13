@@ -37,9 +37,9 @@ This document is the long form. The short form is the *Deploy (Cloudflare Worker
 | Custom domains | `researchwith.me` + `www.researchwith.me`, declared as `custom_domain` routes in `wrangler.jsonc` | last production deploy accepted them; site serves 200 |
 | KV cache | `researchwithme-opennext-cache` = `8d2dc8f0b1bb4839962ae63df8296b31`, bound twice (`NEXT_INC_CACHE_KV`, `NEXT_TAG_CACHE_KV`) | `wrangler deploy --dry-run` resolves both |
 | Worker Previews | Working | branch build `90662e61…` produced a preview URL |
-| Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview` | check run `Workers Builds: researchwithme` passes |
+| Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview`; `scripts/check-production-env.mjs` runs first on either build command (`npm run build` or `npx @opennextjs/cloudflare build`) | check run `Workers Builds: researchwithme` passes |
 | GitHub Actions `Quality` | On `main` | `.github/workflows/quality.yml` |
-| GitHub Actions `Deploy` | **On `main`** | `.github/workflows/deploy.yml`; previews per pull request, production after Quality passes. Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as Actions secrets |
+| GitHub Actions `Deploy` | **Removed** from `.github/workflows/` in `85465ce` (historical copy at `.agents/workflows/deploy.yml`); Cloudflare Workers Builds deploys | `scripts/build-next-or-worker.mjs` runs `scripts/check-production-env.mjs` first on the Workers CI path |
 | Supabase | Project linked; eight migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
 | Revalidate webhook endpoint | Exists at `/api/revalidate`, optional workspace webhook to configure | `app/api/revalidate/route.ts` |
 
@@ -101,7 +101,7 @@ Two facts worth knowing before you change anything:
 | --- | --- | --- |
 | GitHub Actions `Quality` | lint, `tsc`, the Vitest suite, Impeccable detector, `next build` | deployments |
 | Cloudflare Workers Builds | build + deploy on the dashboard path, previews per branch, check runs | tests |
-| GitHub Actions `Deploy` (PR #5) | production deploy after `Quality`, PR preview version | tests |
+| GitHub Actions `Deploy` (PR #5, removed in `85465ce`) | historical: production deploy after `Quality`, PR preview version | tests |
 | Worker | SSR, route handlers, middleware, image optimizer, cache | persistence |
 | Supabase | content, comments, auth, image storage, realtime fan-out | HTML |
 | KV | OpenNext incremental cache + tag cache | anything that must be immediately consistent |
@@ -180,7 +180,6 @@ Three environments, three sets of values, one repository.
 | `REVALIDATE_SECRET` | any 32-byte hex | Worker secret | Worker secret |
 | `GEMINI_API_KEY` | optional | Worker secret | Worker secret |
 | `GEMINI_MODEL` | optional (`gemini-3.8-flash` default) | Worker var | Worker var |
-| `HF_TOKEN`, `HF_SPACE_NAME` | optional | Worker secret | Worker secret |
 
 ### 3.1 Build-time vs runtime — the distinction that breaks deploys
 
@@ -188,10 +187,10 @@ Three environments, three sets of values, one repository.
 | --- | --- | --- | --- |
 | **Build-time / inlined** | every `NEXT_PUBLIC_*` | shell running `next build`, or the Workers Builds *build* variables, or GitHub Actions job `env` | Next.js substitutes the literal string into the client and server bundles |
 | **Runtime var (not secret)** | `RESEND_TPL_*` (one per email scenario) | Worker variables in the dashboard, or set from `npm run email:template:sync` | read at request time; not confidential. Senders come from `lib/email/scenarios.ts`, not from env. See `docs/email-scenarios.md` |
-| **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
+| **Runtime secret** | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `RESEND_API_KEY` | Worker secrets (`wrangler secret put` / dashboard *Settings → Variables and secrets*) | read at request time through `process.env` / `getCloudflareContext().env` |
 | **Preview-only runtime** | the same secrets | `wrangler preview secret put`, or the preview *base config* | previews do not inherit the Worker's secrets |
 
-Both Workers Builds and GitHub Actions therefore need the `NEXT_PUBLIC_*` values as **build**
+Workers Builds therefore needs the `NEXT_PUBLIC_*` values as **build**
 variables. The deploy guard (`npm run deploy-guard`) fails loudly when they are missing, because a
 Worker built without them runs in unauthenticated local demo mode with a read-only filesystem.
 
@@ -210,24 +209,23 @@ already excludes `.env*` except `.env.example`.
 | 4 | `CLOUDFLARE_ACCOUNT_ID` | semi (identifier) | CI, wrangler | Cloudflare dashboard URL, or `npx wrangler whoami` | GitHub secret, Workers Builds env |
 | 5 | `CLOUDFLARE_API_TOKEN` | **yes** | CI, wrangler | Cloudflare → My Profile → API Tokens | GitHub secret only |
 | 6 | `REVALIDATE_SECRET` | **yes** | `/api/revalidate`, Supabase webhook | `openssl rand -hex 32` | Worker secret + Supabase webhook header |
-| 7 | `GEMINI_API_KEY` | **yes** | `/api/research-assistant`, `/api/author-avatar` | Google AI Studio → API keys | Worker secret, `.env.local` |
+| 7 | `GEMINI_API_KEY` | **yes** | `/api/research-assistant` | Google AI Studio → API keys | Worker secret, `.env.local` |
 | 8 | `GEMINI_MODEL` | no | same routes | model id you have access to | Worker var, `.env.local` |
-| 9 | `HF_TOKEN`, `HF_SPACE_NAME` | token **yes**, space name no | `/api/generate` (video/cover generation) | Hugging Face → Settings → Access Tokens; the Space id (`owner/space`) | Worker secret / var |
 
 Already present in the repository (confirm under **Settings → Secrets and variables → Actions**):
-`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `GEMINI_API_KEY`, `GEMINI_MODEL`, `HF_SPACE_NAME`,
-`HF_TOKEN`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
+`CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `GEMINI_API_KEY`, `GEMINI_MODEL`,
+`NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
 `NEXT_PUBLIC_SUPABASE_URL`, `REVALIDATE_SECRET`.
 
 ### 4.1 Where to put them, exactly
 
 | Location | Path in the UI | Holds | Notes |
 | --- | --- | --- | --- |
-| GitHub repository secrets | Settings → Secrets and variables → **Actions** → *Secrets* | items 1–9 | masked in logs; available to every workflow |
+| GitHub repository secrets | Settings → Secrets and variables → **Actions** → *Secrets* | items 1–8 | masked in logs; available to every workflow |
 | GitHub environment secrets | Settings → Environments → **production** → *Environment secrets* | optional, same names | only readable by jobs that declare `environment: production`; add required reviewers here for a manual gate |
 | Cloudflare build variables | Workers & Pages → `researchwithme` → Settings → **Build** → *Variables and secrets* | `NEXT_PUBLIC_*` as plaintext, keys as secrets | consumed by Workers Builds only |
-| Cloudflare Worker secrets | Workers & Pages → `researchwithme` → Settings → **Variables and secrets** (runtime) | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `HF_TOKEN` | available to the Worker at request time |
-| Local machine | `.env.local` (git-ignored) | items 1–9 | copied from `.env.example` |
+| Cloudflare Worker secrets | Workers & Pages → `researchwithme` → Settings → **Variables and secrets** (runtime) | `REVALIDATE_SECRET`, `GEMINI_API_KEY` | available to the Worker at request time |
+| Local machine | `.env.local` (git-ignored) | items 1–8 | copied from `.env.example` |
 
 ### 4.2 Supabase URL and publishable key
 
@@ -288,14 +286,12 @@ wrong-length guess leaks nothing. `MY_SECRET_TOKEN` is accepted as a fallback na
 Rotate by setting the new Worker secret first, then editing the webhook — during the gap the webhook
 returns `401` and only the webhook's cache eviction is affected.
 
-### 4.6 Gemini and Hugging Face
+### 4.6 Gemini
 
 - `GEMINI_API_KEY`: Google AI Studio → **Get API key** → create in the Cloud project you want billed.
-  Used by `/api/research-assistant` and `/api/author-avatar`; absent, those routes degrade instead of
+  Used by `/api/research-assistant`; absent, the assistant answers from the catalogue instead of
   failing the build.
 - `GEMINI_MODEL`: optional; defaults to `gemini-3.8-flash`. Set it to a model your key can call.
-- `HF_TOKEN` + `HF_SPACE_NAME`: Hugging Face → Settings → Access Tokens (fine-grained, *inference*
-  scope is enough) and the Space identifier `owner/space-name` used by `/api/generate`.
 
 These are runtime reads, so they belong to the Worker, not the build. Set all of them in one go:
 
@@ -452,10 +448,7 @@ certificate is Cloudflare's Universal SSL and needs no action.
 npx wrangler secret list
 npx wrangler secret put REVALIDATE_SECRET
 npx wrangler secret put GEMINI_API_KEY
-npx wrangler secret put HF_TOKEN
-# GEMINI_MODEL / HF_SPACE_NAME are plaintext vars — either
-npx wrangler secret put HF_SPACE_NAME      # fine as a secret
-# or add them as Worker variables in the dashboard
+# GEMINI_MODEL is a plaintext var — add it as a Worker variable in the dashboard
 ```
 
 Secrets survive a deploy; they are per-Worker, not per-version.
@@ -490,13 +483,13 @@ subscribes to `push` and `pull_request` and reports back as a check run named
 
 | Setting | Value | Why |
 | --- | --- | --- |
-| Build command | `npx @opennextjs/cloudflare build` (or `npm run build:worker`) | produces `.open-next/worker.js` + assets |
+| Build command | `npx @opennextjs/cloudflare build` (or `npm run build`, `npm run build:worker`) | produces `.open-next/worker.js` + assets. `scripts/build-next-or-worker.mjs` runs `scripts/check-production-env.mjs` first on `WORKERS_CI`, for both `npm run build` and `npx @opennextjs/cloudflare build` (its inner `npm run build`) |
 | Deploy command — production | `npx wrangler deploy` | a *production* deployment; previews branch from it |
 | Deploy command — preview | `npx wrangler preview` | a branch of the Worker with its own URL |
 | Production branch | `main` | everything else is a preview |
 | Root directory | `/` | repository root |
 | Build variables | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SITE_URL` | inlined at build time |
-| Build secrets | `HF_TOKEN`, `HF_SPACE_NAME`, `GEMINI_API_KEY`, `GEMINI_MODEL` | same, for values that must be masked |
+| Build secrets | `GEMINI_API_KEY`, `GEMINI_MODEL` | same, for values that must be masked |
 
 Leave the deploy commands at `wrangler preview` for production and the Worker never gains a
 deployment; every branch then fails with *This Worker does not exist on your account* (§13).
@@ -504,9 +497,8 @@ deployment; every branch then fails with *This Worker does not exist on your acc
 ### 7.3 What a build does
 
 1. Clone the branch at the pushed SHA.
-2. Install dependencies with `bun install --frozen-lockfile`. `bun.lock` is the repository's only
-   lockfile; set the dashboard's install command to match (Settings → Builds) rather than letting it
-   fall back to npm, which has no lockfile to read.
+2. Install dependencies with `npm ci`. `package-lock.json` is the repository's only
+   lockfile; the dashboard's default npm install reads it.
 3. Build command → `.open-next/`.
 4. Deploy command → `wrangler deploy` (production branch) or `wrangler preview` (anything else).
 5. Report a check run with a link to the build, and for previews, to the preview URL.
@@ -530,18 +522,20 @@ request:
 | Step | Command |
 | --- | --- |
 | checkout | `actions/checkout@v4` |
-| Bun | `oven-sh/setup-bun@v2`, version `1.4.4` |
-| install | `bun install --frozen-lockfile` |
+| Node | `actions/setup-node@v4`, Node 22, npm cache |
+| install | `npm ci` |
 | lint | `npm run lint` |
 | typecheck | `npm run typecheck` |
 | tests | `npm test` (Vitest) |
 | design detector | `npx impeccable detect app components` |
-| build | `npm run build`, with `HF_SPACE_NAME` and `HF_TOKEN` from secrets |
+| build | `npm run build` |
 
 It does not deploy, does not need Cloudflare credentials, and takes about two minutes. Do not edit it
 to add deploys — that is what `deploy.yml` is for.
 
 ### 8.2 `Deploy` — designed on PR #5
+
+> **Historical:** `deploy.yml` was removed from `.github/workflows/` in `85465ce` (copy at `.agents/workflows/deploy.yml`). Cloudflare Workers Builds is the deploy path; this section is kept for reference.
 
 `.github/workflows/deploy.yml`:
 `workflow_run` on **Quality → completed → main**, plus `pull_request` for previews and
@@ -575,8 +569,6 @@ env:
   NEXT_PUBLIC_SITE_URL: ${{ vars.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me' }}
   NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL || secrets.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-  HF_SPACE_NAME: ${{ secrets.HF_SPACE_NAME }}
-  HF_TOKEN: ${{ secrets.HF_TOKEN }}
   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 ```
@@ -607,7 +599,7 @@ values live under **Settings → Environments → production**; a job that decla
 
 ```bash
 gh workflow list
-gh workflow run Deploy            # manual production deploy (needs the file on main)
+# gh workflow run Deploy        # historical: deploy.yml removed in 85465ce; use Workers Builds or `npm run deploy`
 gh run watch $(gh run list --workflow=Quality --limit=1 --json databaseId --jq '.[0].databaseId')
 gh pr checks <number>
 ```
@@ -653,6 +645,8 @@ Permissions the app requests are read-only on contents plus write on checks — 
 to Actions secrets.
 
 ### 9.2 GitHub → GitHub Actions (`workflow_run`)
+
+> **Historical:** `deploy.yml` was removed in `85465ce`; Workers Builds is the deploy path.
 
 Not a webhook you configure — an event relationship between two workflows.
 
@@ -765,8 +759,8 @@ lands on `/login` with `error_description` — never as a 500.
 2. Cloudflare's app receives the `push` and starts a build with the production-branch rules applied
    to a non-production branch → `npx wrangler preview`.
 3. A preview URL appears: `<branch>-researchwithme.hazardnet.workers.dev`.
-4. If `deploy.yml` is on the default branch, its `preview` job also uploads a version under the alias
-   `pr-<n>` (only for pull requests) and comments the URL once.
+4. (Historical, `deploy.yml` removed in `85465ce`: its `preview` job also uploaded a version under the alias
+   `pr-<n>` and commented the URL.)
 
 ### Pull request
 
@@ -779,17 +773,15 @@ lands on `/login` with `error_description` — never as a 500.
 
 1. `Quality` runs on `main`.
 2. Cloudflare's production build runs `wrangler deploy` → new version → traffic moves immediately.
-3. With `deploy.yml` merged, its `deploy` job starts after Quality reports success, re-runs the guard
-   and the build, deploys again, then smoke-tests `/` and `/sitemap.xml`.
-   **This is the double-deploy scenario — pick one owner (§15).**
+3. (Historical: with `deploy.yml` merged, a second `deploy` job ran after Quality and deployed again. The workflow was removed in `85465ce`, so Workers Builds is the only deployer.)
 4. KV receives fresh entries under the new build id; old entries expire on their TTL.
 
 ### Manual deploy
 
 ```bash
 npm run deploy-guard && npm run build:worker && npx wrangler deploy
-# or
-gh workflow run Deploy
+# or: retry the build from Workers & Pages → researchwithme → Deployments (Workers Builds)
+# or: npm run deploy   (predeploy runs the guard)
 ```
 
 ---
@@ -863,7 +855,7 @@ Real errors from this repository, in the order they tend to appear.
 | `/api/revalidate` returns `401` | webhook header value ≠ Worker secret (or `?secret=` missing) | re-copy the header value; rotate both together |
 | Sign-in bounces with `redirect_to is not allowed` | origin missing from Supabase redirect URLs | add `https://researchwith.me/auth/callback` |
 | Studio 403s for a signed-in editor | account not in `public.editors` | insert the allowlist row (§5.3) |
-| `npm ci` fails on a clean clone | the repository ships `bun.lock`, not `package-lock.json` | use `bun install --frozen-lockfile` (CI does) |
+| `npm ci` fails on a clean clone | `package-lock.json` out of sync with `package.json` | run `npm install --package-lock-only` and commit the lockfile |
 | `build:worker` fails on Windows | OpenNext builds partly POSIX-only | use WSL or CI |
 | Tailwind utilities missing after a build | stale `.next` | `npm run clean && npm run build:worker` |
 | `Deploy` never triggers | Quality failed or was skipped, or the Cloudflare secrets are missing | check `conclusion == 'success'`; confirm `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
@@ -902,7 +894,9 @@ Both paths run `wrangler deploy` on `main`. Keep exactly one:
 | Preview per PR | yes (`wrangler preview`) | yes (`wrangler preview --name pr-<n>`) |
 | Secrets live in | Cloudflare dashboard | GitHub |
 | Smoke test | no | yes |
-| Requires Bun/npm parity | dashboard uses npm | Bun 1.4.4, matching Quality |
+| Package manager | npm | npm, matching Quality |
+
+> **Historical:** the `deploy.yml` column above describes the removed workflow (`85465ce`); Workers Builds is the deploy path.
 
 **Option A — Cloudflare owns production (current state).** Keep Workers Builds as is; merge
 `deploy.yml` only in `workflow_dispatch` form, or drop it. Simplest, and the setup that is verified
@@ -923,14 +917,14 @@ New machine, new account, or a lost dashboard — the repository is the source o
 
 ```bash
 git clone https://github.com/myself-aas/ResearchWithME.git && cd ResearchWithME
-bun install --frozen-lockfile
+npm ci
 cp .env.example .env.local && $EDITOR .env.local        # §4.1
 supabase link --project-ref <ref> && supabase db push   # §5.2
 npx wrangler login
 npx wrangler kv namespace list                          # reuse or create the namespace
 $EDITOR wrangler.jsonc                                  # account_id, KV ids, routes
 npm run deploy-guard && npm run build:worker && npx wrangler deploy
-npx wrangler secret bulk .dev.vars                      # REVALIDATE_SECRET, GEMINI_API_KEY, HF_TOKEN
+npx wrangler secret bulk .dev.vars                      # REVALIDATE_SECRET, GEMINI_API_KEY
 ```
 
 Then, in the dashboard: reconnect Workers Builds (§7.1), re-add the GitHub secrets (§8.4), re-create
@@ -953,7 +947,7 @@ Checklist to finish:
 
 ```bash
 cp .env.example .env.local
-bun install
+npm ci
 npm run dev            # next dev on 0.0.0.0:3000
 npm run preview        # OpenNext build + workerd on :8787 — the closest thing to production
 ```
@@ -985,6 +979,6 @@ Files that must stay out of git (already ignored): `.env*` except `.env.example`
 | KV keys | `npx wrangler kv key list --namespace-id 8d2dc8f0b1bb4839962ae63df8296b31 --remote` |
 | Pages projects | `npx wrangler pages project list` |
 | Regenerate binding types | `npm run cf-typegen` |
-| Trigger a deploy manually | `gh workflow run Deploy` |
+| Trigger a deploy manually | Retry the build in Workers Builds, or `npm run deploy` from a checkout |
 | Watch the gate | `gh pr checks <n>`, `gh run list --workflow=Quality` |
 </content>

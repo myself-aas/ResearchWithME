@@ -11,19 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install dependencies (canonical lockfile)
-        run: bun install --frozen-lockfile
+        run: npm ci
       - name: Token pipeline gates (build, validate, contrast)
-        run: bun run tokens:build && bun run tokens:check
+        run: npm run tokens:build && npm run tokens:check
       - name: Lint, typecheck, tests, Impeccable source scan
-        run: bun run lint && bun run typecheck && bun run test && bun run impeccable:source
+        run: npm run lint && npm run typecheck && npm run test && npm run impeccable:source
       - name: Production build
-        run: bun run build
+        run: npm run build
       - name: Performance budgets (§18)
-        run: bun run budgets
+        run: npm run budgets
       - name: Release gate machine checks (§44/§46)
-        run: bun run release:gate
+        run: npm run release:gate

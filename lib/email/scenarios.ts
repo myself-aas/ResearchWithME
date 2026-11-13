@@ -224,41 +224,6 @@ export const SCENARIOS = {
     },
   },
 
-  'billing-receipt': {
-    key: 'billing-receipt',
-    templateAlias: 'billing-receipt',
-    from: sender('Research With Me Billing', 'billing'),
-    replyTo: address('billing'),
-    subjectBuilder: (v) => {
-      const invoice = str(v, 'INVOICE_NUMBER');
-      return invoice
-        ? `Receipt ${invoice} from ResearchWithMe`
-        : 'Your receipt from ResearchWithMe';
-    },
-    variables: [
-      { key: 'INVOICE_NUMBER', type: 'string', required: true },
-      // Money is a string, not a number: a receipt must show the currency
-      // formatting the payer was charged, and 1200.5 as a number is ambiguous.
-      { key: 'AMOUNT', type: 'string', required: true },
-      { key: 'CURRENCY', type: 'string', required: true },
-      { key: 'PERIOD', type: 'string', required: false },
-      { key: 'BILLED_ON', type: 'string', required: false },
-      { key: 'RECEIPT_URL', type: 'string', required: false },
-    ],
-    tagCategory: 'billing-receipt',
-    idempotencyPattern: 'billing-receipt/<invoice-number>',
-    templateEnv: 'RESEND_TPL_BILLING_RECEIPT',
-    component: SCENARIO_COMPONENTS['billing-receipt'] as ScenarioDefinition['component'],
-    sample: {
-      INVOICE_NUMBER: 'RWM-INV-2026-0142',
-      AMOUNT: '12.00',
-      CURRENCY: 'USD',
-      PERIOD: '8 November \u2013 7 December 2026',
-      BILLED_ON: '8 November 2026',
-      RECEIPT_URL: 'https://researchwith.me/billing/invoices/RWM-INV-2026-0142',
-    },
-  },
-
   'support-reply': {
     key: 'support-reply',
     templateAlias: 'support-reply',

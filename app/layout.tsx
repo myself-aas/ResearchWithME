@@ -8,10 +8,10 @@ import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
 
 // ResearchWithMe follows the πeme v3.1 design system (docs/pieme-design-system-v3.1.md):
-// Newsreader for editorial reading, Inter for interface chrome, JetBrains Mono
-// for metadata. Newsreader and Inter are self-hosted OFL faces loaded here via
-// next/font/local; JetBrains Mono is requested by name with a system mono
-// fallback in globals.css.
+// the Aptos family (Aptos Serif / Aptos / Aptos Mono) leads each stack and is
+// requested by installed name only in globals.css, never bundled. Newsreader
+// and Inter are the self-hosted OFL fallbacks loaded here via next/font/local;
+// JetBrains Mono is the named mono fallback.
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
   variable: '--font-inter',

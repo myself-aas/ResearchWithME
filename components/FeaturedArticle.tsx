@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { coverLoader, isProcessedCover } from '@/lib/images/urls';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
 import { ArrowRight, Bookmark, CheckCircle2, FileText, GitBranch } from 'lucide-react';
@@ -16,6 +17,8 @@ interface FeaturedArticleProps {
 }
 
 export default function FeaturedArticle({ post, isSaved, onToggleSave }: FeaturedArticleProps) {
+  const coverSrc = post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : '/images/folio-hero.jpeg';
+
   return (
     <section
       aria-labelledby="featured-heading"
@@ -34,8 +37,9 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             </picture>
           ) : (
             <Image
-              src={post.coverImage && post.coverImage.trim() !== '' ? post.coverImage : '/images/folio-hero.jpeg'}
+              src={coverSrc}
               alt=""
+              loader={isProcessedCover(coverSrc) ? coverLoader : undefined}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 42vw"

@@ -19,7 +19,7 @@ target: github-copilot
 ## Purpose
 **Single unified agent** for the ResearchWithMe scholarly research platform. Consolidates all project knowledge, contexts, instructions, workflows, and specialized capabilities into one superagent.
 
-**Platform Stack**: Next.js 15 App Router, React 19, Tailwind CSS v4, Supabase (PostgreSQL), TypeScript, Bun, Cloudflare Workers (OpenNext)
+**Platform Stack**: Next.js 15 App Router, React 19, Tailwind CSS v4, Supabase (PostgreSQL), TypeScript, Cloudflare Workers (OpenNext)
 
 **Capabilities**:
 - **Article Writing & Editing** — SEO/AEO/GEO-optimized blog articles using ResearchWithMe Template v2
@@ -37,7 +37,7 @@ target: github-copilot
 
 ### Project Overview
 - **Mission**: Scholarly publication platform for long-form paper reviews, reproducible teardowns, citation-first reading
-- **Tech Stack**: Next.js 15, React 19, Tailwind v4, Supabase, TypeScript, Bun
+- **Tech Stack**: Next.js 15, React 19, Tailwind v4, Supabase, TypeScript
 - **Key Directories**:
   - `app/` — Next.js App Router routes
   - `components/` — Shared UI components
@@ -424,7 +424,7 @@ For complex tasks, delegates to focused subagents:
 
 ### Platform: Cloudflare Workers via OpenNext
 - **Config**: `open-next.config.ts`, `wrangler.jsonc`, `next.config.ts`
-- **Build**: `bun run build` → `bun run deploy`
+- **Build**: `npm run build` → `npm run deploy`
 - **Edge Middleware**: `middleware.ts` runs at Cloudflare edge
 - **ISR**: Articles 1hr, Papers 6hr, Authors 2hr, Categories 24hr
 - **Revalidation**: `POST /api/revalidate` with `x-revalidate-secret`
@@ -458,9 +458,9 @@ NEXT_PUBLIC_APP_URL=
 
 ### Commands
 ```bash
-bun test              # Run tests
-bun test --watch      # Watch mode
-bun test --coverage   # Coverage report
+npm test              # Run tests
+npm test --watch      # Watch mode
+npm test --coverage   # Coverage report
 ```
 
 ### Mocking Patterns
@@ -474,15 +474,15 @@ bun test --coverage   # Coverage report
 
 ### Development
 ```bash
-bun run dev                    # Start dev server
-bun run typecheck              # TypeScript check
-bun run typecheck --watch      # Watch mode
-bun run lint                   # ESLint
-bun run lint --fix             # Auto-fix
-bun test                       # Vitest
-bun run quality                # Full quality gate
-bun run build                  # Production build
-bun run preview                # Preview build
+npm run dev                    # Start dev server
+npm run typecheck              # TypeScript check
+npm run typecheck --watch      # Watch mode
+npm run lint                   # ESLint
+npm run lint --fix             # Auto-fix
+npm test                       # Vitest
+npm run quality                # Full quality gate
+npm run build                  # Production build
+npm run preview                # Preview build
 ```
 
 ### Database (Supabase)
