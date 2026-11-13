@@ -62,13 +62,12 @@ export default function PrivacyPage() {
               </Text>
               <p className="text-ink-secondary">
                 Reader convenience features—including your{' '}
-                <TextLink href="/bookmarks" >
+                <TextLink href="/bookmarks">
                   saved reading list
                 </TextLink>
-                , light or dark archival paper theme selection, and interface language preference (English or বাংলা)—are
-                stored locally in your browser via first-party <code className="font-mono text-sm">localStorage</code>{' '}
-                keys and a strictly functional locale cookie (<code className="font-mono text-sm">rwm_locale</code>).
-                You can clear these items at any time from your browser settings or directly inside the reading list tool.
+                {' '}and light or dark theme selection—are stored locally in your browser via first-party{' '}
+                <code className="font-mono text-sm">localStorage</code> keys. You can clear these items at any time from
+                your browser settings or directly inside the reading list tool.
               </p>
             </section>
 

@@ -7,8 +7,6 @@ import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Copy, ExternalLink, Quote, X } from 'lucide-react';
 import { buildCitation, type CitationSource } from '@/lib/citations';
-import { t } from '@/lib/i18n';
-import { useLocale } from '@/components/i18n/LocaleProvider';
 import { EASING } from '@/lib/motion/tokens';
 import SuccessCheck from '@/components/motion/SuccessCheck';
 import { Text } from '@/components/primitives';
@@ -71,7 +69,6 @@ export default function InlineCitationPopover({
   source,
   citeHref,
 }: InlineCitationPopoverProps) {
-  const { locale } = useLocale();
   const [copied, setCopied] = useState<CopiedKind>(null);
 
   async function copyText(kind: Exclude<CopiedKind, null>, value: string) {
@@ -119,7 +116,7 @@ export default function InlineCitationPopover({
           <div className="flex items-start justify-between gap-2 border-b border-line pb-2.5">
             <Text as="span" variant="eyebrow" color="brand" weight="semibold" className="inline-flex items-center gap-1.5">
               <Quote className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>{t(locale, 'reader.cite')}</span>
+              <span>Cite reference</span>
             </Text>
             <Popover.Close asChild>
               <button
@@ -178,7 +175,7 @@ export default function InlineCitationPopover({
           )}
 
           <span role="status" aria-live="polite" className="sr-only">
-            {copied ? t(locale, 'reader.copied') : ''}
+            {copied ? 'Copied to clipboard' : ''}
           </span>
           </m.div>
         </Popover.Content>

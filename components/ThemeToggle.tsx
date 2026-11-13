@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 import * as m from 'motion/react-m';
 import { Moon, Sun } from 'lucide-react';
-import { useLocale } from './i18n/LocaleProvider';
 import { EASING } from '@/lib/motion/tokens';
 import Pressable from './motion/Pressable';
 
@@ -25,7 +24,6 @@ function applyDocumentTheme(effective: 'light' | 'dark', explicit: ThemePreferen
 }
 
 export default function ThemeToggle() {
-  const { locale } = useLocale();
   const [effective, setEffective] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
@@ -54,13 +52,9 @@ export default function ThemeToggle() {
   }
 
   const label =
-    locale === 'bn'
-      ? effective === 'dark'
-        ? 'হালকা আর্কাইভ থিমে যান'
-        : 'অন্ধকার অবসিডিয়ান থিমে যান'
-      : effective === 'dark'
-        ? 'Switch to Archival Paper light theme'
-        : 'Switch to Obsidian dark theme';
+    effective === 'dark'
+      ? 'Switch to light theme'
+      : 'Switch to dark theme';
 
   return (
     <Pressable
@@ -70,9 +64,6 @@ export default function ThemeToggle() {
       title={label}
       className="inline-flex min-h-11 min-w-11 items-center justify-center overflow-hidden rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle"
     >
-      {/* Principle 7 (arc) + 8 (secondary action): the outgoing icon rotates
-          away while the incoming one arrives on a short arc. Both are
-          decorative; the accessible name stays on the button. */}
       <AnimatePresence initial={false} mode="wait">
         <m.span
           key={effective}
