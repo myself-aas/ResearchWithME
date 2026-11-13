@@ -13,7 +13,9 @@
  * Not part of `npm run quality`, and not a dependency of the app: PGlite is
  * installed outside the repository on purpose.
  */
-import { PGlite } from '@electric-sql/pglite';
+// PGlite is installed outside the repository (see the header); PGLITE_PATH
+// points at it so this file runs from a clean checkout.
+const { PGlite } = await import(process.env.PGLITE_PATH ?? '@electric-sql/pglite');
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
