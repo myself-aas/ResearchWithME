@@ -1,4 +1,3 @@
-import BillingReceipt from '@/emails/billing-receipt';
 import PasswordReset from '@/emails/password-reset';
 import SecurityAlert from '@/emails/security-alert';
 import SupportReply from '@/emails/support-reply';
@@ -18,7 +17,6 @@ export const SCENARIO_COMPONENTS = {
   'verify-email': VerifyEmail,
   'password-reset': PasswordReset,
   'security-alert': SecurityAlert,
-  'billing-receipt': BillingReceipt,
   'support-reply': SupportReply,
 } as const;
 

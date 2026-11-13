@@ -44,7 +44,6 @@ export interface AppEnv {
   RESEND_TPL_VERIFY_EMAIL?: string;
   RESEND_TPL_PASSWORD_RESET?: string;
   RESEND_TPL_SECURITY_ALERT?: string;
-  RESEND_TPL_BILLING_RECEIPT?: string;
   RESEND_TPL_SUPPORT_REPLY?: string;
   /** 'production' enables the fail-closed production guard. Anything else is preview/local. */
   RWM_DEPLOY_ENV?: 'preview' | 'production';
