@@ -37,7 +37,7 @@ This document is the long form. The short form is the *Deploy (Cloudflare Worker
 | Custom domains | `researchwith.me` + `www.researchwith.me`, declared as `custom_domain` routes in `wrangler.jsonc` | last production deploy accepted them; site serves 200 |
 | KV cache | `researchwithme-opennext-cache` = `8d2dc8f0b1bb4839962ae63df8296b31`, bound twice (`NEXT_INC_CACHE_KV`, `NEXT_TAG_CACHE_KV`) | `wrangler deploy --dry-run` resolves both |
 | Worker Previews | Working | branch build `90662e61…` produced a preview URL |
-| Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview` | check run `Workers Builds: researchwithme` passes |
+| Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview`; `scripts/check-production-env.mjs` runs first on either build command (`npm run build` or `npx @opennextjs/cloudflare build`) | check run `Workers Builds: researchwithme` passes |
 | GitHub Actions `Quality` | On `main` | `.github/workflows/quality.yml` |
 | GitHub Actions `Deploy` | **Removed** from `.github/workflows/` in `85465ce` (historical copy at `.agents/workflows/deploy.yml`); Cloudflare Workers Builds deploys | `scripts/build-next-or-worker.mjs` runs `scripts/check-production-env.mjs` first on the Workers CI path |
 | Supabase | Project linked; eight migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
@@ -609,7 +609,7 @@ values live under **Settings → Environments → production**; a job that decla
 
 ```bash
 gh workflow list
-gh workflow run Deploy            # manual production deploy (needs the file on main)
+# gh workflow run Deploy        # historical: deploy.yml removed in 85465ce; use Workers Builds or `npm run deploy`
 gh run watch $(gh run list --workflow=Quality --limit=1 --json databaseId --jq '.[0].databaseId')
 gh pr checks <number>
 ```
@@ -790,8 +790,8 @@ lands on `/login` with `error_description` — never as a 500.
 
 ```bash
 npm run deploy-guard && npm run build:worker && npx wrangler deploy
-# or
-gh workflow run Deploy
+# or: retry the build from Workers & Pages → researchwithme → Deployments (Workers Builds)
+# or: npm run deploy   (predeploy runs the guard)
 ```
 
 ---
@@ -989,6 +989,6 @@ Files that must stay out of git (already ignored): `.env*` except `.env.example`
 | KV keys | `npx wrangler kv key list --namespace-id 8d2dc8f0b1bb4839962ae63df8296b31 --remote` |
 | Pages projects | `npx wrangler pages project list` |
 | Regenerate binding types | `npm run cf-typegen` |
-| Trigger a deploy manually | `gh workflow run Deploy` |
+| Trigger a deploy manually | Retry the build in Workers Builds, or `npm run deploy` from a checkout |
 | Watch the gate | `gh pr checks <n>`, `gh run list --workflow=Quality` |
 </content>
