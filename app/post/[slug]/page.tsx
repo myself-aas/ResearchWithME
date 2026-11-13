@@ -20,7 +20,7 @@ import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
 import { buildArticleCitationMap, renderWithInlineCitations } from '@/lib/citations-inline';
 import { getCachedArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
-import { articleJsonLd, jsonLdScript, videoJsonLd } from '@/lib/seo/jsonld';
+import { articleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 import { Card, Text } from '@/components/primitives';
 import { WorkflowDisclosure } from '@/components/workflows';
 import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return pageMetadata({
     title: article.title,
     description: article.summary,
-    path: `/post/${slug}`,
+    path: `/post/${article.slug}`,
     type: 'article',
   });
 }
@@ -103,18 +103,10 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     imagePath: article.coverImage,
   });
 
-  const explainerVideoLd = videoJsonLd({
-    name: `Visual explainer: ${article.title}`,
-    description: article.summary,
-    contentPath: `/videos/explainer-${slug}.mp4`,
-    thumbnailPath: coverPath,
-    uploadDate: article.dateISO ?? article.publishedAt,
-  });
-
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      {/* Only claim Article schema: explainer videos are not published assets yet. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(explainerVideoLd) }} />
       <ReadingProgress />
       <ArticleSmoothScroll />
       <BlogHeader />
