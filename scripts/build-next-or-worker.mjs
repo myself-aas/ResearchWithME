@@ -23,6 +23,10 @@ if (isWorkersCI && !isInnerBuild) {
   console.log(
     '[build] WORKERS_CI detected — running opennextjs-cloudflare build so .open-next/ is ready for preview/deploy.',
   );
+  execFileSync(process.execPath, [join(root, 'scripts', 'check-production-env.mjs')], {
+    cwd: root,
+    stdio: 'inherit',
+  });
   const openNextBin = join(
     root,
     'node_modules',

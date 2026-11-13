@@ -14,7 +14,7 @@ function run(envFile: string) {
   try {
     const stdout = execFileSync(process.execPath, [script], {
       cwd,
-      env: { PATH: process.env.PATH },
+      env: { PATH: process.env.PATH } as unknown as NodeJS.ProcessEnv,
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'pipe'],
     });

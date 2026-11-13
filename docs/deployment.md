@@ -39,7 +39,7 @@ This document is the long form. The short form is the *Deploy (Cloudflare Worker
 | Worker Previews | Working | branch build `90662e61…` produced a preview URL |
 | Workers Builds (dashboard CI) | Connected; build `npx @opennextjs/cloudflare build`, production deploy `npx wrangler deploy`, preview deploy `npx wrangler preview` | check run `Workers Builds: researchwithme` passes |
 | GitHub Actions `Quality` | On `main` | `.github/workflows/quality.yml` |
-| GitHub Actions `Deploy` | **On `main`** | `.github/workflows/deploy.yml`; previews per pull request, production after Quality passes. Requires `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as Actions secrets |
+| GitHub Actions `Deploy` | **Removed** from `.github/workflows/` in `85465ce` (historical copy at `.agents/workflows/deploy.yml`); Cloudflare Workers Builds deploys | `scripts/build-next-or-worker.mjs` runs `scripts/check-production-env.mjs` first on the Workers CI path |
 | Supabase | Project linked; eight migrations in `supabase/migrations/` | `docs/supabase-cms.md` |
 | Revalidate webhook endpoint | Exists at `/api/revalidate`, optional workspace webhook to configure | `app/api/revalidate/route.ts` |
 
@@ -543,6 +543,8 @@ to add deploys — that is what `deploy.yml` is for.
 
 ### 8.2 `Deploy` — designed on PR #5
 
+> **Historical:** `deploy.yml` was removed from `.github/workflows/` in `85465ce` (copy at `.agents/workflows/deploy.yml`). Cloudflare Workers Builds is the deploy path; this section is kept for reference.
+
 `.github/workflows/deploy.yml`:
 `workflow_run` on **Quality → completed → main**, plus `pull_request` for previews and
 `workflow_dispatch` for a manual production deploy.
@@ -903,6 +905,8 @@ Both paths run `wrangler deploy` on `main`. Keep exactly one:
 | Secrets live in | Cloudflare dashboard | GitHub |
 | Smoke test | no | yes |
 | Requires Bun/npm parity | dashboard uses npm | Bun 1.4.4, matching Quality |
+
+> **Historical:** the `deploy.yml` column above describes the removed workflow (`85465ce`); Workers Builds is the deploy path.
 
 **Option A — Cloudflare owns production (current state).** Keep Workers Builds as is; merge
 `deploy.yml` only in `workflow_dispatch` form, or drop it. Simplest, and the setup that is verified
