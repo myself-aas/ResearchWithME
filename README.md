@@ -7,12 +7,12 @@ The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) a
 ## Run it
 
 ```bash
-bun install
+npm ci
 npm run dev        # http://localhost:3000
 npm run build && npm start
 ```
 
-Node 20.9 or newer, and [Bun](https://bun.sh) 1.4 or newer — `bun.lock` is the only lockfile, and CI installs with `bun install --frozen-lockfile`. `next.config.ts` sets `output: 'standalone'`, so a production container can run `node .next/standalone/server.js`; `next start` is used for local verification.
+Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs with `npm ci`. `next.config.ts` sets `output: 'standalone'`, so a production container can run `node .next/standalone/server.js`; `next start` is used for local verification.
 
 ## Routes
 

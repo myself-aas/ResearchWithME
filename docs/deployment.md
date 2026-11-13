@@ -504,9 +504,8 @@ deployment; every branch then fails with *This Worker does not exist on your acc
 ### 7.3 What a build does
 
 1. Clone the branch at the pushed SHA.
-2. Install dependencies with `bun install --frozen-lockfile`. `bun.lock` is the repository's only
-   lockfile; set the dashboard's install command to match (Settings → Builds) rather than letting it
-   fall back to npm, which has no lockfile to read.
+2. Install dependencies with `npm ci`. `package-lock.json` is the repository's only
+   lockfile; the dashboard's default npm install reads it.
 3. Build command → `.open-next/`.
 4. Deploy command → `wrangler deploy` (production branch) or `wrangler preview` (anything else).
 5. Report a check run with a link to the build, and for previews, to the preview URL.
@@ -530,8 +529,8 @@ request:
 | Step | Command |
 | --- | --- |
 | checkout | `actions/checkout@v4` |
-| Bun | `oven-sh/setup-bun@v2`, version `1.4.4` |
-| install | `bun install --frozen-lockfile` |
+| Node | `actions/setup-node@v4`, Node 22, npm cache |
+| install | `npm ci` |
 | lint | `npm run lint` |
 | typecheck | `npm run typecheck` |
 | tests | `npm test` (Vitest) |
@@ -865,7 +864,7 @@ Real errors from this repository, in the order they tend to appear.
 | `/api/revalidate` returns `401` | webhook header value ≠ Worker secret (or `?secret=` missing) | re-copy the header value; rotate both together |
 | Sign-in bounces with `redirect_to is not allowed` | origin missing from Supabase redirect URLs | add `https://researchwith.me/auth/callback` |
 | Studio 403s for a signed-in editor | account not in `public.editors` | insert the allowlist row (§5.3) |
-| `npm ci` fails on a clean clone | the repository ships `bun.lock`, not `package-lock.json` | use `bun install --frozen-lockfile` (CI does) |
+| `npm ci` fails on a clean clone | `package-lock.json` out of sync with `package.json` | run `npm install --package-lock-only` and commit the lockfile |
 | `build:worker` fails on Windows | OpenNext builds partly POSIX-only | use WSL or CI |
 | Tailwind utilities missing after a build | stale `.next` | `npm run clean && npm run build:worker` |
 | `Deploy` never triggers | Quality failed or was skipped, or the Cloudflare secrets are missing | check `conclusion == 'success'`; confirm `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` |
@@ -904,7 +903,7 @@ Both paths run `wrangler deploy` on `main`. Keep exactly one:
 | Preview per PR | yes (`wrangler preview`) | yes (`wrangler preview --name pr-<n>`) |
 | Secrets live in | Cloudflare dashboard | GitHub |
 | Smoke test | no | yes |
-| Requires Bun/npm parity | dashboard uses npm | Bun 1.4.4, matching Quality |
+| Package manager | npm | npm, matching Quality |
 
 > **Historical:** the `deploy.yml` column above describes the removed workflow (`85465ce`); Workers Builds is the deploy path.
 
@@ -927,7 +926,7 @@ New machine, new account, or a lost dashboard — the repository is the source o
 
 ```bash
 git clone https://github.com/myself-aas/ResearchWithME.git && cd ResearchWithME
-bun install --frozen-lockfile
+npm ci
 cp .env.example .env.local && $EDITOR .env.local        # §4.1
 supabase link --project-ref <ref> && supabase db push   # §5.2
 npx wrangler login
@@ -957,7 +956,7 @@ Checklist to finish:
 
 ```bash
 cp .env.example .env.local
-bun install
+npm ci
 npm run dev            # next dev on 0.0.0.0:3000
 npm run preview        # OpenNext build + workerd on :8787 — the closest thing to production
 ```

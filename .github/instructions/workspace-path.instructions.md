@@ -10,7 +10,7 @@ applyTo: '**'
 **The agent is STRICTLY FORBIDDEN from performing ANY tasks outside the workspace directory (`G:\Github\ResearchWithME`).**
 
 ### Prohibited Actions Outside Workspace
-- ❌ Installing packages (npm, bun, pip, cargo, etc.)
+- ❌ Installing packages (npm, pip, cargo, etc.)
 - ❌ Installing or managing skills/extensions
 - ❌ Creating files or directories
 - ❌ Running commands that write outside workspace
@@ -19,7 +19,7 @@ applyTo: '**'
 - ❌ Running scripts that operate outside workspace
 
 ### Required Behavior
-- ✅ All package installations MUST use workspace-local package managers (bun, npm) within `G:\Github\ResearchWithME`
+- ✅ All package installations MUST use workspace-local package managers (npm) within `G:\Github\ResearchWithME`
 - ✅ All skill installations MUST target workspace `.github/skills/` or `.agents/skills/`
 - ✅ All file operations MUST use paths relative to workspace root
 - ✅ All commands MUST execute with workspace as working directory
