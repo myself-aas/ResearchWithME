@@ -701,7 +701,7 @@ html .shadow-2xs {
 :root[lang="bn"] {
   --font-serif: var(--font-bengali-editorial);
   --font-sans: var(--font-bengali-interface);
-  --font-mono: 'Aptos Mono', 'JetBrains Mono', 'Noto Serif Bengali', 'Hind Siliguri', monospace;
+  --font-mono: 'JetBrains Mono', 'Noto Serif Bengali', 'Hind Siliguri', monospace;
 }
 :root[lang="bn"] body {
   line-height: 1.72;
