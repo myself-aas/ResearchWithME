@@ -76,7 +76,17 @@ export default async function AccountPage() {
 
   const status = STATUS_COPY[entitlement.status] ?? STATUS_COPY.none;
   const active = hasPremiumAccess(entitlement.status);
+  const hasOneTimePurchase = entitlement.plan === 'purchases';
   const hasPurchases = entitlement.plan !== 'none' || entitlement.status !== 'none';
+  // "Plan" and "Status" would both read "None" for someone who bought a
+  // teardown, so that row describes ownership instead.
+  const planLabel =
+    entitlement.plan === 'copilot'
+      ? 'Research Co-Pilot'
+      : hasOneTimePurchase
+        ? 'Purchased'
+        : 'None';
+  const statusLabel = hasOneTimePurchase && !active ? 'One-time purchase' : status.label;
   const periodEnd = formatDate(entitlement.currentPeriodEnd);
   const ownedKeys = new Set(entitlement.plan === 'copilot' ? ['copilot'] : []);
   const onSale = BILLING_PRODUCTS.filter((product) => !(ownedKeys.has(product.key) && active));
@@ -100,13 +110,11 @@ export default async function AccountPage() {
           <dl className="mt-4 grid gap-4 sm:grid-cols-3">
             <div>
               <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Status</dt>
-              <dd className="mt-1 font-serif text-lg text-ink">{status.label}</dd>
+              <dd className="mt-1 font-serif text-lg text-ink">{statusLabel}</dd>
             </div>
             <div>
               <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Plan</dt>
-              <dd className="mt-1 font-serif text-lg text-ink">
-                {entitlement.plan === 'copilot' ? 'Research Co-Pilot' : 'None'}
-              </dd>
+              <dd className="mt-1 font-serif text-lg text-ink">{planLabel}</dd>
             </div>
             <div>
               <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">
@@ -116,7 +124,7 @@ export default async function AccountPage() {
             </div>
           </dl>
 
-          {status.note ? (
+          {status.note && !hasOneTimePurchase ? (
             <p
               role={status.alert ? 'alert' : undefined}
               className={`mt-4 font-serif leading-relaxed ${status.alert ? 'text-destructive' : 'text-ink-secondary'}`}

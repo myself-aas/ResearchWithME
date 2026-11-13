@@ -260,7 +260,7 @@ const schemas: Record<string, Schema> = {
   CommentInput: object({ postId: { type: 'string', minLength: 1, maxLength: 120 }, authorName: { type: 'string', minLength: 2, maxLength: 120 }, authorRole: { type: 'string', maxLength: 80 }, text: { type: 'string', minLength: 2, maxLength: 4000 } }, ['postId', 'authorName', 'text']),
   AssistantCitation: object({ id: text, title: text, author: text, category: text }, ['id', 'title', 'author', 'category']),
   Entitlement: object({
-    plan: { type: 'string', enum: ['none', 'copilot'] },
+    plan: { type: 'string', enum: ['none', 'copilot', 'purchases'] },
     status: { type: 'string', enum: ['none', 'on_trial', 'active', 'paused', 'past_due', 'unpaid', 'cancelled', 'expired'] },
     aiCredits: integer,
     currentPeriodEnd: { type: ['string', 'null'] },

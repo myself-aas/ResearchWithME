@@ -60,6 +60,17 @@ describe('/dashboard/account', () => {
     expect(html.toLowerCase()).toContain('still');
   });
 
+  it('shows a one-time purchase as bought, not as a lapsed plan', async () => {
+    getEntitlement.mockResolvedValue({ plan: 'purchases', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+    const html = await render();
+    expect(html).toContain('Purchased');
+    expect(html).not.toContain('No purchases yet');
+    // It must not claim a subscription that was never bought. Scope this to the
+    // fact list: "Also available" legitimately names the co-pilot further down.
+    const facts = html.slice(0, html.indexOf('Purchases'));
+    expect(facts).not.toContain('Research Co-Pilot');
+  });
+
   it('stays out of search results', () => {
     expect(metadata.robots).toEqual({ index: false, follow: false, nocache: true });
   });

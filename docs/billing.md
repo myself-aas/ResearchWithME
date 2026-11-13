@@ -32,6 +32,19 @@ This is a product decision, recorded as D3 in the plan, not an omission.
 Squeezy enforces the floor at checkout (`$150`). The checkout request does not
 send a `custom_price`: a client-supplied price is a client-supplied discount.
 
+**Credits are zero today.** No product in the current catalogue grants co-pilot
+credits, so every order is written with `ai_credits = 0` and the counter on
+`/dashboard/account` reads zero. The column and the summing query exist so the
+follow-on entitlement spec does not need a second migration; the pricing page
+does not promise a credit allowance.
+
+**`Entitlement.plan` has three values, not two.** `copilot` is a live
+subscription, `purchases` is ownership of a one-time product with no subscription
+behind it, and `none` is neither. The third value exists because a reader who
+bought the teardown and later let the co-pilot lapse owns something permanent; a
+two-value enum collapsed them to `none` and the account page told a paying
+customer they had bought nothing.
+
 ## 2. Money path
 
 Lemon Squeezy (merchant of record, charges the card, pays sales tax and VAT) →
@@ -77,10 +90,12 @@ not a substitute for not leaking the first.
 **Rotation order matters.** Set the Worker secret first, then update the row:
 
 ```sql
-update private.billing_settings
-   set bridge_secret_sha256 = encode(sha256(convert_to('<new secret>', 'UTF8')), 'hex'),
-       rotated_at = now()
- where id = 1;
+-- private.billing_settings is a two-column key/value table; there is no id=1 row.
+-- Generate the digest exactly as the migration does, so the encoding matches:
+printf %s "<new secret>" | shasum -a 256
+insert into private.billing_settings (key, value)
+values ('bridge_secret_sha256', '<hex from the command above>')
+on conflict (key) do update set value = excluded.value;
 ```
 
 Reversed, every webhook in the gap is rejected and Lemon Squeezy's retries (three
@@ -89,20 +104,27 @@ not lost forever — see §4 — but it does need replaying.
 
 ## 4. Event handling
 
+`HANDLED_EVENTS` in `lib/billing/events.ts` is the authoritative list — eight
+names, and a test pins it:
+
 | Event | What is written |
 | --- | --- |
 | `order_created` | `billing_customers` upsert, `billing_orders` row, credits if the order's product grants them |
 | `subscription_created` | `billing_customers` upsert, `billing_subscriptions` row (`status`, `renews_at`, `ends_at`) |
 | `subscription_updated` | `billing_subscriptions` upsert — the dunning state machine lives here |
-| `subscription_cancelled` | `billing_subscriptions` status → `cancelled`, `ends_at` recorded |
-| `subscription_resumed` | status back to the payload's status, `renews_at` restored |
-| `subscription_paused` | status → `paused` |
-| `subscription_unpaused` | status back to the payload's status |
+| `subscription_cancelled` | status → whatever the payload says (`cancelled`), `ends_at` recorded |
 | `subscription_expired` | status → `expired`; access ends |
 | `subscription_payment_success` | subscription touch; credits reissued for the new period |
-| `subscription_payment_failed` | status → `past_due` (access retained) |
-| `subscription_payment_recovered` | status from the payload (normally `active`) |
-| `subscription_payment_refunded` | status from the payload (normally `cancelled`) |
+| `subscription_payment_failed` | status → `past_due` (access retained, per D2) |
+| `subscription_payment_recovered` | status from the payload (normally back to `active`) |
+
+Four of those eight are absent from the blueprint's event list: `cancelled`,
+`payment_success`, `payment_failed`, and `payment_recovered`. Without them a
+subscription could only ever be `created`, `updated`, or `expired`, and dunning —
+the one state the blueprint explicitly asks to test — would never be recorded.
+Paused and resumed states are not separate events here; they arrive as
+`subscription_updated` with the new status, which the state table in §5 already
+covers.
 
 Anything outside that table is **accepted with `200` and recorded as `ignored`**,
 not rejected. Lemon Squeezy will happily send new event names, and answering `4xx`

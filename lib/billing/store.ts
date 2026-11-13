@@ -26,7 +26,13 @@ import { hasPremiumAccess, isSubscriptionStatus, type SubscriptionStatus } from 
 export type ApplyResult = 'applied' | 'duplicate' | 'ignored';
 
 export interface Entitlement {
-  plan: 'none' | 'copilot';
+  /**
+   * `copilot` is a live subscription. `purchases` is a one-time product with no
+   * subscription behind it — a teardown or an edit. Those are owned forever, so a
+   * lapsed subscription must not erase them; before this distinction existed a
+   * reader who had bought the teardown saw "No plan" and "No purchases yet".
+   */
+  plan: 'none' | 'copilot' | 'purchases';
   status: SubscriptionStatus;
   aiCredits: number;
   /** ISO timestamp of the current period end, when a subscription exists. */
@@ -79,6 +85,8 @@ interface SubscriptionRow {
 
 interface OrderRow {
   ai_credits: unknown;
+  product_name?: unknown;
+  status?: unknown;
   test_mode: boolean;
 }
 
@@ -126,7 +134,7 @@ export function createSupabaseBillingStore(
           .maybeSingle(),
         client
           .from('billing_orders')
-          .select('ai_credits, test_mode')
+          .select('ai_credits, product_name, status, test_mode')
           .eq('user_id', userId)
           .eq('test_mode', false),
       ]);
@@ -136,16 +144,27 @@ export function createSupabaseBillingStore(
 
       const row = (subscription.data ?? null) as SubscriptionRow | null;
       const status = isSubscriptionStatus(row?.status) ? row.status : 'none';
-      const aiCredits = ((orders.data ?? []) as OrderRow[]).reduce((total, order) => {
+      const orderRows = (orders.data ?? []) as OrderRow[];
+
+      const aiCredits = orderRows.reduce((total, order) => {
         const value = Number(order.ai_credits);
         return total + (Number.isFinite(value) && value > 0 ? Math.trunc(value) : 0);
       }, 0);
 
+      // A refunded or fraudulent order did not buy anything.
+      const paidOrders = orderRows.filter((order) => !/refund|fraud|fail/i.test(String(order.status ?? '')));
+      const subscriptionGrantsAccess = status !== 'none' && hasPremiumAccess(status);
+      const plan: Entitlement['plan'] = subscriptionGrantsAccess
+        ? 'copilot'
+        : paidOrders.length > 0
+          ? 'purchases'
+          : 'none';
+
       return {
-        plan: status !== 'none' && hasPremiumAccess(status) ? 'copilot' : 'none',
+        plan,
         status,
         aiCredits,
-        currentPeriodEnd: row?.ends_at ?? row?.renews_at ?? null,
+        currentPeriodEnd: subscriptionGrantsAccess ? (row?.ends_at ?? row?.renews_at ?? null) : null,
       };
     },
   };
