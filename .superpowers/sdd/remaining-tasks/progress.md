@@ -30,10 +30,15 @@ Task 18: complete (commit 0909f09, simplified header) — three-state account/Wr
 | cloudflare-pages/src/ | 18 (nav parity) only | Nav links in Cloudflare routes must mirror Next header; no other tasks touch them. | Include nav parity in Task 18. |
 
 ## Todo
-- [ ] Task 5: npm-only lockfile check
-- [ ] Task 8: billing-receipt .env/scenario sweep
-- [ ] Task 16: Supabase migration reconciliation
-- [ ] Task 18: simplified header polish + editorial-studio sign-in logic
-- [ ] Task 19: doc updates
-- [ ] Audit P1/P2/P3 fixes from audit-report.md
-- [ ] Final whole-branch review
+- [x] Task 5: npm-only lockfile check — commit 22b16c9
+- [x] Task 8: billing-receipt .env/scenario sweep — commit 3dd8e53
+- [x] Task 16: Supabase migration reconciliation — commit 63620bb
+- [x] Task 18: simplified header polish + editorial-studio sign-in logic — commit 0909f09
+- [x] Task 19: doc updates — commit 0f72773
+- [x] Audit P1/P2/P3 fixes — commits 60f2010 (P1s + most P2s), b0a7aea (icon/OG color drift)
+- [x] Final whole-branch review — quality: 0 tsc errors, 0 eslint errors, 677/677 tests, build:pages clean, impeccable source: 0 findings; branch pushed.
+
+## Final quality gates (post all tasks, HEAD b0a7aea)
+* `npm run quality`: tsc 0 errors, eslint 0 errors (1 pre-existing anonymous-default-export warning in open-next.config.ts), vitest 79 files / 677 pass / 0 fail / 1 unchanged skip, impeccable source scan 0 design-system-color advisories.
+* `npm run build:pages`: Vite client + SSR build clean; 484 kB server entry.
+* `git push origin arena/b233dbaa-researchwithme`: pushed; GitHub PR link printed by remote.
