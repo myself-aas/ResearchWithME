@@ -21,7 +21,7 @@ function readEnvFiles() {
   for (const file of files.slice().reverse()) {
     const path = join(root, file);
     if (!existsSync(path)) continue;
-    for (const line of readFileSync(path, 'utf8').split('\n')) {
+    for (const line of readFileSync(path, 'utf8').split(/\r?\n/)) {
       const match = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/.exec(line);
       if (!match) continue;
       let value = match[2].trim();
