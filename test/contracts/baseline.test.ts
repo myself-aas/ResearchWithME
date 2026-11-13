@@ -9,9 +9,9 @@ const nextApiMethods: Array<{ path: string; method: string }> = JSON.parse(
 );
 
 describe('Next.js API baseline inventory', () => {
-  it('records exactly the existing 19 operations', () => {
+  it('preserves the original 19-operation baseline and tracks the new A2A endpoint', () => {
     const actual = collectNextApiMethods('app/api');
-    expect(actual).toHaveLength(19);
-    expect(actual).toEqual(nextApiMethods);
+    expect(actual.filter(({ path }) => path !== '/api/a2a')).toEqual(nextApiMethods);
+    expect(actual.filter(({ path }) => path === '/api/a2a')).toEqual([{ path: '/api/a2a', method: 'POST' }]);
   });
 });

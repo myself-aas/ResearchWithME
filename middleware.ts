@@ -2,15 +2,28 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 import { SUPABASE_ANON_KEY, SUPABASE_URL } from '@/lib/supabase/config';
+import { markdownRoute, wantsMarkdown } from '@/lib/markdown-negotiation';
 
 /**
- * Protects the editorial studio and refreshes the Supabase session cookie.
- *
- * With no Supabase credentials the app runs in local demo mode: the studio stays
- * reachable so the CMS can be exercised against the JSON archive. As soon as
- * credentials exist, every /dashboard request requires a signed-in user.
+ * Negotiates Markdown for public catalogue pages, and protects the editorial
+ * studio while refreshing its Supabase session cookie. Public requests never
+ * trigger a session lookup. With no Supabase credentials the studio remains in
+ * local demo mode; configured /dashboard requests require sign-in.
  */
 export async function middleware(request: NextRequest) {
+  if (markdownRoute(request.nextUrl.pathname)) {
+    if ((request.method === 'GET' || request.method === 'HEAD') && wantsMarkdown(request.headers.get('accept'))) {
+      const url = request.nextUrl.clone();
+      url.pathname = '/agent-markdown';
+      const response = NextResponse.rewrite(url);
+      response.headers.append('Vary', 'Accept');
+      return response;
+    }
+    const response = NextResponse.next();
+    response.headers.append('Vary', 'Accept');
+    return response;
+  }
+
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
     return NextResponse.next();
   }
@@ -48,5 +61,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/', '/post/:path*', '/category/:path*'],
 };

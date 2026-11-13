@@ -32,6 +32,7 @@ export interface PublicConfig {
 export interface AppEnv {
   RATE_LIMIT_KV?: KvNamespaceLike;
   GEMINI_API_KEY?: string;
+  WEB_BOT_AUTH_PRIVATE_JWK?: string;
   GEMINI_MODEL?: string;
   RESEND_API_KEY?: string;
   REVALIDATE_SECRET?: string;

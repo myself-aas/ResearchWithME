@@ -6,6 +6,7 @@ export const API_GROUPS = [
   { id: 'authors', name: 'Writers', path: '/api/authors', description: 'Browse published writer profiles and their article lists.' },
   { id: 'comments', name: 'Comments', path: '/api/comments', description: 'Read and submit article comments.' },
   { id: 'research-assistant', name: 'Research assistant', path: '/api/research-assistant', description: 'Ask questions grounded in the article catalog.' },
+  { id: 'a2a', name: 'A2A archive agent', path: '/api/a2a', description: 'Send textual A2A JSON-RPC messages to search the published archive.' },
   { id: 'cms-posts', name: 'Editorial posts', path: '/api/cms/posts', description: 'Manage editorial posts. Editor access is required.' },
   { id: 'cms-comments', name: 'Comment moderation', path: '/api/cms/comments', description: 'Moderate comments. Editor access is required.' },
   { id: 'applications', name: 'Writer applications', path: '/api/dashboard/applications', description: 'Manage writer applications. A signed-in session is required; reviews require editor access.' },
