@@ -1,7 +1,6 @@
 import type { HttpMethod, RequestContext } from '../context';
 import { articlesRoutes } from './articles';
 import { authorsRoutes } from './authors';
-import { papersRoutes } from './papers';
 import { commentsRoutes } from './comments';
 import { cmsPostsRoutes } from './cms-posts';
 import { cmsCommentsRoutes } from './cms-comments';
@@ -29,7 +28,6 @@ export function json(
 export const API_ROUTES: readonly ApiRoute[] = [
   ...articlesRoutes,
   ...authorsRoutes,
-  ...papersRoutes,
   ...commentsRoutes,
   ...cmsPostsRoutes,
   ...cmsCommentsRoutes,

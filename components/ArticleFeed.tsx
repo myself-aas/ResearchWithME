@@ -234,13 +234,17 @@ export default function ArticleFeed({
       {posts.length === 0 ? (
         <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
           <Text as="p" variant="eyebrow" color="secondary">
-            Diagnostic Empty State · Zero Matches
+            {hasFilters ? 'Diagnostic Empty State · Zero Matches' : 'Empty Catalogue'}
           </Text>
           <Text as="h3" variant="section-title" className="mt-2">
-            No manuscripts match the active filter constraints
+            {hasFilters
+              ? 'No articles match these filters.'
+              : 'No articles have been published yet.'}
           </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
-            No published review satisfies all of the constraints below simultaneously. Relax a filter or reset the index to view the complete specialist catalog.
+            {hasFilters
+              ? 'No published article satisfies all of the constraints below simultaneously. Relax a filter or reset to view the full catalogue.'
+              : 'New writing will appear here once it is published through the studio.'}
           </p>
 
           <div

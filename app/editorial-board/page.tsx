@@ -1,5 +1,5 @@
-import EditorialBoard from '@/components/EditorialBoard';
+import EditorPage from '@/components/EditorPage';
 
-export default function EditorialBoardPage() {
-  return <EditorialBoard />;
+export default function EditorPageRoute() {
+  return <EditorPage />;
 }

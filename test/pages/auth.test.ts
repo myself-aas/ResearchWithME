@@ -6,12 +6,8 @@ import {
   handleAuthCallback,
   requireEditor,
 } from '@/cloudflare-pages/src/server/auth';
-import {
-  createReadOnlyCmsStore,
-  createReadOnlyLegacyStore,
-} from '@/cloudflare-pages/src/server/stores';
+import { createReadOnlyCmsStore } from '@/cloudflare-pages/src/server/stores';
 import { PublicConfigError } from '@/cloudflare-pages/src/server/context';
-import type { BlogPost, CommentRecord, LegacySeeds } from '@/lib/legacy/types';
 
 const LEGAL_HOST = new URL(TEST_SITE_URL).origin;
 
@@ -175,24 +171,6 @@ describe('Pages editor gate', () => {
 });
 
 describe('read-only public stores', () => {
-  const seeds: LegacySeeds = {
-    articles: [
-      { id: 'a-1', slug: 'alpha-review', title: 'Alpha', likes: 7 } as unknown as BlogPost,
-      { id: 'a-2', slug: 'beta-review', title: 'Beta', likes: 3 } as unknown as BlogPost,
-    ],
-    comments: [
-      {
-        id: 'c-1',
-        postId: 'a-1',
-        authorName: 'Maya Lin',
-        authorRole: 'Editor',
-        avatar: '',
-        timestamp: 'Just now',
-        text: 'Seeded comment.',
-      } as CommentRecord,
-    ],
-  };
-
   it('serves empty public CMS data and rejects every write', async () => {
     const cms = createReadOnlyCmsStore();
     expect(await cms.listPosts()).toEqual([]);
@@ -211,32 +189,6 @@ describe('read-only public stores', () => {
     await expect(cms.updatePost('a-1', {} as never)).rejects.toThrow(/read-only/i);
     await expect(cms.deletePost('a-1')).rejects.toThrow(/read-only/i);
     await expect(cms.deleteComment('c-1')).rejects.toThrow(/read-only/i);
-  });
-
-  it('serves the legacy seeds and rejects every write', async () => {
-    const legacy = createReadOnlyLegacyStore(seeds);
-    const articles = await legacy.getArticles();
-    expect(articles.map((article) => article.slug)).toEqual(['alpha-review', 'beta-review']);
-    expect((await legacy.findArticle('beta-review'))?.id).toBe('a-2');
-    expect((await legacy.findArticle('a-1'))?.slug).toBe('alpha-review');
-    expect(await legacy.getComments('a-1')).toHaveLength(1);
-    expect(await legacy.getComments('a-2')).toEqual([]);
-    expect(await legacy.getComments()).toHaveLength(1);
-    await expect(legacy.incrementLikes('a-1')).rejects.toThrow(/read-only/i);
-    await expect(
-      legacy.addComment('a-1', { authorName: 'Reader', content: 'No.' }),
-    ).rejects.toThrow(/read-only/i);
-  });
-
-  it('does not let callers mutate the seeds through returned data', async () => {
-    const legacy = createReadOnlyLegacyStore(seeds);
-    const articles = await legacy.getArticles();
-    articles[0].likes = 9999;
-    articles.push({ id: 'injected' } as unknown as BlogPost);
-    const fresh = await legacy.getArticles();
-    expect(fresh.map((article) => article.id)).toEqual(['a-1', 'a-2']);
-    expect(fresh[0].likes).toBe(7);
-    expect(seeds.articles[0].likes).toBe(7);
   });
 });
 

@@ -14,30 +14,17 @@ const getComments: ApiHandler = async (ctx: RequestContext) => {
     const postId = new URL(ctx.request.url).searchParams.get('postId')?.slice(0, 120);
     const cmsPostId = postId ? fromPublicPostId(postId) : null;
 
-    if (cmsPostId) {
-      try {
-        const store = await ctx.services.publicCms(ctx);
-        const comments = await store.listCommentsForPost(cmsPostId);
-        return json(
-          { comments: comments.map(cmsCommentToRecord) },
-          { headers: { 'cache-control': COMMENT_CACHE } },
-        );
-      } catch (error) {
-        // A CMS outage degrades to a 503 for this filter, not a false empty list.
-        console.error('Error reading CMS comments:', error);
-        return json({ error: 'Comments could not be read.' }, { status: 503 });
-      }
-    }
+    if (!cmsPostId) return json({ error: 'That article does not exist.' }, { status: 404 });
 
     try {
-      const legacy = await ctx.services.legacy(ctx);
-      const comments = (await legacy.getComments(postId || undefined)).slice(0, 200);
+      const store = await ctx.services.publicCms(ctx);
+      const comments = await store.listCommentsForPost(cmsPostId);
       return json(
-        { comments },
+        { comments: comments.map(cmsCommentToRecord) },
         { headers: { 'cache-control': COMMENT_CACHE } },
       );
     } catch (error) {
-      console.error('Error reading legacy comments:', error);
+      console.error('Error reading CMS comments:', error);
       return json({ error: 'Comments could not be read.' }, { status: 503 });
     }
   } catch (error) {
@@ -88,54 +75,24 @@ const postComment: ApiHandler = async (ctx: RequestContext) => {
     );
   }
 
-  // CMS articles live in Supabase (or the local CMS archive in demo mode).
   const cmsPostId = fromPublicPostId(postId);
-  if (cmsPostId) {
-    try {
-      const store = await ctx.services.publicCms(ctx);
-      const candidate = await store.getPost(cmsPostId).catch((error: unknown) => {
-        // Read outage: treat as missing rather than report a write that cannot succeed.
-        console.error('Error reading the CMS article for a comment:', error);
-        return null;
-      });
-      const post = candidate?.status === 'published' ? candidate : null;
-      if (!post) {
-        return json({ error: 'That article does not exist.' }, { status: 404 });
-      }
-
-      const comment = await store.createComment(cmsPostId, parsed.value);
-      return json({ success: true, comment: cmsCommentToRecord(comment) }, { status: 201 });
-    } catch (error) {
-      console.error('Error saving a CMS comment:', error);
-      return json({ error: WRITE_FAILURE }, { status: 503 });
-    }
-  }
-
-  let legacy;
-  try {
-    legacy = await ctx.services.legacy(ctx);
-  } catch (error) {
-    console.error('Error reading the legacy catalogue:', error);
-    return json({ error: WRITE_FAILURE }, { status: 503 });
-  }
-  let article;
-  try {
-    article = await legacy.findArticle(postId);
-  } catch (error) {
-    console.error('Error reading the legacy catalogue:', error);
-    return json({ error: WRITE_FAILURE }, { status: 503 });
-  }
-  if (!article) return json({ error: 'That article does not exist.' }, { status: 404 });
+  if (!cmsPostId) return json({ error: 'That article does not exist.' }, { status: 404 });
 
   try {
-    const comment = await legacy.addComment(article.id, {
-      authorName: parsed.value.authorName,
-      authorRole: parsed.value.authorRole,
-      content: parsed.value.content,
+    const store = await ctx.services.publicCms(ctx);
+    const candidate = await store.getPost(cmsPostId).catch((error: unknown) => {
+      console.error('Error reading the CMS article for a comment:', error);
+      return null;
     });
-    return json({ success: true, comment }, { status: 201 });
+    const post = candidate?.status === 'published' ? candidate : null;
+    if (!post) {
+      return json({ error: 'That article does not exist.' }, { status: 404 });
+    }
+
+    const comment = await store.createComment(cmsPostId, parsed.value);
+    return json({ success: true, comment: cmsCommentToRecord(comment) }, { status: 201 });
   } catch (error) {
-    console.error('Error in POST /api/comments:', error);
+    console.error('Error saving a CMS comment:', error);
     return json({ error: WRITE_FAILURE }, { status: 503 });
   }
 };
@@ -143,4 +100,3 @@ const postComment: ApiHandler = async (ctx: RequestContext) => {
 export const commentsRoutes: ApiRoute[] = [
   { path: '/api/comments', handlers: { GET: getComments, POST: postComment } },
 ];
-

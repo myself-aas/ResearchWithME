@@ -164,30 +164,7 @@ describe('POST /api/cms/posts', () => {
     expect((await res.json()).error).toContain('already uses this URL');
   });
 
-  it('rejects a slug used by a catalogue article with 409', async () => {
-    const app = EDITOR_APP();
-    const res = await app.request('/api/cms/posts', {
-      as: 'editor',
-      method: 'POST',
-      headers: SITE_HEADERS,
-      body: JSON.stringify(validPostBody({ slug: 'inside-vllm-and-paged-attention' })),
-    });
-    expect(res.status).toBe(409);
-    expect((await res.json()).error).toContain('catalogue article');
-  });
 
-  it('returns 503 when the public catalogue cannot be checked', async () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    const app = createTestApp({ legacyFails: true, profileRows: [MAYA_PROFILE] });
-    const res = await app.request('/api/cms/posts', {
-      as: 'editor',
-      method: 'POST',
-      headers: SITE_HEADERS,
-      body: JSON.stringify(validPostBody()),
-    });
-    expect(res.status).toBe(503);
-    expect((await res.json()).error).toContain('catalogue could not be checked');
-  });
 
   it('rate-limits the twenty-first save in a minute with Retry-After', async () => {
     const app = EDITOR_APP();

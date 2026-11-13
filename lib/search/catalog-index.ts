@@ -1,8 +1,7 @@
 import Fuse from 'fuse.js';
 import type { Author, BlogPost } from '@/lib/blog-data';
-import { EDITORIAL_BOARD, type EditorialMember, type Publication } from '@/lib/research-data';
 
-export type CatalogEntityKind = 'article' | 'paper' | 'specialist' | 'route';
+export type CatalogEntityKind = 'article' | 'specialist' | 'route';
 
 export interface CatalogSearchItem {
   id: string;
@@ -27,7 +26,7 @@ export function normalizeIdentifierQuery(raw: string): string {
     .replace(/^https?:\/\/(www\.)?orcid\.org\//i, '')
     .replace(/^orcid:\s*/i, '')
     .replace(/^@+/, '')
-    .replace(/[.,;)\]/]+$/, '')
+    .replace(/[.,;)\]]+$/, '')
     .trim()
     .toLowerCase();
 }
@@ -36,53 +35,35 @@ const CORE_ROUTES: CatalogSearchItem[] = [
   {
     id: 'route-index',
     kind: 'route',
-    title: 'Index — Technical Teardowns & Reviews',
-    subtitle: 'Full specialist catalog filtered by column and format',
+    title: 'Articles',
+    subtitle: 'Full catalogue filtered by topic and format',
     href: '/',
-    identifiers: ['issn 3021-889x', 'index', 'articles'],
-    tags: ['catalog', 'teardowns', 'reviews'],
-  },
-  {
-    id: 'route-papers',
-    kind: 'route',
-    title: 'Papers — Peer-Reviewed Archive',
-    subtitle: 'Diamond Open Access research papers with DOI and BibTeX metadata',
-    href: '/papers',
-    identifiers: ['papers', 'archive', 'doi'],
-    tags: ['open access', 'archive', 'peer review'],
+    identifiers: ['index', 'articles'],
+    tags: ['catalog', 'articles'],
   },
   {
     id: 'route-authors',
     kind: 'route',
-    title: 'Specialists — Verified Contributors',
-    subtitle: 'ORCID and GitHub attested domain specialists and researchers',
+    title: 'Writers',
+    subtitle: 'Approved writers with linked ORCID and GitHub identities',
     href: '/authors',
-    identifiers: ['authors', 'specialists', 'orcid', 'github'],
-    tags: ['contributors', 'orcid', 'github'],
-  },
-  {
-    id: 'route-editions',
-    kind: 'route',
-    title: 'Editions — Quarterly Print Folios',
-    subtitle: 'Curated quarterly archival print issues and PDF compendia',
-    href: '/editions',
-    identifiers: ['editions', 'folios', 'quarterly'],
-    tags: ['issues', 'pdf', 'print'],
+    identifiers: ['authors', 'writers', 'orcid', 'github'],
+    tags: ['writers'],
   },
   {
     id: 'route-assistant',
     kind: 'route',
-    title: 'Synthesis — Grounded Literature Assistant',
+    title: 'Assistant',
     subtitle: 'Citation-grounded research synthesis across published works',
     href: '/assistant',
-    identifiers: ['assistant', 'synthesis'],
+    identifiers: ['assistant'],
     tags: ['rag', 'citations', 'literature'],
   },
   {
     id: 'route-bookmarks',
     kind: 'route',
-    title: 'Reading List — Saved Manuscripts',
-    subtitle: 'Locally persisted articles and papers queued for focused study',
+    title: 'Reading List — Saved Articles',
+    subtitle: 'Locally persisted articles queued for focused study',
     href: '/bookmarks',
     identifiers: ['bookmarks', 'reading-list', 'saved'],
     tags: ['saved', 'bookmarks'],
@@ -90,8 +71,8 @@ const CORE_ROUTES: CatalogSearchItem[] = [
   {
     id: 'route-cite',
     kind: 'route',
-    title: 'Citation Generator — BibTeX, APA, RIS & CSL-JSON',
-    subtitle: 'Export reproducible bibliographic records for any catalog entry',
+    title: 'Citation Generator',
+    subtitle: 'Export BibTeX, APA, RIS & CSL-JSON records for catalog entries',
     href: '/cite',
     identifiers: ['cite', 'bibtex', 'apa', 'ris'],
     tags: ['citation', 'bibtex', 'apa'],
@@ -113,17 +94,13 @@ function collectIdentifiers(rawList: Array<string | undefined | null>): string[]
 
 export function buildCatalogIndex(input: {
   articles: BlogPost[];
-  papers: Publication[];
   authors: Author[];
-  board?: EditorialMember[];
 }): CatalogSearchItem[] {
   const items: CatalogSearchItem[] = [];
   const seenSpecialistKeys = new Set<string>();
 
   for (const post of input.articles) {
-    const canonicalDoi = `10.5555/rwm.${post.id}`;
     const identifiers = collectIdentifiers([
-      canonicalDoi,
       post.id,
       post.slug,
       post.reviewedArtifact?.identifier,
@@ -141,29 +118,6 @@ export function buildCatalogIndex(input: {
       verifiedVia: post.author.verifiedVia,
       category: post.category,
       format: post.format,
-    });
-  }
-
-  for (const paper of input.papers) {
-    const authorNames = paper.authors.map((a) => a.name).join(', ');
-    const identifiers = collectIdentifiers([
-      paper.doi,
-      paper.id,
-      paper.slug,
-      ...paper.authors.map((a) => a.orcid),
-    ]);
-    items.push({
-      id: `paper-${paper.id}`,
-      kind: 'paper',
-      title: paper.title,
-      subtitle: `${authorNames} · ${paper.journal} (${paper.year})`,
-      href: `/paper/${paper.slug}`,
-      identifiers,
-      tags: [...(paper.keywords ?? []), paper.topic],
-      specialistName: authorNames,
-      verifiedVia: 'orcid',
-      category: paper.topic,
-      format: 'Peer-Reviewed Paper',
     });
   }
 
@@ -192,26 +146,6 @@ export function buildCatalogIndex(input: {
     });
   }
 
-  const board = input.board ?? EDITORIAL_BOARD;
-  for (const member of board) {
-    const key = normalizeIdentifierQuery(member.orcid || member.name);
-    if (!key || seenSpecialistKeys.has(key)) continue;
-    seenSpecialistKeys.add(key);
-
-    const identifiers = collectIdentifiers([member.orcid]);
-    items.push({
-      id: `board-${key}`,
-      kind: 'specialist',
-      title: member.name,
-      subtitle: `${member.role} · ${member.institution}`,
-      href: '/editorial-board',
-      identifiers,
-      tags: [member.focus, member.role, member.institution],
-      specialistName: member.name,
-      verifiedVia: 'orcid',
-    });
-  }
-
   items.push(...CORE_ROUTES);
   return items;
 }
@@ -224,13 +158,9 @@ export function searchCatalog(
   const trimmed = query.trim();
   if (!trimmed) {
     const featuredArticles = items.filter((item) => item.kind === 'article').slice(0, 6);
-    const featuredPapers = items.filter((item) => item.kind === 'paper').slice(0, 3);
     const featuredSpecialists = items.filter((item) => item.kind === 'specialist').slice(0, 4);
     const routes = items.filter((item) => item.kind === 'route').slice(0, 5);
-    return [...featuredArticles, ...featuredPapers, ...featuredSpecialists, ...routes].slice(
-      0,
-      limit,
-    );
+    return [...featuredArticles, ...featuredSpecialists, ...routes].slice(0, limit);
   }
 
   const norm = normalizeIdentifierQuery(trimmed);

@@ -1,7 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import AuthorArchiveLayout from '@/components/AuthorArchiveLayout';
-import DeferredImpactChart from '@/components/author/DeferredImpactChart';
 import AuthorProfileCard from '@/components/AuthorProfileCard';
 import BlogFooter from '@/components/BlogFooter';
 import BlogHeader from '@/components/BlogHeader';
@@ -45,13 +44,6 @@ export default function AuthorRoute() {
         </nav>
 
         <AuthorProfileCard author={author} metrics={metrics} headingLevel="h1" />
-
-        <DeferredImpactChart
-          author={author}
-          articleCount={metrics.totalArticles}
-          totalLikes={metrics.totalLikes}
-          totalComments={metrics.totalComments}
-        />
 
         <AuthorArchiveLayout articles={articles} />
       </main>
