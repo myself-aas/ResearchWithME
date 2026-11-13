@@ -2,7 +2,7 @@
 version: 1
 slug: "app-write-page-tsx"
 primary_target: "app/write/page.tsx"
-related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx","lib/auth-context.tsx"]
+related_targets: ["components/BlogHeader.tsx","components/BlogFooter.tsx","lib/auth-context.tsx","components/media/ImageCropDialog.tsx"]
 ---
 
 # Writer Studio

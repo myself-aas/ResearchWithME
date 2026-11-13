@@ -2,7 +2,7 @@
 version: 1
 slug: "app-dashboard-edit-id-page-tsx"
 primary_target: "app/dashboard/(studio)/edit/[id]/page.tsx"
-related_targets: ["components/cms/PostEditor.tsx","components/cms/ConfirmDelete.tsx"]
+related_targets: ["components/cms/PostEditor.tsx","components/cms/ConfirmDelete.tsx","components/media/ImageCropDialog.tsx"]
 ---
 
 # Studio: Edit Article

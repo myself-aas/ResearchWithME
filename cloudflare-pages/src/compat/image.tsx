@@ -16,6 +16,8 @@ export interface ImageShimProps extends ImgHTMLAttributes<HTMLImageElement> {
   fill?: boolean;
   /** Above-the-fold: eager load + high fetch priority. */
   priority?: boolean;
+  /** `next/image` custom loader. Accepted for API parity and dropped: the shim serves `src` as-is. */
+  loader?: (props: { src: string; width: number; quality?: number }) => string;
 }
 
 export function ImageShim({
@@ -29,6 +31,8 @@ export function ImageShim({
   height,
   loading,
   style,
+  // Destructured so it never reaches the DOM as an unknown attribute.
+  loader: _loader,
   ...rest
 }: ImageShimProps): ReactElement {
   const fillStyle: CSSProperties | undefined = fill

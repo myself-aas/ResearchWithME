@@ -39,6 +39,8 @@ const NOT_COLOUR = new Set([
   't', 'b', 'l', 'r', 's', 'e',
   '0', '1', '2', '4', '8', 'solid', 'dashed', 'dotted', 'double', 'hidden', 'collapse', 'separate', 'x', 'y', 'reverse', 'x-reverse', 'y-reverse',
   'inset', 'offset-1', 'offset-2', 'offset-4', 'from-font', 'auto',
+  // createImageBitmap({ imageOrientation: 'from-image' }) in lib/images/process.ts
+  'image',
 ]);
 const KEYWORD_COLOURS = new Set(['transparent', 'current', 'inherit', 'none']);
 const RAW_FAMILY = /^(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|white|black)(?:-\d+)?$/;

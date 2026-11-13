@@ -21,7 +21,9 @@ import { ARTICLE_FORMATS, normalizePostInput } from '@/lib/cms/schema';
 import type { CmsArtifact, CmsPost, FieldErrors } from '@/lib/cms/types';
 import { formatDate } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
-import { uploadBlogImage, validateImageFile } from '@/lib/supabase/storage';
+import { uploadCover } from '@/lib/supabase/storage';
+import type { EncodedImage } from '@/lib/images/process';
+import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
 import { slugify } from '@/lib/validation';
 import { cn } from '@/lib/utils';
 import ConfirmDelete from './ConfirmDelete';
@@ -131,12 +133,10 @@ export default function PostEditor({
   const [notice, setNotice] = useState<string | null>(null);
   const [saving, setSaving] = useState<'draft' | 'published' | null>(null);
   const [deleting, setDeleting] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [cropOpen, setCropOpen] = useState(false);
   const [authorOptions, setAuthorOptions] = useState<AuthorOption[]>([]);
   const [authorsError, setAuthorsError] = useState<string | null>(null);
   const errorRef = useRef<HTMLDivElement>(null);
-  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const dirty = useMemo(() => JSON.stringify(form) !== baseline, [form, baseline]);
   const savedAt = initialPost ? formatDate(initialPost.updatedAt) : null;
@@ -348,24 +348,11 @@ export default function PostEditor({
     }
   }
 
-  async function handleCoverFile(file: File) {
-    const problem = validateImageFile(file);
-    if (problem) {
-      setUploadError(problem);
-      return;
-    }
-
-    setUploading(true);
-    setUploadError(null);
-    try {
-      const url = await uploadBlogImage(file);
-      update('coverImage', url);
-    } catch (cause) {
-      setUploadError(cause instanceof Error ? cause.message : 'The cover image could not be uploaded.');
-    } finally {
-      setUploading(false);
-      if (coverInputRef.current) coverInputRef.current.value = '';
-    }
+  async function handleCoverImages(images: EncodedImage[]) {
+    // Errors propagate to the dialog, which shows them and keeps the crop.
+    const url = await uploadCover(images);
+    update('coverImage', url);
+    setCropOpen(false);
   }
 
   const errorKeys = Object.keys(fieldErrors);
@@ -652,8 +639,8 @@ export default function PostEditor({
             Cover image
           </Text>
           <p className="max-w-2xl text-sm leading-relaxed text-ink-secondary">
-            Covers use the 16:9 editorial frame at the top of the article. Upload a new image to the media library, or
-            choose a bundled photograph.
+            Covers use the 16:9 editorial frame at the top of the article. Upload a JPG or JPEG banner (up to 512 KB) to crop
+            and compress it, or choose a bundled photograph.
           </p>
 
           {form.coverImage ? (
@@ -684,37 +671,26 @@ export default function PostEditor({
           <div className="flex flex-wrap items-center gap-2">
             {isSupabaseConfigured && (
               <>
-                <input
-                  ref={coverInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/avif,image/gif"
-                  className="hidden"
-                  aria-hidden="true"
-                  tabIndex={-1}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (file) void handleCoverFile(file);
-                  }}
-                />
                 <button
                   type="button"
-                  onClick={() => coverInputRef.current?.click()}
-                  disabled={uploading}
+                  onClick={() => setCropOpen(true)}
+                  aria-haspopup="dialog"
                   className={secondaryButtonClass}
                 >
                   <Upload className="h-4 w-4" aria-hidden="true" />
-                  <span>{uploading ? 'Uploading…' : 'Upload cover'}</span>
+                  <span>Upload banner</span>
                 </button>
+                {cropOpen && (
+                  <LazyImageCropDialog
+                    kind="banner"
+                    open={cropOpen}
+                    onCancel={() => setCropOpen(false)}
+                    onConfirm={handleCoverImages}
+                  />
+                )}
               </>
             )}
           </div>
-
-          {uploadError && (
-            <p role="alert" className={inlineErrorClass}>
-              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-              <span>{uploadError}</span>
-            </p>
-          )}
 
           <div
             role="group"
@@ -729,10 +705,7 @@ export default function PostEditor({
                 type="button"
                 aria-pressed={form.coverImage === preset}
                 aria-label={`Use the bundled cover ${preset.split('/').pop()}`}
-                onClick={() => {
-                  update('coverImage', preset);
-                  setUploadError(null);
-                }}
+                onClick={() => update('coverImage', preset)}
                 className={cn(
                   'h-16 w-24 overflow-hidden rounded-md border-2 transition-colors',
                   form.coverImage === preset

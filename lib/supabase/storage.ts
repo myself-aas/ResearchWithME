@@ -1,5 +1,8 @@
 'use client';
 
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { EncodedImage } from '@/lib/images/process';
+import { uniqueImageId } from '@/lib/images/urls';
 import { getSupabaseBrowserClient } from './client';
 
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -48,6 +51,45 @@ export async function uploadBlogImage(file: File): Promise<string> {
   if (error) throw new Error(error.message);
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  if (!data.publicUrl) throw new Error('The upload succeeded but no public URL was returned.');
+  return data.publicUrl;
+}
+
+const COVER_EXTENSIONS: Record<EncodedImage['type'], string> = {
+  'image/webp': 'webp',
+  'image/jpeg': 'jpg',
+};
+
+/**
+ * Uploads a processed banner (`cropAndEncode` output) to
+ * `blog-images/covers/<YYYY>/<MM>/<id>.<ext>`; every further image is stored
+ * beside it as `<id>-<width>.<ext>`. Resolves to the primary image's public URL.
+ */
+export async function uploadCover(
+  images: EncodedImage[],
+  client: SupabaseClient = getSupabaseBrowserClient(),
+): Promise<string> {
+  if (images.length === 0) throw new Error('There is no processed image to upload.');
+
+  const now = new Date();
+  const folder = `covers/${now.getUTCFullYear()}/${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
+  const id = uniqueImageId();
+  const bucket = client.storage.from(BUCKET);
+  const paths = images.map((image, index) => {
+    const extension = COVER_EXTENSIONS[image.type];
+    return index === 0 ? `${folder}/${id}.${extension}` : `${folder}/${id}-${image.width}.${extension}`;
+  });
+
+  for (const [index, image] of images.entries()) {
+    const { error } = await bucket.upload(paths[index], image.blob, {
+      contentType: image.type,
+      cacheControl: '31536000',
+      upsert: false,
+    });
+    if (error) throw new Error(error.message);
+  }
+
+  const { data } = bucket.getPublicUrl(paths[0]);
   if (!data.publicUrl) throw new Error('The upload succeeded but no public URL was returned.');
   return data.publicUrl;
 }
