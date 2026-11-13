@@ -2,24 +2,14 @@ import type { RequestContext } from './context';
 import { isPublicConfigValid } from './context';
 import { CmsAuthorError, CmsValidationError, toCmsError } from '@/lib/cms/errors';
 import type { FieldErrors } from '@/lib/cms/types';
+import { clientIp } from '@/lib/rate-limit-core';
 
 /**
  * Shared HTTP helpers for the Pages API handlers. Deliberately small and
  * dependency-light; the Next counterparts in lib/cms/http.ts are untouched.
  */
 
-/**
- * Best-effort client address for rate-limit keys. Behind Pages the edge sets
- * `cf-connecting-ip` (client-supplied values are stripped at the edge);
- * `x-forwarded-for` is honoured for other fronts, then `x-real-ip`.
- */
-export function clientIp(request: Request): string {
-  const cf = request.headers.get('cf-connecting-ip')?.trim();
-  if (cf) return cf.slice(0, 64);
-  const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
-  if (forwarded) return forwarded.slice(0, 64);
-  return request.headers.get('x-real-ip')?.trim().slice(0, 64) || 'local';
-}
+export { clientIp } from '@/lib/rate-limit-core';
 
 export function clientKey(request: Request, scope: string): string {
   return `${scope}:${clientIp(request)}`;

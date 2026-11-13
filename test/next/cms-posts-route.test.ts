@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
 import { validPostBody } from '@/test/fixtures/cms';
-import { loadRoute } from './support';
+import { cleanupLoadedRoutes, loadRoute } from './support';
 
 type Handler = (request: NextRequest) => Promise<Response>;
 
@@ -20,7 +20,10 @@ function post(body: unknown, headers: Record<string, string> = {}) {
 beforeEach(async () => {
   ({ POST } = await loadRoute<{ POST: Handler }>('@/app/api/cms/posts/route'));
 });
-afterEach(() => vi.unstubAllEnvs());
+afterEach(async () => {
+  vi.unstubAllEnvs();
+  await cleanupLoadedRoutes();
+});
 
 describe('POST /api/cms/posts', () => {
   it('refuses a cross-site origin', async () => {

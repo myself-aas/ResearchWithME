@@ -155,3 +155,17 @@ export function createMemoryRateLimitStore(maxKeys = 5_000): RateLimitStore {
     },
   };
 }
+
+/**
+ * Best-effort client address for rate-limit keys, shared by both targets.
+ * Cloudflare's edge sets `cf-connecting-ip` and strips client-supplied values,
+ * so it wins over `x-forwarded-for` (which a client can rotate freely), then
+ * `x-real-ip`, then 'local'.
+ */
+export function clientIp(request: Request): string {
+  const cf = request.headers.get('cf-connecting-ip')?.trim();
+  if (cf) return cf.slice(0, 64);
+  const forwarded = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim();
+  if (forwarded) return forwarded.slice(0, 64);
+  return request.headers.get('x-real-ip')?.trim().slice(0, 64) || 'local';
+}

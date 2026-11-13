@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { loadRoute } from './support';
+import { cleanupLoadedRoutes, loadRoute } from './support';
 
 type Handler = (request: Request) => Promise<Response>;
 
@@ -18,7 +18,10 @@ function call(headers: Record<string, string> = {}) {
 beforeEach(async () => {
   ({ POST } = await loadRoute<{ POST: Handler }>('@/app/api/revalidate/route'));
 });
-afterEach(() => vi.unstubAllEnvs());
+afterEach(async () => {
+  vi.unstubAllEnvs();
+  await cleanupLoadedRoutes();
+});
 
 describe('POST /api/revalidate', () => {
   it('is 503 when no secret is configured', async () => {

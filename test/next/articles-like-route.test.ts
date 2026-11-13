@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
-import { loadRoute } from './support';
+import { cleanupLoadedRoutes, loadRoute } from './support';
 
 type Patch = (request: NextRequest, props: { params: Promise<{ id: string }> }) => Promise<Response>;
 
@@ -23,9 +23,10 @@ beforeEach(async () => {
   rl = await import('@/lib/rate-limit');
   rl.setRateLimitStoreForTesting(rl.createMemoryRateLimitStore());
 });
-afterEach(() => {
+afterEach(async () => {
   rl.setRateLimitStoreForTesting(null);
   vi.unstubAllEnvs();
+  await cleanupLoadedRoutes();
 });
 
 describe('PATCH /api/articles/[id] (like)', () => {
@@ -41,5 +42,16 @@ describe('PATCH /api/articles/[id] (like)', () => {
     const limited = await like('no-such-id', headers);
     expect(limited.status).toBe(429);
     expect(limited.headers.get('Retry-After')).toBeTruthy();
+  });
+  it('cannot be bypassed by rotating x-forwarded-for', async () => {
+    for (let i = 0; i < 30; i += 1) {
+      const headers = { 'cf-connecting-ip': '203.0.113.7', 'x-forwarded-for': `10.0.0.${i}` };
+      expect((await like('no-such-id', headers)).status).toBe(404);
+    }
+    const limited = await like('no-such-id', {
+      'cf-connecting-ip': '203.0.113.7',
+      'x-forwarded-for': '10.0.0.30',
+    });
+    expect(limited.status).toBe(429);
   });
 });
