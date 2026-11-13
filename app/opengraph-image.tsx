@@ -20,12 +20,12 @@ export default function OpengraphImage() {
           background: '#F8F7F3',
           color: '#161C1A',
           padding: '72px 84px',
-          borderTop: '18px solid #4F46E5',
+          borderTop: '18px solid #1D4ED8',
           fontFamily: 'Georgia, serif',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'Georgia, serif', fontSize: 54, letterSpacing: '-0.04em' }}>
-                  <span style={{ fontWeight: 700, color: '#4F46E5' }}>{piSymbol}</span>
+                  <span style={{ fontWeight: 700, color: '#1D4ED8' }}>{piSymbol}</span>
           <span style={{ fontWeight: 400, color: '#161C1A' }}>eme</span>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>

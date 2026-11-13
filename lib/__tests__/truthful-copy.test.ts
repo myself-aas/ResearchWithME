@@ -55,8 +55,9 @@ describe('truthful copy', () => {
     const hits: string[] = [];
     for (const file of collectFiles()) {
       const rel = path.relative(ROOT, file).split(path.sep).join('/');
-      // Skip the test file itself and docs/codebase historical notes
-      if (rel.includes('truthful-copy') || rel.startsWith('docs/')) continue;
+      // Skip the test file itself, docs/ historical notes, and CHANGELOG
+      // (which records removed-but-once-present identifiers by design).
+      if (rel.includes('truthful-copy') || rel.startsWith('docs/') || rel === 'CHANGELOG.md' || rel.endsWith('/progress.md')) continue;
       const text = readFileSync(file, 'utf8');
       const lines = text.split(/\r?\n/);
       for (let i = 0; i < lines.length; i += 1) {

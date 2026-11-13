@@ -23,7 +23,7 @@ export default function AppleIcon() {
           background: '#F8F7F3',
         }}
       >
-        <span style={{ fontSize: 120, fontWeight: 700, color: '#4F46E5', fontFamily: 'Georgia, serif' }}>
+        <span style={{ fontSize: 120, fontWeight: 700, color: '#1D4ED8', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
           {piSymbol}
         </span>
       </div>

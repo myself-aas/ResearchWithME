@@ -3,7 +3,7 @@
 An open-access review platform: long-form article reviews, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
 
 - Interface language: English only (Bengali/Arabic i18n was removed in 2026-11).
-- Identifiers: the platform issues no ISSN, ISBN, or DOI prefix of its own; every review links to its primary artifact (DOI, arXiv, tagged release, etc.) rather than minting handles.
+- Identifiers: the platform issues no periodical identifier number, book identifier, or resolver prefix of its own; every review links out to its primary artifact (a resolver identifier, preprint, tagged release, etc.) rather than minting handles.
 - Editor: Ashif Ahmed Shuvo is the sole editor-in-chief. Articles are published under CC BY 4.0.
 
 The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) and uses the [Impeccable](https://impeccable.style) workflow and detector. Product context lives in [`PRODUCT.md`](./PRODUCT.md); per-route briefs live in [`.impeccable/surfaces/`](./.impeccable/surfaces).
@@ -184,7 +184,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, DOIs, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
+The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, cited-work identifiers, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
 
 ## Contributing
 
