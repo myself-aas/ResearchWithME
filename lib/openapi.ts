@@ -206,7 +206,18 @@ export const API_OPERATIONS: ApiOperation[] = [
     responses: { 200: json('Revalidation result.', object({ revalidated: boolean, table: { type: ['string', 'null'] }, paths: strings, now: integer }, ['revalidated', 'table', 'paths', 'now'])), ...errors(401, 429, 500, 503) },
   },
   {
-    group: 'billing', method: 'get', path: '/api/billing/entitlement', operationId: 'getBillingEntitlement',
+    group: 'billing', method: 'post', path: '/api/billing/checkout', operationId: 'createBillingCheckout',
+    summary: 'Start a checkout',
+    description: 'Creates a Lemon Squeezy checkout for one of this site’s products and returns its URL for the on-site overlay. The variant is resolved server-side from configuration: the request names a product, never a variant or a price. Rate limited to ten attempts a minute.',
+    security: session,
+    requestBody: jsonBody(object({ product: { type: 'string', enum: ['teardown', 'copilot', 'editing'] } }, ['product']), 'The product to buy.'),
+    responses: {
+      201: json('The checkout to open.', object({ url: text }, ['url'])),
+      ...errors(400, 401, 403, 415, 429, 502, 503),
+    },
+  },
+  {
+    group: 'entitlement', method: 'get', path: '/api/billing/entitlement', operationId: 'getBillingEntitlement',
     summary: 'Read the signed-in account plan',
     description: 'Returns the caller’s plan, subscription state, purchase credits, and the current period end. Uncacheable: a purchase is visible on the next request. Test-mode purchases are excluded.',
     security: session,
