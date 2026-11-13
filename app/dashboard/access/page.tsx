@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import PageState from '@/components/PageState';
 import AuthorApplication from '@/components/dashboard/AuthorApplication';
+import ProfilePhotoCard from '@/components/dashboard/ProfilePhotoCard';
+import { profileToAuthor, type ProfileRow } from '@/lib/author-directory-core';
 import { getDashboardUser } from '@/lib/cms/auth';
 import type { AuthorApplication as Application } from '@/lib/applications';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
@@ -42,6 +44,7 @@ export default async function ApplyToWritePage({
 
   const params = await searchParams;
   let applications: Application[] = [];
+  let profile: ProfileRow | null = null;
 
   if (isSupabaseConfigured) {
     try {
@@ -54,8 +57,16 @@ export default async function ApplyToWritePage({
         .order('created_at', { ascending: false });
       if (error) throw new Error(error.message);
       applications = (data ?? []) as Application[];
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('slug, display_name, bio, role, domain, institution, avatar_url, orcid, github, website, scholar, created_at')
+        .eq('user_id', user?.id ?? '')
+        .maybeSingle();
+      if (profileError) throw new Error(profileError.message);
+      profile = (profileData as ProfileRow | null) ?? null;
     } catch (error) {
-      console.error('Could not read your author application:', error);
+      console.error('Could not read your author application or profile:', error);
     }
   }
 
@@ -88,6 +99,15 @@ export default async function ApplyToWritePage({
           </p>
         )}
       </header>
+
+      {user &&
+        (profile ? (
+          <ProfilePhotoCard userId={user.id} author={profileToAuthor(profile)} />
+        ) : (
+          <p className="mb-6 text-sm leading-relaxed text-ink-secondary">
+            Your profile photo can be added once your author profile exists.
+          </p>
+        ))}
 
       <AuthorApplication applications={applications} isEditor={user?.isEditor ?? false} />
     </div>
