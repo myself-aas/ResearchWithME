@@ -47,71 +47,71 @@ colors:
   dark-selection: "#1E3A8A"
 typography:
   editorial:
-    fontFamily: "'Newsreader', Georgia, serif"
+    fontFamily: "'Aptos Serif', 'Newsreader', Georgia, serif"
   interface:
-    fontFamily: "'Inter', system-ui, sans-serif"
+    fontFamily: "'Aptos', 'Inter', system-ui, sans-serif"
   metadata:
-    fontFamily: "'JetBrains Mono', monospace"
+    fontFamily: "'Aptos Mono', 'JetBrains Mono', monospace"
   display:
-    fontFamily: "Newsreader, Georgia, serif"
+    fontFamily: "'Aptos Serif', Newsreader, Georgia, serif"
     fontSize: "clamp(2.5rem, 5vw, 4.5rem)"
     fontWeight: 450
     lineHeight: 1.05
     letterSpacing: "-0.025em"
   title-1:
-    fontFamily: "Newsreader, Georgia, serif"
+    fontFamily: "'Aptos Serif', Newsreader, Georgia, serif"
     fontSize: "clamp(2rem, 3.5vw, 3rem)"
     fontWeight: 500
     lineHeight: 1.12
     letterSpacing: "-0.02em"
   title-2:
-    fontFamily: "Newsreader, Georgia, serif"
+    fontFamily: "'Aptos Serif', Newsreader, Georgia, serif"
     fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)"
     fontWeight: 500
     lineHeight: 1.2
     letterSpacing: "-0.015em"
   heading-1:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Aptos', Inter, system-ui, sans-serif"
     fontSize: "1.75rem"
     fontWeight: 650
     lineHeight: 1.25
   heading-2:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Aptos', Inter, system-ui, sans-serif"
     fontSize: "1.375rem"
     fontWeight: 650
     lineHeight: 1.3
   heading-3:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Aptos', Inter, system-ui, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 650
     lineHeight: 1.35
   body-reading:
-    fontFamily: "Newsreader, Georgia, serif"
+    fontFamily: "'Aptos Serif', Newsreader, Georgia, serif"
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1.7
   body:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Aptos', Inter, system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.625
   body-small:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Aptos', Inter, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.55
   label:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "'Aptos', Inter, system-ui, sans-serif"
     fontSize: "0.8125rem"
     fontWeight: 600
     lineHeight: 1.4
   citation:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontFamily: "'Aptos Mono', JetBrains Mono, ui-monospace, monospace"
     fontSize: "0.8125rem"
     fontWeight: 500
     lineHeight: 1.5
   metadata:
-    fontFamily: "JetBrains Mono, ui-monospace, monospace"
+    fontFamily: "'Aptos Mono', JetBrains Mono, ui-monospace, monospace"
     fontSize: "0.75rem"
     fontWeight: 500
     lineHeight: 1.45
@@ -149,7 +149,7 @@ The active frontend design system is **πeme v3.1** (`stable-candidate`, updated
 
 - **Principles:** Provenance, Trust, Scholarship, Collaboration, Preservation. Every claim keeps a visible path to its source; trust states are explicit, never implied by polish.
 - **Color:** warm parchment neutrals with an indigo action palette (primary `#4F46E5`), emerald verification, and domain palettes for knowledge, trust, provenance, workflow, collaboration, and citation. Full light/dark semantic maps are in the spec; `globals.css` defines both (`.dark` for dark mode). Color never carries meaning alone.
-- **Typography:** Newsreader (editorial reading), Inter (interface chrome), JetBrains Mono (DOI/ORCID/code/metadata). Newsreader and Inter are self-hosted via `next/font/local` in `app/fonts/`; JetBrains Mono is requested by installed name with a system mono fallback.
+- **Typography:** the Aptos family, requested by installed name only (never bundled): Aptos Serif (editorial reading), Aptos (interface chrome), Aptos Mono (DOI/ORCID/code/metadata). Fallbacks when Aptos is not installed: Newsreader and Inter, self-hosted via `next/font/local` in `app/fonts/`, and JetBrains Mono requested by installed name with a system mono fallback.
 - **Shape and elevation:** πeme radius scale (4px–24px, pill for tags), raised/floating/dialog shadows based on neutral-950.
 - **Motion:** reveal 200ms, verify/archive 320ms, connect 480ms, synthesize up to 700ms, with the standard/enter/exit/emphasize easings; `prefers-reduced-motion: reduce` collapses all animation and transitions per the spec's §9 contract.
 - **Motion system (v1):** implemented with `motion` (`m` + one `LazyMotion` scope) and Disney's twelve animation principles. The token layer is `lib/motion/tokens.ts`, the primitives are in `components/motion/`, and every demo lives at `/motion`. Full guide: [`docs/motion-system.md`](./docs/motion-system.md). Content is never hidden by an animation server-side, reveals arm only below the fold, and nothing loops except a real progress indicator.

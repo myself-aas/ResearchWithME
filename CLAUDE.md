@@ -54,7 +54,7 @@ All interface motion is governed by `docs/motion-system.md` (πeme §9/§10). Re
 - Check `/motion` in `full`, `reduced`, and `static` modes after any motion change.
 
 ## Design system
-- Fonts: Aptos family. Aptos Serif is primary (headings + body), Aptos (sans) for UI chrome, Aptos Mono for code. Aptos is requested by installed name only (never bundled); self-hosted Newsreader/Inter in `app/fonts/` are the fallbacks. No CDN.
+- Fonts: Aptos family. Aptos Serif is primary (headings + reading copy), Aptos (sans) for UI chrome, Aptos Mono for code. Aptos is requested by installed name only (never bundled); self-hosted Newsreader/Inter in `app/fonts/` are the fallbacks. No CDN.
 - Tailwind v4: no arbitrary values for spacing or colour that exist as tokens.
 - Follow `DESIGN.md` for surface-level design decisions; per-route detail is in `.impeccable/surfaces/`.
 

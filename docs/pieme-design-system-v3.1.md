@@ -116,6 +116,8 @@ graph:
 
 # πeme Frontend Design System v3.1
 
+> **2026-11-13:** the Aptos family leads each font stack (Aptos Serif, Aptos, Aptos Mono, requested by installed name only); the faces named below (Newsreader, Inter, JetBrains Mono) are now fallbacks.
+
 πeme is the frontend design system for **researchwith.me**, a scholarly workspace for discovering, evaluating, connecting, discussing, producing, and preserving knowledge. It combines editorial clarity with modern research tooling while avoiding the visual language of a developer console.
 
 > **Manifesto:** πeme makes knowledge traceable, trust visible, scholarship active, collaboration constructive, and the scholarly record enduring.

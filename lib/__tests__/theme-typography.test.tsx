@@ -14,6 +14,10 @@ describe('Archival typography, 68ch prose, Bengali rhythm & ThemeToggle', () => 
     expect(css).toContain('Noto Serif Bengali');
     expect(css).toContain('JetBrains Mono');
     expect(css).toContain('68ch');
+    expect(css).toMatch(/--font-serif:\s*'Aptos Serif',\s*var\(--font-newsreader\)/);
+    expect(css).toMatch(/--font-sans:\s*'Aptos',\s*var\(--font-inter\)/);
+    expect(css).toMatch(/--font-mono:\s*'Aptos Mono',\s*'JetBrains Mono'/);
+    expect(css).not.toMatch(/@font-face[^}]*Aptos/);
     expect(css).toMatch(/:root\[lang="bn"\][\s\S]*line-height:\s*1\.7/);
   });
 
