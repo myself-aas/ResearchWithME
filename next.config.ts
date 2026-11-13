@@ -29,9 +29,19 @@ const supabaseImages = supabaseImagePattern();
 // so the shipped policy stays eval-free.
 const isDev = process.env.NODE_ENV === 'development';
 
+// Lemon.js is the checkout overlay. It loads only on /pricing and
+// /dashboard/account (components/billing/LemonSqueezyScript), never site-wide,
+// but a CSP is per-document and cannot be narrowed per component, so the
+// allowance is here. `frame-src` is the half that is easy to forget: without it
+// the overlay iframe falls back to `default-src 'self'` and is blocked with no
+// visible error. Both are pinned by lib/__tests__/billing-csp.test.ts.
+const LEMON_JS = 'https://app.lemonsqueezy.com';
+const LEMON_FRAMES = 'https://*.lemonsqueezy.com';
+
 const cspDirectives = [
   "default-src 'self'",
-  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
+  isDev ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${LEMON_JS}` : `script-src 'self' 'unsafe-inline' ${LEMON_JS}`,
+  `frame-src 'self' ${LEMON_FRAMES}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
