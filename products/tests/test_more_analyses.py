@@ -6,9 +6,11 @@ test itself needs only the standard library. Run: python3 tests/test_more_analys
 
 import argparse
 import os
+import struct
 import sys
 import tempfile
 import unittest
+import zlib
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SOURCE = os.path.join(HERE, '..', 'src', 'statistical-table-generator')
@@ -156,21 +158,44 @@ class FigureTests(unittest.TestCase):
             for i, run in enumerate(runs):
                 sys.stdout = open(os.devnull, 'w')
                 try:
-                    code = core.main(run + ['--fig', os.path.join(folder, f'f{i}')])
+                    code = core.main(run + ['--fig', os.path.join(folder, f'f{i}'), '--dpi', '92'])
                 finally:
                     sys.stdout.close()
                     sys.stdout = out
                 self.assertEqual(code, 0, run)
                 made = [n for n in os.listdir(folder) if n.startswith(f'f{i}')]
-                self.assertTrue(any(n.endswith('.svg') for n in made) and any(n.endswith('.pdf') for n in made), run)
+                self.assertEqual({os.path.splitext(n)[1] for n in made}, {'.png', '.svg', '.pdf'}, run)
                 for name in made:
                     with open(os.path.join(folder, name), 'rb') as handle:
                         data = handle.read()
-                    if name.endswith('.pdf'):
+                    if name.endswith('.png'):
+                        width, height, depth, colour = struct.unpack('>IIBB', data[16:26])
+                        self.assertEqual(data[:8], b'\x89PNG\r\n\x1a\n')
+                        self.assertEqual((width, depth, colour), (598, 8, 0))
+                        self.assertIn(b'pHYs' + struct.pack('>IIB', 3622, 3622, 1), data)
+                        pixels = zlib.decompress(data[data.index(b'IDAT') + 4:-16])
+                        self.assertEqual(len(pixels), (width + 1) * height)
+                        self.assertLess(min(pixels[1:]), 40)      # something dark was drawn
+                        self.assertGreater(pixels.count(255), len(pixels) // 2)   # on a white page
+                    elif name.endswith('.pdf'):
                         self.assertTrue(data.startswith(b'%PDF-1.4') and data.rstrip().endswith(b'%%EOF'))
                         self.assertNotIn(b'/Image', data)
                     else:
                         self.assertTrue(data.startswith(b'<svg') and b'<image' not in data)
+
+    def test_png_lettering_and_resolution_limits(self):
+        self.assertEqual(len(figures.HERSHEY), 95)
+        self.assertEqual(figures.stroke_text('A', 21 / 0.718)[0][0][1], -21.0)      # capitals are 21 units tall
+        self.assertEqual(len(figures.stroke_text('i', 10)), 2)
+        self.assertGreater(figures.stroke_width('Mean', 10), 15)
+        err = sys.stderr
+        sys.stderr = open(os.devnull, 'w')
+        try:
+            self.assertEqual(core.main(['describe', DATA, '--vars', 'age', '--fig', 'x', '--dpi', '5000']), 2)
+        finally:
+            sys.stderr.close()
+            sys.stderr = err
+        self.assertFalse(os.path.exists('x-histogram-age.png'))
 
     def test_ticks_and_width(self):
         self.assertEqual(figures.nice_ticks(0, 10), [0, 2, 4, 6, 8, 10])

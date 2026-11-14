@@ -2,11 +2,19 @@
 
 Part of the ResearchWithMe Statistical Table Generator (full edition).
 
-Every figure is saved twice: as SVG and as PDF. Both are vector formats: they
-hold lines and text, not pixels, so they have no resolution and stay sharp at
-any size a journal prints them. Word, PowerPoint, LaTeX, and most submission
-systems accept one or the other. No PNG or TIFF is written; if a journal
-insists on one, open the PDF and export it at the resolution asked for.
+Every figure is saved three times: as a PNG image at the resolution you ask
+for (300 dpi unless you say otherwise), and as SVG and PDF, which are vector
+formats (lines and text, not pixels, so they stay sharp at any size).
+
+The PNG is drawn by this file itself. Because Python's standard library has no
+fonts, the lettering in the PNG uses the Hershey Simplex stroke font, so it
+looks slightly different from the Helvetica lettering of the SVG and PDF.
+
+Acknowledgement required by the font's licence: the Hershey Fonts were
+originally created by Dr. A. V. Hershey while working at the U. S. National
+Bureau of Standards. The format of the font data used here was originally
+created by James Hurt, Cognition, Inc., 900 Technology Park Drive, Billerica,
+MA 01821.
 
 The style follows common journal practice: black and grey only, a sans-serif
 face, axes on the left and bottom, no gridlines, no title inside the figure
@@ -14,6 +22,7 @@ face, axes on the left and bottom, no gridlines, no title inside the figure
 """
 
 import math
+import struct
 import zlib
 
 WIDTH, HEIGHT = 468.0, 324.0          # points: 6.5 in by 4.5 in
@@ -23,6 +32,106 @@ HELVETICA = [278, 278, 355, 556, 556, 889, 667, 191, 333, 333, 389, 584, 278, 33
              500, 667, 556, 833, 722, 778, 667, 778, 722, 667, 611, 722, 667, 944, 667, 667, 611, 278, 278, 278, 469,
              556, 333, 556, 556, 500, 556, 556, 278, 556, 556, 222, 222, 500, 222, 833, 556, 556, 556, 556, 333, 500,
              278, 556, 500, 722, 500, 500, 500, 334, 260, 334, 584]
+
+# Hershey Simplex, one string for each character from space to tilde. The first two letters give the left and
+# right edge; the rest are x, y pairs counted from the letter R, with ' R' meaning pen up.
+HERSHEY = [
+    'JZ',
+    'MWRFRT RRYQZR[SZRY',
+    'JZNFNM RVFVM',
+    'H]SBLb RYBRb RLOZO RKUYU',
+    'H\\PBP_ RTBT_ RYIWGTFPFMGKIKKLMMNOOUQWRXSYUYXWZT[P[MZKX',
+    'F^[FI[ RNFPHPJOLMMKMIKIIJGLFNFPGSHVHYG[F RWTUUTWTYV[X[ZZ[X[VYTWT',
+    'E_\\O\\N[MZMYNXPVUTXRZP[L[JZIYHWHUISJRQNRMSKSIRGPFNGMIMKNNPQUXWZY[[[\\Z\\Y',
+    'MWRHQGRFSGSIRKQL',
+    'KYVBTDRGPKOPOTPYR]T`Vb',
+    'KYNBPDRGTKUPUTTYR]P`Nb',
+    'JZRLRX RMOWU RWOMU',
+    'E_RIR[ RIR[R',
+    'NVSWRXQWRVSWSYQ[',
+    'E_IR[R',
+    'NVRVQWRXSWRV',
+    'G][BIb',
+    'H\\QFNGLJKOKRLWNZQ[S[VZXWYRYOXJVGSFQF',
+    'H\\NJPISFS[',
+    'H\\LKLJMHNGPFTFVGWHXJXLWNUQK[Y[',
+    'H\\MFXFRNUNWOXPYSYUXXVZS[P[MZLYKW',
+    'H\\UFKTZT RUFU[',
+    'H\\WFMFLOMNPMSMVNXPYSYUXXVZS[P[MZLYKW',
+    'H\\XIWGTFRFOGMJLOLTMXOZR[S[VZXXYUYTXQVOSNRNOOMQLT',
+    'H\\YFO[ RKFYF',
+    'H\\PFMGLILKMMONSOVPXRYTYWXYWZT[P[MZLYKWKTLRNPQOUNWMXKXIWGTFPF',
+    'H\\XMWPURRSQSNRLPKMKLLINGQFRFUGWIXMXRWWUZR[P[MZLX',
+    'NVROQPRQSPRO RRVQWRXSWRV',
+    'NVROQPRQSPRO RSWRXQWRVSWSYQ[',
+    'F^ZIJRZ[',
+    'E_IO[O RIU[U',
+    'F^JIZRJ[',
+    'I[LKLJMHNGPFTFVGWHXJXLWNVORQRT RRYQZR[SZRY',
+    'E`WNVLTKQKOLNMMPMSNUPVSVUUVS RQKOMNPNSOUPV RWKVSVUXVZV\\T]Q]O\\L[JYHWGTFQFNGLHJJILHOHRIUJWLYNZQ[T[WZYYZX RXKWSWUXV',
+    'I[RFJ[ RRFZ[ RMTWT',
+    'G\\KFK[ RKFTFWGXHYJYLXNWOTP RKPTPWQXRYTYWXYWZT[K[',
+    'H]ZKYIWGUFQFOGMILKKNKSLVMXOZQ[U[WZYXZV',
+    'G\\KFK[ RKFRFUGWIXKYNYSXVWXUZR[K[',
+    'H[LFL[ RLFYF RLPTP RL[Y[',
+    'HZLFL[ RLFYF RLPTP',
+    'H]ZKYIWGUFQFOGMILKKNKSLVMXOZQ[U[WZYXZVZS RUSZS',
+    'G]KFK[ RYFY[ RKPYP',
+    'NVRFR[',
+    'JZVFVVUYTZR[P[NZMYLVLT',
+    'G\\KFK[ RYFKT RPOY[',
+    'HYLFL[ RL[X[',
+    'F^JFJ[ RJFR[ RZFR[ RZFZ[',
+    'G]KFK[ RKFY[ RYFY[',
+    'G]PFNGLIKKJNJSKVLXNZP[T[VZXXYVZSZNYKXIVGTFPF',
+    'G\\KFK[ RKFTFWGXHYJYMXOWPTQKQ',
+    'G]PFNGLIKKJNJSKVLXNZP[T[VZXXYVZSZNYKXIVGTFPF RSWY]',
+    'G\\KFK[ RKFTFWGXHYJYLXNWOTPKP RRPY[',
+    'H\\YIWGTFPFMGKIKKLMMNOOUQWRXSYUYXWZT[P[MZKX',
+    'JZRFR[ RKFYF',
+    'G]KFKULXNZQ[S[VZXXYUYF',
+    'I[JFR[ RZFR[',
+    'F^HFM[ RRFM[ RRFW[ R\\FW[',
+    'H\\KFY[ RYFK[',
+    'I[JFRPR[ RZFRP',
+    'H\\YFK[ RKFYF RK[Y[',
+    'KYOBOb RPBPb ROBVB RObVb',
+    'KYKFY^',
+    'KYTBTb RUBUb RNBUB RNbUb',
+    'JZRDJR RRDZR',
+    'I[Ib[b',
+    'NVSKQMQORPSORNQO',
+    'I\\XMX[ RXPVNTMQMONMPLSLUMXOZQ[T[VZXX',
+    'H[LFL[ RLPNNPMSMUNWPXSXUWXUZS[P[NZLX',
+    'I[XPVNTMQMONMPLSLUMXOZQ[T[VZXX',
+    'I\\XFX[ RXPVNTMQMONMPLSLUMXOZQ[T[VZXX',
+    'I[LSXSXQWOVNTMQMONMPLSLUMXOZQ[T[VZXX',
+    'MYWFUFSGRJR[ ROMVM',
+    'I\\XMX]W`VaTbQbOa RXPVNTMQMONMPLSLUMXOZQ[T[VZXX',
+    'I\\MFM[ RMQPNRMUMWNXQX[',
+    'NVQFRGSFREQF RRMR[',
+    'MWRFSGTFSERF RSMS^RaPbNb',
+    'IZMFM[ RWMMW RQSX[',
+    'NVRFR[',
+    'CaGMG[ RGQJNLMOMQNRQR[ RRQUNWMZM\\N]Q][',
+    'I\\MMM[ RMQPNRMUMWNXQX[',
+    'I\\QMONMPLSLUMXOZQ[T[VZXXYUYSXPVNTMQM',
+    'H[LMLb RLPNNPMSMUNWPXSXUWXUZS[P[NZLX',
+    'I\\XMXb RXPVNTMQMONMPLSLUMXOZQ[T[VZXX',
+    'KXOMO[ ROSPPRNTMWM',
+    'J[XPWNTMQMNNMPNRPSUTWUXWXXWZT[Q[NZMX',
+    'MYRFRWSZU[W[ ROMVM',
+    'I\\MMMWNZP[S[UZXW RXMX[',
+    'JZLMR[ RXMR[',
+    'G]JMN[ RRMN[ RRMV[ RZMV[',
+    'J[MMX[ RXMM[',
+    'JZLMR[ RXMR[P_NaLbKb',
+    'J[XMM[ RMMXM RM[X[',
+    'KYTBRCQDPFPHQJRKSMSOQQ RRCQEQGRISJTLTNSPORSTTVTXSZR[Q]Q_Ra RQSSUSWRYQZP\\P^Q`RaTb',
+    'NVRBRb',
+    'KYPBRCSDTFTHSJRKQMQOSQ RRCSESGRIQJPLPNQPURQTPVPXQZR[S]S_Ra RSSQUQWRYSZT\\T^S`RaPb',
+    'F^IUISJPLONOPPTSVTXTZS[Q RISJQLPNPPQTTVUXUZT[Q[O',
+]
 
 
 def text_width(text, size):
@@ -156,12 +265,195 @@ class Canvas:
         out += f'trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\nstartxref\n{xref}\n%%EOF\n'.encode()
         return bytes(out)
 
-    def save(self, base):
+    # ---- PNG
+
+    def png(self, dpi=300):
+        """An 8-bit greyscale PNG at the given resolution, anti-aliased, with the resolution recorded in the file."""
+        k = dpi / 72.0
+        raster = Raster(int(round(self.width * k)), int(round(self.height * k)))
+        for item in self.items:
+            kind = item[0]
+            if kind == 'line':
+                _, x1, y1, x2, y2, w, grey, dash = item
+                raster.path([(x1 * k, y1 * k), (x2 * k, y2 * k)], w * k, grey, dash, k)
+            elif kind == 'rect':
+                _, x, y, w, h, fill, stroke, sw = item
+                if fill is not None:
+                    raster.fill_rect(x * k, y * k, (x + w) * k, (y + h) * k, fill)
+                if stroke is not None:
+                    corners = [(x * k, y * k), ((x + w) * k, y * k), ((x + w) * k, (y + h) * k), (x * k, (y + h) * k), (x * k, y * k)]
+                    raster.path(corners, sw * k, stroke, None, k)
+            elif kind == 'circle':
+                _, x, y, r, fill, stroke, sw = item
+                raster.circle(x * k, y * k, r * k, fill, stroke, sw * k)
+            elif kind == 'poly':
+                _, points, w, grey, dash = item
+                raster.path([(x * k, y * k) for x, y in points], w * k, grey, dash, k)
+            else:
+                _, x, y, text, size, anchor, rotate, grey = item
+                shift = {'start': 0.0, 'middle': stroke_width(text, size) / 2, 'end': stroke_width(text, size)}[anchor]
+                for stroke in stroke_text(text, size):
+                    if rotate:
+                        points = [((x + v) * k, (y - (u - shift)) * k) for u, v in stroke]
+                    else:
+                        points = [((x + u - shift) * k, (y + v) * k) for u, v in stroke]
+                    raster.path(points, max(size * 0.085 * k, 1.0), grey, None, k)
+        return raster.encode(dpi)
+
+    def save(self, base, dpi=300):
         with open(base + '.svg', 'w', encoding='utf-8') as handle:
             handle.write(self.svg())
         with open(base + '.pdf', 'wb') as handle:
             handle.write(self.pdf())
-        return [base + '.svg', base + '.pdf']
+        with open(base + '.png', 'wb') as handle:
+            handle.write(self.png(dpi))
+        return [base + '.png', base + '.svg', base + '.pdf']
+
+
+# ---------------------------------------------------------------- PNG drawing
+
+STROKE_SQUEEZE = 0.84     # Hershey Simplex is wider than Helvetica; narrowed so that labels fit the same space
+
+
+def _stroke_scale(size):
+    return size * 0.718 / 21.0      # the capitals are 21 units tall; Helvetica's are 0.718 of the type size
+
+
+def _glyph(char):
+    return HERSHEY[ord(char) - 32] if 32 <= ord(char) < 127 else HERSHEY[ord('?') - 32]
+
+
+def stroke_width(text, size):
+    scale = _stroke_scale(size) * STROKE_SQUEEZE
+    return sum(ord(_glyph(c)[1]) - ord(_glyph(c)[0]) for c in text) * scale
+
+
+def stroke_text(text, size):
+    """The pen strokes of a line of text, in points, from the start of the baseline (x to the right, y downwards)."""
+    scale = _stroke_scale(size)
+    out, pen = [], 0.0
+    for char in text:
+        glyph = _glyph(char)
+        left = ord(glyph[0]) - 82
+        stroke = []
+        for i in range(2, len(glyph) - 1, 2):
+            a, b = glyph[i], glyph[i + 1]
+            if a == ' ' and b == 'R':
+                if stroke:
+                    out.append(stroke)
+                stroke = []
+            else:
+                stroke.append((pen + (ord(a) - 82 - left) * scale * STROKE_SQUEEZE, (ord(b) - 82 - 9) * scale))
+        if stroke:
+            out.append(stroke)
+        pen += (ord(glyph[1]) - ord(glyph[0])) * scale * STROKE_SQUEEZE
+    return out
+
+
+class Raster:
+    """A greyscale page of pixels with anti-aliased drawing. 255 is white."""
+
+    def __init__(self, width, height):
+        self.w, self.h = width, height
+        self.px = bytearray(b'\xff') * (width * height)
+
+    def blend(self, x, y, cover, shade):
+        if cover > 0 and 0 <= x < self.w and 0 <= y < self.h:
+            i = y * self.w + x
+            if cover >= 1:
+                self.px[i] = shade
+            else:
+                self.px[i] = int(self.px[i] + (shade - self.px[i]) * cover + 0.5)
+
+    def fill_rect(self, x1, y1, x2, y2, grey):
+        xa, xb = max(0, int(round(min(x1, x2)))), min(self.w, int(round(max(x1, x2))))
+        ya, yb = max(0, int(round(min(y1, y2)))), min(self.h, int(round(max(y1, y2))))
+        if xb > xa:
+            row = bytes([int(round(255 * grey))]) * (xb - xa)
+            for y in range(ya, yb):
+                self.px[y * self.w + xa:y * self.w + xb] = row
+
+    def circle(self, cx, cy, r, fill, stroke, width):
+        reach = r + width / 2 + 1
+        for y in range(int(cy - reach), int(cy + reach) + 2):
+            for x in range(int(cx - reach), int(cx + reach) + 2):
+                d = math.hypot(x + 0.5 - cx, y + 0.5 - cy)
+                if fill is not None:
+                    self.blend(x, y, min(1.0, r + 0.5 - d), int(round(255 * fill)))
+                if stroke is not None:
+                    self.blend(x, y, min(1.0, width / 2 + 0.5 - abs(d - r)), int(round(255 * stroke)))
+
+    def path(self, points, width, grey, dash, k):
+        shade = int(round(255 * grey))
+        if not dash:
+            for a, b in zip(points, points[1:]):
+                self.segment(a, b, width, shade)
+            return
+        pattern = [float(v) * k for v in dash.split(',')]
+        index, left, on = 0, pattern[0], True
+        for (x1, y1), (x2, y2) in zip(points, points[1:]):
+            length = math.hypot(x2 - x1, y2 - y1)
+            done = 0.0
+            while length - done > 1e-9:
+                step = min(left, length - done)
+                if on:
+                    t1, t2 = done / length, (done + step) / length
+                    self.segment((x1 + (x2 - x1) * t1, y1 + (y2 - y1) * t1), (x1 + (x2 - x1) * t2, y1 + (y2 - y1) * t2), width, shade, False)
+                done += step
+                left -= step
+                if left <= 1e-9:
+                    index = (index + 1) % len(pattern)
+                    left, on = pattern[index], not on
+
+    def segment(self, a, b, width, shade, round_ends=True):
+        """A straight stroke. Each pixel is shaded by how much of it the stroke covers."""
+        (x1, y1), (x2, y2) = a, b
+        half = max(width / 2.0, 0.5)
+        weight = min(1.0, width)            # strokes thinner than a pixel are drawn lighter, not narrower
+        dx, dy = x2 - x1, y2 - y1
+        length2 = dx * dx + dy * dy
+        blend = self.blend
+
+        def shade_pixel(x, y):
+            qx, qy = x + 0.5 - x1, y + 0.5 - y1
+            t = (qx * dx + qy * dy) / length2 if length2 else 0.0
+            if not round_ends and (t < 0 or t > 1):
+                return
+            t = max(0.0, min(1.0, t))
+            d = math.hypot(qx - t * dx, qy - t * dy)
+            blend(x, y, min(1.0, half + 0.5 - d) * weight, shade)
+
+        reach = half + 1.5
+        if abs(dy) >= abs(dx):
+            if dy < 0:
+                x1, y1, x2, y2, dx, dy = x2, y2, x1, y1, -dx, -dy
+            span = reach * (math.sqrt(length2) / dy if dy else 1.0)
+            for y in range(max(0, int(y1 - reach)), min(self.h, int(y2 + reach) + 1)):
+                t = max(0.0, min(1.0, (y + 0.5 - y1) / dy)) if dy else 0.0
+                centre = x1 + t * dx
+                for x in range(int(centre - span), int(centre + span) + 1):
+                    shade_pixel(x, y)
+        else:
+            if dx < 0:
+                x1, y1, x2, y2, dx, dy = x2, y2, x1, y1, -dx, -dy
+            span = reach * math.sqrt(length2) / dx
+            for x in range(max(0, int(x1 - reach)), min(self.w, int(x2 + reach) + 1)):
+                t = max(0.0, min(1.0, (x + 0.5 - x1) / dx))
+                centre = y1 + t * dy
+                for y in range(int(centre - span), int(centre + span) + 1):
+                    shade_pixel(x, y)
+
+    def encode(self, dpi):
+        def chunk(kind, data):
+            return struct.pack('>I', len(data)) + kind + data + struct.pack('>I', zlib.crc32(kind + data) & 0xffffffff)
+
+        rows = bytearray()
+        for y in range(self.h):
+            rows += b'\x00' + self.px[y * self.w:(y + 1) * self.w]
+        per_metre = int(round(dpi / 0.0254))
+        return (b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', self.w, self.h, 8, 0, 0, 0, 0))
+                + chunk(b'pHYs', struct.pack('>IIB', per_metre, per_metre, 1))
+                + chunk(b'IDAT', zlib.compress(bytes(rows), 6)) + chunk(b'IEND', b''))
 
 
 # ---------------------------------------------------------------- axes

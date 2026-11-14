@@ -64,7 +64,17 @@ Add `--fig NAME` to a command and the program saves the figures that go with it:
 | chisq, fisher | Grouped bar chart of the counts |
 | regress | Residuals against fitted values, a Q-Q plot of the residuals, and with one predictor a scatter plot with the fitted line |
 
-Each figure is saved twice, as `.svg` and as `.pdf`. Both are vector files: they store lines and text, not pixels, so they have no resolution to run out of and print sharp at any size. That meets a journal's 300, 600, or 1200 dpi requirement in the way journals prefer. Word and PowerPoint accept the SVG (Insert, Pictures); LaTeX accepts the PDF. The program does not write PNG or TIFF files. If a journal insists on one, open the PDF in any PDF viewer or image editor and export it at the resolution asked for.
+Each figure is saved three times:
+
+| File | What it is | Use it for |
+| --- | --- | --- |
+| `.png` | An image at 300 dpi, or at the resolution you give with `--dpi` (72 to 1200) | Journals and forms that ask for an image file; Word; slides |
+| `.svg` | A vector file | Word and PowerPoint (Insert, Pictures), and editing in Inkscape or Illustrator |
+| `.pdf` | A vector file | LaTeX, and journals that accept vector figures |
+
+For example, `--fig figure1 --dpi 600` writes 600 dpi images, 3900 by 2700 pixels. The resolution is recorded inside the PNG, so Word and journal systems place it at 6.5 by 4.5 inches. Journals commonly ask for 300 dpi for shaded figures and 600 to 1200 dpi for line art; check your journal's instructions. The vector files store lines and text, not pixels, and stay sharp at any size, so prefer them where they are accepted.
+
+The PNG is greyscale and has no transparency. Its lettering is a plain single-stroke face (Hershey Simplex), because Python comes with no fonts; the SVG and PDF use Helvetica or Arial. If the lettering must match your journal's typeface, use the SVG or PDF. The program does not write TIFF, EPS, or JPEG files; any image editor converts the PNG.
 
 The figures are 6.5 by 4.5 inches, in black and grey, with a sans-serif face, axes on the left and bottom, and no title inside the figure, because the caption belongs in your manuscript. Box plots follow Tukey: the box runs from the first to the third quartile, the line is the median, the whiskers reach the most extreme value within 1.5 times the interquartile range, and values beyond that are drawn as points. Error bars are 95% confidence intervals of each mean, computed separately for each group or measure. The program does not offer colours, themes, or other layouts; an SVG can be edited in Inkscape or Illustrator.
 
@@ -166,6 +176,10 @@ For anything you will publish, check at least one table against the software you
 | has 3 groups; a t test needs exactly two | Use `anova` |
 | The predictors are perfectly collinear | One predictor is a combination of others; remove one |
 | python: command not found | Try `python3`, or install Python from python.org |
+
+## Acknowledgement
+
+The lettering in the PNG figures uses the Hershey fonts. The Hershey Fonts were originally created by Dr. A. V. Hershey while working at the U. S. National Bureau of Standards. The format of the font data used was originally created by James Hurt, Cognition, Inc., 900 Technology Park Drive, Billerica, MA 01821.
 
 ## Trademarks
 

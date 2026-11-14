@@ -580,7 +580,8 @@ def build_parser():
         p = sub.add_parser(name, help=helptext)
         p.add_argument('csv', help='path to the CSV file (first row must be column names)')
         p.add_argument('--out', help='also write an HTML report that opens in Word')
-        p.add_argument('--fig', metavar='NAME', help='also save figures as NAME-....svg and NAME-....pdf (full edition)')
+        p.add_argument('--fig', metavar='NAME', help='also save figures as NAME-....png, .svg and .pdf (full edition)')
+        p.add_argument('--dpi', type=int, default=300, help='resolution of the PNG figures, 72 to 1200 (default 300)')
         return p
 
     p = add('describe', 'n, mean, SD, median, range, skew, kurtosis')
@@ -632,6 +633,9 @@ def main(argv=None):
         print(f'The free edition runs {", ".join(FREE_COMMANDS)}. The {args.command} command is in the full edition.',
               file=sys.stderr)
         return 2
+    if getattr(args, 'fig', None) and more and not 72 <= args.dpi <= 1200:
+        print('--dpi must be between 72 and 1200.', file=sys.stderr)
+        return 2
     if getattr(args, 'fig', None) and not more:
         print('Figures are in the full edition. Run the command again without --fig.', file=sys.stderr)
         return 2
@@ -657,9 +661,9 @@ def main(argv=None):
     saved = []
     for name, canvas in drawn:
         safe = re.sub(r'[^A-Za-z0-9._-]+', '_', name)
-        saved += canvas.save(f'{args.fig}-{safe}' if safe else args.fig)
+        saved += canvas.save(f'{args.fig}-{safe}' if safe else args.fig, args.dpi)
     if saved:
-        print('\nSaved figures (vector files, sharp at any size):')
+        print(f'\nSaved figures (PNG at {args.dpi} dpi; SVG and PDF are vector files):')
         for path in saved:
             print(f'  {path}')
     elif getattr(args, 'fig', None):
