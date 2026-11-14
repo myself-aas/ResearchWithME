@@ -5,7 +5,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
-import { BILLING_PRODUCTS, FREE_FOR_EVERYONE } from '@/lib/billing/catalogue';
+import { BILLING_PRODUCTS, FREE_DOWNLOADS, FREE_FOR_EVERYONE, isPurchasable } from '@/lib/billing/catalogue';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { absoluteUrl, pageMetadata } from '@/lib/seo';
 import { jsonLdScript } from '@/lib/seo/jsonld';
@@ -192,7 +192,12 @@ export default async function PricingPage() {
               </dl>
 
               <div className="mt-6">
-                {user ? (
+                {!isPurchasable(product.key) ? (
+                  <p className="rounded-sm border border-line bg-surface-subtle px-4 py-3 font-sans text-sm leading-relaxed text-ink-secondary">
+                    <span className="font-semibold text-ink">Not on sale yet.</span> The files are ready and the
+                    checkout is being set up. Nothing can be bought here until it is.
+                  </p>
+                ) : user ? (
                   <CheckoutButton product={product.key} label={`${product.actionLabel} · ${product.priceLabel}`} />
                 ) : (
                   <>
@@ -223,6 +228,62 @@ export default async function PricingPage() {
           </Link>{' '}
           first. Both show the standard of the work before you spend anything.
         </p>
+
+        <section aria-labelledby="downloads-heading" className="mt-14 border-t border-line pt-10">
+          <h2 id="downloads-heading" className="font-serif text-2xl font-bold text-ink">
+            Free downloads
+          </h2>
+          <p className="mt-3 max-w-3xl font-serif leading-relaxed text-ink-secondary">
+            Tools and templates for the work around a manuscript. They cost nothing, need no account, and ask for
+            no email address. Everything runs on your own computer; your manuscript is not sent to us.
+          </p>
+          <div className="mt-6 grid max-w-3xl gap-6">
+            {FREE_DOWNLOADS.map((item) => (
+              <section
+                key={item.key}
+                aria-labelledby={`download-${item.key}`}
+                className="flex flex-col rounded-sm border border-line bg-surface p-6"
+              >
+                <h3
+                  id={`download-${item.key}`}
+                  className="scroll-mt-28 font-sans text-sm font-semibold uppercase tracking-wider text-ink-secondary"
+                >
+                  {item.name}
+                </h3>
+                <p className="mt-3 font-serif text-2xl font-bold leading-snug text-ink">{item.outcome}</p>
+                <p className="mt-4 font-serif leading-relaxed text-ink-secondary">{item.summary}</p>
+                <ul className="mt-5 space-y-2 font-sans text-sm leading-relaxed text-ink">
+                  {item.includes.map((line) => (
+                    <li key={line} className="flex gap-2">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+                <dl className="mt-6 space-y-3 border-t border-line pt-5 font-sans text-sm leading-relaxed">
+                  <div>
+                    <dt className="font-semibold text-ink">What you need</dt>
+                    <dd className="text-ink-secondary">{item.needs}</dd>
+                  </div>
+                  <div>
+                    <dt className="font-semibold text-ink">Worth knowing first</dt>
+                    <dd className="text-ink-secondary">{item.caveat}</dd>
+                  </div>
+                </dl>
+                <div className="mt-6">
+                  <a
+                    href={item.href}
+                    download
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-sm border border-line bg-surface px-4 font-sans text-sm font-semibold uppercase tracking-wider text-ink hover:bg-surface-subtle"
+                  >
+                    Download {item.name}
+                  </a>
+                  <p className="mt-2 text-center font-sans text-xs text-ink-secondary">{item.fileNote}</p>
+                </div>
+              </section>
+            ))}
+          </div>
+        </section>
 
         <section aria-labelledby="how-heading" className="mt-14 border-t border-line pt-10">
           <h2 id="how-heading" className="font-serif text-2xl font-bold text-ink">

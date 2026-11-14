@@ -27,6 +27,17 @@ A small command-line program, `apa_tables.py`, that reads a CSV file and produce
 | chisq | Chi-square test of independence with Cramer's V and a count of low expected cells |
 | regress | Linear regression with B, SE, standardised Beta, t, p, 95% confidence intervals, R squared, and a collinearity warning |
 
+## Editions
+
+| | Free edition | Full edition |
+| --- | --- | --- |
+| describe, correlate, ttest | Yes | Yes |
+| anova, chisq, regress | No | Yes |
+| Tables saved as an HTML file for Word | Yes | Yes |
+| Size of data file, number of runs | No limit | No limit |
+
+The last line of every result names the edition you have. In the free edition, the three commands of the full edition stop with a message and compute nothing.
+
 ## First run
 
 Check that Python is installed by typing `python --version` in a terminal (on some systems the command is `python3`). Then, from the folder that holds these files:

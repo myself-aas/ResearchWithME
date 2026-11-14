@@ -1,4 +1,4 @@
-# PRD: The ResearchWithMe product catalogue: two paid downloads and two free ones
+# PRD: The ResearchWithMe product catalogue: three paid downloads and two free ones
 
 | | |
 | --- | --- |
@@ -6,7 +6,7 @@
 | Date | 2026-11-14 (eighth pass; replaces every earlier pass of this file) |
 | Inputs | Lemon Squeezy's prohibited-products page, read in full on 2026-11-14 (https://docs.lemonsqueezy.com/help/getting-started/prohibited-products); the billing code and `docs/billing.md`; the owner's decisions of 2026-11-14; the download files in `products/`. |
 | Method | Synthesis, no interview. Anything decided in place of an answer is marked **[Assumption]** and listed in section 9.2. |
-| What changed in this pass | Seventh pass: every product became a file the buyer downloads once and keeps; the hosted, pay-per-report tools were dropped. Eighth pass (owner's instruction): prices set below the cheapest paid alternative found, more given free than the alternatives give free, and products folded together. Seven separately priced products became two paid downloads and two free ones (section 3). Competitor figures are in `docs/competitor-pricing-2026-11-14.md`. |
+| What changed in this pass | Seventh pass: every product became a file the buyer downloads once and keeps; the hosted, pay-per-report tools were dropped. Eighth pass (owner's instruction): prices set below the cheapest paid alternative found, more given free than the alternatives give free, and products folded together. Seven separately priced products became three paid downloads and two free ones (section 3). Ninth pass (owner's decisions): the two free downloads went on the site; the table program was split into a free edition and a paid full one; the buy button is hidden until a product can really be bought. Competitor figures are in `docs/competitor-pricing-2026-11-14.md`. |
 
 Earlier passes are in the Git history of this file. Products removed in those passes stay removed (section 8).
 
@@ -70,7 +70,7 @@ Folding has a cost here: Reference Check, which the published policy plainly all
 
 ## 3. Solution
 
-One store, one payment provider, two one-time purchases, and two free downloads. Each purchase delivers one zip file through the provider's own file delivery. Free downloads are served by the site itself with no checkout and no account. Nothing recurs. Reading, the citation builder, the assistant, and bookmarks stay free.
+One store, one payment provider, three one-time purchases, and two free downloads. Each purchase delivers one zip file through the provider's own file delivery. Free downloads are served by the site itself with no checkout and no account. Nothing recurs. Reading, the citation builder, the assistant, and bookmarks stay free.
 
 ### The pricing rule (owner, 2026-11-14)
 
@@ -84,8 +84,9 @@ One store, one payment provider, two one-time purchases, and two free downloads.
 | --- | --- | --- | --- |
 | **The Teardown System** | $19 | P1 | Files built. Shown on the site. No store product, so it cannot be bought. |
 | **Manuscript Check** | $5 | P15 Manuscript Check, P17 Reference Check, P18 Response-to-Reviewers Check | Files built and tested. Held for the provider's reply. |
-| **Manuscript Check, free edition** | Free | The same three programs, with limits | Files built and tested. Not on the site. |
-| **Research Toolkit** | Free | P10 Statistical Table Generator, P7 Manuscript Formatting Kit, P8 Journal Shortlist Workbook | Files built. Not on the site. |
+| **Statistical Table Generator** | $5 **[Assumption]** | P10, full edition | Files built and tested. Not listed. |
+| **Manuscript Check, free edition** | Free | The same three programs, with limits | **On the site** at `/pricing` since 2026-11-14 (owner's decision). |
+| **Research Toolkit** | Free | P10 in its free edition, P7 Manuscript Formatting Kit, P8 Journal Shortlist Workbook | **On the site** at `/pricing` since 2026-11-14. |
 
 P14, the weekly research digest, remains free and is not a product.
 
@@ -96,12 +97,13 @@ Competitor figures were seen in search results on 2026-11-14, mostly in third-pa
 | Our download | Cheapest paid alternative found | Our price | What the alternatives give free | What we give free |
 | --- | --- | --- | --- | --- |
 | Manuscript Check | Recite, $6 for three days of access. Penelope.ai, $9.50 for one report. | $5, once, to keep | Recite: the first 2,500 words and 50 references, two uploads a day. Penelope.ai: a basic analysis. | Four manuscript checks on the whole manuscript; 60 references a run with retraction flags; no limit on runs; the reviewer-comment splitter, letter template, and tracker. |
-| Research Toolkit: tables | None needed: JASP and jamovi are free. | Free | Everything | The whole program. It does less than JASP or jamovi, and its guide says so. |
+| Research Toolkit: tables | None needed: JASP and jamovi are free. | Free | Everything | Descriptive statistics, correlation matrices, and t tests, with no limit on data or runs. |
+| Statistical Table Generator, full | The free programs above. SPSS is the paid one, at about $99 a month or more. | $5 **[Assumption]** | | The owner decided on 2026-11-14 that the complete version is charged for. It adds ANOVA, chi-square, and regression tables. It cannot undercut free programs that do more, so the rule gives no figure; $5 matches Manuscript Check and awaits the owner's confirmation. |
 | Research Toolkit: formatting | Single templates on Etsy from $1.50. | Free | Nothing found | Four templates and the checklist. |
 | Research Toolkit: journals | None needed: the journal finders are free. | Free | Everything | The whole workbook. |
 | The Teardown System | None found. | $19, unchanged | | Nothing new. With no alternative to undercut, the rule does not apply; the price is the owner's. |
 
-What this pricing means for revenue: two things are sold, at $19 and $5. The provider's fee comes out of each sale; if it is the 5% plus 50 cents commonly quoted (not verified for this document), a $5 sale leaves about $4.25.
+What this pricing means for revenue: three things are sold, at $19, $5, and $5. The provider's fee comes out of each sale; if it is the 5% plus 50 cents commonly quoted (not verified for this document), a $5 sale leaves about $4.25.
 
 The site must not claim "the lowest price" or name a competitor's price. Those figures were true on one day, from secondary sources. The page states our price and what is free; the reader can compare.
 
@@ -113,7 +115,8 @@ Each download is assembled from the parts below. An entry states what the part i
 | --- | --- |
 | P1 | The Teardown System |
 | P15, P17, P18 | Manuscript Check, in its paid and free editions |
-| P10, P7, P8 | Research Toolkit |
+| P10 (free edition), P7, P8 | Research Toolkit |
+| P10 (full edition) | Statistical Table Generator |
 
 ### Editions of Manuscript Check
 
@@ -128,7 +131,16 @@ Each download is assembled from the parts below. An entry states what the part i
 | Letter template, tracking spreadsheet, reporting-checklist finder | Yes | Yes |
 | Runs, manuscript length, account | No limit, none needed | No limit, none needed |
 
-Both editions are built from one source; the build changes one line. The programs ship as readable source, so the limits are a statement of what was paid for, not a lock. `products/tests/test_editions.py` covers them.
+### Editions of the Statistical Table Generator
+
+| | Free edition, in the Research Toolkit | Paid edition |
+| --- | --- | --- |
+| describe, correlate, ttest | Yes | Yes |
+| anova, chisq, regress | No | Yes |
+| Tables saved as an HTML file for Word | Yes | Yes |
+| Size of data file, runs | No limit | No limit |
+
+All editions are built from one source; the build changes one line. The programs ship as readable source, so the limits are a statement of what was paid for, not a lock. `products/tests/test_editions.py` covers them.
 
 ### P1. The Teardown System (`teardown-system`)
 
@@ -214,6 +226,8 @@ A command-line program with two steps. Before writing, it splits the reviews int
 
 1. `lib/billing/catalogue.ts` holds one entry per product that is on sale. A product is added there only when its release checklist (section 6) is complete. Planned products do not appear in the code or on the site.
 2. Each entry has a key, the copy fields that exist today, and an environment variable naming its store variant. The checkout route already answers 503 when a variant is not set.
+2a. `isPurchasable` is true only when the API key, the store, and the product's variant are all set. Where it is false, `/pricing` shows "Not on sale yet" in place of the buy button and the account page offers nothing to buy (owner's decision, 2026-11-14). Setting the variables is all it takes to open sales.
+2b. `FREE_DOWNLOADS` in the same file lists the free zips. `python products/build.py` copies them into `public/downloads`, and a test fails if a listed file is missing.
 3. Every entry has mode `payment`. The subscription handling left in the webhook, `lib/billing/status.ts`, and the account page is unused; removing it is a separate cleanup and is not required by this plan.
 4. With two paid products and two free downloads, `/pricing` becomes a short list in which the free downloads are shown as fully as the paid ones. Its tests, which today assert a single product and a single button, change with it.
 
@@ -259,8 +273,8 @@ Items 4 and 5 do not apply to free downloads. In their place: the zip is in the 
 | --- | --- | --- |
 | 0 | Sell The Teardown System: checklist items 1, 2, and 5. A test-mode purchase end to end. | Owner's review; store setup |
 | 1 | Send the support message for Manuscript Check. | Nothing; do it during phase 0, since the reply takes time |
-| 2 | Publish the Research Toolkit as a free download. `/pricing` shows paid and free downloads together. | Owner's review of its files |
-| 3 | Publish the free edition of Manuscript Check. | Owner's review; the live run of the reference program; the decision in section 9.4 |
+| 2 | **Done 2026-11-14.** Both free downloads are on `/pricing`. The owner chose to publish before his review of the files and before the reference program's first live run; both remain to be done, and a fault found then is fixed by replacing the file. | |
+| 3 | List the paid Statistical Table Generator once its price is confirmed. | Phase 0; the price |
 | 4 | List the paid Manuscript Check. | The provider's reply |
 
 No dates are given. One person does this work beside the archive itself.
@@ -366,11 +380,16 @@ Also out:
 - Stripe's restricted-businesses list, which the provider's policy incorporates, was not read.
 - The provider's documentation on file delivery, size limits, and licence keys was not read for this pass.
 - No product has been confirmed by the provider. The support message is unsent.
-- The site code was not changed to list any new product or to serve any free download.
+- No paid product other than The Teardown System is listed on the site.
+- The free downloads were published without the owner's review of the files and without a live run of the reference program.
+
+### 9.5 Decided by the owner on 2026-11-14
+
+1. The free edition of Manuscript Check goes on the site before the provider replies about the paid one.
+2. The Research Toolkit stays free, with a limited table program; the complete table program is charged for.
+3. The buy button is hidden until the store product exists.
 
 ### 9.4 Questions only the owner can answer
 
-1. Whether the free edition of Manuscript Check may be published before the provider replies about the paid one. Nothing is sold, so the policy does not forbid it; but its page would describe the product the provider has not yet confirmed. This document assumes it may, with no buy button until the reply.
+1. The price of the full Statistical Table Generator.
 2. Whether the Teardown System guide describes the method as he practises it.
-3. Whether giving the table program, the templates, and the workbook away is intended to be permanent.
-4. Whether to hide the Teardown System's buy button until the store product exists.

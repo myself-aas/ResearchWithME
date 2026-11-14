@@ -1,11 +1,12 @@
 """The free edition's limits, and that the full edition has none of them."""
 import io, os, sys, tempfile, contextlib
 SRC = os.path.join(os.path.dirname(__file__), '..', 'src')
-for folder in ('manuscript-check', 'reference-check', 'response-to-reviewers-check'):
+for folder in ('manuscript-check', 'reference-check', 'response-to-reviewers-check', 'statistical-table-generator'):
     sys.path.insert(0, os.path.join(SRC, folder))
 import manuscript_check as mc
 import reference_check as rc
 import response_check as rs
+import apa_tables as at
 
 
 def quiet(fn, *args):
@@ -14,7 +15,7 @@ def quiet(fn, *args):
 
 
 def test_sources_ship_as_full():
-    assert mc.EDITION == rc.EDITION == rs.EDITION == 'full'
+    assert mc.EDITION == rc.EDITION == rs.EDITION == at.EDITION == 'full'
 
 
 def test_manuscript_free_runs_four_checks():
@@ -63,6 +64,21 @@ def test_response_free_splits_but_does_not_check():
     finally:
         rs.EDITION = 'full'
     assert os.path.exists(os.path.join(folder, 's-tracker.csv')) and not os.path.exists(os.path.join(folder, 'c.md'))
+
+
+def test_tables_free_runs_three_commands():
+    data = os.path.join(SRC, 'statistical-table-generator', 'sample-data.csv')
+    runs = {'describe': ['--vars', 'age'], 'correlate': ['--vars', 'age', 'study_hours'],
+            'ttest': ['--dv', 'post_score', '--group', 'sex'], 'anova': ['--dv', 'post_score', '--group', 'condition'],
+            'chisq': ['--row', 'condition', '--col', 'passed'], 'regress': ['--dv', 'post_score', '--ivs', 'age']}
+    for command, rest in runs.items():
+        assert quiet(at.main, [command, data] + rest) == 0, command
+    at.EDITION = 'free'
+    try:
+        codes = {command: quiet(at.main, [command, data] + rest) for command, rest in runs.items()}
+    finally:
+        at.EDITION = 'full'
+    assert codes == {'describe': 0, 'correlate': 0, 'ttest': 0, 'anova': 2, 'chisq': 2, 'regress': 2}
 
 
 if __name__ == '__main__':

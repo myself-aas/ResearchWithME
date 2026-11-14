@@ -29,6 +29,8 @@ import sys
 import statdist as sd
 
 VERSION = '1.0.0'
+EDITION = 'full'          # the build sets 'free' in the free edition
+FREE_COMMANDS = ('describe', 'correlate', 'ttest')
 
 
 # ---------------------------------------------------------------- data access
@@ -603,6 +605,10 @@ COMMANDS = {'describe': describe, 'correlate': correlate, 'ttest': ttest, 'anova
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
+    if EDITION == 'free' and args.command not in FREE_COMMANDS:
+        print(f'The free edition runs {", ".join(FREE_COMMANDS)}. The {args.command} command is in the full edition.',
+              file=sys.stderr)
+        return 2
     try:
         rows = read_csv(args.csv)
         tables, method = COMMANDS[args.command](rows, args)
@@ -614,7 +620,7 @@ def main(argv=None):
         return 2
     for table in tables:
         print(table.markdown())
-    print(f'Method: {method} (apa_tables.py {VERSION})')
+    print(f'Method: {method} (apa_tables.py {VERSION}, {EDITION} edition)')
     if args.out:
         write_html(args.out, tables, method, args.csv)
         print(f'\nSaved {args.out}. Open it in Word, or copy the tables from a browser.')

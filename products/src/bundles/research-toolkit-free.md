@@ -8,11 +8,11 @@ ResearchWithMe, version 1.0
 
 | Folder | What it is | What you need | Guide |
 | --- | --- | --- | --- |
-| tables | A program that turns a CSV file into APA-style statistical tables | Python 3.8 or later | Statistical-Table-Generator.pdf |
+| tables | The free edition of a program that turns a CSV file into APA-style statistical tables: descriptive statistics, correlation matrices, and t tests | Python 3.8 or later | Statistical-Table-Generator.pdf |
 | formatting | Four Word templates and a pre-upload checklist | Word, or an editor that opens .docx | Manuscript-Formatting-Kit.pdf |
 | journals | A workbook for comparing candidate journals on your own criteria | Excel, or an editor that opens .xlsx | Journal-Shortlist-Workbook.pdf |
 
-Everything here is free and complete. There is no account, no sign-up, and no limit on use. You may share this download, unchanged, with anyone.
+Everything here is free. There is no account, no sign-up, and no limit on use. The templates and the workbook are complete. The table program is a free edition: ANOVA, chi-square, and regression tables are in the full edition, which is sold separately. You may share this download, unchanged, with anyone.
 
 ## Where to start
 

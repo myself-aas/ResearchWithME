@@ -37,6 +37,7 @@ free, and fold products together. The suggestions that stood here before were re
 | The Teardown System | $19 | None found; price unchanged | |
 | Manuscript Check | $5 once | Recite $6 for 3 days; Penelope.ai $9.50 a report | Manuscript Check, Reference Check, Response-to-Reviewers Check |
 | Manuscript Check, free edition | Free | Recite's free tier is 2,500 words and 50 references, two uploads a day | The same programs: four manuscript checks on the whole file, 60 references a run, no limit on runs, the comment splitter |
+| Statistical Table Generator, full edition | $5, to be confirmed | The alternatives that do more are free; the owner decided the complete version is charged for | |
 | Research Toolkit | Free | JASP, jamovi, and journal finders are free; single templates from $1.50 | Statistical Table Generator, Manuscript Formatting Kit, Journal Shortlist Workbook |
 
 Do not put "lowest price" or any competitor's figure on the site. These were seen on one day in secondary sources.

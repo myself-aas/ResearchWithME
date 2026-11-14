@@ -259,9 +259,16 @@ with a `variant` relationship is what Lemon Squeezy documents, and it is what
 ## Product files
 
 The files for every download are built from `products/` (`python products/build.py`) into `products/downloads/`.
-Two are paid and are uploaded to their product in the Lemon Squeezy store: The Teardown System ($19) and
-Manuscript Check ($5). Two are free and are to be served by the site as static files, with no checkout:
-the free edition of Manuscript Check and the Research Toolkit. Only The Teardown System is in the catalogue
-today. Nothing else may be listed until the release checklist in
-`docs/superpowers/specs/2026-11-14-product-catalogue-prd.md` (section 6) is done for it, and the paid Manuscript
-Check waits for Lemon Squeezy's written reply.
+
+- Paid, uploaded to their product in the Lemon Squeezy store: The Teardown System ($19), Manuscript Check ($5),
+  and the full Statistical Table Generator ($5, to be confirmed). Only The Teardown System is in the catalogue.
+  Manuscript Check waits for Lemon Squeezy's written reply.
+- Free, served by the site from `public/downloads` and listed on `/pricing` with no checkout and no account:
+  the free edition of Manuscript Check and the Research Toolkit.
+
+## When nothing can be bought
+
+`isPurchasable` (`lib/billing/catalogue.ts`) is true only when `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_STORE_ID`
+and the product's variant variable are set. Until then `/pricing` shows "Not on sale yet" in place of the buy
+button and the account page offers nothing to buy. To open sales: create the product in the store, attach its
+zip, and set the three variables.

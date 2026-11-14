@@ -4,7 +4,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
-import { BILLING_PRODUCTS } from '@/lib/billing/catalogue';
+import { BILLING_PRODUCTS, isPurchasable } from '@/lib/billing/catalogue';
 import { getBillingStore, type Entitlement } from '@/lib/billing/store';
 import { hasPremiumAccess, subscriptionStatusLabel, type SubscriptionStatus } from '@/lib/billing/status';
 import { getDashboardUser } from '@/lib/cms/auth';
@@ -89,7 +89,8 @@ export default async function AccountPage() {
   const periodEnd = formatDate(entitlement.currentPeriodEnd);
   // The co-pilot is no longer sold, so nothing on sale can already be owned as
   // a subscription. Existing members still see their plan in the facts above.
-  const onSale = BILLING_PRODUCTS;
+  // Only what this deployment can actually sell; see `isPurchasable`.
+  const onSale = BILLING_PRODUCTS.filter((product) => isPurchasable(product.key));
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -158,6 +159,11 @@ export default async function AccountPage() {
           <h2 id="buy-heading" className="font-serif text-xl font-bold text-ink">
             {hasPurchases ? 'Also available' : 'Available'}
           </h2>
+          {onSale.length === 0 ? (
+            <p className="mt-2 font-serif leading-relaxed text-ink-secondary">
+              Nothing is on sale yet. The checkout is being set up.
+            </p>
+          ) : null}
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {onSale.map((product) => (
               <li key={product.key} className="rounded-sm border border-line bg-surface p-5">

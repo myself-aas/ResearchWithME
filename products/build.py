@@ -745,7 +745,9 @@ DOWNLOADS = {
     'manuscript-check-free': {'paid': False, 'edition': 'free',
                               'start': ('manuscript-check-free.md', 'Manuscript Check, free edition'),
                               'folders': CHECK_FOLDERS},
-    'research-toolkit-free': {'paid': False, 'edition': 'full', 'start': ('research-toolkit-free.md', 'Research Toolkit'),
+    'statistical-table-generator': {'paid': True, 'edition': 'full', 'start': None,
+                                    'folders': [('', 'statistical-table-generator')]},
+    'research-toolkit-free': {'paid': False, 'edition': 'free', 'start': ('research-toolkit-free.md', 'Research Toolkit'),
                               'folders': [('tables', 'statistical-table-generator'), ('formatting', 'manuscript-formatter'),
                                           ('journals', 'journal-matchmaker')]},
 }
@@ -827,6 +829,13 @@ def main():
         print(f'{os.path.relpath(target, HERE)}  ({os.path.getsize(target) / 1024:.0f} kB)  {"paid" if spec["paid"] else "free"}')
         for name in names:
             print(f'    {name}')
+    # The site serves the free downloads as static files.
+    public = os.path.join(HERE, '..', 'public', 'downloads')
+    shutil.rmtree(public, ignore_errors=True)
+    os.makedirs(public)
+    for slug, spec in DOWNLOADS.items():
+        if not spec['paid']:
+            shutil.copy(os.path.join(OUT, f'{slug}-{VERSION}.zip'), public)
     if '--keep' not in sys.argv:
         shutil.rmtree(STAGE, ignore_errors=True)
 

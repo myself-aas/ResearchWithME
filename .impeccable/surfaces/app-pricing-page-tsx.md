@@ -34,3 +34,8 @@ No badges, no "most popular" label, no comparison table, no strikethrough "was" 
 
 ## Checks
 Signed-out state (the action is a link to sign in, not a button that fails), signed-in state (the action is a checkout button), a failed checkout (an inline alert on the card, page still usable), a 320px reflow, and a keyboard-only purchase from the first card to the overlay opening.
+
+## Added 2026-11-14
+
+- A product whose checkout is not configured shows a plain "Not on sale yet" note in place of the buy button, for signed-in and signed-out readers alike. No disabled button, no waiting list.
+- A "Free downloads" section follows the product. Each card states what is in the file, what the reader needs to run it, and its limit, then one download link. No account, no email capture. The link is a secondary-weight control so the page still has one primary action.

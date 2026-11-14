@@ -122,6 +122,86 @@ export function variantIdFor(
 }
 
 /**
+ * Whether this deployment can actually sell a product: the API key, the store
+ * and the product's variant are all set. The store had no products when this
+ * was written, so the honest default is "not yet": surfaces that sell show a
+ * note in place of a buy button until this is true, and never offer a
+ * checkout that would fail. Server-side only; it reads secrets' presence.
+ */
+export function isPurchasable(
+  key: BillingProductKey,
+  env: Record<string, string | undefined> = process.env,
+): boolean {
+  const set = (name: string) => (env[name] ?? '').trim() !== '';
+  return set('LEMONSQUEEZY_API_KEY') && set('LEMONSQUEEZY_STORE_ID') && variantIdFor(key, env) !== null;
+}
+
+export interface FreeDownload {
+  key: string;
+  name: string;
+  outcome: string;
+  summary: string;
+  includes: readonly string[];
+  /** What the reader must have to use it. Said before the link, not after. */
+  needs: string;
+  caveat: string;
+  /** A static file under `public/downloads`, built by `products/build.py`. */
+  href: string;
+  fileNote: string;
+}
+
+/**
+ * Downloads that cost nothing. They are static files served by this site; they
+ * never pass through the payment provider, need no account, and ask for no
+ * email address. The files are built by `python products/build.py`, which
+ * copies the free zips into `public/downloads`.
+ *
+ * Copy rules: these are software and templates. Nothing here is called a
+ * review, an edit, or a service, and nothing promises a result with a journal.
+ * A fuller, paid edition is mentioned only as "not on sale yet" until it has a
+ * product in the store.
+ */
+export const FREE_DOWNLOADS: readonly FreeDownload[] = [
+  {
+    key: 'manuscript-check-free',
+    name: 'Manuscript Check, free edition',
+    outcome: 'Catch the mechanical slips in a manuscript before a journal does.',
+    summary:
+      'Three small programs that run on your own computer. They apply fixed rules to a manuscript you wrote, look up your references in public indexes, and number the comments in a set of journal reports. They write nothing for you.',
+    includes: [
+      'Four checks on a manuscript of any length: sections and declarations, citations against the reference list, figures and tables, abbreviations',
+      'The first 60 references in a run looked up in Crossref and OpenAlex, with retraction flags',
+      'Every comment in the journal reports numbered, with a tracking sheet and an empty response letter',
+      'A Word letter template, a tracking spreadsheet, and a finder for the official reporting checklists',
+      'No limit on how often you run it',
+    ],
+    needs: 'Python 3.8 or later and a terminal. Only the reference lookup uses the internet.',
+    caveat:
+      'It is software applying fixed rules, not an assessment of your science, and some findings will be false alarms. A fuller edition with more checks is planned and is not on sale yet.',
+    href: '/downloads/manuscript-check-free-1.0.0.zip',
+    fileNote: 'Zip file, about 100 kB',
+  },
+  {
+    key: 'research-toolkit-free',
+    name: 'Research Toolkit',
+    outcome: 'Shorten the chores around a manuscript: tables, formatting, choosing a journal.',
+    summary:
+      'A table program for your own data file, Word templates for a submission, and a workbook for comparing candidate journals on criteria you set.',
+    includes: [
+      'APA-style tables from a CSV file: descriptive statistics, correlation matrices, and t tests',
+      'Four Word templates: APA 7 manuscript, general journal submission, title page, cover letter',
+      'A formatting checklist to run before you upload',
+      'A journal shortlist workbook, with a guide to building the list from open sources',
+    ],
+    needs: 'Word and Excel, or editors that open their files. The table program needs Python 3.8 or later and a terminal.',
+    caveat:
+      'The table program is a free edition: ANOVA, chi-square, and regression tables are in a fuller edition that is not on sale yet. The workbook holds no journal data and recommends no journal.',
+    href: '/downloads/research-toolkit-free-1.0.0.zip',
+    fileNote: 'Zip file, about 190 kB',
+  },
+];
+
+/**
  * `Object.hasOwn`, not `in`: `in` walks the prototype chain, so `'toString'`,
  * `'constructor'` and `'__proto__'` all passed this guard and reached the
  * checkout path. They failed later (no variant id, so a 503) but a guard that
