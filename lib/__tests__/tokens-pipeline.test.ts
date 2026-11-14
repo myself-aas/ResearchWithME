@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, cpSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
@@ -143,5 +143,31 @@ describe('generated CSS consumer contract', () => {
     });
     expect(result.status, result.stderr).toBe(0);
     expect(result.stdout).toContain('0 unresolved');
+  });
+});
+
+
+describe('component CSS semantic aliases', () => {
+  it('component_aliases_follow_semantics_not_light_literals', () => {
+    const css = readFileSync(join(process.cwd(), 'tokens/generated/tokens.css'), 'utf8');
+    expect(css).toContain('--reme-component-source-card-background: var(--reme-surface)');
+    expect(css).toContain('--reme-component-button-primary-radius: var(--reme-radius-md)');
+    expect(tokens.component.sourceCard.background).toBe('#F3F1EC');
+    expect(tokens.component.button.primary.radius).toBe('0.5rem');
+  });
+
+  it('rejects unknown references instead of emitting broken browser aliases', () => {
+    const root = mkdtempSync(join(tmpdir(), 'rwm-token-build-'));
+    try {
+      cpSync(join(process.cwd(), 'tokens/src'), join(root, 'tokens/src'), { recursive: true });
+      mkdirSync(join(root, 'tokens/scripts'), { recursive: true });
+      cpSync(join(process.cwd(), 'tokens/scripts/build.mjs'), join(root, 'tokens/scripts/build.mjs'));
+      writeFileSync(join(root, 'tokens/src/component.json'), JSON.stringify({ invalid: '{semantic.light.does-not-exist}' }));
+      const result = spawnSync(process.execPath, [join(root, 'tokens/scripts/build.mjs')], { encoding: 'utf8' });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain('Unresolved token reference: {semantic.light.does-not-exist}');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
