@@ -81,7 +81,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P15 | Manuscript Check | $8 per report **[Assumption: no price given]** | Metered tool | Allowed, if fully automated and never called peer review | Planned |
 | P14 | Weekly Research Digest | Free | Not sold | Not applicable | Not built: no email is sent today |
 
-**Removed on 2026-11-14 as prohibited by the payment provider**
+**Removed on 2026-11-14: prohibited by the payment provider, or withdrawn by the owner as too close to its rules**
 
 | ID | Product | Prohibited category |
 | --- | --- | --- |
