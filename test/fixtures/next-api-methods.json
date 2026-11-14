@@ -1,4 +1,7 @@
 [
+  { "path": "/api/account/api-keys", "method": "GET" },
+  { "path": "/api/account/api-keys", "method": "POST" },
+  { "path": "/api/account/api-keys/{keyId}", "method": "DELETE" },
   { "path": "/api/articles", "method": "GET" },
   { "path": "/api/articles/{id}", "method": "GET" },
   { "path": "/api/articles/{id}", "method": "PATCH" },
