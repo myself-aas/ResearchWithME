@@ -6,6 +6,12 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Design documents for a proposed Assistant API (nothing is built or deployed
+  yet): the spec with a capability map and an assessment of whether the API can
+  be charged for (`docs/superpowers/specs/2026-11-14-assistant-api-spec.md`),
+  the contract, diagrams and guides (`docs/assistant-api.md`), ADR-001
+  (`docs/decisions/`), and the implementation plan
+  (`docs/superpowers/plans/2026-11-14-assistant-api.md`).
 - Three overview dashboards, one per audience, designed with the
   `dashboard-designer` skill: `/dashboard/desk` (editors: applications
   awaiting a decision, stalled drafts, comments, publishing trend, coverage by
