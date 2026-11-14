@@ -1,4 +1,4 @@
-# PRD: The ResearchWithMe product catalogue — two live products and four planned tools
+# PRD: The ResearchWithMe product catalogue — two live products and six planned tools
 
 | | |
 | --- | --- |
@@ -6,7 +6,7 @@
 | Date | 2026-11-14 |
 | Inputs | The live billing integration and its operator notes; the product marketing context; the financial integration blueprint; "Missing Products and Services Inventory" (owner, 2026-11-14). |
 | Method | Synthesis only, no interview. Every assumption made in place of an answer is marked **[Assumption]** and collected in Further Notes §3. |
-| Revision | 2026-11-14, second pass. Five offerings were removed because Lemon Squeezy's published policy prohibits them: Manuscript Editing (withdrawn from the live site the same day), The Soundboard, The Architecture Audit, Statistical Audit, and Digest Sponsorship. Every remaining product was checked against that policy; the result is Implementation Decisions §2. Third pass, same day: an automated Manuscript Check (P15) was added at the owner's request as the policy-compliant form of a "review" product; it is not on the live site. A Language Polish tool (P16) was added and then removed by the owner the same day. Fourth pass, same day: the owner removed the three products that needed the provider's confirmation, Pre-Submission Screening (P9), Paper Club (P11), and the Grant and Fellowship Database (P12). Every product left is one the published policy allows. |
+| Revision | 2026-11-14, second pass. Five offerings were removed because Lemon Squeezy's published policy prohibits them: Manuscript Editing (withdrawn from the live site the same day), The Soundboard, The Architecture Audit, Statistical Audit, and Digest Sponsorship. Every remaining product was checked against that policy; the result is Implementation Decisions §2. Third pass, same day: an automated Manuscript Check (P15) was added at the owner's request as the policy-compliant form of a "review" product; it is not on the live site. A Language Polish tool (P16) was added and then removed by the owner the same day. Fourth pass, same day: the owner removed the three products that needed the provider's confirmation, Pre-Submission Screening (P9), Paper Club (P11), and the Grant and Fellowship Database (P12). Every product left is one the published policy allows. Fifth pass, same day: after a look at two public skill repositories for ideas, the owner added Reference Check (P17) and Response-to-Reviewers Check (P18), and two checks (claim–evidence and paragraph flow) were folded into Manuscript Check. Nothing was copied from either repository (§2, decision on third-party material). |
 
 ---
 
@@ -45,7 +45,7 @@ One catalogue of digital goods, three ways to deliver, and a record of every del
 
 1. **A catalogue organised by what they are trying to do**:
    - *Learn the method* — The Teardown System.
-   - *Tools for your manuscript* — Manuscript Formatter, Journal Matchmaker, Statistical Table Generator, Manuscript Check.
+   - *Tools for your manuscript* — Manuscript Formatter, Journal Matchmaker, Statistical Table Generator, Manuscript Check, Reference Check, Response-to-Reviewers Check.
    - *Membership* — Research Co-Pilot.
 2. **Every purchase turns into something usable within a minute**: a download, an active membership with what it unlocks listed, or a tool credit ready to spend.
 3. **An "Orders" area in the account** showing each tool run and its result, each membership and how to manage it, and credit balances.
@@ -62,7 +62,7 @@ One catalogue of digital goods, three ways to deliver, and a record of every del
    | --- | --- | --- |
    | Download | A file, delivered by the payment provider | Teardown System |
    | Membership | A time-bounded entitlement | Co-Pilot |
-   | Metered tool | Credits, each spent on one automated run | Formatter, Matchmaker, Table Generator, Manuscript Check |
+   | Metered tool | Credits, each spent on one automated run | Formatter, Matchmaker, Table Generator, Manuscript Check, Reference Check, Response-to-Reviewers Check |
 
 3. **One payment rail**, the existing one, selling only what its policy allows.
 4. **A compliance gate**: no product is enabled until it has a recorded policy check.
@@ -79,6 +79,8 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P8 | Journal Matchmaker | $10 per report | Metered tool | Allowed, open data only | Planned |
 | P10 | Statistical Table Generator | $12 per dataset **[Assumption: no price given]** | Metered tool | Allowed | Planned |
 | P15 | Manuscript Check | $8 per report **[Assumption: no price given]** | Metered tool | Allowed, if fully automated and never called peer review | Planned |
+| P17 | Reference Check | $6 per reference list **[Assumption: no price given]** | Metered tool | Allowed, open indexes only | Planned |
+| P18 | Response-to-Reviewers Check | $8 per report **[Assumption: no price given]** | Metered tool | Allowed, if it audits and never drafts | Planned |
 | P14 | Weekly Research Digest | Free | Not sold | Not applicable | Not built: no email is sent today |
 
 **Removed on 2026-11-14: prohibited by the payment provider, or withdrawn by the owner as too close to its rules**
@@ -102,7 +104,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 ### A. Discovering and choosing
 
 1. As a reader, I want the products page grouped by what I am trying to do, so that I am not comparing nine unrelated items.
-2. As a reader, I want each group to show at most four products, so that I can decide without scrolling a long list.
+2. As a reader, I want the tools group split by stage (before submission, after reviews), so that I can decide without scanning a long list.
 3. As a reader, I want each product to state its outcome, price, what is included, who it is for, how it is delivered, and its honest limit, so that I can rule it in or out quickly.
 4. As a reader, I want to see what is free before I see any price, so that I know nothing I already use is being taken away.
 5. As a reader, I want a dedicated page per product with the full scope and terms, so that I can link a colleague or a supervisor to exactly one thing.
@@ -239,6 +241,29 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 101. As an author, I want the tool to say what it did not check, so that I do not assume a clean report means a sound paper.
 102. As an author, I want my manuscript deleted after the run, so that unpublished work is not retained.
 103. As the owner, I want no person involved in producing any report, so that the product stays software and never becomes a service.
+104. As an author, I want claims in my abstract and introduction that the results do not support listed, so that I can add evidence or soften the claim.
+105. As an author, I want paragraphs with no clear point, or more than one, flagged in a reverse outline of each section, so that I can fix the flow myself.
+
+### M. P17 — Reference Check
+
+106. As an author, I want every entry in my reference list looked up in open scholarly indexes, so that I know each one exists.
+107. As an author, I want mismatches in title, authors, year, journal, volume, pages, or DOI shown side by side with the indexed record, so that I can correct them.
+108. As an author, I want retracted and withdrawn works flagged, so that I do not cite them unknowingly.
+109. As an author, I want a reference that cannot be found described as "not found in the indexes searched" and never as fake, so that books, theses, and reports are not wrongly accused.
+110. As an author, I want duplicates and missing DOIs listed, so that the list is clean.
+111. As an author, I want to paste a list or upload a manuscript or a reference-manager export, so that I can use whatever I have.
+112. As an author, I want a corrected export I can import into my reference manager, with every correction mine to accept, so that fixing is quick.
+113. As an author, I want the indexes searched and the date of the search printed on the report, so that I can say how the list was checked.
+
+### N. P18 — Response-to-Reviewers Check
+
+114. As an author revising a paper, I want to upload the reviewers' comments and my response letter, so that I can check the letter before I send it.
+115. As an author, I want every reviewer comment split out and numbered, so that I can see the full list of what was asked.
+116. As an author, I want each comment marked answered, partly answered, or not answered, with the passage of my letter it was matched to, so that I can verify the match.
+117. As an author, I want responses that promise a change checked against my revised manuscript when I upload it, so that I do not claim an edit I did not make.
+118. As an author, I want responses with no stated location (page, section, or line) flagged, so that the editor can find each change.
+119. As an author, I want the tool never to write or reword my response, so that the letter stays mine.
+120. As an author, I want the reviews and my letter deleted after the run, so that confidential review material is not retained.
 
 ## Implementation Decisions
 
@@ -276,6 +301,8 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P8 | Journal Matchmaker | **Allowed** | Software. Condition: built only on openly licensed data; no proprietary impact metric. |
 | P10 | Statistical Table Generator | **Allowed** | Software computing on the buyer's own data. |
 | P15 | Manuscript Check | **Allowed** | Software that returns a report on the buyer's own file. Two conditions. It is fulfilled entirely automatically: if a person reads or annotates any manuscript, it becomes the service that removed Manuscript Editing. It is never called "peer review", "expert review", or "reviewed by", which would be both untrue and a breach of the site's own copy rules. Reporting-guideline checklists are used under their open licences with attribution. |
+| P17 | Reference Check | **Allowed** | Software that reports on the buyer's own reference list. Conditions: only openly licensed indexes are queried (the licence clause); the report is the site's own and not a third party's result passed through; it verifies references and never generates or suggests new ones. |
+| P18 | Response-to-Reviewers Check | **Allowed** | Software that audits a document the buyer wrote. Conditions: it never drafts, completes, or rewords the response (the essay-mill clause); fully automated; never described as review of the paper. |
 | P14 | Weekly Research Digest | **Not applicable** | Free; nothing is sold. It must carry no paid placement. |
 
 **Decisions**
@@ -288,6 +315,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 **Owner actions outside the code.** Archive the Manuscript Editing product in the Lemon Squeezy dashboard and delete its variant variable from the deployment. Anyone who has already paid for an edit should be served or refunded; the removal stops new sales only.
 
 **Additional risk to record.** Third-party reporting in 2026 states that Stripe, which owns Lemon Squeezy, is steering merchant-of-record sellers toward a successor product. The data-driven catalogue is the seam if the provider changes. This PRD does not plan that migration.
+5. No third-party prompts, scripts, templates, or text go into a paid product unless their licence permits commercial use and the grant clearly covers the material. Two repositories were read for ideas on 2026-11-14: `Imbad0202/academic-research-skills` is CC BY-NC 4.0 and its positioning file prohibits commercial hosted services and resale; `Master-cai/Research-Paper-Writing-Skills` is MIT but is built on notes whose original repository carries no licence. Neither is used. P17, P18, and the added Manuscript Check rules are specified and built independently.
 
 ### 3. Catalogue model
 
@@ -355,7 +383,7 @@ The dispatcher is idempotent on the payment event identifier, extending the exis
 
 - A new private storage bucket, separate from the public image bucket. Paths are namespaced by user; policies allow the owner to read and to write within size and type limits, and nobody to list across users. The editor has no standing access to customer files.
 - Uploads go directly from the browser to storage through short-lived signed upload URLs issued by a server route that checks entitlement first. The application server never proxies file bytes.
-- Accepted types and ceilings **[Assumption]**: Word documents up to 20 MB (P7), CSV up to 10 MB or 200,000 rows (P10), Word or PDF up to 20 MB and 15,000 words (P15). Type is verified by content signature, not by extension.
+- Accepted types and ceilings **[Assumption]**: Word documents up to 20 MB (P7), CSV up to 10 MB or 200,000 rows (P10), Word or PDF up to 20 MB and 15,000 words (P15), a reference list of up to 150 entries as pasted text, a manuscript, or a BibTeX or RIS export (P17), up to three Word or PDF files of 20 MB each (P18). Type is verified by content signature, not by extension.
 - Retention **[Assumption]**: tool inputs 7 days, tool outputs 30 days. A scheduled job deletes expired objects and nulls their paths; deletion is logged.
 - Third-party processors are named on the product page and in the privacy policy, per tool.
 - No customer content is sent to any provider that trains on API inputs. This is a contractual check performed during vendor selection, recorded per vendor.
@@ -410,12 +438,34 @@ A scenario library and templates exist but no route sends mail. This PRD wires i
 
 **P15 — Manuscript Check.**
 - Price $8 per report **[Assumption]**. One run, one report, no human step anywhere in the pipeline.
-- Checks in the first release, each a named rule with an identifier: section presence and order by article type; reporting-guideline items for the declared study design (CONSORT, PRISMA, STROBE; more added as fixtures exist); citation and reference-list cross-check; statistical reporting completeness and recomputed consistency of test statistic, degrees of freedom, and p-value; abstract-to-body agreement of numbers; figure and table call-outs; declarations present (ethics, funding, conflicts, data availability).
-- Deterministic rules do the work wherever they can (references, statistics recomputation, call-outs). A language model is used only to locate where a guideline item is reported, and every such finding must quote the passage it relies on; a finding without a verifiable quotation is dropped, not shown.
-- Each finding carries a rule identifier, severity, the location in the text, and the source of the rule. Findings are "reported", "not found", or "could not check"; the tool never scores the paper and never predicts acceptance.
+- Checks in the first release, each a named rule with an identifier: section presence and order by article type; reporting-guideline items for the declared study design (CONSORT, PRISMA, STROBE; more added as fixtures exist); citation and reference-list cross-check; statistical reporting completeness and recomputed consistency of test statistic, degrees of freedom, and p-value; abstract-to-body agreement of numbers; claim–evidence alignment (each claim in the abstract and introduction is matched to the result that supports it, or listed as unsupported); paragraph flow (a reverse outline of each section, flagging paragraphs with no identifiable point or more than one); figure and table call-outs; declarations present (ethics, funding, conflicts, data availability).
+- Deterministic rules do the work wherever they can (references, statistics recomputation, call-outs). A language model is used only to locate things in the text (where a guideline item is reported, which result supports a claim, what a paragraph's point is), and every such finding must quote the passage it relies on; a finding without a verifiable quotation is dropped, not shown.
+- Each finding carries a rule identifier, severity, the location in the text, and the source of the rule. Findings are "reported", "not found", or "could not check"; the tool never scores the paper and never predicts acceptance. Claim–evidence and flow findings are worded as questions for the author ("no supporting result was found for this claim") and carry no suggested rewrite.
 - The report opens with a fixed statement: produced by software, not peer review, not a judgement of scientific merit, followed by a list of what was not checked.
 - Output: an on-screen report and a PDF. The manuscript is deleted after the run; the report follows the standard retention period.
 - Copy rule: "peer review", "reviewer", "expert", and "reviewed by" are banned from this product's page, emails, and metadata, with one exception: the fixed disclaimer that the report is not peer review. Enforced by the truthful-copy test.
+
+**P17 — Reference Check.**
+- Price $6 per reference list **[Assumption]**, up to 150 entries.
+- Input: pasted references, a manuscript (the reference section is extracted), or a BibTeX or RIS export.
+- Each entry is parsed into fields and looked up by DOI where present, otherwise by title and first author, in open indexes: Crossref and OpenAlex in the first release. Matching is deterministic (normalised title similarity plus author and year agreement) with fixed thresholds; no language model decides whether a work exists.
+- Per-entry result, one of: verified; verified with differences (each differing field shown beside the indexed value); retracted or withdrawn (from the indexes' retraction data); not found in the indexes searched; could not parse.
+- "Not found" is never worded as fabricated or fake. The report says which indexes were searched and that books, theses, reports, and works in some languages are often absent from them.
+- Also reported: duplicates, missing DOIs that the index can supply, and inconsistent journal-name forms.
+- Output: on-screen report, PDF, and a corrected BibTeX and RIS export in which every correction is listed and nothing is changed without appearing in the list. Indexes searched and the search date are printed on the report.
+- The tool never proposes additional references and never checks whether a cited work supports the sentence citing it; that is stated on the page.
+- Index rate limits are respected through a polite, identified client with caching; lookups run in the tool-run queue. Unit cost is near zero, so it is also the natural first use of a Co-Pilot credit.
+- Division of labour: Manuscript Check tests whether citations and the list agree with each other; Reference Check tests whether the list agrees with the world. Each page links to the other.
+
+**P18 — Response-to-Reviewers Check.**
+- Price $8 per report **[Assumption]**.
+- Input: the decision letter or reviewer comments, the author's response letter, and optionally the revised manuscript.
+- The comments are segmented into numbered, atomic requests per reviewer. Each is matched to the passage of the response that addresses it. A language model does the segmentation and matching; every match must quote both passages, and a match whose quotations cannot be found in the documents is dropped.
+- Per-comment status: answered; partly answered (the unaddressed part is quoted); not answered. Flags: no location given for a change; a change promised but not found at the stated place in the revised manuscript (only when it was uploaded); a single response covering several distinct requests.
+- It audits only. It has no mode that drafts, completes, rewords, or suggests a response, and it gives no opinion on whether the reviewer or the author is right.
+- Output: a coverage table on screen and as a PDF.
+- Reviewer reports are confidential. Inputs are deleted when the run ends, not at the standard retention period; the model provider must contractually not train on or retain inputs (§6); the page says plainly that the buyer is responsible for the journal's confidentiality terms and names the processor.
+- Copy rule: never described as peer review or as review of the paper; "write", "draft", and "generate" are banned from this product's page in relation to the response.
 
 **P14 — Weekly Research Digest.**
 - Free, and carries no advertising or paid placement of any kind.
@@ -492,7 +542,9 @@ Each phase ends with something shippable. Later phases do not start until the ex
 3. P8 Journal Matchmaker (no file handling; lowest risk; validates the platform).
 4. P10 Statistical Table Generator (deterministic; validates file handling).
 5. P7 Manuscript Formatter (hardest; ships with a deliberately short style list).
-6. P15 Manuscript Check (reuses the Formatter's document parsing; deterministic rules first, guideline location second).
+6. P17 Reference Check (deterministic lookups; no model; cheap to run).
+7. P15 Manuscript Check (reuses the Formatter's document parsing; deterministic rules first, guideline location second).
+8. P18 Response-to-Reviewers Check (reuses Manuscript Check's quote-verification step).
 *Exit per tool:* accuracy bar met on its fixture set (Testing Decisions §4), cost per run recorded, failure returns the credit.
 
 **Phase 4 — Digest (P14).**
@@ -558,7 +610,9 @@ Automated tools are tested against fixed fixture sets with explicit pass bars, s
 - **Formatter** — a corpus of documents per style profile. Bars: extracted body text identical before and after (hard failure otherwise); every profile rule either applied or reported; no silent partial result.
 - **Matchmaker** — abstracts of published articles with the publishing journal known. Bars: the true journal or a same-field journal appears in the five for an agreed proportion of cases **[Assumption: 70%]**; every displayed figure matches the snapshot; no journal on the exclusion list is ever returned.
 - **Table Generator** — public datasets with reference results from R. Bars: statistics agree to the reported precision; the interpretation contains no number absent from the result object.
-- **Manuscript Check** — manuscripts with known, seeded defects (a missing section, an uncited reference, an inconsistent p-value, an unreported guideline item) and clean controls. Bars: every seeded deterministic defect found; no finding shown without a quotation that exists in the text; false findings on the clean controls under an agreed rate **[Assumption: 5% of findings]**; the not-peer-review statement present on every report.
+- **Manuscript Check** — manuscripts with known, seeded defects (a missing section, an uncited reference, an inconsistent p-value, an unreported guideline item) and clean controls. Bars: every seeded deterministic defect found; no finding shown without a quotation that exists in the text; false findings on the clean controls under an agreed rate **[Assumption: 5% of findings]**; the not-peer-review statement present on every report. Claim–evidence and flow: seeded unsupported claims and seeded pointless paragraphs are found at an agreed rate **[Assumption: 80%]**, and no such finding contains a suggested rewrite.
+- **Reference Check** — reference lists with seeded defects (an invented entry, a wrong year, a wrong DOI, a retracted article, a duplicate) and genuine entries including books and non-English works, run against recorded index responses. Bars: every seeded defect classified correctly; no genuine indexed entry reported as not found; no report contains "fake" or "fabricated"; the corrected export differs from the input only by listed corrections.
+- **Response-to-Reviewers Check** — review and response pairs with seeded omissions, partial answers, and a promised change absent from the manuscript. Bars: every seeded omission found; every match quotes text present in both documents; answered comments wrongly marked not answered under an agreed rate **[Assumption: 5%]**; the output contains no drafted response text.
 
 ### 5. Prior art in this codebase
 
@@ -584,6 +638,9 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 - A second payment route (invoices, another processor) to sell what the provider prohibits. If the owner later wants to offer services, that is a separate business decision with its own spec, kept entirely apart from this store.
 - A "humanizer": any tool that rewrites or polishes manuscript text, including one that makes it read as human-written or lowers an AI-detection score. Language Polish (P16) was removed on 2026-11-14.
 - Similarity or AI-detection scanning, a paid community or live sessions, and a grant, fellowship, or funding database. All three were removed on 2026-11-14.
+- Suggesting or generating references, and judging whether a cited work supports the claim citing it.
+- Drafting or rewording a response to reviewers.
+- Using code, prompts, or text from the two repositories named in Implementation Decisions §2.
 - Human review of manuscripts under any name. Manuscript Check (P15) is software only.
 - Donations, tips, "support us" tiers, and pay-what-you-want pricing.
 - Job or vacancy listings.
@@ -617,11 +674,13 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 1. **The Co-Pilot delivers nothing today.** It is live, it charges monthly, and fulfilment is a promised email. That is poor for the member and close to the provider's donation clause. Phase 2 fixes it; pausing the product until then is the safer course.
 2. **The published list is not the whole rule.** It also defers to the provider's payment partners' restrictions and to the provider's own judgement in review. "Allowed" in §2 means "fits the published examples", not a guarantee.
 3. **Manuscript Check false confidence.** A clean report may be read as approval. The fixed opening statement and the "not checked" list are the mitigation.
-4. **Formatter difficulty.** "Any journal" is not achievable in a first release. A short, honest style list is the mitigation.
-5. **Data licensing.** The proprietary impact metric cannot be shown. Open-access directory terms should be read before caching its data at scale.
-6. **Platform limits.** Document processing may not fit the edge runtime; the container fallback is the mitigation and a prototype decides.
-7. **Revenue concentration.** The catalogue is now two live products and four low-priced tools, with one membership. The catalogue now depends on volume, which the tools must earn.
-8. **Second deployment target drift.** It already lacks the pricing route. Decide its future in Phase 1.
+4. **Reference Check false alarms.** Open indexes miss books, theses, and much non-English work; "not found" must never read as an accusation. The fixed wording and the genuine-entry fixtures are the mitigation.
+5. **Confidential review material.** Reviewer reports uploaded to the Response-to-Reviewers Check are confidential under most journals' terms. Immediate deletion, a no-retention processor, and plain notice to the buyer are the mitigation; without a processor that meets the bar the product does not ship.
+6. **Formatter difficulty.** "Any journal" is not achievable in a first release. A short, honest style list is the mitigation.
+7. **Data licensing.** The proprietary impact metric cannot be shown. Open-access directory terms should be read before caching its data at scale.
+8. **Platform limits.** Document processing may not fit the edge runtime; the container fallback is the mitigation and a prototype decides.
+9. **Revenue concentration.** The catalogue is now two live products and six low-priced tools, with one membership. The catalogue now depends on volume, which the tools must earn.
+10. **Second deployment target drift.** It already lacks the pricing route. Decide its future in Phase 1.
 
 ### 3. Assumptions made in place of answers
 
@@ -638,6 +697,9 @@ Each is a default chosen so the document is complete. Any of them can change wit
 | A7 | Refund rules: downloads within 14 days if not downloaded; tools refunded automatically on failure; memberships stop at period end | Nothing is stated today; each rule is one the system can enforce |
 | A8 | Manuscript Check is $8 per report, limited to 15,000 words | No price was given; priced below the Matchmaker because it uses little model time |
 | A9 | Manuscript Check's first guidelines are CONSORT, PRISMA, and STROBE | The most widely required; all openly licensed |
+| A10 | Reference Check is $6 per list, up to 150 entries | No price was given; the cheapest tool because it costs almost nothing to run |
+| A11 | Response-to-Reviewers Check is $8 per report | No price was given; matched to Manuscript Check |
+| A12 | Reference Check's first indexes are Crossref and OpenAlex | Open, large, and both carry retraction data |
 
 ### 4. Questions only the owner can answer
 
