@@ -2,8 +2,11 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
+import ApiKeys from '@/components/account/ApiKeys';
 import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
+import { getApiKeyStore, type ApiKeyRecord } from '@/lib/api/key-store';
+import { getLedger, monthlyIncluded } from '@/lib/api/ledger';
 import { BILLING_PRODUCTS, isPurchasable } from '@/lib/billing/catalogue';
 import { getBillingStore, type Entitlement } from '@/lib/billing/store';
 import { hasPremiumAccess, subscriptionStatusLabel, type SubscriptionStatus } from '@/lib/billing/status';
@@ -70,6 +73,26 @@ export default async function AccountPage() {
     if (user) entitlement = await (await getBillingStore()).getEntitlement(user.id);
   } catch (error) {
     console.error('Could not read the account entitlement:', error);
+  }
+
+  // Keys and usage fail independently of billing: a missing migration or an
+  // unreachable ledger leaves the rest of the page intact.
+  const included = monthlyIncluded();
+  let apiKeys: ApiKeyRecord[] = [];
+  let apiKeysAvailable = true;
+  let used: number | null = null;
+  if (user) {
+    try {
+      apiKeys = await getApiKeyStore().list(user.id);
+    } catch (error) {
+      apiKeysAvailable = false;
+      console.error('Could not read API keys:', error instanceof Error ? error.message : error);
+    }
+    try {
+      used = (await getLedger().usage(user.id, included)).requestsUsed;
+    } catch (error) {
+      console.error('Could not read API usage:', error instanceof Error ? error.message : error);
+    }
   }
 
   const status = STATUS_NOTE[entitlement.status] ?? { note: '', alert: false };
@@ -152,6 +175,32 @@ export default async function AccountPage() {
             </p>
           ) : (
             <p className="mt-2 font-serif leading-relaxed text-ink-secondary">No purchases yet.</p>
+          )}
+        </section>
+
+        <section aria-labelledby="api-keys-heading" className="mt-8">
+          <h2 id="api-keys-heading" className="font-serif text-xl font-bold text-ink">
+            API keys
+          </h2>
+          <p className="mt-2 font-serif leading-relaxed text-ink-secondary">
+            A key lets a script or an agent ask the Assistant, which answers only from published reviews. Use is free
+            up to the monthly allowance.{' '}
+            <Link href="/api-docs#assistant-api" className="underline">
+              Read the API reference
+            </Link>
+            .
+          </p>
+          {!user ? (
+            <p className="mt-4 font-serif leading-relaxed text-ink-secondary">
+              Keys belong to an account, and this deployment has no sign-in configured, so none can be created here.
+            </p>
+          ) : apiKeysAvailable ? (
+            <ApiKeys initialKeys={apiKeys} monthlyIncluded={included} used={used} />
+          ) : (
+            <p role="alert" className="mt-4 font-serif leading-relaxed text-destructive">
+              API keys could not be loaded. Reload the page; if this continues, the keys feature may not be set up on
+              this deployment yet.
+            </p>
           )}
         </section>
 
