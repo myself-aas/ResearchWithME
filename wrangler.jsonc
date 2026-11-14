@@ -66,6 +66,11 @@
 		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
 		{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 	],
+	"ratelimits": [
+		// Burst limit for /api/v1 (lib/api/burst.ts). Approximate by design; the
+		// exact monthly count lives in Postgres. namespace_id is account-wide.
+		{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } }
+	],
 	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
 	// pull request. A preview is a branch of the Worker, not the production
 	// instance, so it does not inherit the bindings above; anything it needs has
