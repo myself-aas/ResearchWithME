@@ -1,4 +1,4 @@
-# PRD: The ResearchWithMe product catalogue — two live products and seven planned ones
+# PRD: The ResearchWithMe product catalogue — two live products and four planned tools
 
 | | |
 | --- | --- |
@@ -6,7 +6,7 @@
 | Date | 2026-11-14 |
 | Inputs | The live billing integration and its operator notes; the product marketing context; the financial integration blueprint; "Missing Products and Services Inventory" (owner, 2026-11-14). |
 | Method | Synthesis only, no interview. Every assumption made in place of an answer is marked **[Assumption]** and collected in Further Notes §3. |
-| Revision | 2026-11-14, second pass. Five offerings were removed because Lemon Squeezy's published policy prohibits them: Manuscript Editing (withdrawn from the live site the same day), The Soundboard, The Architecture Audit, Statistical Audit, and Digest Sponsorship. Every remaining product was checked against that policy; the result is Implementation Decisions §2. Third pass, same day: an automated Manuscript Check (P15) was added at the owner's request as the policy-compliant form of a "review" product; it is not on the live site. A Language Polish tool (P16) was added and then removed by the owner the same day. |
+| Revision | 2026-11-14, second pass. Five offerings were removed because Lemon Squeezy's published policy prohibits them: Manuscript Editing (withdrawn from the live site the same day), The Soundboard, The Architecture Audit, Statistical Audit, and Digest Sponsorship. Every remaining product was checked against that policy; the result is Implementation Decisions §2. Third pass, same day: an automated Manuscript Check (P15) was added at the owner's request as the policy-compliant form of a "review" product; it is not on the live site. A Language Polish tool (P16) was added and then removed by the owner the same day. Fourth pass, same day: the owner removed the three products that needed the provider's confirmation, Pre-Submission Screening (P9), Paper Club (P11), and the Grant and Fellowship Database (P12). Every product left is one the published policy allows. |
 
 ---
 
@@ -22,7 +22,7 @@ Across both there is no confirmation email from the site, no stated refund windo
 
 Beyond those two, the buyer has needs the site does not serve at all:
 
-- They have a finished manuscript and face mechanical chores (formatting to a journal's rules, choosing a journal, pre-screening for similarity) that they would pay a few dollars to offload.
+- They have a finished manuscript and face mechanical chores (formatting to a journal's rules, choosing a journal, checking the manuscript is complete, producing statistical tables) that they would pay a few dollars to offload.
 - They have a CSV and need APA-style tables.
 - They want company and structure: reading papers with others, working alongside others.
 - They need funding and cannot find deadlines and criteria in one place.
@@ -45,8 +45,8 @@ One catalogue of digital goods, three ways to deliver, and a record of every del
 
 1. **A catalogue organised by what they are trying to do**:
    - *Learn the method* — The Teardown System.
-   - *Tools for your manuscript* — Manuscript Formatter, Journal Matchmaker, Pre-Submission Screening, Statistical Table Generator.
-   - *Membership* — Research Co-Pilot, Paper Club, Grant and Fellowship Database.
+   - *Tools for your manuscript* — Manuscript Formatter, Journal Matchmaker, Statistical Table Generator, Manuscript Check.
+   - *Membership* — Research Co-Pilot.
 2. **Every purchase turns into something usable within a minute**: a download, an active membership with what it unlocks listed, or a tool credit ready to spend.
 3. **An "Orders" area in the account** showing each tool run and its result, each membership and how to manage it, and credit balances.
 4. **Transactional email** for every state change that matters: purchased, run finished, run failed and credit returned, payment failed, membership ending.
@@ -61,8 +61,8 @@ One catalogue of digital goods, three ways to deliver, and a record of every del
    | Type | What a purchase creates | Products |
    | --- | --- | --- |
    | Download | A file, delivered by the payment provider | Teardown System |
-   | Membership | A time-bounded entitlement | Co-Pilot, Paper Club, Grant Database |
-   | Metered tool | Credits, each spent on one automated run | Formatter, Matchmaker, Pre-Screening, Table Generator |
+   | Membership | A time-bounded entitlement | Co-Pilot |
+   | Metered tool | Credits, each spent on one automated run | Formatter, Matchmaker, Table Generator, Manuscript Check |
 
 3. **One payment rail**, the existing one, selling only what its policy allows.
 4. **A compliance gate**: no product is enabled until it has a recorded policy check.
@@ -77,11 +77,8 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P2 | Research Co-Pilot | $9 / month | Membership | Allowed **only if it delivers a product** | Live; needs a defined entitlement |
 | P7 | Manuscript Formatter | $15 per document | Metered tool | Allowed | Planned |
 | P8 | Journal Matchmaker | $10 per report | Metered tool | Allowed, open data only | Planned |
-| P9 | Pre-Submission Screening | $5 per scan | Metered tool | **Confirm with the provider first** | Planned |
 | P10 | Statistical Table Generator | $12 per dataset **[Assumption: no price given]** | Metered tool | Allowed | Planned |
 | P15 | Manuscript Check | $8 per report **[Assumption: no price given]** | Metered tool | Allowed, if fully automated and never called peer review | Planned |
-| P11 | Paper Club and Co-Working | $15 / month **[Assumption: range was $10–$20]** | Membership | **Confirm with the provider first** | Planned |
-| P12 | Grant and Fellowship Database | $12 / month, included in Paper Club **[Assumption: no price given]** | Membership | **Confirm with the provider first** | Planned |
 | P14 | Weekly Research Digest | Free | Not sold | Not applicable | Not built: no email is sent today |
 
 **Removed on 2026-11-14 as prohibited by the payment provider**
@@ -94,6 +91,9 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P6 | Statistical Audit / Data Review | "Services of any kind … consulting" |
 | P13 | Digest Sponsorship | "Advertising in newsletters" |
 | P16 | Language Polish (planned only) | Removed by the owner; nearest of all to "Homework/Essay mills" |
+| P9 | Pre-Submission Screening (planned only) | Removed by the owner; needed the provider's confirmation (licence and essay-mill clauses) |
+| P11 | Paper Club and Co-Working (planned only) | Removed by the owner; live sessions are arguably a service |
+| P12 | Grant and Fellowship Database (planned only) | Removed by the owner; close to "Job boards" |
 
 ---
 
@@ -146,7 +146,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 34. As a member who stops, I want access to the end of the period I paid for, so that I get what I bought.
 35. As a non-member, I want the assistant to keep working exactly as before, so that the membership never becomes a toll on something that was free.
 
-### I. P7 — Manuscript Formatter
+### E. P7 — Manuscript Formatter
 
 36. As an author, I want to upload a Word document and choose a target style, so that the document is reformatted without my doing it by hand.
 37. As an author, I want to see the list of supported styles before I pay, so that I do not buy a run for a journal that is not covered.
@@ -158,7 +158,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 43. As an author, I want the uploaded and produced files deleted after seven days, so that my manuscript is not retained.
 44. As an author, I want to rerun the same document against a second style at a reduced price, so that a rejection and resubmission is cheap. **[Assumption]**
 
-### J. P8 — Journal Matchmaker
+### F. P8 — Journal Matchmaker
 
 45. As an author, I want to paste an abstract and receive the five best-matched journals, so that I have a shortlist.
 46. As an author, I want each match explained by recent, similar articles in that journal, so that the recommendation is checkable.
@@ -170,114 +170,81 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 52. As an author, I want my abstract not retained and not used for training, so that unpublished work stays mine.
 53. As an author, I want the report as a page in my account and a PDF, so that I can share it with co-authors.
 
-### K. P9 — Pre-Submission Screening
+### G. P10 — Statistical Table Generator
 
-54. As an author, I want a similarity scan before I submit, so that I find overlap before an editor does.
-55. As an author, I want an AI-writing indicator reported separately, so that the two results are not confused.
-56. As an author, I want the AI indicator described as a fallible estimate with its known false-positive problem, so that I do not treat it as proof.
-57. As an author, I want a written guarantee that my text is not added to any comparison database, so that the scan cannot cause a later match against my own manuscript.
-58. As an author, I want matched passages listed with their sources, so that I can cite or rewrite.
-59. As an author, I want the word limit per scan stated, so that I know whether one scan covers my paper.
-60. As an author, I want the result stored only in my account and deletable by me, so that it stays private.
-61. As an author, I want my credit returned if the provider is unavailable, so that an outage is not my cost.
+54. As an analyst, I want to upload a CSV and choose variables and an analysis, so that I get tables without writing code.
+55. As an analyst, I want descriptives, correlations, t-tests, one-way ANOVA, chi-square, and linear regression in the first release, so that the common cases are covered.
+56. As an analyst, I want APA 7 formatted tables in Word and as copyable text, so that they drop into a manuscript.
+57. As an analyst, I want a plain-language baseline interpretation of each table, so that I have a starting sentence.
+58. As an analyst, I want every number computed deterministically and the interpretation generated only from those numbers, so that the prose cannot contradict the table.
+59. As an analyst, I want assumption checks shown with the result, so that I know when a test was inappropriate.
+60. As an analyst, I want the exact method and library version recorded on the output, so that I can report it.
+61. As an analyst, I want a warning before uploading if my file appears to contain names or email addresses, so that I do not upload identifiable data by mistake.
+62. As an analyst, I want my dataset processed and deleted, with only the output kept, so that data is not retained.
 
-### L. P10 — Statistical Table Generator
+### H. P14 — Weekly Research Digest (free)
 
-62. As an analyst, I want to upload a CSV and choose variables and an analysis, so that I get tables without writing code.
-63. As an analyst, I want descriptives, correlations, t-tests, one-way ANOVA, chi-square, and linear regression in the first release, so that the common cases are covered.
-64. As an analyst, I want APA 7 formatted tables in Word and as copyable text, so that they drop into a manuscript.
-65. As an analyst, I want a plain-language baseline interpretation of each table, so that I have a starting sentence.
-66. As an analyst, I want every number computed deterministically and the interpretation generated only from those numbers, so that the prose cannot contradict the table.
-67. As an analyst, I want assumption checks shown with the result, so that I know when a test was inappropriate.
-68. As an analyst, I want the exact method and library version recorded on the output, so that I can report it.
-69. As an analyst, I want a warning before uploading if my file appears to contain names or email addresses, so that I do not upload identifiable data by mistake.
-70. As an analyst, I want my dataset processed and deleted, with only the output kept, so that data is not retained.
+63. As a reader, I want to subscribe with my email and confirm it, so that I receive the digest.
+64. As a subscriber, I want one email on Tuesdays listing the week's reviews, so that I keep up without visiting.
+65. As a subscriber, I want one-click unsubscribe in every issue, so that leaving is trivial.
+66. As a subscriber, I want no tracking pixel and no per-person click tracking, so that the digest keeps the site's privacy stance.
+67. As a subscriber, I want the digest to carry no advertising, so that it stays what I signed up for.
+68. As a reader who subscribed on the old browser-only form, I want to be asked once to confirm an address, so that my earlier intent is honoured without my being enrolled silently.
 
-### M. P11 — Paper Club and Co-Working
+### I. The account
 
-71. As a member, I want a schedule of weekly sessions in my time zone, so that I can attend.
-72. As a member, I want my community role granted automatically when I subscribe, so that I am not waiting for a moderator.
-73. As a member, I want to connect my community account once from my site account, so that the two are linked.
-74. As a member, I want the paper and any code for each session posted in advance, so that I can prepare.
-75. As a member, I want recordings or notes of past reading sessions, so that a missed week is not lost.
-76. As a member, I want silent co-working sprints listed separately from discussion sessions, so that I can choose the kind of session I need.
-77. As a lapsed member, I want my role removed at the end of the paid period and not before, so that I get what I paid for.
-78. As a member, I want a code of conduct and a way to report a problem, so that the space stays usable.
+69. As a customer, I want one "Orders" view of everything I have bought, so that nothing is scattered.
+70. As a customer, I want my tool credits by tool with a history of how each was spent, so that I can account for them.
+71. As a customer, I want past tool results kept for a stated time and downloadable, so that I can come back to them.
+72. As a customer, I want to delete an uploaded file or a result myself, so that I control my data.
+73. As a customer, I want to export my purchase history, so that I can claim expenses.
+74. As a customer, I want email preferences split into receipts (always), tool results, and announcements, so that I can silence marketing without missing a result.
 
-### N. P12 — Grant and Fellowship Database
+### J. The editor (operator)
 
-79. As a researcher, I want to filter funding by field, career stage, eligible country, amount, and deadline, so that I see only what I can apply for.
-80. As a researcher, I want each record to show when it was last verified and against which source, so that I trust the deadline.
-81. As a researcher, I want to save opportunities and be reminded before deadlines, so that I do not miss them.
-82. As a researcher, I want application templates and criteria summaries attached where they exist, so that I start from more than a blank page.
-83. As a non-member, I want to see a limited preview (record titles and funders, with detail hidden), so that I can judge coverage before subscribing. **[Assumption]**
-84. As a researcher, I want to report a wrong or expired record, so that the database improves.
-85. As a researcher in the Global South, I want eligibility by country treated as a first-class filter, so that I am not reading calls I cannot enter.
+75. As the editor, I want to return a credit or request a refund with a reason, so that corrections are auditable.
+76. As the editor, I want to see failed tool runs with their error and input size, so that I can fix causes.
+77. As the editor, I want third-party cost per run recorded beside the price, so that I can see margin per tool.
+78. As the editor, I want to publish a working note to members and have them notified, so that the Co-Pilot has a release mechanism.
+79. As the editor, I want to compose the weekly digest from that week's published reviews and send a test to myself, so that sending is safe.
+80. As the editor, I want a per-product on/off switch, so that I can pause a product without a deploy.
+81. As the editor, I want a product to be impossible to enable until its policy check is recorded, so that nothing prohibited goes on sale by accident.
+82. As the editor, I want every privileged action logged with who and when, so that there is an audit trail.
 
-### O. P14 — Weekly Research Digest (free)
+### K. Trust, privacy, and compliance
 
-86. As a reader, I want to subscribe with my email and confirm it, so that I receive the digest.
-87. As a subscriber, I want one email on Tuesdays listing the week's reviews, so that I keep up without visiting.
-88. As a subscriber, I want one-click unsubscribe in every issue, so that leaving is trivial.
-89. As a subscriber, I want no tracking pixel and no per-person click tracking, so that the digest keeps the site's privacy stance.
-90. As a subscriber, I want the digest to carry no advertising, so that it stays what I signed up for.
-91. As a reader who subscribed on the old browser-only form, I want to be asked once to confirm an address, so that my earlier intent is honoured without my being enrolled silently.
-
-### Q. The account
-
-92. As a customer, I want one "Orders" view of everything I have bought, so that nothing is scattered.
-93. As a customer, I want my tool credits by tool with a history of how each was spent, so that I can account for them.
-94. As a customer, I want past tool results kept for a stated time and downloadable, so that I can come back to them.
-95. As a customer, I want to delete an uploaded file or a result myself, so that I control my data.
-96. As a customer, I want to export my purchase history, so that I can claim expenses.
-97. As a customer, I want email preferences split into receipts (always), tool results, and announcements, so that I can silence marketing without missing a result.
-
-### R. The editor (operator)
-
-98. As the editor, I want to return a credit or request a refund with a reason, so that corrections are auditable.
-99. As the editor, I want to see failed tool runs with their error and input size, so that I can fix causes.
-100. As the editor, I want third-party cost per run recorded beside the price, so that I can see margin per tool.
-101. As the editor, I want to publish a working note to members and have them notified, so that the Co-Pilot has a release mechanism.
-102. As the editor, I want to add, verify, and expire grant records, with records unverified for 60 days flagged, so that the database does not rot.
-103. As the editor, I want to compose the weekly digest from that week's published reviews and send a test to myself, so that sending is safe.
-104. As the editor, I want a per-product on/off switch, so that I can pause a product without a deploy.
-105. As the editor, I want a product to be impossible to enable until its policy check is recorded, so that nothing prohibited goes on sale by accident.
-106. As the editor, I want every privileged action logged with who and when, so that there is an audit trail.
-
-### S. Trust, privacy, and compliance
-
-107. As a customer, I want uploads encrypted at rest and readable only by me, so that unpublished work is protected.
-108. As a customer, I want a stated retention period per file type and automatic deletion, so that I do not have to remember to clean up.
-109. As a customer, I want to know which third parties process my text and for what, so that I can make an informed choice.
-110. As a customer, I want my content never used to train a model, so that my ideas are not leaked.
-111. As a customer, I want terms of service and a refund policy I can read before buying, so that the rules are known.
-112. As a customer, I want tools described as aids and not guarantees of acceptance, so that I am not misled.
-113. As a reader, I want the privacy policy updated to describe accounts, uploads, email, and processors, so that it matches what the site does.
-114. As the owner, I want every product reviewed against the payment provider's rules before launch, so that the store is not suspended.
-115. As the owner, I want integrity language on every manuscript tool (formatting, screening), so that none can be mistaken for a writing-for-hire service.
-116. As the owner, I want no service, sponsorship, or donation offered through the store, so that the store is never put at risk.
+83. As a customer, I want uploads encrypted at rest and readable only by me, so that unpublished work is protected.
+84. As a customer, I want a stated retention period per file type and automatic deletion, so that I do not have to remember to clean up.
+85. As a customer, I want to know which third parties process my text and for what, so that I can make an informed choice.
+86. As a customer, I want my content never used to train a model, so that my ideas are not leaked.
+87. As a customer, I want terms of service and a refund policy I can read before buying, so that the rules are known.
+88. As a customer, I want tools described as aids and not guarantees of acceptance, so that I am not misled.
+89. As a reader, I want the privacy policy updated to describe accounts, uploads, email, and processors, so that it matches what the site does.
+90. As the owner, I want every product reviewed against the payment provider's rules before launch, so that the store is not suspended.
+91. As the owner, I want integrity language on every manuscript tool (formatting, checking), so that none can be mistaken for a writing-for-hire service.
+92. As the owner, I want no service, sponsorship, or donation offered through the store, so that the store is never put at risk.
 
 ---
 
-### T. P15 — Manuscript Check
+### L. P15 — Manuscript Check
 
-117. As an author, I want to upload my manuscript and get an automated report within minutes, so that I can fix problems before I submit.
-118. As an author, I want the report to say which sections are missing or out of order for my article type, so that the structure is complete.
-119. As an author, I want my manuscript checked against the reporting guideline for my study design (CONSORT, PRISMA, STROBE, and similar), so that I see which items I have not reported.
-120. As an author, I want in-text citations and the reference list cross-checked, so that nothing is cited but unlisted or listed but uncited.
-121. As an author, I want statistical reporting checked for completeness and internal consistency, so that a reported p-value agrees with its test statistic.
-122. As an author, I want the abstract compared with the body, so that numbers and claims in the abstract match the paper.
-123. As an author, I want every finding to point to the place in my text and state the rule it comes from, so that I can verify it myself.
-124. As an author, I want the report to state plainly that software produced it and that it is not peer review, so that I am not misled about what I bought.
-125. As an author, I want the tool to say what it did not check, so that I do not assume a clean report means a sound paper.
-126. As an author, I want my manuscript deleted after the run, so that unpublished work is not retained.
-127. As the owner, I want no person involved in producing any report, so that the product stays software and never becomes a service.
+93. As an author, I want to upload my manuscript and get an automated report within minutes, so that I can fix problems before I submit.
+94. As an author, I want the report to say which sections are missing or out of order for my article type, so that the structure is complete.
+95. As an author, I want my manuscript checked against the reporting guideline for my study design (CONSORT, PRISMA, STROBE, and similar), so that I see which items I have not reported.
+96. As an author, I want in-text citations and the reference list cross-checked, so that nothing is cited but unlisted or listed but uncited.
+97. As an author, I want statistical reporting checked for completeness and internal consistency, so that a reported p-value agrees with its test statistic.
+98. As an author, I want the abstract compared with the body, so that numbers and claims in the abstract match the paper.
+99. As an author, I want every finding to point to the place in my text and state the rule it comes from, so that I can verify it myself.
+100. As an author, I want the report to state plainly that software produced it and that it is not peer review, so that I am not misled about what I bought.
+101. As an author, I want the tool to say what it did not check, so that I do not assume a clean report means a sound paper.
+102. As an author, I want my manuscript deleted after the run, so that unpublished work is not retained.
+103. As the owner, I want no person involved in producing any report, so that the product stays software and never becomes a service.
 
 ## Implementation Decisions
 
 ### 1. Principles that constrain every decision
 
-1. **The archive is never gated.** Articles, the assistant, the citation builder, and the reading list remain free and account-less. The Grant Database (P12) is a separate product, not part of the archive; the product charter's "reading is not gated" decision must be amended to say so explicitly before P12 ships.
+1. **The archive is never gated.** Articles, the assistant, the citation builder, and the reading list remain free and account-less.
 2. **The server is the only party that knows a price or a variant.** The browser names a product key and nothing else. This is already true and stays true for every new product.
 3. **No claim the system cannot keep.** Coverage and accuracy statements come from data the system holds, not from static copy.
 4. **Language models never produce numbers.** In P8 and P10 every figure is computed or retrieved; a model may only phrase what it is given.
@@ -295,9 +262,8 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | "Services of any kind (including marketing, design, web development, consulting or other related services)" | Manuscript Editing, The Soundboard, The Architecture Audit, Statistical Audit — **removed** |
 | "Advertising in newsletters, on websites, or in social media posts" | Digest Sponsorship — **removed** |
 | "Donations or charity giving where no product exists or where the price is greater than the product value" | Any membership that delivers nothing; any "support the archive" framing; pay-what-you-want pricing |
-| "Products or content for which you do not hold a proper license or intellectual property rights" | Showing a proprietary journal metric; reselling a vendor's scan without resale rights |
+| "Products or content for which you do not hold a proper license or intellectual property rights" | Showing a proprietary journal metric |
 | "Private Label Rights … any product which you've obtained a license to sell but do not hold the original IP rights" and "Marketplaces" | Passing a third party's report through unchanged as the product |
-| "Job boards" | Listing paid positions or vacancies in the Grant Database |
 | "Homework/Essay mills" | Any tool that writes, rewrites, paraphrases, or "humanises" a manuscript |
 
 **Check of every remaining product**
@@ -308,20 +274,16 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P2 | Research Co-Pilot | **Allowed, conditionally** | Memberships fulfilled by subscription are typically allowed. Today the payment switches nothing on and the member waits for an email, which is close to the donation clause. Condition: the membership delivers a defined product automatically (member notes and a tool-credit allowance), and no copy presents it as funding the site. The live copy was corrected on 2026-11-14. |
 | P7 | Manuscript Formatter | **Allowed** | Software. Condition: it changes formatting only and provably leaves the text unchanged. |
 | P8 | Journal Matchmaker | **Allowed** | Software. Condition: built only on openly licensed data; no proprietary impact metric. |
-| P9 | Pre-Submission Screening | **Confirm first** | Software, but the result comes from third-party vendors. Two exposures: the licence clause (the vendor's terms must permit commercial resale through an API) and the essay-mill clause (a detector sold to authors can be read as a way to evade detection). Conditions: written vendor permission; the product reports and never rewrites; copy never mentions avoiding or beating detection. |
 | P10 | Statistical Table Generator | **Allowed** | Software computing on the buyer's own data. |
 | P15 | Manuscript Check | **Allowed** | Software that returns a report on the buyer's own file. Two conditions. It is fulfilled entirely automatically: if a person reads or annotates any manuscript, it becomes the service that removed Manuscript Editing. It is never called "peer review", "expert review", or "reviewed by", which would be both untrue and a breach of the site's own copy rules. Reporting-guideline checklists are used under their open licences with attribution. |
-| P11 | Paper Club and Co-Working | **Confirm first** | A membership is allowed; live sessions led by a person are arguably a service, and third-party summaries of the policy list group coaching as refused. Conditions: sold as a membership to digital content (the session archive, notes, the member space), with live sessions an inclusion and not the thing sold; written confirmation from the provider before launch. If refused, the product is cut, not moved. |
-| P12 | Grant and Fellowship Database | **Confirm first** | A searchable database is software. Fellowships and funded positions sit close to "job boards". Conditions: research funding only; no vacancies, no paid postings, no employer listings; written confirmation before launch. |
 | P14 | Weekly Research Digest | **Not applicable** | Free; nothing is sold. It must carry no paid placement. |
 
 **Decisions**
 
 1. There is one payment rail. No second processor or invoice route is introduced to sell what the first prohibits; those products are out of this catalogue.
-2. Every catalogue entry carries a policy-check record: verdict, date, the clause considered, and for "confirm first" products a reference to the provider's written reply. A product without a passing record cannot be enabled.
-3. P9, P11, and P12 are not built until the provider has answered. The question is sent in Phase 0, with a plain description of each.
-4. Pay-what-you-want pricing is not used anywhere.
-5. The existing truthful-copy scan gains the words that would describe a prohibited product on a sales surface: consulting, audit-for-hire, sponsor, donate, support us, humanise, undetectable.
+2. Every catalogue entry carries a policy-check record: verdict, date, the clause considered, and, where the provider was asked, a reference to its written reply. A product without a passing record cannot be enabled. Every product in this catalogue is one the published policy allows; a product that would need the provider's confirmation is not added without a new decision by the owner.
+3. Pay-what-you-want pricing is not used anywhere.
+4. The existing truthful-copy scan gains the words that would describe a prohibited product on a sales surface: consulting, audit-for-hire, sponsor, donate, support us, humanise, undetectable.
 
 **Owner actions outside the code.** Archive the Manuscript Editing product in the Lemon Squeezy dashboard and delete its variant variable from the deployment. Anyone who has already paid for an edit should be served or refunded; the removal stops new sales only.
 
@@ -358,10 +320,6 @@ All changes are additive, idempotent SQL migrations with row-level security on b
 | Tool files | Uploads and outputs | run, role (input / output), storage path, size, checksum, delete-after | Owner |
 | Membership entitlements | What a subscription unlocks | subscription reference, entitlement key, period end | Owner; editor |
 | Member notes | Co-Pilot working notes | title, body, related article, published-at | Members with the entitlement; editor |
-| Community links | Linked community account | user, provider, external id, role-granted-at | Owner; editor |
-| Sessions | Paper Club schedule and archive | title, starts-at, kind, paper reference, recording or notes reference | Members; editor |
-| Grant records | Funding opportunities | funder, title, fields, career stages, eligible countries, amount range, deadline, source URL, last-verified-at, status | Members (full); public (preview columns) |
-| Saved grants | Per-user saves and reminders | user, grant, remind-at | Owner |
 | Newsletter subscribers | Digest list | email (unique, lower-cased), state (pending / confirmed / unsubscribed / bounced), confirm token hash, timestamps | Editor only |
 | Newsletter issues | Sent digests | send date, subject, content snapshot, counts | Editor; public archive of sent issues |
 | Audit log | Privileged actions | actor, action, subject, before/after summary, timestamp | Editor |
@@ -386,7 +344,7 @@ A run debits one credit when queued, inside the same transaction that creates th
 One function receives "order paid" from the webhook path and dispatches on the product's fulfilment type:
 
 - **Download** — nothing further; the provider delivers the file. The account page links to the provider's order page for re-download.
-- **Membership** — write entitlement rows for the subscription period; grant the monthly allowance to the ledger with an expiry at period end; enqueue a community role grant if the product includes one.
+- **Membership** — write entitlement rows for the subscription period; grant the monthly allowance to the ledger with an expiry at period end.
 - **Metered tool** — write a ledger credit for the tool.
 
 Every fulfilment is automatic and happens through software. That is a product requirement and also what the provider's rule ("fulfilled through" the platform, by subscription or licence) expects; no purchase may depend on a person doing work for the buyer.
@@ -409,14 +367,14 @@ The application runs on an edge worker runtime with strict CPU and duration limi
 - **Decision:** the tool-runs table is the source of truth; a message queue provided by the hosting platform dispatches run identifiers to a consumer worker; the consumer loads the run, performs the work, writes the result, and updates the state. The queue is an at-least-once transport, so the consumer is idempotent on run identifier and state.
 - A scheduled trigger sweeps runs stuck in `running` beyond a timeout to `failed` and returns the credit.
 - Workloads that cannot run in the edge runtime (heavy document manipulation, if the pure-JavaScript approach proves insufficient) go to a single small container service behind the same queue contract. This is a fallback, decided per tool after a prototype, not a default.
-- The same scheduled trigger runs retention deletion, deadline reminders, the weekly digest send, and community role reconciliation.
+- The same scheduled trigger runs retention deletion and the weekly digest send.
 
 ### 8. Email
 
 A scenario library and templates exist but no route sends mail. This PRD wires it.
 
 - Transactional mail is sent from server code on state transitions only, through the existing provider adapter.
-- Scenarios to add: order confirmed; tool run finished; tool run failed and credit returned; membership started; payment failed; membership ending; working note published; session reminder; grant deadline reminder; newsletter confirm.
+- Scenarios to add: order confirmed; tool run finished; tool run failed and credit returned; membership started; payment failed; membership ending; working note published; newsletter confirm.
 - Each scenario has a stable key, a subject, a plain-text alternative, and is idempotent on (scenario, subject entity, transition).
 - Preferences: receipts and tool results cannot be disabled; announcements can.
 
@@ -442,17 +400,6 @@ A scenario library and templates exist but no route sends mail. This PRD wires i
 - A weekly job refreshes the journal table; the report records the snapshot date.
 - Abstracts are processed and discarded; only the report is stored.
 
-**P9 — Pre-Submission Screening.**
-- Two independent results from third-party providers: similarity and AI-writing likelihood.
-- Not built until the payment provider has confirmed it in writing (§2).
-- Vendor selection criteria, all mandatory: terms that permit commercial resale of results through an API; no retention or indexing of submitted text; no training on inputs; per-scan cost that leaves margin at $5.
-- The report is the site's own: it combines and explains the vendors' results, and is not a vendor report passed through unchanged.
-- Copy never refers to avoiding, passing, or beating detection.
-- Unit economics are checked before launch: cap of 8,000 words per scan **[Assumption]**; if vendor cost per scan exceeds roughly $2.50 the price or cap changes before launch, not after.
-- The AI indicator is presented as an estimate with documented false positives, never as a verdict, and never alone on a page without that statement.
-- Results are private to the account and deletable.
-- Provider outage returns the credit automatically.
-
 **P10 — Statistical Table Generator.**
 - First release: descriptives, Pearson and Spearman correlations, independent and paired t-tests, one-way ANOVA with post-hoc tests, chi-square, simple and multiple linear regression.
 - All computation is deterministic, performed by a vetted statistics library whose name and version are printed on the output. Results are validated against reference outputs from R.
@@ -470,25 +417,6 @@ A scenario library and templates exist but no route sends mail. This PRD wires i
 - Output: an on-screen report and a PDF. The manuscript is deleted after the run; the report follows the standard retention period.
 - Copy rule: "peer review", "reviewer", "expert", and "reviewed by" are banned from this product's page, emails, and metadata, with one exception: the fixed disclaimer that the report is not peer review. Enforced by the truthful-copy test.
 
-**P11 — Paper Club and Co-Working.**
-- Not built until the payment provider has confirmed it in writing (§2). If it is refused, it is cut.
-- What is sold is a membership to digital content: the archive of past sessions (recordings or notes), the reading list with annotations, and the member space. Live sessions are included but are not the product, and the page is written that way.
-- Single tier at $15 a month **[Assumption]**, hosted on a community chat platform. A second membership platform is rejected because it would introduce a second payment processor and a second customer record.
-- A bot holding only role-management permission grants a role on subscription start and removes it at entitlement end. A scheduled reconciliation compares entitlements to roles daily and corrects drift.
-- Linking the community account uses that platform's sign-in as an identity link on the existing account, the same pattern as the scholarly identity links.
-- The schedule and archive are content the editor manages; sessions are listed on a members' page with time-zone conversion.
-- No one-to-one help, feedback on a member's own work, or bookable time is offered inside the membership; that would be a service.
-- Bundling: Paper Club includes Grant Database access **[Assumption]**. Co-Pilot stays separate.
-
-**P12 — Grant and Fellowship Database.**
-- Not built until the payment provider has confirmed it in writing (§2).
-- Research funding only: grants, fellowships, and travel awards. No vacancies, no employer listings, and no paid or promoted records, so that it is never a job board or an advertising product.
-- Curated by the editor from public funder pages; records link to the source; funder text is summarised, not copied.
-- Every record shows last-verified date; records unverified for 60 days are flagged in the editor's queue and marked "not recently verified" to members.
-- Public preview shows funder, title, field, and whether the deadline is within 30 days; amount, eligibility, criteria, templates, and saving require the entitlement.
-- Reminders at 30, 14, and 3 days before a saved deadline.
-- Launch requires a minimum of 150 verified records **[Assumption]**; selling an empty database is not an option.
-
 **P14 — Weekly Research Digest.**
 - Free, and carries no advertising or paid placement of any kind.
 - Server-side list with double opt-in; confirmation tokens are stored hashed and expire.
@@ -503,8 +431,8 @@ A scenario library and templates exist but no route sends mail. This PRD wires i
 
 - The single pricing page becomes an index of three families: learn, tools, membership. Each family section shows its products as the existing card pattern.
 - Each product gets its own page carrying full contents, terms, sample, questions, and the action.
-- New signed-in areas: orders; a tool workspace per tool (upload, options, run, result); members' notes; sessions; grant database; community link.
-- New editor areas: tool runs; product settings and policy records; member notes; sessions; grants; digest; audit log.
+- New signed-in areas: orders; a tool workspace per tool (upload, options, run, result); members' notes.
+- New editor areas: tool runs; product settings and policy records; member notes; digest; audit log.
 - Every new route gets a surface brief, in line with the repository's rule.
 - The second deployment target, which today has no pricing route although its footer links to one, either gains these routes or is formally retired; this must be decided before Phase 1 ends.
 - Navigation: "Services" in the header is renamed "Products", since no service is sold. Tools are reachable from the article page for manuscript-adjacent formats only.
@@ -517,7 +445,7 @@ A scenario library and templates exist but no route sends mail. This PRD wires i
 - **Get tool run** — output: state, result reference or error, timestamps. Owner only.
 - **Entitlement** — extended to return memberships and credit balances per tool.
 - **Subscribe to digest / confirm / unsubscribe** — unauthenticated, rate-limited, token-based.
-- **Mail-provider webhook, community webhook** — each verified by signature over the raw body before parsing, following the existing payment webhook.
+- **Mail-provider webhook** — verified by signature over the raw body before parsing, following the existing payment webhook.
 
 All state-changing routes keep the existing same-origin check and rate limiting; all are no-store.
 
@@ -539,11 +467,9 @@ Each phase ends with something shippable. Later phases do not start until the ex
 
 **Phase 0 — Decisions and compliance (no code).**
 1. Archive Manuscript Editing in the provider's dashboard; remove its variant variable; serve or refund any open order.
-2. Write to the provider's support describing P9, P11, and P12 plainly, and file the replies.
-3. Owner confirms or corrects every **[Assumption]** in Further Notes §3.
-4. Owner supplies P1 contents, sample section, and page count.
-5. Draft terms of service, refund policy, and the privacy policy changes.
-6. Select vendors for similarity, AI detection, and community, against §9's criteria.
+2. Owner confirms or corrects every **[Assumption]** in Further Notes §3.
+3. Owner supplies P1 contents, sample section, and page count.
+4. Draft terms of service, refund policy, and the privacy policy changes.
 *Exit:* a signed-off catalogue table with final prices, a policy verdict for every product, and refund rules.
 
 **Phase 1 — Catalogue and order foundation.**
@@ -567,14 +493,9 @@ Each phase ends with something shippable. Later phases do not start until the ex
 4. P10 Statistical Table Generator (deterministic; validates file handling).
 5. P7 Manuscript Formatter (hardest; ships with a deliberately short style list).
 6. P15 Manuscript Check (reuses the Formatter's document parsing; deterministic rules first, guideline location second).
-7. P9 Pre-Submission Screening, only if the provider and a vendor have both agreed in writing.
 *Exit per tool:* accuracy bar met on its fixture set (Testing Decisions §4), cost per run recorded, failure returns the credit.
 
-**Phase 4 — Memberships (P11, P12), only if confirmed.**
-Community link and role sync; session schedule and archive; grant records, verification queue, preview, saves, reminders.
-*Exit:* 150 verified grant records; a session archive with content in it before the first sale; role reconciliation shows zero drift for seven days.
-
-**Phase 5 — Digest (P14).**
+**Phase 4 — Digest (P14).**
 Subscribers, double opt-in, composer, send, unsubscribe, bounce handling, privacy policy update.
 *Exit:* four consecutive issues sent.
 
@@ -610,7 +531,7 @@ Existing seams are preferred, and the plan adds only one new one.
 | Injectable store / fetch / environment | Existing (billing store, checkout fetch, rate-limit store) | Dispatcher idempotency, vendor adapters, configuration errors |
 | Migrations applied to an embedded database behind a small auth shim | Existing (billing bridge check, application identity check) | Row-level security, state-machine functions, ledger invariants |
 | Database unit tests under the local database stack | Existing (billing, applications, profile images) | Privileges, policies, constraints |
-| Webhook fixtures | Existing (payment provider) | Mail-provider and community webhooks added to the same fixture pattern |
+| Webhook fixtures | Existing (payment provider) | Mail-provider webhook added to the same fixture pattern |
 | **Tool processor: input reference and parameters in, result object out** | **New** | Each tool's logic, independent of queue and HTTP |
 | End-to-end browser tests | Existing project, lightly used | One purchase-to-delivery path per fulfilment type |
 
@@ -628,7 +549,6 @@ Existing seams are preferred, and the plan adds only one new one.
 - File access: cross-user reads refused at the policy level; signed URLs expire; retention deletes.
 - Email: one message per transition; idempotent on replay; receipts ignore the marketing preference.
 - Newsletter: double opt-in required before any send; unsubscribe is immediate; a bounced address is never mailed again; no per-person click data is stored.
-- Community sync: grant on start, revoke at entitlement end, reconciliation corrects drift.
 - Each page: required facts present, banned phrases absent, one main landmark, one top-level heading.
 
 ### 4. Tool accuracy fixtures
@@ -639,7 +559,6 @@ Automated tools are tested against fixed fixture sets with explicit pass bars, s
 - **Matchmaker** — abstracts of published articles with the publishing journal known. Bars: the true journal or a same-field journal appears in the five for an agreed proportion of cases **[Assumption: 70%]**; every displayed figure matches the snapshot; no journal on the exclusion list is ever returned.
 - **Table Generator** — public datasets with reference results from R. Bars: statistics agree to the reported precision; the interpretation contains no number absent from the result object.
 - **Manuscript Check** — manuscripts with known, seeded defects (a missing section, an uncited reference, an inconsistent p-value, an unreported guideline item) and clean controls. Bars: every seeded deterministic defect found; no finding shown without a quotation that exists in the text; false findings on the clean controls under an agreed rate **[Assumption: 5% of findings]**; the not-peer-review statement present on every report.
-- **Pre-Screening** — adapter contract tests against recorded responses; behaviour on vendor timeout, error, and partial result.
 
 ### 5. Prior art in this codebase
 
@@ -664,6 +583,7 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 - **Every service and every advertising product**: manuscript editing, calls, repository or statistical audits, consulting of any kind, and digest sponsorship. They are prohibited by the payment provider and were removed from this catalogue on 2026-11-14.
 - A second payment route (invoices, another processor) to sell what the provider prohibits. If the owner later wants to offer services, that is a separate business decision with its own spec, kept entirely apart from this store.
 - A "humanizer": any tool that rewrites or polishes manuscript text, including one that makes it read as human-written or lowers an AI-detection score. Language Polish (P16) was removed on 2026-11-14.
+- Similarity or AI-detection scanning, a paid community or live sessions, and a grant, fellowship, or funding database. All three were removed on 2026-11-14.
 - Human review of manuscripts under any name. Manuscript Check (P15) is software only.
 - Donations, tips, "support us" tiers, and pay-what-you-want pricing.
 - Job or vacancy listings.
@@ -677,9 +597,6 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 - Rewriting, paraphrasing, or "humanising" text in any tool.
 - Displaying the proprietary Journal Impact Factor without a licence.
 - Advanced statistics in the Table Generator: mixed models, structural equation models, Bayesian methods, survival analysis.
-- Hosting video; recordings live with a third-party tool.
-- Building a chat or community platform; Paper Club uses an existing one.
-- Scraping funder websites automatically; grant records are curated by hand in the first release.
 - Per-person analytics of any kind.
 - Affiliate or referral programmes.
 - Currencies other than US dollars.
@@ -697,17 +614,14 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 
 ### 2. Risks, in order of severity
 
-1. **Three products still need the provider's answer (§2).** P9, P11, and P12 are grey under the published policy. They are not built until confirmed, and the plan is ordered so nothing depends on them.
-2. **The Co-Pilot delivers nothing today.** It is live, it charges monthly, and fulfilment is a promised email. That is poor for the member and close to the provider's donation clause. Phase 2 fixes it; pausing the product until then is the safer course.
-3. **The published list is not the whole rule.** It also defers to the provider's payment partners' restrictions and to the provider's own judgement in review. "Allowed" in §2 means "fits the published examples", not a guarantee.
-4. **Pre-Screening economics and accuracy.** Vendor cost may not fit $5; AI detectors produce false positives, and a false accusation is a real harm to a customer. The product ships only with the honest framing and the no-retention guarantee, or not at all.
-5. **Manuscript Check false confidence.** A clean report may be read as approval. The fixed opening statement and the "not checked" list are the mitigation.
-6. **Formatter difficulty.** "Any journal" is not achievable in a first release. A short, honest style list is the mitigation.
-7. **Data licensing.** The proprietary impact metric cannot be shown. Open-access directory terms should be read before caching its data at scale.
-8. **Grant database freshness.** A wrong deadline is worse than no record. The verification date and the 60-day flag are the mitigation; the minimum record count gates launch.
-9. **Platform limits.** Document processing may not fit the edge runtime; the container fallback is the mitigation and a prototype decides.
-10. **Revenue concentration.** Removing five offerings leaves only low-priced products. The catalogue now depends on volume, which the tools must earn.
-11. **Second deployment target drift.** It already lacks the pricing route. Decide its future in Phase 1.
+1. **The Co-Pilot delivers nothing today.** It is live, it charges monthly, and fulfilment is a promised email. That is poor for the member and close to the provider's donation clause. Phase 2 fixes it; pausing the product until then is the safer course.
+2. **The published list is not the whole rule.** It also defers to the provider's payment partners' restrictions and to the provider's own judgement in review. "Allowed" in §2 means "fits the published examples", not a guarantee.
+3. **Manuscript Check false confidence.** A clean report may be read as approval. The fixed opening statement and the "not checked" list are the mitigation.
+4. **Formatter difficulty.** "Any journal" is not achievable in a first release. A short, honest style list is the mitigation.
+5. **Data licensing.** The proprietary impact metric cannot be shown. Open-access directory terms should be read before caching its data at scale.
+6. **Platform limits.** Document processing may not fit the edge runtime; the container fallback is the mitigation and a prototype decides.
+7. **Revenue concentration.** The catalogue is now two live products and four low-priced tools, with one membership. The catalogue now depends on volume, which the tools must earn.
+8. **Second deployment target drift.** It already lacks the pricing route. Decide its future in Phase 1.
 
 ### 3. Assumptions made in place of answers
 
@@ -716,19 +630,14 @@ Each is a default chosen so the document is complete. Any of them can change wit
 | # | Assumption | Why this default |
 | --- | --- | --- |
 | A1 | Table Generator is $12 per dataset | No price was given; sits between the Matchmaker and the Formatter |
-| A2 | Paper Club is one tier at $15 a month | Midpoint of the $10–$20 range; one tier avoids a choice |
-| A3 | Grant Database is $12 a month alone and included in Paper Club | No price was given; bundling gives the higher tier a concrete benefit |
-| A4 | Co-Pilot includes three tool credits a month | The membership needs a countable benefit; none is granted today |
-| A5 | Upload ceilings and retention periods as in §6 | Conservative defaults; shorter is safer |
-| A6 | Pre-Screening cap of 8,000 words per scan | Keeps vendor cost predictable |
-| A7 | Formatter offers a free first-page preview and a discounted rerun | Lowers the risk of a wasted purchase |
-| A8 | Grant Database shows a limited public preview and launches at 150 records | A gated product should still be judgeable before purchase |
-| A9 | Matchmaker pass bar of 70% | A starting bar to be set from the first fixture run |
-| A10 | North Star is successful tool runs plus active members per month | Counts only what was delivered |
-| A11 | Refund rules: downloads within 14 days if not downloaded; tools refunded automatically on failure; memberships stop at period end | Nothing is stated today; each rule is one the system can enforce |
-| A12 | Paper Club can be framed as a membership to digital content with live sessions included | The only framing likely to fit the policy; the provider decides |
-| A13 | Manuscript Check is $8 per report, limited to 15,000 words | No price was given; priced below the Matchmaker because it uses little model time |
-| A14 | Manuscript Check's first guidelines are CONSORT, PRISMA, and STROBE | The most widely required; all openly licensed |
+| A2 | Co-Pilot includes three tool credits a month | The membership needs a countable benefit; none is granted today |
+| A3 | Upload ceilings and retention periods as in §6 | Conservative defaults; shorter is safer |
+| A4 | Formatter offers a free first-page preview and a discounted rerun | Lowers the risk of a wasted purchase |
+| A5 | Matchmaker pass bar of 70% | A starting bar to be set from the first fixture run |
+| A6 | North Star is successful tool runs plus active members per month | Counts only what was delivered |
+| A7 | Refund rules: downloads within 14 days if not downloaded; tools refunded automatically on failure; memberships stop at period end | Nothing is stated today; each rule is one the system can enforce |
+| A8 | Manuscript Check is $8 per report, limited to 15,000 words | No price was given; priced below the Matchmaker because it uses little model time |
+| A9 | Manuscript Check's first guidelines are CONSORT, PRISMA, and STROBE | The most widely required; all openly licensed |
 
 ### 4. Questions only the owner can answer
 
@@ -736,11 +645,8 @@ Each is a default chosen so the document is complete. Any of them can change wit
 2. Should the Co-Pilot be paused until member notes exist, or kept on sale while Phase 2 is built?
 3. What is the Teardown System physically: format, length, sections?
 4. How often can working notes realistically be published? The Co-Pilot stands or falls on this.
-5. What does Lemon Squeezy's support say about Pre-Submission Screening, Paper Club, and the Grant Database?
-6. Is the Grant Database acceptable as a gated product under the brand's open-access commitment, or should it be free with paid alerts and templates?
-7. Which similarity and AI-detection vendors permit resale and guarantee no retention?
-8. Is the second deployment target still in use?
+5. Is the second deployment target still in use?
 
 ### 5. Suggested split into tickets
 
-One ticket per numbered step in the delivery plan (§13), each carrying the user-story numbers it satisfies and the exit criterion of its phase. Phase 0 is a single checklist ticket owned by the owner, and nothing in Phases 3 or 4 should be started until it closes.
+One ticket per numbered step in the delivery plan (§13), each carrying the user-story numbers it satisfies and the exit criterion of its phase. Phase 0 is a single checklist ticket owned by the owner, and nothing in Phase 3 should be started until it closes.
