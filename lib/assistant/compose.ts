@@ -80,8 +80,8 @@ export async function composeAnswer(input: AssistantInput, generate: Generate | 
 
 const MAX_QUERY_CHARS = 600;
 const MAX_RECORDS = 4;
-const MAX_FIELD_CHARS = 4000;
-const MAX_TAKEAWAYS = 20;
+export const MAX_FIELD_CHARS = 4000;
+export const MAX_TAKEAWAYS = 20;
 
 function shortString(value: unknown): value is string {
   return typeof value === 'string' && value.length <= MAX_FIELD_CHARS;

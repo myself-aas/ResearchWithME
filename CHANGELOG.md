@@ -16,7 +16,8 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   `ask_archive`, which uses the same key and allowance.
 - A second Worker, `researchwithme-assistant` (`workers/assistant`), that makes
   the Assistant's model call and is reached only through a service binding.
-  The site answers in-process when the binding is absent or fails.
+  Its binding in `wrangler.jsonc` is commented out until that Worker is
+  deployed, so the site answers in-process for now.
   `npm run worker:assistant:check` is now part of `npm run quality`.
 - Design documents for the Assistant API: the spec with a capability map and
   an assessment of whether the API can be charged for

@@ -1,4 +1,5 @@
 import type { BlogPost } from '@/lib/blog-data';
+import { MAX_FIELD_CHARS, MAX_TAKEAWAYS } from './compose';
 import type { AssistantArticle, AssistantCitation } from './types';
 
 const STOP_WORDS = new Set([
@@ -42,16 +43,21 @@ export function rankArticles(query: string, posts: BlogPost[], max = 3): BlogPos
     .map((entry) => entry.post);
 }
 
+/**
+ * Clipped to the bounds the Assistant Worker enforces (parseAssistantInput), so
+ * one unusually long article cannot make every call fall back in-process.
+ */
 export function toAssistantArticle(post: BlogPost): AssistantArticle {
+  const clip = (value: string) => value.slice(0, MAX_FIELD_CHARS);
   return {
-    id: post.id,
-    slug: post.slug,
-    title: post.title,
-    author: post.author.name,
-    category: post.category,
-    summary: post.summary,
-    keyTakeaways: [...post.keyTakeaways],
-    artifact: post.reviewedArtifact ? `${post.reviewedArtifact.identifier} (${post.reviewedArtifact.meta})` : null,
+    id: clip(post.id),
+    slug: clip(post.slug),
+    title: clip(post.title),
+    author: clip(post.author.name),
+    category: clip(post.category),
+    summary: clip(post.summary),
+    keyTakeaways: post.keyTakeaways.slice(0, MAX_TAKEAWAYS).map(clip),
+    artifact: post.reviewedArtifact ? clip(`${post.reviewedArtifact.identifier} (${post.reviewedArtifact.meta})`) : null,
   };
 }
 

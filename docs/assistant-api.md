@@ -218,14 +218,18 @@ the stored answer and is counted once.
 
 ### Owner: deploy
 
-Order matters, because the site Worker's binding names the Assistant Worker.
+Order matters. `main` deploys automatically through Workers Builds, and a
+deploy whose binding names a Worker the account does not have fails. For that
+reason the `ASSISTANT` binding is commented out in `wrangler.jsonc`; until
+step 4 the site answers in-process and the Assistant Worker is not used.
 
 1. Apply `supabase/migrations/20261114000200_api_keys.sql`. It is written to
    be re-runnable. It has been run only against an in-memory Postgres with a
    stubbed `auth` schema, never against Supabase; try it on a branch first.
 2. `npm run worker:assistant:deploy`
 3. `npx wrangler secret put GEMINI_API_KEY -c workers/assistant/wrangler.jsonc`
-4. `npm run deploy`
+4. Uncomment the `ASSISTANT` service binding in `wrangler.jsonc`, then deploy
+   the site (merge to `main`, or `npm run deploy`).
 5. Confirm that rate-limit namespace `2001` is not already used by another
    Worker in the account; a shared id shares counters. Change it in
    `wrangler.jsonc` if it is.
@@ -401,7 +405,7 @@ without a client key get a generated one, so every request is in the ledger.
 
 | Name | Where | Purpose |
 |------|-------|---------|
-| `ASSISTANT` | site Worker service binding | RPC to `researchwithme-assistant` |
+| `ASSISTANT` | site Worker service binding, commented out until the Assistant Worker is deployed | RPC to `researchwithme-assistant` |
 | `API_BURST_LIMITER` | site Worker `ratelimits` binding | Burst limit |
 | `API_FREE_MONTHLY_REQUESTS` | site Worker variable | Allowance, default 100 |
 | `BILLING_BRIDGE_SECRET` | site Worker secret (existing) | Gate for the ledger SQL functions |

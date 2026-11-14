@@ -65,3 +65,18 @@ describe('parseAssistantInput', () => {
     expect(parseAssistantInput(null)).toBeNull();
   });
 });
+
+describe('toAssistantArticle', () => {
+  it('clips a record to what the Assistant Worker accepts', async () => {
+    const { toAssistantArticle } = await import('@/lib/assistant/retrieve');
+    const long = {
+      id: 'p', slug: 's', title: 'T', category: 'C', author: { name: 'A' },
+      summary: 'x'.repeat(9000), keyTakeaways: new Array(40).fill('k'.repeat(5000)),
+      reviewedArtifact: { identifier: 'i'.repeat(5000), meta: 'm' },
+    } as unknown as Parameters<typeof toAssistantArticle>[0];
+    const record = toAssistantArticle(long);
+    expect(record.summary).toHaveLength(4000);
+    expect(record.keyTakeaways).toHaveLength(20);
+    expect(parseAssistantInput({ query: 'q', articles: [record] })).not.toBeNull();
+  });
+});
