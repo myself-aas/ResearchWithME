@@ -12,7 +12,7 @@ Subject: Pre-approval question: two automated manuscript-checking tools (SaaS)
 
 Hello,
 
-I run the store for ResearchWithMe (https://researchwith.me), which currently sells one digital download. Your
+I run the store for ResearchWithMe (https://researchwith.me), a free archive of research reviews. The store has no products yet; the first will be a PDF download. Your
 prohibited-products page asks sellers to check before selling when unsure, so I would like to confirm two software
 tools before I build them. Both are fully automated web tools: the buyer uploads their own document and receives
 a report within minutes. No person reads, edits, or comments on anything, and neither tool writes or rewrites any

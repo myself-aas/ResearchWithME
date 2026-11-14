@@ -17,9 +17,10 @@
  * a sponsorship, a "support us" product, or a membership that delivers nothing
  * automatically to this list.
  *
- * Withdrawing the co-pilot from sale does not touch existing subscriptions:
+ * No co-pilot product was ever created in the store, so there are no
+ * subscribers. The subscription handling is unused and kept only until a cleanup:
  * the webhook, `lib/billing/status.ts` and the account page still handle them
- * until the owner cancels them in Lemon Squeezy.
+ * can be removed safely.
  *
  * Variant IDs live in the environment because they differ between a test store
  * and the live one. The server resolves them (see `lib/billing/checkout.ts`);

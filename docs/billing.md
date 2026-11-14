@@ -34,22 +34,23 @@ store selling them can be suspended without notice
 (https://docs.lemonsqueezy.com/help/getting-started/prohibited-products, read
 2026-11-14). Manuscript Editing was a service and was removed from the catalogue
 on that date; `editing` is no longer a product key and `/api/billing/checkout`
-answers `400` for it. **Owner step:** archive the Manuscript Editing product in
-the Lemon Squeezy dashboard and delete `LEMONSQUEEZY_VARIANT_EDITING` from the
-Worker's variables. Past editing orders stay in `billing_orders` and still show
-on the buyer's account page.
+answers `400` for it. No Manuscript Editing product was ever created in the Lemon Squeezy store, so
+nothing was sold and there is nothing to archive or refund.
 
 **The Research Co-Pilot is withdrawn from sale (2026-11-14).** Its payment
 switched nothing on, and a subscription that grants nothing is, in the
 provider's terms, a donation. `copilot` is no longer a catalogue key, so
 `/api/billing/checkout` answers `400` for it and no page offers it.
-Subscription handling is deliberately left in place: the webhook still records
-subscription events, `lib/billing/status.ts` still interprets them, and the
-account page still shows an existing member's plan. **Owner step:** cancel and,
-where fair, refund every active co-pilot subscription in the Lemon Squeezy
-dashboard, archive the product there, and delete `LEMONSQUEEZY_VARIANT_COPILOT`
-from the Worker's variables. A membership may return only when it delivers a
-defined product automatically.
+No co-pilot product was ever created in the Lemon Squeezy store, so there are
+no subscribers to cancel or refund. The subscription handling in the webhook,
+`lib/billing/status.ts` and the account page is unused code left in place; it
+can be removed in a later cleanup. A membership may return only when it
+delivers a defined product automatically.
+
+**Nothing can be bought yet (owner confirmed 2026-11-14).** The store has no
+products. The site lists the Teardown System, but until a product exists in
+Lemon Squeezy and `LEMONSQUEEZY_VARIANT_TEARDOWN` is set, `/api/billing/checkout`
+answers `503` and the button reports that checkout is not configured.
 
 **Credits are zero today.** No product in the current catalogue grants
 credits, so every order is written with `ai_credits = 0` and the counter on

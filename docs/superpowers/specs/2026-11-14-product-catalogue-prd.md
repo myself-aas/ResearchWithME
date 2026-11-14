@@ -33,7 +33,7 @@ Beyond those two, the buyer has needs the site does not serve at all:
 - The catalogue is a fixed list of keys. Adding a product means editing types, environment handling, the pricing page, the account page, and tests in step.
 - There is no way to sell usage (one scan, one report), only ownership.
 - The payment provider permits digital goods only. Services, newsletter advertising, donations, and job boards are prohibited, which removed five items from the original plan and constrains how three of the remaining ones may be built and described.
-- A membership that delivers nothing is, under that policy, a donation. The Co-Pilot was in that position and was withdrawn; existing subscriptions have to be cancelled by the owner.
+- A membership that delivers nothing is, under that policy, a donation. The Co-Pilot was in that position and was withdrawn; no subscription was ever sold.
 
 ---
 
@@ -67,11 +67,11 @@ One catalogue of digital goods, three ways to deliver, and a record of every del
 
 ### The catalogue
 
-P1 is live. The rest are from the owner's inventory. Prices are the owner's; where the inventory gives a range or none, the working figure is an assumption. Numbering keeps the original IDs so earlier references still resolve; the gaps are the removed products.
+P1 is listed on the site, but no product exists in the payment provider's store yet, so nothing has been sold (owner, 2026-11-14). The rest are from the owner's inventory. Prices are the owner's; where the inventory gives a range or none, the working figure is an assumption. Numbering keeps the original IDs so earlier references still resolve; the gaps are the removed products.
 
 | ID | Product | Price | Fulfilment | Policy check (§2) | Status |
 | --- | --- | --- | --- | --- | --- |
-| P1 | The Teardown System | $19 once | Download | Allowed | Live; needs a preview and contents list |
+| P1 | The Teardown System | $19 once | Download | Allowed | Listed on the site, not yet purchasable; needs a store product, a preview and a contents list |
 | P7 | Manuscript Formatter | $15 per document | Metered tool | Allowed | Planned |
 | P8 | Journal Matchmaker | $10 per report | Metered tool | Allowed, open data only | Planned |
 | P10 | Statistical Table Generator | $12 per dataset **[Assumption: no price given]** | Metered tool | Allowed | Planned |
@@ -295,7 +295,7 @@ P1 is live. The rest are from the owner's inventory. Prices are the owner's; whe
 3. Pay-what-you-want pricing is not used anywhere.
 4. The existing truthful-copy scan gains the words that would describe a prohibited product on a sales surface: consulting, audit-for-hire, sponsor, donate, support us, humanise, undetectable.
 
-**Owner actions outside the code.** Archive the Manuscript Editing product in the Lemon Squeezy dashboard and delete its variant variable from the deployment. Anyone who has already paid for an edit should be served or refunded; the removal stops new sales only.
+**Owner actions outside the code.** None for the removed products: the owner confirmed on 2026-11-14 that no product was ever created in the Lemon Squeezy store, so nothing was sold and there is nothing to archive, cancel, or refund. The one action is the reverse: the Teardown System is listed on the site but cannot be bought until its product exists in the store and its variant variable is set.
 
 **Additional risk to record.** Third-party reporting in 2026 states that Stripe, which owns Lemon Squeezy, is steering merchant-of-record sellers toward a successor product. The data-driven catalogue is the seam if the provider changes. This PRD does not plan that migration.
 5. No third-party prompts, scripts, templates, or text go into a paid product unless their licence permits commercial use and the grant clearly covers the material. Two repositories were read for ideas on 2026-11-14: `Imbad0202/academic-research-skills` is CC BY-NC 4.0 and its positioning file prohibits commercial hosted services and resale; `Master-cai/Research-Paper-Writing-Skills` is MIT but is built on notes whose original repository carries no licence. Neither is used. P17, P18, and the added Manuscript Check rules are specified and built independently.
@@ -496,12 +496,11 @@ All state-changing routes keep the existing same-origin check and rate limiting;
 Each phase ends with something shippable. Later phases do not start until the exit criteria of the earlier ones hold.
 
 **Phase 0 — Decisions and compliance (no code).**
-1. Cancel and, where fair, refund every active Co-Pilot subscription; archive the product in the provider's dashboard; remove its variant variable.
+1. Create the Teardown System product in the provider's store and set its variant variable; until then the site's buy button cannot complete a purchase.
 2. Send the drafted message about P15 and P18 to the provider's support and file the reply.
-3. Archive Manuscript Editing in the provider's dashboard; remove its variant variable; serve or refund any open order.
-4. Owner confirms or corrects every **[Assumption]** in Further Notes §3.
-5. Owner supplies P1 contents, sample section, and page count.
-6. Draft terms of service, refund policy, and the privacy policy changes.
+3. Owner confirms or corrects every **[Assumption]** in Further Notes §3.
+4. Owner supplies P1 contents, sample section, and page count.
+5. Draft terms of service, refund policy, and the privacy policy changes.
 *Exit:* a signed-off catalogue table with final prices, a policy verdict for every product, and refund rules.
 
 **Phase 1 — Catalogue and order foundation.**
@@ -682,11 +681,9 @@ Each is a default chosen so the document is complete. Any of them can change wit
 
 ### 4. Questions only the owner can answer
 
-1. Has anyone already paid for Manuscript Editing whose edit is not yet delivered? They need serving or refunding.
-2. What is the Teardown System physically: format, length, sections?
-3. Is the second deployment target still in use?
-4. How many Co-Pilot subscriptions are active today, and will they be refunded for the current period or left to run out?
-5. What does Lemon Squeezy's support say about Manuscript Check and Response-to-Reviewers Check?
+1. What is the Teardown System physically: format, length, sections?
+2. Is the second deployment target still in use?
+3. What does Lemon Squeezy's support say about Manuscript Check and Response-to-Reviewers Check?
 
 ### 5. Suggested split into tickets
 
