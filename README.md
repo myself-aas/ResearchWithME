@@ -164,7 +164,7 @@ Full setup, the blueprint-to-code map, the data model, and the security notes ar
 - There is no open manuscript intake: the platform publishes explanations written by approved writers. A reader applies at `/dashboard/access` (GitHub or ORCID identity), an editor approves, and the writer publishes through `/write` and the studio.
 - Writer access is a real, server-enforced decision: an applicant connects GitHub or ORCID with Supabase `linkIdentity`, an editor approves the row in `public.author_applications`, and approval writes the `public.editors` entry. There is no browser-side role and nothing is stored in `localStorage`.
 - The research assistant answers from the local catalog. With `GEMINI_API_KEY` set it asks Gemini to summarize the same records; without a key it returns a deterministic cited answer.
-- The Assistant API (`/api/v1/assistant/answers`, API keys, burst limit, monthly allowance, MCP tool `ask_archive`) is implemented but not deployed. It needs `supabase/migrations/20261114000200_api_keys.sql`, `BILLING_BRIDGE_SECRET`, and, optionally, the `researchwithme-assistant` Worker (`npm run worker:assistant:deploy`, then uncomment the `ASSISTANT` binding in `wrangler.jsonc`). Without the bridge secret or the migration the API answers `503`. See [`docs/assistant-api.md`](./docs/assistant-api.md).
+- The Assistant API (`/api/v1/assistant/answers`, API keys, burst limit, monthly allowance, MCP tool `ask_archive`) is implemented but not deployed. It needs `supabase/migrations/20261114000200_api_keys.sql`, its own `API_BRIDGE_SECRET` (Worker secret plus a digest row in `private.api_settings`; not the billing secret), and, optionally, the `researchwithme-assistant` Worker (`npm run worker:assistant:deploy`, then uncomment the `ASSISTANT` binding in `wrangler.jsonc`). Without the bridge secret or the migration the API answers `503`. See [`docs/assistant-api.md`](./docs/assistant-api.md).
 
 Environment variables:
 
@@ -175,6 +175,7 @@ Environment variables:
 | `REVALIDATE_SECRET` | Optional. Shared secret for the `/api/revalidate` webhook. |
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-3.8-flash`. |
+| `API_BRIDGE_SECRET` | Optional. Secret. Required for the Assistant API; its SHA-256 digest is stored in `private.api_settings`. See `docs/assistant-api.md`, "Owner: deploy". |
 | `API_FREE_MONTHLY_REQUESTS` | Optional. Assistant API answers included per account per UTC month. Defaults to `100`. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
 | `LEMONSQUEEZY_API_KEY` | Optional. Secret. Creates checkouts. Without it `/api/billing/checkout` answers `503`. |

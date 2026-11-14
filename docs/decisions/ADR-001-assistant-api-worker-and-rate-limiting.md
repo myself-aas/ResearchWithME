@@ -2,10 +2,9 @@
 
 ## Status
 
-Proposed. Implemented in the repository on 2026-11-14 on the spec's default
-values; the owner has not yet confirmed the limits, the reuse of the billing
-bridge secret, or the second Worker, and nothing is deployed. Change this to
-Accepted when the owner confirms.
+Accepted (2026-11-14). The owner delegated the three open points to best
+practice; decision 6 below was changed as a result. Implemented in the
+repository; nothing is deployed.
 
 ## Date
 
@@ -57,9 +56,13 @@ Constraints found in the repository:
    first is still running, `409`.
 5. **Keys are stored as SHA-256 hashes** with a visible prefix for
    identification. The raw key is shown once.
-6. **The ledger functions reuse the billing bridge secret** rather than
-   introduce a second one. This is the part most open to challenge; see
-   Consequences.
+6. **The ledger functions are gated by the API's own secret,
+   `API_BRIDGE_SECRET`,** whose digest is stored in `private.api_settings`.
+   The first draft reused the billing bridge secret; that was rejected because
+   a leak or rotation of one would then affect the other.
+7. **The service binding to the second Worker is off until that Worker is
+   deployed.** `main` deploys automatically, and a deploy that names a Worker
+   the account does not have fails. The site answers in-process meanwhile.
 
 ## Alternatives considered
 
@@ -105,16 +108,16 @@ Constraints found in the repository:
 
 ## Consequences
 
-- A second Worker must be deployed before the site Worker, because the site's
-  service binding names it. The plan orders the deploys.
+- The second Worker must be deployed before its binding is turned on in the
+  site's configuration. Until then it is unused.
 - Burst limiting will let more than 30 requests through in some minutes. The
   API reference says so. Nothing that costs money depends on it.
 - Every API answer costs one Postgres round trip to claim and one to
   complete. At the expected volume that is acceptable; if latency matters
   later, Hyperdrive is the documented option.
-- Reusing the bridge secret means one secret rotation covers both billing
-  events and API metering, and a leak exposes both. A separate secret is a
-  five-line change in the migration and one more Worker secret.
+- There are two bridge secrets to set and rotate, one for billing and one
+  for the API. Each has a Worker secret and a digest row; set the Worker
+  secret first, then the row.
 - `lib/agent-auth.ts` says the API accepts no bearer tokens. After M3 it
   accepts API keys, still not OAuth tokens. That text and `/auth.md` must be
   updated in the same change so the published statement stays true.

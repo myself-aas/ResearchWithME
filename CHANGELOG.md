@@ -13,7 +13,9 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   key on the Workers Rate Limiting binding with a KV fallback; an exact
   monthly allowance per account with idempotent retries, kept in Postgres
   (`supabase/migrations/20261114000200_api_keys.sql`); and the MCP tool
-  `ask_archive`, which uses the same key and allowance.
+  `ask_archive`, which uses the same key and allowance. The database functions
+  are gated by the API's own secret, `API_BRIDGE_SECRET`, separate from the
+  billing one.
 - A second Worker, `researchwithme-assistant` (`workers/assistant`), that makes
   the Assistant's model call and is reached only through a service binding.
   Its binding in `wrangler.jsonc` is commented out until that Worker is

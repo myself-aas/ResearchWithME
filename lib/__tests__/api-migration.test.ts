@@ -17,11 +17,21 @@ describe('api keys migration', () => {
   it('pins the search path on every function', () => {
     const text = sql();
     const functions = count(text, 'create or replace function');
-    expect(functions).toBe(7);
+    expect(functions).toBe(8);
     expect(count(text, "set search_path = ''")).toBe(functions);
   });
   it('gates every bridge function on the secret', () => {
-    expect(count(sql(), 'if not public.billing_secret_matches(p_bridge_secret) then')).toBe(5);
+    expect(count(sql(), 'if not public.api_secret_matches(p_bridge_secret) then')).toBe(5);
+  });
+
+  it('has its own secret, separate from billing, that fails closed and is not callable directly', () => {
+    const text = sql();
+    expect(text).not.toContain('billing_secret_matches');
+    expect(text).not.toContain('billing_settings');
+    expect(text).toContain('create table if not exists private.api_settings');
+    expect(text).toContain('revoke all on private.api_settings from anon, authenticated;');
+    expect(text).toContain('revoke all on function public.api_secret_matches(text) from public, anon, authenticated;');
+    expect(text).not.toMatch(/grant execute on function public\.api_secret_matches/);
   });
   it('never lets a signed-in user read a key hash or write anything but a revocation', () => {
     const text = sql();

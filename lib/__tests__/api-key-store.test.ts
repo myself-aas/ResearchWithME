@@ -45,7 +45,7 @@ describe('memory api key store', () => {
 
 describe('supabase api key store', () => {
   it('looks a key up through the bridge function with the secret', async () => {
-    vi.stubEnv('BILLING_BRIDGE_SECRET', ' s3cret ');
+    vi.stubEnv('API_BRIDGE_SECRET', ' s3cret ');
     const rpc = vi.fn(async () => ({ data: { keyId: 'k1', userId: 'u1' }, error: null }));
     const store = createSupabaseApiKeyStore(async () => ({ rpc }) as never, async () => ({ rpc }) as never);
     expect(await store.lookup('abc')).toEqual({ keyId: 'k1', userId: 'u1' });
@@ -56,6 +56,13 @@ describe('supabase api key store', () => {
     const store = createSupabaseApiKeyStore(async () => ({ rpc }) as never, async () => ({ rpc }) as never);
     expect(await store.lookup('abc')).toBeNull();
   });
+  it('does not fall back to the billing secret', async () => {
+    vi.stubEnv('API_BRIDGE_SECRET', '');
+    vi.stubEnv('BILLING_BRIDGE_SECRET', 'billing');
+    const { bridgeSecret } = await import('@/lib/api/key-store');
+    expect(bridgeSecret()).toBe('');
+  });
+
   it('throws when the bridge errors, so the caller answers 503 rather than 401', async () => {
     const rpc = vi.fn(async () => ({ data: null, error: { message: 'connection reset' } }));
     const store = createSupabaseApiKeyStore(async () => ({ rpc }) as never, async () => ({ rpc }) as never);

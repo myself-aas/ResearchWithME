@@ -34,3 +34,13 @@ describe('checkBurst', () => {
     expect((await checkBurst('other-key', null)).allowed).toBe(true);
   });
 });
+
+describe('burst limit configuration', () => {
+  it('is the same in wrangler.jsonc as in the fallback', async () => {
+    const { readFileSync } = await import('node:fs');
+    const config = readFileSync('wrangler.jsonc', 'utf8');
+    const match = config.match(/"name": "API_BURST_LIMITER"[^}]*"simple": \{ "limit": (\d+), "period": (\d+) \}/);
+    expect(match).not.toBeNull();
+    expect([Number(match![1]), Number(match![2])]).toEqual([BURST_LIMIT, BURST_WINDOW_SECONDS]);
+  });
+});

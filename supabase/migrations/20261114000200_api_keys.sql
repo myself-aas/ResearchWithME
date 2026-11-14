@@ -10,11 +10,67 @@
 --   api_usage_periods  only the bridge functions below.
 --
 -- The bridge functions are `security definer` and refuse unless the caller
--- presents the bridge secret (public.billing_secret_matches, from
--- 20261113000300_billing.sql). The site Worker calls them with the publishable
--- key; there is still no privileged database credential in the application.
+-- presents the API bridge secret (public.api_secret_matches, section 0). The
+-- site Worker calls them with the publishable key; there is still no privileged
+-- database credential in the application.
+--
+-- The secret is this API's own, not the billing one: a leak of either does not
+-- open the other, and each can be rotated without touching the other. This
+-- migration therefore does not depend on 20261113000300_billing.sql.
 --
 -- Idempotent: safe to run more than once.
+
+-- ---------------------------------------------------------------------------
+-- 0. The API bridge secret
+-- ---------------------------------------------------------------------------
+
+create schema if not exists private;
+revoke all on schema private from anon, authenticated;
+
+create table if not exists private.api_settings (
+  key text primary key,
+  value text not null
+);
+
+revoke all on private.api_settings from anon, authenticated;
+
+-- The owner inserts the digest after this migration, using the value set as
+-- the Worker secret API_BRIDGE_SECRET:
+--   printf %s "$API_BRIDGE_SECRET" | shasum -a 256
+--   insert into private.api_settings (key, value)
+--   values ('bridge_secret_sha256', '<hex>')
+--   on conflict (key) do update set value = excluded.value;
+-- An absent row fails every call closed.
+
+create or replace function public.api_secret_matches(candidate text)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  expected text;
+begin
+  select value into expected
+    from private.api_settings
+   where key = 'bridge_secret_sha256';
+
+  if expected is null or expected = '' then
+    return false;
+  end if;
+  if candidate is null or candidate = '' then
+    return false;
+  end if;
+
+  -- sha256(bytea) is core Postgres (11+), not pgcrypto. convert_to pins the
+  -- encoding so the digest matches `printf %s "$SECRET" | shasum -a 256`.
+  return sha256(convert_to(candidate, 'UTF8')) = decode(expected, 'hex');
+end;
+$$;
+
+-- Only the bridge functions below call this, and they run as their owner, so no
+-- client role needs to execute it directly.
+revoke all on function public.api_secret_matches(text) from public, anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 1. Tables
@@ -143,7 +199,7 @@ as $$
 declare
   v_key public.api_keys;
 begin
-  if not public.billing_secret_matches(p_bridge_secret) then
+  if not public.api_secret_matches(p_bridge_secret) then
     raise exception 'forbidden' using errcode = '42501';
   end if;
 
@@ -193,7 +249,7 @@ declare
   v_period date := date_trunc('month', timezone('utc', now()))::date;
   v_used integer;
 begin
-  if not public.billing_secret_matches(p_bridge_secret) then
+  if not public.api_secret_matches(p_bridge_secret) then
     raise exception 'forbidden' using errcode = '42501';
   end if;
 
@@ -260,7 +316,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  if not public.billing_secret_matches(p_bridge_secret) then
+  if not public.api_secret_matches(p_bridge_secret) then
     raise exception 'forbidden' using errcode = '42501';
   end if;
 
@@ -282,7 +338,7 @@ declare
   v_user uuid;
   v_created timestamptz;
 begin
-  if not public.billing_secret_matches(p_bridge_secret) then
+  if not public.api_secret_matches(p_bridge_secret) then
     raise exception 'forbidden' using errcode = '42501';
   end if;
 
@@ -310,7 +366,7 @@ as $$
 declare
   v_used integer;
 begin
-  if not public.billing_secret_matches(p_bridge_secret) then
+  if not public.api_secret_matches(p_bridge_secret) then
     raise exception 'forbidden' using errcode = '42501';
   end if;
 

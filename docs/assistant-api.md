@@ -226,15 +226,36 @@ step 4 the site answers in-process and the Assistant Worker is not used.
 1. Apply `supabase/migrations/20261114000200_api_keys.sql`. It is written to
    be re-runnable. It has been run only against an in-memory Postgres with a
    stubbed `auth` schema, never against Supabase; try it on a branch first.
-2. `npm run worker:assistant:deploy`
-3. `npx wrangler secret put GEMINI_API_KEY -c workers/assistant/wrangler.jsonc`
+2. Create the API bridge secret and store it in both places, Worker first:
+
+   ```bash
+   SECRET=$(openssl rand -hex 32)
+   printf %s "$SECRET" | npx wrangler secret put API_BRIDGE_SECRET
+   printf %s "$SECRET" | shasum -a 256
+   ```
+
+   ```sql
+   insert into private.api_settings (key, value)
+   values ('bridge_secret_sha256', '<hex from the command above>')
+   on conflict (key) do update set value = excluded.value;
+   ```
+
+   This is not `BILLING_BRIDGE_SECRET`; use a different value. Without the
+   row, or with a mismatch, every API call answers `503`. Rotate in the same
+   order. Until this step is done, keys can be created on the account page
+   but usage shows as unknown there and no key can be used.
+
+   The steps below are optional and can be done later.
+3. `npm run worker:assistant:deploy`, then
+   `npx wrangler secret put GEMINI_API_KEY -c workers/assistant/wrangler.jsonc`
 4. Uncomment the `ASSISTANT` service binding in `wrangler.jsonc`, then deploy
    the site (merge to `main`, or `npm run deploy`).
 5. Confirm that rate-limit namespace `2001` is not already used by another
    Worker in the account; a shared id shares counters. Change it in
    `wrangler.jsonc` if it is.
-6. Send one request with a test key and confirm the trace shows both Workers
-   and the site log has no `assistant.binding_fallback` line. Repeat it with
+6. Send one request with a test key. If the Assistant Worker is enabled,
+   confirm the trace shows both Workers and the site log has no
+   `assistant.binding_fallback` line. Repeat it with
    the same `Idempotency-Key` and confirm the same `id` comes back.
 
 The site Worker keeps working without the Assistant Worker: it answers
@@ -244,7 +265,9 @@ Assistant Worker outage at the cost of holding the key in both Workers.
 
 ### Owner: change a limit
 
-- Burst: edit `ratelimits[0].simple.limit` in `wrangler.jsonc` and deploy. The
+- Burst: edit `ratelimits[0].simple.limit` in `wrangler.jsonc` and
+  `BURST_LIMIT` in `lib/api/burst.ts` together (a test fails if they differ),
+  then deploy. The
   period can only be 10 or 60 seconds.
 - Allowance: set the `API_FREE_MONTHLY_REQUESTS` variable and deploy.
 
@@ -353,9 +376,8 @@ confirm a key ever existed.
 | Request body | 8192 bytes | `app/api/v1/assistant/answers/route.ts` |
 | Model timeout | 20 seconds, then a catalogue answer | `lib/assistant/compose.ts` |
 
-The burst and allowance values are the spec's defaults. The owner has not yet
-confirmed them; both can be changed without a code change (see "Owner: change
-a limit").
+The burst and allowance values are deliberately low starting points, to be
+raised on evidence (see the spec, "Decisions on the open questions").
 
 Where the Rate Limiting binding is absent (local development, Worker
 Previews) or fails, the burst limit is enforced by the KV limiter instead.
@@ -408,7 +430,7 @@ without a client key get a generated one, so every request is in the ledger.
 | `ASSISTANT` | site Worker service binding, commented out until the Assistant Worker is deployed | RPC to `researchwithme-assistant` |
 | `API_BURST_LIMITER` | site Worker `ratelimits` binding | Burst limit |
 | `API_FREE_MONTHLY_REQUESTS` | site Worker variable | Allowance, default 100 |
-| `BILLING_BRIDGE_SECRET` | site Worker secret (existing) | Gate for the ledger SQL functions |
+| `API_BRIDGE_SECRET` | site Worker secret; its SHA-256 digest in `private.api_settings` | Gate for the key lookup and ledger SQL functions. Separate from the billing secret |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Assistant Worker secret and variable; also read by the site Worker for its in-process fallback | Model call |
 | `AI_GATEWAY_BASE_URL` | Assistant Worker variable, optional | Route the model call through AI Gateway |
 

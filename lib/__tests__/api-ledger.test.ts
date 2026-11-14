@@ -78,7 +78,7 @@ describe('supabase ledger', () => {
   const ledger = (rpc: ReturnType<typeof vi.fn>) => createSupabaseLedger(async () => ({ rpc }) as never, now);
 
   it('maps a claimed reply and sends the secret', async () => {
-    vi.stubEnv('BILLING_BRIDGE_SECRET', 's3cret');
+    vi.stubEnv('API_BRIDGE_SECRET', 's3cret');
     clock = new Date('2026-11-14T12:00:00Z');
     const rpc = vi.fn(async () => ({ data: { status: 'CLAIMED', requestId: 'r1', used: 3 }, error: null }));
     const out = await ledger(rpc).claim({ keyId: 'k', idempotencyKey: 'i', requestHash: 'h', included: 100 });

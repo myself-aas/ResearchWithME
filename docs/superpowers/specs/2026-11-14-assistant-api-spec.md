@@ -1,6 +1,6 @@
 # Spec: Assistant API (V1)
 
-Status: **Proposed. Awaiting owner approval. No code has been written.**
+Status: **Accepted on 2026-11-14 and implemented in the repository; not deployed.** The owner delegated the open questions to best practice; see "Decisions on the open questions".
 Date: 2026-11-14
 Plan: `docs/superpowers/plans/2026-11-14-assistant-api.md`
 Design and reference: `docs/assistant-api.md`
@@ -153,7 +153,6 @@ export function apiError(code: ApiErrorCode, message: string, init?: { details?:
 - Creating Cloudflare resources or deploying (`wrangler deploy`, secrets,
   AI Gateway, a custom domain).
 - Applying the migration to the live Supabase project.
-- Reusing `BILLING_BRIDGE_SECRET` for the API ledger (ADR-001 proposes it).
 - Any price, allowance, or limit shown to users.
 - Mirroring the new routes into `cloudflare-pages/`.
 
@@ -232,7 +231,33 @@ the numbers the gate asks for.
   owner's confirmation of account, Worker and version. The plan records when to run it.
 - Migrating the site from OpenNext to vinext.
 
-## Open questions
+## Decisions on the open questions (2026-11-14)
+
+The owner asked for these to be settled by best practice rather than answering
+each one. What was chosen and why:
+
+1. **Limits: 100 answers per month and 30 requests per 60 seconds, kept.**
+   Start low and raise on evidence: a limit is easy to raise and hard to lower
+   once clients depend on it. Both are configuration, not code
+   (`API_FREE_MONTHLY_REQUESTS`; `ratelimits` in `wrangler.jsonc`, which a test
+   keeps equal to the fallback's constant). Revisit with the go/no-go figures
+   in "Can the API earn money?".
+2. **The API has its own secret, `API_BRIDGE_SECRET`; it does not reuse
+   `BILLING_BRIDGE_SECRET`.** One secret per purpose: a leak of either does not
+   open the other, and each rotates alone. The digest lives in
+   `private.api_settings`, and the checking function is not executable by
+   client roles. The cost is one more Worker secret and one more row to insert.
+3. **The second Worker stays, off by default.** It is the only arrangement
+   that can keep the model key out of the Worker that serves pages, and it is
+   independently deployable. Its binding is commented out until the Worker is
+   deployed, because `main` deploys automatically; until then the site answers
+   in-process. The isolation is only real once `GEMINI_API_KEY` is removed
+   from the site Worker, which also removes model answers from the fallback.
+
+Questions 3 to 5 keep the spec's stated defaults: catalogue answers count, no
+AI Gateway yet, no Pages mirror.
+
+## Open questions (as first asked)
 
 1. Free allowance and burst limit: are 100 per month and 30 per minute right?
 2. May the API ledger reuse `BILLING_BRIDGE_SECRET`, or should it have its own secret?
