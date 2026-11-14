@@ -210,7 +210,7 @@ export const API_OPERATIONS: ApiOperation[] = [
     summary: 'Start a checkout',
     description: 'Creates a Lemon Squeezy checkout for one of this site’s products and returns its URL for the on-site overlay. The variant is resolved server-side from configuration: the request names a product, never a variant or a price. Rate limited to ten attempts a minute.',
     security: session,
-    requestBody: jsonBody(object({ product: { type: 'string', enum: ['teardown', 'copilot'] } }, ['product']), 'The product to buy.'),
+    requestBody: jsonBody(object({ product: { type: 'string', enum: ['teardown'] } }, ['product']), 'The product to buy.'),
     responses: {
       201: json('The checkout to open.', object({ url: text }, ['url'])),
       ...errors(400, 401, 403, 415, 429, 502, 503),

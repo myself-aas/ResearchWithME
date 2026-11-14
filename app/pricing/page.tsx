@@ -13,7 +13,7 @@ import { jsonLdScript } from '@/lib/seo/jsonld';
 export const metadata: Metadata = pageMetadata({
   title: 'Products and pricing',
   description:
-    'The Teardown System ($19) and the Research Co-Pilot membership ($9 a month). Reading ResearchWithMe stays free and needs no account.',
+    'The Teardown System, $19 once. Reading ResearchWithMe stays free and needs no account.',
   path: '/pricing',
 });
 
@@ -36,12 +36,12 @@ const QUESTIONS: readonly { question: string; answer: React.ReactNode }[] = [
   {
     question: 'Why do I need an account to buy?',
     answer:
-      'So the purchase is attached to you and shows on your account page. Reading never needs one; buying does, because otherwise there is nothing to tie a download or a membership to.',
+      'So the purchase is attached to you and shows on your account page. Reading never needs one; buying does, because otherwise there is nothing to tie a download to.',
   },
   {
-    question: 'What happens if I stop the membership?',
+    question: 'Is there a subscription?',
     answer:
-      'You keep access until the period you already paid for runs out, and you are not charged again. The receipt email from Lemon Squeezy carries the link to manage the subscription.',
+      'No. The Teardown System is one payment and there is no renewal. The Research Co-Pilot membership is no longer sold; if you still hold one, write to us and we will sort it out.',
   },
   {
     question: 'How do refunds work?',
@@ -59,8 +59,8 @@ const QUESTIONS: readonly { question: string; answer: React.ReactNode }[] = [
 
 const STEPS: readonly { title: string; body: string }[] = [
   {
-    title: 'Choose one',
-    body: 'Sign in, then pick a product. The checkout opens on this page; you do not leave the site.',
+    title: 'Sign in',
+    body: 'Sign in, then choose to buy. The checkout opens on this page; you do not leave the site.',
   },
   {
     title: 'Pay through Lemon Squeezy',
@@ -68,7 +68,7 @@ const STEPS: readonly { title: string; body: string }[] = [
   },
   {
     title: 'Receive it',
-    body: 'The Teardown System arrives as a download. For the co-pilot, the editor writes to you to set up access.',
+    body: 'The Teardown System arrives as a download from Lemon Squeezy once the payment clears.',
   },
 ];
 
@@ -84,17 +84,7 @@ function offerCatalogueJsonLd() {
       description: product.summary,
       url: absoluteUrl(`/pricing#product-${product.key}`),
       priceCurrency: 'USD',
-      ...(product.key === 'teardown' ? { price: '19.00' } : {}),
-      ...(product.key === 'copilot'
-        ? {
-            priceSpecification: {
-              '@type': 'UnitPriceSpecification',
-              price: '9.00',
-              priceCurrency: 'USD',
-              unitCode: 'MON',
-            },
-          }
-        : {}),
+      price: '19.00',
     })),
   };
 }
@@ -129,11 +119,11 @@ export default async function PricingPage() {
 
         <header className="max-w-3xl">
           <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-            The archive is free. Two things go further.
+            The archive is free. One thing goes further.
           </h1>
           <p className="mt-4 font-serif text-lg leading-relaxed text-ink-secondary">
-            A method you can apply to your own code review, and a membership that follows the work as it is
-            written. Each is priced once, plainly, and bought separately.
+            The method behind our repository teardowns, written up so you can apply it to code you did not
+            write. It is priced once, plainly, and there is nothing to renew.
           </p>
         </header>
 
@@ -157,7 +147,7 @@ export default async function PricingPage() {
           </ul>
         </section>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
+        <div className="mt-10 grid max-w-3xl gap-6">
           {BILLING_PRODUCTS.map((product) => (
             <section
               key={product.key}
@@ -223,7 +213,7 @@ export default async function PricingPage() {
         </div>
 
         <p className="mt-6 max-w-3xl font-sans text-sm leading-relaxed text-ink-secondary">
-          Not sure which, or whether any? Read a{' '}
+          Not sure whether it is for you? Read a{' '}
           <Link href="/" className="underline underline-offset-4 hover:text-ink">
             published teardown
           </Link>{' '}
@@ -283,8 +273,8 @@ export default async function PricingPage() {
             Why we sell anything at all
           </h2>
           <p className="mt-3 font-serif leading-relaxed text-ink-secondary">
-            There are no adverts, no trackers, and no article charges here. These two are the things that cost
-            us time to make, and selling them helps keep the reading free for everyone else. Read more about{' '}
+            There are no adverts, no trackers, and no article charges here. The Teardown System is the one thing here
+            we charge for, and selling it helps keep the reading free for everyone else. Read more about{' '}
             <Link href="/about" className="underline underline-offset-4">
               why the archive is open
             </Link>

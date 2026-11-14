@@ -354,11 +354,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
             </li>
           </ul>
           <p className="mt-6 max-w-[60ch] text-sm leading-relaxed text-ink-secondary">
-            The assistant is free for every reader and needs no account. If it is useful to you, the{' '}
-            <Link href="/pricing#product-copilot" className="font-semibold text-ink underline underline-offset-4 hover:text-brand">
-              Research Co-Pilot membership, $9 a month
-            </Link>
-            , adds the working notes behind the reviews.
+            The assistant is free for every reader and needs no account.
           </p>
         </section>
 

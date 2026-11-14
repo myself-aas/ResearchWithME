@@ -57,8 +57,8 @@ export default function ServicesShowcase({ variant = 'band', headingId = 'servic
               Products
             </h2>
             <p className="mt-3 max-w-2xl font-sans text-base leading-relaxed text-ink-secondary">
-              Reading costs nothing and needs no account. When you want the method behind a teardown, or the
-              working notes behind the reviews, these two are what we sell.
+              Reading costs nothing and needs no account. When you want the method behind a teardown
+              written up to use on your own code, this is what we sell.
             </p>
           </div>
           <p className="font-sans text-sm leading-relaxed text-ink-secondary">
@@ -74,7 +74,7 @@ export default function ServicesShowcase({ variant = 'band', headingId = 'servic
           </p>
         </div>
 
-        <ul className="mt-8 grid gap-px overflow-hidden rounded-sm border border-line bg-line md:grid-cols-2">
+        <ul className="mt-8 grid gap-px overflow-hidden rounded-sm border border-line bg-line">
           {BILLING_PRODUCTS.map((product) => (
             <li key={product.key} className="flex flex-col bg-canvas p-6">
               <div className="flex items-baseline justify-between gap-4">

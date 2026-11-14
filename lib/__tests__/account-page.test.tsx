@@ -68,7 +68,7 @@ describe('/dashboard/account', () => {
     expect(html).toContain('Purchased');
     expect(html).not.toContain('No purchases yet');
     // It must not claim a subscription that was never bought. Scope this to the
-    // fact list: "Also available" legitimately names the co-pilot further down.
+    // fact list, which is where a plan would be named.
     const facts = html.slice(0, html.indexOf('Purchases'));
     expect(facts).not.toContain('Research Co-Pilot');
   });

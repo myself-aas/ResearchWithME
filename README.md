@@ -30,7 +30,7 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
 | `/pricing` | Persuade | The two paid products and what stays free; checkout through the Lemon Squeezy overlay |
-| `/dashboard/account` | Operate | Your plan, status, co-pilot credits, and anything still on sale |
+| `/dashboard/account` | Operate | Your plan, status, purchases, and anything still on sale |
 | `/about` / `/contact` / `/privacy` | Read | Mission, contact channels, reader privacy policy |
 | `/login` | Operate | Email / OAuth sign-in; demo-mode setup guide when Supabase is not configured |
 | `/dashboard/access` | Operate | Connect an ORCID or GitHub identity and apply to write |
@@ -177,7 +177,6 @@ Environment variables:
 | `BILLING_BRIDGE_SECRET` | Optional. Secret. Also stored (as a SHA-256 digest) in `private.billing_settings`; see `docs/billing.md` §3. |
 | `LEMONSQUEEZY_STORE_ID` | Optional. Store the checkouts belong to. |
 | `LEMONSQUEEZY_VARIANT_TEARDOWN` | Optional. Variant for the $19 teardown product. |
-| `LEMONSQUEEZY_VARIANT_COPILOT` | Optional. Variant for the $9/month co-pilot. |
 | `LEMONSQUEEZY_TEST_MODE` | Optional. `1` marks checkouts and stored rows as test data; leave unset in production. |
 
 ## Project layout

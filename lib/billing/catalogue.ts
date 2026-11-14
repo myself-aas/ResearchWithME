@@ -1,9 +1,9 @@
 /**
  * The paid offerings, as the product surface describes them.
  *
- * Prices are the spec's, verbatim (`docs/superpowers/specs/
- * 2026-11-13-financial-integration-blueprint.md` Phase 2): $19 teardown and
- * $9/month co-pilot. Lemon Squeezy is the merchant of record, so it is also the
+ * The price is the spec's, verbatim (`docs/superpowers/specs/
+ * 2026-11-13-financial-integration-blueprint.md` Phase 2): $19 teardown.
+ * Lemon Squeezy is the merchant of record, so it is also the
  * authority on what is actually charged; these labels exist so the page and
  * the tests agree with the spec, not so the application can price anything.
  *
@@ -11,8 +11,15 @@
  * kind", newsletter advertising, donations with no product behind them, and
  * job boards, and may suspend a store that sells them
  * (https://docs.lemonsqueezy.com/help/getting-started/prohibited-products).
- * Manuscript Editing was removed on 2026-11-14 for that reason; do not add a
- * service, a sponsorship, or a "support us" product to this list.
+ * Manuscript Editing was removed on 2026-11-14 for that reason. The Research
+ * Co-Pilot membership was withdrawn the same day: its payment switched nothing
+ * on, which is a subscription with no product behind it. Do not add a service,
+ * a sponsorship, a "support us" product, or a membership that delivers nothing
+ * automatically to this list.
+ *
+ * Withdrawing the co-pilot from sale does not touch existing subscriptions:
+ * the webhook, `lib/billing/status.ts` and the account page still handle them
+ * until the owner cancels them in Lemon Squeezy.
  *
  * Variant IDs live in the environment because they differ between a test store
  * and the live one. The server resolves them (see `lib/billing/checkout.ts`);
@@ -22,7 +29,7 @@
  * needs the key type.
  */
 
-export type BillingProductKey = 'teardown' | 'copilot';
+export type BillingProductKey = 'teardown';
 
 export interface BillingProduct {
   key: BillingProductKey;
@@ -50,13 +57,12 @@ export interface BillingProduct {
 /**
  * Copy rules for this list, because every surface that sells reads it:
  *
- * - Nothing here may promise what `docs/billing.md` does not deliver. In
- *   particular the co-pilot grants no usage allowance today, and the research
- *   assistant is free for everyone, so membership is never described as
- *   unlocking it.
- * - A membership is sold for what the member receives, never as a way to
- *   support the site: a subscription with no product is a donation, which the
- *   payment provider prohibits.
+ * - Nothing here may promise what `docs/billing.md` does not deliver. The
+ *   research assistant is free for everyone and is never described as part of
+ *   a purchase.
+ * - A product is sold for what the buyer receives, never as a way to support
+ *   the site: a payment with no product is a donation, which the payment
+ *   provider prohibits.
  * - No invented numbers: no turnaround times, page counts, customer counts, or
  *   discounts. Add them here when they are real.
  */
@@ -81,24 +87,6 @@ export const BILLING_PRODUCTS: readonly BillingProduct[] = [
     actionLabel: 'Buy the system',
     mode: 'payment',
   },
-  {
-    key: 'copilot',
-    name: 'Research Co-Pilot',
-    outcome: 'Follow the work while it is still being written.',
-    summary: 'The monthly membership for readers who want the assistant and the working notes as they are released.',
-    priceLabel: '$9 / month',
-    priceNote: 'Billed monthly, about 30 cents a day',
-    includes: [
-      'The working notes behind the reviews, as they are released',
-      'If you stop, access runs to the end of the month you paid for',
-    ],
-    bestFor: 'Regular readers who want the reasoning behind a review, not only the finished piece.',
-    delivery: 'The editor sets up your access by email after the first payment.',
-    caveat:
-      'The assistant is open to every reader with or without a membership, and notes arrive when they are written, not on a timetable.',
-    actionLabel: 'Subscribe',
-    mode: 'subscription',
-  },
 ];
 
 /**
@@ -114,7 +102,6 @@ export const FREE_FOR_EVERYONE: readonly { label: string; href: string }[] = [
 
 const VARIANT_ENV: Record<BillingProductKey, string> = {
   teardown: 'LEMONSQUEEZY_VARIANT_TEARDOWN',
-  copilot: 'LEMONSQUEEZY_VARIANT_COPILOT',
 };
 
 /**

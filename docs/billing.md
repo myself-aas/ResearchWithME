@@ -15,7 +15,6 @@ checkout URL, and the server is the only party that knows a price.
 | Product | Key | Price | Mode | Delivery |
 | --- | --- | --- | --- | --- |
 | The Teardown System | `teardown` | $19 one-time | `payment` | Lemon Squeezy file download |
-| Research Co-Pilot | `copilot` | $9 / month | `subscription` | `billing_orders.ai_credits` per period |
 
 `lib/billing/catalogue.ts` is the single source of these rows; the pricing page,
 the checkout route, and the tests all read it. A key that is not in that file
@@ -40,12 +39,19 @@ the Lemon Squeezy dashboard and delete `LEMONSQUEEZY_VARIANT_EDITING` from the
 Worker's variables. Past editing orders stay in `billing_orders` and still show
 on the buyer's account page.
 
-**The co-pilot must deliver something.** A subscription that grants nothing is,
-in the provider's terms, a donation. Membership copy describes what the member
-receives and never asks for support; the working notes need to exist and reach
-members for the product to stand.
+**The Research Co-Pilot is withdrawn from sale (2026-11-14).** Its payment
+switched nothing on, and a subscription that grants nothing is, in the
+provider's terms, a donation. `copilot` is no longer a catalogue key, so
+`/api/billing/checkout` answers `400` for it and no page offers it.
+Subscription handling is deliberately left in place: the webhook still records
+subscription events, `lib/billing/status.ts` still interprets them, and the
+account page still shows an existing member's plan. **Owner step:** cancel and,
+where fair, refund every active co-pilot subscription in the Lemon Squeezy
+dashboard, archive the product there, and delete `LEMONSQUEEZY_VARIANT_COPILOT`
+from the Worker's variables. A membership may return only when it delivers a
+defined product automatically.
 
-**Credits are zero today.** No product in the current catalogue grants co-pilot
+**Credits are zero today.** No product in the current catalogue grants
 credits, so every order is written with `ai_credits = 0` and the counter on
 `/dashboard/account` reads zero. The column and the summing query exist so the
 follow-on entitlement spec does not need a second migration; the pricing page

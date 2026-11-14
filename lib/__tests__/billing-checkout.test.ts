@@ -7,7 +7,7 @@ const URL = 'https://researchwithme.lemonsqueezy.com/checkout/buy/abc';
 const env = (over: Record<string, string> = {}) => ({
   LEMONSQUEEZY_API_KEY: 'ls_key',
   LEMONSQUEEZY_STORE_ID: '77',
-  LEMONSQUEEZY_VARIANT_COPILOT: '42',
+  LEMONSQUEEZY_VARIANT_TEARDOWN: '42',
   NEXT_PUBLIC_SITE_URL: 'https://researchwith.me',
   ...over,
 });
@@ -18,7 +18,7 @@ const reply = (body: unknown, status = 201) =>
 const input = (over: Partial<Parameters<typeof createCheckout>[0]> = {}) => ({
   userId: USER,
   email: 'reader@example.org',
-  product: 'copilot' as const,
+  product: 'teardown' as const,
   redirectUrl: 'https://researchwith.me/dashboard/account',
   ...over,
 });
@@ -62,7 +62,7 @@ describe('createCheckout', () => {
   it('refuses to invent a variant id', async () => {
     const fetchImpl = reply({ data: { attributes: { url: URL } } });
     await expect(
-      createCheckout({ ...input(), env: env({ LEMONSQUEEZY_VARIANT_COPILOT: '' }), fetchImpl }),
+      createCheckout({ ...input(), env: env({ LEMONSQUEEZY_VARIANT_TEARDOWN: '' }), fetchImpl }),
     ).rejects.toBeInstanceOf(CheckoutNotConfiguredError);
     expect(fetchImpl).not.toHaveBeenCalled();
   });

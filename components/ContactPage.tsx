@@ -48,9 +48,9 @@ export default function ContactPage() {
               </Text>
               <Text as="h3" variant="card-title" className="mt-2">Orders</Text>
               <p className="mt-2 text-sm text-ink-secondary">
-                Ask about an order for the Teardown System or the Research Co-Pilot. Include the email you paid
+                Ask about an order for the Teardown System, or an existing membership. Include the email you paid
                 with. See{' '}
-                <TextLink href="/pricing">products and pricing</TextLink> for what each one includes.
+                <TextLink href="/pricing">products and pricing</TextLink> for what is included.
               </p>
               <p className="mt-4 font-mono text-sm text-ink">
                 <a href="mailto:editor@researchwith.me?subject=Order" className="text-brand underline underline-offset-4">

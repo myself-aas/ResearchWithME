@@ -26,7 +26,7 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata: Metadata = {
   ...pageMetadata({
     title: 'Your account',
-    description: 'Your plan, purchases, and remaining co-pilot credits on ResearchWithMe.',
+    description: 'Your plan and purchases on ResearchWithMe.',
     path: '/dashboard/account',
     type: 'website',
   }),
@@ -87,8 +87,9 @@ export default async function AccountPage() {
         : 'None';
   const shownStatus = hasOneTimePurchase && !active ? 'One-time purchase' : statusLabel;
   const periodEnd = formatDate(entitlement.currentPeriodEnd);
-  const ownedKeys = new Set(entitlement.plan === 'copilot' ? ['copilot'] : []);
-  const onSale = BILLING_PRODUCTS.filter((product) => !(ownedKeys.has(product.key) && active));
+  // The co-pilot is no longer sold, so nothing on sale can already be owned as
+  // a subscription. Existing members still see their plan in the facts above.
+  const onSale = BILLING_PRODUCTS;
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -155,7 +156,7 @@ export default async function AccountPage() {
 
         <section aria-labelledby="buy-heading" className="mt-8">
           <h2 id="buy-heading" className="font-serif text-xl font-bold text-ink">
-            {onSale.length === BILLING_PRODUCTS.length ? 'Available' : 'Also available'}
+            {hasPurchases ? 'Also available' : 'Available'}
           </h2>
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {onSale.map((product) => (

@@ -10,7 +10,6 @@ Source of truth: `lib/billing/catalogue.ts` (copy) and `docs/billing.md` (delive
 | Product | Price | Job the buyer hires it for | Delivery |
 | --- | --- | --- | --- |
 | The Teardown System | $19, one payment | Judge a repository they did not write, using the method the reviews use | Lemon Squeezy download |
-| Research Co-Pilot | $9 / month | Follow the reasoning behind reviews as it is written | Editor sets up access by email |
 
 Free and never gated: every article, the research assistant, the citation
 builder, the reading list.
@@ -28,7 +27,7 @@ tactic below is one that spends none of it.
 | --- | --- | --- |
 | Jobs to be done | Each product leads with the outcome, not the artefact | Catalogue `outcome`, pricing cards, home band |
 | Reciprocity, zero-price effect | What is free is stated before what is sold, with links | Pricing strip, home band, About |
-| Paradox of choice, Hick's law | Two products, one action each, a "who it is for" line to rule options out | Pricing cards |
+| Paradox of choice, Hick's law | One product, one action, a "who it is for" line to rule options out | Pricing cards |
 | Pratfall effect | Each product states its real limit up front ("Worth knowing first") | Catalogue `caveat` |
 | Regret aversion | Merchant of record, refunds, stopping a membership, and accounts answered before the button | Pricing questions |
 | Mental accounting | $9 a month restated as about 30 cents a day (arithmetic, not a discount) | Catalogue `priceNote` |
@@ -62,5 +61,4 @@ what the member receives.
 
 1. A stated refund window. Today the page only says who processes refunds.
 3. What the Teardown System physically is: format, length, a sample page.
-4. What co-pilot members receive and how often; no usage allowance is granted yet.
 5. Real buyer quotes, once there are buyers.

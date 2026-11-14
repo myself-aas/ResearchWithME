@@ -220,7 +220,7 @@ export default function BlogHero({
                 <div className="mt-6 max-w-xs border-t border-line pt-5">
                   <Text as="p" variant="eyebrow" color="secondary">Products</Text>
                   <p className="mt-1 font-sans text-sm leading-relaxed text-ink">
-                    The teardown method and a monthly membership.
+                    The teardown method, written up to use on your own code.
                   </p>
                   <Link
                     href="/pricing"

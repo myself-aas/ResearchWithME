@@ -16,7 +16,7 @@ const getDashboardUser = vi.fn();
 const CheckoutNotConfiguredError = class extends Error {};
 const CheckoutUnavailableError = class extends Error {};
 
-function post(body: unknown = { product: 'copilot' }, headers: Record<string, string> = {}) {
+function post(body: unknown = { product: 'teardown' }, headers: Record<string, string> = {}) {
   return POST(
     new NextRequest('https://researchwith.me/api/billing/checkout', {
       method: 'POST',
@@ -55,7 +55,7 @@ afterEach(async () => {
 
 describe('POST /api/billing/checkout', () => {
   it('refuses a cross-site origin', async () => {
-    expect((await post({ product: 'copilot' }, { origin: 'https://evil.example' })).status).toBe(403);
+    expect((await post({ product: 'teardown' }, { origin: 'https://evil.example' })).status).toBe(403);
   });
 
   it('refuses a non-JSON body', async () => {
@@ -79,14 +79,14 @@ describe('POST /api/billing/checkout', () => {
     getDashboardUser.mockResolvedValue({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
     createCheckout.mockResolvedValue({ url: 'https://researchwithme.lemonsqueezy.com/checkout/buy/abc' });
 
-    const res = await post({ product: 'copilot' });
+    const res = await post({ product: 'teardown' });
     expect(res.status).toBe(201);
     expect(await res.json()).toEqual({ url: 'https://researchwithme.lemonsqueezy.com/checkout/buy/abc' });
     expect(createCheckout).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: 'user-1',
         email: 'r@example.org',
-        product: 'copilot',
+        product: 'teardown',
         redirectUrl: 'https://researchwith.me/dashboard/account',
       }),
     );
