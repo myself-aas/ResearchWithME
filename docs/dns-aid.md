@@ -26,6 +26,31 @@ CLOUDFLARE_API_TOKEN="$TOKEN_FROM_SECRET_STORE" node scripts/dns-aid-cloudflare.
 
 The publisher checks that the exact Cloudflare zone is active, checks DNSSEC **before** writing, upserts only these three SVCB names, and refuses ambiguous same-name SVCB or CNAME records. It will not silently enable DNSSEC. Its DNSSEC mode is opt-in and still requires registrar DS verification. The script uses Cloudflare's structured SVCB `data: { priority, target, value }` API shape.
 
+## Verified state (2026-11-13)
+
+Checked over DNS-over-HTTPS against public resolvers, not inferred from this repository:
+
+| Check | Result |
+| --- | --- |
+| `_index._agents.researchwith.me` SVCB | **NODATA** — not published |
+| `_a2a._agents.researchwith.me` SVCB | **NODATA** — not published |
+| `_mcp._agents.researchwith.me` SVCB | **NODATA** — not published |
+| `researchwith.me` DS at the parent | **present** (`2371 13 2 217060…D4D2`) |
+| Resolver `AD` flag on zone queries | **true** — the zone is signed and the chain validates |
+
+So DNSSEC — the part that cannot be fixed from here and is the riskiest to change — is
+already correct and needs no action. The records themselves have never been created.
+`checks.discoverability.dnsAid` cannot pass until they are, and no test or deploy in
+this repository publishes them.
+
+Both target endpoints are live and were confirmed before writing this:
+`https://researchwith.me/.well-known/agent-card.json` and
+`https://researchwith.me/.well-known/mcp/server-card.json`. The A2A interface in the
+card advertises `https://researchwith.me/api/a2a`.
+
+This sandbox holds no Cloudflare credentials, so publishing requires an operator with a
+zone-scoped token (step 3 below).
+
 ## Verify
 
 ```sh
