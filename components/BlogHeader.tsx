@@ -16,6 +16,7 @@ import {
   PenSquare,
   Search,
   Sparkles,
+  Tag,
   User,
   Users,
   X,
@@ -41,6 +42,7 @@ const primaryNav = [
   { href: '/', label: 'Home', icon: BookOpen, match: (path: string) => path === '/' || path.startsWith('/articles') || path.startsWith('/post/') || path.startsWith('/category/') },
   { href: '/authors', label: 'Writers', icon: Users, match: (path: string) => path.startsWith('/author') },
   { href: '/assistant', label: 'Assistant', icon: Sparkles, match: (path: string) => path.startsWith('/assistant') },
+  { href: '/pricing', label: 'Products', icon: Tag, match: (path: string) => path.startsWith('/pricing') },
 ];
 
 export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {

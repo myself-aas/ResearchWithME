@@ -1,6 +1,6 @@
 # Lemon Squeezy billing
 
-Three paid products, one merchant of record, no gate on reading. This document is
+Two paid products, one merchant of record, no gate on reading. This document is
 the operator's view: what is sold, where the money goes, which credentials exist,
 what each webhook does to the database, and the order to switch things on.
 
@@ -15,8 +15,7 @@ checkout URL, and the server is the only party that knows a price.
 | Product | Key | Price | Mode | Delivery |
 | --- | --- | --- | --- | --- |
 | The Teardown System | `teardown` | $19 one-time | `payment` | Lemon Squeezy file download |
-| Research Co-Pilot | `copilot` | $9 / month | `subscription` | `billing_orders.ai_credits` per period |
-| Manuscript Editing | `editing` | $150 minimum, pay what you want above it | `payment` | Arranged by the editor after purchase |
+| Statistical Table Generator | `stat-tables` | $5 one-time | `payment` | Lemon Squeezy file download (`statistical-table-generator-1.0.0.zip`) |
 
 `lib/billing/catalogue.ts` is the single source of these rows; the pricing page,
 the checkout route, and the tests all read it. A key that is not in that file
@@ -28,11 +27,33 @@ assistant, and the bookmark list stay free and account-less. No surface shows a
 "Premium" badge, and no route checks a subscription before rendering content.
 This is a product decision, recorded as D3 in the plan, not an omission.
 
-**Pay what you want.** The editing product carries a `minPriceCents` and Lemon
-Squeezy enforces the floor at checkout (`$150`). The checkout request does not
-send a `custom_price`: a client-supplied price is a client-supplied discount.
+**Only digital goods.** Lemon Squeezy's prohibited-products list includes
+"services of any kind (including marketing, design, web development, consulting
+or other related services)", "advertising in newsletters", "donations or charity
+giving where no product exists", "job boards", and "homework/essay mills", and a
+store selling them can be suspended without notice
+(https://docs.lemonsqueezy.com/help/getting-started/prohibited-products, read
+2026-11-14). Manuscript Editing was a service and was removed from the catalogue
+on that date; `editing` is no longer a product key and `/api/billing/checkout`
+answers `400` for it. No Manuscript Editing product was ever created in the Lemon Squeezy store, so
+nothing was sold and there is nothing to archive or refund.
 
-**Credits are zero today.** No product in the current catalogue grants co-pilot
+**The Research Co-Pilot is withdrawn from sale (2026-11-14).** Its payment
+switched nothing on, and a subscription that grants nothing is, in the
+provider's terms, a donation. `copilot` is no longer a catalogue key, so
+`/api/billing/checkout` answers `400` for it and no page offers it.
+No co-pilot product was ever created in the Lemon Squeezy store, so there are
+no subscribers to cancel or refund. The subscription handling in the webhook,
+`lib/billing/status.ts` and the account page is unused code left in place; it
+can be removed in a later cleanup. A membership may return only when it
+delivers a defined product automatically.
+
+**Nothing can be bought yet (owner confirmed 2026-11-14).** The store has no
+products. The site lists the Teardown System, but until a product exists in
+Lemon Squeezy and `LEMONSQUEEZY_VARIANT_TEARDOWN` is set, `/api/billing/checkout`
+answers `503` and the button reports that checkout is not configured.
+
+**Credits are zero today.** No product in the current catalogue grants
 credits, so every order is written with `ai_credits = 0` and the counter on
 `/dashboard/account` reads zero. The column and the summing query exist so the
 follow-on entitlement spec does not need a second migration; the pricing page
@@ -193,7 +214,7 @@ work, and the last step is the only one that can take real money.
    value as `LEMONSQUEEZY_WEBHOOK_SECRET`, and at minimum the four events the
    blueprint names (`order_created`, `subscription_created`, `subscription_updated`,
    `subscription_expired`) plus the payment sub-events in §4.
-5. **Test-mode purchase.** With the store in test mode, buy each of the three
+5. **Test-mode purchase.** With the store in test mode, buy each of the two
    products using Lemon Squeezy's test card (`4242 4242 4242 4242`, any future
    expiry, any CVC). For each one confirm three things: a row in the matching
    table with `test_mode = true`, a `200` in the webhook delivery log, and the
@@ -223,9 +244,8 @@ absent from this repository:
   for downloads.
 - **The 1-on-1 Soundboard Audit booking flow.** Calendly or Tally embedded through
   Zapier/Make, with a manuscript intake form landing in Google Drive. That is
-  configuration in those products, not code here. The editing product's purchase
-  webhook is the hand-off point: it records who bought and leaves the scheduling
-  to the runbook written for those tools.
+  a service, which Lemon Squeezy prohibits, so it cannot be sold through this
+  integration at all.
 - **Tax and invoicing beyond the merchant of record.** Lemon Squeezy is the MoR,
   so it files and remits. Nothing in this repository computes tax, stores a VAT
   number, or renders an invoice PDF.
@@ -236,3 +256,20 @@ migrations) and **no variant ID in a checkout URL** (the blueprint's
 `checkout[buy_now]=...` URL form predates the checkout API; `POST /v1/checkouts`
 with a `variant` relationship is what Lemon Squeezy documents, and it is what
 `lib/billing/checkout.ts` sends).
+
+## Product files
+
+The files for every download are built from `products/` (`python products/build.py`) into `products/downloads/`.
+
+- Paid, uploaded to their product in the Lemon Squeezy store: The Teardown System ($19), Manuscript Check ($5),
+  and the full Statistical Table Generator ($5). The Teardown System and the Statistical Table Generator are in the catalogue; each shows "Not on sale yet" until its variant ID (`LEMONSQUEEZY_VARIANT_TEARDOWN`, `LEMONSQUEEZY_VARIANT_STAT_TABLES`) is set.
+  Manuscript Check waits for Lemon Squeezy's written reply.
+- Free, served by the site from `public/downloads` and listed on `/pricing` with no checkout and no account:
+  the free edition of Manuscript Check and the Research Toolkit.
+
+## When nothing can be bought
+
+`isPurchasable` (`lib/billing/catalogue.ts`) is true only when `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_STORE_ID`
+and the product's variant variable are set. Until then `/pricing` shows "Not on sale yet" in place of the buy
+button and the account page offers nothing to buy. To open sales: create the product in the store, attach its
+zip, and set the three variables.

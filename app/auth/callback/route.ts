@@ -9,9 +9,20 @@ export async function GET(request: NextRequest) {
   const next = safeNextPath(request.nextUrl.searchParams.get('next'), '/');
   const loginUrl = new URL('/login', request.url);
   loginUrl.searchParams.set('next', next);
+  // Connecting GitHub or ORCID starts from the application page with a session
+  // already in place. Sending that failure to /login would drop a signed-in
+  // reader on a sign-in form that has nothing to say about it, so the reason
+  // goes back to the page they came from.
+  const linking = next === '/dashboard/access' || next.startsWith('/dashboard/access?');
   const failure = (message: string) => {
-    loginUrl.searchParams.set('error_description', message);
-    const response = NextResponse.redirect(loginUrl);
+    let target = loginUrl;
+    if (linking) {
+      target = new URL('/dashboard/access', request.url);
+      target.searchParams.set('link_error', message.slice(0, 300));
+    } else {
+      loginUrl.searchParams.set('error_description', message);
+    }
+    const response = NextResponse.redirect(target);
     response.headers.set('Cache-Control', 'no-store');
     return response;
   };

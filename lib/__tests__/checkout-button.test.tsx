@@ -17,7 +17,7 @@ function mount() {
   document.body.appendChild(container);
   root = createRoot(container);
   act(() => {
-    root.render(<CheckoutButton product="copilot" label="Subscribe" />);
+    root.render(<CheckoutButton product="teardown" label="Buy" />);
   });
   return container.querySelector('button')!;
 }

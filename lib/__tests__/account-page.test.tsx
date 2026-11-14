@@ -27,9 +27,21 @@ async function render() {
 
 beforeEach(() => {
   getEntitlement.mockReset();
+  vi.unstubAllEnvs();
+  vi.stubEnv('LEMONSQUEEZY_API_KEY', 'test-key');
+  vi.stubEnv('LEMONSQUEEZY_STORE_ID', '1');
+  vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '2');
 });
 
 describe('/dashboard/account', () => {
+  it('offers nothing to buy while the store has no product', async () => {
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '');
+    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+    const html = await render();
+    expect(html).toContain('Nothing is on sale yet');
+    expect(html).not.toContain('buy-teardown');
+  });
+
   it('tells an account with no purchases what to do next', async () => {
     getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
     const html = await render();
@@ -68,7 +80,7 @@ describe('/dashboard/account', () => {
     expect(html).toContain('Purchased');
     expect(html).not.toContain('No purchases yet');
     // It must not claim a subscription that was never bought. Scope this to the
-    // fact list: "Also available" legitimately names the co-pilot further down.
+    // fact list, which is where a plan would be named.
     const facts = html.slice(0, html.indexOf('Purchases'));
     expect(facts).not.toContain('Research Co-Pilot');
   });

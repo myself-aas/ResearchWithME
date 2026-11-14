@@ -4,7 +4,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
-import { BILLING_PRODUCTS } from '@/lib/billing/catalogue';
+import { BILLING_PRODUCTS, isPurchasable } from '@/lib/billing/catalogue';
 import { getBillingStore, type Entitlement } from '@/lib/billing/store';
 import { hasPremiumAccess, subscriptionStatusLabel, type SubscriptionStatus } from '@/lib/billing/status';
 import { getDashboardUser } from '@/lib/cms/auth';
@@ -26,7 +26,7 @@ import { pageMetadata } from '@/lib/seo';
 export const metadata: Metadata = {
   ...pageMetadata({
     title: 'Your account',
-    description: 'Your plan, purchases, and remaining co-pilot credits on ResearchWithMe.',
+    description: 'Your plan and purchases on ResearchWithMe.',
     path: '/dashboard/account',
     type: 'website',
   }),
@@ -87,8 +87,10 @@ export default async function AccountPage() {
         : 'None';
   const shownStatus = hasOneTimePurchase && !active ? 'One-time purchase' : statusLabel;
   const periodEnd = formatDate(entitlement.currentPeriodEnd);
-  const ownedKeys = new Set(entitlement.plan === 'copilot' ? ['copilot'] : []);
-  const onSale = BILLING_PRODUCTS.filter((product) => !(ownedKeys.has(product.key) && active));
+  // The co-pilot is no longer sold, so nothing on sale can already be owned as
+  // a subscription. Existing members still see their plan in the facts above.
+  // Only what this deployment can actually sell; see `isPurchasable`.
+  const onSale = BILLING_PRODUCTS.filter((product) => isPurchasable(product.key));
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -155,8 +157,13 @@ export default async function AccountPage() {
 
         <section aria-labelledby="buy-heading" className="mt-8">
           <h2 id="buy-heading" className="font-serif text-xl font-bold text-ink">
-            {onSale.length === BILLING_PRODUCTS.length ? 'Available' : 'Also available'}
+            {hasPurchases ? 'Also available' : 'Available'}
           </h2>
+          {onSale.length === 0 ? (
+            <p className="mt-2 font-serif leading-relaxed text-ink-secondary">
+              Nothing is on sale yet. The checkout is being set up.
+            </p>
+          ) : null}
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {onSale.map((product) => (
               <li key={product.key} className="rounded-sm border border-line bg-surface p-5">
@@ -174,7 +181,7 @@ export default async function AccountPage() {
           <p className="mt-6 font-serif leading-relaxed text-ink-secondary">
             Reading stays free whether or not anything appears on this page.{' '}
             <Link href="/pricing" className="underline">
-              See all three products
+              See all products
             </Link>
             .
           </p>

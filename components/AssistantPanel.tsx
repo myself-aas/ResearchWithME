@@ -353,6 +353,9 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
               <span>It stores nothing you type and keeps no conversation history.</span>
             </li>
           </ul>
+          <p className="mt-6 max-w-[60ch] text-sm leading-relaxed text-ink-secondary">
+            The assistant is free for every reader and needs no account.
+          </p>
         </section>
 
         <section aria-label="How discovery works" className="border-t border-line py-8">

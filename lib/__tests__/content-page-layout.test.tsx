@@ -30,7 +30,7 @@ describe('reference-page layouts', () => {
   it('about_toc_links_resolve_to_existing_sections', () => {
     const html = render(AboutPage);
     const links = linksForNavigation(html, 'About page sections');
-    const expected = ['mission-heading', 'verification-heading', 'reuse-heading', 'governance-heading'];
+    const expected = ['mission-heading', 'verification-heading', 'reuse-heading', 'funding-heading', 'governance-heading'];
     expect(links).toEqual(expected);
     for (const id of expected) expect(ids(html).filter((candidate) => candidate === id)).toHaveLength(1);
   });

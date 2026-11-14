@@ -1,9 +1,12 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import PricingPage from '@/app/pricing/page';
 import sitemap from '@/app/sitemap';
+import { BILLING_PRODUCTS, FREE_DOWNLOADS } from '@/lib/billing/catalogue';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 
 vi.mock('@/components/BlogHeader', () => ({ default: () => null }));
 vi.mock('@/components/BlogFooter', () => ({ default: () => null }));
@@ -23,15 +26,67 @@ async function render() {
 }
 
 describe('/pricing', () => {
-  it('shows all three products with the spec prices', async () => {
+  // A deployment that can sell: key, store and the product's variant are set.
+  beforeEach(() => {
+    vi.stubEnv('LEMONSQUEEZY_API_KEY', 'test-key');
+    vi.stubEnv('LEMONSQUEEZY_STORE_ID', '1');
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '2');
+  });
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('offers no way to buy while the store has no product for it', async () => {
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '');
+    for (const user of [null, { id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false }]) {
+      getDashboardUser.mockResolvedValueOnce(user);
+      const html = await render();
+      expect(html).toContain('Not on sale yet.');
+      expect(html).not.toContain('Sign in to buy');
+      expect(html).not.toContain('<button');
+      expect(html).toContain('$19');
+    }
+  });
+
+  it('offers the free downloads with no account, and each file exists', async () => {
+    const html = await render();
+    expect(FREE_DOWNLOADS.length).toBe(2);
+    for (const item of FREE_DOWNLOADS) {
+      expect(html).toContain(`href="${item.href}"`);
+      expect(html).toContain(`id="download-${item.key}"`);
+      expect(existsSync(path.join(process.cwd(), 'public', item.href)), item.href).toBe(true);
+    }
+    expect(html).toContain('need no account');
+  });
+
+  it('describes the free tools as software, never as a review or an edit, and prices nothing unsold', async () => {
+    const copy = JSON.stringify(FREE_DOWNLOADS).toLowerCase();
+    for (const word of ['review', 'proofread', 'rewrite', 'polish', 'humaniz', 'guarantee', 'acceptance', 'essay', 'homework', 'assignment', '$']) {
+      expect(copy, word).not.toContain(word);
+    }
+  });
+
+  it('shows the one product at the spec price, and no service or membership on sale', async () => {
     const html = await render();
 
     expect(html).toContain('The Teardown System');
-    expect(html).toContain('Research Co-Pilot');
-    expect(html).toContain('Manuscript Editing');
+    expect(html).not.toContain('product-copilot');
+    expect(html).not.toContain('Manuscript Editing');
     expect(html).toContain('$19');
-    expect(html).toContain('$9 / month');
-    expect(html).toContain('$150');
+    expect(html).not.toContain('$9');
+    expect(html).not.toContain('$150');
+  });
+
+  it('lists the table program at its price, and sells it only once its own variant is set', async () => {
+    const off = await render();
+    expect(off).toContain('Statistical Table Generator');
+    expect(off).toContain('$5</p>');
+    expect(off).toContain('Python 3.8');
+    expect(off).not.toContain('all possible');
+    getDashboardUser.mockResolvedValue({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
+    expect((await render()).match(/<button/g)?.length ?? 0).toBe(1);
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_STAT_TABLES', '3');
+    expect((await render()).match(/<button/g)?.length ?? 0).toBe(2);
   });
 
   it('says plainly that reading stays free, and links to the mission', async () => {
@@ -47,6 +102,31 @@ describe('/pricing', () => {
     expect(html).not.toContain('cancel anytime');
   });
 
+  it('leads each product with its outcome and states its limit', async () => {
+    const html = await render();
+    for (const product of BILLING_PRODUCTS) {
+      const escaped = (text: string) => text.replace(/'/g, '&#x27;');
+      expect(html).toContain(escaped(product.outcome));
+      expect(html).toContain(escaped(product.caveat));
+      expect(html).toContain(`id="product-${product.key}"`);
+    }
+  });
+
+  it('lists what stays free before the first price', async () => {
+    const html = await render();
+    expect(html.indexOf('Already yours, free')).toBeGreaterThan(-1);
+    expect(html.indexOf('Already yours, free')).toBeLessThan(html.indexOf('$19</p>'));
+  });
+
+  it('uses no manufactured urgency, popularity, or discount', async () => {
+    const html = (await render()).toLowerCase();
+    for (const phrase of ['most popular', 'limited time', 'only a few', 'hurry', 'best value', '% off', 'was $']) {
+      expect(html, phrase).not.toContain(phrase);
+    }
+    expect(html).not.toContain('<s>');
+    expect(html).not.toContain('<del');
+  });
+
   it('asks a signed-out reader to sign in rather than failing at checkout', async () => {
     getDashboardUser.mockResolvedValueOnce(null);
     const html = await render();
@@ -58,7 +138,7 @@ describe('/pricing', () => {
     getDashboardUser.mockResolvedValueOnce({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
     const html = await render();
     expect(html).not.toContain('Sign in to buy');
-    expect(html.match(/<button/g)?.length ?? 0).toBe(3);
+    expect(html.match(/<button/g)?.length ?? 0).toBe(1);
   });
 
   it('is in the sitemap with a stable priority', async () => {

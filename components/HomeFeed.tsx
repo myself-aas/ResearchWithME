@@ -8,6 +8,7 @@ import FeaturedArticle from '@/components/FeaturedArticle';
 import ArticleFeed from '@/components/ArticleFeed';
 import AuthorSpotlight from '@/components/AuthorSpotlight';
 import BlogFooter from '@/components/BlogFooter';
+import ServicesShowcase from '@/components/billing/ServicesShowcase';
 import { Author, BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
 import Reveal from '@/components/motion/Reveal';
@@ -102,8 +103,8 @@ export default function HomeFeed({
   }, [posts, searchQuery, selectedCategory, selectedFormat]);
 
   const featuredPost = useMemo(() => posts.find((post) => post.featured) ?? posts[0], [posts]);
-  const showFeatured =
-    !searchQuery && selectedCategory === 'All' && selectedFormat === 'All' && Boolean(featuredPost);
+  const unfiltered = !searchQuery && selectedCategory === 'All' && selectedFormat === 'All';
+  const showFeatured = unfiltered && Boolean(featuredPost);
 
   function scrollToFeed() {
     feedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -187,6 +188,11 @@ export default function HomeFeed({
             />
           </Reveal>
         )}
+
+        {/* Services sit between the lead story and the index, and only on the
+            unfiltered front page: a reader who searched or filtered asked for
+            articles, and gets articles. */}
+        {unfiltered && <ServicesShowcase />}
 
         <div ref={feedRef}>
           <ArticleFeed

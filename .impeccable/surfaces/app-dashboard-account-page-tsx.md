@@ -13,7 +13,7 @@ Mode: Operate
 Answer one question — what have I bought, and is it still running — and get out of the way.
 
 ## First useful result
-A reader can tell whether their co-pilot subscription is active, how many credits remain, when it renews, and what to do if a payment failed.
+A reader can tell what they have bought and, if they still hold a co-pilot subscription from before it was withdrawn, whether it is active, how many credits remain, when it renews, and what to do if a payment failed.
 
 ## Direction
 A definition list for the facts (status, plan, credits), then receipts in prose, then anything still on sale. State is a word first and a colour second: `Past due` and `Ended` are readable without the alert styling, and the note underneath says what happens next. No account-settings furniture that is not implemented — notably no billing-portal button until the portal URL is documented.

@@ -216,9 +216,8 @@ already excludes `.env*` except `.env.example`.
 | 11 | `BILLING_BRIDGE_SECRET` | **yes** | `/api/webhooks/lemonsqueezy` | `openssl rand -hex 32` | Worker secret **and** a row in `private.billing_settings` |
 | 12 | `LEMONSQUEEZY_STORE_ID` | no (identifier) | checkout | Lemon Squeezy → Settings → Stores | Worker var, `.env.local` |
 | 13 | `LEMONSQUEEZY_VARIANT_TEARDOWN` | no (identifier) | checkout | product → variant ID | Worker var, `.env.local` |
-| 14 | `LEMONSQUEEZY_VARIANT_COPILOT` | no (identifier) | checkout | product → variant ID | Worker var, `.env.local` |
-| 15 | `LEMONSQUEEZY_VARIANT_EDITING` | no (identifier) | checkout | product → variant ID | Worker var, `.env.local` |
-| 16 | `LEMONSQUEEZY_TEST_MODE` | no | checkout, webhook rows | `1` in previews | Worker var, `.env.local` |
+| 13a | `LEMONSQUEEZY_VARIANT_STAT_TABLES` | no (identifier) | checkout | Statistical Table Generator product → variant ID | Worker var, `.env.local` |
+| 14 | `LEMONSQUEEZY_TEST_MODE` | no | checkout, webhook rows | `1` in previews | Worker var, `.env.local` |
 
 Already present in the repository (confirm under **Settings → Secrets and variables → Actions**):
 `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `GEMINI_API_KEY`, `GEMINI_MODEL`,
@@ -352,6 +351,7 @@ order. Four migrations exist:
 | `20261108000200_post_artifacts.sql` | artifact columns on `posts` for the reproducible-metadata fields |
 | `20261108000300_author_applications.sql` | `public.author_applications` + `apply_as_author()` / `review_author_application()` |
 | `20261108000400_author_profiles.sql` | `public.profiles` — the author directory, replacing the hardcoded `AUTHORS` record |
+| `20261114000100_verify_application_identity.sql` | Replaces `apply_as_author()` so the provider must be linked in `auth.identities` and the handle is read from that row, not from the request |
 
 The GitHub Supabase integration also runs a *Supabase Preview* check on pull requests. It fails with
 `Remote migration versions not found in local migrations directory` when the remote history contains

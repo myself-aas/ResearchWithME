@@ -2,21 +2,19 @@ import { describe, expect, it } from 'vitest';
 import { BILLING_PRODUCTS, isBillingProductKey, variantIdFor } from '@/lib/billing/catalogue';
 import { hasPremiumAccess, isSubscriptionStatus } from '@/lib/billing/status';
 
+const byKeyOf = (key: string) => BILLING_PRODUCTS.find((p) => p.key === key)!;
+
 describe('billing catalogue', () => {
   it('pins the spec prices verbatim', () => {
     const byKey = Object.fromEntries(BILLING_PRODUCTS.map((p) => [p.key, p]));
     expect(byKey.teardown.priceLabel).toBe('$19');
     expect(byKey.teardown.mode).toBe('payment');
-    expect(byKey.copilot.priceLabel).toBe('$9 / month');
-    expect(byKey.copilot.mode).toBe('subscription');
-    expect(byKey.editing.minPriceCents).toBe(15000);
-    expect(byKey.editing.mode).toBe('payment');
   });
 
   it('reads variant ids from the environment and reports a missing one as null', () => {
-    expect(variantIdFor('copilot', { LEMONSQUEEZY_VARIANT_COPILOT: ' 42 ' })).toBe('42');
-    expect(variantIdFor('copilot', {})).toBeNull();
-    expect(variantIdFor('copilot', { LEMONSQUEEZY_VARIANT_COPILOT: '' })).toBeNull();
+    expect(variantIdFor('teardown', { LEMONSQUEEZY_VARIANT_TEARDOWN: ' 42 ' })).toBe('42');
+    expect(variantIdFor('teardown', {})).toBeNull();
+    expect(variantIdFor('teardown', { LEMONSQUEEZY_VARIANT_TEARDOWN: '' })).toBeNull();
   });
 
   it('grants access for every paid-first state and denies the terminal two', () => {
@@ -42,11 +40,28 @@ describe('billing catalogue', () => {
     }
   });
 
-  it('accepts exactly the three real product keys', () => {
-    for (const key of ['teardown', 'copilot', 'editing']) {
-      expect(isBillingProductKey(key)).toBe(true);
-    }
+  it('accepts exactly the real product keys', () => {
+    expect(isBillingProductKey('teardown')).toBe(true);
+    expect(isBillingProductKey('stat-tables')).toBe(true);
+    expect(byKeyOf('stat-tables').priceLabel).toBe('$5');
+    expect(variantIdFor('stat-tables', { LEMONSQUEEZY_VARIANT_STAT_TABLES: '7' })).toBe('7');
+    expect(variantIdFor('stat-tables', { LEMONSQUEEZY_VARIANT_TEARDOWN: '7' })).toBeNull();
     expect(isBillingProductKey('')).toBe(false);
     expect(isBillingProductKey('TEARDOWN')).toBe(false);
+  });
+
+  it('sells no service: the payment provider prohibits them', () => {
+    // https://docs.lemonsqueezy.com/help/getting-started/prohibited-products
+    expect(BILLING_PRODUCTS.map((p) => p.key)).toEqual(['teardown', 'stat-tables']);
+    expect(BILLING_PRODUCTS.every((p) => p.mode === 'payment')).toBe(true);
+    expect(isBillingProductKey('editing')).toBe(false);
+    // Withdrawn 2026-11-14: the membership delivered nothing when the payment
+    // cleared, which the provider treats as a donation.
+    expect(isBillingProductKey('copilot')).toBe(false);
+    expect(BILLING_PRODUCTS.some((p) => p.mode === 'subscription')).toBe(false);
+    const copy = JSON.stringify(BILLING_PRODUCTS).toLowerCase();
+    for (const word of ['consult', 'sponsor', 'donat', 'pay what you want', 'manuscript editing', 'membership', 'co-pilot']) {
+      expect(copy, word).not.toContain(word);
+    }
   });
 });

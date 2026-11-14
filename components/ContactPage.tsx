@@ -16,7 +16,7 @@ export default function ContactPage() {
             Get in touch
           </h1>
           <p className="mt-4 max-w-2xl font-serif text-xl leading-relaxed text-ink-secondary">
-            Channels for pitches, corrections, contributor verification, and security disclosure.
+            Channels for pitches, purchases, corrections, and security disclosure.
           </p>
         </header>
 
@@ -37,6 +37,23 @@ export default function ContactPage() {
               </p>
               <p className="mt-4 font-mono text-sm text-ink">
                 <a href="mailto:editor@researchwith.me" className="text-brand underline underline-offset-4">
+                  editor@researchwith.me
+                </a>
+              </p>
+            </Card>
+
+            <Card padding="xl">
+              <Text as="p" variant="eyebrow" color="brand" weight="semibold">
+                Purchases
+              </Text>
+              <Text as="h3" variant="card-title" className="mt-2">Orders</Text>
+              <p className="mt-2 text-sm text-ink-secondary">
+                Ask about an order for the Teardown System, or an existing membership. Include the email you paid
+                with. See{' '}
+                <TextLink href="/pricing">products and pricing</TextLink> for what is included.
+              </p>
+              <p className="mt-4 font-mono text-sm text-ink">
+                <a href="mailto:editor@researchwith.me?subject=Order" className="text-brand underline underline-offset-4">
                   editor@researchwith.me
                 </a>
               </p>
