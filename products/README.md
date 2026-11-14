@@ -8,7 +8,7 @@ The files a buyer receives for each product in the catalogue. The plan they belo
 | `teardown-system-1.0.0.zip` | $19 | `teardown-system` | Listed; needs a store product |
 | `manuscript-check-1.0.0.zip` | $5 | `manuscript-check`, `reference-check`, `response-to-reviewers-check`, full edition | No; waits for the payment provider's written reply |
 | `manuscript-check-free-1.0.0.zip` | Free | The same three, free edition | Yes, on `/pricing` |
-| `statistical-table-generator-1.0.0.zip` | $5 (to confirm) | `statistical-table-generator`, full edition | No |
+| `statistical-table-generator-1.0.0.zip` | $5 (to confirm) | `statistical-table-generator`, full edition: 21 commands and vector figures (`apa_more.py`, `figures.py` ship only here) | No |
 | `research-toolkit-free-1.0.0.zip` | Free | `statistical-table-generator` (free edition), `manuscript-formatter`, `journal-matchmaker` | Yes, on `/pricing` |
 
 Paid zips are uploaded to the store product. The build copies the free zips into `public/downloads`, which the site serves; `FREE_DOWNLOADS` in `lib/billing/catalogue.ts` lists them. After a rebuild, commit both folders.

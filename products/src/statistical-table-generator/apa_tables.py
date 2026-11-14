@@ -24,6 +24,7 @@ import argparse
 import csv
 import html
 import math
+import re
 import sys
 
 import statdist as sd
@@ -31,6 +32,8 @@ import statdist as sd
 VERSION = '1.0.0'
 EDITION = 'full'          # the build sets 'free' in the free edition
 FREE_COMMANDS = ('describe', 'correlate', 'ttest')
+FULL_ONLY = ('onesample', 'welchanova', 'factorial', 'rmanova', 'mannwhitney', 'wilcoxon', 'kruskal', 'friedman', 'fisher',
+             'mcnemar', 'gof', 'logistic', 'reliability', 'normality', 'plot')
 
 
 # ---------------------------------------------------------------- data access
@@ -446,7 +449,7 @@ def anova(rows, args):
     checks = []
     if lp < 0.05:
         checks.append(f"Levene's test indicates unequal variances, F({l1}, {l2}) = {num(lf)}, {p_text(lp)}. The "
-                      "standard F test assumes equal variances; consider Welch's ANOVA, which this tool does not compute.")
+                      "standard F test assumes equal variances; use the welchanova command, which does not assume them.")
     main = Table(2, f'One-Way Analysis of Variance of {args.dv} by {args.group}',
                  ['Source', 'SS', 'df', 'MS', 'F', 'p', 'eta squared'],
                  [['Between groups', num(ssb), df1, num(ssb / df1), num(f), pval(p), no_zero(eta2)],
@@ -540,7 +543,8 @@ def regress(rows, args):
         table_rows.append([name, num(beta[i]), num(se), std, num(t), pval(sd.t_p_two_sided(t, dfe)),
                            f'[{num(beta[i] - crit * se)}, {num(beta[i] + crit * se)}]'])
     checks = ['Linear regression assumes a linear relationship, independent errors, constant error variance, and '
-              'approximately normal residuals. This tool does not plot residuals; do so before reporting.']
+              'approximately normal residuals. Add --fig NAME to save a residual plot and a Q-Q plot, and look at them '
+              'before reporting.']
     for i in range(k):
         others = [j for j in range(k) if j != i]
         if not others:
@@ -576,6 +580,7 @@ def build_parser():
         p = sub.add_parser(name, help=helptext)
         p.add_argument('csv', help='path to the CSV file (first row must be column names)')
         p.add_argument('--out', help='also write an HTML report that opens in Word')
+        p.add_argument('--fig', metavar='NAME', help='also save figures as NAME-....svg and NAME-....pdf (full edition)')
         return p
 
     p = add('describe', 'n, mean, SD, median, range, skew, kurtosis')
@@ -596,7 +601,24 @@ def build_parser():
     p = add('regress', 'linear regression')
     p.add_argument('--dv', required=True)
     p.add_argument('--ivs', nargs='+', required=True)
+    more = load_more()
+    if more:
+        COMMANDS.update(more.register(add))
+    else:
+        for name in FULL_ONLY:
+            sub.add_parser(name, help='full edition').add_argument('rest', nargs=argparse.REMAINDER)
     return parser
+
+
+def load_more():
+    """The further analyses and the figures, which ship with the full edition only."""
+    if EDITION != 'full':
+        return None
+    try:
+        import apa_more
+        return apa_more
+    except ImportError:
+        return None
 
 
 COMMANDS = {'describe': describe, 'correlate': correlate, 'ttest': ttest, 'anova': anova, 'chisq': chisq,
@@ -605,13 +627,21 @@ COMMANDS = {'describe': describe, 'correlate': correlate, 'ttest': ttest, 'anova
 
 def main(argv=None):
     args = build_parser().parse_args(argv)
-    if EDITION == 'free' and args.command not in FREE_COMMANDS:
+    more = load_more()
+    if args.command not in FREE_COMMANDS and not more:
         print(f'The free edition runs {", ".join(FREE_COMMANDS)}. The {args.command} command is in the full edition.',
               file=sys.stderr)
+        return 2
+    if getattr(args, 'fig', None) and not more:
+        print('Figures are in the full edition. Run the command again without --fig.', file=sys.stderr)
         return 2
     try:
         rows = read_csv(args.csv)
         tables, method = COMMANDS[args.command](rows, args)
+        drawn = []
+        if getattr(args, 'fig', None):
+            single = getattr(args, '_single_figure', None)
+            drawn = [('', single)] if single is not None else more.figures_for(args.command, rows, args)
     except DataError as error:
         print(f'Cannot run this analysis: {error}', file=sys.stderr)
         return 2
@@ -621,11 +651,23 @@ def main(argv=None):
     for table in tables:
         print(table.markdown())
     print(f'Method: {method} (apa_tables.py {VERSION}, {EDITION} edition)')
-    if args.out:
+    if args.out and tables:
         write_html(args.out, tables, method, args.csv)
         print(f'\nSaved {args.out}. Open it in Word, or copy the tables from a browser.')
+    saved = []
+    for name, canvas in drawn:
+        safe = re.sub(r'[^A-Za-z0-9._-]+', '_', name)
+        saved += canvas.save(f'{args.fig}-{safe}' if safe else args.fig)
+    if saved:
+        print('\nSaved figures (vector files, sharp at any size):')
+        for path in saved:
+            print(f'  {path}')
+    elif getattr(args, 'fig', None):
+        print('\nThis command has no figure.')
     return 0
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    # Run as the module, so that the further analyses and this file share one set of classes.
+    import apa_tables
+    sys.exit(apa_tables.main())

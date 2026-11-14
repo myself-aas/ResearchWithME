@@ -716,7 +716,8 @@ PARTS = {
     },
     'statistical-table-generator': {
         'title': 'Statistical Table Generator', 'pdf': 'Statistical-Table-Generator.pdf',
-        'copy': ['apa_tables.py', 'statdist.py', 'sample-data.csv'], 'extra_pdfs': [], 'make': [],
+        'copy': ['apa_tables.py', 'statdist.py', 'sample-data.csv'], 'copy_full': ['apa_more.py', 'figures.py'],
+        'extra_pdfs': [], 'make': [],
     },
     'manuscript-check': {
         'title': 'Manuscript Check', 'pdf': 'Manuscript-Check.pdf',
@@ -775,7 +776,7 @@ def build_part(part, stage, edition):
     markdown_to_pdf(os.path.join(source, 'guide.md'), os.path.join(stage, spec['pdf']), spec['title'])
     for md, pdf, title in spec['extra_pdfs']:
         markdown_to_pdf(os.path.join(source, md), os.path.join(stage, pdf), title)
-    for name in spec['copy']:
+    for name in spec['copy'] + (spec.get('copy_full', []) if edition == 'full' else []):
         target = os.path.join(stage, name)
         shutil.copy(os.path.join(source, name), target)
         if name.endswith('.py') and name != 'statdist.py':

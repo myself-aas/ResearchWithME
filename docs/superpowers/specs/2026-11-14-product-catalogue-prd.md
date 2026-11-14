@@ -98,7 +98,7 @@ Competitor figures were seen in search results on 2026-11-14, mostly in third-pa
 | --- | --- | --- | --- | --- |
 | Manuscript Check | Recite, $6 for three days of access. Penelope.ai, $9.50 for one report. | $5, once, to keep | Recite: the first 2,500 words and 50 references, two uploads a day. Penelope.ai: a basic analysis. | Four manuscript checks on the whole manuscript; 60 references a run with retraction flags; no limit on runs; the reviewer-comment splitter, letter template, and tracker. |
 | Research Toolkit: tables | None needed: JASP and jamovi are free. | Free | Everything | Descriptive statistics, correlation matrices, and t tests, with no limit on data or runs. |
-| Statistical Table Generator, full | The free programs above. SPSS is the paid one, at about $99 a month or more. | $5 **[Assumption]** | | The owner decided on 2026-11-14 that the complete version is charged for. It adds ANOVA, chi-square, and regression tables. It cannot undercut free programs that do more, so the rule gives no figure; $5 matches Manuscript Check and awaits the owner's confirmation. |
+| Statistical Table Generator, full | The free programs above. SPSS is the paid one, at about $99 a month or more. | $5 **[Assumption]** | | The owner decided on 2026-11-14 that the complete version is charged for. It adds 18 commands (ANOVA family, non-parametric tests, exact tests, linear and logistic regression, reliability, normality) and vector figures. It cannot undercut free programs that do more, so the rule gives no figure; $5 matches Manuscript Check and awaits the owner's confirmation. |
 | Research Toolkit: formatting | Single templates on Etsy from $1.50. | Free | Nothing found | Four templates and the checklist. |
 | Research Toolkit: journals | None needed: the journal finders are free. | Free | Everything | The whole workbook. |
 | The Teardown System | None found. | $19, unchanged | | Nothing new. With no alternative to undercut, the rule does not apply; the price is the owner's. |
@@ -137,8 +137,12 @@ Each download is assembled from the parts below. An entry states what the part i
 | --- | --- | --- |
 | describe, correlate, ttest | Yes | Yes |
 | anova, chisq, regress | No | Yes |
+| onesample, welchanova, factorial (two-way ANOVA and ANCOVA), rmanova, mannwhitney, wilcoxon, kruskal, friedman, fisher, mcnemar, gof, logistic, reliability, normality | No | Yes |
+| Figures (`--fig`, and the `plot` command), saved as SVG and PDF vector files | No | Yes |
 | Tables saved as an HTML file for Word | Yes | Yes |
 | Size of data file, runs | No limit | No limit |
+
+Added 2026-11-14 on the owner's instruction "all possible statistical analysis with high resolution figures". The paid edition has 21 commands. "All possible" is not met literally and must not be claimed on any page: the guide lists what is left out (Tukey's HSD, mixed and three-way designs, MANOVA, multilevel models, factor analysis, SEM, survival analysis, ordinal and multinomial regression, mediation, power analysis, Bayesian statistics). "High resolution" is met with vector files, which have no resolution limit; the program writes no PNG or TIFF, and the page copy must say "vector figures (SVG and PDF)", not a dpi figure. The further analyses were compared with SciPy 1.17.1 and statsmodels 0.15.0 on the sample data (`products/tests/test_more_analyses.py`). Figures were inspected by rendering the PDFs; they have not been opened in Word or submitted to a journal system.
 
 All editions are built from one source; the build changes one line. The programs ship as readable source, so the limits are a statement of what was paid for, not a lock. `products/tests/test_editions.py` covers them.
 

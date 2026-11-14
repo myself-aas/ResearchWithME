@@ -76,8 +76,13 @@ def test_tables_free_runs_three_commands():
     at.EDITION = 'free'
     try:
         codes = {command: quiet(at.main, [command, data] + rest) for command, rest in runs.items()}
+        further = quiet(at.main, ['mannwhitney', data, '--dv', 'post_score', '--group', 'sex'])
+        with tempfile.TemporaryDirectory() as folder:
+            figure = quiet(at.main, ['describe', data, '--vars', 'age', '--fig', os.path.join(folder, 'f')])
+            assert os.listdir(folder) == []
     finally:
         at.EDITION = 'full'
+    assert (further, figure) == (2, 2)
     assert codes == {'describe': 0, 'correlate': 0, 'ttest': 0, 'anova': 2, 'chisq': 2, 'regress': 2}
 
 
