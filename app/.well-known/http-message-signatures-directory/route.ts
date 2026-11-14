@@ -13,10 +13,19 @@ function privateJwk() {
   return process.env.WEB_BOT_AUTH_PRIVATE_JWK;
 }
 
-export function GET() {
-  return webBotDirectoryResponse(privateJwk(), 'GET');
+/**
+ * The authority the response was served from. The directory self-signature
+ * covers it, so it must be the host the client actually requested — not a
+ * configured site URL, which differs on preview deployments.
+ */
+function authority(request: Request): string | undefined {
+  return request.headers.get('host') ?? undefined;
 }
 
-export function HEAD() {
-  return webBotDirectoryResponse(privateJwk(), 'HEAD');
+export function GET(request: Request) {
+  return webBotDirectoryResponse(privateJwk(), 'GET', authority(request));
+}
+
+export function HEAD(request: Request) {
+  return webBotDirectoryResponse(privateJwk(), 'HEAD', authority(request));
 }

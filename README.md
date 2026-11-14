@@ -50,6 +50,8 @@ Agent authentication is published, not implied: [`/auth.md`](https://researchwit
 
 In the browser, [`public/webmcp.js`](./public/webmcp.js) registers three read-only tools — `search_articles`, `list_categories`, `get_article` — with WebMCP on page load, so an in-tab agent queries the archive instead of scraping it. It registers into both `document.modelContext` (the specification) and `navigator.modelContext` (older preview builds and scanner shims), and does nothing in the browsers that lack the API. See [`docs/webmcp.md`](./docs/webmcp.md).
 
+Outbound bot requests identify themselves with [Web Bot Auth](https://datatracker.ietf.org/wg/webbotauth/about/): [`/.well-known/http-message-signatures-directory`](https://researchwith.me/.well-known/http-message-signatures-directory) serves the Ed25519 JWKS and signs that response over its own authority, and `lib/web-bot-auth.ts` signs each request with `Signature-Agent`, `Signature-Input`, and `Signature` headers. The endpoint returns 503 until a signing key is provisioned — it never advertises a key nobody holds. See [`docs/web-bot-auth.md`](./docs/web-bot-auth.md).
+
 The [API catalog](https://researchwith.me/.well-known/api-catalog) follows RFC 9727 and lists the archive, assistant, and editorial route groups. Its `service-desc` links point to the [OpenAPI 3.1 document](https://researchwith.me/openapi.json), and `service-doc` links point to the [API reference](https://researchwith.me/api-docs). Editor, signed-in, and webhook-secret requirements are documented per operation; publishing the catalog does not grant access. There is no advertised health endpoint.
 
 After deploying, verify discovery with:

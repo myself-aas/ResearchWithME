@@ -72,7 +72,11 @@ export async function handleRequest(
     const response =
       (pathname === '/auth.md' ? authMdResponse(ctx.request.method) : null) ??
       (pathname === WEB_BOT_DIRECTORY
-        ? await webBotDirectoryResponse(ctx.env.WEB_BOT_AUTH_PRIVATE_JWK, ctx.request.method) : null) ??
+        ? await webBotDirectoryResponse(
+            ctx.env.WEB_BOT_AUTH_PRIVATE_JWK,
+            ctx.request.method,
+            new URL(ctx.request.url).host,
+          ) : null) ??
       (pathname === '/.well-known/mcp/server-card.json'
         ? mcpCardResponse(ctx.config.siteUrl, ctx.request.method) : null) ??
       (pathname === '/mcp' ? await (async () => {

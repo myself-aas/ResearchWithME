@@ -66,6 +66,19 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   working configuration. Responses state whether they are live or captured.
 
 ### Fixed
+- Web Bot Auth directory responses are now signed, as Cloudflare requires:
+  `tag="http-message-signatures-directory"` over `("@authority";req)`. Without
+  the self-signature a copied JWKS proves nothing about who controls the host.
+  The signature uses the serving host, so preview deployments sign correctly.
+- `Signature-Agent` is emitted as a quoted structured string rather than the
+  dictionary form `sig="…"`, and `signature-agent` is now covered by the
+  signature. Cloudflare rejects both mistakes; a signer that produces headers a
+  verifier refuses is worse than no signer.
+- Dropped the unsupported `key` component parameter and renamed the signature
+  label to `sig1`, matching Cloudflare's parser.
+- The directory's `503` now logs its reason server-side, so a missing secret is
+  distinguishable from a runtime without Ed25519 WebCrypto.
+
 - Mobile search placeholder no longer references "DOI".
 - About/Contact/Privacy/Error/Not-found copy aligned with the truthful
   product story.
