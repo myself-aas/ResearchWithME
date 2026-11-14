@@ -1,12 +1,12 @@
-# PRD: The ResearchWithMe product catalogue, as seven digital downloads
+# PRD: The ResearchWithMe product catalogue: two paid downloads and two free ones
 
 | | |
 | --- | --- |
 | Status | Draft for owner review. Not published to an issue tracker. |
-| Date | 2026-11-14 (seventh pass; replaces every earlier pass of this file) |
+| Date | 2026-11-14 (eighth pass; replaces every earlier pass of this file) |
 | Inputs | Lemon Squeezy's prohibited-products page, read in full on 2026-11-14 (https://docs.lemonsqueezy.com/help/getting-started/prohibited-products); the billing code and `docs/billing.md`; the owner's decisions of 2026-11-14; the download files in `products/`. |
 | Method | Synthesis, no interview. Anything decided in place of an answer is marked **[Assumption]** and listed in section 9.2. |
-| What changed in this pass | The whole catalogue was rebuilt around the payment provider's policy. Every product is now a file the buyer downloads once and keeps. The hosted, pay-per-report tools of earlier passes are gone, and with them the upload pipeline, job queue, file storage, and credit ledger. The download files for all seven products now exist. Two products changed shape and name to fit (section 4). |
+| What changed in this pass | Seventh pass: every product became a file the buyer downloads once and keeps; the hosted, pay-per-report tools were dropped. Eighth pass (owner's instruction): prices set below the cheapest paid alternative found, more given free than the alternatives give free, and products folded together. Seven separately priced products became two paid downloads and two free ones (section 3). Competitor figures are in `docs/competitor-pricing-2026-11-14.md`. |
 
 Earlier passes are in the Git history of this file. Products removed in those passes stay removed (section 8).
 
@@ -55,41 +55,80 @@ The policy does allow hosted software, so this is a choice, not a requirement. T
 
 The cost is real: a buyer must have Python installed to use the four programs, and must be willing to use a terminal. Section 9.1 lists this first among the risks.
 
-### Verdict by product
+### Verdict by download
 
-| ID | Product | Verdict | Why |
-| --- | --- | --- | --- |
-| P1 | The Teardown System | Allowed | A PDF guide with templates and a spreadsheet. |
-| P10 | Statistical Table Generator | Allowed | Software that computes on the buyer's own data file. |
-| P7 | Manuscript Formatting Kit | Allowed | Document templates and a checklist. |
-| P8 | Journal Shortlist Workbook | Allowed | A spreadsheet and a guide. Contains no third-party data. |
-| P17 | Reference Check | Allowed | Software that looks up the buyer's references in open indexes. It generates nothing. |
-| P15 | Manuscript Check | Fits the published text. **Hold for written confirmation.** | It checks a document the buyer wrote. The undefined "essay mill" clause and the word "manuscript" are the only reasons to ask first. |
-| P18 | Response-to-Reviewers Check | Fits the published text. **Hold for written confirmation.** | Same reasoning. It never drafts a response. |
+| Download | Verdict | Why |
+| --- | --- | --- |
+| The Teardown System (paid) | Allowed | A PDF guide with templates and a spreadsheet. |
+| Manuscript Check (paid) | Fits the published text. **Hold for written confirmation.** | Three programs that check documents the buyer wrote. The undefined "essay mill" clause and the word "manuscript" are the only reasons to ask first. |
+| Manuscript Check, free edition | Not sold, so the policy on products does not reach it. | See the owner's decision in section 9.4. |
+| Research Toolkit (free) | Not sold. | Templates, a workbook, and a table program. |
 
-"Allowed" is this document's reading of a published page. Only the provider can confirm a product, and it has confirmed none. The owner asked on 2026-11-14 that P15 and P18 be described to the provider's support before they go further; the message is drafted in `docs/lemon-squeezy-support-message.md` and has not been sent. Their files were built in this pass because the owner asked for the downloads of each product, but **neither may be given a store product or shown on the site until the reply is filed in that document.**
+"Allowed" is this document's reading of a published page. Only the provider can confirm a product, and it has confirmed none. The owner asked on 2026-11-14 that Manuscript Check and Response-to-Reviewers Check be described to the provider's support before they go further; the message is drafted in `docs/lemon-squeezy-support-message.md` and has not been sent. **The paid Manuscript Check may not be given a store product or shown on the site until the reply is filed in that document.**
+
+Folding has a cost here: Reference Check, which the published policy plainly allows, now sits inside the held product and waits with it.
 
 ## 3. Solution
 
-One store, one payment provider, seven one-time purchases. Each purchase delivers one zip file through the provider's own file delivery. Nothing recurs. Reading, the citation builder, the assistant, and bookmarks stay free and need no purchase.
+One store, one payment provider, two one-time purchases, and two free downloads. Each purchase delivers one zip file through the provider's own file delivery. Free downloads are served by the site itself with no checkout and no account. Nothing recurs. Reading, the citation builder, the assistant, and bookmarks stay free.
 
-| ID | Product | Price | What the buyer downloads | State on 2026-11-14 |
-| --- | --- | --- | --- | --- |
-| P1 | The Teardown System | $19 | Guide (PDF, 5 pages), teardown record template, run-log template, claim ledger (spreadsheet and CSV), reading checklist | Files built. Shown on the site. No store product, so it cannot be bought. |
-| P10 | Statistical Table Generator | $12 **[Assumption]** | Program, user guide, sample data | Files built and tested. Not listed. |
-| P7 | Manuscript Formatting Kit | $9 **[Assumption]** | Four Word templates, formatting checklist, guide | Files built. Not opened in Word yet. Not listed. |
-| P8 | Journal Shortlist Workbook | $7 **[Assumption]** | Scoring workbook, guide | Files built. Not opened in Excel yet. Not listed. |
-| P17 | Reference Check | $9 **[Assumption]** | Program, user guide, sample reference file | Files built. Never run against the live indexes. Not listed. |
-| P15 | Manuscript Check | $12 **[Assumption]** | Program, user guide, reporting-guideline finder, sample manuscript | Files built and tested. Held for the provider's reply. |
-| P18 | Response-to-Reviewers Check | $9 **[Assumption]** | Program, letter template, tracking spreadsheet, user guide, samples | Files built and tested. Held for the provider's reply. |
+### The pricing rule (owner, 2026-11-14)
+
+1. **Charge less than the cheapest paid alternative found.** Where the alternatives are free, the product is free.
+2. **Give more free than the alternatives give free.**
+3. **Fold products together** where they serve the same moment in the buyer's work.
+
+### The catalogue
+
+| Download | Price | Folds in | State on 2026-11-14 |
+| --- | --- | --- | --- |
+| **The Teardown System** | $19 | P1 | Files built. Shown on the site. No store product, so it cannot be bought. |
+| **Manuscript Check** | $5 | P15 Manuscript Check, P17 Reference Check, P18 Response-to-Reviewers Check | Files built and tested. Held for the provider's reply. |
+| **Manuscript Check, free edition** | Free | The same three programs, with limits | Files built and tested. Not on the site. |
+| **Research Toolkit** | Free | P10 Statistical Table Generator, P7 Manuscript Formatting Kit, P8 Journal Shortlist Workbook | Files built. Not on the site. |
 
 P14, the weekly research digest, remains free and is not a product.
 
-Only the $19 price is the owner's. The others are placeholders to be replaced before anything is listed.
+### How each price was reached
 
-## 4. The products
+Competitor figures were seen in search results on 2026-11-14, mostly in third-party articles and marketplace listings, not on the vendors' own pages. They will change.
 
-Each entry states what the product is, what it deliberately is not, and what it was verified to do. Full contents are in `products/src/<folder>/`; the built zips are in `products/downloads/`.
+| Our download | Cheapest paid alternative found | Our price | What the alternatives give free | What we give free |
+| --- | --- | --- | --- | --- |
+| Manuscript Check | Recite, $6 for three days of access. Penelope.ai, $9.50 for one report. | $5, once, to keep | Recite: the first 2,500 words and 50 references, two uploads a day. Penelope.ai: a basic analysis. | Four manuscript checks on the whole manuscript; 60 references a run with retraction flags; no limit on runs; the reviewer-comment splitter, letter template, and tracker. |
+| Research Toolkit: tables | None needed: JASP and jamovi are free. | Free | Everything | The whole program. It does less than JASP or jamovi, and its guide says so. |
+| Research Toolkit: formatting | Single templates on Etsy from $1.50. | Free | Nothing found | Four templates and the checklist. |
+| Research Toolkit: journals | None needed: the journal finders are free. | Free | Everything | The whole workbook. |
+| The Teardown System | None found. | $19, unchanged | | Nothing new. With no alternative to undercut, the rule does not apply; the price is the owner's. |
+
+What this pricing means for revenue: two things are sold, at $19 and $5. The provider's fee comes out of each sale; if it is the 5% plus 50 cents commonly quoted (not verified for this document), a $5 sale leaves about $4.25.
+
+The site must not claim "the lowest price" or name a competitor's price. Those figures were true on one day, from secondary sources. The page states our price and what is free; the reader can compare.
+
+## 4. The parts
+
+Each download is assembled from the parts below. An entry states what the part is, what it deliberately is not, and what it was verified to do. Sources are in `products/src/<folder>/`; the built zips are in `products/downloads/`.
+
+| Part | Goes into |
+| --- | --- |
+| P1 | The Teardown System |
+| P15, P17, P18 | Manuscript Check, in its paid and free editions |
+| P10, P7, P8 | Research Toolkit |
+
+### Editions of Manuscript Check
+
+| | Free edition | Paid edition |
+| --- | --- | --- |
+| Manuscript: sections and declarations, citations against the reference list, figures and tables, abbreviations | Yes | Yes |
+| Manuscript: statistics recomputed, abstract numbers, length, reverse outline, claims worksheet | No | Yes |
+| References looked up in a run | The first 60 | 500, or more on request |
+| References: results as a spreadsheet | No | Yes |
+| Reviewer comments numbered; tracker and empty letter built | Yes | Yes |
+| Written response letter checked against the reviews | No | Yes |
+| Letter template, tracking spreadsheet, reporting-checklist finder | Yes | Yes |
+| Runs, manuscript length, account | No limit, none needed | No limit, none needed |
+
+Both editions are built from one source; the build changes one line. The programs ship as readable source, so the limits are a statement of what was paid for, not a lock. `products/tests/test_editions.py` covers them.
 
 ### P1. The Teardown System (`teardown-system`)
 
@@ -133,7 +172,7 @@ A command-line program. It reads a reference list (BibTeX, RIS, or pasted text),
 - It never edits the buyer's file, never suggests references, and does not judge whether a source supports a claim.
 - **Not verified against the live services.** The build environment could not reach either index. The parsing, matching, and reporting were tested with recorded answers in the indexes' published formats (`products/tests/test_reference_check.py`). The guide tells the buyer this. A live run on the sample file is a release condition (section 6).
 
-### P15. Manuscript Check (`manuscript-check`) — held
+### P15. Manuscript Check (`manuscript-check`)
 
 A command-line program. It reads a manuscript (.docx, .txt, .md) on the buyer's computer and writes a report.
 
@@ -144,7 +183,7 @@ A command-line program. It reads a manuscript (.docx, .txt, .md) on the buyer's 
 - Narrower than earlier passes described: it does not test a manuscript against reporting-guideline items. Those checklists belong to the groups that publish them, so the download carries a one-page finder that links to the official sources.
 - Verified: on a sample manuscript with planted mistakes it found each one and did not flag the four correct statistics (`products/tests/test_manuscript_check.py`).
 
-### P18. Response-to-Reviewers Check (`response-to-reviewers-check`) — held
+### P18. Response-to-Reviewers Check (`response-to-reviewers-check`)
 
 A command-line program with two steps. Before writing, it splits the reviews into numbered comments and produces a tracker and an empty letter with each comment quoted. Before sending, it checks the written letter: each comment is answered, quoted with no response under it, or not found.
 
@@ -161,11 +200,12 @@ A command-line program with two steps. Before writing, it splits the reviews int
 1. Every file in `products/` was written for this catalogue in this repository. Nothing was taken from the two public skill repositories examined on 2026-11-14 or from any other third party.
 2. The files were drafted with an AI coding agent working from the owner's editorial material. **The owner must read every guide and template before selling it** and change anything that is not how he would say it or does not match his practice. The policy asks the seller to hold the rights to what is sold; the owner should be able to stand behind each file as his own.
 3. Third-party names (APA, CONSORT, PRISMA, OpenAlex, DOAJ, Crossref) are used to refer to those things only. Their checklists, manuals, and data are not reproduced.
-4. Each zip carries the same licence: one person, any number of that person's devices, own use, no redistribution or resale, no warranty. What the buyer makes with a product is the buyer's. The wording is in `products/build.py` and has not been reviewed by a lawyer.
+4. Paid zips carry one licence: one person, any number of that person's devices, own use, no redistribution or resale, no warranty. Free zips carry another: use freely, share the unchanged download freely, do not sell it. In both, what the user makes with the files is the user's. The wording is in `products/build.py` and has not been reviewed by a lawyer.
 
 ### 5.2 Fulfilment
 
-1. The provider delivers the file. The owner uploads each zip to its store product; the buyer gets the download from the provider's receipt and order page. The site stores and serves no product file.
+1. The provider delivers paid files. The owner uploads each paid zip to its store product; the buyer gets the download from the provider's receipt and order page. The site stores and serves no paid file.
+1a. Free downloads are static files served by the site, linked from the product pages. No checkout, account, or email address is asked for. They never pass through the provider.
 2. The site's part is unchanged in kind: show the product, start a checkout for a signed-in reader, record the order when the webhook arrives.
 3. There is no upload, storage, job queue, usage ledger, or credit balance. Earlier passes specified all five; they are withdrawn.
 4. Updates: a corrected zip replaces the file on the store product. The version number is in the file name, in every PDF footer, and in each program's `--version`.
@@ -175,7 +215,7 @@ A command-line program with two steps. Before writing, it splits the reviews int
 1. `lib/billing/catalogue.ts` holds one entry per product that is on sale. A product is added there only when its release checklist (section 6) is complete. Planned products do not appear in the code or on the site.
 2. Each entry has a key, the copy fields that exist today, and an environment variable naming its store variant. The checkout route already answers 503 when a variant is not set.
 3. Every entry has mode `payment`. The subscription handling left in the webhook, `lib/billing/status.ts`, and the account page is unused; removing it is a separate cleanup and is not required by this plan.
-4. With more than one product, `/pricing` becomes a list. Its tests, which today assert a single product and a single button, change with it.
+4. With two paid products and two free downloads, `/pricing` becomes a short list in which the free downloads are shown as fully as the paid ones. Its tests, which today assert a single product and a single button, change with it.
 
 ### 5.4 Product page rules
 
@@ -189,7 +229,9 @@ Every product on the site states, before the buy button:
 
 No product page may use the words review, reviewer (of the product), edit, proofread, rewrite, polish, humanize, or guarantee; promise acceptance or a faster decision; give a count of customers, a turnaround time, or a discount; or address coursework, essays, or assignments.
 
-A free sample is offered for each product from files that already exist: the sample report each program produces from its bundled sample, and the first page of each guide. **[Assumption]**
+The free edition is the sample for Manuscript Check. The Teardown System's sample is the first page of its guide. **[Assumption]**
+
+The page for Manuscript Check shows the editions table from section 4, so that a reader can see what the free edition does before deciding whether $5 is worth it.
 
 ### 5.5 Build
 
@@ -207,22 +249,26 @@ A product goes on sale only when all of these are true.
 4. A price is set by the owner.
 5. The store product exists with the zip attached, and its variant variable is set in the deployment.
 6. The catalogue entry and page copy follow section 5.4, and the site's quality gate passes.
-7. Product-specific conditions: Reference Check has been run against the live indexes and the two real sample papers came back verified; Manuscript Check and Response-to-Reviewers Check have the provider's written reply on file, and any wording it asked for is applied.
+7. Conditions for particular downloads: before either edition of Manuscript Check is released, the reference program has been run against the live indexes and the two real sample papers came back verified; before the paid edition is listed, the provider's written reply is on file and any wording it asked for is applied.
+
+Items 4 and 5 do not apply to free downloads. In their place: the zip is in the site's static files and its page links to it.
 
 ### Order
 
 | Phase | What | Blocked by |
 | --- | --- | --- |
-| 0 | Sell The Teardown System: checklist items 1, 2, and 5 for P1. A test-mode purchase end to end. | Owner's review; store setup |
-| 1 | Send the support message for P15 and P18. | Nothing; do it during phase 0, since the reply takes time |
-| 2 | Catalogue and `/pricing` support several products. Add P10, then P7 and P8, then P17, each when its checklist is done. | Phase 0 |
-| 3 | Add P15 and P18. | The provider's reply |
+| 0 | Sell The Teardown System: checklist items 1, 2, and 5. A test-mode purchase end to end. | Owner's review; store setup |
+| 1 | Send the support message for Manuscript Check. | Nothing; do it during phase 0, since the reply takes time |
+| 2 | Publish the Research Toolkit as a free download. `/pricing` shows paid and free downloads together. | Owner's review of its files |
+| 3 | Publish the free edition of Manuscript Check. | Owner's review; the live run of the reference program; the decision in section 9.4 |
+| 4 | List the paid Manuscript Check. | The provider's reply |
 
 No dates are given. One person does this work beside the archive itself.
 
 ### Measures
 
 - Orders per product per month, and refunds per product with the reason given.
+- Downloads of each free zip per month, and how many buyers of the paid Manuscript Check there are for each hundred downloads of the free edition.
 - Messages from buyers who could not run a program. This is the test of the download decision; if it is common, section 9.1 applies.
 - No target figures are set, because there is no baseline: nothing has been sold.
 
@@ -235,6 +281,12 @@ No dates are given. One person does this work beside the archive itself.
 3. As a reader, I want to see a sample of the output, so that I can judge whether it is useful to me.
 4. As a reader, I want each product to say what it does not do, so that I do not expect a review or an edit.
 5. As a reader, I want the free parts of the site listed beside the products, so that I know reading costs nothing.
+
+### Free downloads
+
+5a. As a reader, I want to download the free tools without an account or an email address, so that trying them costs me nothing.
+5b. As a reader, I want to see exactly what the free edition does and what the paid one adds, so that I can decide whether to pay.
+5c. As a reader, I want the free edition to run on my whole manuscript as often as I like, so that it is useful and not a demonstration.
 
 ### Buying
 
@@ -281,7 +333,9 @@ Also out:
 - Any product that writes, rewrites, paraphrases, or generates text, references, or reviewer responses; any tool to disguise machine-written text.
 - Human review, feedback, or support sold for money.
 - A second payment provider or invoicing route.
-- Licence keys, team licences, bundles, discounts, and affiliate schemes. **[Assumption]** They can be considered once there are sales.
+- Licence keys, team licences, discounts, and affiliate schemes. **[Assumption]** They can be considered once there are sales.
+- Free services of any kind (reviews, feedback, help with a manuscript). The owner's instruction mentioned free "tools/services/runs"; tools and runs are given, services are not, because none exists to give and a service must never appear beside a paid product in this store.
+- Any public claim to be the cheapest, and any competitor's price on the site.
 - Graphical versions of the programs.
 - Any change to what is free.
 
@@ -289,18 +343,21 @@ Also out:
 
 ### 9.1 Risks, most serious first
 
-1. **Buyers who cannot run a Python program.** Four of seven products need a terminal. Some of the audience will not have used one. The product pages must say so before purchase, the guides give the exact commands, and refunds for this reason should be given without argument. If it proves common, the remedy is a packaged or browser-based version that still runs on the buyer's machine, not a hosted service.
-2. **The provider reads P15 or P18 differently.** Mitigated by asking first and by holding both.
+1. **Buyers who cannot run a Python program.** Manuscript Check, in both editions, and the table program need a terminal. Some of the audience will not have used one. The product pages must say so before purchase, the guides give the exact commands, and refunds for this reason should be given without argument. If it proves common, the remedy is a packaged or browser-based version that still runs on the buyer's machine, not a hosted service.
+2. **The provider reads Manuscript Check differently.** Mitigated by asking first and by holding the paid edition.
 3. **Reference Check fails against the live indexes,** or the indexes change. It has never been run against them. A live run is a release condition.
 4. **A program gives a wrong result.** The statistics are tested against reference values. The other checks are rule-based and will produce false alarms; each guide says so and each finding quotes its source so the buyer can judge.
 5. **The Word and Excel files were never opened in Word or Excel.** They were generated and inspected by program only.
-6. **Copying.** The programs ship as source. The licence forbids redistribution, and nothing else prevents it. At these prices this is accepted.
+6. **Copying, and the free edition's limits.** The programs ship as source. The paid licence forbids redistribution and the free edition's limits are one line of code; nothing else prevents either. At $5 this is accepted.
+7. **Revenue.** Most of what was built is now free. The plan earns from two products, one of them at $5.
 
 ### 9.2 Assumptions made in place of answers
 
-- All prices except $19.
+- That "lowest price" means below the cheapest paid alternative found on 2026-11-14, and free where the alternatives are free.
+- The free edition's limits: four of nine manuscript checks, 60 references a run, the splitter without the letter check.
+- That free downloads need no account or email address.
+- The names "Manuscript Check" for the folded paid product and "Research Toolkit" for the free one.
 - That the store product type offers file delivery with repeat downloads from the receipt, as `docs/billing.md` already assumes for P1.
-- That free samples are wanted on product pages.
 - That the owner wants the folder names `manuscript-formatter` and `journal-matchmaker` kept although the products were renamed.
 - Order of release in section 6.
 
@@ -309,11 +366,11 @@ Also out:
 - Stripe's restricted-businesses list, which the provider's policy incorporates, was not read.
 - The provider's documentation on file delivery, size limits, and licence keys was not read for this pass.
 - No product has been confirmed by the provider. The support message is unsent.
-- The site code was not changed to list any new product.
+- The site code was not changed to list any new product or to serve any free download.
 
 ### 9.4 Questions only the owner can answer
 
-1. The prices.
+1. Whether the free edition of Manuscript Check may be published before the provider replies about the paid one. Nothing is sold, so the policy does not forbid it; but its page would describe the product the provider has not yet confirmed. This document assumes it may, with no buy button until the reply.
 2. Whether the Teardown System guide describes the method as he practises it.
-3. Whether the two renamed products (the Formatting Kit and the Shortlist Workbook) are worth selling in this form, or should be dropped.
+3. Whether giving the table program, the templates, and the workbook away is intended to be permanent.
 4. Whether to hide the Teardown System's buy button until the store product exists.

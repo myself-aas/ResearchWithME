@@ -3,22 +3,23 @@
 The files a buyer receives for each product in the catalogue. The plan they belong to is
 `docs/superpowers/specs/2026-11-14-product-catalogue-prd.md`.
 
-| Folder under `src/` | Zip in `downloads/` | Sold today? |
-| --- | --- | --- |
-| `teardown-system` | `teardown-system-1.0.0.zip` | Listed on the site; needs a store product |
-| `statistical-table-generator` | `statistical-table-generator-1.0.0.zip` | No |
-| `manuscript-formatter` | `manuscript-formatter-1.0.0.zip` | No |
-| `journal-matchmaker` | `journal-matchmaker-1.0.0.zip` | No |
-| `reference-check` | `reference-check-1.0.0.zip` | No |
-| `manuscript-check` | `manuscript-check-1.0.0.zip` | No; waits for the payment provider's written reply |
-| `response-to-reviewers-check` | `response-to-reviewers-check-1.0.0.zip` | No; waits for the payment provider's written reply |
+| Zip in `downloads/` | Price | Built from (folders under `src/`) | On the site today? |
+| --- | --- | --- | --- |
+| `teardown-system-1.0.0.zip` | $19 | `teardown-system` | Listed; needs a store product |
+| `manuscript-check-1.0.0.zip` | $5 | `manuscript-check`, `reference-check`, `response-to-reviewers-check`, full edition | No; waits for the payment provider's written reply |
+| `manuscript-check-free-1.0.0.zip` | Free | The same three, free edition | No |
+| `research-toolkit-free-1.0.0.zip` | Free | `statistical-table-generator`, `manuscript-formatter`, `journal-matchmaker` | No |
+
+Paid zips are uploaded to the store product. Free zips are to be served by the site as static files.
 
 ## Layout
 
 - `src/<product>/guide.md` is the user guide; the build renders it to PDF.
 - `src/<product>/*.py` are the programs. They use the Python standard library only.
 - `src/shared/statdist.py` is the probability module. Two products ship a copy; the build fails if a copy drifts.
-- `build.py` renders the PDFs, generates the Word templates and spreadsheets, and writes the zips.
+- `src/bundles/` holds the START-HERE page of each folded download.
+- `build.py` renders the PDFs, generates the Word templates and spreadsheets, and writes the zips. The parts and the downloads they go into are the `PARTS` and `DOWNLOADS` tables near its end.
+- Editions: each of the three checking programs has one line, `EDITION = 'full'`. The build changes it to `'free'` for the free zip. Keep the limits in the program, the guide's Editions table, and `tests/test_editions.py` in step.
 - `tests/` holds the tests for the programs.
 
 ## Build and test

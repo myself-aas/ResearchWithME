@@ -43,6 +43,7 @@ import zipfile
 from xml.etree import ElementTree
 
 VERSION = '1.0.0'
+EDITION = 'full'          # the build sets 'free' in the free edition
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
 REVIEWER = re.compile(r'^\W*((?:reviewer|referee|reader)\s*(?:#|no\.?|number)?\s*[:\-]?\s*([0-9]+|[A-D]|one|two|three|four)\b'
@@ -272,7 +273,7 @@ def skeleton(comments):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description='Check that a response letter answers every reviewer comment.')
-    parser.add_argument('--version', action='version', version=f'response_check.py {VERSION}')
+    parser.add_argument('--version', action='version', version=f'response_check.py {VERSION} ({EDITION} edition)')
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('split', help='number the reviewer comments; write a tracker and an empty letter')
     p.add_argument('reviews')
@@ -295,6 +296,10 @@ def main(argv=None):
             print(f'Saved {args.out}-tracker.csv and {args.out}-letter-skeleton.txt')
             print('Check the split by eye: a long comment may hold several requests.')
             return 0
+        if EDITION == 'free':
+            print('The free edition numbers the comments and builds the tracker and empty letter (the split '
+                  'command). Checking a written letter is in the full edition.', file=sys.stderr)
+            return 2
         results = assess(comments, read(args.letter))
     except (OSError, ValueError, zipfile.BadZipFile, KeyError, ElementTree.ParseError) as error:
         print(f'Cannot read the file: {error}', file=sys.stderr)

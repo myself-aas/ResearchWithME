@@ -4,7 +4,7 @@
     pip install reportlab python-docx openpyxl
     python products/build.py
 
-Each product becomes one zip file. Guides are written in Markdown under src/ and rendered to PDF here;
+Each download becomes one zip file; a download is assembled from one or more parts, in a full or a free edition. Guides are written in Markdown under src/ and rendered to PDF here;
 Word templates and spreadsheets are generated here so that their content is reviewable as code.
 The build is repeatable: file dates inside the zips are fixed.
 """
@@ -670,7 +670,34 @@ def journal_shortlist(path):
 
 # ---------------------------------------------------------------- Packaging
 
-PRODUCTS = {
+FREE_LICENSE = """ResearchWithMe free download licence
+Version 1.0
+
+Copyright (c) 2026 Ashif Ahmed Shuvo, ResearchWithMe. All rights reserved.
+
+This licence covers the files in this download ("the files"). They are free of charge.
+
+You may
+  - use the files for any research, study, or professional work, on any number of devices;
+  - change the files for your own use;
+  - share the download, complete and unchanged, with anyone, free of charge;
+  - use what you make with them (tables, reports, manuscripts, letters, records) for any purpose, without
+    credit and without restriction. What you make is yours.
+
+You may not
+  - sell the files, or include them in anything that is sold;
+  - share changed copies, or copies with this notice removed.
+
+No warranty. The files are provided as they are. They are aids to your own checking and do not replace it.
+You remain responsible for the accuracy of everything you submit or publish. To the extent the law allows,
+the author is not liable for loss arising from use of the files.
+
+Third-party services. Some tools contact public scholarly indexes (Crossref, OpenAlex) at your request.
+Those services are run by others, under their own terms, and may change or become unavailable.
+"""
+
+# One part = one source folder under src/, placed in one folder of a zip.
+PARTS = {
     'teardown-system': {
         'title': 'The Teardown System', 'pdf': 'The-Teardown-System.pdf',
         'copy': ['teardown-record-template.md', 'run-log-template.md'],
@@ -707,6 +734,22 @@ PRODUCTS = {
     },
 }
 
+CHECK_FOLDERS = [('manuscript', 'manuscript-check'), ('references', 'reference-check'),
+                 ('reviewer-response', 'response-to-reviewers-check')]
+
+# One download = one zip. 'folders' maps a folder inside the zip ('' is the top) to a part.
+DOWNLOADS = {
+    'teardown-system': {'paid': True, 'edition': 'full', 'start': None, 'folders': [('', 'teardown-system')]},
+    'manuscript-check': {'paid': True, 'edition': 'full', 'start': ('manuscript-check-full.md', 'Manuscript Check'),
+                         'folders': CHECK_FOLDERS},
+    'manuscript-check-free': {'paid': False, 'edition': 'free',
+                              'start': ('manuscript-check-free.md', 'Manuscript Check, free edition'),
+                              'folders': CHECK_FOLDERS},
+    'research-toolkit-free': {'paid': False, 'edition': 'full', 'start': ('research-toolkit-free.md', 'Research Toolkit'),
+                              'folders': [('tables', 'statistical-table-generator'), ('formatting', 'manuscript-formatter'),
+                                          ('journals', 'journal-matchmaker')]},
+}
+
 
 def normalise_office_file(path):
     """Rewrite a .docx/.xlsx with fixed timestamps so that rebuilding gives the same bytes."""
@@ -719,28 +762,53 @@ def normalise_office_file(path):
             target.writestr(zipfile.ZipInfo(name, (2026, 11, 14, 0, 0, 0)), data, zipfile.ZIP_DEFLATED)
 
 
-def build(slug):
-    spec = PRODUCTS[slug]
-    source, stage = os.path.join(SRC, slug), os.path.join(STAGE, slug)
-    os.makedirs(stage)
-    if slug in ('statistical-table-generator', 'manuscript-check'):
+def build_part(part, stage, edition):
+    spec = PARTS[part]
+    source = os.path.join(SRC, part)
+    os.makedirs(stage, exist_ok=True)
+    if part in ('statistical-table-generator', 'manuscript-check'):
         with open(os.path.join(SRC, 'shared', 'statdist.py'), 'rb') as a, open(os.path.join(source, 'statdist.py'), 'rb') as b:
             if a.read() != b.read():
-                raise ValueError(f'{slug}/statdist.py differs from shared/statdist.py; copy the shared file over it')
+                raise ValueError(f'{part}/statdist.py differs from shared/statdist.py; copy the shared file over it')
     markdown_to_pdf(os.path.join(source, 'guide.md'), os.path.join(stage, spec['pdf']), spec['title'])
     for md, pdf, title in spec['extra_pdfs']:
         markdown_to_pdf(os.path.join(source, md), os.path.join(stage, pdf), title)
     for name in spec['copy']:
-        shutil.copy(os.path.join(source, name), os.path.join(stage, name))
+        target = os.path.join(stage, name)
+        shutil.copy(os.path.join(source, name), target)
+        if name.endswith('.py') and name != 'statdist.py':
+            with open(target, encoding='utf-8') as handle:
+                code = handle.read()
+            marker = "EDITION = 'full'"
+            if edition == 'free':
+                if code.count(marker) != 1:
+                    raise ValueError(f'{name}: expected exactly one line reading {marker}')
+                code = code.replace(marker, "EDITION = 'free'")
+                with open(target, 'w', encoding='utf-8') as handle:
+                    handle.write(code)
     for name, maker in spec['make']:
         maker(os.path.join(stage, name))
     for name in os.listdir(stage):
         if name.endswith(('.docx', '.xlsx')):
             normalise_office_file(os.path.join(stage, name))
+
+
+def build(slug):
+    spec = DOWNLOADS[slug]
+    stage = os.path.join(STAGE, slug)
+    os.makedirs(stage)
+    licence = LICENSE if spec['paid'] else FREE_LICENSE
+    for folder, part in spec['folders']:
+        build_part(part, os.path.join(stage, folder), spec['edition'])
+        with open(os.path.join(stage, folder, 'LICENSE.txt'), 'w', encoding='utf-8') as handle:
+            handle.write(licence)
     with open(os.path.join(stage, 'LICENSE.txt'), 'w', encoding='utf-8') as handle:
-        handle.write(LICENSE)
+        handle.write(licence)
+    if spec['start']:
+        markdown_to_pdf(os.path.join(SRC, 'bundles', spec['start'][0]), os.path.join(stage, 'START-HERE.pdf'), spec['start'][1])
     target = os.path.join(OUT, f'{slug}-{VERSION}.zip')
-    names = sorted(os.listdir(stage))
+    names = sorted(os.path.relpath(os.path.join(root, f), stage).replace(os.sep, '/')
+                   for root, _, files in os.walk(stage) for f in files)
     with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED) as archive:
         for name in names:
             info = zipfile.ZipInfo(f'{slug}/{name}', (2026, 11, 14, 0, 0, 0))
@@ -752,10 +820,11 @@ def build(slug):
 
 def main():
     shutil.rmtree(STAGE, ignore_errors=True)
-    os.makedirs(OUT, exist_ok=True)
-    for slug in PRODUCTS:
+    shutil.rmtree(OUT, ignore_errors=True)
+    os.makedirs(OUT)
+    for slug, spec in DOWNLOADS.items():
         target, names = build(slug)
-        print(f'{os.path.relpath(target, HERE)}  ({os.path.getsize(target) / 1024:.0f} kB)')
+        print(f'{os.path.relpath(target, HERE)}  ({os.path.getsize(target) / 1024:.0f} kB)  {"paid" if spec["paid"] else "free"}')
         for name in names:
             print(f'    {name}')
     if '--keep' not in sys.argv:

@@ -25,7 +25,7 @@ python reference_check.py sample-references.bib --email you@university.edu
 
 Use your own email address. Crossref and OpenAlex both ask programs to identify themselves with a contact address, and give identified users a steadier service. The address is sent to those two indexes and nowhere else.
 
-The program writes two files: `reference-check.md`, a report to read, and `reference-check.csv`, the same results as a spreadsheet. Use `--out name` to choose a different file name.
+The program writes `reference-check.md`, a report to read. The full edition also writes `reference-check.csv`, the same results as a spreadsheet. Use `--out name` to choose a different file name.
 
 ## Input formats
 
@@ -67,6 +67,18 @@ The reverse also holds. "Verified" means a work with that title, author, and yea
 
 The thresholds are fixed; no language model decides whether a work exists.
 
+## Editions
+
+| | Free edition | Full edition |
+| --- | --- | --- |
+| References checked in one run | The first 60 | 500, or more with `--limit` |
+| Number of runs | No limit | No limit |
+| Retraction flags, missing DOIs, duplicates | Yes | Yes |
+| Report to read (.md) | Yes | Yes |
+| Results as a spreadsheet (.csv) | No | Yes |
+
+Type `python reference_check.py --version` to see which edition you have.
+
 ## What it does not do
 
 - It never edits your file. Corrections are listed for you to make.
@@ -78,7 +90,7 @@ The thresholds are fixed; no language model decides whether a work exists.
 
 ## Limits you should know about
 
-- The program was tested against recorded answers in the format the two indexes publish. It was not possible to test it against the live services when this version was built, so the first thing to do is run it on the sample file and confirm that the two real papers come back as verified. If they do not, the services may have changed; write to us at the address on your receipt.
+- The program was tested against recorded answers in the format the two indexes publish. It was not possible to test it against the live services when this version was built, so the first thing to do is run it on the sample file and confirm that the two real papers come back as verified. If they do not, the services may have changed; write to us through the contact page at researchwith.me.
 - It pauses briefly between requests to be polite to the indexes. A list of 100 references takes a few minutes.
 - It checks at most 500 entries per run unless you raise the limit with `--limit`.
 

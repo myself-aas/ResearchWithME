@@ -19,6 +19,16 @@ The program needs Python 3.8 or later and nothing else. The reviews and your let
 
 **The program never writes, completes, or rewords a response.** It tells you whether a response is present for each comment. It cannot tell whether the response is a good one, and it has no opinion on whether you or the reviewer is right.
 
+## Editions
+
+| | Free edition | Full edition |
+| --- | --- | --- |
+| Step 1: number the comments, build the tracker and the empty letter | Yes | Yes |
+| Step 2: check the written letter against the reviews | No | Yes |
+| Letter template and tracking spreadsheet | Yes | Yes |
+
+Type `python response_check.py --version` to see which edition you have.
+
 ## Step 1. Before you write: split the reviews
 
 Paste the decision letter and reviews into a text file, or save them as .docx. Then:

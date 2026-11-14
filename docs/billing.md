@@ -258,8 +258,10 @@ with a `variant` relationship is what Lemon Squeezy documents, and it is what
 
 ## Product files
 
-The file a buyer downloads for each product is built from `products/` (`python products/build.py`) into
-`products/downloads/`. Upload the zip to the product in the Lemon Squeezy store; the site does not store or serve
-it. Only The Teardown System is in the catalogue. The other six zips are for planned products and must not be
-listed until the release checklist in `docs/superpowers/specs/2026-11-14-product-catalogue-prd.md` (section 6) is
-done for each.
+The files for every download are built from `products/` (`python products/build.py`) into `products/downloads/`.
+Two are paid and are uploaded to their product in the Lemon Squeezy store: The Teardown System ($19) and
+Manuscript Check ($5). Two are free and are to be served by the site as static files, with no checkout:
+the free edition of Manuscript Check and the Research Toolkit. Only The Teardown System is in the catalogue
+today. Nothing else may be listed until the release checklist in
+`docs/superpowers/specs/2026-11-14-product-catalogue-prd.md` (section 6) is done for it, and the paid Manuscript
+Check waits for Lemon Squeezy's written reply.

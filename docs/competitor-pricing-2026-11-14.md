@@ -27,14 +27,16 @@ absent. Marketplace prices are asking prices; nothing here shows how many copies
 | Response-to-Reviewers Check | None found | | | One search; no comparable product or template surfaced |
 | The Teardown System | None found | | | Not searched for specifically |
 
-## Suggested prices
+## Prices decided (owner, 2026-11-14)
 
-| Product | Placeholder | Suggested | Reasoning |
+The owner's rule: charge less than the cheapest paid alternative found, give more free than the alternatives give
+free, and fold products together. The suggestions that stood here before were replaced by this.
+
+| Download | Price | Cheapest paid alternative found | Folds in |
 | --- | --- | --- | --- |
-| The Teardown System | $19 | $19 | Owner's price. No comparable found. It is at the top of the range for academic guides and templates, and the free teardowns on the site are the evidence it is worth it. |
-| Manuscript Check | $12 | $12 | One Penelope.ai report is $9.50. Ours is a little more, once, for every manuscript, and nothing is uploaded. It checks fewer things and needs a terminal. |
-| Reference Check | $9 | $7 | Recite's month is $10 and its 3-day pass $6, and Recite does more with less effort. A single payment between the two is defensible; $9 is not. |
-| Response-to-Reviewers Check | $9 | $9 | No comparable found, so no evidence to move it. Lowest confidence of the seven. |
-| Manuscript Formatting Kit | $9 | $7 | Inside the $4 to $11 band for single APA templates and small bundles. The journal-submission template and title page are less common than APA student templates. |
-| Journal Shortlist Workbook | $7 | $5, or fold into the Formatting Kit | Every journal finder is free. A workbook that suggests no journals will be compared with them. |
-| Statistical Table Generator | $12 | $5, or free | JASP and jamovi are free, have menus, and produce APA tables. A command-line tool cannot ask $12 against that. |
+| The Teardown System | $19 | None found; price unchanged | |
+| Manuscript Check | $5 once | Recite $6 for 3 days; Penelope.ai $9.50 a report | Manuscript Check, Reference Check, Response-to-Reviewers Check |
+| Manuscript Check, free edition | Free | Recite's free tier is 2,500 words and 50 references, two uploads a day | The same programs: four manuscript checks on the whole file, 60 references a run, no limit on runs, the comment splitter |
+| Research Toolkit | Free | JASP, jamovi, and journal finders are free; single templates from $1.50 | Statistical Table Generator, Manuscript Formatting Kit, Journal Shortlist Workbook |
+
+Do not put "lowest price" or any competitor's figure on the site. These were seen on one day in secondary sources.

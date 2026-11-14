@@ -39,6 +39,8 @@ from xml.etree import ElementTree
 import statdist as sd
 
 VERSION = '1.0.0'
+EDITION = 'full'          # the build sets 'free' in the free edition
+FREE_CHECKS = ('1', '2', '5', '6')
 W = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 
 SECTIONS = [
@@ -573,19 +575,34 @@ CHECKS = [
 ]
 
 
+def cell(title, findings):
+    if findings is None:
+        return 'full edition only'
+    return 'worksheet' if title[0] in '89' else findings
+
+
 def build_report(doc, source):
     parts, summary = [], []
+    left_out = []
     for title, function in CHECKS:
+        if EDITION == 'free' and title[0] not in FREE_CHECKS:
+            left_out.append(title)
+            summary.append((title, None))
+            continue
         lines, findings = function(doc)
         parts += [f'## {title}', ''] + lines + ['']
         summary.append((title, findings))
+    if left_out:
+        parts += ['## Not run in the free edition', '',
+                  'These checks are in the full edition and were not run on this file: '
+                  + '; '.join(t.split('. ', 1)[1].lower() for t in left_out) + '.', '']
     head = ['# Manuscript check', '', f'File: {source}  ', f'Date: {datetime.date.today().isoformat()}  ',
-            f'Tool: manuscript_check.py {VERSION}', '',
+            f'Tool: manuscript_check.py {VERSION} ({EDITION} edition)', '',
             '**Read this first.** This report was produced by software applying fixed rules. It is not peer review '
             'and not a judgement of the science. It checks only what is listed below, some findings will be false '
             'alarms, and an empty section does not mean that part of the paper is sound. Nothing in your file was changed.',
             '', '## Summary', '', '| Check | Items to look at |', '| --- | ---: |']
-    head += [f'| {title} | {findings if title[0] not in "89" else "worksheet"} |' for title, findings in summary]
+    head += [f'| {title} | {cell(title, findings)} |' for title, findings in summary]
     head += ['', '**Not checked:** whether the methods are appropriate, whether the conclusions follow from the '
              'results, originality or overlap with other work, whether references exist or are accurate, language '
              'quality, journal formatting rules, reporting-guideline items (use the checklists in this kit), images, '
@@ -597,7 +614,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description='Mechanical pre-submission checks on a research manuscript.')
     parser.add_argument('file', help='a .docx, .txt, or .md manuscript')
     parser.add_argument('--out', help='where to write the report (default: <file>-check.md)')
-    parser.add_argument('--version', action='version', version=f'manuscript_check.py {VERSION}')
+    parser.add_argument('--version', action='version', version=f'manuscript_check.py {VERSION} ({EDITION} edition)')
     args = parser.parse_args(argv)
     try:
         if args.file.lower().endswith('.docx'):
@@ -619,7 +636,7 @@ def main(argv=None):
     with open(out, 'w', encoding='utf-8') as handle:
         handle.write(report)
     for title, findings in summary:
-        print(f'  {title:<44}{findings if title[0] not in "89" else "worksheet":>10}')
+        print(f'  {title:<44}{cell(title, findings):>18}')
     print(f'\nSaved {out}')
     print('This is not peer review. Some findings will be false alarms; check each one.')
     return 0

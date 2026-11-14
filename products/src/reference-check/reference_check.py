@@ -46,6 +46,8 @@ import urllib.parse
 import urllib.request
 
 VERSION = '1.0.0'
+EDITION = 'full'          # the build sets 'free' in the free edition
+FREE_LIMIT = 60           # references checked per run in the free edition
 CROSSREF = 'https://api.crossref.org/works'
 OPENALEX = 'https://api.openalex.org/works'
 DOI_RE = re.compile(r'10\.\d{4,9}/[^\s"<>{}]+', re.I)
@@ -371,13 +373,16 @@ NOT_FOUND_NOTE = ('"Not found" means only that Crossref and OpenAlex returned no
                   'published in English are often absent from these indexes. Check each one by hand.')
 
 
-def markdown_report(results, source, today):
+def markdown_report(results, source, today, skipped=0):
     counts = {status: sum(1 for r in results if r['status'] == status) for status in ORDER}
     out = ['# Reference check', '', f'File: {source}  ', f'Checked: {today}  ',
-           'Indexes searched: Crossref, OpenAlex  ', f'Tool: reference_check.py {VERSION}', '', '## Summary', '',
+           'Indexes searched: Crossref, OpenAlex  ', f'Tool: reference_check.py {VERSION} ({EDITION} edition)', '', '## Summary', '',
            '| Result | Entries |', '| --- | ---: |']
     out += [f'| {status} | {counts[status]} |' for status in ORDER]
     out += [f'| **Total** | **{len(results)}** |', '', NOT_FOUND_NOTE, '']
+    if skipped:
+        out += [f'**{skipped} further references in the file were not checked.** The free edition checks the first '
+                f'{FREE_LIMIT} in a run. Split the file and run each part, or use the full edition.', '']
     for status in ORDER:
         group = [r for r in results if r['status'] == status]
         if not group or status == 'verified':
@@ -433,7 +438,7 @@ def main(argv=None):
     parser.add_argument('--email', required=True, help='your email address, sent to the indexes as a contact')
     parser.add_argument('--out', default='reference-check', help='base name for the report files')
     parser.add_argument('--limit', type=int, default=500, help='stop after this many entries (default 500)')
-    parser.add_argument('--version', action='version', version=f'reference_check.py {VERSION}')
+    parser.add_argument('--version', action='version', version=f'reference_check.py {VERSION} ({EDITION} edition)')
     args = parser.parse_args(argv)
     if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', args.email):
         print('Give a real email address with --email; the indexes ask for one.', file=sys.stderr)
@@ -446,18 +451,23 @@ def main(argv=None):
     if not entries:
         print('No references were found in the file.', file=sys.stderr)
         return 2
-    entries = entries[:args.limit]
+    total = len(entries)
+    entries = entries[:min(args.limit, FREE_LIMIT) if EDITION == 'free' else args.limit]
+    skipped = total - len(entries) if EDITION == 'free' else 0
     print(f'Checking {len(entries)} references against Crossref and OpenAlex...')
     results = check(entries, Client(args.email),
                     progress=lambda i, n: print(f'  {i}/{n}', end='\r', flush=True))
     today = datetime.date.today().isoformat()
     with open(args.out + '.md', 'w', encoding='utf-8') as handle:
-        handle.write(markdown_report(results, args.file, today))
-    write_csv(args.out + '.csv', results)
+        handle.write(markdown_report(results, args.file, today, skipped))
+    if EDITION == 'full':
+        write_csv(args.out + '.csv', results)
     print(' ' * 20)
     for status in ORDER:
         print(f'  {status:<28}{sum(1 for r in results if r["status"] == status):>4}')
-    print(f'\nSaved {args.out}.md and {args.out}.csv')
+    print(f'\nSaved {args.out}.md' + (f' and {args.out}.csv' if EDITION == 'full' else ''))
+    if skipped:
+        print(f'{skipped} further references were not checked: the free edition checks {FREE_LIMIT} in a run.')
     print('Reminder: "not found" does not mean a reference is wrong. Check those by hand.')
     return 0
 

@@ -79,6 +79,17 @@ Expect some. Typical ones:
 
 Every finding quotes the text it came from so that you can decide in a few seconds.
 
+## Editions
+
+| | Free edition | Full edition |
+| --- | --- | --- |
+| Sections and declarations, citations against the reference list, figures and tables, abbreviations | Yes | Yes |
+| Reported statistics recomputed, numbers in the abstract, length | No | Yes |
+| Reverse outline and claims worksheets | No | Yes |
+| Length of manuscript, number of runs | No limit | No limit |
+
+Type `python manuscript_check.py --version` to see which edition you have. The free edition's report lists the checks it did not run.
+
 ## What it does not check
 
 Whether the methods are appropriate; whether the conclusions follow from the results; originality or text overlap; whether references exist or are correct (the Reference Check does that); language quality; a journal's formatting rules; reporting-guideline items; images and equations; anything in a table or figure that is not plain text.
