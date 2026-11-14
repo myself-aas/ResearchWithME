@@ -64,3 +64,14 @@ a malformed refresh fails CI rather than production.
 This site-root endpoint is an alias for *Supabase's* issuer metadata, not the issuer's canonical RFC 8414 location. The `issuer` remains Supabase's actual issuer, not `https://researchwith.me`; consumers validating RFC 8414 issuer-location matching should use the canonical Supabase URL. ResearchWithMe's APIs currently use browser session cookies for editorial access, not OAuth bearer tokens. The mirror alone **does not enable agents to authenticate to these APIs**. Before claiming agent OAuth support, implement bearer validation, resource/audience and scope checks on protected APIs, then add the scopes to the protected-resource document. `/auth.md` describes the currently supported public and human flows.
 
 To check a deployed environment, request `GET /.well-known/oauth-authorization-server`, compare its issuer and endpoints with the upstream Supabase document, and check the upstream OAuth server configuration. The scanner at `https://isitagentready.com/api/scan` can only be run after deployment; this repository change does not establish a production `oauthDiscovery` pass.
+
+## The relay's fetch must suit the Workers runtime
+
+workerd accepts only `redirect: 'follow'` and `redirect: 'manual'`. The relay used `redirect: 'error'`, which the edge rejects outright — so the fetch threw before any request was sent, the snapshot fallback answered `200`, and the relayed document was a week-old capture on every request. Nothing in the response said the upstream had never been reached: `x-researchwithme-source: snapshot` looks exactly like a transient outage.
+
+It is now `manual`, and a 3xx is treated as a failed round-trip because a redirect means the document is not served from the origin that was validated. `test/pages/oauth-resilience.test.ts` asserts the fetch configuration directly, since this failure mode is invisible in Node — where `redirect: 'error'` is perfectly legal — and only appears in workerd.
+
+## One loader, two consumers
+
+`loadDiscovery` does the round-trip and the validation once. The relay needs the document; the protected-resource metadata needs only the issuer. Fetching separately would let them disagree about whether the authorization server is usable, so a PRM could name a server the relay then refuses.
+

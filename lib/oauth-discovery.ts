@@ -8,6 +8,24 @@
  * reads the block will POST to the registration URI; publishing it beside a 503
  * would send that agent to a door that does not open, and the failure would look
  * like our bug rather than a disabled feature on the authorization server.
+ *
+ * ── One fetch, two consumers ────────────────────────────────────────────────
+ *
+ * `loadDiscovery` performs the round-trip and the validation exactly once. The
+ * relay needs the document and the protected-resource metadata needs only the
+ * issuer; if they fetched separately they could disagree about whether the
+ * authorization server is usable, and a PRM naming a server the relay then
+ * refuses is the same failure in two places.
+ *
+ * ── Why `redirect: 'manual'` ────────────────────────────────────────────────
+ *
+ * workerd rejects `redirect: 'error'` outright — it accepts only `follow` and
+ * `manual` — so that value made every fetch throw before a request was sent.
+ * The snapshot fallback then answered 200 on every request and the relay served
+ * a week-old capture indefinitely, with nothing in the response saying the
+ * upstream had never been reached. `manual` still refuses to follow; the status
+ * check turns a 3xx into a failed round-trip, which is what a redirect to
+ * another origin deserves.
  */
 
 import { agentAuthBlock } from './agent-auth';
@@ -64,16 +82,25 @@ export function validateDiscoveryDocument(
 }
 
 /**
- * The issuer a client should be told to fetch, or undefined when no reachable
- * authorization server validates. Used by the protected-resource metadata, which
- * must not name a server that cannot answer the RFC 8414 check.
+ * One round-trip, one validation, for both consumers.
  *
- * Never throws: an unreachable or malformed upstream means "advertise nothing".
+ * The relay needs the document; the protected-resource metadata needs only the
+ * issuer. They must never disagree about whether the authorization server is
+ * usable — a PRM naming a server the relay then 503s is the same failure in two
+ * places — so the fetch and the validation happen exactly once, here.
+ *
+ * Failure degrades to the captured snapshot only for the project it was taken
+ * from: the snapshot is evidence about one issuer, not a template that can be
+ * pointed at another.
  */
-export async function discoverIssuer(supabaseUrl: string | undefined): Promise<string | undefined> {
+type DiscoveryResult =
+  | { ok: true; doc: Record<string, unknown>; source: 'upstream' | 'snapshot'; issuer: string }
+  | { ok: false; reason: string; unavailableForThisProject: boolean };
+
+export async function loadDiscovery(supabaseUrl: string | undefined): Promise<DiscoveryResult> {
   let base: URL;
   try {
-    if (!supabaseUrl) return undefined;
+    if (!supabaseUrl) throw new Error('not configured');
     base = new URL(supabaseUrl);
     if (
       base.protocol !== 'https:' ||
@@ -83,37 +110,61 @@ export async function discoverIssuer(supabaseUrl: string | undefined): Promise<s
       base.hash ||
       base.pathname !== '/'
     ) {
-      return undefined;
+      throw new Error('not configured');
     }
   } catch {
-    return undefined;
+    // No usable configuration: there is nothing to fall back to, and a 503 tells
+    // an agent the truth rather than naming an issuer we cannot reach.
+    return { ok: false, reason: 'authorization server is not configured', unavailableForThisProject: false };
   }
+
+  const snapshot = (reason: string): DiscoveryResult => {
+    if (!snapshotMatches(supabaseUrl ?? '')) {
+      return { ok: false, reason, unavailableForThisProject: false };
+    }
+    console.warn(
+      `OAuth discovery relay fell back to the captured snapshot (${reason}). Refresh lib/oauth-metadata.ts when the authorization server changes.`,
+    );
+    const doc = OAUTH_METADATA_SNAPSHOT.document as Record<string, unknown>;
+    return { ok: true, doc, source: 'snapshot', issuer: String(doc.issuer) };
+  };
 
   try {
     const upstream = await fetch(new URL(DISCOVERY_PATH, base), {
       headers: { Accept: 'application/json' },
       cache: 'no-store',
-      redirect: 'error',
+      // 'manual', not 'error': workerd rejects 'error' outright ("must be one
+      // of follow or manual"), which made every request throw before it was
+      // sent and left the relay serving the snapshot forever. 'manual' still
+      // refuses to follow — a 3xx is caught by the !ok check below — so the
+      // validation stays about this exact origin, which is the point.
+      redirect: 'manual',
       signal: AbortSignal.timeout(5000),
     });
-    if (!upstream.ok) return snapshotIssuer(supabaseUrl, `upstream ${upstream.status}`);
+    // Includes 3xx: a redirect means the document is not served from the origin
+    // we validated, so it is not usable.
+    if (!upstream.ok) return snapshot(`upstream ${upstream.status}`);
     const metadata: unknown = await upstream.json();
-    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return undefined;
-    const result = validateDiscoveryDocument(metadata as Record<string, unknown>, base);
-    return result.ok ? result.issuer : snapshotIssuer(supabaseUrl, result.reason);
+    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) {
+      return snapshot('upstream returned a non-object document');
+    }
+    const doc = metadata as Record<string, unknown>;
+    const result = validateDiscoveryDocument(doc, base);
+    if (!result.ok) return snapshot(result.reason);
+    return { ok: true, doc, source: 'upstream', issuer: result.issuer };
   } catch (error) {
-    return snapshotIssuer(supabaseUrl, error instanceof Error ? error.message : 'fetch failed');
+    return snapshot(error instanceof Error ? error.message : 'fetch failed');
   }
 }
 
-/** The snapshot's issuer, only for the project it was captured from. */
-function snapshotIssuer(supabaseUrl: string | undefined, reason: string): string | undefined {
-  if (!snapshotMatches(supabaseUrl ?? '')) return undefined;
-  console.warn(
-    `OAuth issuer resolved from the captured snapshot (${reason}). Refresh lib/oauth-metadata.ts when the authorization server changes.`,
-  );
-  const issuer = OAUTH_METADATA_SNAPSHOT.document.issuer;
-  return typeof issuer === 'string' ? issuer : undefined;
+/**
+ * The issuer a client should be told to fetch, or undefined when no reachable
+ * authorization server validates. The protected-resource metadata uses this: it
+ * must not name a server that cannot answer the RFC 8414 check.
+ */
+export async function discoverIssuer(supabaseUrl: string | undefined): Promise<string | undefined> {
+  const result = await loadDiscovery(supabaseUrl);
+  return result.ok ? result.issuer : undefined;
 }
 
 export async function oauthDiscoveryResponse(
@@ -156,45 +207,9 @@ export async function oauthDiscoveryResponse(
     return new Response(method === 'HEAD' ? null : JSON.stringify(body), { headers });
   };
 
-  // Any failure of the round-trip — refused connection, timeout, bad JSON, a
-  // non-2xx — degrades to the captured document for this same project rather
-  // than telling an agent we have no OAuth. A different project gets no
-  // fallback: the snapshot is evidence about one issuer, not a template.
-  const fallback = (reason: string): Response => {
-    if (!snapshotMatches(supabaseUrl)) return unavailable();
-    console.warn(
-      `OAuth discovery relay fell back to the captured snapshot (${reason}). Refresh lib/oauth-metadata.ts when the authorization server changes.`,
-    );
-    return respond(OAUTH_METADATA_SNAPSHOT.document, 'snapshot');
-  };
-
-  let base: URL;
-  try {
-    base = new URL(supabaseUrl);
-    if (base.protocol !== 'https:' || base.username || base.password || base.search || base.hash || base.pathname !== '/') {
-      return unavailable();
-    }
-  } catch {
-    return unavailable();
-  }
-
-  try {
-    const upstream = await fetch(new URL(DISCOVERY_PATH, base), {
-      headers: { Accept: 'application/json' },
-      cache: 'no-store',
-      redirect: 'error',
-      signal: AbortSignal.timeout(5000),
-    });
-    if (!upstream.ok) return fallback(`upstream ${upstream.status}`);
-    const metadata: unknown = await upstream.json();
-    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return unavailable();
-    const doc = metadata as Record<string, unknown>;
-    // Same validator the PRM uses to decide which server to advertise, so the
-    // two can never disagree about what this deployment is willing to serve.
-    const result = validateDiscoveryDocument(doc, base);
-    if (!result.ok) return fallback(result.reason);
-    return respond(doc, 'upstream');
-  } catch (error) {
-    return fallback(error instanceof Error ? error.message : 'fetch failed');
-  }
+  // Same loader the protected-resource metadata uses, so the two can never
+  // disagree about what this deployment is willing to serve.
+  const result = await loadDiscovery(supabaseUrl);
+  if (!result.ok) return unavailable();
+  return result.source === 'upstream' ? respond(result.doc, 'upstream') : respond(result.doc, 'snapshot');
 }

@@ -34,7 +34,9 @@ describe('Supabase OAuth discovery mirror', () => {
     }
     expect(fetchMock).toHaveBeenCalledWith(
       new URL(`${FAKE_SUPABASE_URL}/auth/v1/.well-known/oauth-authorization-server`),
-      expect.objectContaining({ redirect: 'error', cache: 'no-store' }),
+      // 'manual', not 'error': workerd rejects 'error' outright, which made the
+      // fetch throw before it was sent and left the relay serving the snapshot.
+      expect.objectContaining({ redirect: 'manual', cache: 'no-store' }),
     );
   });
 

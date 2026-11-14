@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestApp, FAKE_SUPABASE_URL } from '@/test/support/pages';
-import { oauthDiscoveryResponse } from '@/lib/oauth-discovery';
+import { loadDiscovery, oauthDiscoveryResponse } from '@/lib/oauth-discovery';
 import { OAUTH_METADATA_SNAPSHOT } from '@/lib/oauth-metadata';
 
 /**
@@ -116,5 +116,47 @@ describe('OAuth discovery resilience', () => {
     expect(a.token_endpoint).toBe(b.token_endpoint);
     expect(a.jwks_uri).toBe(b.jwks_uri);
     expect(a.agent_auth).toEqual(b.agent_auth);
+  });
+});
+
+/**
+ * The Workers runtime rejects `redirect: 'error'` outright — "must be one of
+ * follow or manual" — so a fetch configured that way throws before any request
+ * is made. The snapshot fallback then answers 200 and the failure looks like a
+ * transient upstream outage forever. It was live: the relayed document was a
+ * week-old capture on every request, and nothing in the output said so.
+ *
+ * These assertions pin the fetch configuration the edge actually accepts.
+ */
+describe('fetch configuration the Workers runtime accepts', () => {
+  it('never asks for redirect: error, which workerd rejects', async () => {
+    const calls: (RequestInit | undefined)[] = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async (_url: string, init?: RequestInit) => {
+        calls.push(init);
+        return Response.json(metadata);
+      }),
+    );
+
+    await loadDiscovery(FAKE_SUPABASE_URL);
+
+    expect(calls).toHaveLength(1);
+    // 'manual' rather than 'follow': a redirect must not be followed silently,
+    // because the signature and validation are about this exact origin.
+    expect(calls[0]?.redirect).toBe('manual');
+    expect(calls[0]?.redirect).not.toBe('error');
+  });
+
+  it('treats a redirect response as a failed round-trip, not as metadata', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockImplementation(async () => new Response(null, { status: 302, headers: { location: 'https://elsewhere.test/' } })),
+    );
+
+    const result = await loadDiscovery(OAUTH_METADATA_SNAPSHOT.issuerOrigin);
+    // The snapshot is the correct answer here, and it must be labelled as such.
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.source).toBe('snapshot');
   });
 });

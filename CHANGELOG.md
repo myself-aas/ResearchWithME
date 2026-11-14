@@ -66,6 +66,16 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   working configuration. Responses state whether they are live or captured.
 
 ### Fixed
+- OAuth discovery relayed upstream metadata only in theory: it fetched with
+  `redirect: 'error'`, which the Workers runtime rejects outright, so every
+  request threw before it was sent and the snapshot answered `200` in its place.
+  The relayed document was therefore always a week-old capture, and nothing in
+  the response distinguished that from a transient outage. It now uses
+  `redirect: 'manual'`; a 3xx is a failed round-trip. Found by running the built
+  worker, not the unit tests, which cannot see the constraint.
+- The relay and the protected-resource metadata now share one loader
+  (`loadDiscovery`): one fetch, one validation, so they cannot disagree about
+  whether the authorization server is usable.
 - OAuth protected-resource metadata now names the authorization server by the
   issuer it actually publishes, resolved at request time, instead of pointing
   `authorization_servers` at this origin. RFC 9728 §3.3 has clients reject
