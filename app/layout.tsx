@@ -88,6 +88,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* WebMCP: registers the archive's read-only tools on page load, before
+            hydration, so an in-tab agent (or a readiness scanner) sees them.
+            The script no-ops where the browser has no modelContext. */}
+        <script src="/webmcp.js" defer />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased selection:bg-selection selection:text-ink" suppressHydrationWarning>
         <a

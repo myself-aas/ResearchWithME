@@ -138,6 +138,10 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-variable.woff2" crossorigin>` +
     `<script>${themeBoot}</script>` +
     `<script>window.${HYDRATION_DATA_KEY}=${hydrationJson}</script>` +
+    // WebMCP: registers the archive's read-only tools on page load, before
+    // hydration, so an in-tab agent (or a readiness scanner) sees them. The
+    // script no-ops where the browser has no modelContext.
+    `<script src="/webmcp.js" defer></script>` +
     `</head><body class="bg-canvas font-sans text-ink antialiased">` +
     `<a href="#main-content" class="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary focus:not-sr-only focus:fixed">Skip to main content</a>` +
     `<div id="root">`;

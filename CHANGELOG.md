@@ -30,6 +30,12 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - CC BY 4.0 remains the stated content licence.
 
 ### Added
+- WebMCP tools (`public/webmcp.js`): `search_articles`, `list_categories`, and
+  `get_article` registered on page load against `document.modelContext` and,
+  for scanner shims and older preview builds, `navigator.modelContext`. All
+  three are read-only and query the existing `/api/articles` endpoint. Served
+  as a static asset from both the Next.js and Cloudflare Pages builds, with the
+  registration scoped by an `AbortSignal` so tools unregister by aborting.
 - English-only source detector (`lib/__tests__/english-only.test.ts`).
 - Post-cleanup Supabase reconciliation migration
   (`supabase/migrations/20261113000200_reconcile_after_cleanup.sql`) and

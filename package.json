@@ -42,7 +42,7 @@
     "test": "vitest run",
     "tokens:build": "node tokens/scripts/build.mjs",
     "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs",
-    "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test && npm run dns:test && npm run impeccable:source",
+    "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test && npm run dns:test && npm run webmcp:test && npm run impeccable:source",
     "impeccable:source": "impeccable detect app components",
     "impeccable:url": "impeccable detect --json --no-advisory --viewport 1280x800 http://localhost:3000",
     "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
@@ -57,6 +57,7 @@
     "reme:check": "node scripts/reme-check.mjs --all",
     "reme:test": "node --test test/reme-check.test.mjs test/reme-name.test.mjs",
     "dns:test": "node --test test/dns-aid.test.mjs test/verify-dns-aid.test.mjs",
+    "webmcp:test": "node --test test/webmcp.test.mjs",
     "parity": "node scripts/visual-parity.mjs",
     "preinstall": "node scripts/ensure-npm.mjs"
   },
