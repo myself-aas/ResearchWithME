@@ -44,7 +44,7 @@ export default function ApiDocsReference() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-8">
           <p className="font-sans text-xs font-semibold uppercase tracking-widest text-brand">Developer reference</p>
           <h1 className="mt-3 font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">ResearchWithMe API</h1>

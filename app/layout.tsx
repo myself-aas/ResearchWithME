@@ -104,7 +104,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             policy for the whole app (see components/motion/MotionScope). */}
         <MotionModeProvider>
           <MotionScope>
-            <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
+            <div className="min-h-screen">
               <RouteTransition>{children}</RouteTransition>
             </div>
           </MotionScope>

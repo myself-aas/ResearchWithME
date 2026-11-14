@@ -279,7 +279,7 @@ export default function WritePage() {
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-10">
         {isSupabaseConfigured && (
           <div className="mb-6 border-l-2 border-trust-uncertain bg-brand/5 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
             <p className="font-semibold">Publishing now happens in the editorial studio</p>

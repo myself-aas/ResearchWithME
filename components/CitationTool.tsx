@@ -106,7 +106,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-ink-secondary">
           <Link href="/" className="inline-flex items-center gap-1.5 hover:text-ink hover:underline">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />

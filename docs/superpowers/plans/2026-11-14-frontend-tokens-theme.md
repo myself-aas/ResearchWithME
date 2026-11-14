@@ -84,10 +84,10 @@ expect(css).toContain("--reme-component-source-card-background: var(--reme-surfa
 
 - [x] **Step 2: Verify red.** Run `npm test -- lib/__tests__/tokens-pipeline.test.ts`. Expected: the new contract assertion fails for the documented defect; an unimplemented new symbol is acceptable, a missing runner/dependency is not.
 - [x] **Step 3: Implement the smallest change.** Generate CSS component aliases from raw references separately from literal resolution: strip the `semantic.light` path into the semantic CSS variable name using the existing kebab mapping. Allow known primitive aliases for dimensions; fail unknown references. Do not recursively replace every literal token output with CSS var strings.
-- [ ] **Step 4: Verify green.** Run `npm test -- lib/__tests__/tokens-pipeline.test.ts`; expected PASS. Rebuild and run token checks; in browser verify Source/Evidence/Claim computed background/text respond to light/dark without a reload. If these reference cards have no route, mount them in a test-only Playwright fixture, not a public demo route.
+- [x] **Step 4: Verify green.** Run `npm test -- lib/__tests__/tokens-pipeline.test.ts`; expected PASS. Rebuild and run token checks; in browser verify Source/Evidence/Claim computed background/text respond to light/dark without a reload. If these reference cards have no route, mount them in a test-only Playwright fixture, not a public demo route.
 - [x] **Step 5: Review and commit.** Inspect `git diff --check` and the task diff; stage only the files above plus any generated outputs explicitly named there, then `git commit -m "fix: keep component color aliases theme aware"` on the current branch. Do not push/deploy as part of this task.
 
-**Execution status (2026-11-14):** implementation/unit verification committed; Step 4 remains open because Chromium is unavailable. No task-complete ledger line or browser pass claimed.
+**Execution status (2026-11-14):** implemented and locally verified, including compatible Chromium 153 browser checks; no production or whole-programme conformance claim.
 
 ### Task 3: Contrast-safe domain text recipes
 
@@ -111,10 +111,10 @@ expect(ratio).toBeGreaterThanOrEqual(4.5); // each composed foreground/surface i
 
 - [x] **Step 2: Verify red.** Run `npm test -- lib/__tests__/tokens-pipeline.test.ts`. Expected: the new contract assertion fails for the documented defect; an unimplemented new symbol is acceptable, a missing runner/dependency is not.
 - [x] **Step 3: Implement the smallest change.** Find every Emerging/Uncertain text consumer, retain labels/icons and existing tint/accent semantics, and replace only foreground roles. Use exact proposed foreground values: light Emerging #155E75, light Uncertain #92400E, dark Emerging #67E8F9, dark Uncertain #FCD34D. Record them in DESIGN.md with regenerated outputs and verify all composed ratios; if a composition fails, stop for foreground/surface review rather than weaken the threshold. Extend gate pairs to include actual compositions.
-- [ ] **Step 4: Verify green.** Run `npm test -- lib/__tests__/tokens-pipeline.test.ts`; expected PASS. Run tokens:build/tokens:check and inspect both themes, focus and disabled states. Do not round a failing ratio up or apply large-text thresholds to metadata.
+- [x] **Step 4: Verify green.** Run `npm test -- lib/__tests__/tokens-pipeline.test.ts`; expected PASS. Run tokens:build/tokens:check and inspect both themes, focus and disabled states. Do not round a failing ratio up or apply large-text thresholds to metadata.
 - [x] **Step 5: Review and commit.** Inspect `git diff --check` and the task diff; stage only the files above plus any generated outputs explicitly named there, then `git commit -m "fix: add accessible domain badge foregrounds"` on the current branch. Do not push/deploy as part of this task.
 
-**Execution status (2026-11-14):** implementation/unit verification committed; Step 4 remains open because Chromium is unavailable. No task-complete ledger line or browser pass claimed.
+**Execution status (2026-11-14):** implemented and locally verified, including compatible Chromium 153 browser checks; no production or whole-programme conformance claim.
 
 ### Task 4: Complete system-theme lifecycle
 
@@ -137,10 +137,10 @@ expect(resolveEffectiveTheme("light", true)).toBe("light");
 
 - [x] **Step 2: Verify red.** Run `npm test -- lib/__tests__/theme-typography.test.tsx`. Expected: the new contract assertion fails for the documented defect; an unimplemented new symbol is acceptable, a missing runner/dependency is not.
 - [x] **Step 3: Implement the smallest change.** Use a labeled native select with Light/Dark/System, listener cleanup, safe storage reads/writes and media-query listener only when relevant. Update pre-paint bootstrap in layout using matching resolution, without weakening CSP. Retain effective-theme screen-reader labels and reduced-motion behavior.
-- [ ] **Step 4: Verify green.** Run `npm test -- lib/__tests__/theme-typography.test.tsx`; expected PASS. Run `npm run test:pages -- test/e2e/theme.spec.ts` and check blocked-storage + system-change cases. Test Pages shell/bootstrap separately if it owns initial HTML theme classes.
+- [x] **Step 4: Verify green.** Run `npm test -- lib/__tests__/theme-typography.test.tsx`; expected PASS. Run `npm run test:pages -- test/e2e/theme.spec.ts` and check blocked-storage + system-change cases. Test Pages shell/bootstrap separately if it owns initial HTML theme classes.
 - [x] **Step 5: Review and commit.** Inspect `git diff --check` and the task diff; stage only the files above plus any generated outputs explicitly named there, then `git commit -m "fix: support persistent system theme selection"` on the current branch. Do not push/deploy as part of this task.
 
-**Execution status (2026-11-14):** implementation/unit verification committed; Step 4 remains open because Chromium is unavailable. No task-complete ledger line or browser pass claimed.
+**Execution status (2026-11-14):** implemented and locally verified, including compatible Chromium 153 browser checks; no production or whole-programme conformance claim.
 
 ## Completion gate
 

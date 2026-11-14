@@ -52,7 +52,7 @@ Files are listed per task below; `Create` means proposed, not already present. T
 
 **Interfaces:** Produces document contract: one `<main id="main-content" tabIndex={-1}>`; site skip link targets it; sign-in link name always includes Sign in. Apply to every shell discovered in route inventory, including Pages HTML wrapper.
 
-- [ ] **Step 1: Write failing regression `skip_link_bypasses_chrome_and_sign_in_is_named`.** Browser at 320/768/1024/1440: `expect(await page.locator("#main-content").count()).toBe(1)`; Tab to skip link, activate and assert main focused; at 768/1024 assert `getByRole("link", {name: "Sign in", exact: true})` is named/visible in its applicable navigation. Repeat after client navigation.
+- [x] **Step 1: Write failing regression `skip_link_bypasses_chrome_and_sign_in_is_named`.** Browser at 320/768/1024/1440: `expect(await page.locator("#main-content").count()).toBe(1)`; Tab to skip link, activate and assert main focused; at 768/1024 assert `getByRole("link", {name: "Sign in", exact: true})` is named/visible in its applicable navigation. Repeat after client navigation.
 
 Assertion excerpt (inside the named test, using its fixtures):
 ```ts
@@ -60,10 +60,12 @@ await expect(page.locator("#main-content")).toHaveCount(1);
 await expect(page.locator("main#main-content")).toBeFocused(); // after skip activation
 ```
 
-- [ ] **Step 2: Verify red.** Run `npm run test:pages -- test/e2e/navigation-accessibility.spec.ts`. Expected: the new contract assertion fails for the documented defect; an unimplemented new symbol is acceptable, a missing runner/dependency is not.
-- [ ] **Step 3: Implement the smallest change.** Remove duplicate outer target, add target/focusability to the actual main in public/tool/studio shells. Keep one main per rendered composition, not nested mains. Name sign-in independently of responsive visual spans. Add exact affected shell paths to the task commit after inventory, not a broad repository rewrite.
+- [x] **Step 2: Verify red.** Run `npm run test:pages -- test/e2e/navigation-accessibility.spec.ts`. Expected: the new contract assertion fails for the documented defect; an unimplemented new symbol is acceptable, a missing runner/dependency is not.
+- [x] **Step 3: Implement the smallest change.** Remove duplicate outer target, add target/focusability to the actual main in public/tool/studio shells. Keep one main per rendered composition, not nested mains. Name sign-in independently of responsive visual spans. Add exact affected shell paths to the task commit after inventory, not a broad repository rewrite.
 - [ ] **Step 4: Verify green.** Run `npm run test:pages -- test/e2e/navigation-accessibility.spec.ts`; expected PASS. Check public, tool, directory, reader, error and locally testable studio shells; no auth bypass in production. Run existing content-page-layout tests.
 - [ ] **Step 5: Review and commit.** Inspect `git diff --check` and the task diff; stage only the files above plus any generated outputs explicitly named there, then `git commit -m "fix: make skip navigation and sign in consistently accessible"` on the current branch. Do not push/deploy as part of this task.
+
+**Execution status (2026-11-14):** implementation and 10 Pages/13 Next browser cases pass, full suite 987 passes. Populated reader/author route acceptance pending: local catalogue is empty. See execution status and ignored ledger for exact shell inventory/rulings.
 
 ### Task 2: Viewport-safe mobile menu and reading dock
 

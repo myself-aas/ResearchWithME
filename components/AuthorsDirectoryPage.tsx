@@ -24,7 +24,7 @@ export default function AuthorsDirectoryPage({ authors }: AuthorsDirectoryPagePr
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main
+      <main tabIndex={-1}
         id="main-content"
         className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8"
       >

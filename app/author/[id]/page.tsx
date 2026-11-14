@@ -62,7 +62,7 @@ export default async function AuthorDetailPage({ params }: PageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(personJsonLd(author)) }} />
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>

@@ -9,11 +9,11 @@ Native execution has started. **The 28-task programme is not complete.**
 | Token/theme plan task | Implementation | Verification |
 |---|---|---|
 | 1. Canonical component names/consumer check | Committed `e77245d` | Complete: red→green, targeted/full unit suite, token gate, deterministic second build |
-| 2. Live semantic aliases | Committed `ac0eb23` | Unit/type/token checks pass; three browser checks blocked by absent Chromium |
-| 3. Domain badge text contrast | Committed `770d2e7` | Red→green composed contrast and gate-rejection tests pass; rendered/visual states pending |
-| 4. Light/Dark/System lifecycle | Committed `2b7d533` | Red→green mounted control/bootstrap/synchronization tests pass; two browser cases blocked by absent Chromium |
+| 2. Live semantic aliases | Committed `ac0eb23` | Complete: unit/type/token checks and three live browser alias checks pass |
+| 3. Domain badge text contrast | Committed `770d2e7` | Complete: red→green contrast/gate tests plus four browser-composited cases pass |
+| 4. Light/Dark/System lifecycle | Committed `2b7d533` | Complete: mounted/bootstrap/sync tests plus two cases each on Pages and Next pass |
 
-Other 24 tasks have not started. Do not interpret these commits as whole-programme completion, browser conformance, or release approval. The plan's Step 4 checkboxes remain open where browser evidence is missing.
+Navigation Task 1 is implemented: one focusable actual main per shell, no duplicate wrapper target, named responsive Sign in link, account child no longer nests a main. Ten Pages and 13 Next browser cases pass; populated reader/author acceptance remains pending because the local catalogue is empty. The other 23 tasks have not started. No whole-programme conformance or release approval is claimed.
 
 ## Delivered changes
 
@@ -40,8 +40,8 @@ Other 24 tasks have not started. Do not interpret these commits as whole-program
 | Second token build/checksums | All six generated outputs identical to the preceding build |
 | Next production build | PASS with public Supabase settings blank; no deployment |
 | Pages client + SSR builds | PASS during theme browser test setup; bundle-size warnings remain |
-| Isolated CSS browser tests | Three cases fail at launch: Chromium executable absent; assertions not executed |
-| Real Pages theme browser tests | Two cases fail at launch: Chromium executable absent; assertions not executed |
+| Isolated CSS browser tests | Seven cases pass: three live background/text aliases and four browser-composited contrast cases |
+| Real Pages theme browser tests | Two cases pass on Pages and repeat successfully on local production Next |
 | Production/staging/Supabase writes | Not performed |
 | Independent reviewer | Unavailable: no subagent-dispatch tool; whole-programme final review remains pending |
 
@@ -54,7 +54,7 @@ npx playwright test --config test/playwright.tokens.config.ts
 npm run test:pages -- test/e2e/theme.spec.ts
 ```
 
-The second command built locally and launched local workerd before hitting the missing browser. No production origin was used. Required browser binaries are not installed; no missing-browser error was reclassified as a test pass.
+Initial runs failed at browser launch. Resumed runs use Chromium 153.0.8010.0 from an npm tarball in ignored `.cache/browser-tools`, with bundled NSS libraries and local font configuration. No project dependencies changed. Both commands now pass against local assets/services; no production origin was used.
 
 ## Rulings made so far
 
@@ -78,4 +78,6 @@ The task-scoped ledger and red/green/build logs remain at:
 
 This scratch directory is ignored by Git; this tracked status document and commits preserve the externally useful progress. Do not delete the scratch workspace before remaining verification/final review. Resume from the ledger and commits, not by repeating Task 1.
 
-Next verification requirement: provision an approved existing Playwright browser or compatible `RWM_CHROMIUM_PATH`, rerun pending browser/visual cases, then record task completion only when their full acceptance contracts pass. The other subsystem plans remain the roadmap for subsequent work. No merge, push, live migration or deployment has been performed.
+Next: obtain a test-only populated reader/author fixture without publishing content; finish navigation Task 1 acceptance, then continue viewport-safe controls. Browser commands need `LD_LIBRARY_PATH=$PWD/.cache/browser-tools/runtime/lib`, `FONTCONFIG_PATH=$PWD/.cache/browser-tools/runtime`, and `RWM_CHROMIUM_PATH=$PWD/.cache/browser-tools/runtime/chromium`. The cached browser is not a production dependency and may need reprovisioning after workspace restoration. No merge, push, live migration or deployment has been performed.
+
+Additional rulings: npm-distributed cached Chromium unblocks local verification without lockfile changes (confirm version-specific findings in CI); mechanically include all discovered shell owners to satisfy the main contract; Pages lacks login/studio routes, so run those only against Next with HTTP-status assertions, never certify a 404 as studio success. Full navigation suite remains 119 files/987 tests; production Next build and typecheck pass. Latest implementation commits include `d58ab44` (browser config/contrast), `ce6019c` (text colors), plus the navigation commit containing this update.

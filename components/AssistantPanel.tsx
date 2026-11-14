@@ -127,7 +127,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-line pb-8">
           <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Ask the archive a question

@@ -241,6 +241,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <div className="hidden items-center gap-1 md:flex">
                 <Link
                   href="/login"
+                  aria-label="Sign in"
                   className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
                 >
                   <LogIn className="h-4 w-4 text-brand" aria-hidden="true" />
@@ -377,6 +378,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                       <div className="mt-2 flex gap-2">
                         <Link
                           href="/login"
+                          aria-label="Sign in"
                           className="inline-flex min-h-9 items-center gap-1 rounded-sm border border-line bg-canvas px-2.5 py-1.5 text-ink hover:bg-surface-subtle"
                         >
                           <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
