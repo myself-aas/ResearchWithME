@@ -6,11 +6,23 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
-- Design documents for a proposed Assistant API (nothing is built or deployed
-  yet): the spec with a capability map and an assessment of whether the API can
-  be charged for (`docs/superpowers/specs/2026-11-14-assistant-api-spec.md`),
-  the contract, diagrams and guides (`docs/assistant-api.md`), ADR-001
-  (`docs/decisions/`), and the implementation plan
+- Assistant API, implemented but not yet deployed (the database migration is
+  not applied and neither Worker has been deployed with it):
+  `POST /api/v1/assistant/answers` and `GET /api/v1/usage`, authenticated with
+  API keys that are created and revoked on the account page; a burst limit per
+  key on the Workers Rate Limiting binding with a KV fallback; an exact
+  monthly allowance per account with idempotent retries, kept in Postgres
+  (`supabase/migrations/20261114000200_api_keys.sql`); and the MCP tool
+  `ask_archive`, which uses the same key and allowance.
+- A second Worker, `researchwithme-assistant` (`workers/assistant`), that makes
+  the Assistant's model call and is reached only through a service binding.
+  The site answers in-process when the binding is absent or fails.
+  `npm run worker:assistant:check` is now part of `npm run quality`.
+- Design documents for the Assistant API: the spec with a capability map and
+  an assessment of whether the API can be charged for
+  (`docs/superpowers/specs/2026-11-14-assistant-api-spec.md`), the contract,
+  diagrams and guides (`docs/assistant-api.md`), ADR-001 (`docs/decisions/`),
+  and the implementation plan
   (`docs/superpowers/plans/2026-11-14-assistant-api.md`).
 - Three overview dashboards, one per audience, designed with the
   `dashboard-designer` skill: `/dashboard/desk` (editors: applications

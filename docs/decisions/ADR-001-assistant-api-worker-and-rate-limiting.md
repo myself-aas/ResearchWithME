@@ -2,7 +2,10 @@
 
 ## Status
 
-Proposed
+Proposed. Implemented in the repository on 2026-11-14 on the spec's default
+values; the owner has not yet confirmed the limits, the reuse of the billing
+bridge secret, or the second Worker, and nothing is deployed. Change this to
+Accepted when the owner confirms.
 
 ## Date
 

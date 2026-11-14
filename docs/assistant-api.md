@@ -1,10 +1,12 @@
 # Assistant API
 
-> **Status: proposed design. None of this is deployed.** The endpoints below
-> do not exist yet. This document is the contract the implementation plan
-> (`docs/superpowers/plans/2026-11-14-assistant-api.md`) builds to. When the
-> work ships, remove this notice and check every example against the running
-> service.
+> **Status: implemented in this repository, not deployed.** The code, the
+> migration and the Assistant Worker exist and are covered by unit tests, but
+> the migration has not been applied to the live database and neither Worker
+> has been deployed with these changes, so `https://researchwith.me/api/v1/*`
+> does not answer yet. Nothing here has been checked against a running
+> production service. Remove this notice after the deploy steps in
+> "Owner: deploy" and the checks that follow them.
 
 The document has four parts, one per reader need: an explanation of how the
 API works, a first-call tutorial, how-to guides for common tasks, and the
@@ -114,7 +116,15 @@ sequenceDiagram
 
 If the site Worker fails after the claim and before the completion, it calls
 `api_request_release`, which deletes the ledger row and returns the unit to
-the allowance. A `5xx` never uses allowance.
+the allowance, so an error response uses no allowance. Two narrow exceptions:
+if the release call itself fails, the unit stays counted until the claim is
+two minutes old and the same `Idempotency-Key` is sent again; and if the
+answer was produced but storing it failed, the answer is still returned and
+counted, and only its replay is lost.
+
+The Assistant Worker is tried first. If the binding is missing, throws, or
+returns something that is not a well-formed answer, the site Worker composes
+the answer itself and logs `assistant.binding_fallback`.
 
 ### Request states
 
@@ -178,14 +188,16 @@ You need an account on the site.
 
 ### Retry safely
 
-Send an `Idempotency-Key` header (any string of 8 to 128 characters, unique
-per question you intend to ask). If the connection drops, repeat the request
+Send an `Idempotency-Key` header (8 to 128 characters from `A-Z a-z 0-9 _ -`,
+unique per question you intend to ask). If the connection drops, repeat the request
 with the same key and the same body. You get the stored answer and it is
 counted once. Stored answers are kept for 24 hours.
 
 ### Handle the two kinds of 429
 
 - `RATE_LIMITED`: wait for the number of seconds in `Retry-After`, then retry.
+  When the Rate Limiting binding made the decision the value is always 60,
+  because the binding reports only yes or no.
 - `QUOTA_EXHAUSTED`: retrying will not help until the date in
   `error.details.resetsAt`.
 
@@ -199,17 +211,32 @@ revoked key is refused on its next request.
 Connect to `https://researchwith.me/mcp` (streamable HTTP, protocol version
 `2025-11-25`). `search_reviews` needs no key. `ask_archive` needs the header
 `Authorization: Bearer <key>` and counts against the same allowance as the
-HTTP API.
+HTTP API. A refusal (no key, burst limit, allowance used) comes back as a tool
+result with `isError: true` and a sentence to read, not as a protocol error.
+Resending the same JSON-RPC id with the same question within 24 hours returns
+the stored answer and is counted once.
 
 ### Owner: deploy
 
 Order matters, because the site Worker's binding names the Assistant Worker.
 
-1. Apply `supabase/migrations/20261114000100_api_keys.sql`.
-2. `npx wrangler deploy -c workers/assistant/wrangler.jsonc`
+1. Apply `supabase/migrations/20261114000200_api_keys.sql`. It is written to
+   be re-runnable. It has been run only against an in-memory Postgres with a
+   stubbed `auth` schema, never against Supabase; try it on a branch first.
+2. `npm run worker:assistant:deploy`
 3. `npx wrangler secret put GEMINI_API_KEY -c workers/assistant/wrangler.jsonc`
 4. `npm run deploy`
-5. Send one request with a test key and confirm the trace shows both Workers.
+5. Confirm that rate-limit namespace `2001` is not already used by another
+   Worker in the account; a shared id shares counters. Change it in
+   `wrangler.jsonc` if it is.
+6. Send one request with a test key and confirm the trace shows both Workers
+   and the site log has no `assistant.binding_fallback` line. Repeat it with
+   the same `Idempotency-Key` and confirm the same `id` comes back.
+
+The site Worker keeps working without the Assistant Worker: it answers
+in-process. If `GEMINI_API_KEY` is removed from the site Worker, that fallback
+gives catalogue answers only; leaving it set keeps model answers during an
+Assistant Worker outage at the cost of holding the key in both Workers.
 
 ### Owner: change a limit
 
@@ -221,9 +248,10 @@ Order matters, because the site Worker's binding names the Assistant Worker.
 
 Follow the `workers-profiling` skill: confirm the account, Worker,
 environment and version first, capture a CPU or heap profile with the
-Cloudflare CLI, and report the file, function and metric. Source maps are off
-in `wrangler.jsonc` (`upload_source_maps: false`); turn them on for the Worker
-being profiled so the frames are readable.
+Cloudflare CLI, and report the file, function and metric. Source maps are on
+for the Assistant Worker and off for the site Worker (`upload_source_maps:
+false` in `wrangler.jsonc`, because of their size); turn them on there before
+profiling the site Worker so the frames are readable.
 
 ---
 
@@ -274,7 +302,9 @@ unavailable, otherwise `null`. The values in the example are placeholders.
 
 ### `GET /api/v1/usage`
 
-Response `200`: the `usage` object above, plus `"plan": "FREE"`.
+Response `200`: the fields of the `usage` object above at the top level, plus
+`"plan": "FREE"`. Reading usage spends no allowance; it is subject to the
+burst limit.
 
 ### Key management (signed-in session, same origin)
 
@@ -282,7 +312,7 @@ Response `200`: the `usage` object above, plus `"plan": "FREE"`.
 |-----------------|---------|---------|
 | `GET /api/account/api-keys` | List your keys: `id`, `name`, `prefix`, `createdAt`, `lastUsedAt`, `revokedAt` | `200 { "data": [...] }` |
 | `POST /api/account/api-keys` | Create a key. Body `{ "name": string }`, 1 to 60 characters. At most 5 active keys | `201` with the fields above and `key`, shown once |
-| `DELETE /api/account/api-keys/{keyId}` | Revoke | `204` |
+| `DELETE /api/account/api-keys/{keyId}` | Revoke. An id that is not yours, or is already revoked, is `404 NOT_FOUND` | `204` |
 
 ### Errors
 
@@ -295,13 +325,14 @@ Every error has one shape:
 | Status | Code | When |
 |--------|------|------|
 | 400 | `INVALID_REQUEST` | Body unreadable, `query` missing or too long, bad `Idempotency-Key` |
-| 401 | `UNAUTHENTICATED` | No key, unknown key, or revoked key |
+| 401 | `UNAUTHENTICATED` | No key, unknown key, or revoked key. `WWW-Authenticate: Bearer` set |
+| 404 | `NOT_FOUND` | Key management only: no such key on this account |
 | 409 | `IDEMPOTENCY_IN_FLIGHT` | The first request with this key is still running |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | Not `application/json` |
 | 422 | `IDEMPOTENCY_KEY_REUSED` | Same key, different body |
-| 429 | `RATE_LIMITED` | Burst limit. `Retry-After` header set |
+| 429 | `RATE_LIMITED` | Burst limit for the key, or too many failed key checks from one address. `Retry-After` header set |
 | 429 | `QUOTA_EXHAUSTED` | Monthly allowance spent. `details.resetsAt` set |
-| 503 | `UPSTREAM_UNAVAILABLE` | The archive or the ledger could not be reached |
+| 503 | `UPSTREAM_UNAVAILABLE` | The archive, the key store or the ledger could not be reached. Nothing is answered without a ledger entry |
 | 500 | `INTERNAL` | Anything else |
 
 Revoked and unknown keys return the same `401` so that a response does not
@@ -312,13 +343,19 @@ confirm a key ever existed.
 | Limit | Value | Configured in |
 |-------|-------|---------------|
 | Burst per key | 30 requests per 60 seconds, approximate | `wrangler.jsonc` `ratelimits` |
-| Unauthenticated attempts per IP | 60 per 60 seconds | `lib/api/authenticate.ts`, KV limiter |
+| Failed key checks per address | 60 per 60 seconds; requests with a valid key do not count | `lib/api/authenticate.ts`, KV limiter |
 | Monthly allowance per account | 100 answers | `API_FREE_MONTHLY_REQUESTS` |
 | Active keys per account | 5 | `lib/api/keys.ts` |
-| Request body | 8 KB | route |
+| Request body | 8192 bytes | `app/api/v1/assistant/answers/route.ts` |
 | Model timeout | 20 seconds, then a catalogue answer | `lib/assistant/compose.ts` |
 
-The burst and allowance values are proposals awaiting the owner's decision.
+The burst and allowance values are the spec's defaults. The owner has not yet
+confirmed them; both can be changed without a code change (see "Owner: change
+a limit").
+
+Where the Rate Limiting binding is absent (local development, Worker
+Previews) or fails, the burst limit is enforced by the KV limiter instead.
+That limiter allows requests through if KV itself is unreachable.
 
 ### Data model
 
@@ -368,7 +405,7 @@ without a client key get a generated one, so every request is in the ledger.
 | `API_BURST_LIMITER` | site Worker `ratelimits` binding | Burst limit |
 | `API_FREE_MONTHLY_REQUESTS` | site Worker variable | Allowance, default 100 |
 | `BILLING_BRIDGE_SECRET` | site Worker secret (existing) | Gate for the ledger SQL functions |
-| `GEMINI_API_KEY`, `GEMINI_MODEL` | Assistant Worker secret and variable | Model call |
+| `GEMINI_API_KEY`, `GEMINI_MODEL` | Assistant Worker secret and variable; also read by the site Worker for its in-process fallback | Model call |
 | `AI_GATEWAY_BASE_URL` | Assistant Worker variable, optional | Route the model call through AI Gateway |
 
 ### Diagram sources
