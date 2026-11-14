@@ -22,6 +22,37 @@ If upstream publishes no `registration_endpoint`, the block keeps its `skill` po
 
 The protected-resource document advertises `bearer_methods_supported: ["header"]` and an empty `scopes_supported`, plus `x-researchwithme-api-bearer-support: none`. No ResearchWithMe route reads an `Authorization` header, so a scope list would name permissions no endpoint enforces. `authorization_servers` points at this origin because that is where the document carrying `agent_auth` is served; `x-researchwithme-issuer-relay` records that the issuer inside it is Supabase's, which strict RFC 8414 issuer-location checks will not match.
 
+## Both well-known addresses
+
+`/.well-known/oauth-authorization-server` (RFC 8414) and `/.well-known/openid-configuration`
+(OIDC Discovery) answer from one implementation with identical content. The scanner
+accepts either, and agents commonly try OIDC first; two code paths would eventually
+disagree.
+
+## Why the relay has a snapshot fallback
+
+Discovery metadata changes rarely — a new scope, a new endpoint. The round-trip that
+fetches it can fail at any moment: DNS inside the Worker, an egress policy, a cold
+start, a timeout. When it did, this endpoint answered `503`, which tells a scanning
+agent "this service has no OAuth" — a false statement about a working configuration.
+That is what kept `checks.discovery.oauthDiscovery` failing while the upstream
+document was demonstrably healthy and publicly reachable.
+
+`lib/oauth-metadata.ts` holds a captured copy of this project's document. Live data
+wins whenever the fetch succeeds; the snapshot answers when it does not, and the
+response says which one you got:
+
+| Header | Meaning |
+| --- | --- |
+| `x-researchwithme-source: upstream` | Relayed live, `max-age=300` |
+| `x-researchwithme-source: snapshot` | Captured copy, `max-age=60`, plus `x-researchwithme-metadata-captured` |
+
+The snapshot is bound to one origin. If `NEXT_PUBLIC_SUPABASE_URL` points at a
+different project, there is no fallback and the endpoint stays `503` — a snapshot is
+evidence about one issuer, not a template for any issuer. Refresh it by fetching the
+live document and replacing the object; the tests assert the six required fields, so
+a malformed refresh fails CI rather than production.
+
 ## Caveat on the alias
 
 This site-root endpoint is an alias for *Supabase's* issuer metadata, not the issuer's canonical RFC 8414 location. The `issuer` remains Supabase's actual issuer, not `https://researchwith.me`; consumers validating RFC 8414 issuer-location matching should use the canonical Supabase URL. ResearchWithMe's APIs currently use browser session cookies for editorial access, not OAuth bearer tokens. The mirror alone **does not enable agents to authenticate to these APIs**. Before claiming agent OAuth support, implement bearer validation, resource/audience and scope checks on protected APIs, then add the scopes to the protected-resource document. `/auth.md` describes the currently supported public and human flows.

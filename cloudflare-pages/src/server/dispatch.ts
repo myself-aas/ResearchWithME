@@ -92,7 +92,7 @@ export async function handleRequest(
           }) : null) ??
       (pathname === '/.well-known/oauth-protected-resource'
         ? protectedResourceMetadata(ctx.config.siteUrl) : null) ??
-      (pathname === '/.well-known/oauth-authorization-server'
+      (pathname === '/.well-known/oauth-authorization-server' || pathname === '/.well-known/openid-configuration'
         ? await oauthDiscoveryResponse(ctx.config.supabaseUrl, ctx.request.method, ctx.config.siteUrl) : null) ??
       (await dispatchApi(ctx)) ??
       (pathname === ROUTE_DATA_PATH

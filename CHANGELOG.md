@@ -53,6 +53,11 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   rather than inventing `/agent/auth`.
 - CSP allowance for `@supabase/auth-js` on jsDelivr, scoped to the package path,
   so the Supabase OAuth consent flow is not blocked once that server is enabled.
+- `/.well-known/openid-configuration`, answering from the same implementation as
+  `/.well-known/oauth-authorization-server` so OIDC-first agents find the metadata.
+- A captured-metadata fallback for OAuth discovery (`lib/oauth-metadata.ts`), so a
+  failed upstream round-trip from the Worker no longer reports "no OAuth" about a
+  working configuration. Responses state whether they are live or captured.
 
 ### Fixed
 - Mobile search placeholder no longer references "DOI".
