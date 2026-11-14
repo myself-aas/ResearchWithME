@@ -36,6 +36,13 @@ describe('auth callback', () => {
     expect(target.searchParams.get('next')).toBe('/write');
     expect(mocks.exchange).not.toHaveBeenCalled();
   });
+  it('returns a failed identity link to the application page, not the sign-in form', async () => {
+    const response = await GET(new NextRequest('https://researchwith.me/auth/callback?error=server_error&error_description=Error+getting+user+email+from+external+provider&next=%2Fdashboard%2Faccess'));
+    const target = new URL(response.headers.get('location')!);
+    expect(target.pathname).toBe('/dashboard/access');
+    expect(target.searchParams.get('link_error')).toContain('user email');
+    expect(mocks.exchange).not.toHaveBeenCalled();
+  });
   it('rejects external destinations and reports failed exchanges', async () => {
     mocks.exchange.mockResolvedValue({ error: { message: 'invalid code' } });
     const response = await GET(new NextRequest('https://researchwith.me/auth/callback?code=x&next=%2F%2Fevil.example'));

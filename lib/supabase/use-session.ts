@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { hasSupabaseBrowserConfig } from './config';
+import { linkedIdentities, type LinkedIdentity } from './identities';
+
+export type { LinkedIdentity };
 
 export interface SessionUser {
   id: string;
@@ -20,12 +23,6 @@ export interface SessionUser {
   identities: LinkedIdentity[];
 }
 
-export interface LinkedIdentity {
-  provider: 'github' | 'orcid';
-  /** GitHub username, or the ORCID iD. Empty when the provider omits it. */
-  handle: string;
-}
-
 export interface Session {
   user: SessionUser | null;
   /** False until the browser session has been read, so the first paint is stable. */
@@ -41,32 +38,10 @@ function displayName(email: string, metadata: Record<string, unknown>) {
   return email.split('@')[0]?.slice(0, 80) || 'Reader';
 }
 
-/**
- * Pulls the handle out of a linked identity. GitHub returns the username under
- * `user_name` or `preferred_username`; the ORCID OIDC provider returns the iD as
- * the subject claim. Both are absent for the `email` provider.
- */
-function linkedIdentities(account: User): LinkedIdentity[] {
-  const found: LinkedIdentity[] = [];
-  for (const identity of account.identities ?? []) {
-    if (identity.provider !== 'github' && identity.provider !== 'orcid') continue;
-    const data = (identity.identity_data ?? {}) as Record<string, unknown>;
-    const candidates = [data.user_name, data.preferred_username, data.sub, data.full_name];
-    const handle = candidates.find(
-      (value): value is string => typeof value === 'string' && value.trim().length > 0,
-    );
-    found.push({
-      provider: identity.provider,
-      handle: (handle ?? '').trim().slice(0, 160),
-    });
-  }
-  return found;
-}
-
 function toSessionUser(account: User, isEditor: boolean): SessionUser {
   const metadata = (account.user_metadata ?? {}) as Record<string, unknown>;
   const email = account.email ?? '';
-  const identities = linkedIdentities(account);
+  const identities = linkedIdentities(account.identities);
   return {
     id: account.id,
     email,
