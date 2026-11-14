@@ -1,8 +1,10 @@
 /**
  * The paid offerings, as the product surface describes them.
  *
- * The price is the spec's, verbatim (`docs/superpowers/specs/
- * 2026-11-13-financial-integration-blueprint.md` Phase 2): $19 teardown.
+ * The prices are the owner's: $19 for the teardown system (`docs/superpowers/
+ * specs/2026-11-13-financial-integration-blueprint.md` Phase 2) and $5 for the
+ * full Statistical Table Generator (decided 2026-11-14, `docs/superpowers/
+ * specs/2026-11-14-product-catalogue-prd.md`).
  * Lemon Squeezy is the merchant of record, so it is also the
  * authority on what is actually charged; these labels exist so the page and
  * the tests agree with the spec, not so the application can price anything.
@@ -30,7 +32,7 @@
  * needs the key type.
  */
 
-export type BillingProductKey = 'teardown';
+export type BillingProductKey = 'teardown' | 'stat-tables';
 
 export interface BillingProduct {
   key: BillingProductKey;
@@ -88,6 +90,29 @@ export const BILLING_PRODUCTS: readonly BillingProduct[] = [
     actionLabel: 'Buy the system',
     mode: 'payment',
   },
+  {
+    key: 'stat-tables',
+    name: 'Statistical Table Generator',
+    outcome: 'Turn a data file into APA-style tables and print-ready figures on your own computer.',
+    summary:
+      'A command-line program that reads a CSV file and computes 21 kinds of analysis, lays each result out as an APA 7 table with a draft sentence, and draws the figures that go with it. Your data never leaves your machine.',
+    priceLabel: '$5',
+    priceNote: 'One payment',
+    includes: [
+      'Descriptive statistics, correlations, t tests, one-way, two-way and repeated-measures ANOVA, ANCOVA',
+      'Mann-Whitney, Wilcoxon, Kruskal-Wallis and Friedman tests; chi-square, Fisher and McNemar tests',
+      'Linear and logistic regression, scale reliability, and a normality test',
+      'Figures saved as PNG at 300 dpi, or any resolution up to 1200 dpi, and as SVG and PDF',
+      'Tables saved as a file that opens in Word, a sample data file, and a guide',
+      'No limit on data size or runs; there is no renewal',
+    ],
+    bestFor: 'Students and researchers who know which analysis they need and want the table and figure without a statistics package.',
+    delivery: 'A zip file download from Lemon Squeezy, available once the payment clears.',
+    caveat:
+      'It needs Python 3.8 or later and a terminal; there are no menus. It does not choose the analysis or interpret the result, figures are greyscale, and it leaves out multilevel models, factor analysis, and other advanced methods that free programs such as JASP and jamovi cover. The free Research Toolkit below has three of the analyses, so you can try it first.',
+    actionLabel: 'Buy the program',
+    mode: 'payment',
+  },
 ];
 
 /**
@@ -103,6 +128,7 @@ export const FREE_FOR_EVERYONE: readonly { label: string; href: string }[] = [
 
 const VARIANT_ENV: Record<BillingProductKey, string> = {
   teardown: 'LEMONSQUEEZY_VARIANT_TEARDOWN',
+  'stat-tables': 'LEMONSQUEEZY_VARIANT_STAT_TABLES',
 };
 
 /**
@@ -195,7 +221,7 @@ export const FREE_DOWNLOADS: readonly FreeDownload[] = [
     ],
     needs: 'Word and Excel, or editors that open their files. The table program needs Python 3.8 or later and a terminal.',
     caveat:
-      'The table program is a free edition: ANOVA, chi-square, and regression tables are in a fuller edition that is not on sale yet. The workbook holds no journal data and recommends no journal.',
+      'The table program is a free edition with three analyses and no figures; the full Statistical Table Generator is listed above. The workbook holds no journal data and recommends no journal.',
     href: '/downloads/research-toolkit-free-1.0.0.zip',
     fileNote: 'Zip file, about 190 kB',
   },

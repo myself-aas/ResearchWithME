@@ -216,6 +216,7 @@ already excludes `.env*` except `.env.example`.
 | 11 | `BILLING_BRIDGE_SECRET` | **yes** | `/api/webhooks/lemonsqueezy` | `openssl rand -hex 32` | Worker secret **and** a row in `private.billing_settings` |
 | 12 | `LEMONSQUEEZY_STORE_ID` | no (identifier) | checkout | Lemon Squeezy → Settings → Stores | Worker var, `.env.local` |
 | 13 | `LEMONSQUEEZY_VARIANT_TEARDOWN` | no (identifier) | checkout | product → variant ID | Worker var, `.env.local` |
+| 13a | `LEMONSQUEEZY_VARIANT_STAT_TABLES` | no (identifier) | checkout | Statistical Table Generator product → variant ID | Worker var, `.env.local` |
 | 14 | `LEMONSQUEEZY_TEST_MODE` | no | checkout, webhook rows | `1` in previews | Worker var, `.env.local` |
 
 Already present in the repository (confirm under **Settings → Secrets and variables → Actions**):

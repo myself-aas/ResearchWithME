@@ -13,7 +13,7 @@ import { jsonLdScript } from '@/lib/seo/jsonld';
 export const metadata: Metadata = pageMetadata({
   title: 'Products and pricing',
   description:
-    'The Teardown System, $19 once. Reading ResearchWithMe stays free and needs no account.',
+    'The Teardown System, $19 once, and the Statistical Table Generator, $5 once. Reading ResearchWithMe stays free and needs no account.',
   path: '/pricing',
 });
 
@@ -41,7 +41,7 @@ const QUESTIONS: readonly { question: string; answer: React.ReactNode }[] = [
   {
     question: 'Is there a subscription?',
     answer:
-      'No. The Teardown System is one payment and there is no renewal.',
+      'No. Each product is one payment and there is no renewal.',
   },
   {
     question: 'How do refunds work?',
@@ -68,7 +68,7 @@ const STEPS: readonly { title: string; body: string }[] = [
   },
   {
     title: 'Receive it',
-    body: 'The Teardown System arrives as a download from Lemon Squeezy once the payment clears.',
+    body: 'Your purchase arrives as a download from Lemon Squeezy once the payment clears.',
   },
 ];
 
@@ -334,8 +334,8 @@ export default async function PricingPage() {
             Why we sell anything at all
           </h2>
           <p className="mt-3 font-serif leading-relaxed text-ink-secondary">
-            There are no adverts, no trackers, and no article charges here. The Teardown System is the one thing here
-            we charge for, and selling it helps keep the reading free for everyone else. Read more about{' '}
+            There are no adverts, no trackers, and no article charges here. The two products on this page are the only
+            things we charge for, and selling them helps keep the reading free for everyone else. Read more about{' '}
             <Link href="/about" className="underline underline-offset-4">
               why the archive is open
             </Link>

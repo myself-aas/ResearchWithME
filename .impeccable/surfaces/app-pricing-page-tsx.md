@@ -39,3 +39,10 @@ Signed-out state (the action is a link to sign in, not a button that fails), sig
 
 - A product whose checkout is not configured shows a plain "Not on sale yet" note in place of the buy button, for signed-in and signed-out readers alike. No disabled button, no waiting list.
 - A "Free downloads" section follows the product. Each card states what is in the file, what the reader needs to run it, and its limit, then one download link. No account, no email capture. The link is a secondary-weight control so the page still has one primary action.
+
+## Added 2026-11-14: second product
+
+The Statistical Table Generator ($5, one payment) is the second product card. It follows the same card pattern and
+the same "Not on sale yet" note until `LEMONSQUEEZY_VARIANT_STAT_TABLES` is set. Its copy states the requirement
+(Python and a terminal), what it leaves out, and that free programs cover more; it points to the free Research
+Toolkit as the way to try it. The page no longer says there is one thing for sale.

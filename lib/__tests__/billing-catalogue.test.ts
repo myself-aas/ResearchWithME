@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { BILLING_PRODUCTS, isBillingProductKey, variantIdFor } from '@/lib/billing/catalogue';
 import { hasPremiumAccess, isSubscriptionStatus } from '@/lib/billing/status';
 
+const byKeyOf = (key: string) => BILLING_PRODUCTS.find((p) => p.key === key)!;
+
 describe('billing catalogue', () => {
   it('pins the spec prices verbatim', () => {
     const byKey = Object.fromEntries(BILLING_PRODUCTS.map((p) => [p.key, p]));
@@ -38,15 +40,20 @@ describe('billing catalogue', () => {
     }
   });
 
-  it('accepts exactly the one real product key', () => {
+  it('accepts exactly the real product keys', () => {
     expect(isBillingProductKey('teardown')).toBe(true);
+    expect(isBillingProductKey('stat-tables')).toBe(true);
+    expect(byKeyOf('stat-tables').priceLabel).toBe('$5');
+    expect(variantIdFor('stat-tables', { LEMONSQUEEZY_VARIANT_STAT_TABLES: '7' })).toBe('7');
+    expect(variantIdFor('stat-tables', { LEMONSQUEEZY_VARIANT_TEARDOWN: '7' })).toBeNull();
     expect(isBillingProductKey('')).toBe(false);
     expect(isBillingProductKey('TEARDOWN')).toBe(false);
   });
 
   it('sells no service: the payment provider prohibits them', () => {
     // https://docs.lemonsqueezy.com/help/getting-started/prohibited-products
-    expect(BILLING_PRODUCTS.map((p) => p.key)).toEqual(['teardown']);
+    expect(BILLING_PRODUCTS.map((p) => p.key)).toEqual(['teardown', 'stat-tables']);
+    expect(BILLING_PRODUCTS.every((p) => p.mode === 'payment')).toBe(true);
     expect(isBillingProductKey('editing')).toBe(false);
     // Withdrawn 2026-11-14: the membership delivered nothing when the payment
     // cleared, which the provider treats as a donation.

@@ -77,6 +77,18 @@ describe('/pricing', () => {
     expect(html).not.toContain('$150');
   });
 
+  it('lists the table program at its price, and sells it only once its own variant is set', async () => {
+    const off = await render();
+    expect(off).toContain('Statistical Table Generator');
+    expect(off).toContain('$5</p>');
+    expect(off).toContain('Python 3.8');
+    expect(off).not.toContain('all possible');
+    getDashboardUser.mockResolvedValue({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
+    expect((await render()).match(/<button/g)?.length ?? 0).toBe(1);
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_STAT_TABLES', '3');
+    expect((await render()).match(/<button/g)?.length ?? 0).toBe(2);
+  });
+
   it('says plainly that reading stays free, and links to the mission', async () => {
     const html = await render();
     expect(html).toContain('href="/about"');

@@ -84,7 +84,7 @@ One store, one payment provider, three one-time purchases, and two free download
 | --- | --- | --- | --- |
 | **The Teardown System** | $19 | P1 | Files built. Shown on the site. No store product, so it cannot be bought. |
 | **Manuscript Check** | $5 | P15 Manuscript Check, P17 Reference Check, P18 Response-to-Reviewers Check | Files built and tested. Held for the provider's reply. |
-| **Statistical Table Generator** | $5 once (owner, 2026-11-14) | P10, full edition | Files built and tested. Not listed. |
+| **Statistical Table Generator** | $5 once (owner, 2026-11-14) | P10, full edition | Files built and tested. Listed on `/pricing` (key `stat-tables`) with "Not on sale yet" until `LEMONSQUEEZY_VARIANT_STAT_TABLES` is set. |
 | **Manuscript Check, free edition** | Free | The same three programs, with limits | **On the site** at `/pricing` since 2026-11-14 (owner's decision). |
 | **Research Toolkit** | Free | P10 in its free edition, P7 Manuscript Formatting Kit, P8 Journal Shortlist Workbook | **On the site** at `/pricing` since 2026-11-14. |
 
@@ -278,7 +278,7 @@ Items 4 and 5 do not apply to free downloads. In their place: the zip is in the 
 | 0 | Sell The Teardown System: checklist items 1, 2, and 5. A test-mode purchase end to end. | Owner's review; store setup |
 | 1 | Send the support message for Manuscript Check. | Nothing; do it during phase 0, since the reply takes time |
 | 2 | **Done 2026-11-14.** Both free downloads are on `/pricing`. The owner chose to publish before his review of the files and before the reference program's first live run; both remain to be done, and a fault found then is fixed by replacing the file. | |
-| 3 | List the paid Statistical Table Generator. Its price is confirmed at $5. | Phase 0; a store product and variant |
+| 3 | List the paid Statistical Table Generator. Done 2026-11-14: it is in the catalogue at $5. Selling it needs the store product, the uploaded zip, and the variant ID. | Phase 0; a store product and variant |
 | 4 | List the paid Manuscript Check. | The provider's reply |
 
 No dates are given. One person does this work beside the archive itself.

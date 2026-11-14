@@ -15,6 +15,7 @@ checkout URL, and the server is the only party that knows a price.
 | Product | Key | Price | Mode | Delivery |
 | --- | --- | --- | --- | --- |
 | The Teardown System | `teardown` | $19 one-time | `payment` | Lemon Squeezy file download |
+| Statistical Table Generator | `stat-tables` | $5 one-time | `payment` | Lemon Squeezy file download (`statistical-table-generator-1.0.0.zip`) |
 
 `lib/billing/catalogue.ts` is the single source of these rows; the pricing page,
 the checkout route, and the tests all read it. A key that is not in that file
@@ -261,7 +262,7 @@ with a `variant` relationship is what Lemon Squeezy documents, and it is what
 The files for every download are built from `products/` (`python products/build.py`) into `products/downloads/`.
 
 - Paid, uploaded to their product in the Lemon Squeezy store: The Teardown System ($19), Manuscript Check ($5),
-  and the full Statistical Table Generator ($5). Only The Teardown System is in the catalogue.
+  and the full Statistical Table Generator ($5). The Teardown System and the Statistical Table Generator are in the catalogue; each shows "Not on sale yet" until its variant ID (`LEMONSQUEEZY_VARIANT_TEARDOWN`, `LEMONSQUEEZY_VARIANT_STAT_TABLES`) is set.
   Manuscript Check waits for Lemon Squeezy's written reply.
 - Free, served by the site from `public/downloads` and listed on `/pricing` with no checkout and no account:
   the free edition of Manuscript Check and the Research Toolkit.

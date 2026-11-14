@@ -177,6 +177,7 @@ Environment variables:
 | `BILLING_BRIDGE_SECRET` | Optional. Secret. Also stored (as a SHA-256 digest) in `private.billing_settings`; see `docs/billing.md` §3. |
 | `LEMONSQUEEZY_STORE_ID` | Optional. Store the checkouts belong to. |
 | `LEMONSQUEEZY_VARIANT_TEARDOWN` | Optional. Variant for the $19 teardown product. |
+| `LEMONSQUEEZY_VARIANT_STAT_TABLES` | Optional. Variant for the $5 Statistical Table Generator. |
 | `LEMONSQUEEZY_TEST_MODE` | Optional. `1` marks checkouts and stored rows as test data; leave unset in production. |
 
 ## Project layout
