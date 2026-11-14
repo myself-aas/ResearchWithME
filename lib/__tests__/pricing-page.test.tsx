@@ -24,15 +24,15 @@ async function render() {
 }
 
 describe('/pricing', () => {
-  it('shows all three products with the spec prices', async () => {
+  it('shows both products with the spec prices, and no service', async () => {
     const html = await render();
 
     expect(html).toContain('The Teardown System');
     expect(html).toContain('Research Co-Pilot');
-    expect(html).toContain('Manuscript Editing');
+    expect(html).not.toContain('Manuscript Editing');
     expect(html).toContain('$19');
     expect(html).toContain('$9 / month');
-    expect(html).toContain('$150');
+    expect(html).not.toContain('$150');
   });
 
   it('says plainly that reading stays free, and links to the mission', async () => {
@@ -84,7 +84,7 @@ describe('/pricing', () => {
     getDashboardUser.mockResolvedValueOnce({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
     const html = await render();
     expect(html).not.toContain('Sign in to buy');
-    expect(html.match(/<button/g)?.length ?? 0).toBe(3);
+    expect(html.match(/<button/g)?.length ?? 0).toBe(2);
   });
 
   it('is in the sitemap with a stable priority', async () => {

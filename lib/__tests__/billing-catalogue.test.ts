@@ -9,8 +9,6 @@ describe('billing catalogue', () => {
     expect(byKey.teardown.mode).toBe('payment');
     expect(byKey.copilot.priceLabel).toBe('$9 / month');
     expect(byKey.copilot.mode).toBe('subscription');
-    expect(byKey.editing.minPriceCents).toBe(15000);
-    expect(byKey.editing.mode).toBe('payment');
   });
 
   it('reads variant ids from the environment and reports a missing one as null', () => {
@@ -42,11 +40,21 @@ describe('billing catalogue', () => {
     }
   });
 
-  it('accepts exactly the three real product keys', () => {
-    for (const key of ['teardown', 'copilot', 'editing']) {
+  it('accepts exactly the two real product keys', () => {
+    for (const key of ['teardown', 'copilot']) {
       expect(isBillingProductKey(key)).toBe(true);
     }
     expect(isBillingProductKey('')).toBe(false);
     expect(isBillingProductKey('TEARDOWN')).toBe(false);
+  });
+
+  it('sells no service: the payment provider prohibits them', () => {
+    // https://docs.lemonsqueezy.com/help/getting-started/prohibited-products
+    expect(BILLING_PRODUCTS.map((p) => p.key)).toEqual(['teardown', 'copilot']);
+    expect(isBillingProductKey('editing')).toBe(false);
+    const copy = JSON.stringify(BILLING_PRODUCTS).toLowerCase();
+    for (const word of ['consult', 'sponsor', 'donat', 'pay what you want', 'manuscript editing']) {
+      expect(copy, word).not.toContain(word);
+    }
   });
 });

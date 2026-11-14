@@ -174,7 +174,7 @@ export default async function AccountPage() {
           <p className="mt-6 font-serif leading-relaxed text-ink-secondary">
             Reading stays free whether or not anything appears on this page.{' '}
             <Link href="/pricing" className="underline">
-              See all three products
+              See all products
             </Link>
             .
           </p>

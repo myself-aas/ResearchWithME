@@ -358,7 +358,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
             <Link href="/pricing#product-copilot" className="font-semibold text-ink underline underline-offset-4 hover:text-brand">
               Research Co-Pilot membership, $9 a month
             </Link>
-            , helps fund it and adds the working notes behind the reviews.
+            , adds the working notes behind the reviews.
           </p>
         </section>
 

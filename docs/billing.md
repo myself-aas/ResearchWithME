@@ -1,6 +1,6 @@
 # Lemon Squeezy billing
 
-Three paid products, one merchant of record, no gate on reading. This document is
+Two paid products, one merchant of record, no gate on reading. This document is
 the operator's view: what is sold, where the money goes, which credentials exist,
 what each webhook does to the database, and the order to switch things on.
 
@@ -16,7 +16,6 @@ checkout URL, and the server is the only party that knows a price.
 | --- | --- | --- | --- | --- |
 | The Teardown System | `teardown` | $19 one-time | `payment` | Lemon Squeezy file download |
 | Research Co-Pilot | `copilot` | $9 / month | `subscription` | `billing_orders.ai_credits` per period |
-| Manuscript Editing | `editing` | $150 minimum, pay what you want above it | `payment` | Arranged by the editor after purchase |
 
 `lib/billing/catalogue.ts` is the single source of these rows; the pricing page,
 the checkout route, and the tests all read it. A key that is not in that file
@@ -28,9 +27,23 @@ assistant, and the bookmark list stay free and account-less. No surface shows a
 "Premium" badge, and no route checks a subscription before rendering content.
 This is a product decision, recorded as D3 in the plan, not an omission.
 
-**Pay what you want.** The editing product carries a `minPriceCents` and Lemon
-Squeezy enforces the floor at checkout (`$150`). The checkout request does not
-send a `custom_price`: a client-supplied price is a client-supplied discount.
+**Only digital goods.** Lemon Squeezy's prohibited-products list includes
+"services of any kind (including marketing, design, web development, consulting
+or other related services)", "advertising in newsletters", "donations or charity
+giving where no product exists", "job boards", and "homework/essay mills", and a
+store selling them can be suspended without notice
+(https://docs.lemonsqueezy.com/help/getting-started/prohibited-products, read
+2026-11-14). Manuscript Editing was a service and was removed from the catalogue
+on that date; `editing` is no longer a product key and `/api/billing/checkout`
+answers `400` for it. **Owner step:** archive the Manuscript Editing product in
+the Lemon Squeezy dashboard and delete `LEMONSQUEEZY_VARIANT_EDITING` from the
+Worker's variables. Past editing orders stay in `billing_orders` and still show
+on the buyer's account page.
+
+**The co-pilot must deliver something.** A subscription that grants nothing is,
+in the provider's terms, a donation. Membership copy describes what the member
+receives and never asks for support; the working notes need to exist and reach
+members for the product to stand.
 
 **Credits are zero today.** No product in the current catalogue grants co-pilot
 credits, so every order is written with `ai_credits = 0` and the counter on
@@ -193,7 +206,7 @@ work, and the last step is the only one that can take real money.
    value as `LEMONSQUEEZY_WEBHOOK_SECRET`, and at minimum the four events the
    blueprint names (`order_created`, `subscription_created`, `subscription_updated`,
    `subscription_expired`) plus the payment sub-events in §4.
-5. **Test-mode purchase.** With the store in test mode, buy each of the three
+5. **Test-mode purchase.** With the store in test mode, buy each of the two
    products using Lemon Squeezy's test card (`4242 4242 4242 4242`, any future
    expiry, any CVC). For each one confirm three things: a row in the matching
    table with `test_mode = true`, a `200` in the webhook delivery log, and the
@@ -223,9 +236,8 @@ absent from this repository:
   for downloads.
 - **The 1-on-1 Soundboard Audit booking flow.** Calendly or Tally embedded through
   Zapier/Make, with a manuscript intake form landing in Google Drive. That is
-  configuration in those products, not code here. The editing product's purchase
-  webhook is the hand-off point: it records who bought and leaves the scheduling
-  to the runbook written for those tools.
+  a service, which Lemon Squeezy prohibits, so it cannot be sold through this
+  integration at all.
 - **Tax and invoicing beyond the merchant of record.** Lemon Squeezy is the MoR,
   so it files and remits. Nothing in this repository computes tax, stores a VAT
   number, or renders an invoice PDF.

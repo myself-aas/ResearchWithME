@@ -4,12 +4,12 @@ import { BILLING_PRODUCTS, FREE_FOR_EVERYONE } from '@/lib/billing/catalogue';
 import { Text } from '@/components/primitives';
 
 /**
- * The three paid offerings, shown where a reader already is.
+ * The paid offerings, shown where a reader already is.
  *
  * Two variants, one source (`lib/billing/catalogue.ts`):
  *
- * - `band`    — the home page: a ruled row of three, under a heading.
- * - `compact` — reference pages (About): the same three as a definition list.
+ * - `band`    — the home page: a ruled row, under a heading.
+ * - `compact` — reference pages (About): the same products as a definition list.
  *
  * It names prices and links to `/pricing`; it never starts a checkout. One
  * decision per surface: here the decision is "is any of this for me", and the
@@ -54,11 +54,11 @@ export default function ServicesShowcase({ variant = 'band', headingId = 'servic
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:items-end lg:gap-16">
           <div>
             <h2 id={headingId} className="font-serif text-3xl font-bold tracking-tight text-ink">
-              Services and products
+              Products
             </h2>
             <p className="mt-3 max-w-2xl font-sans text-base leading-relaxed text-ink-secondary">
-              Reading costs nothing and needs no account. When you want the method, the working notes, or an
-              editor on your own manuscript, these three are what we sell.
+              Reading costs nothing and needs no account. When you want the method behind a teardown, or the
+              working notes behind the reviews, these two are what we sell.
             </p>
           </div>
           <p className="font-sans text-sm leading-relaxed text-ink-secondary">
@@ -74,7 +74,7 @@ export default function ServicesShowcase({ variant = 'band', headingId = 'servic
           </p>
         </div>
 
-        <ul className="mt-8 grid gap-px overflow-hidden rounded-sm border border-line bg-line md:grid-cols-3">
+        <ul className="mt-8 grid gap-px overflow-hidden rounded-sm border border-line bg-line md:grid-cols-2">
           {BILLING_PRODUCTS.map((product) => (
             <li key={product.key} className="flex flex-col bg-canvas p-6">
               <div className="flex items-baseline justify-between gap-4">

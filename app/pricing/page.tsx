@@ -11,9 +11,9 @@ import { absoluteUrl, pageMetadata } from '@/lib/seo';
 import { jsonLdScript } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Services and pricing',
+  title: 'Products and pricing',
   description:
-    'The Teardown System ($19), the Research Co-Pilot membership ($9 a month), and manuscript editing (from $150). Reading ResearchWithMe stays free and needs no account.',
+    'The Teardown System ($19) and the Research Co-Pilot membership ($9 a month). Reading ResearchWithMe stays free and needs no account.',
   path: '/pricing',
 });
 
@@ -55,11 +55,6 @@ const QUESTIONS: readonly { question: string; answer: React.ReactNode }[] = [
       </>
     ),
   },
-  {
-    question: 'How much should I pay for editing?',
-    answer:
-      'The floor is $150 for one manuscript and Lemon Squeezy will not accept less. Above that it is your call: pay what the edit is worth to you.',
-  },
 ];
 
 const STEPS: readonly { title: string; body: string }[] = [
@@ -73,7 +68,7 @@ const STEPS: readonly { title: string; body: string }[] = [
   },
   {
     title: 'Receive it',
-    body: 'The Teardown System arrives as a download. For the co-pilot and for editing, the editor writes to you to set things up.',
+    body: 'The Teardown System arrives as a download. For the co-pilot, the editor writes to you to set up access.',
   },
 ];
 
@@ -81,7 +76,7 @@ function offerCatalogueJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@type': 'OfferCatalog',
-    name: 'ResearchWithMe services and products',
+    name: 'ResearchWithMe products',
     url: absoluteUrl('/pricing'),
     itemListElement: BILLING_PRODUCTS.map((product) => ({
       '@type': 'Offer',
@@ -97,15 +92,6 @@ function offerCatalogueJsonLd() {
               price: '9.00',
               priceCurrency: 'USD',
               unitCode: 'MON',
-            },
-          }
-        : {}),
-      ...(product.minPriceCents
-        ? {
-            priceSpecification: {
-              '@type': 'PriceSpecification',
-              minPrice: (product.minPriceCents / 100).toFixed(2),
-              priceCurrency: 'USD',
             },
           }
         : {}),
@@ -143,11 +129,11 @@ export default async function PricingPage() {
 
         <header className="max-w-3xl">
           <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-            The archive is free. Three things go further.
+            The archive is free. Two things go further.
           </h1>
           <p className="mt-4 font-serif text-lg leading-relaxed text-ink-secondary">
-            A method you can apply to your own code review, a membership that follows the work as it is written,
-            and an editor for your manuscript. Each is priced once, plainly, and bought separately.
+            A method you can apply to your own code review, and a membership that follows the work as it is
+            written. Each is priced once, plainly, and bought separately.
           </p>
         </header>
 
@@ -171,7 +157,7 @@ export default async function PricingPage() {
           </ul>
         </section>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
           {BILLING_PRODUCTS.map((product) => (
             <section
               key={product.key}
@@ -297,7 +283,7 @@ export default async function PricingPage() {
             Why we sell anything at all
           </h2>
           <p className="mt-3 font-serif leading-relaxed text-ink-secondary">
-            There are no adverts, no trackers, and no article charges here. These three are the things that cost
+            There are no adverts, no trackers, and no article charges here. These two are the things that cost
             us time to make, and selling them helps keep the reading free for everyone else. Read more about{' '}
             <Link href="/about" className="underline underline-offset-4">
               why the archive is open

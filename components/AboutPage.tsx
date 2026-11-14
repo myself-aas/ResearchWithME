@@ -95,14 +95,14 @@ export default function AboutPage() {
               </Text>
               <p className="text-ink-secondary">
                 ResearchWithMe carries no advertising, charges readers nothing, and charges writers nothing. It is
-                funded by three things readers can choose to buy. None of them unlocks an article, and the research
+                funded by two things readers can choose to buy. None of them unlocks an article, and the research
                 assistant and citation builder stay open to everyone whether or not they buy.
               </p>
               <ServicesShowcase variant="compact" />
               <p className="text-ink-secondary">
                 Payments are handled by Lemon Squeezy as merchant of record. What each one includes, who it is for,
                 and how it reaches you is set out on the{' '}
-                <TextLink href="/pricing">services and pricing page</TextLink>.
+                <TextLink href="/pricing">products and pricing page</TextLink>.
               </p>
             </section>
 

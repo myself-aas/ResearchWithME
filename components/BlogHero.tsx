@@ -218,15 +218,15 @@ export default function BlogHero({
                   Zero paywalls, behavioural ad trackers, or reading-flow pop-ups. Primary artifacts first.
                 </p>
                 <div className="mt-6 max-w-xs border-t border-line pt-5">
-                  <Text as="p" variant="eyebrow" color="secondary">Services</Text>
+                  <Text as="p" variant="eyebrow" color="secondary">Products</Text>
                   <p className="mt-1 font-sans text-sm leading-relaxed text-ink">
-                    The teardown method, a monthly membership, and manuscript editing.
+                    The teardown method and a monthly membership.
                   </p>
                   <Link
                     href="/pricing"
                     className="mt-2 inline-flex min-h-11 items-center gap-1.5 font-sans text-sm font-semibold text-brand underline-offset-4 hover:underline"
                   >
-                    See services and pricing
+                    See products and pricing
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </div>

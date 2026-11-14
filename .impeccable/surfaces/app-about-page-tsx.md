@@ -16,7 +16,7 @@ State plainly how ResearchWithMe publishes open-access paper reviews and reposit
 A reader understands who publishes here and under what standards within one screen.
 
 ## Direction
-Long-form serif reading column with clear section headings; claims limited to what the platform actually does. A "How the work is funded" section names the three paid products and their prices as a plain list and links to `/pricing`; it sells nothing itself.
+Long-form serif reading column with clear section headings; claims limited to what the platform actually does. A "How the work is funded" section names the paid products and their prices as a plain list and links to `/pricing`; it sells nothing itself.
 
 ## Constraints
 - WCAG 2.1 AA contrast, visible keyboard focus, and semantic landmarks.

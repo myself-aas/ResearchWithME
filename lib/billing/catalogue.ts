@@ -2,11 +2,17 @@
  * The paid offerings, as the product surface describes them.
  *
  * Prices are the spec's, verbatim (`docs/superpowers/specs/
- * 2026-11-13-financial-integration-blueprint.md` Phase 2): $19 teardown,
- * $9/month co-pilot, $150 minimum for manuscript editing. Lemon Squeezy is the
- * merchant of record, so it is also the authority on what is actually charged;
- * these labels exist so the page and the tests agree with the spec, not so the
- * application can price anything.
+ * 2026-11-13-financial-integration-blueprint.md` Phase 2): $19 teardown and
+ * $9/month co-pilot. Lemon Squeezy is the merchant of record, so it is also the
+ * authority on what is actually charged; these labels exist so the page and
+ * the tests agree with the spec, not so the application can price anything.
+ *
+ * Only digital goods belong here. Lemon Squeezy prohibits "services of any
+ * kind", newsletter advertising, donations with no product behind them, and
+ * job boards, and may suspend a store that sells them
+ * (https://docs.lemonsqueezy.com/help/getting-started/prohibited-products).
+ * Manuscript Editing was removed on 2026-11-14 for that reason; do not add a
+ * service, a sponsorship, or a "support us" product to this list.
  *
  * Variant IDs live in the environment because they differ between a test store
  * and the live one. The server resolves them (see `lib/billing/checkout.ts`);
@@ -16,7 +22,7 @@
  * needs the key type.
  */
 
-export type BillingProductKey = 'teardown' | 'copilot' | 'editing';
+export type BillingProductKey = 'teardown' | 'copilot';
 
 export interface BillingProduct {
   key: BillingProductKey;
@@ -39,8 +45,6 @@ export interface BillingProduct {
   /** Verb phrase for the checkout button. */
   actionLabel: string;
   mode: 'payment' | 'subscription';
-  /** Pay-what-you-want floor, in cents. Only the editing service has one. */
-  minPriceCents?: number;
 }
 
 /**
@@ -50,6 +54,9 @@ export interface BillingProduct {
  *   particular the co-pilot grants no usage allowance today, and the research
  *   assistant is free for everyone, so membership is never described as
  *   unlocking it.
+ * - A membership is sold for what the member receives, never as a way to
+ *   support the site: a subscription with no product is a donation, which the
+ *   payment provider prohibits.
  * - No invented numbers: no turnaround times, page counts, customer counts, or
  *   discounts. Add them here when they are real.
  */
@@ -83,7 +90,6 @@ export const BILLING_PRODUCTS: readonly BillingProduct[] = [
     priceNote: 'Billed monthly, about 30 cents a day',
     includes: [
       'The working notes behind the reviews, as they are released',
-      'A direct way to fund the open archive and its assistant',
       'If you stop, access runs to the end of the month you paid for',
     ],
     bestFor: 'Regular readers who want the reasoning behind a review, not only the finished piece.',
@@ -92,25 +98,6 @@ export const BILLING_PRODUCTS: readonly BillingProduct[] = [
       'The assistant is open to every reader with or without a membership, and notes arrive when they are written, not on a timetable.',
     actionLabel: 'Subscribe',
     mode: 'subscription',
-  },
-  {
-    key: 'editing',
-    name: 'Manuscript Editing',
-    outcome: 'Send your manuscript out with the prose and the methods already read.',
-    summary: 'Pay what you want above the floor. A line edit and a methods read of one manuscript.',
-    priceLabel: 'from $150',
-    priceNote: 'Pay what you want above $150, per manuscript',
-    includes: [
-      'A line edit of one manuscript',
-      'A methods read of the same manuscript',
-      'Handled by the editor of this archive',
-    ],
-    bestFor: 'Authors with a draft they intend to submit.',
-    delivery: 'Arranged with the editor by email after purchase: you send the manuscript, the edit comes back to you.',
-    caveat: 'One editor does this work, so the timing is agreed with you by email and not promised on this page.',
-    actionLabel: 'Book an edit',
-    mode: 'payment',
-    minPriceCents: 15000,
   },
 ];
 
@@ -128,7 +115,6 @@ export const FREE_FOR_EVERYONE: readonly { label: string; href: string }[] = [
 const VARIANT_ENV: Record<BillingProductKey, string> = {
   teardown: 'LEMONSQUEEZY_VARIANT_TEARDOWN',
   copilot: 'LEMONSQUEEZY_VARIANT_COPILOT',
-  editing: 'LEMONSQUEEZY_VARIANT_EDITING',
 };
 
 /**

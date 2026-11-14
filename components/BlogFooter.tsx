@@ -10,7 +10,7 @@ const exploreLinks = [
   { href: '/authors', label: 'Writers' },
   { href: '/assistant', label: 'Assistant' },
   { href: '/cite', label: 'Citation builder' },
-  { href: '/pricing', label: 'Services and pricing' },
+  { href: '/pricing', label: 'Products and pricing' },
   { href: '/bookmarks', label: 'Reading list' },
   { href: '/editorial-board', label: 'Editor' },
   { href: '/about', label: 'About' },

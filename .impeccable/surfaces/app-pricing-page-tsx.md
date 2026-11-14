@@ -10,7 +10,7 @@ related_targets: ["lib/billing/catalogue.ts","components/billing/CheckoutButton.
 Mode: Persuade
 
 ## Purpose
-Sell three products without implying that reading is one of them.
+Sell the two digital products without implying that reading is one of them. Services are not sold here: the payment provider prohibits them.
 
 ## First useful result
 A reader understands what costs money, confirms that the archive stays free, and either starts a checkout or signs in to start one.
@@ -19,7 +19,7 @@ A reader understands what costs money, confirms that the archive stays free, and
 The page follows the order of a buyer's doubts: what is already free, what each product lets them do, who it is for, what the catch is, who takes the money, and what happens afterwards.
 
 - A ruled strip under the title lists what is free, with links, before any price appears.
-- Three plain cards, one per product. Each leads with the outcome in the buyer's terms, then the price in the same words the catalogue uses, a short line on how it is charged, what is included, who it is for, how it is delivered, and one honest limit ("Worth knowing first").
+- Two plain cards, one per product. Each leads with the outcome in the buyer's terms, then the price in the same words the catalogue uses, a short line on how it is charged, what is included, who it is for, how it is delivered, and one honest limit ("Worth knowing first").
 - "How buying works" is three numbered steps. "Questions before you pay" is a native disclosure list answering the objections a first-time buyer has about a merchant of record, accounts, stopping a membership, and refunds.
 - All product copy comes from `lib/billing/catalogue.ts`; the page adds no claim the catalogue or `docs/billing.md` does not make.
 

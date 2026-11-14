@@ -18,7 +18,7 @@ A reader lands on a readable lead article, can search or filter the catalog, and
 ## Direction
 Use the archival editorial system: warm parchment ground, Aptos Serif display and reading type under a double-ruled masthead, amber actions, emerald verification cues, and a calm reading measure. Keep the article hierarchy bold and the feed compact but legible.
 
-Services appear twice, both quietly: a short entry in the hero's summary column linking to `/pricing`, and one ruled band of three (`ServicesShowcase`) between the lead article and the index. The band states what is free before what is sold, links out instead of starting a checkout, and is hidden whenever a search or filter is active so results are never pushed down.
+Services appear twice, both quietly: a short entry in the hero's summary column linking to `/pricing`, and one ruled band (`ServicesShowcase`) between the lead article and the index. The band states what is free before what is sold, links out instead of starting a checkout, and is hidden whenever a search or filter is active so results are never pushed down.
 
 ## Constraints
 - WCAG 2.1 AA contrast, visible keyboard focus, and semantic landmarks.
