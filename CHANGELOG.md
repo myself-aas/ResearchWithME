@@ -5,6 +5,19 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Three overview dashboards, one per audience, designed with the
+  `dashboard-designer` skill: `/dashboard/desk` (editors: applications
+  awaiting a decision, stalled drafts, comments, publishing trend, coverage by
+  discipline), `/dashboard/writing` (a writer's own byline: drafts and what
+  each is missing, publishing trend, likes against the desk average) and
+  `/dashboard/reading` (any signed-in account: reading list, new in the
+  archive, writer application state). One period filter (4 / 12 / 52 weeks)
+  drives every panel; every headline figure is compared with the previous
+  period or a stated target. Metric maths lives in `lib/dashboard/metrics.ts`.
+- Dashboard sidebar is grouped into Overview and Studio (or Account for
+  readers). Demo mode, whose studio is open, now shows the studio set.
+
 ### Removed
 - Legacy paper archive (`/papers`, `/paper/[slug]`) and quarterly PDF editions
   (`/editions`) retired; routes now 404 and all nav/footer/API references

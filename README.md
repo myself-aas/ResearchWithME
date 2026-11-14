@@ -36,6 +36,9 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 | `/dashboard/access` | Operate | Connect an ORCID or GitHub identity and apply to write |
 | `/write` | Operate | Autosaved draft editor, preview, and publish through the CMS store (editor access) |
 | `/dashboard` | Operate | Studio landing: drafts, published articles, applications |
+| `/dashboard/reading` | Operate | Reader dashboard: reading list, new in the archive, application state |
+| `/dashboard/(studio)/desk` | Operate | Editor dashboard: queues, stalled drafts, publishing trend, coverage |
+| `/dashboard/(studio)/writing` | Operate | Writer dashboard: own drafts, publishing trend, reader response |
 | `/dashboard/(studio)/manage` | Operate | Search, filter, publish/revert, delete, live status |
 | `/dashboard/(studio)/edit/[id]` | Operate | Edit a draft or published article |
 | `/dashboard/(studio)/comments` | Operate | Comment moderation with realtime updates |
