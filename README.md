@@ -46,6 +46,8 @@ Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`,
 
 ## API discovery
 
+Agent authentication is published, not implied: [`/auth.md`](https://researchwith.me/auth.md) is the walkthrough, [`/.well-known/oauth-protected-resource`](https://researchwith.me/.well-known/oauth-protected-resource) is the RFC 9728 protected-resource document, and [`/.well-known/oauth-authorization-server`](https://researchwith.me/.well-known/oauth-authorization-server) relays Supabase's authorization-server metadata plus an Auth.md `agent_auth` block when that server is reachable. No ResearchWithMe API validates a bearer token, so the documents say so and advertise no scopes. See [`docs/oauth-discovery.md`](./docs/oauth-discovery.md).
+
 The [API catalog](https://researchwith.me/.well-known/api-catalog) follows RFC 9727 and lists the archive, assistant, and editorial route groups. Its `service-desc` links point to the [OpenAPI 3.1 document](https://researchwith.me/openapi.json), and `service-doc` links point to the [API reference](https://researchwith.me/api-docs). Editor, signed-in, and webhook-secret requirements are documented per operation; publishing the catalog does not grant access. There is no advertised health endpoint.
 
 After deploying, verify discovery with:

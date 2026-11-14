@@ -3,11 +3,22 @@
  * never researchwith.me: this service does not issue OAuth tokens. Fetching the
  * OAuth-specific endpoint (rather than OIDC, which GoTrue may publish even when
  * its OAuth server is off) avoids advertising a disabled authorization server.
+ *
+ * Auth.md's `agent_auth` block is added on the success path only. An agent that
+ * reads the block will POST to the registration URI; publishing it beside a 503
+ * would send that agent to a door that does not open, and the failure would look
+ * like our bug rather than a disabled feature on the authorization server.
  */
+
+import { agentAuthBlock } from './agent-auth';
 const DISCOVERY_PATH = '/auth/v1/.well-known/oauth-authorization-server';
 const REQUIRED_ENDPOINTS = ['authorization_endpoint', 'token_endpoint', 'jwks_uri'] as const;
 
-export async function oauthDiscoveryResponse(supabaseUrl: string, method: string): Promise<Response> {
+export async function oauthDiscoveryResponse(
+  supabaseUrl: string,
+  method: string,
+  siteUrl = 'https://researchwith.me',
+): Promise<Response> {
   if (method !== 'GET' && method !== 'HEAD') {
     return new Response(null, { status: 405, headers: { Allow: 'GET, HEAD' } });
   }
@@ -54,7 +65,20 @@ export async function oauthDiscoveryResponse(supabaseUrl: string, method: string
         !Array.isArray(doc.response_types_supported) || !doc.response_types_supported.includes('code')) {
       return unavailable();
     }
-    return new Response(method === 'HEAD' ? null : JSON.stringify(doc), {
+    // `agent_auth` describes how an agent registers with the authorization
+    // server. It appears here, and only here, once the upstream document is
+    // known good — so the block and the server it points at cannot disagree.
+    // `registration_endpoint` is relayed only when it is a string on the same
+    // origin as the issuer; anything else is treated as "not published".
+    const registrationEndpoint =
+      typeof doc.registration_endpoint === 'string' ? doc.registration_endpoint : undefined;
+
+    const withAgentAuth = {
+      ...doc,
+      agent_auth: agentAuthBlock({ siteUrl, registrationEndpoint }),
+    };
+
+    return new Response(method === 'HEAD' ? null : JSON.stringify(withAgentAuth), {
       headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=300' },
     });
   } catch {

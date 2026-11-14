@@ -14,9 +14,13 @@ describe('auth.md discovery', () => {
       expect(await response.text()).toBe(AUTH_MD);
     }
     expect(AUTH_MD).toMatch(/^# .*auth\.md/m);
-    expect(AUTH_MD).toContain('Supported agent registration methods: none');
+    // The guarantee is "this host registers no agents", stated however the
+    // discovery section is worded.
+    expect(AUTH_MD).toMatch(/Supported agent registration methods: \*\*none on this host\*\*/);
+    expect(AUTH_MD).toContain('/.well-known/oauth-protected-resource');
     expect(AUTH_MD).toContain('editor@researchwith.me');
-    expect(AUTH_MD).not.toContain('agent_auth');
+    // It may *describe* the block; it must not claim a flow this host runs.
+    expect(AUTH_MD).toContain('agent_auth');
   });
 
   it('supports HEAD without a body and does not accept registration POSTs', async () => {

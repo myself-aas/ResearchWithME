@@ -38,9 +38,19 @@ const isDev = process.env.NODE_ENV === 'development';
 const LEMON_JS = 'https://app.lemonsqueezy.com';
 const LEMON_FRAMES = 'https://*.lemonsqueezy.com';
 
+// When Supabase Auth's OAuth server is enabled, @supabase/auth-js loads part of
+// itself as ES modules from jsDelivr. That is a cross-origin script load, so
+// without this the authorization/consent flow dies on an opaque CSP violation.
+// Scoped to the package path on purpose: jsDelivr serves every npm package, and
+// the bare origin would be an allow-anything hole.
+// Pinned by lib/__tests__/auth-csp.test.ts.
+const SUPABASE_AUTH_SDK = 'https://cdn.jsdelivr.net/npm/@supabase/auth-js@*';
+
 const cspDirectives = [
   "default-src 'self'",
-  isDev ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${LEMON_JS}` : `script-src 'self' 'unsafe-inline' ${LEMON_JS}`,
+  isDev
+    ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${LEMON_JS} ${SUPABASE_AUTH_SDK}`
+    : `script-src 'self' 'unsafe-inline' ${LEMON_JS} ${SUPABASE_AUTH_SDK}`,
   `frame-src 'self' ${LEMON_FRAMES}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",

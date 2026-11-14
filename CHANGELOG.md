@@ -46,6 +46,13 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Lemon.js overlay loading on the two surfaces that sell, with the CSP allowance
   pinned by a test.
 - Owner runbook for billing configuration and go-live (`docs/billing.md`).
+- Auth.md agent-registration discovery: protected-resource metadata at
+  `/.well-known/oauth-protected-resource`, an `agent_auth` block added to the
+  authorization-server document only when the upstream server is reachable, and
+  a `/auth.md` walkthrough that names the real RFC 7591 registration endpoint
+  rather than inventing `/agent/auth`.
+- CSP allowance for `@supabase/auth-js` on jsDelivr, scoped to the package path,
+  so the Supabase OAuth consent flow is not blocked once that server is enabled.
 
 ### Fixed
 - Mobile search placeholder no longer references "DOI".
