@@ -13,6 +13,9 @@ export const API_GROUPS = [
   { id: 'revalidate', name: 'Cache revalidation', path: '/api/revalidate', description: 'Receive database webhooks that invalidate cached pages. A shared secret is required.' },
   { id: 'billing', name: 'Billing', path: '/api/billing/checkout', description: 'Start a checkout for one of this site’s products. A session is required.' },
   { id: 'entitlement', name: 'Account plan', path: '/api/billing/entitlement', description: 'Read the signed-in account’s plan and purchase credits. A session is required.' },
+  { id: 'assistant-api', name: 'Assistant API', path: '/api/v1/assistant/answers', description: 'Ask the Assistant with an API key. Rate limited per key, with a monthly allowance per account.' },
+  { id: 'api-usage', name: 'API usage', path: '/api/v1/usage', description: 'Read how much of the monthly Assistant API allowance is used. An API key is required.' },
+  { id: 'api-keys', name: 'API keys', path: '/api/account/api-keys', description: 'Create, list, and revoke keys for the versioned Assistant API. A session is required.' },
   { id: 'webhooks', name: 'Billing webhook', path: '/api/webhooks/lemonsqueezy', description: 'Receive signed Lemon Squeezy billing events. A webhook signing secret is required.' },
 ] as const;
 

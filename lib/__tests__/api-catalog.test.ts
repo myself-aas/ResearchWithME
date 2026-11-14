@@ -117,4 +117,19 @@ describe('OpenAPI and human-readable reference', () => {
     }
     expect(API_OPERATIONS.find(({ group }) => group === 'revalidate')?.security).toEqual([{ RevalidateSecret: [] }]);
   });
+
+  it('documents the versioned Assistant API with the key scheme and every error status', () => {
+    type Documented = { operationId: string; responses: Record<string, unknown>; security: unknown };
+    const paths = OPENAPI_DOCUMENT.paths as Record<string, Record<string, Documented>>;
+    const answers = paths['/api/v1/assistant/answers'].post;
+    expect(answers.operationId).toBe('createAssistantAnswer');
+    expect(Object.keys(answers.responses).sort()).toEqual(['200', '400', '401', '409', '415', '422', '429', '500', '503']);
+    expect(answers.security).toEqual([{ ApiKeyBearer: [] }]);
+    const usage = paths['/api/v1/usage'].get;
+    expect(usage.operationId).toBe('getApiUsage');
+    expect(usage.security).toEqual([{ ApiKeyBearer: [] }]);
+    expect(OPENAPI_DOCUMENT.components.securitySchemes.ApiKeyBearer).toMatchObject({ type: 'http', scheme: 'bearer' });
+    expect(OPENAPI_DOCUMENT.components.schemas).toHaveProperty('AssistantAnswer');
+    expect(OPENAPI_DOCUMENT.components.schemas).toHaveProperty('ApiError');
+  });
 });

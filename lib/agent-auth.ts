@@ -24,7 +24,8 @@
  * with agent client registration turned on. Then an agent really can register
  * there and obtain a token. Whether `researchwith.me` accepts that token is a
  * different question, and the answer is currently no — which `/auth.md` and the
- * PRM both state plainly rather than implying otherwise.
+ * PRM both state plainly rather than implying otherwise. (The API keys this
+ * site issues itself are a separate credential and unrelated to this block.)
  *
  * ── What is deliberately absent ─────────────────────────────────────────────
  *
@@ -37,7 +38,13 @@
  * when they are missing; a warning is the right outcome for a flow nobody built.
  */
 
-const API_BEARER_SUPPORT = 'none';
+/**
+ * What a bearer credential means on this host. `api-key`: keys created on the
+ * account page are accepted on `/api/v1/*` and by the MCP tool `ask_archive`
+ * (lib/api/authenticate.ts). OAuth access tokens from the authorization server
+ * are still not accepted anywhere here.
+ */
+const API_BEARER_SUPPORT = 'api-key';
 
 export interface AgentAuthBlock {
   /** The walkthrough. Always ours; this is the document an agent reads first. */
@@ -125,7 +132,8 @@ export function agentAuthBlock({ siteUrl, registrationEndpoint }: AgentAuthInput
  * `bearer_methods_supported: ['header']` is true in the narrow sense that
  * matters: *if* a bearer token is ever accepted, it arrives in the
  * `Authorization` header. The `x-` field states the part a scanner cannot
- * infer — that no API here validates one today — so an agent does not read a
+ * infer — which kind of bearer credential is validated here: this site's own
+ * API keys, and not OAuth access tokens — so an agent does not read a
  * capability into the document that is not there.
  *
  * `scopes_supported` is empty for the same reason. Inventing `api.read` would

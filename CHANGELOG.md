@@ -5,6 +5,47 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Assistant API. The database migration is applied; the API answers `503`
+  until the owner sets `API_BRIDGE_SECRET` and its digest row
+  (`docs/assistant-api.md`, "Owner: deploy"):
+  `POST /api/v1/assistant/answers` and `GET /api/v1/usage`, authenticated with
+  API keys that are created and revoked on the account page; a burst limit per
+  key on the Workers Rate Limiting binding with a KV fallback; an exact
+  monthly allowance per account with idempotent retries, kept in Postgres
+  (`supabase/migrations/20261114000200_api_keys.sql`); and the MCP tool
+  `ask_archive`, which uses the same key and allowance. The database functions
+  are gated by the API's own secret, `API_BRIDGE_SECRET`, separate from the
+  billing one.
+- A second Worker, `researchwithme-assistant` (`workers/assistant`), that makes
+  the Assistant's model call and is reached only through a service binding.
+  Its binding in `wrangler.jsonc` is commented out until that Worker is
+  deployed, so the site answers in-process for now.
+  `npm run worker:assistant:check` is now part of `npm run quality`.
+- Design documents for the Assistant API: the spec with a capability map and
+  an assessment of whether the API can be charged for
+  (`docs/superpowers/specs/2026-11-14-assistant-api-spec.md`), the contract,
+  diagrams and guides (`docs/assistant-api.md`), ADR-001 (`docs/decisions/`),
+  and the implementation plan
+  (`docs/superpowers/plans/2026-11-14-assistant-api.md`).
+- Three overview dashboards, one per audience, designed with the
+  `dashboard-designer` skill: `/dashboard/desk` (editors: applications
+  awaiting a decision, stalled drafts, comments, publishing trend, coverage by
+  discipline), `/dashboard/writing` (a writer's own byline: drafts and what
+  each is missing, publishing trend, likes against the desk average) and
+  `/dashboard/reading` (any signed-in account: reading list, new in the
+  archive, writer application state). One period filter (4 / 12 / 52 weeks)
+  drives every panel; every headline figure is compared with the previous
+  period or a stated target. Metric maths lives in `lib/dashboard/metrics.ts`.
+- Dashboard refinements from the `kpi-dashboard-design` skill: a "Needs
+  attention" list under the headline figures (missed targets first, each
+  linked to its fix), a "How this is counted" definition on every figure from
+  one shared registry, card sparklines, a fifth process figure on the desk and
+  writing dashboards (median days from first save to publication), and a
+  comment-spike alert that uses the desk's own moving baseline.
+- Dashboard sidebar is grouped into Overview and Studio (or Account for
+  readers). Demo mode, whose studio is open, now shows the studio set.
+
 ### Removed
 - Legacy paper archive (`/papers`, `/paper/[slug]`) and quarterly PDF editions
   (`/editions`) retired; routes now 404 and all nav/footer/API references

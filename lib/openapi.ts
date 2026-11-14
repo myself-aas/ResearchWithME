@@ -65,12 +65,27 @@ const errorDescriptions: Record<number, string> = {
 const errors = (...codes: number[]): Record<string, ApiResponse> =>
   Object.fromEntries(codes.map((code) => [String(code), json(errorDescriptions[code], ref('Error'))]));
 const session: Security = [{ SessionCookie: [] }];
+const apiKey: Security = [{ ApiKeyBearer: [] }];
 const webhookSecret: Security = [{ RevalidateSecret: [] }];
 const billingWebhook: Security = [{ BillingWebhookSignature: [] }];
 const articleId = path('id', 'Published article ID or slug.');
 const authorId = path('id', 'Published author profile ID.');
 const cmsId = path('id', 'Editorial record ID.');
 const applicationId = path('id', 'Numeric application ID.');
+const apiErrorDescriptions: Record<number, string> = {
+  400: 'The request is malformed or a field is invalid.',
+  401: 'No valid credential was presented.',
+  404: 'The record does not exist or belongs to another account.',
+  409: 'The first request with this Idempotency-Key is still running.',
+  415: 'The request must be sent as application/json.',
+  422: 'The Idempotency-Key was already used with a different body.',
+  429: 'Either the burst limit (RATE_LIMITED) or the monthly allowance (QUOTA_EXHAUSTED) was reached.',
+  500: 'The request failed and used no allowance.',
+  503: 'The archive or the usage ledger could not be reached.',
+};
+/** Responses in the structured `{ error: { code, message, details? } }` shape used by the versioned API. */
+const apiErrors = (...codes: number[]): Record<string, ApiResponse> =>
+  Object.fromEntries(codes.map((code) => [String(code), json(apiErrorDescriptions[code], ref('ApiError'))]));
 
 export const API_OPERATIONS: ApiOperation[] = [
   {
@@ -217,6 +232,44 @@ export const API_OPERATIONS: ApiOperation[] = [
     },
   },
   {
+    group: 'assistant-api', method: 'post', path: '/api/v1/assistant/answers', operationId: 'createAssistantAnswer',
+    summary: 'Ask the Assistant with an API key',
+    description: 'Answers a question from published reviews only and cites them. Each answer uses one unit of the account’s monthly allowance; a failed request uses none. Send an Idempotency-Key header (8 to 128 characters from A-Z, a-z, 0-9, underscore, hyphen) to make a retry safe: the same key and body return the stored answer for 24 hours and are counted once. The burst limit is approximate; the monthly allowance is exact.',
+    security: apiKey,
+    requestBody: jsonBody(object({ query: { type: 'string', minLength: 1, maxLength: 600 } }, ['query']), 'Question about the archive.'),
+    responses: { 200: json('The answer, its citations, and the allowance after this request.', ref('AssistantAnswer')), ...apiErrors(400, 401, 409, 415, 422, 429, 500, 503) },
+  },
+  {
+    group: 'api-usage', method: 'get', path: '/api/v1/usage', operationId: 'getApiUsage',
+    summary: 'Read this month’s API usage',
+    description: 'Returns how much of the monthly allowance the key’s account has used. Reading it uses no allowance.',
+    security: apiKey,
+    responses: { 200: json('Usage for the current UTC month.', ref('ApiUsage')), ...apiErrors(401, 429, 503) },
+  },
+  {
+    group: 'api-keys', method: 'get', path: '/api/account/api-keys', operationId: 'listApiKeys',
+    summary: 'List your API keys',
+    description: 'Returns the caller’s keys, newest first. A key is identified by its name and its first 12 characters; the key itself is never returned after creation.',
+    security: session,
+    responses: { 200: json('The caller’s keys.', object({ data: array(ref('ApiKey')) }, ['data'])), ...apiErrors(400, 401, 503) },
+  },
+  {
+    group: 'api-keys', method: 'post', path: '/api/account/api-keys', operationId: 'createApiKey',
+    summary: 'Create an API key',
+    description: 'Creates a key and returns it once. Only a SHA-256 hash is stored. An account can hold at most 5 active keys.',
+    security: session,
+    requestBody: jsonBody(object({ name: { type: 'string', minLength: 1, maxLength: 60 } }, ['name']), 'A label for the key.'),
+    responses: { 201: json('The new key. The `key` field is shown only in this response.', ref('ApiKeyCreated')), ...apiErrors(400, 401, 415, 503) },
+  },
+  {
+    group: 'api-keys', method: 'delete', path: '/api/account/api-keys/{keyId}', operationId: 'revokeApiKey',
+    summary: 'Revoke an API key',
+    description: 'Revokes the key. It is refused on its next request and cannot be restored.',
+    security: session,
+    parameters: [path('keyId', 'API key ID.')],
+    responses: { 204: { description: 'Revoked.' }, ...apiErrors(400, 401, 404, 503) },
+  },
+  {
     group: 'entitlement', method: 'get', path: '/api/billing/entitlement', operationId: 'getBillingEntitlement',
     summary: 'Read the signed-in account plan',
     description: 'Returns the caller’s plan, subscription state, purchase credits, and the current period end. Uncacheable: a purchase is visible on the next request. Test-mode purchases are excluded.',
@@ -258,6 +311,33 @@ const schemas: Record<string, Schema> = {
   Paper: object({ id: text, slug: text, title: text, subtitle: text, authors: array(object({ name: text, affiliation: text, orcid: text, role: text })), abstract: text, publishedDate: text, year: integer, doi: text, journal: text, volume: text, issue: text, pages: text, topic: text, citationCount: integer, readTime: text, keywords: strings, license: text, pdfFileName: text, dataUrl: text, fullContent: object({ background: text, methodology: text, findings: strings, discussion: text, implications: text, references: strings }) }, ['id', 'slug', 'title']),
   Comment: object({ id: text, postId: text, authorName: text, authorRole: text, avatar: text, timestamp: text, text }, ['id', 'postId', 'authorName', 'avatar', 'timestamp', 'text']),
   CommentInput: object({ postId: { type: 'string', minLength: 1, maxLength: 120 }, authorName: { type: 'string', minLength: 2, maxLength: 120 }, authorRole: { type: 'string', maxLength: 80 }, text: { type: 'string', minLength: 2, maxLength: 4000 } }, ['postId', 'authorName', 'text']),
+  ApiError: object({
+    error: object({
+      code: { type: 'string', enum: ['INVALID_REQUEST', 'UNAUTHENTICATED', 'NOT_FOUND', 'UNSUPPORTED_MEDIA_TYPE', 'IDEMPOTENCY_KEY_REUSED', 'IDEMPOTENCY_IN_FLIGHT', 'RATE_LIMITED', 'QUOTA_EXHAUSTED', 'UPSTREAM_UNAVAILABLE', 'INTERNAL'] },
+      message: text,
+      details: { type: 'object', additionalProperties: true },
+    }, ['code', 'message']),
+  }, ['error']),
+  ApiUsage: object({
+    plan: { type: 'string', enum: ['FREE'] }, requestsUsed: integer, requestsIncluded: integer, requestsRemaining: integer,
+    resetsAt: { type: 'string', format: 'date-time' },
+  }, ['requestsUsed', 'requestsIncluded', 'requestsRemaining', 'resetsAt']),
+  AssistantAnswer: object({
+    id: text, answer: text,
+    citations: array(object({ id: text, slug: text, title: text, author: text, category: text, url: text }, ['id', 'slug', 'title', 'author', 'category', 'url'])),
+    mode: { type: 'string', enum: ['MODEL', 'CATALOG'] },
+    notice: { type: ['string', 'null'] },
+    usage: ref('ApiUsage'),
+  }, ['id', 'answer', 'citations', 'mode', 'notice', 'usage']),
+  ApiKey: object({
+    id: text, name: text, prefix: text, createdAt: text,
+    lastUsedAt: { type: ['string', 'null'] }, revokedAt: { type: ['string', 'null'] },
+  }, ['id', 'name', 'prefix', 'createdAt', 'lastUsedAt', 'revokedAt']),
+  ApiKeyCreated: object({
+    id: text, name: text, prefix: text, createdAt: text,
+    lastUsedAt: { type: ['string', 'null'] }, revokedAt: { type: ['string', 'null'] },
+    key: { type: 'string', pattern: '^rwm_[A-Za-z0-9_-]{43}$' },
+  }, ['id', 'name', 'prefix', 'createdAt', 'lastUsedAt', 'revokedAt', 'key']),
   AssistantCitation: object({ id: text, title: text, author: text, category: text }, ['id', 'title', 'author', 'category']),
   Entitlement: object({
     plan: { type: 'string', enum: ['none', 'copilot', 'purchases'] },
@@ -296,6 +376,10 @@ export const OPENAPI_DOCUMENT = {
   }, {}),
   components: {
     securitySchemes: {
+      ApiKeyBearer: {
+        type: 'http', scheme: 'bearer',
+        description: 'An API key created on the account page, sent as `Authorization: Bearer rwm_…`. Only a hash of the key is stored. OAuth access tokens are not accepted.',
+      },
       SessionCookie: {
         type: 'apiKey', in: 'header', name: 'Cookie',
         description: 'Supabase Auth session cookie(s), obtained by signing in on the site. Cookie names depend on the deployment and may be chunked. Editor-only operations additionally require an editor account.',

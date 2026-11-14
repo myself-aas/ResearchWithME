@@ -34,6 +34,15 @@ beforeEach(() => {
 });
 
 describe('/dashboard/account', () => {
+  it('has an API keys section that states the allowance and links to the reference', async () => {
+    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+    const html = await render();
+    expect(html).toContain('id="api-keys-heading"');
+    expect(html).toContain('0 of 100 answers used this month');
+    expect(html).toContain('No keys yet. Create one to call the Assistant API.');
+    expect(html).toContain('href="/api-docs#assistant-api"');
+  });
+
   it('offers nothing to buy while the store has no product', async () => {
     vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '');
     getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });

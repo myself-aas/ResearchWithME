@@ -51,6 +51,14 @@
 			"binding": "WORKER_SELF_REFERENCE",
 			"service": "researchwithme"
 		}
+		// The Assistant's model call can run in its own Worker (workers/assistant),
+		// called over RPC from lib/assistant/service.ts. The binding is off until
+		// that Worker exists: `main` deploys automatically, and a deploy that names
+		// a Worker the account does not have fails. Until then the site answers
+		// in-process. To turn it on: `npm run worker:assistant:deploy`, set its
+		// GEMINI_API_KEY secret, then add a comma after the brace above and
+		// uncomment:
+		// { "binding": "ASSISTANT", "service": "researchwithme-assistant", "entrypoint": "AssistantService" }
 	],
 	// Free-plan setup: no R2 or Images bindings, so next/image serves originals.
 	// One KV namespace (researchwithme-opennext-cache) backs both OpenNext
@@ -65,6 +73,11 @@
 		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
 		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
 		{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+	],
+	"ratelimits": [
+		// Burst limit for /api/v1 (lib/api/burst.ts). Approximate by design; the
+		// exact monthly count lives in Postgres. namespace_id is account-wide.
+		{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } }
 	],
 	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
 	// pull request. A preview is a branch of the Worker, not the production
