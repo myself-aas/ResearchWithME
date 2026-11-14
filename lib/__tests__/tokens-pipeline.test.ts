@@ -4,6 +4,10 @@ import { tmpdir } from 'node:os';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { tokens } from '@/tokens/generated/tokens';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Badge } from '@/components/primitives/Badge';
+import { compositeOverHex } from '@/lib/tokens/contrast';
 import { contrastRatio, meetsAA, WCAG_AA_NORMAL_TEXT } from '@/lib/tokens/contrast';
 
 const flatten = (obj: Record<string, unknown>, prefix: string[] = []): Array<[string, unknown]> =>
@@ -166,6 +170,46 @@ describe('component CSS semantic aliases', () => {
       const result = spawnSync(process.execPath, [join(root, 'tokens/scripts/build.mjs')], { encoding: 'utf8' });
       expect(result.status).toBe(1);
       expect(result.stderr).toContain('Unresolved token reference: {semantic.light.does-not-exist}');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+
+describe('domain badge foreground contrast', () => {
+  for (const variant of ['emerging', 'uncertain'] as const) {
+    it(`${variant} text passes on actual tinted badge surfaces in both themes`, () => {
+      const html = renderToStaticMarkup(createElement(Badge, { variant, dot: true }, variant === 'emerging' ? 'Emerging consensus' : 'Uncertain'));
+      const foregroundRole = html.match(/text-(trust|domain-text)-(emerging|uncertain)/)?.[1];
+      expect(foregroundRole).toBeTruthy();
+      for (const theme of [tokens.semanticLight, tokens.semanticDark]) {
+        const hex = theme.trust[variant];
+        const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+        const foreground = foregroundRole === 'trust' ? hex : (theme as unknown as { domainText: Record<string, string> }).domainText[variant];
+        for (const base of [theme.canvas, theme.surface, theme['surface-raised']]) {
+          const background = compositeOverHex(`rgba(${r},${g},${b},0.1)`, base);
+          expect(contrastRatio(foreground, background), `${variant} on ${base}`).toBeGreaterThanOrEqual(4.5);
+        }
+      }
+      expect(html).toContain(variant === 'emerging' ? 'Emerging consensus' : 'Uncertain');
+    });
+  }
+
+  it('contrast CLI rejects domain foregrounds that fail on composed badge surfaces', () => {
+    const root = mkdtempSync(join(tmpdir(), 'rwm-domain-contrast-'));
+    try {
+      cpSync(join(process.cwd(), 'tokens/src'), join(root, 'tokens/src'), { recursive: true });
+      mkdirSync(join(root, 'tokens/scripts'), { recursive: true });
+      cpSync(join(process.cwd(), 'tokens/scripts/check-contrast.mjs'), join(root, 'tokens/scripts/check-contrast.mjs'));
+      const file = join(root, 'tokens/src/semantic-light.json');
+      const light = JSON.parse(readFileSync(file, 'utf8'));
+      light.domainText = { emerging: '#FFFFFF', uncertain: '#FFFFFF' };
+      writeFileSync(file, JSON.stringify(light));
+      const result = spawnSync(process.execPath, [join(root, 'tokens/scripts/check-contrast.mjs')], { encoding: 'utf8' });
+      expect(result.status).toBe(1);
+      expect(result.stdout + result.stderr).toContain('emerging badge');
+      expect(result.stdout + result.stderr).toContain('uncertain badge');
     } finally {
       rmSync(root, { recursive: true, force: true });
     }

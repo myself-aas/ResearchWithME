@@ -240,6 +240,10 @@ export const semanticLight = {
     "software": "#1D4ED8",
     "protocol": "#0D9488",
     "webpage": "#5C5C63"
+  },
+  "domainText": {
+    "emerging": "#155E75",
+    "uncertain": "#92400E"
   }
 } as const;
 export const semanticDark = {
@@ -315,6 +319,10 @@ export const semanticDark = {
     "software": "#60A5FA",
     "protocol": "#14B8A6",
     "webpage": "#9496A1"
+  },
+  "domainText": {
+    "emerging": "#67E8F9",
+    "uncertain": "#FCD34D"
   }
 } as const;
 export const motion = {

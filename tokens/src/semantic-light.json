@@ -71,5 +71,9 @@
     "software": "#1D4ED8",
     "protocol": "#0D9488",
     "webpage": "#5C5C63"
+  },
+  "domainText": {
+    "emerging": "#155E75",
+    "uncertain": "#92400E"
   }
 }

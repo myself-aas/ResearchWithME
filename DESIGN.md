@@ -155,3 +155,14 @@ The active frontend design system is **reme v3.1** (`stable-candidate`, updated 
 - **Motion system (v1):** implemented with `motion` (`m` + one `LazyMotion` scope) and Disney's twelve animation principles. The token layer is `lib/motion/tokens.ts`, the primitives are in `components/motion/`, and every demo lives at `/motion`. Full guide: [`docs/motion-system.md`](./docs/motion-system.md). Content is never hidden by an animation server-side, reveals arm only below the fold, and nothing loops except a real progress indicator.
 - **Accessibility:** WCAG 2.2 AA baseline; 2px/2px focus ring in the focus token (indigo-600 light, indigo-300 dark); 44px minimum touch targets; status always paired with a text label.
 - **Do not** use gradient text, decorative glass, AI purple/cyan palettes, terminal motifs, or color alone for status.
+
+
+## Domain badge foregrounds (2026-11-14)
+
+Emerging/Uncertain labels use dedicated semantic foregrounds, not their accent
+colors as text. `domainText.emerging` is `#155E75` in light and `#67E8F9` in
+dark; `domainText.uncertain` is `#92400E` in light and `#FCD34D` in dark.
+Existing trust accent dots, 10% tints, borders and research-state wording stay
+unchanged. `tokens:check` enforces >=4.5:1 for these text roles on their 10%
+accent tint composited over canvas, surface and surface-raised in both themes.
+These configured checks do not certify every rendered component composition.
