@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { tokens } from '@/tokens/generated/tokens';
 import { contrastRatio, meetsAA, WCAG_AA_NORMAL_TEXT } from '@/lib/tokens/contrast';
@@ -94,5 +96,52 @@ describe('reme token pipeline (tokens/generated)', () => {
     expect(contrastRatio('rgba(18, 18, 20, 0.10)', '#FAF9F6')).toBeGreaterThan(1.1);
     expect(contrastRatio(tokens.semanticLight.action['on-primary'], tokens.semanticLight.action.primary)).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(tokens.semanticDark.action['on-primary'], tokens.semanticDark.action.primary)).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+
+describe('generated CSS consumer contract', () => {
+  it('component_css_names_resolve_including_ts_factories', () => {
+    const css = readFileSync(join(process.cwd(), 'tokens/generated/tokens.css'), 'utf8');
+    expect(css).toContain('--reme-component-source-card-background:');
+    expect(css).not.toContain('--reme-component-component-');
+  });
+
+  function checkFixture(files: Record<string, string>) {
+    const root = mkdtempSync(join(tmpdir(), 'rwm-token-consumers-'));
+    try {
+      for (const [name, content] of Object.entries(files)) {
+        const path = join(root, name);
+        mkdirSync(join(path, '..'), { recursive: true });
+        writeFileSync(path, content);
+      }
+      return spawnSync(process.execPath, [join(process.cwd(), 'tokens/scripts/check-consumers.mjs'), '--root', root], { encoding: 'utf8' });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+
+  it('rejects unresolved variables in TypeScript style factories with a path diagnostic', () => {
+    const result = checkFixture({
+      'tokens/generated/tokens.css': ':root { --reme-surface: #fff; }',
+      'lib/scholarly/factory.ts': "export const style = { color: 'var(--reme-missing)' };",
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('lib/scholarly/factory.ts');
+    expect(result.stderr).toContain('--reme-missing');
+  });
+
+  it('accepts variables declared in generated or application CSS and ignores test fixtures', () => {
+    const result = checkFixture({
+      'tokens/generated/tokens.css': ':root { --reme-surface: #fff; }',
+      'app/globals.css': ':root { --reme-local: var(--reme-surface); }',
+      'lib/factory.ts': "export const style = { color: 'var(--reme-local, var(--reme-surface))' };",
+      'components/Card.tsx': "export const background = 'var(--reme-surface)';",
+      'cloudflare-pages/src/styles.css': 'main { color: var(--reme-local); }',
+      'lib/__tests__/fixture.ts': "const missing = 'var(--reme-test-only)';",
+      'lib/factory.test.ts': "const missing = 'var(--reme-test-only)';",
+    });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain('0 unresolved');
   });
 });

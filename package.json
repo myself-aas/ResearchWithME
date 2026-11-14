@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "tokens:build": "node tokens/scripts/build.mjs",
-    "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs",
+    "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs && node tokens/scripts/check-consumers.mjs",
     "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test && npm run dns:test && npm run webmcp:test && npm run impeccable:source && npm run worker:assistant:check",
     "impeccable:source": "impeccable detect app components",
     "impeccable:url": "impeccable detect --json --no-advisory --viewport 1280x800 http://localhost:3000",
