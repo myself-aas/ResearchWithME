@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function NotFound() {
   return (
-    <main
+    <main tabIndex={-1} id="main-content"
       style={{
         fontFamily: 'Georgia, "Times New Roman", serif',
         maxWidth: '42rem',

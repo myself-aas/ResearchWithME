@@ -113,7 +113,7 @@ function RouteErrorBoundary() {
       : 'The journal hit an unexpected error. Please try again in a moment.';
 
   return (
-    <main style={homeStyles.main}>
+    <main tabIndex={-1} id="main-content" style={homeStyles.main}>
       <p style={homeStyles.eyebrow}>Error {status}</p>
       <h1 style={homeStyles.wordmark}>{heading}</h1>
       <p style={homeStyles.strap}>{detail}</p>

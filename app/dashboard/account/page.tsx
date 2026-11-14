@@ -118,7 +118,7 @@ export default async function AccountPage() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
-      <main className="mx-auto w-full max-w-4xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+      <section className="mx-auto w-full max-w-4xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-6">
           <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">Your account</h1>
           <p className="mt-2 font-serif text-ink-secondary">
@@ -237,7 +237,7 @@ export default async function AccountPage() {
         </section>
 
         <LemonSqueezyScript />
-      </main>
+      </section>
       <BlogFooter />
     </div>
   );

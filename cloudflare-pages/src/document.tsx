@@ -1,3 +1,4 @@
+import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import { renderToReadableStream } from 'react-dom/server.edge';
 import {
   createStaticHandler,
@@ -125,7 +126,6 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
   );
   await appStream.allReady;
 
-  const themeBoot = `(function(){try{var t=localStorage.getItem('rwm-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.classList.toggle('light',t==='light');}catch(e){}})();`;
 
   const head =
     `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8">` +
@@ -136,7 +136,7 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
     cssLinks +
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/newsreader-latin-variable.woff2" crossorigin>` +
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-variable.woff2" crossorigin>` +
-    `<script>${themeBoot}</script>` +
+    `<script>${THEME_INIT_SCRIPT}</script>` +
     `<script>window.${HYDRATION_DATA_KEY}=${hydrationJson}</script>` +
     // WebMCP: registers the archive's read-only tools on page load, before
     // hydration, so an in-tab agent (or a readiness scanner) sees them. The

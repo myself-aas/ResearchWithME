@@ -133,7 +133,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <BlogHeader savedCount={savedArticles.length} />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-line pb-8">
           <Text as="p" variant="eyebrow" color="secondary">
             Local Archive · Persisted on Device

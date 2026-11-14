@@ -172,7 +172,7 @@ export default function DashboardShell({ children, configured, user }: Dashboard
             )}
           </div>
 
-          <main className="min-w-0 py-6 sm:py-8">
+          <main tabIndex={-1} id="main-content" className="min-w-0 py-6 sm:py-8">
             {!configured && (
               <div className="mb-6 border-l-2 border-trust-uncertain bg-brand/5 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
                 <p className="font-semibold">Local demo mode</p>

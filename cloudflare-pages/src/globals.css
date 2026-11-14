@@ -110,6 +110,8 @@
   --color-trust-peer-reviewed: var(--reme-trust-peer-reviewed);
   --color-trust-emerging: var(--reme-trust-emerging);
   --color-trust-uncertain: var(--reme-trust-uncertain);
+  --color-domain-text-emerging: var(--reme-domain-text-emerging);
+  --color-domain-text-uncertain: var(--reme-domain-text-uncertain);
   --color-trust-contested: var(--reme-trust-contested);
   --color-trust-unknown: var(--reme-trust-unknown);
   --color-provenance-direct-source: var(--reme-provenance-direct-source);

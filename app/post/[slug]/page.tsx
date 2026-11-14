@@ -112,7 +112,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <ArticleSmoothScroll />
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>

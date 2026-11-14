@@ -111,7 +111,7 @@ export default async function PricingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
-      <main id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLdScript(offerCatalogueJsonLd()) }}

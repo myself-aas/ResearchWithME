@@ -27,7 +27,7 @@ export default function MotionLabPage() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <BlogHeader />
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-10 sm:px-6 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-16 pt-10 sm:px-6 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
           <Link href="/" className="hover:text-ink">
             Index
