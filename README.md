@@ -29,6 +29,8 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 | `/assistant` | Operate | Catalog-grounded research assistant with inline citations |
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
+| `/pricing` | Persuade | The three paid products and what stays free; checkout through the Lemon Squeezy overlay |
+| `/dashboard/account` | Operate | Your plan, status, co-pilot credits, and anything still on sale |
 | `/about` / `/contact` / `/privacy` | Read | Mission, contact channels, reader privacy policy |
 | `/login` | Operate | Email / OAuth sign-in; demo-mode setup guide when Supabase is not configured |
 | `/dashboard/access` | Operate | Connect an ORCID or GitHub identity and apply to write |
@@ -43,6 +45,12 @@ Retired routes (`/papers`, `/paper/[slug]`, `/editions`) return 404; their surfa
 Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
 ## API discovery
+
+Agent authentication is published, not implied: [`/auth.md`](https://researchwith.me/auth.md) is the walkthrough, [`/.well-known/oauth-protected-resource`](https://researchwith.me/.well-known/oauth-protected-resource) is the RFC 9728 protected-resource document, and [`/.well-known/oauth-authorization-server`](https://researchwith.me/.well-known/oauth-authorization-server) (also served at [`/.well-known/openid-configuration`](https://researchwith.me/.well-known/openid-configuration)) relays Supabase's authorization-server metadata plus an Auth.md `agent_auth` block. The relay falls back to a captured copy of that document when the round-trip fails, and labels which it served. No ResearchWithMe API validates a bearer token, so the documents say so and advertise no scopes. See [`docs/oauth-discovery.md`](./docs/oauth-discovery.md).
+
+In the browser, [`public/webmcp.js`](./public/webmcp.js) registers three read-only tools — `search_articles`, `list_categories`, `get_article` — with WebMCP on page load, so an in-tab agent queries the archive instead of scraping it. It registers into both `document.modelContext` (the specification) and `navigator.modelContext` (older preview builds and scanner shims), and does nothing in the browsers that lack the API. See [`docs/webmcp.md`](./docs/webmcp.md).
+
+Outbound bot requests identify themselves with [Web Bot Auth](https://datatracker.ietf.org/wg/webbotauth/about/): [`/.well-known/http-message-signatures-directory`](https://researchwith.me/.well-known/http-message-signatures-directory) serves the Ed25519 JWKS and signs that response over its own authority, and `lib/web-bot-auth.ts` signs each request with `Signature-Agent`, `Signature-Input`, and `Signature` headers. The endpoint returns 503 until a signing key is provisioned — it never advertises a key nobody holds. See [`docs/web-bot-auth.md`](./docs/web-bot-auth.md).
 
 The [API catalog](https://researchwith.me/.well-known/api-catalog) follows RFC 9727 and lists the archive, assistant, and editorial route groups. Its `service-desc` links point to the [OpenAPI 3.1 document](https://researchwith.me/openapi.json), and `service-doc` links point to the [API reference](https://researchwith.me/api-docs). Editor, signed-in, and webhook-secret requirements are documented per operation; publishing the catalog does not grant access. There is no advertised health endpoint.
 
@@ -164,6 +172,14 @@ Environment variables:
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-3.8-flash`. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
+| `LEMONSQUEEZY_API_KEY` | Optional. Secret. Creates checkouts. Without it `/api/billing/checkout` answers `503`. |
+| `LEMONSQUEEZY_WEBHOOK_SECRET` | Optional. Secret. Verifies webhook signatures; without it every delivery is refused. |
+| `BILLING_BRIDGE_SECRET` | Optional. Secret. Also stored (as a SHA-256 digest) in `private.billing_settings`; see `docs/billing.md` §3. |
+| `LEMONSQUEEZY_STORE_ID` | Optional. Store the checkouts belong to. |
+| `LEMONSQUEEZY_VARIANT_TEARDOWN` | Optional. Variant for the $19 teardown product. |
+| `LEMONSQUEEZY_VARIANT_COPILOT` | Optional. Variant for the $9/month co-pilot. |
+| `LEMONSQUEEZY_VARIANT_EDITING` | Optional. Variant for manuscript editing, minimum $150. |
+| `LEMONSQUEEZY_TEST_MODE` | Optional. `1` marks checkouts and stored rows as test data; leave unset in production. |
 
 ## Project layout
 

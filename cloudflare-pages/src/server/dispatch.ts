@@ -12,11 +12,13 @@ import { handleAuthCallback } from './auth';
 import { handleRouteData, ROUTE_DATA_PATH } from './route-data';
 import { dispatchApi } from './api/registry';
 import { authMdResponse } from '@/lib/auth-md';
+import { protectedResourceMetadata } from '@/lib/agent-auth';
 import { oauthDiscoveryResponse } from '@/lib/oauth-discovery';
 import { agentCard } from '@/lib/a2a';
 import { INDEX_PATH, SKILL_PATH, skillsIndexResponse, skillArtifactResponse } from '@/lib/agent-skills';
 import { mcpCardResponse, handleMcp } from '@/lib/mcp';
 import { WEB_BOT_DIRECTORY, webBotDirectoryResponse } from '@/lib/web-bot-auth';
+import { discoverIssuer } from '@/lib/oauth-discovery';
 import { getPublicArticleCatalogue } from './stores';
 import { rateLimit } from './context';
 import { clientKey } from './http';
@@ -71,7 +73,11 @@ export async function handleRequest(
     const response =
       (pathname === '/auth.md' ? authMdResponse(ctx.request.method) : null) ??
       (pathname === WEB_BOT_DIRECTORY
-        ? await webBotDirectoryResponse(ctx.env.WEB_BOT_AUTH_PRIVATE_JWK, ctx.request.method) : null) ??
+        ? await webBotDirectoryResponse(
+            ctx.env.WEB_BOT_AUTH_PRIVATE_JWK,
+            ctx.request.method,
+            new URL(ctx.request.url).host,
+          ) : null) ??
       (pathname === '/.well-known/mcp/server-card.json'
         ? mcpCardResponse(ctx.config.siteUrl, ctx.request.method) : null) ??
       (pathname === '/mcp' ? await (async () => {
@@ -89,8 +95,12 @@ export async function handleRequest(
         ? new Response(ctx.request.method === 'HEAD' ? null : JSON.stringify(agentCard(ctx.config.siteUrl)), {
             headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' },
           }) : null) ??
-      (pathname === '/.well-known/oauth-authorization-server'
-        ? await oauthDiscoveryResponse(ctx.config.supabaseUrl, ctx.request.method) : null) ??
+      (pathname === '/.well-known/oauth-protected-resource'
+        ? protectedResourceMetadata(ctx.config.siteUrl, {
+            issuer: await discoverIssuer(ctx.config.supabaseUrl),
+          }) : null) ??
+      (pathname === '/.well-known/oauth-authorization-server' || pathname === '/.well-known/openid-configuration'
+        ? await oauthDiscoveryResponse(ctx.config.supabaseUrl, ctx.request.method, ctx.config.siteUrl) : null) ??
       (await dispatchApi(ctx)) ??
       (pathname === ROUTE_DATA_PATH
         ? await handleRouteData(ctx)

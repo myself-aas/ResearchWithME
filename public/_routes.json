@@ -1,5 +1,5 @@
 {
   "version": 1,
   "include": ["/*"],
-  "exclude": ["/assets/*", "/images/*", "/fonts/*", "/icon.svg", "/icon.png", "/apple-icon"]
+  "exclude": ["/assets/*", "/images/*", "/fonts/*", "/webmcp.js", "/icon.svg", "/icon.png", "/apple-icon"]
 }

@@ -30,14 +30,74 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - CC BY 4.0 remains the stated content licence.
 
 ### Added
+- WebMCP tools (`public/webmcp.js`): `search_articles`, `list_categories`, and
+  `get_article` registered on page load against `document.modelContext` and,
+  for scanner shims and older preview builds, `navigator.modelContext`. All
+  three are read-only and query the existing `/api/articles` endpoint. Served
+  as a static asset from both the Next.js and Cloudflare Pages builds, with the
+  registration scoped by an `AbortSignal` so tools unregister by aborting.
 - English-only source detector (`lib/__tests__/english-only.test.ts`).
 - Post-cleanup Supabase reconciliation migration
   (`supabase/migrations/20261113000200_reconcile_after_cleanup.sql`) and
   owner runbook (`supabase/MIGRATION-RECONCILE-2026-11-13.md`).
 - Npm-only package-manager enforcement (`packageManager` + preinstall guard).
 - Full-stack Impeccable audit report (`audit-report.md`, score 15/20).
+- Lemon Squeezy billing: `/pricing` and `/dashboard/account` surfaces, a
+  server-created checkout (`app/api/billing/checkout`), the signed webhook
+  (`app/api/webhooks/lemonsqueezy`), and the entitlement read
+  (`app/api/billing/entitlement`). Reading stays un-gated.
+- Billing schema (`supabase/migrations/20261113000300_billing.sql`): customers,
+  subscriptions, orders, and an idempotency log, written through one
+  `SECURITY DEFINER` function guarded by a bridge secret — no service-role key.
+- Lemon.js overlay loading on the two surfaces that sell, with the CSP allowance
+  pinned by a test.
+- Owner runbook for billing configuration and go-live (`docs/billing.md`).
+- Auth.md agent-registration discovery: protected-resource metadata at
+  `/.well-known/oauth-protected-resource`, an `agent_auth` block added to the
+  authorization-server document only when the upstream server is reachable, and
+  a `/auth.md` walkthrough that names the real RFC 7591 registration endpoint
+  rather than inventing `/agent/auth`.
+- CSP allowance for `@supabase/auth-js` on jsDelivr, scoped to the package path,
+  so the Supabase OAuth consent flow is not blocked once that server is enabled.
+- `/.well-known/openid-configuration`, answering from the same implementation as
+  `/.well-known/oauth-authorization-server` so OIDC-first agents find the metadata.
+- A captured-metadata fallback for OAuth discovery (`lib/oauth-metadata.ts`), so a
+  failed upstream round-trip from the Worker no longer reports "no OAuth" about a
+  working configuration. Responses state whether they are live or captured.
 
 ### Fixed
+- OAuth discovery relayed upstream metadata only in theory: it fetched with
+  `redirect: 'error'`, which the Workers runtime rejects outright, so every
+  request threw before it was sent and the snapshot answered `200` in its place.
+  The relayed document was therefore always a week-old capture, and nothing in
+  the response distinguished that from a transient outage. It now uses
+  `redirect: 'manual'`; a 3xx is a failed round-trip. Found by running the built
+  worker, not the unit tests, which cannot see the constraint.
+- The relay and the protected-resource metadata now share one loader
+  (`loadDiscovery`): one fetch, one validation, so they cannot disagree about
+  whether the authorization server is usable.
+- OAuth protected-resource metadata now names the authorization server by the
+  issuer it actually publishes, resolved at request time, instead of pointing
+  `authorization_servers` at this origin. RFC 9728 §3.3 has clients reject
+  metadata whose returned `issuer` differs from the identifier they requested,
+  so the self-reference made the document — including the `agent_auth` block it
+  was meant to deliver — unusable. Supabase serves RFC 8414 at the canonical
+  path, so its issuer is its metadata location. The relay and the PRM now share
+  one validator, and the array is empty rather than guessed when no issuer
+  validates.
+- Web Bot Auth directory responses are now signed, as Cloudflare requires:
+  `tag="http-message-signatures-directory"` over `("@authority";req)`. Without
+  the self-signature a copied JWKS proves nothing about who controls the host.
+  The signature uses the serving host, so preview deployments sign correctly.
+- `Signature-Agent` is emitted as a quoted structured string rather than the
+  dictionary form `sig="…"`, and `signature-agent` is now covered by the
+  signature. Cloudflare rejects both mistakes; a signer that produces headers a
+  verifier refuses is worse than no signer.
+- Dropped the unsupported `key` component parameter and renamed the signature
+  label to `sig1`, matching Cloudflare's parser.
+- The directory's `503` now logs its reason server-side, so a missing secret is
+  distinguishable from a runtime without Ed25519 WebCrypto.
+
 - Mobile search placeholder no longer references "DOI".
 - About/Contact/Privacy/Error/Not-found copy aligned with the truthful
   product story.

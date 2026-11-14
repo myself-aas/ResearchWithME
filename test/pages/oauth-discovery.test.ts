@@ -23,11 +23,20 @@ describe('Supabase OAuth discovery mirror', () => {
     for (const response of [pages, next]) {
       expect(response.status).toBe(200);
       expect(response.headers.get('content-type')).toContain('application/json');
-      expect(await response.json()).toEqual(metadata);
+      // Every upstream field is relayed verbatim — the issuer above all — and the
+      // only addition is the Auth.md `agent_auth` block (see
+      // test/pages/agent-auth-discovery.test.ts). Asserting deep equality on the
+      // whole document would forbid that addition; asserting the upstream subset
+      // keeps the guarantee that matters: nothing is rewritten.
+      const doc = await response.json();
+      expect(doc).toMatchObject(metadata);
+      expect(Object.keys(doc).sort()).toEqual([...Object.keys(metadata), 'agent_auth'].sort());
     }
     expect(fetchMock).toHaveBeenCalledWith(
       new URL(`${FAKE_SUPABASE_URL}/auth/v1/.well-known/oauth-authorization-server`),
-      expect.objectContaining({ redirect: 'error', cache: 'no-store' }),
+      // 'manual', not 'error': workerd rejects 'error' outright, which made the
+      // fetch throw before it was sent and left the relay serving the snapshot.
+      expect.objectContaining({ redirect: 'manual', cache: 'no-store' }),
     );
   });
 
