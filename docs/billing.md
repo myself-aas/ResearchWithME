@@ -255,3 +255,11 @@ migrations) and **no variant ID in a checkout URL** (the blueprint's
 `checkout[buy_now]=...` URL form predates the checkout API; `POST /v1/checkouts`
 with a `variant` relationship is what Lemon Squeezy documents, and it is what
 `lib/billing/checkout.ts` sends).
+
+## Product files
+
+The file a buyer downloads for each product is built from `products/` (`python products/build.py`) into
+`products/downloads/`. Upload the zip to the product in the Lemon Squeezy store; the site does not store or serve
+it. Only The Teardown System is in the catalogue. The other six zips are for planned products and must not be
+listed until the release checklist in `docs/superpowers/specs/2026-11-14-product-catalogue-prd.md` (section 6) is
+done for each.

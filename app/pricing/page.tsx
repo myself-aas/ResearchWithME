@@ -41,7 +41,7 @@ const QUESTIONS: readonly { question: string; answer: React.ReactNode }[] = [
   {
     question: 'Is there a subscription?',
     answer:
-      'No. The Teardown System is one payment and there is no renewal. The Research Co-Pilot membership is no longer sold; if you still hold one, write to us and we will sort it out.',
+      'No. The Teardown System is one payment and there is no renewal.',
   },
   {
     question: 'How do refunds work?',
