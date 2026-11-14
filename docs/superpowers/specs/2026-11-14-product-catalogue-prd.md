@@ -84,7 +84,7 @@ One store, one payment provider, three one-time purchases, and two free download
 | --- | --- | --- | --- |
 | **The Teardown System** | $19 | P1 | Files built. Shown on the site. No store product, so it cannot be bought. |
 | **Manuscript Check** | $5 | P15 Manuscript Check, P17 Reference Check, P18 Response-to-Reviewers Check | Files built and tested. Held for the provider's reply. |
-| **Statistical Table Generator** | $5 **[Assumption]** | P10, full edition | Files built and tested. Not listed. |
+| **Statistical Table Generator** | $5 once (owner, 2026-11-14) | P10, full edition | Files built and tested. Not listed. |
 | **Manuscript Check, free edition** | Free | The same three programs, with limits | **On the site** at `/pricing` since 2026-11-14 (owner's decision). |
 | **Research Toolkit** | Free | P10 in its free edition, P7 Manuscript Formatting Kit, P8 Journal Shortlist Workbook | **On the site** at `/pricing` since 2026-11-14. |
 
@@ -98,7 +98,7 @@ Competitor figures were seen in search results on 2026-11-14, mostly in third-pa
 | --- | --- | --- | --- | --- |
 | Manuscript Check | Recite, $6 for three days of access. Penelope.ai, $9.50 for one report. | $5, once, to keep | Recite: the first 2,500 words and 50 references, two uploads a day. Penelope.ai: a basic analysis. | Four manuscript checks on the whole manuscript; 60 references a run with retraction flags; no limit on runs; the reviewer-comment splitter, letter template, and tracker. |
 | Research Toolkit: tables | None needed: JASP and jamovi are free. | Free | Everything | Descriptive statistics, correlation matrices, and t tests, with no limit on data or runs. |
-| Statistical Table Generator, full | The free programs above. SPSS is the paid one, at about $99 a month or more. | $5 **[Assumption]** | | The owner decided on 2026-11-14 that the complete version is charged for. It adds 18 commands (ANOVA family, non-parametric tests, exact tests, linear and logistic regression, reliability, normality) and vector figures. It cannot undercut free programs that do more, so the rule gives no figure; $5 matches Manuscript Check and awaits the owner's confirmation. |
+| Statistical Table Generator, full | The free programs above. SPSS is the paid one, at about $99 a month or more. | $5 once (owner, 2026-11-14) | | The owner decided on 2026-11-14 that the complete version is charged for. It adds 18 commands (ANOVA family, non-parametric tests, exact tests, linear and logistic regression, reliability, normality) and vector figures. It cannot undercut free programs that do more, so the rule gives no figure; $5 matches Manuscript Check and awaits the owner's confirmation. |
 | Research Toolkit: formatting | Single templates on Etsy from $1.50. | Free | Nothing found | Four templates and the checklist. |
 | Research Toolkit: journals | None needed: the journal finders are free. | Free | Everything | The whole workbook. |
 | The Teardown System | None found. | $19, unchanged | | Nothing new. With no alternative to undercut, the rule does not apply; the price is the owner's. |
@@ -278,7 +278,7 @@ Items 4 and 5 do not apply to free downloads. In their place: the zip is in the 
 | 0 | Sell The Teardown System: checklist items 1, 2, and 5. A test-mode purchase end to end. | Owner's review; store setup |
 | 1 | Send the support message for Manuscript Check. | Nothing; do it during phase 0, since the reply takes time |
 | 2 | **Done 2026-11-14.** Both free downloads are on `/pricing`. The owner chose to publish before his review of the files and before the reference program's first live run; both remain to be done, and a fault found then is fixed by replacing the file. | |
-| 3 | List the paid Statistical Table Generator once its price is confirmed. | Phase 0; the price |
+| 3 | List the paid Statistical Table Generator. Its price is confirmed at $5. | Phase 0; a store product and variant |
 | 4 | List the paid Manuscript Check. | The provider's reply |
 
 No dates are given. One person does this work beside the archive itself.
@@ -395,5 +395,5 @@ Also out:
 
 ### 9.4 Questions only the owner can answer
 
-1. The price of the full Statistical Table Generator.
+1. ~~The price of the full Statistical Table Generator.~~ Decided on 2026-11-14: $5, paid once.
 2. Whether the Teardown System guide describes the method as he practises it.

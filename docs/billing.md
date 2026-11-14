@@ -261,7 +261,7 @@ with a `variant` relationship is what Lemon Squeezy documents, and it is what
 The files for every download are built from `products/` (`python products/build.py`) into `products/downloads/`.
 
 - Paid, uploaded to their product in the Lemon Squeezy store: The Teardown System ($19), Manuscript Check ($5),
-  and the full Statistical Table Generator ($5, to be confirmed). Only The Teardown System is in the catalogue.
+  and the full Statistical Table Generator ($5). Only The Teardown System is in the catalogue.
   Manuscript Check waits for Lemon Squeezy's written reply.
 - Free, served by the site from `public/downloads` and listed on `/pricing` with no checkout and no account:
   the free edition of Manuscript Check and the Research Toolkit.
