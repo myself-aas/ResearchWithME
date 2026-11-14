@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
+  Alerts,
   Change,
   DashboardFooter,
   DashboardHeader,
@@ -17,13 +18,17 @@ import { primaryButtonClass, secondaryButtonClass } from '@/components/cms/style
 import { getDashboardUser } from '@/lib/cms/auth';
 import { loadStudioData, loadWriterIdentity } from '@/lib/dashboard/data';
 import {
+  DEFINITIONS,
   STALLED_DRAFT_DAYS,
   buildWriterMetrics,
+  compare,
   comparisonText,
   describeGaps,
+  leadTimeText,
   parsePeriod,
   plural,
   publishingInsight,
+  writerAlerts,
   type ArticleRow,
   type DraftRow,
 } from '@/lib/dashboard/metrics';
@@ -111,25 +116,17 @@ export default async function MyWritingPage({
           <span className="font-semibold">{identity.displayName}</span>.
         </p>
       )}
-      {!identity.published && (
-        <p role="status" className="mt-5 border-l-2 border-trust-uncertain bg-surface px-4 py-3 text-sm leading-relaxed text-ink">
-          <span className="font-semibold">Your author profile is not published.</span> Drafts can be saved, but an
-          article cannot be published under an unpublished profile.{' '}
-          <Link href="/dashboard/access" className="font-semibold underline underline-offset-4">
-            Open your profile
-          </Link>
-          .
-        </p>
-      )}
       {!studio.ok && (
         <p role="alert" className="mt-5 border-l-2 border-destructive bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
           The archive could not be read, so the figures below are empty rather than zero. Refresh to try again.
         </p>
       )}
 
-      <KpiGrid label="Headline figures">
+      <KpiGrid label="Headline figures" columns={5}>
         <Kpi
           lead
+          wide
+          definition={DEFINITIONS.drafts}
           label="Drafts in progress"
           value={String(metrics.totals.drafts)}
           comparison={
@@ -155,12 +152,34 @@ export default async function MyWritingPage({
         <Kpi
           label={`Published, last ${period.noun}`}
           value={String(metrics.published.current)}
+          definition={DEFINITIONS.published}
+          spark={metrics.trend}
           comparison={<Change comparison={metrics.published} text={comparisonText(metrics.published, period)} />}
           action={{ href: '/dashboard', label: 'New article' }}
         />
         <Kpi
+          label="Days from first save to publication"
+          value={metrics.leadTime.current === null ? '—' : String(metrics.leadTime.current)}
+          definition={DEFINITIONS.leadTime}
+          comparison={
+            metrics.leadTime.current !== null && metrics.leadTime.previous !== null ? (
+              <>
+                <Change
+                  comparison={compare(metrics.leadTime.current, metrics.leadTime.previous)}
+                  text={leadTimeText(metrics.leadTime, period)}
+                  upIs="bad"
+                />
+                <span className="mt-1 block">Median of {plural(metrics.leadTime.sample, 'article')}.</span>
+              </>
+            ) : (
+              leadTimeText(metrics.leadTime, period)
+            )
+          }
+        />
+        <Kpi
           label="Likes per article"
           value={mine === null ? '—' : String(mine)}
+          definition={DEFINITIONS.likesPerArticle}
           comparison={
             mine === null ? (
               'Counted once you have a published article.'
@@ -181,12 +200,16 @@ export default async function MyWritingPage({
         <Kpi
           label={`Comments on my articles, last ${period.noun}`}
           value={String(metrics.comments.current)}
+          definition={DEFINITIONS.comments}
+          spark={metrics.commentTrend}
           comparison={
             <Change comparison={metrics.comments} text={comparisonText(metrics.comments, period)} upIs="neutral" />
           }
           action={{ href: '/dashboard/comments', label: 'Read comments' }}
         />
       </KpiGrid>
+
+      <Alerts alerts={writerAlerts(metrics, identity.published)} clear="Nothing is waiting on you" />
 
       <div id="drafts" className="mt-10 scroll-mt-6">
         <Panel

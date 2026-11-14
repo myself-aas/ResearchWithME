@@ -290,7 +290,9 @@ export interface PendingApplicationRow {
 export interface DeskMetrics {
   published: Comparison;
   comments: Comparison;
+  leadTime: LeadTime;
   trend: TrendBucket[];
+  commentTrend: TrendBucket[];
   coverage: RankedRow[];
   drafts: DraftRow[];
   stalledDrafts: number;
@@ -339,7 +341,13 @@ export function buildDeskMetrics(input: {
       comments.map((comment) => comment.insertedAt),
       window,
     ),
+    leadTime: leadTime(posts, window),
     trend: trendSeries(publishedDates, now, period),
+    commentTrend: trendSeries(
+      comments.map((comment) => comment.insertedAt),
+      now,
+      period,
+    ),
     coverage: categoryCoverage(published, window),
     drafts,
     stalledDrafts: drafts.filter((draft) => draft.stalled).length,
@@ -362,7 +370,9 @@ export interface ArticleRow {
 export interface WriterMetrics {
   published: Comparison;
   comments: Comparison;
+  leadTime: LeadTime;
   trend: TrendBucket[];
+  commentTrend: TrendBucket[];
   drafts: DraftRow[];
   stalledDrafts: number;
   /** Drafts with nothing left to add. */
@@ -413,8 +423,14 @@ export function buildWriterMetrics(input: {
       myComments.map((comment) => comment.insertedAt),
       window,
     ),
+    leadTime: leadTime(mine, window),
     trend: trendSeries(
       published.map((post) => post.publishedAt),
+      now,
+      period,
+    ),
+    commentTrend: trendSeries(
+      myComments.map((comment) => comment.insertedAt),
       now,
       period,
     ),
@@ -455,6 +471,7 @@ export interface ReadingArticle {
 
 export interface ReadingMetrics {
   published: Comparison;
+  trend: TrendBucket[];
   coverage: RankedRow[];
   /** Articles published in the selected period, newest first. */
   recent: ReadingArticle[];
@@ -479,6 +496,11 @@ export function buildReadingMetrics(input: {
     published: comparePeriods(
       articles.map((article) => article.publishedAt),
       window,
+    ),
+    trend: trendSeries(
+      articles.map((article) => article.publishedAt),
+      now,
+      period,
     ),
     coverage: categoryCoverage(articles, window),
     recent,
@@ -534,3 +556,170 @@ export function coverageInsight(rows: RankedRow[], period: Period): string {
   if (empty === 0) return lead;
   return `${lead}; ${plural(empty, 'discipline')} had none`;
 }
+
+/* -------------------------------------------------------------------------- */
+/* Lead time                                                                  */
+/* -------------------------------------------------------------------------- */
+
+export interface LeadTime {
+  /** Median days from first save to publication; null when nothing was published. */
+  current: number | null;
+  previous: number | null;
+  /** Articles behind `current`, so a median of one is not mistaken for a trend. */
+  sample: number;
+}
+
+function median(values: number[]): number | null {
+  if (values.length === 0) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  const value = sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+  return Math.round(value);
+}
+
+/**
+ * How long an article takes to go from its first save in the studio to
+ * publication. A process figure the desk controls, unlike reader response.
+ */
+export function leadTime(posts: CmsPost[], window: PeriodWindow): LeadTime {
+  const current: number[] = [];
+  const previous: number[] = [];
+  for (const post of posts) {
+    if (post.status !== 'published') continue;
+    const published = timeOf(post.publishedAt);
+    const started = timeOf(post.insertedAt);
+    if (published === null || started === null || published >= window.end) continue;
+    const days = Math.max(0, (published - started) / DAY_MS);
+    if (published >= window.start) current.push(days);
+    else if (published >= window.previousStart) previous.push(days);
+  }
+  return { current: median(current), previous: median(previous), sample: current.length };
+}
+
+export function leadTimeText(value: LeadTime, period: Period): string {
+  if (value.current === null) return `Nothing was published in the last ${period.noun}.`;
+  if (value.previous === null) return `No article in the previous ${period.noun} to compare with.`;
+  const delta = value.current - value.previous;
+  if (delta === 0) return `Same as the previous ${period.noun}`;
+  return `${plural(Math.abs(delta), 'day')} ${delta < 0 ? 'faster' : 'slower'} than the previous ${period.noun}`;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Alerts                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * True when `current` is well above its own recent baseline: more than two
+ * standard deviations over the mean of `history`, and by at least two in
+ * absolute terms so that 0 -> 1 on a quiet desk is not called a spike. A
+ * moving baseline, because a fixed threshold is either always or never firing.
+ */
+export function isUnusuallyHigh(current: number, history: number[]): boolean {
+  if (history.length < 4) return false;
+  const mean = history.reduce((sum, value) => sum + value, 0) / history.length;
+  const variance = history.reduce((sum, value) => sum + (value - mean) ** 2, 0) / history.length;
+  return current - mean > 2 * Math.sqrt(variance) && current - mean >= 2;
+}
+
+export interface DashboardAlert {
+  /** `alert`: a target has been missed. `caution`: worth a look before it is. */
+  severity: 'alert' | 'caution';
+  text: string;
+  action: { href: string; label: string };
+}
+
+function bySeverity(alerts: DashboardAlert[]): DashboardAlert[] {
+  return [...alerts].sort((a, b) => Number(b.severity === 'alert') - Number(a.severity === 'alert'));
+}
+
+export function deskAlerts(metrics: DeskMetrics, period: Period): DashboardAlert[] {
+  const alerts: DashboardAlert[] = [];
+  const overdue = metrics.pendingApplications?.filter((row) => row.overdue).length ?? 0;
+
+  if (overdue > 0) {
+    alerts.push({
+      severity: 'alert',
+      text: `${plural(overdue, 'writer application')} ${overdue === 1 ? 'has' : 'have'} waited more than ${APPLICATION_TARGET_DAYS} days for a decision; the oldest, ${plural(metrics.oldestApplicationDays ?? 0, 'day')}.`,
+      action: { href: '/dashboard/applications', label: 'Review applications' },
+    });
+  }
+  if (metrics.published.current === 0 && metrics.published.previous > 0) {
+    alerts.push({
+      severity: 'alert',
+      text: `Nothing was published in the last ${period.noun}, after ${plural(metrics.published.previous, 'article')} in the ${period.noun} before.`,
+      action: { href: '/dashboard/manage', label: 'Open articles' },
+    });
+  }
+  if (metrics.stalledDrafts > 0) {
+    const ready = metrics.drafts.filter((draft) => draft.stalled && draft.gaps.length === 0).length;
+    alerts.push({
+      severity: 'caution',
+      text:
+        `${plural(metrics.stalledDrafts, 'draft')} ${metrics.stalledDrafts === 1 ? 'has' : 'have'} not been edited in ${STALLED_DRAFT_DAYS} days` +
+        (ready > 0 ? `; ${ready} of them ${ready === 1 ? 'is' : 'are'} complete and could be published.` : '.'),
+      action: { href: '#drafts', label: 'See the drafts' },
+    });
+  }
+  const latest = metrics.commentTrend.at(-1)?.count ?? 0;
+  const history = metrics.commentTrend.slice(0, -1).map((bucket) => bucket.count);
+  if (isUnusuallyHigh(latest, history)) {
+    const usual = Math.round((history.reduce((sum, value) => sum + value, 0) / history.length) * 10) / 10;
+    alerts.push({
+      severity: 'caution',
+      text: `Comments are unusually high: ${latest} in the last ${period.bucketDays} days, against a usual ${usual}.`,
+      action: { href: '/dashboard/comments', label: 'Moderate comments' },
+    });
+  }
+  return bySeverity(alerts);
+}
+
+export function writerAlerts(metrics: WriterMetrics, profilePublished: boolean): DashboardAlert[] {
+  const alerts: DashboardAlert[] = [];
+  if (!profilePublished) {
+    alerts.push({
+      severity: 'alert',
+      text: 'Your author profile is not published, so nothing can be published under your byline.',
+      action: { href: '/dashboard/access', label: 'Open your profile' },
+    });
+  }
+  if (metrics.readyDrafts > 0) {
+    alerts.push({
+      severity: 'caution',
+      text: `${plural(metrics.readyDrafts, 'draft')} ${metrics.readyDrafts === 1 ? 'is' : 'are'} complete and waiting to be published.`,
+      action: { href: '#drafts', label: 'See the drafts' },
+    });
+  }
+  const stalledUnfinished = metrics.drafts.filter((draft) => draft.stalled && draft.gaps.length > 0).length;
+  if (stalledUnfinished > 0) {
+    alerts.push({
+      severity: 'caution',
+      text: `${plural(stalledUnfinished, 'unfinished draft')} ${stalledUnfinished === 1 ? 'has' : 'have'} not been edited in ${STALLED_DRAFT_DAYS} days.`,
+      action: { href: '#drafts', label: 'See what is missing' },
+    });
+  }
+  return bySeverity(alerts);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Definitions                                                                */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * One definition per figure, shown on its card. The desk and writing
+ * dashboards read the same entry, so "published" cannot mean two things.
+ */
+export const DEFINITIONS = {
+  applications: `Writer applications whose status is pending. The wait is counted from the latest submission, so applying again restarts it. Target: a decision within ${APPLICATION_TARGET_DAYS} days.`,
+  published:
+    'Articles that are published now and whose publication date falls in the period (UTC). An article reverted to a draft is not counted.',
+  stalledDrafts: `Drafts whose last save was ${STALLED_DRAFT_DAYS} or more days ago. Target: none.`,
+  drafts: `Articles with the status draft. One is idle when its last save was ${STALLED_DRAFT_DAYS} or more days ago, and ready when it has a body of 200 characters, a summary, a key takeaway, a cover image, and a reviewed work.`,
+  leadTime:
+    'Median days between an article’s first save in the studio and its publication, for articles published in the period. Lower is faster.',
+  comments: 'Comments posted in the period (UTC). Deleted comments are not counted.',
+  likesPerArticle:
+    'Likes on your published articles divided by the number of them, compared with the same figure for every other writer’s published articles. Likes carry no date, so this is all time.',
+  readingList:
+    'Articles saved with the bookmark control in this browser that are still in the archive. Reading time is the sum of each article’s estimate.',
+  access: 'Reader until a writer application is approved. Reading is not limited by this.',
+} as const;

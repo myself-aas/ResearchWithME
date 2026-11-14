@@ -21,6 +21,7 @@ Three headline figures, not four: reading list (lead), new in the archive, accou
 ## Constraints
 - Uses the shared platform masthead and footer and the dashboard sidebar; no bespoke chrome.
 - Every headline figure carries a comparison (previous period or a stated target) and a link to where the action is taken. A figure that cannot be read shows a dash and a reason, never zero.
+- Each figure carries a "How this is counted" disclosure fed from the single `DEFINITIONS` registry in `lib/dashboard/metrics.ts`, so one metric never has two meanings across dashboards.
 - One period filter (4, 12, 52 weeks; default 4) drives every panel and lives in the URL. No automatic refresh.
 - Status is a dot plus a word; red is reserved for a missed target. Bars are labelled with their values and repeated as a screen-reader table.
 - Server-rendered and static: no animation of measurements. Tables scroll inside their own region; the page does not scroll sideways at 320px.

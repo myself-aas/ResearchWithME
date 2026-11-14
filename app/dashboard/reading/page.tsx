@@ -13,6 +13,7 @@ import {
 import { getDashboardUser } from '@/lib/cms/auth';
 import { loadApplicationState, loadReadingArticles, type ApplicationState } from '@/lib/dashboard/data';
 import {
+  DEFINITIONS,
   buildReadingMetrics,
   comparisonText,
   coverageInsight,
@@ -124,12 +125,15 @@ export default async function MyReadingPage({
         <Kpi
           label={`New in the archive, last ${period.noun}`}
           value={String(metrics.published.current)}
+          definition={DEFINITIONS.published}
+          spark={metrics.trend}
           comparison={<Change comparison={metrics.published} text={comparisonText(metrics.published, period)} />}
           action={{ href: '#new', label: 'See the new articles' }}
         />
         <Kpi
           label="Account access"
           value={access.value}
+          definition={DEFINITIONS.access}
           comparison={
             <>
               <StatusLabel tone={access.tone}>{access.status}</StatusLabel>

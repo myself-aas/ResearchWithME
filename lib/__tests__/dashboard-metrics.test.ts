@@ -12,13 +12,18 @@ import {
   comparePeriods,
   comparisonText,
   coverageInsight,
+  deskAlerts,
   draftGaps,
   formatMinutes,
+  isUnusuallyHigh,
+  leadTime,
+  leadTimeText,
   parsePeriod,
   parseReadMinutes,
   periodWindow,
   publishingInsight,
   trendSeries,
+  writerAlerts,
   type ReadingArticle,
 } from '@/lib/dashboard/metrics';
 
@@ -271,5 +276,87 @@ describe('copy helpers', () => {
     expect(formatMinutes(44)).toBe('44 min');
     expect(formatMinutes(95)).toBe('1 h 35 min');
     expect(formatMinutes(120)).toBe('2 h');
+  });
+});
+
+describe('leadTime', () => {
+  it('takes the median days from first save to publication, per period', () => {
+    const posts = [
+      post({ insertedAt: ago(12), publishedAt: ago(2) }), // 10 days
+      post({ insertedAt: ago(9), publishedAt: ago(5) }), // 4 days
+      post({ insertedAt: ago(30), publishedAt: ago(10) }), // 20 days
+      post({ insertedAt: ago(46), publishedAt: ago(40) }), // previous period: 6 days
+      post({ status: 'draft', insertedAt: ago(90), publishedAt: null }),
+    ];
+    const value = leadTime(posts, periodWindow(NOW, DEFAULT_PERIOD));
+    expect(value).toEqual({ current: 10, previous: 6, sample: 3 });
+    expect(leadTimeText(value, DEFAULT_PERIOD)).toBe('4 days slower than the previous 4 weeks');
+  });
+
+  it('has no figure when nothing was published', () => {
+    const value = leadTime([], periodWindow(NOW, DEFAULT_PERIOD));
+    expect(value.current).toBeNull();
+    expect(leadTimeText(value, DEFAULT_PERIOD)).toBe('Nothing was published in the last 4 weeks.');
+  });
+});
+
+describe('isUnusuallyHigh', () => {
+  it('needs a baseline, a real deviation, and an absolute jump', () => {
+    expect(isUnusuallyHigh(9, [1, 2])).toBe(false); // too little history
+    expect(isUnusuallyHigh(1, [0, 0, 0, 0])).toBe(false); // 0 -> 1 is not a spike
+    expect(isUnusuallyHigh(3, [1, 2, 1, 2, 1])).toBe(false); // +1.6: under the absolute jump
+    expect(isUnusuallyHigh(4, [0, 4, 0, 4, 0, 4])).toBe(false); // within its own spread
+    expect(isUnusuallyHigh(9, [1, 2, 1, 2, 1])).toBe(true);
+  });
+});
+
+describe('alerts', () => {
+  it('raises nothing on a healthy desk', () => {
+    const metrics = buildDeskMetrics({
+      posts: [post({ publishedAt: ago(2) })],
+      comments: [],
+      applications: [],
+      now: NOW,
+      period: DEFAULT_PERIOD,
+    });
+    expect(deskAlerts(metrics, DEFAULT_PERIOD)).toEqual([]);
+  });
+
+  it('puts missed targets ahead of things to check', () => {
+    const metrics = buildDeskMetrics({
+      posts: [
+        post({ publishedAt: ago(40) }),
+        post({ status: 'draft', publishedAt: null, updatedAt: ago(20) }),
+      ],
+      comments: [],
+      applications: [application(1, 'pending', APPLICATION_TARGET_DAYS + 3)],
+      now: NOW,
+      period: DEFAULT_PERIOD,
+    });
+    const alerts = deskAlerts(metrics, DEFAULT_PERIOD);
+    expect(alerts.map((alert) => alert.severity)).toEqual(['alert', 'alert', 'caution']);
+    expect(alerts[0].text).toContain('1 writer application has waited more than 7 days');
+    expect(alerts[1].text).toContain('Nothing was published in the last 4 weeks');
+    expect(alerts[2].text).toBe('1 draft has not been edited in 14 days; 1 of them is complete and could be published.');
+  });
+
+  it('flags a comment spike against the desk’s own baseline', () => {
+    const p = post({ publishedAt: ago(2) });
+    const steady = [50, 43, 36, 29, 22, 15, 8].map((days) => comment(p.id, days));
+    const spike = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6].map((days) => comment(p.id, days));
+    const metrics = buildDeskMetrics({ posts: [p], comments: [...steady, ...spike], applications: [], now: NOW, period: DEFAULT_PERIOD });
+    expect(deskAlerts(metrics, DEFAULT_PERIOD).map((alert) => alert.action.href)).toEqual(['/dashboard/comments']);
+  });
+
+  it('tells a writer about an unpublished profile first', () => {
+    const metrics = buildWriterMetrics({
+      posts: [post({ status: 'draft', publishedAt: null }), post({ status: 'draft', publishedAt: null, summary: '', updatedAt: ago(30) })],
+      comments: [],
+      authorId: 'writer-a',
+      now: NOW,
+      period: DEFAULT_PERIOD,
+    });
+    expect(writerAlerts(metrics, false).map((alert) => alert.severity)).toEqual(['alert', 'caution', 'caution']);
+    expect(writerAlerts(metrics, true)).toHaveLength(2);
   });
 });

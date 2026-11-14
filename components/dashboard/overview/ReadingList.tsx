@@ -10,7 +10,7 @@
  */
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { formatMinutes, plural, type Period, type ReadingArticle } from '@/lib/dashboard/metrics';
+import { DEFINITIONS, formatMinutes, plural, type Period, type ReadingArticle } from '@/lib/dashboard/metrics';
 import { formatDate } from '@/lib/format';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
 import { DetailTable, Kpi, Panel, StatusLabel } from './primitives';
@@ -41,6 +41,7 @@ export function ReadingListKpi({ articles }: { articles: ReadingArticle[] }) {
       lead
       label="On your reading list"
       value={hydrated ? String(saved.length) : '—'}
+      definition={DEFINITIONS.readingList}
       comparison={
         !hydrated ? (
           'Reading the list saved in this browser.'

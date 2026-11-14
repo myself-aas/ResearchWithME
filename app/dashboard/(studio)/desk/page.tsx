@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
+  Alerts,
   Change,
   DashboardFooter,
   DashboardHeader,
@@ -16,11 +17,15 @@ import {
 import { loadApplications, loadStudioData } from '@/lib/dashboard/data';
 import {
   APPLICATION_TARGET_DAYS,
+  DEFINITIONS,
   STALLED_DRAFT_DAYS,
   buildDeskMetrics,
+  compare,
   comparisonText,
   coverageInsight,
   describeGaps,
+  deskAlerts,
+  leadTimeText,
   parsePeriod,
   plural,
   publishingInsight,
@@ -81,9 +86,11 @@ export default async function DeskOverviewPage({
         </p>
       )}
 
-      <KpiGrid label="Headline figures">
+      <KpiGrid label="Headline figures" columns={5}>
         <Kpi
           lead
+          wide
+          definition={DEFINITIONS.applications}
           label="Applications awaiting a decision"
           value={pending ? String(pending.length) : '—'}
           comparison={
@@ -107,12 +114,15 @@ export default async function DeskOverviewPage({
         <Kpi
           label={`Published, last ${period.noun}`}
           value={String(metrics.published.current)}
+          definition={DEFINITIONS.published}
+          spark={metrics.trend}
           comparison={<Change comparison={metrics.published} text={comparisonText(metrics.published, period)} />}
           action={{ href: '/dashboard/manage', label: 'Open articles' }}
         />
         <Kpi
           label={`Drafts idle ${STALLED_DRAFT_DAYS}+ days`}
           value={String(metrics.stalledDrafts)}
+          definition={DEFINITIONS.stalledDrafts}
           comparison={
             <>
               <StatusLabel tone={metrics.stalledDrafts > 0 ? 'caution' : 'good'}>
@@ -124,14 +134,37 @@ export default async function DeskOverviewPage({
           action={{ href: '#drafts', label: 'See the drafts' }}
         />
         <Kpi
+          label="Days from first save to publication"
+          value={metrics.leadTime.current === null ? '—' : String(metrics.leadTime.current)}
+          definition={DEFINITIONS.leadTime}
+          comparison={
+            metrics.leadTime.current !== null && metrics.leadTime.previous !== null ? (
+              <>
+                <Change
+                  comparison={compare(metrics.leadTime.current, metrics.leadTime.previous)}
+                  text={leadTimeText(metrics.leadTime, period)}
+                  upIs="bad"
+                />
+                <span className="mt-1 block">Median of {plural(metrics.leadTime.sample, 'article')}.</span>
+              </>
+            ) : (
+              leadTimeText(metrics.leadTime, period)
+            )
+          }
+        />
+        <Kpi
           label={`Comments, last ${period.noun}`}
           value={String(metrics.comments.current)}
+          definition={DEFINITIONS.comments}
+          spark={metrics.commentTrend}
           comparison={
             <Change comparison={metrics.comments} text={comparisonText(metrics.comments, period)} upIs="neutral" />
           }
           action={{ href: '/dashboard/comments', label: 'Moderate comments' }}
         />
       </KpiGrid>
+
+      <Alerts alerts={deskAlerts(metrics, period)} clear="No target is missed and no queue is waiting" />
 
       <div className="mt-10 grid grid-cols-1 gap-x-10 gap-y-10 lg:grid-cols-5">
         <Panel

@@ -15,6 +15,12 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   archive, writer application state). One period filter (4 / 12 / 52 weeks)
   drives every panel; every headline figure is compared with the previous
   period or a stated target. Metric maths lives in `lib/dashboard/metrics.ts`.
+- Dashboard refinements from the `kpi-dashboard-design` skill: a "Needs
+  attention" list under the headline figures (missed targets first, each
+  linked to its fix), a "How this is counted" definition on every figure from
+  one shared registry, card sparklines, a fifth process figure on the desk and
+  writing dashboards (median days from first save to publication), and a
+  comment-spike alert that uses the desk's own moving baseline.
 - Dashboard sidebar is grouped into Overview and Studio (or Account for
   readers). Demo mode, whose studio is open, now shows the studio set.
 

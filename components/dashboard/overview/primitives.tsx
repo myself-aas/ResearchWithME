@@ -15,7 +15,15 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { ArrowDownRight, ArrowRight, ArrowUpRight, Minus, RotateCw } from 'lucide-react';
-import { PERIODS, plural, type Comparison, type Period, type RankedRow, type TrendBucket } from '@/lib/dashboard/metrics';
+import {
+  PERIODS,
+  plural,
+  type Comparison,
+  type DashboardAlert,
+  type Period,
+  type RankedRow,
+  type TrendBucket,
+} from '@/lib/dashboard/metrics';
 import { cn } from '@/lib/utils';
 
 export type Tone = 'good' | 'caution' | 'alert' | 'neutral';
@@ -114,15 +122,15 @@ export function KpiGrid({
 }: {
   children: ReactNode;
   label: string;
-  /** Four for the operational dashboards, three for the reader's. */
-  columns?: 3 | 4;
+  /** Three for the reader's dashboard; five puts a wide lead figure above two rows. */
+  columns?: 3 | 4 | 5;
 }) {
   return (
     <section aria-label={label} className="mt-6">
       <ul
         className={cn(
           'grid gap-px overflow-hidden rounded-lg border border-line bg-line',
-          columns === 3 ? 'md:grid-cols-3' : 'sm:grid-cols-2 xl:grid-cols-4',
+          columns === 3 ? 'md:grid-cols-3' : columns === 5 ? 'sm:grid-cols-2 xl:grid-cols-3' : 'sm:grid-cols-2 xl:grid-cols-4',
         )}
       >
         {children}
@@ -138,12 +146,34 @@ interface KpiProps {
   comparison: ReactNode;
   /** The lead figure of the dashboard: larger, and first in reading order. */
   lead?: boolean;
+  /** Spans two columns. Used for the lead figure when a grid holds five. */
+  wide?: boolean;
+  /** How the figure is counted, shown on the card on request. */
+  definition?: string;
+  /** The figure's own history: previous period in grey, selected period in brand. */
+  spark?: TrendBucket[];
   action?: { href: string; label: string };
 }
 
-export function Kpi({ label, value, comparison, lead = false, action }: KpiProps) {
+/** A trend indicator sized for a card. Decorative: the full chart and its table are below. */
+function Sparkline({ buckets }: { buckets: TrendBucket[] }) {
+  const max = Math.max(1, ...buckets.map((bucket) => bucket.count));
   return (
-    <li className="flex min-w-0 flex-col bg-surface-raised p-5">
+    <span aria-hidden="true" className="mt-3 flex h-6 items-end gap-0.5">
+      {buckets.map((bucket) => (
+        <span
+          key={bucket.startISO}
+          className={cn('block max-w-3 flex-1 rounded-t-sm', bucket.inPeriod ? 'bg-brand' : 'bg-border-strong')}
+          style={{ height: bucket.count === 0 ? '1px' : `${Math.max(12, (bucket.count / max) * 100)}%` }}
+        />
+      ))}
+    </span>
+  );
+}
+
+export function Kpi({ label, value, comparison, lead = false, wide = false, definition, spark, action }: KpiProps) {
+  return (
+    <li className={cn('flex min-w-0 flex-col bg-surface-raised p-5', wide && 'sm:col-span-2')}>
       <p className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">{label}</p>
       <p
         className={cn(
@@ -153,17 +183,29 @@ export function Kpi({ label, value, comparison, lead = false, action }: KpiProps
       >
         {value}
       </p>
+      {spark && <Sparkline buckets={spark} />}
       <div className="mt-3 font-sans text-sm leading-snug text-ink-secondary">{comparison}</div>
-      {action && (
-        <p className="mt-auto pt-4">
-          <Link
-            href={action.href}
-            className="inline-flex min-h-10 items-center gap-1.5 font-sans text-sm font-semibold text-ink underline decoration-border-strong underline-offset-4 hover:decoration-ink"
-          >
-            {action.label}
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </p>
+      {(action || definition) && (
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 pt-3">
+          {action && (
+            <Link
+              href={action.href}
+              className="inline-flex min-h-10 items-center gap-1.5 font-sans text-sm font-semibold text-ink underline decoration-border-strong underline-offset-4 hover:decoration-ink"
+            >
+              {action.label}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          )}
+          {definition && (
+            // Closed, it sits beside the action; open, it takes its own line.
+            <details className="font-sans text-sm text-ink-secondary open:basis-full">
+              <summary className="inline-flex min-h-10 cursor-pointer items-center underline decoration-border-strong underline-offset-4 hover:text-ink">
+                How this is counted
+              </summary>
+              <p className="max-w-prose pb-1 leading-relaxed">{definition}</p>
+            </details>
+          )}
+        </div>
       )}
     </li>
   );
@@ -181,13 +223,14 @@ export function Change({
 }: {
   comparison: Comparison;
   text: string;
-  upIs?: 'good' | 'neutral';
+  /** `bad` for figures where lower is better, such as days to publication. */
+  upIs?: 'good' | 'neutral' | 'bad';
 }) {
   const Icon = comparison.direction === 'up' ? ArrowUpRight : comparison.direction === 'down' ? ArrowDownRight : Minus;
   const tone =
     upIs === 'neutral' || comparison.direction === 'flat'
       ? 'text-ink-secondary'
-      : comparison.direction === 'up'
+      : (comparison.direction === 'up') === (upIs === 'good')
         ? 'text-success'
         : 'text-ink';
   return (
@@ -195,6 +238,46 @@ export function Change({
       <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', tone)} aria-hidden="true" />
       <span>{text}</span>
     </span>
+  );
+}
+
+/**
+ * What needs attention, most serious first, each with the page that fixes it.
+ * It is always present, so an empty list reads as "checked, nothing wrong"
+ * rather than as a missing section.
+ */
+export function Alerts({ alerts, clear }: { alerts: DashboardAlert[]; clear: string }) {
+  return (
+    <section aria-labelledby="attention-heading" className="mt-6">
+      <h2 id="attention-heading" className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+        Needs attention
+      </h2>
+      {alerts.length === 0 ? (
+        <p className="mt-2">
+          <StatusLabel tone="good">{clear}</StatusLabel>
+        </p>
+      ) : (
+        <ul className="mt-2 divide-y divide-line rounded-lg border border-line">
+          {alerts.map((alert) => (
+            <li key={alert.text} className="flex flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-2.5">
+              <p className="flex min-w-0 items-baseline gap-3 font-sans text-sm leading-relaxed text-ink">
+                <span className="shrink-0">
+                  <StatusLabel tone={alert.severity}>{alert.severity === 'alert' ? 'Act now' : 'Check'}</StatusLabel>
+                </span>
+                <span>{alert.text}</span>
+              </p>
+              <Link
+                href={alert.action.href}
+                className="inline-flex min-h-10 shrink-0 items-center gap-1.5 font-sans text-sm font-semibold text-ink underline decoration-border-strong underline-offset-4 hover:decoration-ink"
+              >
+                {alert.action.label}
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
   );
 }
 
