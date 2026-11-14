@@ -23,5 +23,7 @@
   { "path": "/api/dashboard/applications/{id}", "method": "POST" },
   { "path": "/api/research-assistant", "method": "POST" },
   { "path": "/api/revalidate", "method": "POST" },
+  { "path": "/api/v1/assistant/answers", "method": "POST" },
+  { "path": "/api/v1/usage", "method": "GET" },
   { "path": "/api/webhooks/lemonsqueezy", "method": "POST" }
 ]

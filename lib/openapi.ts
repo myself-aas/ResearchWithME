@@ -65,6 +65,7 @@ const errorDescriptions: Record<number, string> = {
 const errors = (...codes: number[]): Record<string, ApiResponse> =>
   Object.fromEntries(codes.map((code) => [String(code), json(errorDescriptions[code], ref('Error'))]));
 const session: Security = [{ SessionCookie: [] }];
+const apiKey: Security = [{ ApiKeyBearer: [] }];
 const webhookSecret: Security = [{ RevalidateSecret: [] }];
 const billingWebhook: Security = [{ BillingWebhookSignature: [] }];
 const articleId = path('id', 'Published article ID or slug.');
@@ -231,6 +232,21 @@ export const API_OPERATIONS: ApiOperation[] = [
     },
   },
   {
+    group: 'assistant-api', method: 'post', path: '/api/v1/assistant/answers', operationId: 'createAssistantAnswer',
+    summary: 'Ask the Assistant with an API key',
+    description: 'Answers a question from published reviews only and cites them. Each answer uses one unit of the account’s monthly allowance; a failed request uses none. Send an Idempotency-Key header (8 to 128 characters from A-Z, a-z, 0-9, underscore, hyphen) to make a retry safe: the same key and body return the stored answer for 24 hours and are counted once. The burst limit is approximate; the monthly allowance is exact.',
+    security: apiKey,
+    requestBody: jsonBody(object({ query: { type: 'string', minLength: 1, maxLength: 600 } }, ['query']), 'Question about the archive.'),
+    responses: { 200: json('The answer, its citations, and the allowance after this request.', ref('AssistantAnswer')), ...apiErrors(400, 401, 409, 415, 422, 429, 500, 503) },
+  },
+  {
+    group: 'api-usage', method: 'get', path: '/api/v1/usage', operationId: 'getApiUsage',
+    summary: 'Read this month’s API usage',
+    description: 'Returns how much of the monthly allowance the key’s account has used. Reading it uses no allowance.',
+    security: apiKey,
+    responses: { 200: json('Usage for the current UTC month.', ref('ApiUsage')), ...apiErrors(401, 429, 503) },
+  },
+  {
     group: 'api-keys', method: 'get', path: '/api/account/api-keys', operationId: 'listApiKeys',
     summary: 'List your API keys',
     description: 'Returns the caller’s keys, newest first. A key is identified by its name and its first 12 characters; the key itself is never returned after creation.',
@@ -302,6 +318,17 @@ const schemas: Record<string, Schema> = {
       details: { type: 'object', additionalProperties: true },
     }, ['code', 'message']),
   }, ['error']),
+  ApiUsage: object({
+    plan: { type: 'string', enum: ['FREE'] }, requestsUsed: integer, requestsIncluded: integer, requestsRemaining: integer,
+    resetsAt: { type: 'string', format: 'date-time' },
+  }, ['requestsUsed', 'requestsIncluded', 'requestsRemaining', 'resetsAt']),
+  AssistantAnswer: object({
+    id: text, answer: text,
+    citations: array(object({ id: text, slug: text, title: text, author: text, category: text, url: text }, ['id', 'slug', 'title', 'author', 'category', 'url'])),
+    mode: { type: 'string', enum: ['MODEL', 'CATALOG'] },
+    notice: { type: ['string', 'null'] },
+    usage: ref('ApiUsage'),
+  }, ['id', 'answer', 'citations', 'mode', 'notice', 'usage']),
   ApiKey: object({
     id: text, name: text, prefix: text, createdAt: text,
     lastUsedAt: { type: ['string', 'null'] }, revokedAt: { type: ['string', 'null'] },
@@ -349,6 +376,10 @@ export const OPENAPI_DOCUMENT = {
   }, {}),
   components: {
     securitySchemes: {
+      ApiKeyBearer: {
+        type: 'http', scheme: 'bearer',
+        description: 'An API key created on the account page, sent as `Authorization: Bearer rwm_…`. Only a hash of the key is stored. OAuth access tokens are not accepted.',
+      },
       SessionCookie: {
         type: 'apiKey', in: 'header', name: 'Cookie',
         description: 'Supabase Auth session cookie(s), obtained by signing in on the site. Cookie names depend on the deployment and may be chunked. Editor-only operations additionally require an editor account.',
