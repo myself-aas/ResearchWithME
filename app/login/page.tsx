@@ -26,10 +26,14 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{ next?: string | string[]; error_description?: string | string[]; error?: string | string[] }>;
 }) {
   const params = await searchParams;
   const next = safeNextPath(params.next);
+  // The auth callback sends a failed sign-in here with the reason. It is passed
+  // on as text; React escapes it, and the form rewrites the common ones.
+  const rawError = params.error_description ?? params.error;
+  const initialError = typeof rawError === 'string' ? rawError.trim().slice(0, 300) : '';
   const configured = isSupabaseConfigured;
   const user = await getDashboardUser();
 
@@ -79,7 +83,7 @@ export default async function LoginPage({
             </ul>
           </section>
 
-          <LoginForm configured={configured} user={user} next={next} />
+          <LoginForm configured={configured} user={user} next={next} initialError={initialError} />
         </div>
       </main>
 

@@ -352,6 +352,7 @@ order. Four migrations exist:
 | `20261108000200_post_artifacts.sql` | artifact columns on `posts` for the reproducible-metadata fields |
 | `20261108000300_author_applications.sql` | `public.author_applications` + `apply_as_author()` / `review_author_application()` |
 | `20261108000400_author_profiles.sql` | `public.profiles` — the author directory, replacing the hardcoded `AUTHORS` record |
+| `20261114000100_verify_application_identity.sql` | Replaces `apply_as_author()` so the provider must be linked in `auth.identities` and the handle is read from that row, not from the request |
 
 The GitHub Supabase integration also runs a *Supabase Preview* check on pull requests. It fails with
 `Remote migration versions not found in local migrations directory` when the remote history contains

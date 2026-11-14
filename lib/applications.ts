@@ -41,11 +41,14 @@ export function applicationErrorMessage(raw: string): string {
   if (code.includes('not_authenticated')) {
     return 'Sign in before applying to write.';
   }
+  if (code.includes('identity_not_linked')) {
+    return 'That account is not connected to yours yet. Connect GitHub or ORCID above, then apply.';
+  }
   if (code.includes('unsupported_provider')) {
     return 'Connect a GitHub or ORCID identity before applying.';
   }
   if (code.includes('handle_required')) {
-    return 'The application needs the handle from the connected identity.';
+    return 'The connected account did not share a username or ORCID iD we can cite. Reconnect it, or contact the editor.';
   }
   if (code.includes('name_required')) {
     return 'Add the name to publish under.';
