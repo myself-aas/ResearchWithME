@@ -18,9 +18,9 @@
  * automatically to this list.
  *
  * No co-pilot product was ever created in the store, so there are no
- * subscribers. The subscription handling is unused and kept only until a cleanup:
- * the webhook, `lib/billing/status.ts` and the account page still handle them
- * can be removed safely.
+ * subscribers. The subscription handling in the webhook,
+ * `lib/billing/status.ts` and the account page is unused and can be removed in
+ * a later cleanup.
  *
  * Variant IDs live in the environment because they differ between a test store
  * and the live one. The server resolves them (see `lib/billing/checkout.ts`);
