@@ -1,4 +1,4 @@
-# PRD: The ResearchWithMe product catalogue — two live products and eight planned ones
+# PRD: The ResearchWithMe product catalogue — two live products and seven planned ones
 
 | | |
 | --- | --- |
@@ -6,7 +6,7 @@
 | Date | 2026-11-14 |
 | Inputs | The live billing integration and its operator notes; the product marketing context; the financial integration blueprint; "Missing Products and Services Inventory" (owner, 2026-11-14). |
 | Method | Synthesis only, no interview. Every assumption made in place of an answer is marked **[Assumption]** and collected in Further Notes §3. |
-| Revision | 2026-11-14, second pass. Five offerings were removed because Lemon Squeezy's published policy prohibits them: Manuscript Editing (withdrawn from the live site the same day), The Soundboard, The Architecture Audit, Statistical Audit, and Digest Sponsorship. Every remaining product was checked against that policy; the result is Implementation Decisions §2. Third pass, same day: two automated tools were added at the owner's request, Manuscript Check (P15) and Language Polish (P16), as policy-compliant replacements for the ideas of a "review" product and a "humanize" product. Neither is on the live site. |
+| Revision | 2026-11-14, second pass. Five offerings were removed because Lemon Squeezy's published policy prohibits them: Manuscript Editing (withdrawn from the live site the same day), The Soundboard, The Architecture Audit, Statistical Audit, and Digest Sponsorship. Every remaining product was checked against that policy; the result is Implementation Decisions §2. Third pass, same day: an automated Manuscript Check (P15) was added at the owner's request as the policy-compliant form of a "review" product; it is not on the live site. A Language Polish tool (P16) was added and then removed by the owner the same day. |
 
 ---
 
@@ -80,7 +80,6 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P9 | Pre-Submission Screening | $5 per scan | Metered tool | **Confirm with the provider first** | Planned |
 | P10 | Statistical Table Generator | $12 per dataset **[Assumption: no price given]** | Metered tool | Allowed | Planned |
 | P15 | Manuscript Check | $8 per report **[Assumption: no price given]** | Metered tool | Allowed, if fully automated and never called peer review | Planned |
-| P16 | Language Polish | $10 per document **[Assumption: no price given]** | Metered tool | **Confirm with the provider first** | Planned |
 | P11 | Paper Club and Co-Working | $15 / month **[Assumption: range was $10–$20]** | Membership | **Confirm with the provider first** | Planned |
 | P12 | Grant and Fellowship Database | $12 / month, included in Paper Club **[Assumption: no price given]** | Membership | **Confirm with the provider first** | Planned |
 | P14 | Weekly Research Digest | Free | Not sold | Not applicable | Not built: no email is sent today |
@@ -94,6 +93,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P5 | The Architecture Audit | "Services of any kind … consulting" |
 | P6 | Statistical Audit / Data Review | "Services of any kind … consulting" |
 | P13 | Digest Sponsorship | "Advertising in newsletters" |
+| P16 | Language Polish (planned only) | Removed by the owner; nearest of all to "Homework/Essay mills" |
 
 ---
 
@@ -101,7 +101,7 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 
 ### A. Discovering and choosing
 
-1. As a reader, I want the products page grouped by what I am trying to do, so that I am not comparing ten unrelated items.
+1. As a reader, I want the products page grouped by what I am trying to do, so that I am not comparing nine unrelated items.
 2. As a reader, I want each group to show at most four products, so that I can decide without scrolling a long list.
 3. As a reader, I want each product to state its outcome, price, what is included, who it is for, how it is delivered, and its honest limit, so that I can rule it in or out quickly.
 4. As a reader, I want to see what is free before I see any price, so that I know nothing I already use is being taken away.
@@ -273,18 +273,6 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 126. As an author, I want my manuscript deleted after the run, so that unpublished work is not retained.
 127. As the owner, I want no person involved in producing any report, so that the product stays software and never becomes a service.
 
-### U. P16 — Language Polish
-
-128. As an author writing in a second language, I want the grammar, clarity, and academic tone of my own text improved, so that reviewers judge the research and not the English.
-129. As an author, I want every change shown as a tracked change I can accept or reject, so that I stay the author of every sentence.
-130. As an author, I want a guarantee that numbers, citations, quotations, equations, and technical terms are untouched, so that the meaning cannot drift.
-131. As an author, I want a short reason beside each kind of change, so that I learn from it.
-132. As an author, I want to choose British or American spelling and how light or thorough the pass is, so that the result fits the journal.
-133. As an author, I want the tool to refuse to generate new content, expand a draft, or paraphrase someone else's text, so that it cannot be used to write the paper for me.
-134. As an author, I want a suggested disclosure sentence for the journal's AI-use policy, so that I can declare the tool honestly.
-135. As an author, I want my manuscript processed by a provider that does not train on it, and deleted afterwards, so that unpublished work stays private.
-136. As the owner, I want the product never described as humanizing text or as avoiding, passing, or beating AI detection, in any page, email, or metadata, so that it cannot be read as an evasion tool.
-
 ## Implementation Decisions
 
 ### 1. Principles that constrain every decision
@@ -323,7 +311,6 @@ P1 and P2 are live. The rest are from the owner's inventory. Prices are the owne
 | P9 | Pre-Submission Screening | **Confirm first** | Software, but the result comes from third-party vendors. Two exposures: the licence clause (the vendor's terms must permit commercial resale through an API) and the essay-mill clause (a detector sold to authors can be read as a way to evade detection). Conditions: written vendor permission; the product reports and never rewrites; copy never mentions avoiding or beating detection. |
 | P10 | Statistical Table Generator | **Allowed** | Software computing on the buyer's own data. |
 | P15 | Manuscript Check | **Allowed** | Software that returns a report on the buyer's own file. Two conditions. It is fulfilled entirely automatically: if a person reads or annotates any manuscript, it becomes the service that removed Manuscript Editing. It is never called "peer review", "expert review", or "reviewed by", which would be both untrue and a breach of the site's own copy rules. Reporting-guideline checklists are used under their open licences with attribution. |
-| P16 | Language Polish | **Confirm first** | Editing software for the buyer's own text is ordinary SaaS. The exposure is the "Homework/Essay mills" clause: a tool that rewrites academic text can be read as writing for the student or as disguising machine-written text. Conditions: it edits and never generates; every change is visible and reversible; it never mentions "humanize", "undetectable", or AI detection; it is not bundled or cross-sold with Pre-Submission Screening as a detect-then-fix loop; written confirmation from the provider before launch. A "humanizer" in the usual sense is **not** in this catalogue and must not be added. |
 | P11 | Paper Club and Co-Working | **Confirm first** | A membership is allowed; live sessions led by a person are arguably a service, and third-party summaries of the policy list group coaching as refused. Conditions: sold as a membership to digital content (the session archive, notes, the member space), with live sessions an inclusion and not the thing sold; written confirmation from the provider before launch. If refused, the product is cut, not moved. |
 | P12 | Grant and Fellowship Database | **Confirm first** | A searchable database is software. Fellowships and funded positions sit close to "job boards". Conditions: research funding only; no vacancies, no paid postings, no employer listings; written confirmation before launch. |
 | P14 | Weekly Research Digest | **Not applicable** | Free; nothing is sold. It must carry no paid placement. |
@@ -410,7 +397,7 @@ The dispatcher is idempotent on the payment event identifier, extending the exis
 
 - A new private storage bucket, separate from the public image bucket. Paths are namespaced by user; policies allow the owner to read and to write within size and type limits, and nobody to list across users. The editor has no standing access to customer files.
 - Uploads go directly from the browser to storage through short-lived signed upload URLs issued by a server route that checks entitlement first. The application server never proxies file bytes.
-- Accepted types and ceilings **[Assumption]**: Word documents up to 20 MB (P7), CSV up to 10 MB or 200,000 rows (P10), Word or PDF up to 20 MB and 15,000 words (P15), Word up to 20 MB and 10,000 words (P16). Type is verified by content signature, not by extension.
+- Accepted types and ceilings **[Assumption]**: Word documents up to 20 MB (P7), CSV up to 10 MB or 200,000 rows (P10), Word or PDF up to 20 MB and 15,000 words (P15). Type is verified by content signature, not by extension.
 - Retention **[Assumption]**: tool inputs 7 days, tool outputs 30 days. A scheduled job deletes expired objects and nulls their paths; deletion is logged.
 - Third-party processors are named on the product page and in the privacy policy, per tool.
 - No customer content is sent to any provider that trains on API inputs. This is a contractual check performed during vendor selection, recorded per vendor.
@@ -482,18 +469,6 @@ A scenario library and templates exist but no route sends mail. This PRD wires i
 - The report opens with a fixed statement: produced by software, not peer review, not a judgement of scientific merit, followed by a list of what was not checked.
 - Output: an on-screen report and a PDF. The manuscript is deleted after the run; the report follows the standard retention period.
 - Copy rule: "peer review", "reviewer", "expert", and "reviewed by" are banned from this product's page, emails, and metadata, with one exception: the fixed disclaimer that the report is not peer review. Enforced by the truthful-copy test.
-
-**P16 — Language Polish.**
-- Not built until the payment provider has confirmed it in writing (§2). If it is refused, it is cut.
-- Price $10 per document **[Assumption]**, up to 10,000 words.
-- Scope is the buyer's own prose: grammar, spelling, punctuation, word choice, sentence clarity, and academic register. Two depths (light, thorough) and two spelling conventions.
-- Output is the original Word document with tracked changes, plus a summary of change types with a one-line reason for each. Nothing is applied silently.
-- Protected spans are extracted before the model sees the text and verified after: numbers, units, citations, quotations, equations, reference-list entries, and a glossary of the document's technical terms. Any edit that alters a protected span is rejected automatically.
-- An edit-distance ceiling per sentence stops rewriting: a sentence changed beyond the ceiling is returned unedited with a comment. The tool has no prompt box and no "expand", "paraphrase", or "rewrite" mode, and it rejects input that is an instruction and not a manuscript.
-- No AI-detection score is computed, shown, or targeted, before or after. The product is not linked from Pre-Submission Screening results, and the two are never sold as a bundle.
-- The output includes a suggested disclosure sentence for journals that require AI-assisted editing to be declared.
-- Processed by a model provider that contractually does not train on inputs (§6). Input deleted after the run.
-- Copy rule: "humanize", "humanise", "undetectable", "bypass", "AI detection", and "pass as human" are banned from this product's page, emails, and metadata, enforced by the truthful-copy test.
 
 **P11 — Paper Club and Co-Working.**
 - Not built until the payment provider has confirmed it in writing (§2). If it is refused, it is cut.
@@ -593,7 +568,6 @@ Each phase ends with something shippable. Later phases do not start until the ex
 5. P7 Manuscript Formatter (hardest; ships with a deliberately short style list).
 6. P15 Manuscript Check (reuses the Formatter's document parsing; deterministic rules first, guideline location second).
 7. P9 Pre-Submission Screening, only if the provider and a vendor have both agreed in writing.
-8. P16 Language Polish, only if the provider has agreed in writing.
 *Exit per tool:* accuracy bar met on its fixture set (Testing Decisions §4), cost per run recorded, failure returns the credit.
 
 **Phase 4 — Memberships (P11, P12), only if confirmed.**
@@ -665,7 +639,6 @@ Automated tools are tested against fixed fixture sets with explicit pass bars, s
 - **Matchmaker** — abstracts of published articles with the publishing journal known. Bars: the true journal or a same-field journal appears in the five for an agreed proportion of cases **[Assumption: 70%]**; every displayed figure matches the snapshot; no journal on the exclusion list is ever returned.
 - **Table Generator** — public datasets with reference results from R. Bars: statistics agree to the reported precision; the interpretation contains no number absent from the result object.
 - **Manuscript Check** — manuscripts with known, seeded defects (a missing section, an uncited reference, an inconsistent p-value, an unreported guideline item) and clean controls. Bars: every seeded deterministic defect found; no finding shown without a quotation that exists in the text; false findings on the clean controls under an agreed rate **[Assumption: 5% of findings]**; the not-peer-review statement present on every report.
-- **Language Polish** — documents with protected spans marked. Bars: every protected span byte-identical after the run (hard failure otherwise); no sentence beyond the edit-distance ceiling; word count within 5% of the input; an instruction-only input is refused; the output contains no banned term.
 - **Pre-Screening** — adapter contract tests against recorded responses; behaviour on vendor timeout, error, and partial result.
 
 ### 5. Prior art in this codebase
@@ -690,7 +663,7 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 - Migrating away from the current automated payment provider. The data-driven catalogue makes it possible; planning it is separate.
 - **Every service and every advertising product**: manuscript editing, calls, repository or statistical audits, consulting of any kind, and digest sponsorship. They are prohibited by the payment provider and were removed from this catalogue on 2026-11-14.
 - A second payment route (invoices, another processor) to sell what the provider prohibits. If the owner later wants to offer services, that is a separate business decision with its own spec, kept entirely apart from this store.
-- A "humanizer": any tool that rewrites text to read as human-written or to lower an AI-detection score. Language Polish (P16) is deliberately not this.
+- A "humanizer": any tool that rewrites or polishes manuscript text, including one that makes it read as human-written or lowers an AI-detection score. Language Polish (P16) was removed on 2026-11-14.
 - Human review of manuscripts under any name. Manuscript Check (P15) is software only.
 - Donations, tips, "support us" tiers, and pay-what-you-want pricing.
 - Job or vacancy listings.
@@ -724,18 +697,17 @@ Every phase passes the existing gate (tokens, lint, typecheck, unit tests, proto
 
 ### 2. Risks, in order of severity
 
-1. **Four products still need the provider's answer (§2).** P9, P11, P12, and P16 are grey under the published policy. They are not built until confirmed, and the plan is ordered so nothing depends on them.
+1. **Three products still need the provider's answer (§2).** P9, P11, and P12 are grey under the published policy. They are not built until confirmed, and the plan is ordered so nothing depends on them.
 2. **The Co-Pilot delivers nothing today.** It is live, it charges monthly, and fulfilment is a promised email. That is poor for the member and close to the provider's donation clause. Phase 2 fixes it; pausing the product until then is the safer course.
 3. **The published list is not the whole rule.** It also defers to the provider's payment partners' restrictions and to the provider's own judgement in review. "Allowed" in §2 means "fits the published examples", not a guarantee.
 4. **Pre-Screening economics and accuracy.** Vendor cost may not fit $5; AI detectors produce false positives, and a false accusation is a real harm to a customer. The product ships only with the honest framing and the no-retention guarantee, or not at all.
-5. **Language Polish can be misused or misread.** Even with the limits in §9 it is the product nearest the essay-mill clause, and many journals require AI-assisted editing to be declared. The limits, the disclosure sentence, and the provider's written answer are the mitigation; if any cannot be held, it is cut.
-6. **Manuscript Check false confidence.** A clean report may be read as approval. The fixed opening statement and the "not checked" list are the mitigation.
-7. **Formatter difficulty.** "Any journal" is not achievable in a first release. A short, honest style list is the mitigation.
-8. **Data licensing.** The proprietary impact metric cannot be shown. Open-access directory terms should be read before caching its data at scale.
-9. **Grant database freshness.** A wrong deadline is worse than no record. The verification date and the 60-day flag are the mitigation; the minimum record count gates launch.
-10. **Platform limits.** Document processing may not fit the edge runtime; the container fallback is the mitigation and a prototype decides.
-11. **Revenue concentration.** Removing five offerings leaves only low-priced products. The catalogue now depends on volume, which the tools must earn.
-12. **Second deployment target drift.** It already lacks the pricing route. Decide its future in Phase 1.
+5. **Manuscript Check false confidence.** A clean report may be read as approval. The fixed opening statement and the "not checked" list are the mitigation.
+6. **Formatter difficulty.** "Any journal" is not achievable in a first release. A short, honest style list is the mitigation.
+7. **Data licensing.** The proprietary impact metric cannot be shown. Open-access directory terms should be read before caching its data at scale.
+8. **Grant database freshness.** A wrong deadline is worse than no record. The verification date and the 60-day flag are the mitigation; the minimum record count gates launch.
+9. **Platform limits.** Document processing may not fit the edge runtime; the container fallback is the mitigation and a prototype decides.
+10. **Revenue concentration.** Removing five offerings leaves only low-priced products. The catalogue now depends on volume, which the tools must earn.
+11. **Second deployment target drift.** It already lacks the pricing route. Decide its future in Phase 1.
 
 ### 3. Assumptions made in place of answers
 
@@ -756,8 +728,7 @@ Each is a default chosen so the document is complete. Any of them can change wit
 | A11 | Refund rules: downloads within 14 days if not downloaded; tools refunded automatically on failure; memberships stop at period end | Nothing is stated today; each rule is one the system can enforce |
 | A12 | Paper Club can be framed as a membership to digital content with live sessions included | The only framing likely to fit the policy; the provider decides |
 | A13 | Manuscript Check is $8 per report, limited to 15,000 words | No price was given; priced below the Matchmaker because it uses little model time |
-| A14 | Language Polish is $10 per document, limited to 10,000 words | No price was given; the ceiling keeps model cost predictable |
-| A15 | Manuscript Check's first guidelines are CONSORT, PRISMA, and STROBE | The most widely required; all openly licensed |
+| A14 | Manuscript Check's first guidelines are CONSORT, PRISMA, and STROBE | The most widely required; all openly licensed |
 
 ### 4. Questions only the owner can answer
 
@@ -765,7 +736,7 @@ Each is a default chosen so the document is complete. Any of them can change wit
 2. Should the Co-Pilot be paused until member notes exist, or kept on sale while Phase 2 is built?
 3. What is the Teardown System physically: format, length, sections?
 4. How often can working notes realistically be published? The Co-Pilot stands or falls on this.
-5. What does Lemon Squeezy's support say about Pre-Submission Screening, Language Polish, Paper Club, and the Grant Database?
+5. What does Lemon Squeezy's support say about Pre-Submission Screening, Paper Club, and the Grant Database?
 6. Is the Grant Database acceptable as a gated product under the brand's open-access commitment, or should it be free with paid alerts and templates?
 7. Which similarity and AI-detection vendors permit resale and guarantee no retention?
 8. Is the second deployment target still in use?
