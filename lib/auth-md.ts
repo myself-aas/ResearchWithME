@@ -1,7 +1,8 @@
 // Public agent-auth discovery. The discovery documents are real
 // (/.well-known/oauth-protected-resource, /.well-known/oauth-authorization-server),
-// but no ResearchWithMe API validates a bearer token, so this document must not
-// imply that one does. Registration happens at the authorization server, which is
+// but no ResearchWithMe API validates an OAuth access token, so this document
+// must not imply that one does. The only bearer credential accepted here is an
+// API key a signed-in person creates on the account page (lib/api/keys.ts). Registration happens at the authorization server, which is
 // Supabase, using RFC 7591 dynamic client registration — NOT an Auth.md-specific
 // `/agent/auth`, which Supabase does not serve. Do not advertise ID-JAG: nothing
 // in this chain mints or verifies one.
@@ -11,11 +12,11 @@ export const AUTH_MD = `# ResearchWithMe auth.md
 
 This document is for software agents and developers integrating with the ResearchWithMe archive. It is the \`skill\` URL that \`agent_auth\` points back to: https://researchwith.me/auth.md
 
-Public reading does not require an account, and no ResearchWithMe API accepts a bearer token today. Agent registration is **not** handled by this service; it is handled, when an operator has enabled it, by the authorization server named in the discovery documents below.
+Public reading does not require an account. The Assistant API and the MCP tool \`ask_archive\` accept an API key that a signed-in person creates; no ResearchWithMe API accepts an OAuth access token. Agent registration is **not** handled by this service; it is handled, when an operator has enabled it, by the authorization server named in the discovery documents below.
 
 ## 1. Discover
 
-1. Read the protected-resource metadata at [/.well-known/oauth-protected-resource](/.well-known/oauth-protected-resource). It names this resource, its authorization server, and states plainly that no API here validates a bearer credential.
+1. Read the protected-resource metadata at [/.well-known/oauth-protected-resource](/.well-known/oauth-protected-resource). It names this resource, its authorization server, and states which bearer credential this host validates: its own API keys, not OAuth access tokens.
 2. Read the authorization-server metadata at [/.well-known/oauth-authorization-server](/.well-known/oauth-authorization-server). It relays Supabase Auth's issuer verbatim and, when that OAuth server is reachable, carries an \`agent_auth\` block.
 3. If \`agent_auth\` has no \`register_uri\`, there is nothing to register with on this deployment. Stop: the rest of this document is the whole story, and the public archive is readable without credentials.
 
@@ -56,13 +57,14 @@ Supported agent registration methods: **none on this host**.
 ## Credential use
 
 - Read the public archive through [the HTTP API](/api-docs), including GET /api/articles and GET /api/authors, without credentials.
+- API keys are accepted on \`/api/v1/*\` and for the MCP tool \`ask_archive\`, sent as \`Authorization: Bearer rwm_...\`. A person with an account creates and revokes keys at [/dashboard/account](/dashboard/account); an agent cannot obtain one by itself. See [the Assistant API reference](/api-docs#assistant-api).
 - A credential obtained from the authorization server is an OAuth access token for *that* server's resources. It is not accepted by researchwith.me: send it to Supabase's APIs, where row-level security decides what it may read. Do not send it to a ResearchWithMe route expecting agent authorization.
 - The editorial studio uses a Supabase browser session cookie for approved human accounts. Do not send a Supabase publishable key as an agent credential; it does not grant account access.
 - Do not attempt to register by probing write endpoints.
 
 ## Revocation
 
-Revoke an OAuth client or its grants in the Supabase dashboard (Authentication → OAuth Apps). ResearchWithMe holds no agent credential to revoke, because it issues none.
+Revoke an OAuth client or its grants in the Supabase dashboard (Authentication → OAuth Apps). ResearchWithMe issues no agent credential through that flow. An API key is revoked by its owner at [/dashboard/account](/dashboard/account) and stops working at once.
 `;
 
 export function authMdResponse(method: string): Response {

@@ -2,7 +2,7 @@ import type { BlogPost } from './blog-data';
 
 export const MCP_VERSION = '2025-11-25';
 const RESOURCE_PATH = '/api/articles';
-const SERVER_INFO = { name: 'me.researchwith/archive', version: '1.0.0' };
+const SERVER_INFO = { name: 'me.researchwith/archive', version: '1.1.0' };
 const TOOL = {
   name: 'search_reviews',
   description: 'Find published ResearchWithMe reviews by title, tag, summary, or reviewed artifact. Returns linked summaries from the public archive only.',
@@ -11,6 +11,23 @@ const TOOL = {
     required: ['query'], additionalProperties: false,
   },
 };
+const ASK_TOOL = {
+  name: 'ask_archive',
+  description: 'Ask a question and get an answer written only from published ResearchWithMe reviews, with links to them. Requires an API key in the Authorization header (Bearer rwm_…), created on the account page. Each answer uses one unit of the account’s monthly allowance.',
+  inputSchema: {
+    type: 'object', properties: { query: { type: 'string', description: 'Question about the archive (1–600 characters).' } },
+    required: ['query'], additionalProperties: false,
+  },
+};
+
+/**
+ * Answers `ask_archive`. Supplied by the route (app/mcp/route.ts) so this module
+ * stays free of the key store and the ledger and can run where they do not exist.
+ * `ok: false` is a refusal the caller should read (no key, allowance used), so it
+ * is returned as a tool error rather than a protocol error.
+ */
+export type AskArchive = (request: Request, query: string, rpcId: string | number) =>
+  Promise<{ ok: true; text: string } | { ok: false; message: string }>;
 
 export function mcpServerCard(siteUrl: string) {
   const origin = new URL(siteUrl).origin;
@@ -50,7 +67,9 @@ function matches(query: string, posts: BlogPost[]) {
   })).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
 }
 
-export async function handleMcp(request: Request, loadPosts: () => Promise<BlogPost[]>, siteUrl: string): Promise<Response> {
+export async function handleMcp(
+  request: Request, loadPosts: () => Promise<BlogPost[]>, siteUrl: string, ask?: AskArchive,
+): Promise<Response> {
   const origin = request.headers.get('origin');
   if (origin) {
     try {
@@ -87,17 +106,27 @@ export async function handleMcp(request: Request, loadPosts: () => Promise<BlogP
         capabilities: { tools: {}, resources: {} }, serverInfo: SERVER_INFO });
     }
     case 'ping': return result({});
-    case 'tools/list': return result({ tools: [TOOL] });
+    case 'tools/list': return result({ tools: [TOOL, ASK_TOOL] });
     case 'resources/list': return result({ resources: [{
       uri: new URL(RESOURCE_PATH, siteUrl).toString(),
       name: 'Published ResearchWithMe articles', mimeType: 'application/json',
       description: 'Metadata for published articles in the public archive.',
     }] });
     case 'tools/call': {
-      if (params.name !== TOOL.name || !params.arguments || typeof params.arguments !== 'object' || Array.isArray(params.arguments)) {
+      if ((params.name !== TOOL.name && params.name !== ASK_TOOL.name) || !params.arguments || typeof params.arguments !== 'object' || Array.isArray(params.arguments)) {
         return error(id, -32602, 'Unknown tool or invalid arguments.');
       }
       const args = params.arguments as Record<string, unknown>;
+      if (params.name === ASK_TOOL.name) {
+        const question = typeof args.query === 'string' ? args.query.trim() : '';
+        if (!question || question.length > 600) return error(id, -32602, 'query must be 1–600 characters.');
+        const toolError = (text: string) => result({ content: [{ type: 'text', text }], isError: true });
+        if (!ask) return toolError('ask_archive is not available on this deployment.');
+        try {
+          const outcome = await ask(request, question, id);
+          return outcome.ok ? result({ content: [{ type: 'text', text: outcome.text }] }) : toolError(outcome.message);
+        } catch { return toolError('The answer could not be produced.'); }
+      }
       if (typeof args.query !== 'string' || !args.query.trim() || args.query.length > 120) return error(id, -32602, 'query must be 1–120 characters.');
       try {
         const found = matches(args.query.trim(), await loadPosts());

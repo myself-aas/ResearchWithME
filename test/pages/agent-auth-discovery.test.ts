@@ -19,8 +19,8 @@ import { agentAuthBlock, protectedResourceMetadata } from '@/lib/agent-auth';
  *     worse than no block: an agent will follow it and fail later, in a way that
  *     looks like our bug.
  *   - The PRM must describe a resource that actually accepts the credential it
- *     advertises. These APIs take no bearer token, so the PRM says so rather
- *     than publishing `bearer_methods_supported` for a door that is not there.
+ *     advertises. The only bearer credential these APIs take is this site's
+ *     own API key, never an OAuth access token, and the PRM says exactly that.
  */
 
 const metadata = {
@@ -47,9 +47,10 @@ describe('agent auth discovery chain', () => {
     // RFC 9728: the resource must not claim a different origin's scopes.
     expect(Array.isArray(doc.authorization_servers)).toBe(true);
     expect(doc.bearer_methods_supported).toEqual(['header']);
-    // This site's own APIs accept no bearer token, so there is no protected
+    // The only bearer credential validated here is this site's own API key
+    // (not an OAuth access token), so there is no OAuth-protected
     // resource to point at and no scope to advertise.
-    expect(doc['x-researchwithme-api-bearer-support']).toBe('none');
+    expect(doc['x-researchwithme-api-bearer-support']).toBe('api-key');
   });
 
   /**
@@ -111,7 +112,7 @@ describe('agent auth discovery chain', () => {
     expect(doc.resource).toBe('https://researchwith.me');
     expect(doc.bearer_methods_supported).toEqual(['header']);
     expect(doc.scopes_supported).toEqual([]);
-    expect(doc['x-researchwithme-api-bearer-support']).toBe('none');
+    expect(doc['x-researchwithme-api-bearer-support']).toBe('api-key');
   });
 
   it('publishes the agent_auth block only when the authorization server is reachable', async () => {
