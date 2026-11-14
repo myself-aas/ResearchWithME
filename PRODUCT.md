@@ -49,7 +49,7 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 - Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
 - GitHub and ORCID are identity links on an existing account, not sign-in methods. Connecting one never replaces the session the reader applied from.
 - The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
-- Reading remains free: no article, citation, bookmark, or assistant turn is gated. Paid products — a $19 teardown system, a $9/month research co-pilot, and manuscript editing from $150 — are sold through Lemon Squeezy, the merchant of record, and the archive was not put behind them. See `docs/billing.md`.
+- Reading remains free: no article, citation, bookmark, or assistant turn is gated. Paid products — a $19 teardown system, a $9/month research co-pilot, and manuscript editing from $150 — are sold through Lemon Squeezy, the merchant of record, and the archive was not put behind them. See `docs/billing.md`. They are shown on the home page, the header, About, Contact, the assistant page, and at the foot of each article, always as links to `/pricing` and always beside what stays free. Product copy lives in `lib/billing/catalogue.ts`; positioning notes are in `.agents/product-marketing.md`.
 - Newsletter and reading-list preferences are stored locally in the browser. No email is sent at runtime. A Resend scenario library exists in `lib/email/` and `emails/`, but no route calls it. No behavioral tracking is used.
 
 ## Accessibility & Inclusion

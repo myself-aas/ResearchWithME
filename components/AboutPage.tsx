@@ -1,12 +1,14 @@
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import SectionNavigation from '@/components/layout/SectionNavigation';
+import ServicesShowcase from '@/components/billing/ServicesShowcase';
 import { Text, Link as TextLink } from '@/components/primitives';
 
 const aboutSections = [
   { id: 'mission-heading', label: 'Mission' },
   { id: 'verification-heading', label: 'Writer verification' },
   { id: 'reuse-heading', label: 'Open access and reuse' },
+  { id: 'funding-heading', label: 'How the work is funded' },
   { id: 'governance-heading', label: 'Corrections, ethics, and correspondence' },
 ] as const;
 
@@ -84,6 +86,23 @@ export default function AboutPage() {
                 We publish continuously, not in issues, and we do not issue our own ISSNs, ISBNs, or DOIs. Where an
                 article reviews a work that carries its own persistent identifier, that identifier links to the
                 primary record, not to a ResearchWithMe-minted handle.
+              </p>
+            </section>
+
+            <section aria-labelledby="funding-heading" className="space-y-4 border-t border-line pt-8">
+              <Text id="funding-heading" as="h2" variant="section-title">
+                How the work is funded
+              </Text>
+              <p className="text-ink-secondary">
+                ResearchWithMe carries no advertising, charges readers nothing, and charges writers nothing. It is
+                funded by three things readers can choose to buy. None of them unlocks an article, and the research
+                assistant and citation builder stay open to everyone whether or not they buy.
+              </p>
+              <ServicesShowcase variant="compact" />
+              <p className="text-ink-secondary">
+                Payments are handled by Lemon Squeezy as merchant of record. What each one includes, who it is for,
+                and how it reaches you is set out on the{' '}
+                <TextLink href="/pricing">services and pricing page</TextLink>.
               </p>
             </section>
 

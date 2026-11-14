@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import PricingPage from '@/app/pricing/page';
 import sitemap from '@/app/sitemap';
+import { BILLING_PRODUCTS } from '@/lib/billing/catalogue';
 
 vi.mock('@/components/BlogHeader', () => ({ default: () => null }));
 vi.mock('@/components/BlogFooter', () => ({ default: () => null }));
@@ -45,6 +46,31 @@ describe('/pricing', () => {
     expect(html).not.toContain('paywall');
     expect(html).not.toContain('free trial');
     expect(html).not.toContain('cancel anytime');
+  });
+
+  it('leads each product with its outcome and states its limit', async () => {
+    const html = await render();
+    for (const product of BILLING_PRODUCTS) {
+      const escaped = (text: string) => text.replace(/'/g, '&#x27;');
+      expect(html).toContain(escaped(product.outcome));
+      expect(html).toContain(escaped(product.caveat));
+      expect(html).toContain(`id="product-${product.key}"`);
+    }
+  });
+
+  it('lists what stays free before the first price', async () => {
+    const html = await render();
+    expect(html.indexOf('Already yours, free')).toBeGreaterThan(-1);
+    expect(html.indexOf('Already yours, free')).toBeLessThan(html.indexOf('$19</p>'));
+  });
+
+  it('uses no manufactured urgency, popularity, or discount', async () => {
+    const html = (await render()).toLowerCase();
+    for (const phrase of ['most popular', 'limited time', 'only a few', 'hurry', 'best value', '% off', 'was $']) {
+      expect(html, phrase).not.toContain(phrase);
+    }
+    expect(html).not.toContain('<s>');
+    expect(html).not.toContain('<del');
   });
 
   it('asks a signed-out reader to sign in rather than failing at checkout', async () => {
