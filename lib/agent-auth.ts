@@ -102,29 +102,47 @@ export function agentAuthBlock({ siteUrl, registrationEndpoint }: AgentAuthInput
 /**
  * RFC 9728 protected-resource metadata.
  *
- * `bearer_methods_supported: ['header']` is what the scanner looks for, and it is
- * true in the narrow sense that matters: *if* a bearer token is ever accepted, it
- * arrives in the `Authorization` header. The `x-` field states the part a scanner
- * cannot infer — that no API here validates one today — so an agent does not read
- * a capability into the document that is not there.
+ * ── authorization_servers must be the issuer, not this site ─────────────────
  *
- * `scopes_supported` is empty for the same reason. Inventing `api.read` would put
- * a scope in front of an agent that no endpoint enforces.
+ * RFC 9728 §3.3 tells a client to fetch
+ * `<authorization_servers[0]>/.well-known/oauth-authorization-server` and then
+ * check that the `issuer` it returns *is* the identifier it asked for; if not,
+ * the metadata MUST be rejected.
+ *
+ * An earlier version advertised this origin, reasoning that our relay is where
+ * the `agent_auth` block lives. That cannot work: the relay deliberately
+ * reports Supabase's issuer, so the check fails and the document is discarded
+ * before an agent reads the block the self-reference was meant to deliver.
+ * Supabase serves RFC 8414 at the canonical path, so its issuer is also its
+ * metadata location — the exact property the self-reference lacked. Advertise
+ * the issuer.
+ *
+ * With no issuer known, the array is empty rather than filled with a guess. A
+ * server that cannot answer the check sends every client down a path that must
+ * fail; an empty array says only that authentication is not on offer, which the
+ * rest of this document already states plainly.
+ *
+ * `bearer_methods_supported: ['header']` is true in the narrow sense that
+ * matters: *if* a bearer token is ever accepted, it arrives in the
+ * `Authorization` header. The `x-` field states the part a scanner cannot
+ * infer — that no API here validates one today — so an agent does not read a
+ * capability into the document that is not there.
+ *
+ * `scopes_supported` is empty for the same reason. Inventing `api.read` would
+ * put a scope in front of an agent that no endpoint enforces.
  */
-export function protectedResourceMetadata(siteUrl: string): Response {
-  const body = {
-    resource: siteUrl.replace(/\/+$/, ''),
-    // The authorization server is reachable at the discovery mirror on this host;
-    // `lib/oauth-discovery.ts` forwards to the real one or 503s.
-    authorization_servers: [`${siteUrl.replace(/\/+$/, '')}`],
+export function protectedResourceMetadata(
+  siteUrl: string,
+  options: { issuer?: string } = {},
+): Response {
+  const site = siteUrl.replace(/\/+$/, '');
+  const body: Record<string, unknown> = {
+    resource: site,
+    authorization_servers: options.issuer ? [options.issuer] : [],
     scopes_supported: [] as string[],
     bearer_methods_supported: ['header'],
-    resource_documentation: `${siteUrl.replace(/\/+$/, '')}/auth.md`,
+    resource_documentation: `${site}/auth.md`,
     'x-researchwithme-api-bearer-support': API_BEARER_SUPPORT,
-    // The advertised server relays Supabase's issuer rather than being the
-    // issuer. Said out loud because RFC 8414's issuer-location check will not
-    // match, and a reader deserves to know that is deliberate, not broken.
-    'x-researchwithme-issuer-relay': 'Supabase Auth (/auth/v1); issuer is not this origin',
   };
 
   return new Response(JSON.stringify(body), {

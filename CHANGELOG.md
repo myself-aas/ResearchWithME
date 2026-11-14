@@ -66,6 +66,15 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   working configuration. Responses state whether they are live or captured.
 
 ### Fixed
+- OAuth protected-resource metadata now names the authorization server by the
+  issuer it actually publishes, resolved at request time, instead of pointing
+  `authorization_servers` at this origin. RFC 9728 §3.3 has clients reject
+  metadata whose returned `issuer` differs from the identifier they requested,
+  so the self-reference made the document — including the `agent_auth` block it
+  was meant to deliver — unusable. Supabase serves RFC 8414 at the canonical
+  path, so its issuer is its metadata location. The relay and the PRM now share
+  one validator, and the array is empty rather than guessed when no issuer
+  validates.
 - Web Bot Auth directory responses are now signed, as Cloudflare requires:
   `tag="http-message-signatures-directory"` over `("@authority";req)`. Without
   the self-signature a copied JWKS proves nothing about who controls the host.

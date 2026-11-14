@@ -15,6 +15,107 @@ import { OAUTH_METADATA_SNAPSHOT, snapshotMatches } from './oauth-metadata';
 const DISCOVERY_PATH = '/auth/v1/.well-known/oauth-authorization-server';
 const REQUIRED_ENDPOINTS = ['authorization_endpoint', 'token_endpoint', 'jwks_uri'] as const;
 
+/**
+ * Validate an upstream document: the issuer must be this exact project, every
+ * advertised endpoint must stay on it, and the server must actually support the
+ * authorization-code flow. Returns the issuer, or the reason it was rejected.
+ *
+ * Shared by the relay below and by the protected-resource metadata, so the
+ * `authorization_servers` a client is told to trust is always the same value
+ * this file is willing to serve a document for. Two validators that could
+ * disagree would let the PRM name a server the relay then refuses.
+ */
+export function validateDiscoveryDocument(
+  doc: Record<string, unknown>,
+  base: URL,
+): { ok: true; issuer: string } | { ok: false; reason: string } {
+  let issuer: URL;
+  try {
+    issuer = new URL(String(doc.issuer));
+  } catch {
+    return { ok: false, reason: 'upstream issuer was not a URL' };
+  }
+  // GoTrue's OAuth endpoints and signing keys must all belong to our own
+  // configured Supabase project; never publish arbitrary upstream links.
+  if (issuer.origin !== base.origin || issuer.pathname !== '/auth/v1' || issuer.search || issuer.hash) {
+    return { ok: false, reason: 'upstream issuer did not match the configured project' };
+  }
+  for (const field of REQUIRED_ENDPOINTS) {
+    if (typeof doc[field] !== 'string') return { ok: false, reason: `upstream omitted ${field}` };
+    let endpoint: URL;
+    try {
+      endpoint = new URL(doc[field] as string);
+    } catch {
+      return { ok: false, reason: `upstream ${field} was not a URL` };
+    }
+    if (endpoint.origin !== base.origin || !endpoint.pathname.startsWith('/auth/v1/') || endpoint.search || endpoint.hash) {
+      return { ok: false, reason: `upstream ${field} left the configured project` };
+    }
+  }
+  if (
+    !Array.isArray(doc.grant_types_supported) ||
+    !doc.grant_types_supported.includes('authorization_code') ||
+    !Array.isArray(doc.response_types_supported) ||
+    !doc.response_types_supported.includes('code')
+  ) {
+    return { ok: false, reason: 'upstream does not support the authorization-code flow' };
+  }
+  return { ok: true, issuer: issuer.href.replace(/\/$/, '') };
+}
+
+/**
+ * The issuer a client should be told to fetch, or undefined when no reachable
+ * authorization server validates. Used by the protected-resource metadata, which
+ * must not name a server that cannot answer the RFC 8414 check.
+ *
+ * Never throws: an unreachable or malformed upstream means "advertise nothing".
+ */
+export async function discoverIssuer(supabaseUrl: string | undefined): Promise<string | undefined> {
+  let base: URL;
+  try {
+    if (!supabaseUrl) return undefined;
+    base = new URL(supabaseUrl);
+    if (
+      base.protocol !== 'https:' ||
+      base.username ||
+      base.password ||
+      base.search ||
+      base.hash ||
+      base.pathname !== '/'
+    ) {
+      return undefined;
+    }
+  } catch {
+    return undefined;
+  }
+
+  try {
+    const upstream = await fetch(new URL(DISCOVERY_PATH, base), {
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+      redirect: 'error',
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!upstream.ok) return snapshotIssuer(supabaseUrl, `upstream ${upstream.status}`);
+    const metadata: unknown = await upstream.json();
+    if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return undefined;
+    const result = validateDiscoveryDocument(metadata as Record<string, unknown>, base);
+    return result.ok ? result.issuer : snapshotIssuer(supabaseUrl, result.reason);
+  } catch (error) {
+    return snapshotIssuer(supabaseUrl, error instanceof Error ? error.message : 'fetch failed');
+  }
+}
+
+/** The snapshot's issuer, only for the project it was captured from. */
+function snapshotIssuer(supabaseUrl: string | undefined, reason: string): string | undefined {
+  if (!snapshotMatches(supabaseUrl ?? '')) return undefined;
+  console.warn(
+    `OAuth issuer resolved from the captured snapshot (${reason}). Refresh lib/oauth-metadata.ts when the authorization server changes.`,
+  );
+  const issuer = OAUTH_METADATA_SNAPSHOT.document.issuer;
+  return typeof issuer === 'string' ? issuer : undefined;
+}
+
 export async function oauthDiscoveryResponse(
   supabaseUrl: string,
   method: string,
@@ -88,28 +189,10 @@ export async function oauthDiscoveryResponse(
     const metadata: unknown = await upstream.json();
     if (!metadata || typeof metadata !== 'object' || Array.isArray(metadata)) return unavailable();
     const doc = metadata as Record<string, unknown>;
-    let issuer: URL;
-    try {
-      issuer = new URL(String(doc.issuer));
-    } catch {
-      return fallback('upstream issuer was not a URL');
-    }
-    // GoTrue's OAuth endpoints and signing keys must all belong to our own
-    // configured Supabase project; never publish arbitrary upstream links.
-    if (issuer.origin !== base.origin || issuer.pathname !== '/auth/v1' || issuer.search || issuer.hash) {
-      return fallback('upstream issuer did not match the configured project');
-    }
-    for (const field of REQUIRED_ENDPOINTS) {
-      if (typeof doc[field] !== 'string') return fallback(`upstream omitted ${field}`);
-      const endpoint = new URL(doc[field]);
-      if (endpoint.origin !== base.origin || !endpoint.pathname.startsWith('/auth/v1/') || endpoint.search || endpoint.hash) {
-        return fallback(`upstream ${field} left the configured project`);
-      }
-    }
-    if (!Array.isArray(doc.grant_types_supported) || !doc.grant_types_supported.includes('authorization_code') ||
-        !Array.isArray(doc.response_types_supported) || !doc.response_types_supported.includes('code')) {
-      return unavailable();
-    }
+    // Same validator the PRM uses to decide which server to advertise, so the
+    // two can never disagree about what this deployment is willing to serve.
+    const result = validateDiscoveryDocument(doc, base);
+    if (!result.ok) return fallback(result.reason);
     return respond(doc, 'upstream');
   } catch (error) {
     return fallback(error instanceof Error ? error.message : 'fetch failed');

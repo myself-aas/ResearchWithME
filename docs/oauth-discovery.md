@@ -20,7 +20,13 @@ When the upstream document is valid, the response is relayed field-for-field wit
 
 If upstream publishes no `registration_endpoint`, the block keeps its `skill` pointer and advertises **no** identity types. `identity_assertion` and ID-JAG are never advertised: nothing in this chain mints or verifies an ID-JAG, so claiming one would invite an assertion that would be rejected.
 
-The protected-resource document advertises `bearer_methods_supported: ["header"]` and an empty `scopes_supported`, plus `x-researchwithme-api-bearer-support: none`. No ResearchWithMe route reads an `Authorization` header, so a scope list would name permissions no endpoint enforces. `authorization_servers` points at this origin because that is where the document carrying `agent_auth` is served; `x-researchwithme-issuer-relay` records that the issuer inside it is Supabase's, which strict RFC 8414 issuer-location checks will not match.
+The protected-resource document advertises `bearer_methods_supported: ["header"]` and an empty `scopes_supported`, plus `x-researchwithme-api-bearer-support: none`. No ResearchWithMe route reads an `Authorization` header, so a scope list would name permissions no endpoint enforces. `authorization_servers` names **Supabase's issuer** (`https://<project>.supabase.co/auth/v1`), resolved at request time from the authorization server's own document — never assumed, and never this origin.
+
+An earlier version advertised this origin, reasoning that the relay is where `agent_auth` lives. That cannot work. RFC 9728 §3.3 has the client fetch `<authorization_servers[0]>/.well-known/oauth-authorization-server` and then require the returned `issuer` to equal the identifier it asked for; our relay deliberately reports Supabase's issuer, so the check fails and the whole document — `agent_auth` included — is discarded before an agent reads it. Supabase serves RFC 8414 at the canonical path, so its issuer *is* its metadata location, which is the property the self-reference lacked.
+
+`discoverIssuer` and the relay share one validator (`validateDiscoveryDocument`), so the PRM can never name a server the relay would refuse, and a PRM whose `authorization_servers` is not exactly the relayed `issuer` would fail the client check.
+
+With no reachable or valid authorization server, `authorization_servers` is `[]`. An empty array says only that authentication is not on offer — the same thing the rest of the document states. Naming a host that cannot answer the RFC 8414 check would send every client down a path that must fail.
 
 ## Both well-known addresses
 

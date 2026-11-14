@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { createTestApp, FAKE_SUPABASE_URL } from '@/test/support/pages';
-import { oauthDiscoveryResponse } from '@/lib/oauth-discovery';
+import { discoverIssuer, oauthDiscoveryResponse } from '@/lib/oauth-discovery';
 import { AUTH_MD } from '@/lib/auth-md';
 import { agentAuthBlock, protectedResourceMetadata } from '@/lib/agent-auth';
 
@@ -52,18 +52,66 @@ describe('agent auth discovery chain', () => {
     expect(doc['x-researchwithme-api-bearer-support']).toBe('none');
   });
 
-  it('advertises the host whose document actually carries agent_auth', async () => {
+  /**
+   * RFC 9728 §3.3: the client fetches
+   * `<authorization_servers[0]>/.well-known/oauth-authorization-server` and then
+   * checks that the `issuer` it returns *is* the identifier it asked for. If it
+   * is not, the metadata MUST be rejected.
+   *
+   * Adverting our own origin therefore cannot work: our relay deliberately
+   * reports Supabase's issuer, so the check fails and the document — including
+   * the agent_auth block the self-reference was meant to deliver — is discarded
+   * before an agent ever reads it. The advertised value must be the issuer
+   * itself.
+   */
+  it('names the authorization server by the issuer it actually publishes', async () => {
+    const doc = await protectedResourceMetadata('https://researchwith.me', {
+      issuer: `${FAKE_SUPABASE_URL}/auth/v1`,
+    }).json();
+
+    expect(doc.authorization_servers).toEqual([`${FAKE_SUPABASE_URL}/auth/v1`]);
+    // No self-reference: pointing at our own relay is what breaks the check.
+    expect(doc.authorization_servers).not.toContain('https://researchwith.me');
+  });
+
+  /**
+   * The invariant that the old self-reference violated: the server the PRM
+   * tells a client to trust must be the same issuer the relayed document
+   * reports. If those disagree, the RFC 9728 client check fails and the
+   * document — agent_auth block included — is discarded unseen.
+   */
+  it('names the same issuer that the authorization-server document reports', async () => {
+    // A fresh Response per call: a Response body can be read only once, so a
+    // shared mockResolvedValue makes the second request appear to fail.
+    vi.stubGlobal('fetch', vi.fn().mockImplementation(async () => Response.json(metadata)));
+
+    const issuer = await discoverIssuer(FAKE_SUPABASE_URL);
+    const prm = await protectedResourceMetadata('https://researchwith.me', { issuer }).json();
+    const server = await (await oauthDiscoveryResponse(FAKE_SUPABASE_URL, 'GET')).json();
+
+    expect(prm.authorization_servers).toHaveLength(1);
+    expect(prm.authorization_servers[0]).toBe(server.issuer);
+    expect(issuer).toBe(server.issuer);
+  });
+
+  /**
+   * With no issuer known, nothing is advertised. An authorization_servers array
+   * naming a host that cannot answer the RFC 8414 check is worse than an empty
+   * one: it sends every client down a path that must fail.
+   */
+  it('omits authorization_servers when no real issuer is available', async () => {
     const doc = await protectedResourceMetadata('https://researchwith.me').json();
-    // Deliberate: the advertised server is our own origin, because that is where
-    // the document with the `agent_auth` block is served. Pointing at Supabase's
-    // canonical issuer would be more literal, but that document has no
-    // agent_auth and the chain would dead-end for a scanning agent.
-    //
-    // The cost is stated rather than hidden: our document relays Supabase's
-    // issuer, so a strict RFC 8414 issuer-location check will not match. The PRM
-    // says so in `x-researchwithme-issuer-relay`, and /auth.md says so in prose.
-    expect(doc.authorization_servers).toEqual(['https://researchwith.me']);
-    expect(doc['x-researchwithme-issuer-relay']).toMatch(/supabase/i);
+    expect(doc.authorization_servers).toEqual([]);
+    // The document still says where to read about it.
+    expect(doc.resource_documentation).toBe('https://researchwith.me/auth.md');
+  });
+
+  it('still declares the resource, the bearer transport, and the honest caveat', async () => {
+    const doc = await protectedResourceMetadata('https://researchwith.me').json();
+    expect(doc.resource).toBe('https://researchwith.me');
+    expect(doc.bearer_methods_supported).toEqual(['header']);
+    expect(doc.scopes_supported).toEqual([]);
+    expect(doc['x-researchwithme-api-bearer-support']).toBe('none');
   });
 
   it('publishes the agent_auth block only when the authorization server is reachable', async () => {

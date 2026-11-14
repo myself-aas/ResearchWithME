@@ -18,6 +18,7 @@ import { agentCard } from '@/lib/a2a';
 import { INDEX_PATH, SKILL_PATH, skillsIndexResponse, skillArtifactResponse } from '@/lib/agent-skills';
 import { mcpCardResponse, handleMcp } from '@/lib/mcp';
 import { WEB_BOT_DIRECTORY, webBotDirectoryResponse } from '@/lib/web-bot-auth';
+import { discoverIssuer } from '@/lib/oauth-discovery';
 import { getPublicArticleCatalogue } from './stores';
 import { rateLimit } from './context';
 import { clientKey } from './http';
@@ -95,7 +96,9 @@ export async function handleRequest(
             headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' },
           }) : null) ??
       (pathname === '/.well-known/oauth-protected-resource'
-        ? protectedResourceMetadata(ctx.config.siteUrl) : null) ??
+        ? protectedResourceMetadata(ctx.config.siteUrl, {
+            issuer: await discoverIssuer(ctx.config.supabaseUrl),
+          }) : null) ??
       (pathname === '/.well-known/oauth-authorization-server' || pathname === '/.well-known/openid-configuration'
         ? await oauthDiscoveryResponse(ctx.config.supabaseUrl, ctx.request.method, ctx.config.siteUrl) : null) ??
       (await dispatchApi(ctx)) ??
