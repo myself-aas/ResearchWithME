@@ -50,3 +50,4 @@ supabase/.temp/
 
 # Visual parity captures (npm run parity)
 .parity/
+workers/assistant/worker-configuration.d.ts

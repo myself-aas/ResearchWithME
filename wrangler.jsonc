@@ -50,6 +50,15 @@
 			// See https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
 			"service": "researchwithme"
+		},
+		{
+			// The Assistant's model call runs in its own Worker
+			// (workers/assistant), called over RPC from lib/assistant/service.ts.
+			// Deploy that Worker first: `npm run worker:assistant:deploy`.
+			// Without this binding the site answers in-process instead.
+			"binding": "ASSISTANT",
+			"service": "researchwithme-assistant",
+			"entrypoint": "AssistantService"
 		}
 	],
 	// Free-plan setup: no R2 or Images bindings, so next/image serves originals.

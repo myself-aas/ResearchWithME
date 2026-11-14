@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { composeAnswer } from '@/lib/assistant/compose';
-import { createGeminiGenerator } from '@/lib/assistant/generate';
 import { rankArticles, toAssistantArticle } from '@/lib/assistant/retrieve';
+import { answerQuestion } from '@/lib/assistant/service';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 import { cleanText } from '@/lib/validation';
@@ -45,14 +44,7 @@ export async function POST(request: NextRequest) {
     category: article.category,
   }));
 
-  const result = await composeAnswer(
-    { query, articles: matches, context: archive.slice(0, 4).map(toAssistantArticle) },
-    createGeminiGenerator({
-      GEMINI_API_KEY: process.env.GEMINI_API_KEY,
-      GEMINI_MODEL: process.env.GEMINI_MODEL,
-      AI_GATEWAY_BASE_URL: process.env.AI_GATEWAY_BASE_URL,
-    }),
-  );
+  const result = await answerQuestion({ query, articles: matches, context: archive.slice(0, 4).map(toAssistantArticle) });
 
   // This route predates the versioned API and keeps its lowercase modes.
   return NextResponse.json({

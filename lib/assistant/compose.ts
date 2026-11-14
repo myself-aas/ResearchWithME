@@ -77,3 +77,63 @@ export async function composeAnswer(input: AssistantInput, generate: Generate | 
     return { answer: fallback, mode: 'CATALOG', notice: MODEL_UNAVAILABLE_NOTICE };
   }
 }
+
+const MAX_QUERY_CHARS = 600;
+const MAX_RECORDS = 4;
+const MAX_FIELD_CHARS = 4000;
+const MAX_TAKEAWAYS = 20;
+
+function shortString(value: unknown): value is string {
+  return typeof value === 'string' && value.length <= MAX_FIELD_CHARS;
+}
+
+function parseArticle(value: unknown): AssistantArticle | null {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  const { id, slug, title, author, category, summary, keyTakeaways, artifact } = record;
+  if (![id, slug, title, author, category, summary].every(shortString)) return null;
+  if (!Array.isArray(keyTakeaways) || keyTakeaways.length > MAX_TAKEAWAYS || !keyTakeaways.every(shortString)) return null;
+  if (artifact !== null && !shortString(artifact)) return null;
+  return {
+    id: id as string, slug: slug as string, title: title as string, author: author as string,
+    category: category as string, summary: summary as string, keyTakeaways: keyTakeaways as string[],
+    artifact: artifact as string | null,
+  };
+}
+
+function parseArticles(value: unknown): AssistantArticle[] | null {
+  if (!Array.isArray(value) || value.length > MAX_RECORDS) return null;
+  const parsed = value.map(parseArticle);
+  return parsed.every((article): article is AssistantArticle => article !== null) ? parsed : null;
+}
+
+/**
+ * What the Assistant Worker accepts over RPC. The caller is our own site
+ * Worker, but the bounds are enforced here too: they are what keeps a prompt,
+ * and therefore a model bill, a known size.
+ */
+export function parseAssistantInput(value: unknown): AssistantInput | null {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  const query = typeof record.query === 'string' ? record.query.trim() : '';
+  if (query.length < 1 || query.length > MAX_QUERY_CHARS) return null;
+  const articles = parseArticles(record.articles);
+  if (!articles) return null;
+  if (record.context === undefined) return { query, articles };
+  const context = parseArticles(record.context);
+  return context ? { query, articles, context } : null;
+}
+
+/** What the site Worker accepts back. A reply that does not fit is discarded, not repaired. */
+export function parseAssistantAnswer(value: unknown): AssistantAnswer | null {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  if (typeof record.answer !== 'string' || record.answer.trim() === '') return null;
+  if (record.mode !== 'MODEL' && record.mode !== 'CATALOG') return null;
+  if (record.notice !== null && typeof record.notice !== 'string') return null;
+  return {
+    answer: record.answer.slice(0, MAX_ANSWER_CHARS),
+    mode: record.mode,
+    notice: record.notice === null ? null : record.notice.slice(0, 500),
+  };
+}
