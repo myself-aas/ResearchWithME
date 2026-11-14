@@ -1,12 +1,11 @@
 # Assistant API
 
-> **Status: implemented in this repository, not deployed.** The code, the
-> migration and the Assistant Worker exist and are covered by unit tests, but
-> the migration has not been applied to the live database and neither Worker
-> has been deployed with these changes, so `https://researchwith.me/api/v1/*`
-> does not answer yet. Nothing here has been checked against a running
-> production service. Remove this notice after the deploy steps in
-> "Owner: deploy" and the checks that follow them.
+> **Status: shipped, not yet switched on.** The migration was applied to the
+> live database on 2026-11-14 and the code deploys with `main`. The API bridge
+> secret (step 2 of "Owner: deploy") has not been set, so every key-authenticated
+> call answers `503` until it is, and no request has yet been made against the
+> production service. The Assistant Worker is not deployed; the site answers
+> in-process. Remove this notice after step 2 and one successful request.
 
 The document has four parts, one per reader need: an explanation of how the
 API works, a first-call tutorial, how-to guides for common tasks, and the
@@ -223,9 +222,10 @@ deploy whose binding names a Worker the account does not have fails. For that
 reason the `ASSISTANT` binding is commented out in `wrangler.jsonc`; until
 step 4 the site answers in-process and the Assistant Worker is not used.
 
-1. Apply `supabase/migrations/20261114000200_api_keys.sql`. It is written to
-   be re-runnable. It has been run only against an in-memory Postgres with a
-   stubbed `auth` schema, never against Supabase; try it on a branch first.
+1. Apply `supabase/migrations/20261114000200_api_keys.sql`. Done for the
+   production project on 2026-11-14 (migration history entry `api_keys`); the
+   tables, row-level security, grants and functions were checked afterwards.
+   It is re-runnable, for any other project.
 2. Create the API bridge secret and store it in both places, Worker first:
 
    ```bash

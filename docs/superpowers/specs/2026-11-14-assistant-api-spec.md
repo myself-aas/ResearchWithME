@@ -1,6 +1,6 @@
 # Spec: Assistant API (V1)
 
-Status: **Accepted on 2026-11-14 and implemented in the repository; not deployed.** The owner delegated the open questions to best practice; see "Decisions on the open questions".
+Status: **Accepted on 2026-11-14 and implemented; the migration is applied, the bridge secret is not yet set.** The owner delegated the open questions to best practice; see "Decisions on the open questions".
 Date: 2026-11-14
 Plan: `docs/superpowers/plans/2026-11-14-assistant-api.md`
 Design and reference: `docs/assistant-api.md`

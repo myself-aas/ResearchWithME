@@ -6,8 +6,9 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
-- Assistant API, implemented but not yet deployed (the database migration is
-  not applied and neither Worker has been deployed with it):
+- Assistant API. The database migration is applied; the API answers `503`
+  until the owner sets `API_BRIDGE_SECRET` and its digest row
+  (`docs/assistant-api.md`, "Owner: deploy"):
   `POST /api/v1/assistant/answers` and `GET /api/v1/usage`, authenticated with
   API keys that are created and revoked on the account page; a burst limit per
   key on the Workers Rate Limiting binding with a KV fallback; an exact
