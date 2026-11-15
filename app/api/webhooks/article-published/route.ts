@@ -5,7 +5,7 @@ import { headers } from 'next/headers';
 export async function POST(request: NextRequest) {
   // Verify webhook signature if using Supabase webhooks
   const headersList = await headers();
-  const signature = headersList.get('x-supabase-signature');
+  const _signature = headersList.get('x-supabase-signature');
   
   // TODO: Verify signature with Supabase webhook secret
   

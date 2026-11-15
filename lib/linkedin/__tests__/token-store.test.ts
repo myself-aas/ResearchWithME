@@ -45,8 +45,8 @@ describe('TokenStore', () => {
     });
 
     const tokens = await tokenStore.getTokens();
-    expect(tokens.access_token).toBe('access-token');
-    expect(tokens.refresh_token).toBe('refresh-token');
+      expect(tokens!.access_token).toBe('access-token');
+      expect(tokens!.refresh_token).toBe('refresh-token');
   });
 
   it('saves encrypted tokens to Supabase', async () => {

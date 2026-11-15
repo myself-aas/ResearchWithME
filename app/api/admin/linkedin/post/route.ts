@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { postArticleToLinkedIn } from '@/lib/linkedin/automation';
 
 export async function POST(request: NextRequest) {
-  const supabase = createClient();
+  const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
   
   if (!user) {

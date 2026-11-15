@@ -21,7 +21,7 @@ vi.mock('@/lib/supabase/config', () => ({
   isSupabaseConfigured: true,
 }));
 
-import { logLinkedInEvent, getLinkedInMetrics, LinkedInEventType } from '@/lib/linkedin/monitoring';
+import { logLinkedInEvent, getLinkedInMetrics } from '@/lib/linkedin/monitoring';
 
 describe('LinkedIn Monitoring', () => {
   beforeEach(() => {

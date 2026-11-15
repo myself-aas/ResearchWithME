@@ -13,7 +13,7 @@ export class TokenStore {
   private readonly ROW_ID = 'company_page_tokens';
 
   async getTokens(): Promise<TokenSet | null> {
-      const supabase = getSupabasePublicClient();
+    const supabase = getSupabasePublicClient();
     const { data, error } = await supabase
       .from(this.TABLE)
       .select('*')
@@ -23,21 +23,21 @@ export class TokenStore {
     if (error || !data) return null;
 
     return {
-      access_token: decrypt(data.access_token),
-      refresh_token: decrypt(data.refresh_token),
+      access_token: await decrypt(data.access_token),
+      refresh_token: await decrypt(data.refresh_token),
       expires_at: data.expires_at,
       scope: data.scope,
     };
   }
 
   async saveTokens(tokens: TokenSet): Promise<void> {
-      const supabase = getSupabasePublicClient();
+    const supabase = getSupabasePublicClient();
     const { error } = await supabase
       .from(this.TABLE)
       .upsert({
         id: this.ROW_ID,
-        access_token: encrypt(tokens.access_token),
-        refresh_token: encrypt(tokens.refresh_token),
+        access_token: await encrypt(tokens.access_token),
+        refresh_token: await encrypt(tokens.refresh_token),
         expires_at: tokens.expires_at,
         scope: tokens.scope,
         updated_at: new Date().toISOString(),
@@ -47,7 +47,7 @@ export class TokenStore {
   }
 
   async clearTokens(): Promise<void> {
-      const supabase = getSupabasePublicClient();
+    const supabase = getSupabasePublicClient();
     const { error } = await supabase
       .from(this.TABLE)
       .delete()

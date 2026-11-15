@@ -42,14 +42,14 @@ describe('Retry Logic', () => {
   it('does not retry on auth error (401)', async () => {
     const fn = vi.fn().mockRejectedValue(new LinkedInAuthError('Unauthorized', 401));
 
-    await expect(withRetry(fn, { maxAttempts: 3 })).rejects.toThrow(LinkedInAuthError);
+      await expect(withRetry(fn, { maxAttempts: 3, baseDelayMs: 10 })).rejects.toThrow(LinkedInAuthError);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 
   it('does not retry on client error (4xx except 429)', async () => {
     const fn = vi.fn().mockRejectedValue(new LinkedInClientError('Bad request', 400));
 
-    await expect(withRetry(fn, { maxAttempts: 3 })).rejects.toThrow(LinkedInClientError);
+      await expect(withRetry(fn, { maxAttempts: 3, baseDelayMs: 10 })).rejects.toThrow(LinkedInClientError);
     expect(fn).toHaveBeenCalledTimes(1);
   });
 

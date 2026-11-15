@@ -3,13 +3,13 @@ import { formatLinkedInPost } from '@/lib/linkedin/content-formatter';
 import { createEventLogger } from '@/lib/linkedin/monitoring';
 import { z } from 'zod';
 
-const PostResultSchema = z.object({
+const _PostResultSchema = z.object({
   success: z.boolean(),
   postUrn: z.string().optional(),
   error: z.string().optional(),
 });
 
-export type PostResult = z.infer<typeof PostResultSchema>;
+export type PostResult = z.infer<typeof _PostResultSchema>;
 
 export interface ArticleData {
   title: string;

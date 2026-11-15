@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LinkedInClient } from '@/lib/linkedin/client';
 import { formatLinkedInPost } from '@/lib/linkedin/content-formatter';
-import { extractArticleForLinkedIn } from '@/lib/linkedin/article-extractor';
-import { postArticleToLinkedIn } from '@/lib/linkedin/automation';
 
 // Mock the catalogue at the top level using vi.hoisted
 const { mockCatalogue } = vi.hoisted(() => ({

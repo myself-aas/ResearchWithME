@@ -4,7 +4,7 @@ import { headers } from 'next/headers';
 
 // This route should be called by a cron job (e.g., Vercel Cron, GitHub Actions, or external scheduler)
 // Protect with CRON_SECRET
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   const headersList = await headers();
   const authHeader = headersList.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
