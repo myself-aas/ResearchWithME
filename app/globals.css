@@ -16,6 +16,7 @@
    aliases. Components reference semantic tokens, never primitives. */
 
 @font-face {
+  /* impeccable-disable-next-line overused-font: user-approved editorial font, self-hosted with OFL license */
   font-family: 'Plus Jakarta Sans';
   src: url('/fonts/plus-jakarta-sans-variable.ttf') format('truetype');
   font-style: normal;
