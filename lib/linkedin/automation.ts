@@ -1,6 +1,7 @@
 import { LinkedInClient } from '@/lib/linkedin/client';
 import { extractArticleForLinkedIn } from '@/lib/linkedin/article-extractor';
 import { PostResult } from '@/lib/linkedin/client';
+import { createEventLogger } from '@/lib/linkedin/monitoring';
 
 export interface BatchResult {
   posted: number;
@@ -9,6 +10,8 @@ export interface BatchResult {
 }
 
 const RATE_LIMIT_DELAY_MS = 1000; // 1 second between posts
+
+const logger = createEventLogger();
 
 export async function postArticleToLinkedIn(slug: string): Promise<PostResult> {
   const client = new LinkedInClient();
@@ -22,6 +25,8 @@ export async function postArticleToLinkedIn(slug: string): Promise<PostResult> {
 }
 
 export async function batchPostArticles(slugs: string[]): Promise<BatchResult> {
+  await logger.logBatchStart(slugs.length);
+  
   const client = new LinkedInClient();
   const results: BatchResult['results'] = [];
   let posted = 0;
@@ -54,6 +59,7 @@ export async function batchPostArticles(slugs: string[]): Promise<BatchResult> {
     }
   }
 
+  await logger.logBatchComplete(posted, failed);
   return { posted, failed, results };
 }
 

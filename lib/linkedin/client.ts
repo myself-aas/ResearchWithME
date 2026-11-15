@@ -1,5 +1,6 @@
 import { TokenStore, TokenSet } from '@/lib/linkedin/token-store';
 import { formatLinkedInPost } from '@/lib/linkedin/content-formatter';
+import { createEventLogger } from '@/lib/linkedin/monitoring';
 import { z } from 'zod';
 
 const PostResultSchema = z.object({
@@ -27,6 +28,7 @@ const API_VERSION = '2024-07';
 
 export class LinkedInClient {
   private tokenStore = new TokenStore();
+  private logger = createEventLogger();
 
   async postArticle(article: ArticleData): Promise<PostResult> {
     try {
@@ -45,13 +47,18 @@ export class LinkedInClient {
           const refreshed = await this.refreshAndRetry(article);
           if (refreshed) return refreshed;
         }
-        return { success: false, error: `LinkedIn API error: ${response.status} - ${JSON.stringify(errorData)}` };
+        const errorMessage = `LinkedIn API error: ${response.status} - ${JSON.stringify(errorData)}`;
+        await this.logger.logPostAttempt(article.url, 'failed', undefined, errorMessage);
+        return { success: false, error: errorMessage };
       }
 
       const data = await response.json();
+      await this.logger.logPostAttempt(article.url, 'success', data.id);
       return { success: true, postUrn: data.id };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      await this.logger.logPostAttempt(article.url, 'failed', undefined, errorMessage);
+      return { success: false, error: errorMessage };
     }
   }
 
