@@ -89,13 +89,13 @@ export default function BlogHero({
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
                         placeholder="Title, writer, tag, or org/repo"
-                        className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-10 font-sans text-sm text-ink placeholder:text-ink-secondary focus:bg-canvas"
+                        className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-12 font-sans text-sm text-ink placeholder:text-ink-secondary focus:bg-canvas"
                       />
                       {searchQuery && (
                         <button
                           type="button"
                           onClick={() => setSearchQuery('')}
-                          className="absolute right-1.5 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
+                          className="absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                         >
                           <X className="h-4 w-4" aria-hidden="true" />
                           <span className="sr-only">Clear search</span>

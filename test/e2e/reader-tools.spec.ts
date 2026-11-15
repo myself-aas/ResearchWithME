@@ -43,3 +43,8 @@ test('the API reference renders and its group anchors resolve', async ({ page })
   await nav.getByRole('link', { name: 'Articles' }).click();
   await expect(page).toHaveURL(/#articles$/);
 });
+
+test('a missing article returns an HTTP 404', async ({ request }) => {
+  const response = await request.get('/post/definitely-missing-reader');
+  expect(response.status()).toBe(404);
+});

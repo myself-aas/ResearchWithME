@@ -19,3 +19,29 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 }
+
+for (const theme of ['light', 'dark'] as const) {
+  test(`fixture reader content remains visible in ${theme} mode`, async ({ page }) => {
+    test.skip(process.env.RWM_ARTICLE_FIXTURE !== '1', 'Requires the isolated editorial-fixture CMS post.');
+    await page.addInitScript((choice) => localStorage.setItem('rwm-theme', choice), theme);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/post/editorial-fixture');
+    await expect(page.locator('html')).toHaveAttribute('data-theme', `reme-${theme}`);
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByText('This is a deterministic research review fixture', { exact: false })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Open citation builder' })).toBeVisible();
+  });
+}
+
+test('reader save is keyboard accessible and persists after reload', async ({ page }) => {
+  test.skip(process.env.RWM_ARTICLE_FIXTURE !== '1', 'Requires the isolated editorial-fixture CMS post.');
+  await page.goto('/post/editorial-fixture');
+  const save = page.getByRole('article').getByRole('button', { name: 'Save', exact: true });
+  await expect(save).toBeVisible();
+  for (let i = 0; i < 60 && !(await save.evaluate((el) => el === document.activeElement)); i++) await page.keyboard.press('Tab');
+  await expect(save).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('article').getByRole('button', { name: 'Saved', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await page.reload();
+  await expect(page.getByRole('article').getByRole('button', { name: 'Saved', exact: true })).toHaveAttribute('aria-pressed', 'true');
+});
