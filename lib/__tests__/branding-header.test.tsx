@@ -10,14 +10,15 @@ import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
 import manifest from '@/app/manifest';
 
 describe('brand assets', () => {
-  it('renders the supplied wordmark and compact mark with an accessible name', () => {
+  it('renders the larger wordmark and compact mark with an accessible name', () => {
     const wordmark = renderToStaticMarkup(createElement(BrandLogo));
     const mark = renderToStaticMarkup(createElement(BrandLogo, { showText: false }));
-    expect(wordmark).toContain('/brand/wordmark.svg');
+    expect(wordmark).toContain('reme');
+    expect(wordmark).toContain('/brand/mark.svg');
     expect(mark).toContain('/brand/mark.svg');
     expect(wordmark).toContain('aria-label="ResearchWithMe"');
-    expect(wordmark).toContain('bg-primary');
-    expect(wordmark).toContain('mask-image:url(/brand/wordmark.svg)');
+    expect(wordmark).toContain('bg-brand');
+    expect(mark).not.toContain('reme<span');
     expect(readFileSync('public/brand/wordmark.svg')).toEqual(readFileSync('research-with-me (3).svg'));
     expect(readFileSync('public/favicon.svg')).toEqual(readFileSync('research-with-me-favicon.svg'));
   });

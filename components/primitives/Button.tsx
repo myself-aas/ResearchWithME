@@ -16,7 +16,7 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: 'min-h-9 px-3 text-xs',
-  md: 'min-h-11 px-4 text-sm',
+  md: 'min-h-11 px-6 text-sm',
   lg: 'min-h-12 px-6 text-base',
 };
 
@@ -52,7 +52,7 @@ export function Button({
       disabled={isDisabled}
       aria-busy={loading}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-sm font-sans font-semibold uppercase tracking-wider transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
+        'inline-flex items-center justify-center gap-2 rounded-full font-sans font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         fullWidth && 'w-full',

@@ -12,8 +12,8 @@ describe('Archival typography, 68ch prose & ThemeToggle', () => {
     const css = readFileSync(join(process.cwd(), file), 'utf8');
     expect(css).toContain('JetBrains Mono');
     expect(css).toContain('68ch');
-    expect(css).toMatch(/--font-serif:\s*'Aptos Serif',\s*var\(--font-newsreader\)/);
-    expect(css).toMatch(/--font-sans:\s*'Aptos',\s*var\(--font-inter\)/);
+    expect(css).toMatch(/--font-serif:\s*'Plus Jakarta Sans',\s*var\(--font-newsreader\)/);
+    expect(css).toMatch(/--font-sans:\s*'Plus Jakarta Sans',\s*var\(--font-inter\)/);
     expect(css).toMatch(/--font-mono:\s*'Aptos Mono',\s*'JetBrains Mono'/);
     expect(css).not.toMatch(/@font-face[^}]*Aptos/);
     expect(css).not.toMatch(/Hind Siliguri|Noto Serif Bengali|lang="bn"/);

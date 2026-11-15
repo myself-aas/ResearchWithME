@@ -112,7 +112,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <ArticleSmoothScroll />
       <BlogHeader />
 
-      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-5 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-10">
         <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
@@ -139,9 +139,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12">
           <article aria-labelledby="article-title" className="min-w-0">
-            <header className="border-b border-line pb-8">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
-                <span className="font-semibold text-brand">{article.category}</span>
+            <header className="pb-2">
+              <p className="flex flex-wrap items-center gap-x-2 gap-y-2 font-sans text-xs text-ink-secondary">
+                <span className="rounded-full bg-selection px-3 py-1.5 font-semibold text-brand">{article.category}</span>
                 <span aria-hidden="true">·</span>
                 <span>{article.format}</span>
                 <span aria-hidden="true">·</span>
@@ -150,11 +150,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <span>{article.readTime}</span>
               </p>
 
-              <h1 id="article-title" className="mt-3 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
+              <h1 id="article-title" className="mt-5 max-w-4xl break-words font-sans text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-[3.5rem] lg:leading-[1.14]">
                 {article.title}
               </h1>
 
-              <p className="mt-4 reading-column break-words font-serif text-xl leading-relaxed text-ink-secondary">
+              <p className="mt-4 reading-column break-words font-sans text-lg leading-relaxed text-ink-secondary">
                 {article.subtitle}
               </p>
 
@@ -167,7 +167,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     >
                       <span
                         aria-hidden="true"
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface font-sans text-xs font-semibold text-ink"
                       >
                         {article.author.avatar}
                       </span>
@@ -180,7 +180,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                     <div className="flex min-w-0 items-center gap-3 font-sans text-sm">
                       <span
                         aria-hidden="true"
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface font-sans text-xs font-semibold text-ink"
                       >
                         {article.author.avatar}
                       </span>
@@ -245,11 +245,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               />
             </section>
 
-            <section aria-labelledby="takeaways-heading" className="mt-10 reading-column border-y border-line py-6">
+            <section aria-labelledby="takeaways-heading" className="mt-10 reading-column rounded-2xl border border-line bg-surface p-5 sm:p-6">
               <Text id="takeaways-heading" as="h2" variant="eyebrow" weight="semibold">
                 Key takeaways
               </Text>
-              <ul className="mt-3 space-y-2.5">
+              <ul className="mt-4 space-y-3">
                 {article.keyTakeaways.map((takeaway) => (
                   <li key={takeaway} className="flex gap-3 font-serif text-base leading-relaxed text-ink">
                     <span aria-hidden="true" className="font-mono text-brand">—</span>
@@ -283,7 +283,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             {article.reviewedArtifact && (
               <Card
                 aria-labelledby="artifact-heading"
-                as="section" padding="lg" className="mt-10 reading-column"
+                as="section" padding="lg" radius="lg" className="mt-10 reading-column"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <Text id="artifact-heading" as="h2" variant="eyebrow" weight="semibold">
@@ -322,7 +322,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <Link
                   key={tag}
                   href={`/?${new URLSearchParams({ search: tag }).toString()}`}
-                  className="rounded-sm border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
+                  className="rounded-full border border-line bg-surface px-3 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
                 >
                   #{tag}
                 </Link>
@@ -337,21 +337,31 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <ArticleServiceNote format={article.format} />
             </div>
 
+            <ReadingProgressDock
+              inline
+              itemId={article.id}
+              itemKind="post"
+              readTime={article.readTime}
+              citationSource={citationMap.rwm}
+              citeHref={citeHref}
+              discussionAnchor="#discussion"
+            />
+
             <div className="mt-10 reading-column">
               <DeferredDiscussion postId={article.id} commentCount={article.commentsCount} />
             </div>
 
             {related.length > 0 && (
-              <section aria-labelledby="related-heading" className="mt-12 reading-column border-t border-line pt-8">
+              <section aria-labelledby="related-heading" className="mt-12 reading-column pt-2">
                 <h2 id="related-heading" className="font-serif text-2xl font-bold text-ink">
                   Related reviews
                 </h2>
-                <ul className="mt-4 divide-y divide-line border-y border-line">
+                <ul className="mt-4 space-y-3">
                   {related.map((item) => (
                     <li key={item.id}>
                       <Link
                         href={`/post/${item.slug}`}
-                        className="group flex flex-col gap-1 py-4 hover:text-brand"
+                        className="group flex flex-col gap-2 rounded-2xl border border-line bg-surface p-5 transition-colors hover:bg-surface-subtle hover:text-brand"
                       >
                         <span className="font-mono text-xs text-ink-secondary">
                           {item.category} · {item.readTime}
@@ -372,9 +382,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
           <aside
             aria-label="Article tools"
-            className="h-fit space-y-6 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
+            className="h-fit space-y-4 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-t-0 lg:pt-0"
           >
-            <Card padding="lg">
+            <Card padding="lg" radius="lg">
               <Text as="h2" variant="eyebrow" weight="semibold">
                 Cite this review
               </Text>
@@ -390,14 +400,14 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </div>
               <Link
                 href={citeHref}
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-action-primary px-6 py-2 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
               >
                 <Quote className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Open citation builder</span>
               </Link>
             </Card>
 
-            <Card padding="lg">
+            <Card padding="lg" radius="lg">
               <Text as="h2" variant="eyebrow" weight="semibold">
                 Archival Record
               </Text>
@@ -433,11 +443,11 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </dl>
             </Card>
 
-            <Card padding="lg">
+            <Card padding="lg" radius="lg">
               <WorkflowDisclosure workflow={RESEARCH_WORKFLOWS.publication} summary="How this review was published" />
             </Card>
 
-            <Card padding="lg" className="font-sans text-xs leading-relaxed text-ink-secondary">
+            <Card padding="lg" radius="lg" className="font-sans text-xs leading-relaxed text-ink-secondary">
               <p className="flex items-center gap-2 font-mono uppercase tracking-wider text-ink">
                 <BookOpen className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
                 <span>Verification note</span>
@@ -450,14 +460,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         </div>
       </main>
 
-      <ReadingProgressDock
-        itemId={article.id}
-        itemKind="post"
-        readTime={article.readTime}
-        citationSource={citationMap.rwm}
-        citeHref={citeHref}
-        discussionAnchor="#discussion"
-      />
+
 
       <BlogFooter />
     </div>

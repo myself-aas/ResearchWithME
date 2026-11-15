@@ -18,6 +18,7 @@ export interface ReadingProgressDockProps {
   citationSource: CitationSource;
   citeHref: string;
   discussionAnchor?: string;
+  inline?: boolean;
 }
 
 function parseMinutes(readTime: string): number {
@@ -32,6 +33,7 @@ export default function ReadingProgressDock({
   citationSource,
   citeHref,
   discussionAnchor,
+  inline = false,
 }: ReadingProgressDockProps) {
   const hydrated = useHydratePreferences();
   const savedPostIds = usePreferencesStore((state) => state.savedPostIds);
@@ -70,9 +72,9 @@ export default function ReadingProgressDock({
   return (
     <aside
       aria-label="Reading controls"
-      className="fixed bottom-5 left-1/2 z-40 -translate-x-1/2 print:hidden"
+      className={inline ? "mt-8 reading-column print:hidden" : "fixed bottom-5 left-1/2 z-40 -translate-x-1/2 print:hidden"}
     >
-      <div className="flex items-center gap-2 rounded-2xl border border-line bg-surface/95 shadow-lg px-3 py-1.5 text-ink backdrop-blur-xs">
+      <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface px-3 py-1.5 text-ink">
         {/* Solid drawing: the ring is the same object as the top bar, at a
             smaller scale — it reads progress without adding a second metric. */}
         <m.svg
