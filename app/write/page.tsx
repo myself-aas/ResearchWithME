@@ -20,9 +20,10 @@ import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
 import dynamic from 'next/dynamic';
 import { Text } from '@/components/primitives';
 import { WorkflowDisclosure } from '@/components/workflows';
+import MarkdownBody from '@/components/MarkdownBody';
 import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
 
-const MarkdownEditor = dynamic(() => import('@/components/cms/MarkdownEditor'), {
+const PlateBodyEditor = dynamic(() => import('@/components/editor/PlateBodyEditor'), {
   ssr: false,
 });
 
@@ -179,10 +180,6 @@ export default function WritePage() {
     [draft.authorId],
   );
   const readTime = useMemo(() => readingTimeFromText(`${draft.summary} ${draft.content}`), [draft.summary, draft.content]);
-  const previewParagraphs = useMemo(
-    () => draft.content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean),
-    [draft.content],
-  );
 
   async function publish(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -399,12 +396,8 @@ export default function WritePage() {
             )}
 
             <div className="mt-8 space-y-4">
-              {previewParagraphs.length > 0 ? (
-                previewParagraphs.map((paragraph, index) => (
-                  <p key={`${index}-${paragraph.slice(0, 20)}`} className="max-w-prose text-lg leading-relaxed text-ink">
-                    {paragraph}
-                  </p>
-                ))
+              {draft.content.trim() ? (
+                <MarkdownBody markdown={draft.content} />
               ) : (
                 <p className="text-base text-ink-secondary">The article body will appear here as you write.</p>
               )}
@@ -709,11 +702,11 @@ export default function WritePage() {
               <Text as="legend" variant="card-title">Body</Text>
 
               <div>
-                <label htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-ink">
+                <label id="write-content-label" htmlFor="write-content" className="mb-1.5 block text-sm font-medium text-ink">
                   Article body <span className="text-ink-secondary">(required)</span>
                 </label>
                 <div className="mt-1">
-                  <MarkdownEditor
+                  <PlateBodyEditor
                     id="write-content"
                     value={draft.content}
                     onChange={(value) => update('content', value)}
@@ -721,7 +714,7 @@ export default function WritePage() {
                   />
                 </div>
                 <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-ink-secondary">
-                  <span>Separate paragraphs with an empty line. Estimated reading time: {readTime} min.</span>
+                  <span>Estimated reading time: {readTime} min.</span>
                   <span>
                     {draft.content.length} of {LIMITS.body} characters
                   </span>

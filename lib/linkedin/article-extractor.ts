@@ -24,7 +24,6 @@ export async function extractArticleForLinkedIn(slug: string): Promise<ArticleDa
     authorName: article.author.name,
     category: article.category,
     tags: article.tags,
-    doi: `10.5555/rwm.${article.id}`,
   };
 }
 

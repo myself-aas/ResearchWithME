@@ -4,7 +4,7 @@ import { useEffect, useId, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AnimatePresence, LayoutGroup, useMotionValueEvent, useScroll } from 'motion/react';
+import { AnimatePresence, LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import {
   Bookmark,
@@ -12,14 +12,12 @@ import {
   CheckCircle2,
   LogIn,
   LogOut,
-  Menu,
   PenSquare,
   Search,
   Sparkles,
   Tag,
   User,
   Users,
-  X,
 } from 'lucide-react';
 import { useSession } from '@/lib/supabase/use-session';
 import { useDigestSubscribed, useSavedTotalCount } from '@/lib/stores/preferences-store';
@@ -28,6 +26,9 @@ import { EASING, TRANSITION } from '@/lib/motion/tokens';
 import AttentionPulse from './motion/AttentionPulse';
 import Pressable from './motion/Pressable';
 import BrandLogo from './BrandLogo';
+import { Header } from '@/components/ui/header-2';
+import { Button } from '@/components/ui/button';
+import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
 import ThemeToggle from './ThemeToggle';
 
 const CommandPalette = dynamic(() => import('./search/CommandPalette'), { ssr: false });
@@ -53,7 +54,6 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   const [menuOpen, setMenuOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteEverOpened, setPaletteEverOpened] = useState(false);
-  const [elevated, setElevated] = useState(false);
   const [badgePulse, setBadgePulse] = useState(false);
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -61,13 +61,8 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
 
   const savedTotal = savedCount ?? storeSavedCount;
   const warmPalette = useWarmImport(() => import('./search/CommandPalette'));
-  const { scrollY } = useScroll();
   const isEditor = Boolean(user?.isEditor);
   const isSignedIn = Boolean(user);
-
-  useMotionValueEvent(scrollY, 'change', (value) => {
-    setElevated(value > 8);
-  });
 
   useEffect(() => {
     if (savedTotal <= 0) return;
@@ -104,6 +99,13 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [menuOpen]);
 
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 1024px)');
+    const closeOnDesktop = () => { if (desktop.matches) setMenuOpen(false); };
+    desktop.addEventListener('change', closeOnDesktop);
+    return () => desktop.removeEventListener('change', closeOnDesktop);
+  }, []);
+
   function openPalette() {
     setPaletteEverOpened(true);
     setPaletteOpen(true);
@@ -124,16 +126,12 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
     }`;
 
   return (
-    <header
-      className={`sticky top-0 z-40 border-b border-line bg-canvas/95 backdrop-blur-xs transition-shadow duration-200 ${
-        elevated ? 'shadow-floating' : 'shadow-none'
-      }`}
-    >
+    <Header open={menuOpen}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-16 items-center justify-between gap-1.5 sm:gap-3">
           <Link
             href="/"
-            className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-none"
+            className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             aria-label="ResearchWithMe home"
           >
             <BrandLogo size="xl" showText={true} />
@@ -257,13 +255,15 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               </div>
             )}
 
-            <Pressable
+            <Button
               ref={menuButtonRef}
+              size="icon"
+              variant="outline"
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle lg:hidden"
+              className="lg:hidden"
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">
@@ -275,10 +275,10 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   transition={{ duration: 0.16, ease: [...EASING.enter] }}
                   className="inline-flex"
                 >
-                  {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+                  <MenuToggleIcon open={menuOpen} className="h-5 w-5" />
                 </m.span>
               </AnimatePresence>
-            </Pressable>
+            </Button>
           </div>
         </div>
 
@@ -292,7 +292,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.22, ease: [...EASING.standard] }}
-              className="overflow-hidden lg:hidden"
+              className="max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain lg:hidden"
             >
               <div className="mb-4 rounded-sm border border-line bg-surface p-5">
                 {setSearchQuery && (
@@ -319,6 +319,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                         <li key={item.href}>
                           <Link
                             href={item.href}
+                            onClick={() => setMenuOpen(false)}
                             aria-current={active ? 'page' : undefined}
                             className={`flex min-h-11 items-center gap-2 rounded-sm border px-3 py-2 font-sans text-sm font-medium transition-colors ${
                               active ? 'border-brand bg-surface-subtle text-ink' : 'border-transparent text-ink-secondary hover:bg-surface-subtle hover:text-ink'
@@ -340,6 +341,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                       <li key={item.href}>
                         <Link
                           href={item.href}
+                          onClick={() => setMenuOpen(false)}
                           aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
                           className="flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
                         >
@@ -408,6 +410,6 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           initialQuery={searchQuery ?? ''}
         />
       )}
-    </header>
+    </Header>
   );
 }

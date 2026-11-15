@@ -6,30 +6,19 @@ interface BrandLogoProps {
   className?: string;
 }
 
-export default function BrandLogo({
-  size = 'md',
-  showText = true,
-  className = '',
-}: BrandLogoProps) {
-  const wordmarkSizes = {
-    sm: 'text-xl',
-    md: 'text-2xl',
-    lg: 'text-3xl',
-    xl: 'text-4xl',
-  }[size];
-
-  // Use theme-aware colors: dark mode uses text-ink (light), light mode uses text-stone-900 (dark)
-  // The pi symbol (𝜋 - U+1D70B MATHEMATICAL SANS-SERIF BOLD SMALL PI) is non-italic
-  const piSymbol = '𝜋';
+export default function BrandLogo({ size = 'md', showText = true, className = '' }: BrandLogoProps) {
+  const sizes = {
+    sm: showText ? 'h-8 w-[54px]' : 'h-8 w-8',
+    md: showText ? 'h-10 w-[67px]' : 'h-10 w-10',
+    lg: showText ? 'h-11 w-[74px]' : 'h-11 w-11',
+    xl: showText ? 'h-12 w-[81px]' : 'h-12 w-12',
+  };
 
   return (
-    <div className={`inline-flex items-center ${className}`}>
-      <span
-        className={`${wordmarkSizes} font-serif font-semibold leading-none tracking-[-0.04em] text-ink`}
-        aria-label={showText ? `${piSymbol}eme` : piSymbol}
-      >
-        {showText ? `${piSymbol}eme` : piSymbol}
-      </span>
-    </div>
+    <span className={`inline-flex shrink-0 items-center ${className}`} role="img" aria-label="ResearchWithMe">
+      {/* The supplied mark is dark; invert it in the dark theme for legibility. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={showText ? '/brand/wordmark.svg' : '/brand/mark.svg'} alt="" className={`${sizes[size]} dark:brightness-0 dark:invert`} />
+    </span>
   );
 }

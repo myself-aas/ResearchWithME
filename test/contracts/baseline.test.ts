@@ -9,9 +9,20 @@ const nextApiMethods: Array<{ path: string; method: string }> = JSON.parse(
 );
 
 describe('Next.js API baseline inventory', () => {
-  it('preserves the original 19-operation baseline and tracks the new A2A endpoint', () => {
+  it('preserves the baseline and explicitly tracks subsequently added endpoints', () => {
     const actual = collectNextApiMethods('app/api');
-    expect(actual.filter(({ path }) => path !== '/api/a2a')).toEqual(nextApiMethods);
-    expect(actual.filter(({ path }) => path === '/api/a2a')).toEqual([{ path: '/api/a2a', method: 'POST' }]);
+    const additions = [
+      { path: '/api/a2a', method: 'POST' },
+      { path: '/api/admin/linkedin/auth', method: 'GET' },
+      { path: '/api/admin/linkedin/callback', method: 'GET' },
+      { path: '/api/admin/linkedin/post', method: 'POST' },
+      { path: '/api/admin/linkedin/status', method: 'GET' },
+      { path: '/api/cron/linkedin-batch', method: 'GET' },
+      { path: '/api/webhooks/article-published', method: 'POST' },
+    ];
+    const expected = [...nextApiMethods, ...additions].sort((a, b) =>
+      a.path === b.path ? a.method.localeCompare(b.method) : a.path.localeCompare(b.path),
+    );
+    expect(actual).toEqual(expected);
   });
 });

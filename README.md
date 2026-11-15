@@ -43,6 +43,8 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 | `/dashboard/(studio)/edit/[id]` | Operate | Edit a draft or published article |
 | `/dashboard/(studio)/comments` | Operate | Comment moderation with realtime updates |
 
+The `/write` body uses the open-source Plate editor. Its visual mode supports basic formatting, headings, lists, quotes, links and code. Switch to Markdown mode to edit images, tables and other advanced syntax. Existing drafts that cannot be safely round-tripped in visual mode open in Markdown mode without conversion. Autosave and publishing continue to use Markdown; the dashboard editor remains separate.
+
 Retired routes (`/papers`, `/paper/[slug]`, `/editions`) return 404; their surface briefs are kept under `.impeccable/surfaces/` with `status: retired` for history but no code serves them.
 
 Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
