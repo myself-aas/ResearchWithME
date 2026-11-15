@@ -3,7 +3,7 @@
 /**
  * LazyMount — viewport-gated mounting for expensive client widgets.
  *
- * Policy (πeme §18 code-splitting + animation-principles staging):
+ * Policy (reme §18 code-splitting + animation-principles staging):
  *  - Anything a crawler must read stays server-rendered. LazyMount is for
  *    widgets that are *interactive only*: graphs, charts, editors, players.
  *  - The placeholder occupies the widget's final box (skeleton matches the

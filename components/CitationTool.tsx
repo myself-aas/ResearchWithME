@@ -106,7 +106,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <nav aria-label="Breadcrumb" className="mb-6 flex flex-wrap items-center gap-2 text-sm text-ink-secondary">
           <Link href="/" className="inline-flex items-center gap-1.5 hover:text-ink hover:underline">
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
@@ -382,26 +382,11 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
             Scholarly provenance and reference verification
           </Text>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-ink-secondary">
-            Every formatted reference generated here draws from verified publication dates, persistent Digital Object
-            Identifiers, and contributor records maintained by our{' '}
-            <TextLink href="/authors" >
-              domain specialists
-            </TextLink>{' '}
-            and{' '}
-            <TextLink href="/editorial-board" >
-              editorial board
-            </TextLink>
-            . Downloaded <code className="font-mono text-xs">.bib</code> and{' '}
+            Formatted references are generated from published article metadata and any primary DOI, URL, or identifier
+            attached to the reviewed work. Downloaded <code className="font-mono text-xs">.bib</code> and{' '}
             <code className="font-mono text-xs">.ris</code> records import directly into Zotero, JabRef, Mendeley, and
-            LaTeX workflows; you can also browse full volumes in{' '}
-            <TextLink href="/editions" >
-              printable PDF editions
-            </TextLink>{' '}
-            or query primary sources in the{' '}
-            <TextLink href="/assistant" >
-              research synthesis assistant
-            </TextLink>
-            .
+            LaTeX workflows. Query primary sources interactively in the{' '}
+            <TextLink href="/assistant">research assistant</TextLink>.
           </p>
         </section>
       </main>

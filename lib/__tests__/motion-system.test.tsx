@@ -1,9 +1,9 @@
 /**
- * Motion system contract — πeme v3.1 §9/§10 + animation-principles.
+ * Motion system contract — reme v3.1 §9/§10 + animation-principles.
  *
  * These tests protect the four things that are easy to regress and expensive
  * to notice in review:
- *  1. token parity with the generated πeme tokens (no drifting literals);
+ *  1. token parity with the generated reme tokens (no drifting literals);
  *  2. the timing ceiling and stagger cap;
  *  3. the twelve-principle registry used by `/motion` and the docs;
  *  4. the SSR contract — content is never emitted hidden, and a primitive
@@ -42,13 +42,13 @@ import { lazyWidget } from '@/lib/motion/lazy';
 const tokensCss = readFileSync(join(process.cwd(), 'tokens/generated/tokens.css'), 'utf8');
 
 describe('motion tokens', () => {
-  it('matches the generated πeme duration and easing tokens exactly', () => {
+  it('matches the generated reme duration and easing tokens exactly', () => {
     for (const [name, value] of Object.entries(DURATION_MS)) {
-      expect(tokensCss).toContain(`--pieme-motion-duration-${name}: ${value}ms`);
+      expect(tokensCss).toContain(`--reme-motion-duration-${name}: ${value}ms`);
       expect(DURATION_S[name as keyof typeof DURATION_S]).toBeCloseTo(value / 1000, 5);
     }
     for (const [name, [x1, y1, x2, y2]] of Object.entries(EASING)) {
-      expect(tokensCss).toContain(`--pieme-motion-easing-${name}: cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`);
+      expect(tokensCss).toContain(`--reme-motion-easing-${name}: cubic-bezier(${x1}, ${y1}, ${x2}, ${y2})`);
     }
   });
 

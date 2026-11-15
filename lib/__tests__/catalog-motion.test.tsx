@@ -1,16 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
-import type { BlogPost } from '@/lib/blog-data';
 import ArticleFeed from '@/components/ArticleFeed';
+import { makeTestArticle } from '@/test/fixtures/articles';
 
-const posts: BlogPost[] = JSON.parse(readFileSync(join(process.cwd(), 'data/articles.json'), 'utf8'));
+const posts = [
+  makeTestArticle(),
+  makeTestArticle({
+    id: 'cms-test-2',
+    slug: 'test-article-2',
+    title: 'A Second Test Article',
+    category: 'GitHub Repo Teardowns',
+    format: 'Repo Teardown',
+  }),
+];
 
 describe('ArticleFeed motion catalog & empty/populated states', () => {
-  it('Review Focus #4b: renders populated archival cards with DOI badges, numbered columns, and full SSR visibility (no opacity:0)', () => {
+  it('renders populated archival cards with numbered columns and full SSR visibility (no opacity:0)', () => {
     const html = renderToStaticMarkup(
       createElement(
         MemoryRouter,
@@ -27,10 +34,8 @@ describe('ArticleFeed motion catalog & empty/populated states', () => {
         }),
       ),
     );
-    expect(html).toContain('Inside vLLM');
-    expect(html).toContain('10.5555/rwm.post-1');
+    expect(html).toContain('A Test Article for Unit Tests');
     expect(html).toContain('01');
-    expect(html).toContain('06');
     expect(html).not.toContain('opacity:0');
     expect(html).toContain('CC BY 4.0');
   });
@@ -47,7 +52,7 @@ describe('ArticleFeed motion catalog & empty/populated states', () => {
           onLikePost: () => {},
           selectedCategory: 'STEM & Tech',
           selectedFormat: 'Field Notes',
-          searchQuery: 'nonexistent-doi',
+          searchQuery: 'nonexistent-query',
           onClearFilters: () => {},
         }),
       ),
@@ -55,7 +60,7 @@ describe('ArticleFeed motion catalog & empty/populated states', () => {
     expect(html).toContain('data-testid="active-filter-chips"');
     expect(html).toContain('Column: STEM &amp; Tech');
     expect(html).toContain('Format: Field Notes');
-    expect(html).toContain('Query: nonexistent-doi');
+    expect(html).toContain('Query: nonexistent-query');
     expect(html).toContain('Reset filters');
   });
 });

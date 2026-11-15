@@ -1,86 +1,29 @@
 [
-  {
-    "path": "/api/articles",
-    "method": "GET"
-  },
-  {
-    "path": "/api/articles/{id}",
-    "method": "GET"
-  },
-  {
-    "path": "/api/articles/{id}",
-    "method": "PATCH"
-  },
-  {
-    "path": "/api/authors",
-    "method": "GET"
-  },
-  {
-    "path": "/api/authors/{id}",
-    "method": "GET"
-  },
-  {
-    "path": "/api/cms/comments",
-    "method": "GET"
-  },
-  {
-    "path": "/api/cms/comments/{id}",
-    "method": "DELETE"
-  },
-  {
-    "path": "/api/cms/posts",
-    "method": "GET"
-  },
-  {
-    "path": "/api/cms/posts",
-    "method": "POST"
-  },
-  {
-    "path": "/api/cms/posts/{id}",
-    "method": "DELETE"
-  },
-  {
-    "path": "/api/cms/posts/{id}",
-    "method": "GET"
-  },
-  {
-    "path": "/api/cms/posts/{id}",
-    "method": "PATCH"
-  },
-  {
-    "path": "/api/comments",
-    "method": "GET"
-  },
-  {
-    "path": "/api/comments",
-    "method": "POST"
-  },
-  {
-    "path": "/api/dashboard/applications",
-    "method": "GET"
-  },
-  {
-    "path": "/api/dashboard/applications",
-    "method": "POST"
-  },
-  {
-    "path": "/api/dashboard/applications/{id}",
-    "method": "POST"
-  },
-  {
-    "path": "/api/papers",
-    "method": "GET"
-  },
-  {
-    "path": "/api/papers/{slug}",
-    "method": "GET"
-  },
-  {
-    "path": "/api/research-assistant",
-    "method": "POST"
-  },
-  {
-    "path": "/api/revalidate",
-    "method": "POST"
-  }
+  { "path": "/api/account/api-keys", "method": "GET" },
+  { "path": "/api/account/api-keys", "method": "POST" },
+  { "path": "/api/account/api-keys/{keyId}", "method": "DELETE" },
+  { "path": "/api/articles", "method": "GET" },
+  { "path": "/api/articles/{id}", "method": "GET" },
+  { "path": "/api/articles/{id}", "method": "PATCH" },
+  { "path": "/api/authors", "method": "GET" },
+  { "path": "/api/authors/{id}", "method": "GET" },
+  { "path": "/api/billing/checkout", "method": "POST" },
+  { "path": "/api/billing/entitlement", "method": "GET" },
+  { "path": "/api/cms/comments", "method": "GET" },
+  { "path": "/api/cms/comments/{id}", "method": "DELETE" },
+  { "path": "/api/cms/posts", "method": "GET" },
+  { "path": "/api/cms/posts", "method": "POST" },
+  { "path": "/api/cms/posts/{id}", "method": "DELETE" },
+  { "path": "/api/cms/posts/{id}", "method": "GET" },
+  { "path": "/api/cms/posts/{id}", "method": "PATCH" },
+  { "path": "/api/comments", "method": "GET" },
+  { "path": "/api/comments", "method": "POST" },
+  { "path": "/api/dashboard/applications", "method": "GET" },
+  { "path": "/api/dashboard/applications", "method": "POST" },
+  { "path": "/api/dashboard/applications/{id}", "method": "POST" },
+  { "path": "/api/research-assistant", "method": "POST" },
+  { "path": "/api/revalidate", "method": "POST" },
+  { "path": "/api/v1/assistant/answers", "method": "POST" },
+  { "path": "/api/v1/usage", "method": "GET" },
+  { "path": "/api/webhooks/lemonsqueezy", "method": "POST" }
 ]

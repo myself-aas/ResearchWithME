@@ -1,5 +1,5 @@
 /**
- * SourceCard presentation logic — πeme v3.1 §27.3 (pure, unit-tested).
+ * SourceCard presentation logic — reme v3.1 §27.3 (pure, unit-tested).
  */
 import type { Source, SourceVersion, PermissionDecision, ExternalIdentifier } from '@/lib/schemas/scholarly';
 import { component } from '@/tokens/generated/tokens';
@@ -32,11 +32,11 @@ export function sourceCardLabel(source: Source): string {
 }
 
 export const sourceCardTokens = {
-  background: `bg-[var(--pieme-component-source-card-background)]`,
-  border: `border-[var(--pieme-component-source-card-border)]`,
-  accentDot: `bg-[var(--pieme-component-source-card-accent)]`,
-  title: `text-[var(--pieme-component-source-card-title)]`,
-  metadata: `text-[var(--pieme-component-source-card-metadata)]`,
+  background: `bg-[var(--reme-component-source-card-background)]`,
+  border: `border-[var(--reme-component-source-card-border)]`,
+  accentDot: `bg-[var(--reme-component-source-card-accent)]`,
+  title: `text-[var(--reme-component-source-card-title)]`,
+  metadata: `text-[var(--reme-component-source-card-metadata)]`,
 } as const;
 
 export const sourceCardComponentTokens = component.sourceCard;

@@ -1,5 +1,5 @@
 /**
- * EmptyState — πeme v3.1 accessible primitive (spec §7 Feedback).
+ * EmptyState — reme v3.1 accessible primitive (spec §7 Feedback).
  *
  * Purpose: explains why the view is empty and offers exactly one relevant action.
  * Anatomy: heading (h2/h3 per placement), explanation, single action slot.

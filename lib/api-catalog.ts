@@ -3,14 +3,20 @@ import { absoluteUrl } from './seo';
 /** Each entry represents a route group, including related item routes. */
 export const API_GROUPS = [
   { id: 'articles', name: 'Articles', path: '/api/articles', description: 'Browse published articles and record reactions.' },
-  { id: 'authors', name: 'Authors', path: '/api/authors', description: 'Browse published author profiles and their archives.' },
-  { id: 'papers', name: 'Papers', path: '/api/papers', description: 'Search the paper archive and retrieve individual papers.' },
+  { id: 'authors', name: 'Writers', path: '/api/authors', description: 'Browse published writer profiles and their article lists.' },
   { id: 'comments', name: 'Comments', path: '/api/comments', description: 'Read and submit article comments.' },
   { id: 'research-assistant', name: 'Research assistant', path: '/api/research-assistant', description: 'Ask questions grounded in the article catalog.' },
+  { id: 'a2a', name: 'A2A archive agent', path: '/api/a2a', description: 'Send textual A2A JSON-RPC messages to search the published archive.' },
   { id: 'cms-posts', name: 'Editorial posts', path: '/api/cms/posts', description: 'Manage editorial posts. Editor access is required.' },
   { id: 'cms-comments', name: 'Comment moderation', path: '/api/cms/comments', description: 'Moderate comments. Editor access is required.' },
   { id: 'applications', name: 'Writer applications', path: '/api/dashboard/applications', description: 'Manage writer applications. A signed-in session is required; reviews require editor access.' },
   { id: 'revalidate', name: 'Cache revalidation', path: '/api/revalidate', description: 'Receive database webhooks that invalidate cached pages. A shared secret is required.' },
+  { id: 'billing', name: 'Billing', path: '/api/billing/checkout', description: 'Start a checkout for one of this site’s products. A session is required.' },
+  { id: 'entitlement', name: 'Account plan', path: '/api/billing/entitlement', description: 'Read the signed-in account’s plan and purchase credits. A session is required.' },
+  { id: 'assistant-api', name: 'Assistant API', path: '/api/v1/assistant/answers', description: 'Ask the Assistant with an API key. Rate limited per key, with a monthly allowance per account.' },
+  { id: 'api-usage', name: 'API usage', path: '/api/v1/usage', description: 'Read how much of the monthly Assistant API allowance is used. An API key is required.' },
+  { id: 'api-keys', name: 'API keys', path: '/api/account/api-keys', description: 'Create, list, and revoke keys for the versioned Assistant API. A session is required.' },
+  { id: 'webhooks', name: 'Billing webhook', path: '/api/webhooks/lemonsqueezy', description: 'Receive signed Lemon Squeezy billing events. A webhook signing secret is required.' },
 ] as const;
 
 export type ApiGroupId = (typeof API_GROUPS)[number]['id'];

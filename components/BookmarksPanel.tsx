@@ -133,7 +133,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <BlogHeader savedCount={savedArticles.length} />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-line pb-8">
           <Text as="p" variant="eyebrow" color="secondary">
             Local Archive · Persisted on Device
@@ -337,22 +337,10 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
           <p className="mt-2 max-w-3xl font-sans text-sm leading-relaxed text-ink-secondary">
             Your saved reading list stays entirely in your browser storage—no account registration or cloud telemetry is
             required to bookmark reviews from the{' '}
-            <TextLink href="/" >
-              editorial catalog
-            </TextLink>{' '}
-            or records from the{' '}
-            <TextLink href="/papers" >
-              indexed paper archive
-            </TextLink>
-            . Export saved items as clean Markdown notes for Obsidian, Notion, or lab notebooks, generate structured
-            BibTeX and RIS files in the{' '}
-            <TextLink href="/cite" >
-              citation builder
-            </TextLink>
-            , or inspect our zero-tracking guarantees in the{' '}
-            <TextLink href="/privacy" >
-              reader privacy policy
-            </TextLink>
+            <TextLink href="/">home catalog</TextLink>. Export saved items as clean Markdown notes for Obsidian, Notion,
+            or lab notebooks, generate structured BibTeX and RIS files in the{' '}
+            <TextLink href="/cite">citation builder</TextLink>, or inspect our zero-tracking guarantees in the{' '}
+            <TextLink href="/privacy">privacy policy</TextLink>
             . Saved items persist across sessions on this device so you can assemble seminar packets, replication queues,
             and literature review checklists at your own pace without exposing reading habits to third-party servers.
           </p>

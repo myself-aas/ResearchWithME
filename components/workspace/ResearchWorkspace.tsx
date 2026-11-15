@@ -1,5 +1,5 @@
 /**
- * ResearchWorkspace — πeme v3.1 §5/§7 (stage 4, beta).
+ * ResearchWorkspace — reme v3.1 §5/§7 (stage 4, beta).
  *
  * Desktop: resizable Sources / Synthesis / Inspector regions on a 12-column
  * grid; regions collapse without losing focus or unsaved state (panels are

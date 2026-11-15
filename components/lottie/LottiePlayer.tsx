@@ -12,7 +12,7 @@
  *    imported on first use, never with the shell.
  *  - **Decorative.** The player is `aria-hidden`; the state change it
  *    illustrates must already be announced in text by the caller.
- *  - **Theme-safe.** `.pieme-lottie` recolours every painted shape to
+ *  - **Theme-safe.** `.reme-lottie` recolours every painted shape to
  *    `currentColor` (globals.css), so callers colour it with `text-*` tokens.
  *  - **Replayable.** Change `playKey` to play again (e.g. on each save).
  */
@@ -122,7 +122,7 @@ export default function LottiePlayer({
     <span
       aria-hidden="true"
       data-lottie={animation.nm}
-      className={cn('pieme-lottie relative inline-flex shrink-0', className)}
+      className={cn('reme-lottie relative inline-flex shrink-0', className)}
       style={{ width: size, height: size, ...style }}
     >
       <span className={cn('inline-flex h-full w-full', live && 'invisible')}>{fallback}</span>

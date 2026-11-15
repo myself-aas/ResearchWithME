@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 import AuthorArchiveLayout from '@/components/AuthorArchiveLayout';
-import DeferredImpactChart from '@/components/author/DeferredImpactChart';
+
 import AuthorProfileCard from '@/components/AuthorProfileCard';
 import BlogFooter from '@/components/BlogFooter';
 import BlogHeader from '@/components/BlogHeader';
@@ -62,7 +62,7 @@ export default async function AuthorDetailPage({ params }: PageProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(personJsonLd(author)) }} />
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
@@ -89,25 +89,16 @@ export default async function AuthorDetailPage({ params }: PageProps) {
 
         <AuthorProfileCard author={author} metrics={metrics} headingLevel="h1" />
 
-        <DeferredImpactChart
-          author={author}
-          articleCount={metrics.totalArticles}
-          totalLikes={metrics.totalLikes}
-          totalComments={metrics.totalComments}
-        />
-
         <AuthorArchiveLayout articles={articles} />
 
         <p className="mt-10 border-t border-line pt-6 text-sm leading-relaxed text-ink-secondary">
-          All reviews, benchmark replications, and technical essays attributed to {author.name} undergo editorial
-          provenance checks against the contributor&apos;s verified registry credentials and are published openly under
-          Creative Commons Attribution 4.0 International. Browse all{' '}
-          <TextLink href="/authors" >
-            contributors and domain reviewers
+          Articles by {author.name} are published openly under CC BY 4.0. Browse all{' '}
+          <TextLink href="/authors">
+            writers
           </TextLink>{' '}
           or read our{' '}
-          <TextLink href="/editorial-board" >
-            editorial board review standards
+          <TextLink href="/editorial-board">
+            editorial standards
           </TextLink>
           .
         </p>

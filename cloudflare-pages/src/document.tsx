@@ -1,3 +1,4 @@
+import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import { renderToReadableStream } from 'react-dom/server.edge';
 import {
   createStaticHandler,
@@ -9,11 +10,8 @@ import { HYDRATION_DATA_KEY } from './routes';
 import type { RequestContext } from './server/context';
 import { clientAssets } from './manifest';
 import { pageMetadata, renderMetadataTags, type PageMetadataOverrides } from './server/metadata';
-import { dirOf } from '@/lib/i18n/locales';
-import LocaleProvider from '@/components/i18n/LocaleProvider';
 import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
-import { getRequestLocale } from './server/locale';
 import {
   createServerRoutes,
   serializeRouteError,
@@ -22,10 +20,6 @@ import {
 
 const encoder = new TextEncoder();
 
-/**
- * Escapes the loader payload so it can be embedded inside an inline
- * <script> without any chance of breaking out (`</script>`, U+2028/2029).
- */
 function safeJsonForHtml(value: unknown): string {
   return JSON.stringify(value ?? null)
     .replace(/</g, '\\u003c')
@@ -39,14 +33,11 @@ interface HydrationPayload {
   errors: Record<string, unknown> | null;
 }
 
-/** Builds the exact state the browser router needs to resume without re-fetching. */
 export function hydrationPayload(context: StaticHandlerContext): HydrationPayload {
   let errors: Record<string, unknown> | null = null;
   if (context.errors) {
     errors = {};
     for (const [routeId, error] of Object.entries(context.errors)) {
-      // ErrorResponseImpl serializes cleanly; anything else collapses to a
-      // generic 500 shape that still satisfies isRouteErrorResponse().
       errors[routeId] = serializeRouteError(error);
     }
   }
@@ -61,12 +52,6 @@ interface LoaderMetadataEnvelope {
   metadata?: unknown;
 }
 
-/**
- * Finds the route metadata a loader embedded in its data, deepest match
- * first. Loaders treat these values as untrusted text — `pageMetadata`
- * collapses whitespace, caps length and the renderer attribute-escapes
- * everything — so this function only needs to recognise the shape.
- */
 export function routeMetadataFromContext(context: StaticHandlerContext): PageMetadataOverrides {
   const loaderData = (context.loaderData ?? {}) as Record<string, unknown>;
   for (let index = (context.matches?.length ?? 0) - 1; index >= 0; index -= 1) {
@@ -89,11 +74,6 @@ export function routeMetadataFromContext(context: StaticHandlerContext): PageMet
   return {};
 }
 
-/**
- * Maps the static-handler context onto the HTTP status. Loader errors win
- * (the deepest matched status code is already in the context); otherwise the
- * catch-all not-found route is the only non-200 outcome in the table.
- */
 function statusFromContext(context: StaticHandlerContext): number {
   if (context.errors) {
     return context.statusCode >= 400 && context.statusCode <= 599 ? context.statusCode : 500;
@@ -118,7 +98,6 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
   }
 
   if (queryContext instanceof Response) {
-    // A loader short-circuited with a redirect: pass it through, never cacheable.
     const headers = new Headers(queryContext.headers);
     if (!headers.has('cache-control')) headers.set('cache-control', 'private, no-store');
     return new Response(queryContext.body, {
@@ -133,30 +112,23 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
   const assets = clientAssets();
   const metadataTags = renderMetadataTags(pageMetadata(ctx, routeMetadataFromContext(queryContext)));
   const hydrationJson = safeJsonForHtml(hydrationPayload(queryContext));
-  const locale = getRequestLocale(ctx);
-  const dir = dirOf(locale);
   const cssLinks = (assets.css ?? [])
     .map((file) => `<link rel="stylesheet" href="/${file}">`)
     .join('');
 
   const appStream = await renderToReadableStream(
-    <LocaleProvider initialLocale={locale}>
-      <MotionModeProvider>
-        <MotionScope>
-          <StaticRouterProvider router={router} context={queryContext} />
-        </MotionScope>
-      </MotionModeProvider>
-    </LocaleProvider>,
+    <MotionModeProvider>
+      <MotionScope>
+        <StaticRouterProvider router={router} context={queryContext} />
+      </MotionScope>
+    </MotionModeProvider>,
     { bootstrapModules: [`/${assets.file}`] },
   );
   await appStream.allReady;
 
-  const themeBoot = `(function(){try{var t=localStorage.getItem('rwm-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.classList.toggle('light',t==='light');}catch(e){}})();`;
 
-  // locale/dir are derived from resolveLocale(), never from raw request text,
-  // so they are safe to interpolate into the shell.
   const head =
-    `<!doctype html><html lang="${locale}" dir="${dir}"><head><meta charset="utf-8">` +
+    `<!doctype html><html lang="en" dir="ltr"><head><meta charset="utf-8">` +
     `<meta name="viewport" content="width=device-width, initial-scale=1">` +
     `<meta name="color-scheme" content="light dark">` +
     `<meta name="theme-color" content="#FAF9F6">` +
@@ -164,8 +136,12 @@ export async function renderPage(ctx: RequestContext): Promise<Response> {
     cssLinks +
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/newsreader-latin-variable.woff2" crossorigin>` +
     `<link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-variable.woff2" crossorigin>` +
-    `<script>${themeBoot}</script>` +
-    `<script>window.__RWM_LOCALE__=${JSON.stringify(locale)};window.${HYDRATION_DATA_KEY}=${hydrationJson}</script>` +
+    `<script>${THEME_INIT_SCRIPT}</script>` +
+    `<script>window.${HYDRATION_DATA_KEY}=${hydrationJson}</script>` +
+    // WebMCP: registers the archive's read-only tools on page load, before
+    // hydration, so an in-tab agent (or a readiness scanner) sees them. The
+    // script no-ops where the browser has no modelContext.
+    `<script src="/webmcp.js" defer></script>` +
     `</head><body class="bg-canvas font-sans text-ink antialiased">` +
     `<a href="#main-content" class="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary focus:not-sr-only focus:fixed">Skip to main content</a>` +
     `<div id="root">`;

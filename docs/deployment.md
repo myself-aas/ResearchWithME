@@ -198,7 +198,7 @@ Worker built without them runs in unauthenticated local demo mode with a read-on
 
 ## 4. Complete credential inventory
 
-Nine values, three places to put them. None of these belong in a committed file — `.gitignore`
+Seventeen values, three places to put them. None of these belong in a committed file — `.gitignore`
 already excludes `.env*` except `.env.example`.
 
 | # | Name | Secret? | Used by | Obtained from | Stored in |
@@ -211,11 +211,25 @@ already excludes `.env*` except `.env.example`.
 | 6 | `REVALIDATE_SECRET` | **yes** | `/api/revalidate`, Supabase webhook | `openssl rand -hex 32` | Worker secret + Supabase webhook header |
 | 7 | `GEMINI_API_KEY` | **yes** | `/api/research-assistant` | Google AI Studio → API keys | Worker secret, `.env.local` |
 | 8 | `GEMINI_MODEL` | no | same routes | model id you have access to | Worker var, `.env.local` |
+| 9 | `LEMONSQUEEZY_API_KEY` | **yes** | `/api/billing/checkout` | Lemon Squeezy → Settings → API | Worker secret, `.env.local` |
+| 10 | `LEMONSQUEEZY_WEBHOOK_SECRET` | **yes** | `/api/webhooks/lemonsqueezy` | Lemon Squeezy → Settings → Webhooks → *Signing secret* | Worker secret, `.env.local` |
+| 11 | `BILLING_BRIDGE_SECRET` | **yes** | `/api/webhooks/lemonsqueezy` | `openssl rand -hex 32` | Worker secret **and** a row in `private.billing_settings` |
+| 12 | `LEMONSQUEEZY_STORE_ID` | no (identifier) | checkout | Lemon Squeezy → Settings → Stores | Worker var, `.env.local` |
+| 13 | `LEMONSQUEEZY_VARIANT_TEARDOWN` | no (identifier) | checkout | product → variant ID | Worker var, `.env.local` |
+| 13a | `LEMONSQUEEZY_VARIANT_STAT_TABLES` | no (identifier) | checkout | Statistical Table Generator product → variant ID | Worker var, `.env.local` |
+| 14 | `LEMONSQUEEZY_TEST_MODE` | no | checkout, webhook rows | `1` in previews | Worker var, `.env.local` |
+| 15 | `API_BRIDGE_SECRET` | only for the Assistant API | `/api/v1/*`, `/api/account/api-keys`, MCP `ask_archive` | `openssl rand -hex 32`, a different value from row 11 | Worker secret **and** a row in `private.api_settings` (`docs/assistant-api.md`) |
 
 Already present in the repository (confirm under **Settings → Secrets and variables → Actions**):
 `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`, `GEMINI_API_KEY`, `GEMINI_MODEL`,
 `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`,
 `NEXT_PUBLIC_SUPABASE_URL`, `REVALIDATE_SECRET`.
+
+Items 9–16 are documented end to end in `docs/billing.md`. Item 11 is the one that
+needs a second home: the same string has to exist as a Worker secret *and* as the
+`bridge_secret_sha256` column of `private.billing_settings`, or every webhook is
+rejected. Rotation order is Worker secret first, table row second (§3 of that
+document).
 
 ### 4.1 Where to put them, exactly
 
@@ -224,7 +238,7 @@ Already present in the repository (confirm under **Settings → Secrets and vari
 | GitHub repository secrets | Settings → Secrets and variables → **Actions** → *Secrets* | items 1–8 | masked in logs; available to every workflow |
 | GitHub environment secrets | Settings → Environments → **production** → *Environment secrets* | optional, same names | only readable by jobs that declare `environment: production`; add required reviewers here for a manual gate |
 | Cloudflare build variables | Workers & Pages → `researchwithme` → Settings → **Build** → *Variables and secrets* | `NEXT_PUBLIC_*` as plaintext, keys as secrets | consumed by Workers Builds only |
-| Cloudflare Worker secrets | Workers & Pages → `researchwithme` → Settings → **Variables and secrets** (runtime) | `REVALIDATE_SECRET`, `GEMINI_API_KEY` | available to the Worker at request time |
+| Cloudflare Worker secrets | Workers & Pages → `researchwithme` → Settings → **Variables and secrets** (runtime) | `REVALIDATE_SECRET`, `GEMINI_API_KEY`, `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_WEBHOOK_SECRET`, `BILLING_BRIDGE_SECRET` | available to the Worker at request time |
 | Local machine | `.env.local` (git-ignored) | items 1–8 | copied from `.env.example` |
 
 ### 4.2 Supabase URL and publishable key
@@ -338,6 +352,7 @@ order. Four migrations exist:
 | `20261108000200_post_artifacts.sql` | artifact columns on `posts` for the reproducible-metadata fields |
 | `20261108000300_author_applications.sql` | `public.author_applications` + `apply_as_author()` / `review_author_application()` |
 | `20261108000400_author_profiles.sql` | `public.profiles` — the author directory, replacing the hardcoded `AUTHORS` record |
+| `20261114000100_verify_application_identity.sql` | Replaces `apply_as_author()` so the provider must be linked in `auth.identities` and the handle is read from that row, not from the request |
 
 The GitHub Supabase integration also runs a *Supabase Preview* check on pull requests. It fails with
 `Remote migration versions not found in local migrations directory` when the remote history contains
@@ -448,7 +463,14 @@ certificate is Cloudflare's Universal SSL and needs no action.
 npx wrangler secret list
 npx wrangler secret put REVALIDATE_SECRET
 npx wrangler secret put GEMINI_API_KEY
+npx wrangler secret put LEMONSQUEEZY_API_KEY
+npx wrangler secret put LEMONSQUEEZY_WEBHOOK_SECRET
+npx wrangler secret put BILLING_BRIDGE_SECRET
 # GEMINI_MODEL is a plaintext var — add it as a Worker variable in the dashboard
+# Likewise LEMONSQUEEZY_STORE_ID, the three LEMONSQUEEZY_VARIANT_* ids, and
+# LEMONSQUEEZY_TEST_MODE. After setting BILLING_BRIDGE_SECRET, insert the same
+# value's digest into private.billing_settings (docs/billing.md §3), or every
+# webhook answers 500 with billing_bridge_unauthorized.
 ```
 
 Secrets survive a deploy; they are per-Worker, not per-version.
@@ -458,6 +480,8 @@ Secrets survive a deploy; they are per-Worker, not per-version.
 ```bash
 npx wrangler preview --name feature-x      # name defaults to the current git branch
 npx wrangler preview secret put REVALIDATE_SECRET --name feature-x
+# Billing secrets too, and keep LEMONSQUEEZY_TEST_MODE=1 on every preview so a
+# preview checkout cannot charge a real card.
 npx wrangler preview delete feature-x
 ```
 

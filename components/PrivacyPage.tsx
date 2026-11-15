@@ -15,7 +15,7 @@ export default function PrivacyPage() {
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-8">
           <Text as="p" variant="eyebrow" color="brand" weight="semibold">
             Reader Trust &amp; Data Governance
@@ -39,20 +39,9 @@ export default function PrivacyPage() {
                 1. Zero-tracking open-access reading
               </Text>
               <p className="text-ink-secondary">
-                You can read every article, inspect{' '}
-                <TextLink href="/papers" >
-                  archived research papers
-                </TextLink>
-                , download{' '}
-                <TextLink href="/editions" >
-                  quarterly PDF editions
-                </TextLink>
-                , and export citations from the{' '}
-                <TextLink href="/cite" >
-                  citation builder
-                </TextLink>{' '}
-                without registering an account. We do not load third-party ad networks, session-replay scripts, or
-                fingerprinting beacons on any page of the journal.
+                You can read every article and export citations from the{' '}
+                <TextLink href="/cite">citation builder</TextLink> without registering an account. We do not load
+                third-party ad networks, session-replay scripts, or fingerprinting beacons on any page of the site.
               </p>
             </section>
 
@@ -62,13 +51,12 @@ export default function PrivacyPage() {
               </Text>
               <p className="text-ink-secondary">
                 Reader convenience features—including your{' '}
-                <TextLink href="/bookmarks" >
+                <TextLink href="/bookmarks">
                   saved reading list
                 </TextLink>
-                , light or dark archival paper theme selection, and interface language preference (English or বাংলা)—are
-                stored locally in your browser via first-party <code className="font-mono text-sm">localStorage</code>{' '}
-                keys and a strictly functional locale cookie (<code className="font-mono text-sm">rwm_locale</code>).
-                You can clear these items at any time from your browser settings or directly inside the reading list tool.
+                {' '}and light or dark theme selection—are stored locally in your browser via first-party{' '}
+                <code className="font-mono text-sm">localStorage</code> keys. You can clear these items at any time from
+                your browser settings or directly inside the reading list tool.
               </p>
             </section>
 

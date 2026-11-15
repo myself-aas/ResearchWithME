@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Visual parity harness — full-page screenshots of the main routes at the five
- * πeme breakpoints, and a pixel comparison between two captures.
+ * reme breakpoints, and a pixel comparison between two captures.
  *
  *   node scripts/visual-parity.mjs capture <outDir> [route ...]
  *   node scripts/visual-parity.mjs compare <beforeDir> <afterDir>

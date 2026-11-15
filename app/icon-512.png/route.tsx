@@ -16,7 +16,7 @@ export async function GET() {
           background: '#FAF9F6',
         }}
       >
-        <span style={{ fontSize: 300, fontWeight: 700, color: '#0F766E', fontFamily: 'Georgia, serif' }}>
+        <span style={{ fontSize: 300, fontWeight: 700, color: '#1D4ED8', fontFamily: 'ui-sans-serif, system-ui, sans-serif' }}>
           {piSymbol}
         </span>
       </div>

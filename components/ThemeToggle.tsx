@@ -1,94 +1,78 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AnimatePresence } from 'motion/react';
-import * as m from 'motion/react-m';
-import { Moon, Sun } from 'lucide-react';
-import { useLocale } from './i18n/LocaleProvider';
-import { EASING } from '@/lib/motion/tokens';
-import Pressable from './motion/Pressable';
+import {
+  applyDocumentTheme,
+  normalizeThemePreference,
+  THEME_STORAGE_KEY,
+  type ThemePreference,
+} from '@/lib/theme';
 
-export type ThemePreference = 'light' | 'dark' | 'system';
+export { resolveEffectiveTheme, THEME_STORAGE_KEY, type ThemePreference } from '@/lib/theme';
 
-export const THEME_STORAGE_KEY = 'rwm-theme';
-
-export function resolveEffectiveTheme(pref: ThemePreference, prefersDark: boolean): 'light' | 'dark' {
-  if (pref === 'dark') return 'dark';
-  if (pref === 'light') return 'light';
-  return prefersDark ? 'dark' : 'light';
-}
-
-function applyDocumentTheme(effective: 'light' | 'dark', explicit: ThemePreference) {
-  if (typeof document === 'undefined') return;
-  document.documentElement.classList.toggle('dark', effective === 'dark');
-  document.documentElement.classList.toggle('light', explicit === 'light');
-}
+const THEME_CHANGE_EVENT = 'rwm-theme-change';
 
 export default function ThemeToggle() {
-  const { locale } = useLocale();
+  const [preference, setPreference] = useState<ThemePreference>('system');
   const [effective, setEffective] = useState<'light' | 'dark'>('light');
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     try {
-      const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-      const pref: ThemePreference =
-        stored === 'dark' || stored === 'light' || stored === 'system' ? stored : 'system';
-      const prefersDark = Boolean(window.matchMedia?.('(prefers-color-scheme: dark)').matches);
-      const resolved = resolveEffectiveTheme(pref, prefersDark);
-      setEffective(resolved);
-      applyDocumentTheme(resolved, pref);
+      setPreference(normalizeThemePreference(window.localStorage.getItem(THEME_STORAGE_KEY)));
     } catch {
-      /* storage unavailable */
+      // Storage denial does not prevent system mode or an in-memory choice.
     }
+    setReady(true);
+    const onChange = (event: Event) => setPreference(normalizeThemePreference((event as CustomEvent).detail));
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === THEME_STORAGE_KEY || event.key === null) {
+        setPreference(normalizeThemePreference(event.newValue));
+      }
+    };
+    window.addEventListener(THEME_CHANGE_EVENT, onChange);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(THEME_CHANGE_EVENT, onChange);
+      window.removeEventListener('storage', onStorage);
+    };
   }, []);
 
-  function toggleTheme() {
-    const next: 'light' | 'dark' = effective === 'dark' ? 'light' : 'dark';
-    setEffective(next);
-    applyDocumentTheme(next, next);
+  useEffect(() => {
+    if (!ready) return;
+    const query = window.matchMedia?.('(prefers-color-scheme: dark)');
+    const update = () => setEffective(applyDocumentTheme(preference, Boolean(query?.matches)));
+    update();
+    if (preference !== 'system' || !query) return;
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, [preference, ready]);
+
+  function choose(value: string) {
+    const next = normalizeThemePreference(value);
+    setPreference(next);
     try {
       window.localStorage.setItem(THEME_STORAGE_KEY, next);
     } catch {
-      /* storage unavailable */
+      // The current session's explicit choice remains usable.
     }
+    window.dispatchEvent(new CustomEvent(THEME_CHANGE_EVENT, { detail: next }));
   }
 
-  const label =
-    locale === 'bn'
-      ? effective === 'dark'
-        ? 'হালকা আর্কাইভ থিমে যান'
-        : 'অন্ধকার অবসিডিয়ান থিমে যান'
-      : effective === 'dark'
-        ? 'Switch to Archival Paper light theme'
-        : 'Switch to Obsidian dark theme';
-
   return (
-    <Pressable
-      type="button"
-      onClick={toggleTheme}
-      aria-label={label}
-      title={label}
-      className="inline-flex min-h-11 min-w-11 items-center justify-center overflow-hidden rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle"
-    >
-      {/* Principle 7 (arc) + 8 (secondary action): the outgoing icon rotates
-          away while the incoming one arrives on a short arc. Both are
-          decorative; the accessible name stays on the button. */}
-      <AnimatePresence initial={false} mode="wait">
-        <m.span
-          key={effective}
-          initial={{ rotate: -60, opacity: 0, scale: 0.6, y: 6 }}
-          animate={{ rotate: 0, opacity: 1, scale: 1, y: 0 }}
-          exit={{ rotate: 60, opacity: 0, scale: 0.6, y: -6 }}
-          transition={{ duration: 0.2, ease: [...EASING.emphasize] }}
-          className="inline-flex"
-        >
-          {effective === 'dark' ? (
-            <Sun className="h-4 w-4" aria-hidden="true" />
-          ) : (
-            <Moon className="h-4 w-4" aria-hidden="true" />
-          )}
-        </m.span>
-      </AnimatePresence>
-    </Pressable>
+    <label className="inline-flex min-h-11 items-center rounded-sm border border-line bg-surface text-ink">
+      <span className="sr-only">Theme</span>
+      <select
+        value={preference}
+        onChange={(event) => choose(event.target.value)}
+        aria-label="Theme"
+        title={`Theme: ${preference} (currently ${effective})`}
+        className="min-h-11 max-w-full rounded-sm bg-surface px-2 font-sans text-base text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:text-sm"
+      >
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+        <option value="system">System</option>
+      </select>
+    </label>
   );
 }

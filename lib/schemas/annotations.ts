@@ -1,5 +1,5 @@
 /**
- * Editor & annotation schemas — πeme v3.1 §29/§34 (hand-rolled validators,
+ * Editor & annotation schemas — reme v3.1 §29/§34 (hand-rolled validators,
  * same pattern as lib/schemas/scholarly.ts).
  *
  * AnnotationAnchor (§29): anchors combine sourceVersionId + structural path +

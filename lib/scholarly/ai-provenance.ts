@@ -1,5 +1,5 @@
 /**
- * AI provenance disclosure logic — πeme v3.1 §26 (pure, unit-tested).
+ * AI provenance disclosure logic — reme v3.1 §26 (pure, unit-tested).
  * Never exposes hidden chain-of-thought; surfaces a concise, source-grounded
  * summary plus validation state and publication blockers.
  */

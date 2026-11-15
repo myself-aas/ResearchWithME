@@ -139,7 +139,7 @@ export function scholarlyArticleJsonLd(input: ScholarlyArticleJsonLdInput) {
             : `https://orcid.org/${profile.orcid}`
           : undefined;
         return {
-          ...(profile.slug ? { '@id': `${absoluteUrl(`/papers`)}#${profile.slug}` } : {}),
+          ...(profile.slug ? { '@id': `${absoluteUrl(`/author/${profile.slug}`)}` } : {}),
           '@type': 'Person' as const,
           name: profile.name,
           ...(orcidUrl ? { url: orcidUrl, sameAs: [orcidUrl] } : {}),

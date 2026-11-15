@@ -1,13 +1,13 @@
+import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
-import LocaleProvider from '@/components/i18n/LocaleProvider';
 import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
 
-// ResearchWithMe follows the πeme v3.1 design system (docs/pieme-design-system-v3.1.md):
+// ResearchWithMe follows the reme v3.1 design system (docs/reme-design-system-v3.1.md):
 // the Aptos family (Aptos Serif / Aptos / Aptos Mono) leads each stack and is
 // requested by installed name only in globals.css, never bundled. Newsreader
 // and Inter are the self-hosted OFL fallbacks loaded here via next/font/local;
@@ -82,13 +82,16 @@ export const viewport: Viewport = {
   ],
 };
 
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('rwm-theme');var d=t==='dark'||(t!=='light'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.classList.toggle('light',t==='light');}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        {/* WebMCP: registers the archive's read-only tools on page load, before
+            hydration, so an in-tab agent (or a readiness scanner) sees them.
+            The script no-ops where the browser has no modelContext. */}
+        <script src="/webmcp.js" defer />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased selection:bg-selection selection:text-ink" suppressHydrationWarning>
         <a
@@ -97,17 +100,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <LocaleProvider>
-          {/* πeme motion runtime: one lazy feature bundle and one reduced-motion
-              policy for the whole app (see components/motion/MotionScope). */}
-          <MotionModeProvider>
-            <MotionScope>
-              <div id="main-content" tabIndex={-1} className="min-h-screen outline-none">
-                <RouteTransition>{children}</RouteTransition>
-              </div>
-            </MotionScope>
-          </MotionModeProvider>
-        </LocaleProvider>
+        {/* reme motion runtime: one lazy feature bundle and one reduced-motion
+            policy for the whole app (see components/motion/MotionScope). */}
+        <MotionModeProvider>
+          <MotionScope>
+            <div className="min-h-screen">
+              <RouteTransition>{children}</RouteTransition>
+            </div>
+          </MotionScope>
+        </MotionModeProvider>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Toast / ToastRegion — πeme v3.1 accessible primitive (spec §7 Feedback).
+ * Toast / ToastRegion — reme v3.1 accessible primitive (spec §7 Feedback).
  *
  * Purpose: noncritical confirmation only — never contains essential next steps.
  * Anatomy: region (aria-live="polite", aria-label="Notifications") containing toasts (role="status").
@@ -52,7 +52,7 @@ export function Toast({ message, tone = 'info', duration = 4000, onDismiss }: To
       <AnimatePresence onExitComplete={() => onDismiss?.()}>
         {visible ? (
           <m.div
-            key="pieme-toast"
+            key="reme-toast"
             role="status"
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}

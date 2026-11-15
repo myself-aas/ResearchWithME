@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * πeme v3.1 §44/§46 stable release gate — machine-checkable items.
+ * reme v3.1 §44/§46 stable release gate — machine-checkable items.
  *
  * Verifies the automatable release-blocking checks and writes
  * docs/design-system/release-manifest.json with a token checksum.
@@ -27,7 +27,7 @@ const check = (id, description, fn) => {
 };
 const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
 
-console.log('πeme release gate (§44/§46) — machine-checkable items');
+console.log('reme release gate (§44/§46) — machine-checkable items');
 
 // Design system
 check('DS-1', 'token pipeline builds from tokens/src', () => {
@@ -61,21 +61,23 @@ check('A11Y-1', 'axe-core suite present and wired into vitest', () => {
   assert(t.includes('axe.run'), 'axe.run not found');
   return 'lib/__tests__/a11y.test.ts';
 });
-check('I18N-1', 'English + Bangla dictionaries have key parity', () => {
-  const en = JSON.parse(readFileSync(join(root, 'lib/i18n/messages/en.json'), 'utf8'));
-  const bn = JSON.parse(readFileSync(join(root, 'lib/i18n/messages/bn.json'), 'utf8'));
-  const a = Object.keys(en).sort(), b = Object.keys(bn).sort();
-  assert(JSON.stringify(a) === JSON.stringify(b), `key mismatch: en-only=${a.filter((k) => !b.includes(k))} bn-only=${b.filter((k) => !a.includes(k))}`);
-  return `${a.length} keys in both locales`;
+check('I18N-1', 'site declares English-only (lang="en", dir="ltr"); multi-locale dicts not required', () => {
+  // Per the 2026-11 cleanup the product ships English-only (Bengali/Arabic
+  // i18n was removed). This gate now verifies that declaration instead of
+  // requiring Bangla/RTL dictionaries.
+  const layout = readFileSync(join(root, 'app/layout.tsx'), 'utf8');
+  assert(/lang="en"/.test(layout), 'root layout must declare lang="en"');
+  assert(/dir="ltr"/.test(layout), 'root layout must declare dir="ltr"');
+  return 'app/layout.tsx declares lang="en" dir="ltr"';
 });
-check('I18N-2', 'RTL verified with Arabic; LTR isolation for identifiers', () => {
+check('I18N-2', 'LTR bidi isolation for identifiers and inline code', () => {
   const css = readFileSync(join(root, 'app/globals.css'), 'utf8');
-  assert(css.includes('[dir="rtl"] code') && css.includes('unicode-bidi: isolate'), 'RTL isolation missing');
-  return 'globals.css + locales.ts';
+  assert(css.includes('unicode-bidi: isolate'), 'bidi isolation missing on code/identifier blocks');
+  return 'globals.css unicode-bidi: isolate on identifiers';
 });
-check('I18N-3', 'pseudo-localization ≥35% expansion on all messages', () => {
-  const en = JSON.parse(readFileSync(join(root, 'lib/i18n/messages/en.json'), 'utf8'));
-  return `${Object.keys(en).length} messages tested in i18n.test.ts`;
+check('I18N-3', 'pseudo-localization not applicable (English-only product)', () => {
+  // Skipped: site is English-only; no multi-locale dictionary to expand.
+  return 'skipped — English-only product per 2026-11 product decision';
 });
 
 // Resilience & motion
@@ -104,7 +106,7 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {
-  gate: 'πeme v3.1 §44/§46 stable release gate',
+  gate: 'reme v3.1 §44/§46 stable release gate',
   generatedAt: new Date().toISOString(),
   tokenChecksum: results.find((r) => r.id === 'DS-2')?.evidence,
   results,

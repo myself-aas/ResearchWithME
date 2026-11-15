@@ -6,8 +6,8 @@ export type BadgeSize = 'sm' | 'md' | 'lg';
 const VARIANT_CLASSES: Record<BadgeVariant, string> = {
   default: 'bg-surface text-text-primary border-line',
   verified: 'bg-trust-verified/10 text-trust-verified border-trust-verified/20',
-  emerging: 'bg-trust-emerging/10 text-trust-emerging border-trust-emerging/20',
-  uncertain: 'bg-trust-uncertain/10 text-trust-uncertain border-trust-uncertain/20',
+  emerging: 'bg-trust-emerging/10 text-domain-text-emerging border-trust-emerging/20',
+  uncertain: 'bg-trust-uncertain/10 text-domain-text-uncertain border-trust-uncertain/20',
   contested: 'bg-trust-contested/10 text-trust-contested border-trust-contested/20',
   destructive: 'bg-destructive/10 text-destructive border-destructive/20',
   outline: 'bg-transparent text-text-secondary border-line',

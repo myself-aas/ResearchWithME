@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Performance budget gate — πeme v3.1 §18.
+ * Performance budget gate — reme v3.1 §18.
  *
  * Reads the production build output (.next) and enforces:
  *  - initial shell JS (chunks referenced by the root layout / app shell)
  *    ≤ 200 KB gzip, excluding editor/graph/video routes;
  *  - reports LCP-relevant largest chunks for review.
  * Run after `next build`:  node scripts/check-budgets.mjs
- * Budgets are overridable via env (PIEME_BUDGET_SHELL_KB) for staged rollout.
+ * Budgets are overridable via env (REME_BUDGET_SHELL_KB) for staged rollout.
  */
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -20,7 +20,7 @@ if (!existsSync(join(nextDir, 'static'))) {
   process.exit(2);
 }
 
-const BUDGET_SHELL_KB = Number(process.env.PIEME_BUDGET_SHELL_KB ?? 200);
+const BUDGET_SHELL_KB = Number(process.env.REME_BUDGET_SHELL_KB ?? 200);
 
 const gzipKb = (buf) => gzipSync(buf, { level: 9 }).length / 1024;
 

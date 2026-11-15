@@ -1,5 +1,5 @@
 /**
- * Provenance graph logic — πeme v3.1 §7 / §27.5 (pure, unit-tested).
+ * Provenance graph logic — reme v3.1 §7 / §27.5 (pure, unit-tested).
  * Every edge is labeled; direct edges are solid, inferred edges dashed with
  * an explanation; the list alternative is the canonical accessible view.
  */

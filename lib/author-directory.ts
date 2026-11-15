@@ -4,7 +4,6 @@ import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 import { AUTHORS, type Author } from '@/lib/blog-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
-import { DEFAULT_LEGACY_SEEDS } from '@/lib/legacy/seeds';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getSupabasePublicClient } from '@/lib/supabase/server';
 import {
@@ -39,11 +38,6 @@ function seedProfiles(slug?: string): ProfileRow[] {
   const byId = new Map<string, Author>();
   for (const author of Object.values(AUTHORS)) {
     byId.set(author.id.toLowerCase(), author);
-  }
-  for (const article of DEFAULT_LEGACY_SEEDS.articles) {
-    if (article.author?.id && !byId.has(article.author.id.toLowerCase())) {
-      byId.set(article.author.id.toLowerCase(), article.author);
-    }
   }
   return [...byId.values()]
     .filter((author) => !normalizedSlug || author.id.toLowerCase() === normalizedSlug)

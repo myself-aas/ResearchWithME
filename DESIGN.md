@@ -1,6 +1,6 @@
 ---
-name: πeme
-description: πeme Frontend Design System v3.1 for researchwith.me — scholarly open-science platform and research engine. Full normative spec: docs/pieme-design-system-v3.1.md
+name: reme
+description: reme Frontend Design System v3.1 for researchwith.me — scholarly open-science platform and research engine. Full normative spec: docs/reme-design-system-v3.1.md
 version: 3.1.0
 status: stable-candidate
 updated: 2026-11-09
@@ -139,19 +139,30 @@ spacing:
   24: "6rem"
 ---
 
-# Design System — πeme v3.1
+# Design System — reme v3.1
 
 <!-- impeccable:design-schema 1 -->
 
-The active frontend design system is **πeme v3.1** (`stable-candidate`, updated 2026-11-09). The full normative specification — token architecture, accessibility baseline, components, motion, scholarly domain model, conformance profiles, and the release gate — lives in **[`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)**, which takes precedence over this file. The front-matter above is the machine-readable schema consumed by the Impeccable detector; the token layer implementing it is `app/globals.css`.
+The active frontend design system is **reme v3.1** (`stable-candidate`, updated 2026-11-09). The full normative specification — token architecture, accessibility baseline, components, motion, scholarly domain model, conformance profiles, and the release gate — lives in **[`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md)**, which takes precedence over this file. The front-matter above is the machine-readable schema consumed by the Impeccable detector; the token layer implementing it is `app/globals.css`.
 
 ## Summary
 
 - **Principles:** Provenance, Trust, Scholarship, Collaboration, Preservation. Every claim keeps a visible path to its source; trust states are explicit, never implied by polish.
 - **Color:** warm parchment neutrals with an indigo action palette (primary `#4F46E5`), emerald verification, and domain palettes for knowledge, trust, provenance, workflow, collaboration, and citation. Full light/dark semantic maps are in the spec; `globals.css` defines both (`.dark` for dark mode). Color never carries meaning alone.
 - **Typography:** the Aptos family, requested by installed name only (never bundled): Aptos Serif (editorial reading), Aptos (interface chrome), Aptos Mono (DOI/ORCID/code/metadata). Fallbacks when Aptos is not installed: Newsreader and Inter, self-hosted via `next/font/local` in `app/fonts/`, and JetBrains Mono requested by installed name with a system mono fallback.
-- **Shape and elevation:** πeme radius scale (4px–24px, pill for tags), raised/floating/dialog shadows based on neutral-950.
+- **Shape and elevation:** reme radius scale (4px–24px, pill for tags), raised/floating/dialog shadows based on neutral-950.
 - **Motion:** reveal 200ms, verify/archive 320ms, connect 480ms, synthesize up to 700ms, with the standard/enter/exit/emphasize easings; `prefers-reduced-motion: reduce` collapses all animation and transitions per the spec's §9 contract.
 - **Motion system (v1):** implemented with `motion` (`m` + one `LazyMotion` scope) and Disney's twelve animation principles. The token layer is `lib/motion/tokens.ts`, the primitives are in `components/motion/`, and every demo lives at `/motion`. Full guide: [`docs/motion-system.md`](./docs/motion-system.md). Content is never hidden by an animation server-side, reveals arm only below the fold, and nothing loops except a real progress indicator.
 - **Accessibility:** WCAG 2.2 AA baseline; 2px/2px focus ring in the focus token (indigo-600 light, indigo-300 dark); 44px minimum touch targets; status always paired with a text label.
 - **Do not** use gradient text, decorative glass, AI purple/cyan palettes, terminal motifs, or color alone for status.
+
+
+## Domain badge foregrounds (2026-11-14)
+
+Emerging/Uncertain labels use dedicated semantic foregrounds, not their accent
+colors as text. `domainText.emerging` is `#155E75` in light and `#67E8F9` in
+dark; `domainText.uncertain` is `#92400E` in light and `#FCD34D` in dark.
+Existing trust accent dots, 10% tints, borders and research-state wording stay
+unchanged. `tokens:check` enforces >=4.5:1 for these text roles on their 10%
+accent tint composited over canvas, surface and surface-raised in both themes.
+These configured checks do not certify every rendered component composition.

@@ -1,6 +1,7 @@
 'use client';
 
-import { Search, X } from 'lucide-react';
+import Link from 'next/link';
+import { ArrowRight, Search, X } from 'lucide-react';
 import { LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import { ArticleFormat, CATEGORIES } from '@/lib/blog-data';
@@ -16,6 +17,7 @@ interface BlogHeroProps {
   selectedCategory?: string;
   setSelectedCategory?: (c: string) => void;
   totalArticles: number;
+  totalWriters: number;
 }
 
 const formats: Array<'All' | ArticleFormat> = [
@@ -37,6 +39,7 @@ export default function BlogHero({
   selectedCategory = 'All',
   setSelectedCategory,
   totalArticles,
+  totalWriters,
 }: BlogHeroProps) {
   return (
     <section className="border-b border-line bg-canvas" aria-labelledby="platform-title">
@@ -48,7 +51,7 @@ export default function BlogHero({
                   style={{ '--enter-delay': '0ms' } as React.CSSProperties}
                   as="p" variant="eyebrow" color="secondary"
                 >
-                  ISSN 2994-0821 · Diamond Open Access · Verified Specialist Monograph
+                  Open access · CC BY 4.0 · Independent reviews
                 </Text>
                 <h1
                   id="platform-title"
@@ -72,7 +75,7 @@ export default function BlogHero({
                   className="mt-8 max-w-2xl"
                 >
                   <Text htmlFor="catalog-search" as="label" variant="eyebrow" color="secondary" className="mb-2 block">
-                    Filter catalog by keyword, DOI, or repository
+                    Search reviews by keyword, writer, or repository
                   </Text>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <div className="relative flex-1">
@@ -85,7 +88,7 @@ export default function BlogHero({
                         type="search"
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
-                        placeholder="Title, specialist, 10.5555/rwm…, or org/repo"
+                        placeholder="Title, writer, tag, or org/repo"
                         className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-10 font-sans text-sm text-ink placeholder:text-ink-secondary focus:bg-canvas"
                       />
                       {searchQuery && (
@@ -199,21 +202,34 @@ export default function BlogHero({
                     <dd className="mt-1 font-mono text-2xl font-semibold text-ink">{totalArticles}</dd>
                   </div>
                   <div className="lg:py-4">
-                    <Text as="dt" variant="eyebrow" color="secondary">Verified specialists</Text>
-                    <dd className="mt-1 font-mono text-2xl font-semibold text-ink">6</dd>
+                    <Text as="dt" variant="eyebrow" color="secondary">Writers</Text>
+                    <dd className="mt-1 font-mono text-2xl font-semibold text-ink">{totalWriters}</dd>
                   </div>
                   <div className="lg:py-4">
-                    <Text as="dt" variant="eyebrow" color="secondary">Access model</Text>
-                    <dd className="mt-1 font-sans text-sm font-semibold text-ink">Diamond open access</dd>
+                    <Text as="dt" variant="eyebrow" color="secondary">Access</Text>
+                    <dd className="mt-1 font-sans text-sm font-semibold text-ink">Open access, no paywall</dd>
                   </div>
                   <div className="lg:pt-4">
-                    <Text as="dt" variant="eyebrow" color="secondary">License</Text>
+                    <Text as="dt" variant="eyebrow" color="secondary">Licence</Text>
                     <dd className="mt-1 font-mono text-sm font-semibold text-ink">CC BY 4.0</dd>
                   </div>
                 </dl>
                 <p className="mt-6 max-w-xs font-sans text-xs leading-relaxed text-ink-secondary">
                   Zero paywalls, behavioural ad trackers, or reading-flow pop-ups. Primary artifacts first.
                 </p>
+                <div className="mt-6 max-w-xs border-t border-line pt-5">
+                  <Text as="p" variant="eyebrow" color="secondary">Products</Text>
+                  <p className="mt-1 font-sans text-sm leading-relaxed text-ink">
+                    The teardown method, written up to use on your own code.
+                  </p>
+                  <Link
+                    href="/pricing"
+                    className="mt-2 inline-flex min-h-11 items-center gap-1.5 font-sans text-sm font-semibold text-brand underline-offset-4 hover:underline"
+                  >
+                    See products and pricing
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                </div>
               </aside>
             </div>
           </div>

@@ -30,15 +30,6 @@
       "editorial": "'Newsreader', Georgia, serif",
       "interface": "'Inter', system-ui, sans-serif",
       "metadata": "'JetBrains Mono', monospace"
-    },
-    "bengali": {
-      "editorial": "'Noto Serif Bengali', 'Hind Siliguri', serif",
-      "interface": "'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif",
-      "metadata": "'Noto Serif Bengali', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif"
-    },
-    "arabic": {
-      "editorial": "'Noto Naskh Arabic', serif",
-      "interface": "'Noto Sans Arabic', sans-serif"
     }
   },
   "motion": {

@@ -1,8 +1,6 @@
 import type { CmsStore } from '@/lib/cms/types';
 import type { CmsPost } from '@/lib/cms/types';
 import { cmsPostToArticle } from '@/lib/cms/mapping';
-import { DEFAULT_LEGACY_SEEDS } from '@/lib/legacy/seeds';
-import type { LegacySeeds, LegacyStore } from '@/lib/legacy/types';
 import type { BlogPost } from '@/lib/blog-data';
 import type { RequestContext } from './context';
 import { isPublicConfigValid } from './context';
@@ -27,14 +25,9 @@ function readonlyStore(): Error {
   return new Error('This deployment is read-only: durable storage is not configured.');
 }
 
-function clone<T>(value: T): T {
-  return JSON.parse(JSON.stringify(value)) as T;
-}
-
 export function createReadOnlyCmsStore(): CmsStore {
   const unavailable = () => Promise.reject(readonlyStore());
   return {
-    // No editor pick: read-only stores exist for public reads only.
     kind: 'local',
     listPosts: () => Promise.resolve([]),
     getPost: () => Promise.resolve(null),
@@ -52,27 +45,11 @@ export function createReadOnlyCmsStore(): CmsStore {
   };
 }
 
-export function createReadOnlyLegacyStore(seeds: LegacySeeds): LegacyStore {
-  const articles = clone(seeds.articles);
-  const comments = clone(seeds.comments);
-  return {
-    kind: 'local',
-    getArticles: () => Promise.resolve(clone(articles)),
-    findArticle: (key: string): Promise<BlogPost | undefined> =>
-      Promise.resolve(articles.find((article) => article.slug === key || article.id === key)),
-    incrementLikes: () => Promise.reject(readonlyStore()),
-    getComments: (postId?: string) =>
-      Promise.resolve(clone(postId ? comments.filter((comment) => comment.postId === postId) : comments)),
-    addComment: () => Promise.reject(readonlyStore()),
-  };
-}
-
 // ---------------------------------------------------------------------------
-// Request-scoped public catalogue (Pages equivalent of lib/cms/catalogue.ts,
-// which is not importable here: it is bound to the Node public stores and to
-// node:fs). Published CMS rows lead, then the durable legacy corpus, then the
-// bundled seeds as a last-ditch fallback. CMS/legacy failures degrade — a
-// storage outage must not blank the site.
+// Request-scoped public catalogue (Pages equivalent of lib/cms/catalogue.ts).
+// Published CMS posts only; nothing else. CMS failures degrade to an empty list
+// — a storage outage must not blank the site, but neither should it fabricate
+// content.
 // ---------------------------------------------------------------------------
 
 async function publicCmsFeed(ctx: RequestContext): Promise<{
@@ -102,37 +79,13 @@ export async function getPublicArticleCatalogue(ctx: RequestContext): Promise<Bl
     merged.set(article.slug, article);
   }
 
-  let legacyArticles: BlogPost[] = DEFAULT_LEGACY_SEEDS.articles;
-  try {
-    // Store implementations already overlay durable counters onto the seed
-    // corpus, so these articles carry the freshest likes/commentsCount.
-    const legacy = await ctx.services.legacy(ctx);
-    legacyArticles = await legacy.getArticles();
-  } catch (error) {
-    console.error('Could not load the legacy interaction corpus:', error);
-  }
-
-  for (const article of [...DEFAULT_LEGACY_SEEDS.articles, ...legacyArticles]) {
-    if (article?.slug && !merged.has(article.slug)) merged.set(article.slug, article);
-  }
-
   return [...merged.values()];
 }
 
 // ---------------------------------------------------------------------------
-// Editor-studio adapters (Task 8A) — the request-scoped equivalents of
-// lib/cms/store.ts's getEditorCmsStore and lib/cms/authors.ts's
-// resolvePublishableAuthor. Next's wrappers are untouched for Task 16.
+// Editor-studio adapters.
 // ---------------------------------------------------------------------------
 
-/**
- * Pages equivalent of lib/cms/store.ts's getEditorCmsStore.
- *
- * An unconfigured Pages deployment has no durable studio storage and fails
- * closed; the Node-local demo keeps the local archive. (In practice the
- * editor gate has already rejected such requests with a 503 before any store
- * is built.)
- */
 export async function getEditorCmsStore(ctx: RequestContext): Promise<CmsStore> {
   if (!isPublicConfigValid(ctx.config) && ctx.runtime !== 'node-local') {
     throw new CmsUnavailableError('Durable storage is not configured for this deployment.');
@@ -142,12 +95,6 @@ export async function getEditorCmsStore(ctx: RequestContext): Promise<CmsStore> 
 
 /**
  * Pages equivalent of lib/cms/authors.ts's resolvePublishableAuthor.
- *
- * The byline stored on a post is server-derived: the profile must exist and
- * be published, and the stored name is the profile's display_name — never
- * whatever the request claimed. Without a configured deployment there is no
- * profiles table to check, so the byline passes through (local demo parity).
- * A profile we cannot check fails closed.
  */
 export async function resolvePublishableAuthor(
   ctx: RequestContext,

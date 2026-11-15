@@ -127,7 +127,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12 lg:px-8">
         <header className="border-b border-line pb-8">
           <h1 className="max-w-3xl font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
             Ask the archive a question
@@ -353,6 +353,9 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
               <span>It stores nothing you type and keeps no conversation history.</span>
             </li>
           </ul>
+          <p className="mt-6 max-w-[60ch] text-sm leading-relaxed text-ink-secondary">
+            The assistant is free for every reader and needs no account.
+          </p>
         </section>
 
         <section aria-label="How discovery works" className="border-t border-line py-8">

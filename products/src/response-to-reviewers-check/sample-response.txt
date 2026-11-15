@@ -1,0 +1,31 @@
+Response to reviewers
+
+This letter is made up, for trying the tool. Several problems are planted on purpose.
+
+Reviewer 1
+
+Comment R1.1: The abstract says 81% of the retrieval group passed, but I cannot find this figure anywhere in the Results. Please report the pass rates in the text or in a table.
+
+Response: Thank you for noticing this. The pass rates are now reported in the Results (page 6, lines 142-145) and in Table 1.
+
+Comment R1.2: The first t test reports p = .004, which does not match t(182) = 2.31. Please check the analysis output.
+
+Response: This was a typing error. The correct value is p = .022, and we have corrected it.
+
+Comment R1.3: Were students in the rereading condition prevented from testing themselves? If not, this should be discussed as a limitation.
+
+Response:
+
+Reviewer 2
+
+Comment R2.1: The manuscript has no ethics statement. Please state which committee approved the study and how consent was obtained.
+
+Response: We will add an ethics statement naming the committee and describing the consent procedure in the Methods.
+
+Comment R2.2: Figure 3 is cited but not included, and Figure 2 is never mentioned.
+
+Response: Figure 3 is now included on page 9, and Figure 2 is cited on page 7, line 171.
+
+Comment R2.4: Whitfield and Osei (2020) is cited in the Discussion but is missing from the reference list.
+
+Response: We respectfully disagree that the entry is missing in the submitted file; it appears in the reference list of the version we uploaded, and we have left it unchanged.

@@ -1,5 +1,5 @@
 /**
- * πeme primitives — composable, accessible, minimalist UI primitives.
+ * reme primitives — composable, accessible, minimalist UI primitives.
  * 
  * Import from `@/components/primitives` for consistent, token-driven components.
  */

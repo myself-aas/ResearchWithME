@@ -20,6 +20,8 @@ interface LoginFormProps {
   configured: boolean;
   user: DashboardUser | null;
   next: string;
+  /** A failure reported by the auth callback, shown on first paint. */
+  initialError?: string;
 }
 
 function mapAuthError(message: string) {
@@ -33,10 +35,22 @@ function mapAuthError(message: string) {
   if (normalised.includes('rate limit') || normalised.includes('too many')) {
     return 'Too many attempts. Wait a minute before trying again.';
   }
+  if (normalised.includes('access_denied') || normalised.includes('denied')) {
+    return 'Sign-in was cancelled on the provider\'s page. Try again and approve the request.';
+  }
+  if (normalised.includes('redirect')) {
+    return 'This address is not registered for sign-in. The site administrator needs to add it to the allowed redirect URLs.';
+  }
+  if (normalised.includes('getting user email') || normalised.includes('email from external provider')) {
+    return 'The provider did not share an email address, so the account could not be created. Use an account with a visible email, or sign in with email and password.';
+  }
+  if (normalised.includes('signups not allowed') || normalised.includes('signup is disabled')) {
+    return 'New accounts are not being accepted at the moment. Contact the editor.';
+  }
   return message;
 }
 
-export default function LoginForm({ configured, user, next }: LoginFormProps) {
+export default function LoginForm({ configured, user, next, initialError = '' }: LoginFormProps) {
   const router = useRouter();
   const emailId = useId();
   const passwordId = useId();
@@ -45,7 +59,7 @@ export default function LoginForm({ configured, user, next }: LoginFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [pending, setPending] = useState<'password' | 'google' | 'signout' | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError ? mapAuthError(initialError) : null);
 
   function fail(message: string) {
     setError(message);

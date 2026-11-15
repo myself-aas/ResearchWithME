@@ -1,12 +1,12 @@
 import type { HttpMethod, RequestContext } from '../context';
 import { articlesRoutes } from './articles';
 import { authorsRoutes } from './authors';
-import { papersRoutes } from './papers';
 import { commentsRoutes } from './comments';
 import { cmsPostsRoutes } from './cms-posts';
 import { cmsCommentsRoutes } from './cms-comments';
 import { applicationsRoutes } from './applications';
 import { assistantRoutes } from './assistant';
+import { a2aRoutes } from './a2a';
 import { revalidateRoutes } from './revalidate';
 
 export type ApiHandler = (ctx: RequestContext, params: Record<string, string>) => Promise<Response>;
@@ -29,12 +29,12 @@ export function json(
 export const API_ROUTES: readonly ApiRoute[] = [
   ...articlesRoutes,
   ...authorsRoutes,
-  ...papersRoutes,
   ...commentsRoutes,
   ...cmsPostsRoutes,
   ...cmsCommentsRoutes,
   ...applicationsRoutes,
   ...assistantRoutes,
+  ...a2aRoutes,
   ...revalidateRoutes,
 ];
 

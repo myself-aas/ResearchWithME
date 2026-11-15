@@ -1,5 +1,5 @@
 /**
- * AnnotationMarker — πeme v3.1 §29 (editor annotation surface).
+ * AnnotationMarker — reme v3.1 §29 (editor annotation surface).
  *
  * Renders an annotation with its anchor state. Broken/drifted anchors are
  * marked visually and to assistive tech (`aria-describedby` + status text) —

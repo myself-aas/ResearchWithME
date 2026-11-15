@@ -6,13 +6,13 @@
 
 **Architecture:** Use the existing page-family components and data sources rather than introducing a global dashboard-like layout or generic filler. Add a small shared section-navigation component for long reference pages, add a factual author-work summary rail to author profiles, and tune card-grid breakpoints so three columns are reserved for wide viewports. Preserve existing two-column patterns in reader, assistant, login, and studio surfaces; preserve single-column patterns for forms and concentrated reading.
 
-**Tech Stack:** Next.js App Router, shared React/TypeScript components, Tailwind CSS v4 utilities, existing `motion/react` 14.12.0 where already used, Vitest, Playwright (`test:pages`), and the existing πeme v3.1 design tokens; no new motion/video dependencies.
+**Tech Stack:** Next.js App Router, shared React/TypeScript components, Tailwind CSS v4 utilities, existing `motion/react` 14.12.0 where already used, Vitest, Playwright (`test:pages`), and the existing reme v3.1 design tokens; no new motion/video dependencies.
 
-**Spec:** `docs/pieme-design-system-v3.1.md` §5 (Responsive Layout), §17 (accessibility), §41 (Test Matrix), plus the user's direction in this conversation: use two columns for primary content plus useful context, use three columns only for equal-weight collections on wide screens, and do not fill whitespace with irrelevant content.
+**Spec:** `docs/reme-design-system-v3.1.md` §5 (Responsive Layout), §17 (accessibility), §41 (Test Matrix), plus the user's direction in this conversation: use two columns for primary content plus useful context, use three columns only for equal-weight collections on wide screens, and do not fill whitespace with irrelevant content.
 
 ## Global Constraints
 
-- Preferred reading width is `48rem`; preferred line length is **60–72 characters** (`docs/pieme-design-system-v3.1.md` §5).
+- Preferred reading width is `48rem`; preferred line length is **60–72 characters** (`docs/reme-design-system-v3.1.md` §5).
 - Use the specified layout breakpoints: `sm: 36rem`, `md: 48rem`, `lg: 64rem`, `xl: 80rem`, `2xl: 96rem`.
 - The grid spec is desktop 12 columns with `1.5rem` gutters and `3rem` margins; tablet 8 columns with `1rem` gutters and `2rem` margins; mobile 4 columns with `0.75rem` gutters and `1rem` margins.
 - Reflow at **320 CSS px** and remain usable at **200% zoom**. Test responsive layouts at **320, 768, 1024, 1440, and 1920 CSS px**.

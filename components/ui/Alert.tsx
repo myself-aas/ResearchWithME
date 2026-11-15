@@ -1,5 +1,5 @@
 /**
- * Alert — πeme v3.1 accessible primitive (spec §7 Feedback).
+ * Alert — reme v3.1 accessible primitive (spec §7 Feedback).
  *
  * Purpose: inline feedback next to the affected object; banners for workspace-wide status.
  * Anatomy: icon (decorative, aria-hidden) + tone label (always text, never color alone) + message + optional action.

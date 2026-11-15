@@ -7,7 +7,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
 export default defineConfig([
-  globalIgnores(['.next/**', 'node_modules/**', 'data/**', 'coverage/**', '.open-next/**', '.wrangler/**', 'cloudflare-env.d.ts', 'cloudflare-pages/dist/**', 'cloudflare-pages/.server/**']),
+  globalIgnores(['.next/**', 'node_modules/**', 'data/**', 'coverage/**', '.open-next/**', '.wrangler/**', 'workers/**/.wrangler/**', 'workers/**/worker-configuration.d.ts', 'cloudflare-env.d.ts', 'cloudflare-pages/dist/**', 'cloudflare-pages/.server/**']),
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     files: ['next-env.d.ts'],

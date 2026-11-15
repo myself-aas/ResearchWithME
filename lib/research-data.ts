@@ -55,10 +55,7 @@ export interface PdfEdition {
 export interface EditorialMember {
   name: string;
   role: string;
-  institution: string;
-  orcid: string;
-  focus: string;
-  avatarInitials: string;
+  profileSlug: string;
 }
 
 export const RESEARCH_TOPICS = [
@@ -70,50 +67,16 @@ export const RESEARCH_TOPICS = [
   'Scholarly Tech',
 ] as const;
 
-export const EDITORIAL_BOARD: EditorialMember[] = [
-  {
-    name: 'Dr. Elena Rostova',
-    role: 'Editor-in-Chief',
-    institution: 'Institute for Digital Public Goods, Zurich',
-    orcid: '0000-0002-1825-0097',
-    focus: 'Open protocols, peer review integrity, knowledge governance',
-    avatarInitials: 'ER',
-  },
-  {
-    name: 'Prof. Marcus Vance',
-    role: 'Senior Editor, Systems & Verification',
-    institution: 'Center for Algorithmic Reliability, Cambridge',
-    orcid: '0000-0001-9234-8812',
-    focus: 'Machine learning reproducibility, formal proofs, automated peer auditing',
-    avatarInitials: 'MV',
-  },
-  {
-    name: 'Dr. Ananya Sen',
-    role: 'Editor, Environmental Commons',
-    institution: 'South Asian Climate Research Consortium',
-    orcid: '0000-0003-4412-9908',
-    focus: 'Empirical telemetry, open sensor networks, geospatial data equity',
-    avatarInitials: 'AS',
-  },
-  {
-    name: 'Dr. Thabo Khumalo',
-    role: 'Review Editor, Scholarly Communications',
-    institution: 'African Open Science Platform',
-    orcid: '0000-0002-7718-2041',
-    focus: 'Diamond open access, decentralized publication registries, citation tracking',
-    avatarInitials: 'TK',
-  },
-];
+/**
+ * The single editor. Editorial decisions are made by the Editor-in-Chief.
+ * Links to the live author profile at /author/<profileSlug>.
+ */
+export const EDITOR_IN_CHIEF = {
+  name: 'Ashif Ahmed Shuvo',
+  role: 'Editor-in-Chief',
+  profileSlug: 'myself-aas',
+} as const;
 
+// Placeholder archive data removed; the catalogue is CMS-only.
 export const PUBLICATIONS_DATA: Publication[] = [];
-
 export const PDF_EDITIONS_DATA: PdfEdition[] = [];
-
-export const OVERVIEW_STATS = {
-  totalPublications: 142,
-  peerReviewedCitations: 4890,
-  openDatasets: 38,
-  archivedEditions: 12,
-  diamondAccessPercent: 100,
-  averageReviewDays: 24,
-};

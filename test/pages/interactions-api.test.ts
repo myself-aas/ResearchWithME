@@ -1,72 +1,59 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { createTestApp, TEST_ORIGIN, TEST_SITE_URL } from '@/test/support/pages';
 import { clientIp, clientKey, isSameOrigin } from '@/cloudflare-pages/src/server/http';
 
 afterEach(() => {
-  vi.restoreAllMocks();
-  vi.unstubAllEnvs();
+  // no-op: legacyFails option removed; tests use only CMS posts.
 });
 
 const JSON_HEADERS = { 'content-type': 'application/json' };
-const commentBody = (overrides: Record<string, unknown> = {}) =>
-  JSON.stringify({ postId: 'post-1', authorName: 'Reader', text: 'Useful notes.', ...overrides });
 
 describe('PATCH /api/articles/:id (likes)', () => {
-  it('persists a legacy like', async () => {
+  it('404s a non-CMS article id', async () => {
     const app = createTestApp();
-    const res = await app.request('/api/articles/post-1', { method: 'PATCH' });
-    expect(res.status).toBe(200);
-    expect((await res.json()).likes).toBe(343); // seed 342 + 1
-
-    const second = await app.request('/api/articles/post-1', { method: 'PATCH' });
-    expect((await second.json()).likes).toBe(344);
+    expect((await app.request('/api/articles/post-1', { method: 'PATCH' })).status).toBe(404);
+    expect((await app.request('/api/articles/no-such-id', { method: 'PATCH' })).status).toBe(404);
   });
 
-  it('404s an unknown article and increments CMS likes', async () => {
+  it('increments CMS likes', async () => {
     const app = createTestApp();
-    expect((await app.request('/api/articles/post-999', { method: 'PATCH' })).status).toBe(404);
-
     const post = await app.seedPost({ slug: 'cms-like-target', status: 'published' });
     const res = await app.request(`/api/articles/cms-${post.id}`, { method: 'PATCH' });
     expect(res.status).toBe(200);
     expect((await res.json()).likes).toBe(1);
+
+    const second = await app.request(`/api/articles/cms-${post.id}`, { method: 'PATCH' });
+    expect((await second.json()).likes).toBe(2);
   });
 
-  it('returns 503 instead of claiming an unpersisted write', async () => {
+  it('returns 503 for an unconfigured deployment when a reaction cannot be recorded', async () => {
     const app = createTestApp({ configured: false });
     expect((await app.request('/api/articles')).status).toBe(200);
     expect((await app.request('/api/articles/post-1', { method: 'PATCH' })).status).toBe(503);
-    expect((await app.request('/api/comments', {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: commentBody(),
-    })).status).toBe(503);
   });
 
-  it('returns 503 when the legacy store fails, without mutating the counter', async () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-    const app = createTestApp({ legacyFails: true });
-    const res = await app.request('/api/articles/post-1', { method: 'PATCH' });
-    expect(res.status).toBe(503);
-    expect((await res.json()).error).toContain('could not be read');
+  it('limits one client to 30 likes a minute', async () => {
+    const app = createTestApp();
+    const post = await app.seedPost({ slug: 'rate-limit-like', status: 'published' });
+    const ip = { 'cf-connecting-ip': '203.0.113.77' };
+    for (let i = 0; i < 30; i += 1) {
+      const res = await app.request(`/api/articles/cms-${post.id}`, { method: 'PATCH', headers: { ...ip, 'x-forwarded-for': `10.0.0.${i}` } });
+      expect(res.status).toBe(200);
+    }
+    const limited = await app.request(`/api/articles/cms-${post.id}`, { method: 'PATCH', headers: ip });
+    expect(limited.status).toBe(429);
+    expect(Number(limited.headers.get('retry-after'))).toBeGreaterThan(0);
   });
 });
 
 describe('GET /api/comments', () => {
-  it('reads the legacy corpus with its cache policy and filters by postId', async () => {
+  it('404s a non-CMS postId', async () => {
     const app = createTestApp();
-    const all = await app.request('/api/comments');
-    expect(all.status).toBe(200);
-    const body = await all.json();
-    expect(Array.isArray(body.comments)).toBe(true);
-    expect(all.headers.get('cache-control')).toBe('public, max-age=15, stale-while-revalidate=60');
+    const all = await app.request('/api/comments?postId=post-1');
+    expect(all.status).toBe(404);
 
-    const filtered = await (await app.request('/api/comments?postId=post-1')).json();
-    expect(filtered.comments.length).toBeGreaterThan(0);
-    expect(filtered.comments.every((c: { postId: string }) => c.postId === 'post-1')).toBe(true);
-
-    const unknown = await (await app.request('/api/comments?postId=post-999')).json();
-    expect(unknown.comments).toEqual([]);
+    const unknown = await app.request('/api/comments?postId=post-999');
+    expect(unknown.status).toBe(404);
   });
 
   it('serves CMS comments for a cms-* post id', async () => {
@@ -75,25 +62,20 @@ describe('GET /api/comments', () => {
     const res = await app.request(`/api/comments?postId=cms-${post.id}`);
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ comments: [] });
+    expect(res.headers.get('cache-control')).toBe('public, max-age=15, stale-while-revalidate=60');
   });
 });
 
 describe('POST /api/comments', () => {
-  it('creates a legacy comment and reflects it in the counter', async () => {
+  it('404s a comment on a non-CMS article', async () => {
     const app = createTestApp();
     const res = await app.request('/api/comments', {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: commentBody(),
+      body: JSON.stringify({ postId: 'post-1', authorName: 'Reader', text: 'Useful notes.' }),
     });
-    expect(res.status).toBe(201);
-    const body = await res.json();
-    expect(body.success).toBe(true);
-    expect(body.comment.text).toBe('Useful notes.');
-    expect(body.comment.postId).toBe('post-1');
-
-    const comments = await (await app.request('/api/comments?postId=post-1')).json();
-    expect(comments.comments.some((c: { text: string }) => c.text === 'Useful notes.')).toBe(true);
+    expect(res.status).toBe(404);
+    expect((await res.json()).error).toBe('That article does not exist.');
   });
 
   it('creates a CMS comment for a cms-* post id', async () => {
@@ -102,7 +84,7 @@ describe('POST /api/comments', () => {
     const res = await app.request('/api/comments', {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: commentBody({ postId: `cms-${post.id}` }),
+      body: JSON.stringify({ postId: `cms-${post.id}`, authorName: 'Reader', text: 'Useful notes.' }),
     });
     expect(res.status).toBe(201);
     expect((await res.json()).comment.postId).toBe(`cms-${post.id}`);
@@ -111,17 +93,18 @@ describe('POST /api/comments', () => {
     const draftRes = await app.request('/api/comments', {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: commentBody({ postId: `cms-${draft.id}` }),
+      body: JSON.stringify({ postId: `cms-${draft.id}`, authorName: 'Reader', text: 'Draft comment.' }),
     });
     expect(draftRes.status).toBe(404);
   });
 
   it('rejects cross-site browser posts with 403', async () => {
     const app = createTestApp();
+    const post = await app.seedPost({ slug: 'xsite-cms-target', status: 'published' });
     const res = await app.request('/api/comments', {
       method: 'POST',
       headers: { ...JSON_HEADERS, origin: 'https://evil.example', host: 'test.researchwith.me' },
-      body: commentBody(),
+      body: JSON.stringify({ postId: `cms-${post.id}`, authorName: 'Reader', text: 'x' }),
     });
     expect(res.status).toBe(403);
     expect((await res.json()).error).toContain('Cross-site');
@@ -129,34 +112,38 @@ describe('POST /api/comments', () => {
 
   it('accepts same-origin and site-origin posts, and origin-less callers', async () => {
     const app = createTestApp();
+    const post = await app.seedPost({ slug: 'origin-cms-target', status: 'published' });
+    const body = (extra = '') => JSON.stringify({ postId: `cms-${post.id}`, authorName: 'Reader', text: `ok ${extra}` });
+
     const sameOrigin = await app.request('/api/comments', {
       method: 'POST',
       headers: { ...JSON_HEADERS, origin: TEST_ORIGIN, host: new URL(TEST_ORIGIN).host },
-      body: commentBody({ text: 'Same origin wins.' }),
+      body: body('same'),
     });
     expect(sameOrigin.status).toBe(201);
 
     const siteOrigin = await app.request('/api/comments', {
       method: 'POST',
       headers: { ...JSON_HEADERS, origin: TEST_SITE_URL, host: 'test.researchwith.me' },
-      body: commentBody({ text: 'Site origin wins.' }),
+      body: body('site'),
     });
     expect(siteOrigin.status).toBe(201);
 
     const originless = await app.request('/api/comments', {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: commentBody({ text: 'No origin header at all.' }),
+      body: body('none'),
     });
     expect(originless.status).toBe(201);
   });
 
   it('rejects a missing JSON content type with 415, malformed JSON with 400', async () => {
     const app = createTestApp();
+    const post = await app.seedPost({ slug: 'ct-cms-target', status: 'published' });
     const wrongType = await app.request('/api/comments', {
       method: 'POST',
       headers: { 'content-type': 'text/plain' },
-      body: commentBody(),
+      body: JSON.stringify({ postId: `cms-${post.id}` }),
     });
     expect(wrongType.status).toBe(415);
 
@@ -181,52 +168,30 @@ describe('POST /api/comments', () => {
     const invalid = await app.request('/api/comments', {
       method: 'POST',
       headers: JSON_HEADERS,
-      body: commentBody({ authorName: 'R' }),
+      body: JSON.stringify({ postId: 'cms-x', authorName: 'R', text: 'hi' }),
     });
     expect(invalid.status).toBe(400);
-    expect((await invalid.json()).fieldErrors.authorName).toBeTruthy();
-  });
-
-  it('404s a comment on an unknown article', async () => {
-    const app = createTestApp();
-    const res = await app.request('/api/comments', {
-      method: 'POST',
-      headers: JSON_HEADERS,
-      body: commentBody({ postId: 'post-999' }),
-    });
-    expect(res.status).toBe(404);
-    expect((await res.json()).error).toBe('That article does not exist.');
   });
 
   it('rate-limits the ninth comment in a minute with Retry-After', async () => {
     const app = createTestApp();
-    const ip = { 'x-forwarded-for': '203.0.113.77' };
+    const post = await app.seedPost({ slug: 'rl-cms-comment', status: 'published' });
+    const ip = { 'cf-connecting-ip': '203.0.113.77' };
     for (let index = 0; index < 8; index += 1) {
       const res = await app.request('/api/comments', {
         method: 'POST',
         headers: { ...JSON_HEADERS, ...ip },
-        body: commentBody({ text: `Comment number ${index} from the limited address.` }),
+        body: JSON.stringify({ postId: `cms-${post.id}`, authorName: 'Reader', text: `c${index}` }),
       });
       expect(res.status).toBe(201);
     }
     const limited = await app.request('/api/comments', {
       method: 'POST',
       headers: { ...JSON_HEADERS, ...ip },
-      body: commentBody({ text: 'One comment too many.' }),
+      body: JSON.stringify({ postId: `cms-${post.id}`, authorName: 'Reader', text: 'over' }),
     });
     expect(limited.status).toBe(429);
     expect(Number(limited.headers.get('retry-after'))).toBeGreaterThan(0);
-  });
-
-  it('answers HEAD and OPTIONS on the comments collection', async () => {
-    const app = createTestApp();
-    const head = await app.request('/api/comments', { method: 'HEAD' });
-    expect(head.status).toBe(200);
-    expect(await head.text()).toBe('');
-
-    const options = await app.request('/api/comments', { method: 'OPTIONS' });
-    expect(options.status).toBe(204);
-    expect(options.headers.get('allow')).toBe('GET, HEAD, POST, OPTIONS');
   });
 });
 

@@ -30,6 +30,9 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preupload": "node scripts/check-production-env.mjs",
     "upload": "opennextjs-cloudflare build && opennextjs-cloudflare upload",
+    "worker:assistant:dev": "wrangler dev -c workers/assistant/wrangler.jsonc",
+    "worker:assistant:check": "wrangler types -c workers/assistant/wrangler.jsonc workers/assistant/worker-configuration.d.ts && tsc -p workers/assistant && wrangler deploy --dry-run -c workers/assistant/wrangler.jsonc --outdir .wrangler/assistant-dry-run",
+    "worker:assistant:deploy": "wrangler deploy -c workers/assistant/wrangler.jsonc",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "email:dev": "email dev -d emails -p 3001",
     "email:export": "email export -d emails --outDir .email-export",
@@ -45,8 +48,8 @@
       "test:e2e:linkedin": "playwright test test/e2e/linkedin-automation.spec.ts",
       "test:all": "npm run test && npm run test:linkedin",
     "tokens:build": "node tokens/scripts/build.mjs",
-    "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs",
-    "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test && npm run impeccable:source",
+    "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs && node tokens/scripts/check-consumers.mjs",
+    "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test && npm run dns:test && npm run webmcp:test && npm run impeccable:source && npm run worker:assistant:check",
     "impeccable:source": "impeccable detect app components",
     "impeccable:url": "impeccable detect --json --no-advisory --viewport 1280x800 http://localhost:3000",
     "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
@@ -58,7 +61,12 @@
     "test:pages": "playwright test --project=e2e --config test/playwright.config.ts",
     "test:staging": "playwright test --project=staging --config test/playwright.config.ts",
     "docs:workflows": "tsx scripts/build-workflow-docs.ts",
-    "parity": "node scripts/visual-parity.mjs"
+    "reme:check": "node scripts/reme-check.mjs --all",
+    "reme:test": "node --test test/reme-check.test.mjs test/reme-name.test.mjs",
+    "dns:test": "node --test test/dns-aid.test.mjs test/verify-dns-aid.test.mjs",
+    "webmcp:test": "node --test test/webmcp.test.mjs",
+    "parity": "node scripts/visual-parity.mjs",
+    "preinstall": "node scripts/ensure-npm.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -125,5 +133,6 @@
     "next": {
       "postcss": "^8.5.31"
     }
-  }
+  },
+  "packageManager": "npm@10.9.8"
 }

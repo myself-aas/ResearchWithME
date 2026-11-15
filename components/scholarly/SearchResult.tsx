@@ -1,5 +1,5 @@
 /**
- * SearchResult — πeme v3.1 §28 (stage 4, beta).
+ * SearchResult — reme v3.1 §28 (stage 4, beta).
  *
  * Renders one result with its search mode labeled; AI-expanded results are
  * always visibly marked "AI-expanded" (never passed off as lexical).

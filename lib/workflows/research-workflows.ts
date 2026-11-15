@@ -7,7 +7,7 @@
  * `planned`. The diagram labels planned nodes as such; it never presents an
  * unbuilt capability as available.
  *
- * Each stage names the πeme §9 motion pattern its state change uses, so the
+ * Each stage names the reme §9 motion pattern its state change uses, so the
  * UI picks the matching Lottie micro-interaction instead of inventing one.
  *
  * Inert data: safe in server components, tests, and docs tooling.
@@ -208,10 +208,10 @@ export const RESEARCH_WORKFLOWS: Readonly<Record<WorkflowId, ResearchWorkflow>> 
       {
         id: 'impact',
         label: 'Impact tracking',
-        summary: 'Report citations and reading time without tracking readers.',
+        summary: 'Report reading time without tracking readers.',
         pattern: 'synthesize',
         details: [
-          { id: 'impact-citations', label: 'Citation counts', status: 'live', component: 'PapersArchive' },
+          { id: 'impact-citations', label: 'Primary DOI links on reviewed artifacts', status: 'live', component: 'ArticleFeed' },
           { id: 'impact-reading', label: 'Reading-time estimates', status: 'live', component: 'ArticleFeed' },
         ],
       },

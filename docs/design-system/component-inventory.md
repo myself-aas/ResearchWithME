@@ -3,7 +3,7 @@
 > **2026-11-12:** shared primitives (`Text`, `Link`, `Card`, `Stack`, `Icon`, form controls) and the semantic-token rules are documented in [primitives.md](./primitives.md).
 
 Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** · **Wrap temporarily** · **Replace** · **Deprecate** · **Remove after migration**.
-"Retokenized" = already migrated to πeme v3.1 token classes in `c522005` (amber brand → `brand`/indigo, stone → πeme neutral).
+"Retokenized" = already migrated to reme v3.1 token classes in `c522005` (amber brand → `brand`/indigo, stone → reme neutral).
 
 ## App shell and navigation
 
@@ -11,7 +11,7 @@ Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** 
 |---|---|---|
 | `components/BlogHeader.tsx` | Retokenize → done; Refactor later | Sticky masthead; keep. Map to spec nav shell in later stage. |
 | `components/BlogFooter.tsx` | Retokenize → done; Retain | Shared footer, newsletter inline. |
-| `components/BrandLogo.tsx` | Retokenize → done; Retain | Wordmark uses πeme primary. |
+| `components/BrandLogo.tsx` | Retokenize → done; Retain | Wordmark uses reme primary. |
 | `components/PageState.tsx` | Refactor | loading/empty/error/404 → spec Feedback states (skeleton mirrors layout, empty state explains + one action). |
 
 ## Content and reading

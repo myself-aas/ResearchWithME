@@ -109,7 +109,7 @@ export default function ArticleInteractions({
           }`}
         >
           {/* Secondary action (principle 8): the heart pops, the number does
-              not count up — πeme §9 keeps numeric animation out of the UI. */}
+              not count up — reme §9 keeps numeric animation out of the UI. */}
           <m.span
             aria-hidden="true"
             className="inline-flex"

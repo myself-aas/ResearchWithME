@@ -47,7 +47,7 @@ describe('lottie animations', () => {
     for (const layer of animation.layers) expect(layer.op).toBe(animation.op);
   });
 
-  it.each(names)('%s uses only πeme token easings', (name) => {
+  it.each(names)('%s uses only reme token easings', (name) => {
     for (const frame of collectKeyframes(LOTTIE_ANIMATIONS[name])) {
       if (!frame.o || !frame.i) continue;
       const curve = [frame.o.x[0], frame.o.y[0], frame.i.x[0], frame.i.y[0]].join(',');
@@ -78,7 +78,7 @@ describe('lottie micro-interactions (SSR)', () => {
     ['attention', AttentionMark],
   ] as const)('%s server-renders its static resting frame, decorative only', (name, Mark) => {
     const html = renderToStaticMarkup(createElement(Mark, { size: 20 }));
-    expect(html).toContain(`data-lottie="pieme-${name}"`);
+    expect(html).toContain(`data-lottie="reme-${name}"`);
     expect(html).toContain('aria-hidden="true"');
     expect(html).toContain('<svg');
     expect(html).toContain('width:20px');

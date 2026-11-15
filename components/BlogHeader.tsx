@@ -10,14 +10,13 @@ import {
   Bookmark,
   BookOpen,
   CheckCircle2,
-  ChevronDown,
-  FileText,
+  LogIn,
+  LogOut,
   Menu,
   PenSquare,
-  Quote,
   Search,
-  ShieldCheck,
   Sparkles,
+  Tag,
   User,
   Users,
   X,
@@ -26,14 +25,10 @@ import { useSession } from '@/lib/supabase/use-session';
 import { useDigestSubscribed, useSavedTotalCount } from '@/lib/stores/preferences-store';
 import { useWarmImport } from '@/lib/motion/hooks';
 import { EASING, TRANSITION } from '@/lib/motion/tokens';
-import { t } from '@/lib/i18n';
 import AttentionPulse from './motion/AttentionPulse';
 import Pressable from './motion/Pressable';
 import BrandLogo from './BrandLogo';
-import LocaleSwitcher from './i18n/LocaleSwitcher';
-import { useLocale } from './i18n/LocaleProvider';
 import ThemeToggle from './ThemeToggle';
-import { Card, Text } from '@/components/primitives';
 
 const CommandPalette = dynamic(() => import('./search/CommandPalette'), { ssr: false });
 
@@ -44,25 +39,15 @@ interface BlogHeaderProps {
 }
 
 const primaryNav = [
-  { href: '/', label: 'Index', icon: BookOpen, match: (path: string) => path === '/' || path === '/articles' },
-  { href: '/papers', label: 'Papers', icon: FileText, match: (path: string) => path.startsWith('/paper') },
-  { href: '/authors', label: 'Specialists', icon: Users, match: (path: string) => path.startsWith('/author') },
-  { href: '/editions', label: 'Editions', icon: BookOpen, match: (path: string) => path.startsWith('/editions') },
-  { href: '/assistant', label: 'Synthesis', icon: Sparkles, match: (path: string) => path.startsWith('/assistant') },
-];
-
-const secondaryNav = [
-  { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
-  { href: '/cite', label: 'Citation builder', icon: Quote },
-  { href: '/editorial-board', label: 'Editorial board', icon: Users },
-  { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck },
-  { href: '/dashboard', label: 'Editorial studio', icon: PenSquare },
+  { href: '/', label: 'Home', icon: BookOpen, match: (path: string) => path === '/' || path.startsWith('/articles') || path.startsWith('/post/') || path.startsWith('/category/') },
+  { href: '/authors', label: 'Writers', icon: Users, match: (path: string) => path.startsWith('/author') },
+  { href: '/assistant', label: 'Assistant', icon: Sparkles, match: (path: string) => path.startsWith('/assistant') },
+  { href: '/pricing', label: 'Products', icon: Tag, match: (path: string) => path.startsWith('/pricing') },
 ];
 
 export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {
   const pathname = usePathname() || '/';
-  const { locale } = useLocale();
-  const { user } = useSession();
+  const { user, signOut } = useSession();
   const storeSavedCount = useSavedTotalCount();
   const digestSubscribed = useDigestSubscribed();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -77,14 +62,13 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   const savedTotal = savedCount ?? storeSavedCount;
   const warmPalette = useWarmImport(() => import('./search/CommandPalette'));
   const { scrollY } = useScroll();
+  const isEditor = Boolean(user?.isEditor);
+  const isSignedIn = Boolean(user);
 
-  // Sticky header elevation: staging says chrome should recede only as far as
-  // the reader needs. 8px of travel switches from hairline to raised shadow.
   useMotionValueEvent(scrollY, 'change', (value) => {
     setElevated(value > 8);
   });
 
-  // Attention is rationed: one pulse when the reading list grows, then silence.
   useEffect(() => {
     if (savedTotal <= 0) return;
     setBadgePulse(true);
@@ -125,6 +109,13 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
     setPaletteOpen(true);
   }
 
+  const secondaryNav = [
+    { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
+    { href: '/cite', label: 'Cite', icon: Bookmark },
+    { href: '/editorial-board', label: 'Editor', icon: User },
+    { href: isEditor ? '/write' : '/dashboard/access', label: isEditor ? 'Writer studio' : 'Write for us', icon: PenSquare },
+  ];
+
   const navLinkClass = (active: boolean) =>
     `inline-flex min-h-11 items-center gap-1.5 border-b-2 px-3 py-2 font-sans text-xs font-semibold uppercase tracking-wider transition-colors ${
       active
@@ -143,13 +134,13 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-none"
-                      aria-label="𝞹eme — ResearchWithMe platform home"
+            aria-label="ResearchWithMe home"
           >
             <BrandLogo size="xl" showText={true} />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
-            <LayoutGroup id="pieme-primary-nav">
+            <LayoutGroup id="reme-primary-nav">
               <ul className="flex items-center gap-0.5">
                 {primaryNav.map((item) => {
                   const active = item.match(pathname);
@@ -163,7 +154,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                         <span>{item.label}</span>
                         {active ? (
                           <m.span
-                            layoutId="pieme-nav-underline"
+                            layoutId="reme-nav-underline"
                             aria-hidden="true"
                             className="absolute inset-x-2 -bottom-[2px] h-0.5 rounded-full bg-ink"
                             transition={{ layout: TRANSITION.reveal }}
@@ -183,9 +174,10 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               onClick={openPalette}
               {...warmPalette}
               className="inline-flex min-h-11 items-center gap-2.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink sm:px-3"
+              aria-label="Search articles and writers (⌘K)"
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span className="sr-only xl:not-sr-only">{t(locale, 'cmdk.trigger')}</span>
+              <span className="sr-only xl:not-sr-only">Search articles and writers</span>
               <kbd className="hidden rounded-sm border border-line bg-canvas px-1.5 py-0.5 font-mono text-xs font-medium text-ink-secondary sm:inline-block">
                 ⌘K
               </kbd>
@@ -194,11 +186,12 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             <Link
               href="/bookmarks"
               className="relative hidden min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle sm:inline-flex"
-              title={digestSubscribed ? t(locale, 'nav.digestSubscribed') : t(locale, 'nav.readingList')}
+              title={digestSubscribed ? 'Weekly digest subscribed' : 'Reading list'}
+              aria-label={digestSubscribed ? 'Reading list — weekly digest subscribed' : 'Reading list'}
             >
               <Bookmark className="h-4 w-4 text-ink-secondary" aria-hidden="true" />
-              <span className="hidden 2xl:inline">{t(locale, 'nav.readingList')}</span>
-              <span className="sr-only 2xl:hidden">{t(locale, 'nav.readingList')}</span>
+              <span className="hidden 2xl:inline">Reading list</span>
+              <span className="sr-only 2xl:hidden">Reading list</span>
               {savedTotal > 0 && (
                 <AttentionPulse active={badgePulse} className="rounded-sm">
                   <span className="rounded-sm bg-brand px-1.5 py-0.5 font-mono text-xs font-semibold text-on-primary">
@@ -207,35 +200,62 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                 </AttentionPulse>
               )}
               {digestSubscribed && (
-                <CheckCircle2
-                  className="h-3.5 w-3.5 text-brand"
-                  aria-label={t(locale, 'nav.digestSubscribed')}
-                />
+                <CheckCircle2 className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
               )}
             </Link>
 
-            <LocaleSwitcher />
             <ThemeToggle />
 
-            <Link
-              href={user ? '/dashboard/access' : '/login'}
-              className="hidden min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle md:inline-flex"
-              title={user ? `Signed in as ${user.name}` : 'Sign in or create an account'}
-            >
-              <ShieldCheck className="h-4 w-4 text-brand" aria-hidden="true" />
-              <span className="hidden xl:inline">
-                {user ? (user.isEditor ? 'Writer' : 'Account') : 'Sign In'}
-              </span>
-            </Link>
-
-            <Link
-              href={user?.isEditor ? '/write' : '/login?next=%2Fwrite'}
-              aria-label={user?.isEditor ? 'Write a review in the writer studio' : 'Sign in to write'}
-              className="hidden min-h-11 items-center justify-center gap-1.5 rounded-sm bg-ink px-3 py-1.5 font-sans text-xs font-semibold text-canvas transition-opacity hover:opacity-90 sm:inline-flex"
-            >
-              <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>{user?.isEditor ? 'Write' : 'Sign in'}</span>
-            </Link>
+            {/* Auth / Write CTA — adapts cleanly to three states */}
+            {isSignedIn ? (
+              <div className="hidden items-center gap-1 md:flex">
+                <Link
+                  href={isEditor ? '/write' : '/dashboard'}
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+                  title={`Signed in as ${user?.name ?? 'a reader'}`}
+                  aria-label={isEditor ? 'Open writer studio' : 'Your account'}
+                >
+                  <User className="h-4 w-4 text-brand" aria-hidden="true" />
+                  <span className="hidden xl:inline">{isEditor ? 'Studio' : 'Account'}</span>
+                </Link>
+                {isEditor && (
+                  <Link
+                    href="/write"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-sm bg-ink px-3 py-1.5 font-sans text-xs font-semibold text-canvas transition-opacity hover:opacity-90"
+                  >
+                    <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Write</span>
+                  </Link>
+                )}
+                <Pressable
+                  type="button"
+                  onClick={() => signOut?.()}
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
+                  aria-label="Sign out"
+                  title="Sign out"
+                >
+                  <LogOut className="h-4 w-4" aria-hidden="true" />
+                </Pressable>
+              </div>
+            ) : (
+              <div className="hidden items-center gap-1 md:flex">
+                <Link
+                  href="/login"
+                  aria-label="Sign in"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+                >
+                  <LogIn className="h-4 w-4 text-brand" aria-hidden="true" />
+                  <span className="hidden xl:inline">Sign in</span>
+                </Link>
+                <Link
+                  href="/dashboard/access"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-sm bg-ink px-3 py-1.5 font-sans text-xs font-semibold text-canvas transition-opacity hover:opacity-90"
+                >
+                  <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>Write for us</span>
+                </Link>
+              </div>
+            )}
 
             <Pressable
               ref={menuButtonRef}
@@ -244,6 +264,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               aria-expanded={menuOpen}
               aria-controls={menuId}
               className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink transition-colors hover:bg-surface-subtle lg:hidden"
+              aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">
                 <m.span
@@ -257,7 +278,6 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   {menuOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
                 </m.span>
               </AnimatePresence>
-              <span className="sr-only">{menuOpen ? 'Close navigation menu' : 'Open navigation menu'}</span>
             </Pressable>
           </div>
         </div>
@@ -265,7 +285,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         <AnimatePresence initial={false}>
           {menuOpen ? (
             <m.div
-              key="pieme-mobile-menu"
+              key="reme-mobile-menu"
               ref={menuRef}
               id={menuId}
               initial={{ height: 0, opacity: 0 }}
@@ -274,84 +294,108 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               transition={{ duration: 0.22, ease: [...EASING.standard] }}
               className="overflow-hidden lg:hidden"
             >
-              <Card className="mb-4">
-          {setSearchQuery && (
-            <div className="mb-4">
-              <label htmlFor="mobile-search" className="mb-1.5 block font-sans text-xs font-medium text-ink">
-                Search articles
-              </label>
-              <input
-                id="mobile-search"
-                type="search"
-                value={searchQuery ?? ''}
-                onChange={(event) => setSearchQuery(event.target.value)}
-                placeholder="Title, author, DOI, or repository"
-                className="h-11 w-full rounded-sm border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
-              />
-            </div>
-          )}
+              <div className="mb-4 rounded-sm border border-line bg-surface p-5">
+                {setSearchQuery && (
+                  <div className="mb-4">
+                    <label htmlFor="mobile-search" className="mb-1.5 block font-sans text-xs font-medium text-ink">
+                      Search articles
+                    </label>
+                    <input
+                      id="mobile-search"
+                      type="search"
+                      value={searchQuery ?? ''}
+                      onChange={(event) => setSearchQuery(event.target.value)}
+                      placeholder="Title, writer, tag, or org/repo"
+                      className="h-11 w-full rounded-sm border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
+                    />
+                  </div>
+                )}
 
-          <nav aria-label="Mobile primary">
-            <ul className="grid gap-1">
-              {primaryNav.map((item) => {
-                const active = item.match(pathname);
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      aria-current={active ? 'page' : undefined}
-                      className={`flex min-h-11 items-center gap-2 rounded-sm border px-3 py-2 font-sans text-sm font-medium transition-colors ${
-                        active ? 'border-brand bg-surface-subtle text-ink' : 'border-transparent text-ink-secondary hover:bg-surface-subtle hover:text-ink'
-                      }`}
-                    >
-                      <item.icon className="h-4 w-4" aria-hidden="true" />
-                      <span>{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
+                <nav aria-label="Mobile primary">
+                  <ul className="grid gap-1">
+                    {primaryNav.map((item) => {
+                      const active = item.match(pathname);
+                      return (
+                        <li key={item.href}>
+                          <Link
+                            href={item.href}
+                            aria-current={active ? 'page' : undefined}
+                            className={`flex min-h-11 items-center gap-2 rounded-sm border px-3 py-2 font-sans text-sm font-medium transition-colors ${
+                              active ? 'border-brand bg-surface-subtle text-ink' : 'border-transparent text-ink-secondary hover:bg-surface-subtle hover:text-ink'
+                            }`}
+                          >
+                            <item.icon className="h-4 w-4" aria-hidden="true" />
+                            <span>{item.label}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </nav>
 
-          <nav aria-label="Research tools" className="mt-4 border-t border-line pt-4">
-            <Text as="p" variant="eyebrow" color="secondary" weight="medium" className="mb-2 flex items-center gap-1.5">
-              <ChevronDown className="h-4 w-4" aria-hidden="true" />
-              Research tools
-            </Text>
-            <ul className="grid gap-1">
-              {secondaryNav.map((item) => (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
-                    className="flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
-                  >
-                    <item.icon className="h-4 w-4" aria-hidden="true" />
-                    <span>{item.label}</span>
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link
-                  href="/write"
-                  className="flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
-                >
-                  <PenSquare className="h-4 w-4" aria-hidden="true" />
-                  <span>Writer studio</span>
-                </Link>
-              </li>
-            </ul>
-          </nav>
+                <nav aria-label="Secondary" className="mt-4 border-t border-line pt-4">
+                  <p className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-ink">Tools</p>
+                  <ul className="grid gap-1">
+                    {secondaryNav.map((item) => (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
+                          className="flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
+                        >
+                          <item.icon className="h-4 w-4" aria-hidden="true" />
+                          <span>{item.label}</span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
 
-              <p className="mt-4 flex items-start gap-2 border-t border-line pt-4 font-sans text-xs text-ink-secondary">
-                <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>
-                  {user?.isEditor
-                    ? `Signed in as ${user.name}. Publishing permissions are active.`
-                    : 'Reader mode. Apply to write to publish reviews.'}
-                </span>
-              </p>
-              </Card>
+                <div className="mt-4 flex items-start gap-2 border-t border-line pt-4 font-sans text-xs text-ink-secondary">
+                  <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                  {isSignedIn ? (
+                    <div className="flex-1">
+                      <p className="text-ink">
+                        Signed in as <span className="font-semibold">{user?.name}</span>.
+                      </p>
+                      <p className="mt-1">
+                        {isEditor
+                          ? 'Publishing permissions are active.'
+                          : 'Reader mode. Apply to write to publish reviews.'}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => signOut?.()}
+                        className="mt-2 inline-flex items-center gap-1 text-brand underline-offset-4 hover:underline"
+                      >
+                        <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+                        Sign out
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex-1">
+                      <p>Reader mode. Sign in to publish reviews or save to a synced reading list.</p>
+                      <div className="mt-2 flex gap-2">
+                        <Link
+                          href="/login"
+                          aria-label="Sign in"
+                          className="inline-flex min-h-9 items-center gap-1 rounded-sm border border-line bg-canvas px-2.5 py-1.5 text-ink hover:bg-surface-subtle"
+                        >
+                          <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+                          Sign in
+                        </Link>
+                        <Link
+                          href="/dashboard/access"
+                          className="inline-flex min-h-9 items-center gap-1 rounded-sm bg-ink px-2.5 py-1.5 font-semibold text-canvas hover:opacity-90"
+                        >
+                          <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                          Write for us
+                        </Link>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </m.div>
           ) : null}
         </AnimatePresence>

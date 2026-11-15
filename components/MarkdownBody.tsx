@@ -123,11 +123,28 @@ export default function MarkdownBody({ markdown, citations, citeHref }: Markdown
           ),
           img: ({ src, alt }) => {
             if (typeof src !== 'string') return null;
+            // Derive a fallback alt from the filename so decorative/publisher-
+            // supplied screenshots never ship with empty alt (which screen
+            // readers treat as "skip this" — fine for purely decorative art
+            // but wrong for explanatory figures). Explicit `alt=""` still wins.
+            const fallbackAlt = alt?.trim()
+              ? alt
+              : (() => {
+                  try {
+                    const pathname = new URL(src, 'http://local').pathname;
+                    const base = pathname.split('/').pop() ?? '';
+                    const stem = base.replace(/\.[a-z0-9]+$/i, '');
+                    const words = stem.replace(/[-_]+/g, ' ').replace(/\s+/g, ' ').trim();
+                    return words || 'Article figure';
+                  } catch {
+                    return 'Article figure';
+                  }
+                })();
             return (
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={src}
-                alt={alt ?? ''}
+                alt={fallbackAlt}
                 loading="lazy"
                 decoding="async"
                 className="mt-6 h-auto w-full rounded-sm border border-line"

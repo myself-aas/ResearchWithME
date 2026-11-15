@@ -1,7 +1,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { CmsStore } from '@/lib/cms/types';
 import type { SendScenarioInput, SendScenarioOptions, SendScenarioResult } from '@/lib/email/send';
-import type { LegacyStore } from '@/lib/legacy/types';
 import type { Publication } from '@/lib/research-data';
 import {
   createKvRateLimitStore,
@@ -33,6 +32,7 @@ export interface PublicConfig {
 export interface AppEnv {
   RATE_LIMIT_KV?: KvNamespaceLike;
   GEMINI_API_KEY?: string;
+  WEB_BOT_AUTH_PRIVATE_JWK?: string;
   GEMINI_MODEL?: string;
   RESEND_API_KEY?: string;
   REVALIDATE_SECRET?: string;
@@ -66,7 +66,6 @@ export interface RuntimeServices {
   sessionClient(ctx: RequestContext): SupabaseClient | null;
   publicCms(ctx: RequestContext): Promise<CmsStore>;
   editorCms(ctx: RequestContext): Promise<CmsStore>;
-  legacy(ctx: RequestContext): Promise<LegacyStore>;
   listPapers(): readonly Publication[];
   models: ModelServices;
   email(ctx: RequestContext): EmailSender;
@@ -248,7 +247,6 @@ function unconfiguredServices(): RuntimeServices {
     sessionClient: () => null,
     publicCms: notWiredAsync('publicCms') as RuntimeServices['publicCms'],
     editorCms: notWiredAsync('editorCms') as RuntimeServices['editorCms'],
-    legacy: notWiredAsync('legacy') as RuntimeServices['legacy'],
     listPapers: () => [] as readonly Publication[],
     models: {
       generateText: () => Promise.reject(new Error('Models are not wired in this build.')),

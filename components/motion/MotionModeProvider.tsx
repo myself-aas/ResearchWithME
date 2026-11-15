@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * MotionModeProvider — πeme v3.1 §10 motion modes (`full` · `reduced` · `static`).
+ * MotionModeProvider — reme v3.1 §10 motion modes (`full` · `reduced` · `static`).
  *
  * The provider does three things:
  *  1. persists the reader's choice (`rwm-motion-mode`) next to the theme;

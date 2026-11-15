@@ -29,9 +29,29 @@ const supabaseImages = supabaseImagePattern();
 // so the shipped policy stays eval-free.
 const isDev = process.env.NODE_ENV === 'development';
 
+// Lemon.js is the checkout overlay. It loads only on /pricing and
+// /dashboard/account (components/billing/LemonSqueezyScript), never site-wide,
+// but a CSP is per-document and cannot be narrowed per component, so the
+// allowance is here. `frame-src` is the half that is easy to forget: without it
+// the overlay iframe falls back to `default-src 'self'` and is blocked with no
+// visible error. Both are pinned by lib/__tests__/billing-csp.test.ts.
+const LEMON_JS = 'https://app.lemonsqueezy.com';
+const LEMON_FRAMES = 'https://*.lemonsqueezy.com';
+
+// When Supabase Auth's OAuth server is enabled, @supabase/auth-js loads part of
+// itself as ES modules from jsDelivr. That is a cross-origin script load, so
+// without this the authorization/consent flow dies on an opaque CSP violation.
+// Scoped to the package path on purpose: jsDelivr serves every npm package, and
+// the bare origin would be an allow-anything hole.
+// Pinned by lib/__tests__/auth-csp.test.ts.
+const SUPABASE_AUTH_SDK = 'https://cdn.jsdelivr.net/npm/@supabase/auth-js@*';
+
 const cspDirectives = [
   "default-src 'self'",
-  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
+  isDev
+    ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${LEMON_JS} ${SUPABASE_AUTH_SDK}`
+    : `script-src 'self' 'unsafe-inline' ${LEMON_JS} ${SUPABASE_AUTH_SDK}`,
+  `frame-src 'self' ${LEMON_FRAMES}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",

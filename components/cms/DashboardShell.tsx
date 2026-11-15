@@ -3,7 +3,17 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { FileText, LogOut, MessageSquare, PenSquare, ShieldCheck, UserCheck } from 'lucide-react';
+import {
+  BookOpen,
+  FileText,
+  LayoutDashboard,
+  LineChart,
+  LogOut,
+  MessageSquare,
+  PenSquare,
+  ShieldCheck,
+  UserCheck,
+} from 'lucide-react';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import type { DashboardUser } from '@/lib/cms/types';
@@ -18,17 +28,49 @@ interface NavItem {
   exact: boolean;
 }
 
-/** Every signed-in account gets the application page. */
-const accountNav: NavItem[] = [
-  { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck, exact: false },
+interface NavSection {
+  label: string;
+  items: NavItem[];
+}
+
+const readingItem: NavItem = { href: '/dashboard/reading', label: 'My reading', icon: BookOpen, exact: false };
+
+/** Every signed-in account gets the reading dashboard and the application page. */
+const accountNav: NavSection[] = [
+  {
+    label: 'Overview',
+    items: [readingItem],
+  },
+  {
+    label: 'Account',
+    items: [
+      { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck, exact: false },
+    ],
+  },
 ];
 
-/** Approved writers get the publishing surfaces and the review queue. */
-const studioNav: NavItem[] = [
-  { href: '/dashboard', label: 'New article', icon: PenSquare, exact: true },
-  { href: '/dashboard/manage', label: 'Articles', icon: FileText, exact: false },
-  { href: '/dashboard/comments', label: 'Comments', icon: MessageSquare, exact: false },
-  { href: '/dashboard/applications', label: 'Applications', icon: UserCheck, exact: false },
+/**
+ * Approved writers get one dashboard per job — the desk, their own byline, and
+ * their reading — above the publishing surfaces and the review queues.
+ */
+const studioNav: NavSection[] = [
+  {
+    label: 'Overview',
+    items: [
+      { href: '/dashboard/desk', label: 'Desk', icon: LayoutDashboard, exact: false },
+      { href: '/dashboard/writing', label: 'My writing', icon: LineChart, exact: false },
+      readingItem,
+    ],
+  },
+  {
+    label: 'Studio',
+    items: [
+      { href: '/dashboard', label: 'New article', icon: PenSquare, exact: true },
+      { href: '/dashboard/manage', label: 'Articles', icon: FileText, exact: false },
+      { href: '/dashboard/comments', label: 'Comments', icon: MessageSquare, exact: false },
+      { href: '/dashboard/applications', label: 'Applications', icon: UserCheck, exact: false },
+    ],
+  },
 ];
 
 interface DashboardShellProps {
@@ -70,33 +112,38 @@ export default function DashboardShell({ children, configured, user }: Dashboard
       <div className="mx-auto w-full max-w-7xl flex-1 px-4 sm:px-6 lg:px-8">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-10">
           <div className="-mx-4 border-b border-line px-4 py-3 sm:-mx-6 sm:px-6 lg:mx-0 lg:border-b-0 lg:border-r lg:px-0 lg:py-8 lg:pr-6">
-            <nav aria-label="Editorial studio">
-              <p className="hidden text-xs font-semibold uppercase tracking-wider text-ink-secondary lg:block">
-                Editorial studio
-              </p>
-              <ul className="flex flex-wrap gap-1 lg:sticky lg:top-6 lg:mt-3 lg:flex-col lg:py-0">
-                {(user?.isEditor ? studioNav : accountNav).map((item) => {
-                  const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
-                  const Icon = item.icon;
-                  return (
-                    <li key={item.href} className="shrink-0">
-                      <Link
-                        href={item.href}
-                        aria-current={active ? 'page' : undefined}
-                        className={cn(
-                          'inline-flex min-h-11 w-full items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                          active
-                            ? 'bg-surface-inverse text-text-inverse'
-                            : 'text-ink hover:bg-surface hover:text-ink',
-                        )}
-                      >
-                        <Icon className="h-4 w-4" aria-hidden="true" />
-                        <span>{item.label}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+            <nav aria-label="Dashboard" className="lg:sticky lg:top-6">
+              {/* Demo mode has no account, and its studio is open, so it shows the studio set. */}
+              {(user?.isEditor || !configured ? studioNav : accountNav).map((section, index) => (
+                <div key={section.label} className={cn(index > 0 && 'mt-2 lg:mt-6')}>
+                  <p className="hidden text-xs font-semibold uppercase tracking-wider text-ink-secondary lg:block">
+                    {section.label}
+                  </p>
+                  <ul className="flex flex-wrap gap-1 lg:mt-3 lg:flex-col lg:py-0">
+                    {section.items.map((item) => {
+                      const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+                      const Icon = item.icon;
+                      return (
+                        <li key={item.href} className="shrink-0">
+                          <Link
+                            href={item.href}
+                            aria-current={active ? 'page' : undefined}
+                            className={cn(
+                              'inline-flex min-h-11 w-full items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                              active
+                                ? 'bg-surface-inverse text-text-inverse'
+                                : 'text-ink hover:bg-surface hover:text-ink',
+                            )}
+                          >
+                            <Icon className="h-4 w-4" aria-hidden="true" />
+                            <span>{item.label}</span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
             </nav>
 
             {configured && user && (
@@ -125,7 +172,7 @@ export default function DashboardShell({ children, configured, user }: Dashboard
             )}
           </div>
 
-          <main className="min-w-0 py-6 sm:py-8">
+          <main tabIndex={-1} id="main-content" className="min-w-0 py-6 sm:py-8">
             {!configured && (
               <div className="mb-6 border-l-2 border-trust-uncertain bg-brand/5 px-4 py-3 text-sm leading-relaxed text-brand-pressed">
                 <p className="font-semibold">Local demo mode</p>

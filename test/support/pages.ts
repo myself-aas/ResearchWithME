@@ -16,9 +16,6 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createLocalCmsStore } from '@/lib/cms/local-store';
 import type { CmsPost, CmsPostInput, CmsStore } from '@/lib/cms/types';
 import type { Publication } from '@/lib/research-data';
-import type { LegacyStore } from '@/lib/legacy/types';
-import { createSupabaseLegacyFixture } from '@/test/fixtures/legacy';
-import { createSupabaseLegacyStore } from '@/lib/legacy/supabase-store';
 import type { ProfileRow } from '@/lib/author-directory-core';
 import type { AuthorApplication } from '@/lib/applications';
 import type { KvNamespaceLike } from '@/lib/rate-limit-core';
@@ -82,8 +79,6 @@ export interface TestAppOptions {
   expiredSessions?: boolean;
   /** Published rows the fake `profiles` table serves to the public client. Default: empty directory. */
   profileRows?: ProfileRow[];
-  /** Makes the public legacy store unavailable, like a storage outage in front of the seed corpus. */
-  legacyFails?: boolean;
 }
 
 const tempDirs: string[] = [];
@@ -482,7 +477,6 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
     applicationsFail = false,
     expiredSessions = false,
     profileRows = [],
-    legacyFails = false,
   } = options;
 
   const directory = mkdtempSync(path.join(tmpdir(), 'rwm-test-app-'));
@@ -491,9 +485,6 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
   const sharedOptions: TestAppOptions = { ...options, applications, applicationsFail };
 
   const cmsStore: CmsStore = createLocalCmsStore({ dataDir: directory });
-
-  const legacyFixture = createSupabaseLegacyFixture();
-  const legacyStore: LegacyStore = createSupabaseLegacyStore(legacyFixture.client, legacyFixture.seeds);
 
   const papers: Publication[] = [];
 
@@ -532,7 +523,6 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
       },
       publicCms: () => Promise.resolve(cmsStore),
       editorCms: () => Promise.resolve(cmsStore),
-      legacy: () => (legacyFails ? Promise.reject(new Error('legacy store unavailable')) : Promise.resolve(legacyStore)),
       listPapers: () => papers,
       models: {
         generateText: async () => {

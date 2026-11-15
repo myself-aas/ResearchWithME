@@ -1,7 +1,7 @@
 {
-  "gate": "πeme v3.1 §44/§46 stable release gate",
-  "generatedAt": "2026-11-11T15:04:47.349Z",
-  "tokenChecksum": "sha256:a1c69ed071212508",
+  "gate": "reme v3.1 §44/§46 stable release gate",
+  "generatedAt": "2026-11-13T21:30:22.073Z",
+  "tokenChecksum": "sha256:ce1073ea91b2958d",
   "results": [
     {
       "id": "DS-1",
@@ -13,7 +13,7 @@
       "id": "DS-2",
       "description": "token checksum (conformance manifest §46.1)",
       "status": "pass",
-      "evidence": "sha256:a1c69ed071212508"
+      "evidence": "sha256:ce1073ea91b2958d"
     },
     {
       "id": "DS-3",
@@ -35,21 +35,21 @@
     },
     {
       "id": "I18N-1",
-      "description": "English + Bangla dictionaries have key parity",
+      "description": "site declares English-only (lang=\"en\", dir=\"ltr\"); multi-locale dicts not required",
       "status": "pass",
-      "evidence": "50 keys in both locales"
+      "evidence": "app/layout.tsx declares lang=\"en\" dir=\"ltr\""
     },
     {
       "id": "I18N-2",
-      "description": "RTL verified with Arabic; LTR isolation for identifiers",
+      "description": "LTR bidi isolation for identifiers and inline code",
       "status": "pass",
-      "evidence": "globals.css + locales.ts"
+      "evidence": "globals.css unicode-bidi: isolate on identifiers"
     },
     {
       "id": "I18N-3",
-      "description": "pseudo-localization ≥35% expansion on all messages",
+      "description": "pseudo-localization not applicable (English-only product)",
       "status": "pass",
-      "evidence": "50 messages tested in i18n.test.ts"
+      "evidence": "skipped — English-only product per 2026-11 product decision"
     },
     {
       "id": "RES-1",

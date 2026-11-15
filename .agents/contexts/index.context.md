@@ -6,6 +6,7 @@ This file serves as the main entry point for all ResearchWithMe project contexts
 
 | Context File | Description | When to Use |
 |--------------|-------------|-------------|
+| `reme.context.md` | reme boundaries, published archive MCP, supported CMS fields and safety | reme research, editorial and agent tasks |
 | `project-overview.context.md` | High-level project description, tech stack, key directories | Starting any task, onboarding |
 | `architecture.context.md` | System architecture, data flow, components, database schema | Backend tasks, API design, database changes |
 | `workflows.context.md` | Development workflows, quality gates, git practices, testing | Daily development, CI/CD, code reviews |
@@ -118,10 +119,10 @@ ls .github/contexts/
 ## Related Files
 
 ### Instructions
-- `.github/instructions/reme-article-writing.instructions.md`
+- `.agents/instructions/reme-editorial.instructions.md`
 
 ### Agents
-- `.github/agents/reme.agent.md`
+- `.agents/agents/reme.agent.md`
 
 ### Workflows
 - `.github/workflows/quality.yml`

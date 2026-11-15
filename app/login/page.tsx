@@ -26,10 +26,14 @@ export const metadata: Metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string | string[] }>;
+  searchParams: Promise<{ next?: string | string[]; error_description?: string | string[]; error?: string | string[] }>;
 }) {
   const params = await searchParams;
   const next = safeNextPath(params.next);
+  // The auth callback sends a failed sign-in here with the reason. It is passed
+  // on as text; React escapes it, and the form rewrites the common ones.
+  const rawError = params.error_description ?? params.error;
+  const initialError = typeof rawError === 'string' ? rawError.trim().slice(0, 300) : '';
   const configured = isSupabaseConfigured;
   const user = await getDashboardUser();
 
@@ -37,7 +41,7 @@ export default async function LoginPage({
     <div className="flex min-h-screen flex-col bg-canvas">
       <BlogHeader />
 
-      <main className="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-10 sm:px-6 lg:py-16">
+      <main tabIndex={-1} id="main-content" className="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-10 sm:px-6 lg:py-16">
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-16">
           <section aria-labelledby="login-title">
             <h1 id="login-title" className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">
@@ -79,7 +83,7 @@ export default async function LoginPage({
             </ul>
           </section>
 
-          <LoginForm configured={configured} user={user} next={next} />
+          <LoginForm configured={configured} user={user} next={next} initialError={initialError} />
         </div>
       </main>
 

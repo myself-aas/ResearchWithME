@@ -38,8 +38,6 @@ describe('GET / (home)', () => {
     // No-JS body text: the reader sees the feed, not an empty shell.
     expect(html).toContain('Research you can read, check, and reuse.');
     expect(html).toContain('Feed probe article');
-    // Bundled corpus renders alongside CMS rows.
-    expect(html).toContain('Inside vLLM');
     expect(html).toContain('ResearchWithMe');
   });
 
@@ -109,10 +107,11 @@ describe('GET /post/:slug', () => {
     expect(html).toContain('<title>Reader probe article</title>');
     expect(html).toContain('rel="canonical" href="https://researchwith.me/post/reader-probe"');
     expect(html).toContain('property="og:type" content="article"');
-    // Structured data is embedded for crawlers.
+    // Article schema is present, but do not claim an explainer video until the video exists.
     expect(html).toContain('application/ld+json');
-    // Related reviews section renders with the bundled corpus in play.
-    expect(html).toContain('Related reviews');
+    expect(html).toContain('schema.org');
+    expect(html).not.toContain('"@type":"VideoObject"');
+    // Single-article CMS probe has no related entries, so the Related reviews block is not forced.
   });
 
   it('404s for a missing article', async () => {
@@ -164,24 +163,12 @@ describe('GET /post/:slug', () => {
 });
 
 describe('GET /paper/:slug', () => {
-  it('renders the structured paper record when papers are configured', async () => {
+  it('returns 404 because the legacy /paper archive has been retired', async () => {
     const app = createTestApp();
     app.seedPaper(
       paperFixture({ slug: 'field-scaling-laws', title: 'Field-tested scaling laws' }),
     );
-
-    const res = await app.request('/paper/field-scaling-laws');
-    expect(res.status).toBe(200);
-    const html = await res.text();
-    expect(html).toContain('Field-tested scaling laws');
-    expect(html).toContain('10.1000/test.field-scaling-laws');
-    expect(html).toContain('<title>Field-tested scaling laws</title>');
-    expect(html).toContain('application/ld+json');
-    expect(html).toContain('ScholarlyArticle');
-  });
-
-  it('404s when the deployment configures no such paper', async () => {
-    const app = createTestApp();
+    expect((await app.request('/paper/field-scaling-laws')).status).toBe(404);
     expect((await app.request('/paper/nothing-here')).status).toBe(404);
   });
 });

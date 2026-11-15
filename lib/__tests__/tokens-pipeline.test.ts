@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdtempSync, mkdirSync, writeFileSync, rmSync, cpSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 import { tokens } from '@/tokens/generated/tokens';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { Badge } from '@/components/primitives/Badge';
+import { compositeOverHex } from '@/lib/tokens/contrast';
 import { contrastRatio, meetsAA, WCAG_AA_NORMAL_TEXT } from '@/lib/tokens/contrast';
 
 const flatten = (obj: Record<string, unknown>, prefix: string[] = []): Array<[string, unknown]> =>
@@ -9,7 +15,7 @@ const flatten = (obj: Record<string, unknown>, prefix: string[] = []): Array<[st
     v !== null && typeof v === 'object' ? flatten(v as Record<string, unknown>, [...prefix, k]) : [[[...prefix, k].join('.'), v]],
   );
 
-describe('πeme token pipeline (tokens/generated)', () => {
+describe('reme token pipeline (tokens/generated)', () => {
   it('has no unresolved {references} in generated output', () => {
     const flat = flatten(tokens as unknown as Record<string, unknown>);
     const unresolved = flat.filter(([, v]) => typeof v === 'string' && /\{[a-z0-9.\-]+\}/i.test(v));
@@ -66,10 +72,10 @@ describe('πeme token pipeline (tokens/generated)', () => {
   it('globals.css consumes generated tokens (no duplicated literals for semantic colors)', () => {
     const css = readFileSync(join(process.cwd(), 'app/globals.css'), 'utf8');
     expect(css).toContain('@import "../tokens/generated/tokens.css"');
-    expect(css).toContain('--color-canvas: var(--pieme-canvas)');
+    expect(css).toContain('--color-canvas: var(--reme-canvas)');
     expect(css).toContain('--color-brand: var(--color-action-primary)');
-    // stone scale is an alias over the generated πeme neutral ramp
-    expect(css).toContain('--color-stone-50: var(--pieme-color-neutral-50)');
+    // stone scale is an alias over the generated reme neutral ramp
+    expect(css).toContain('--color-stone-50: var(--reme-color-neutral-50)');
   });
 
   it('emits exact Archival Paper (light) and Obsidian (dark) palette tokens', () => {
@@ -94,5 +100,118 @@ describe('πeme token pipeline (tokens/generated)', () => {
     expect(contrastRatio('rgba(18, 18, 20, 0.10)', '#FAF9F6')).toBeGreaterThan(1.1);
     expect(contrastRatio(tokens.semanticLight.action['on-primary'], tokens.semanticLight.action.primary)).toBeGreaterThanOrEqual(4.5);
     expect(contrastRatio(tokens.semanticDark.action['on-primary'], tokens.semanticDark.action.primary)).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+
+describe('generated CSS consumer contract', () => {
+  it('component_css_names_resolve_including_ts_factories', () => {
+    const css = readFileSync(join(process.cwd(), 'tokens/generated/tokens.css'), 'utf8');
+    expect(css).toContain('--reme-component-source-card-background:');
+    expect(css).not.toContain('--reme-component-component-');
+  });
+
+  function checkFixture(files: Record<string, string>) {
+    const root = mkdtempSync(join(tmpdir(), 'rwm-token-consumers-'));
+    try {
+      for (const [name, content] of Object.entries(files)) {
+        const path = join(root, name);
+        mkdirSync(join(path, '..'), { recursive: true });
+        writeFileSync(path, content);
+      }
+      return spawnSync(process.execPath, [join(process.cwd(), 'tokens/scripts/check-consumers.mjs'), '--root', root], { encoding: 'utf8' });
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+
+  it('rejects unresolved variables in TypeScript style factories with a path diagnostic', () => {
+    const result = checkFixture({
+      'tokens/generated/tokens.css': ':root { --reme-surface: #fff; }',
+      'lib/scholarly/factory.ts': "export const style = { color: 'var(--reme-missing)' };",
+    });
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain('lib/scholarly/factory.ts');
+    expect(result.stderr).toContain('--reme-missing');
+  });
+
+  it('accepts variables declared in generated or application CSS and ignores test fixtures', () => {
+    const result = checkFixture({
+      'tokens/generated/tokens.css': ':root { --reme-surface: #fff; }',
+      'app/globals.css': ':root { --reme-local: var(--reme-surface); }',
+      'lib/factory.ts': "export const style = { color: 'var(--reme-local, var(--reme-surface))' };",
+      'components/Card.tsx': "export const background = 'var(--reme-surface)';",
+      'cloudflare-pages/src/styles.css': 'main { color: var(--reme-local); }',
+      'lib/__tests__/fixture.ts': "const missing = 'var(--reme-test-only)';",
+      'lib/factory.test.ts': "const missing = 'var(--reme-test-only)';",
+    });
+    expect(result.status, result.stderr).toBe(0);
+    expect(result.stdout).toContain('0 unresolved');
+  });
+});
+
+
+describe('component CSS semantic aliases', () => {
+  it('component_aliases_follow_semantics_not_light_literals', () => {
+    const css = readFileSync(join(process.cwd(), 'tokens/generated/tokens.css'), 'utf8');
+    expect(css).toContain('--reme-component-source-card-background: var(--reme-surface)');
+    expect(css).toContain('--reme-component-button-primary-radius: var(--reme-radius-md)');
+    expect(tokens.component.sourceCard.background).toBe('#F3F1EC');
+    expect(tokens.component.button.primary.radius).toBe('0.5rem');
+  });
+
+  it('rejects unknown references instead of emitting broken browser aliases', () => {
+    const root = mkdtempSync(join(tmpdir(), 'rwm-token-build-'));
+    try {
+      cpSync(join(process.cwd(), 'tokens/src'), join(root, 'tokens/src'), { recursive: true });
+      mkdirSync(join(root, 'tokens/scripts'), { recursive: true });
+      cpSync(join(process.cwd(), 'tokens/scripts/build.mjs'), join(root, 'tokens/scripts/build.mjs'));
+      writeFileSync(join(root, 'tokens/src/component.json'), JSON.stringify({ invalid: '{semantic.light.does-not-exist}' }));
+      const result = spawnSync(process.execPath, [join(root, 'tokens/scripts/build.mjs')], { encoding: 'utf8' });
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain('Unresolved token reference: {semantic.light.does-not-exist}');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
+
+
+describe('domain badge foreground contrast', () => {
+  for (const variant of ['emerging', 'uncertain'] as const) {
+    it(`${variant} text passes on actual tinted badge surfaces in both themes`, () => {
+      const html = renderToStaticMarkup(createElement(Badge, { variant, dot: true }, variant === 'emerging' ? 'Emerging consensus' : 'Uncertain'));
+      const foregroundRole = html.match(/text-(trust|domain-text)-(emerging|uncertain)/)?.[1];
+      expect(foregroundRole).toBeTruthy();
+      for (const theme of [tokens.semanticLight, tokens.semanticDark]) {
+        const hex = theme.trust[variant];
+        const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+        const foreground = foregroundRole === 'trust' ? hex : (theme as unknown as { domainText: Record<string, string> }).domainText[variant];
+        for (const base of [theme.canvas, theme.surface, theme['surface-raised']]) {
+          const background = compositeOverHex(`rgba(${r},${g},${b},0.1)`, base);
+          expect(contrastRatio(foreground, background), `${variant} on ${base}`).toBeGreaterThanOrEqual(4.5);
+        }
+      }
+      expect(html).toContain(variant === 'emerging' ? 'Emerging consensus' : 'Uncertain');
+    });
+  }
+
+  it('contrast CLI rejects domain foregrounds that fail on composed badge surfaces', () => {
+    const root = mkdtempSync(join(tmpdir(), 'rwm-domain-contrast-'));
+    try {
+      cpSync(join(process.cwd(), 'tokens/src'), join(root, 'tokens/src'), { recursive: true });
+      mkdirSync(join(root, 'tokens/scripts'), { recursive: true });
+      cpSync(join(process.cwd(), 'tokens/scripts/check-contrast.mjs'), join(root, 'tokens/scripts/check-contrast.mjs'));
+      const file = join(root, 'tokens/src/semantic-light.json');
+      const light = JSON.parse(readFileSync(file, 'utf8'));
+      light.domainText = { emerging: '#FFFFFF', uncertain: '#FFFFFF' };
+      writeFileSync(file, JSON.stringify(light));
+      const result = spawnSync(process.execPath, [join(root, 'tokens/scripts/check-contrast.mjs')], { encoding: 'utf8' });
+      expect(result.status).toBe(1);
+      expect(result.stdout + result.stderr).toContain('emerging badge');
+      expect(result.stdout + result.stderr).toContain('uncertain badge');
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

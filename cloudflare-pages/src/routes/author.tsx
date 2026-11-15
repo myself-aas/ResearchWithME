@@ -1,7 +1,6 @@
 import { Link, useLoaderData } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import AuthorArchiveLayout from '@/components/AuthorArchiveLayout';
-import DeferredImpactChart from '@/components/author/DeferredImpactChart';
 import AuthorProfileCard from '@/components/AuthorProfileCard';
 import BlogFooter from '@/components/BlogFooter';
 import BlogHeader from '@/components/BlogHeader';
@@ -19,7 +18,7 @@ export default function AuthorRoute() {
     <div className="flex min-h-screen flex-col bg-stone-50">
       <BlogHeader />
 
-      <main id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-5xl flex-1 px-4 pb-16 pt-8 sm:px-6 sm:pt-12">
         <nav aria-label="Breadcrumb" className="mb-6 text-sm text-stone-600">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
@@ -45,13 +44,6 @@ export default function AuthorRoute() {
         </nav>
 
         <AuthorProfileCard author={author} metrics={metrics} headingLevel="h1" />
-
-        <DeferredImpactChart
-          author={author}
-          articleCount={metrics.totalArticles}
-          totalLikes={metrics.totalLikes}
-          totalComments={metrics.totalComments}
-        />
 
         <AuthorArchiveLayout articles={articles} />
       </main>

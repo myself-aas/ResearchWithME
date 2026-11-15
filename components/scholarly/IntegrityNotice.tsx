@@ -1,5 +1,5 @@
 /**
- * IntegrityNotice — πeme v3.1 §25 (stage 3, beta).
+ * IntegrityNotice — reme v3.1 §25 (stage 3, beta).
  *
  * Retraction/correction banner. The original version is always preserved;
  * the notice states what happened, which dependents are marked for review,

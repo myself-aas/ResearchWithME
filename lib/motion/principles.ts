@@ -1,5 +1,5 @@
 /**
- * πeme v3.1 — the twelve animation principles, as this product applies them.
+ * reme v3.1 — the twelve animation principles, as this product applies them.
  *
  * Source framework: `dylantarre/animation-principles` (Disney's twelve
  * principles mapped to interface motion). This registry is the contract
@@ -10,7 +10,7 @@
  *     principle plus its tokens and implementation notes.
  *  3. `lib/__tests__/motion-system.test.tsx` — asserts nothing is orphaned.
  *
- * Each entry names the πeme pattern it belongs to (§9: reveal, connect,
+ * Each entry names the reme pattern it belongs to (§9: reveal, connect,
  * verify, synthesize, archive) so a designer can answer "which principle is
  * this and how long may it last?" without reading component code.
  */
@@ -40,7 +40,7 @@ export interface PrincipleSpec {
   intent: string;
   /** Where this product uses it, in product language. */
   appliedTo: string[];
-  /** πeme §9 pattern this principle lives inside. */
+  /** reme §9 pattern this principle lives inside. */
   pattern: MotionPatternName;
   /** Canonical duration in ms (null when the principle is continuous/gestural). */
   durationMs: number | null;

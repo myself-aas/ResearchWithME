@@ -8,7 +8,7 @@ import { cx as cn } from './cx';
  *    `card-title`) emit exactly the class strings the product already uses,
  *    so migrating markup to `<Text>` is pixel-identical and each pattern is
  *    defined once.
- *  - **Spec scale** (`display` … `metadata`) — πeme v3.1 §2 type styles for
+ *  - **Spec scale** (`display` … `metadata`) — reme v3.1 §2 type styles for
  *    new surfaces.
  *
  * Fonts follow the spec split: serif for reading/titles, sans for chrome,
@@ -22,7 +22,7 @@ export type TextVariant =
   | 'page-title'
   | 'section-title'
   | 'card-title'
-  // πeme v3.1 scale
+  // reme v3.1 scale
   | 'display'
   | 'title-1'
   | 'title-2'

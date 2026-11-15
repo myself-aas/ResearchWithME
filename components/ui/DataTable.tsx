@@ -1,5 +1,5 @@
 /**
- * DataTable — πeme v3.1 §7 Tables and Matrices (stage 4, beta).
+ * DataTable — reme v3.1 §7 Tables and Matrices (stage 4, beta).
  *
  * - Sticky header, tabular numerals, units in headers, text left / numbers right.
  * - Missing values render "Not reported" — NEVER zero (§7).

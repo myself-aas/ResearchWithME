@@ -1,5 +1,5 @@
 /**
- * πeme Lottie layer — public surface.
+ * reme Lottie layer — public surface.
  *
  * Compositions are built from motion tokens in `lib/lottie/`; this folder
  * holds the client player and the named micro-interactions. See

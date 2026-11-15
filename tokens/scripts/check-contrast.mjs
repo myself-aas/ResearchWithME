@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * πeme token pipeline — WCAG contrast gate. Fails (exit 1) when a required
+ * reme token pipeline — WCAG contrast gate. Fails (exit 1) when a required
  * semantic pair falls below 4.5:1 (normal text) or 3:1 (focus ring / large text).
  */
 import { readFileSync } from 'node:fs';
@@ -58,6 +58,13 @@ const pairs = (s) => [
   ['visited on surface', s.action.visited, s.surface, 4.5],
   ['focus ring on canvas', s.focus, s.canvas, 3.0],
   ['focus ring on surface', s.focus, s.surface, 3.0],
+  ...['emerging', 'uncertain'].flatMap((status) => {
+    const [r, g, b] = hexToRgb(s.trust[status]);
+    return ['canvas', 'surface', 'surface-raised'].map((surface) => [
+      `${status} badge on ${surface}`, s.domainText[status],
+      compositeOverHex(`rgba(${r}, ${g}, ${b}, 0.1)`, s[surface]), 4.5,
+    ]);
+  }),
 ];
 
 let failed = 0;
@@ -73,4 +80,4 @@ if (failed) {
   console.error(`tokens: contrast check FAILED (${failed} pairs below threshold)`);
   process.exit(1);
 }
-console.log('tokens: contrast OK — all semantic pairs meet WCAG AA');
+console.log('tokens: contrast OK — all configured semantic pairs meet WCAG AA');

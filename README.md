@@ -1,6 +1,10 @@
 # ResearchWithMe
 
-An open-access research platform: long-form explanations of published papers, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
+An open-access review platform: long-form article reviews, reproducible repository teardowns, and a citation-first reading experience. Built with Next.js App Router, React 19, and Tailwind CSS v4, with a Supabase-backed editorial studio and a local demo adapter.
+
+- Interface language: English only (Bengali/Arabic i18n was removed in 2026-11).
+- Identifiers: the platform issues no periodical identifier number, book identifier, or resolver prefix of its own; every review links out to its primary artifact (a resolver identifier, preprint, tagged release, etc.) rather than minting handles.
+- Editor: Ashif Ahmed Shuvo is the sole editor-in-chief. Articles are published under CC BY 4.0.
 
 The interface follows the design system recorded in [`DESIGN.md`](./DESIGN.md) and uses the [Impeccable](https://impeccable.style) workflow and detector. Product context lives in [`PRODUCT.md`](./PRODUCT.md); per-route briefs live in [`.impeccable/surfaces/`](./.impeccable/surfaces).
 
@@ -18,27 +22,38 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 
 | Route | Mode | What it does |
 | --- | --- | --- |
-| `/` | Persuade | Searchable article feed, field browser, featured review, contributor roster |
-| `/post/[slug]` | Read | Server-rendered article with takeaways, artifact record, discussion, related reviews |
-| `/papers` | Operate | Filterable paper archive with DOI and citation actions |
-| `/paper/[slug]` | Read | Structured paper with abstract, methods, findings, references, publication record |
-| `/authors`, `/author/[id]` | Operate / Read | Contributor directory and profile with verification record and archive |
-| `/editions` | Operate | Quarterly compendiums with browser print-to-PDF |
-| `/editorial-board` | Read | Editors and editorial standards |
-| `/assistant` | Operate | Catalog-grounded research assistant with citations |
+| `/` | Persuade | Searchable article feed, category browser, featured review, writer roster |
+| `/post/[slug]` | Read | Server-rendered article with key takeaways, reviewed-artifact record, discussion, cite tool |
+| `/authors`, `/author/[id]` | Operate / Read | Writer directory and profile with public ORCID/GitHub attribution and article archive |
+| `/editorial-board` | Read | Editor-in-chief and editorial policy |
+| `/assistant` | Operate | Catalog-grounded research assistant with inline citations |
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
-| `/login` | Operate | Sign in with email and password, or Google; setup guide in demo mode |
-| `/dashboard/access` | Operate | Connect a GitHub or ORCID identity and apply to write |
-| `/write` | Operate | Draft autosave, validation, preview, and publish through the CMS store |
-| `/dashboard` | Operate | Studio: new article with Markdown editor, cover library, takeaways |
-| `/dashboard/manage` | Operate | Search, filter, publish/revert, delete, live status |
-| `/dashboard/edit/[id]` | Operate | Edit a draft or published article |
-| `/dashboard/comments` | Operate | Comment moderation with realtime updates |
+| `/pricing` | Persuade | The two paid products and what stays free; checkout through the Lemon Squeezy overlay |
+| `/dashboard/account` | Operate | Your plan, status, purchases, and anything still on sale |
+| `/about` / `/contact` / `/privacy` | Read | Mission, contact channels, reader privacy policy |
+| `/login` | Operate | Email / OAuth sign-in; demo-mode setup guide when Supabase is not configured |
+| `/dashboard/access` | Operate | Connect an ORCID or GitHub identity and apply to write |
+| `/write` | Operate | Autosaved draft editor, preview, and publish through the CMS store (editor access) |
+| `/dashboard` | Operate | Studio landing: drafts, published articles, applications |
+| `/dashboard/reading` | Operate | Reader dashboard: reading list, new in the archive, application state |
+| `/dashboard/(studio)/desk` | Operate | Editor dashboard: queues, stalled drafts, publishing trend, coverage |
+| `/dashboard/(studio)/writing` | Operate | Writer dashboard: own drafts, publishing trend, reader response |
+| `/dashboard/(studio)/manage` | Operate | Search, filter, publish/revert, delete, live status |
+| `/dashboard/(studio)/edit/[id]` | Operate | Edit a draft or published article |
+| `/dashboard/(studio)/comments` | Operate | Comment moderation with realtime updates |
+
+Retired routes (`/papers`, `/paper/[slug]`, `/editions`) return 404; their surface briefs are kept under `.impeccable/surfaces/` with `status: retired` for history but no code serves them.
 
 Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
 ## API discovery
+
+Agent authentication is published, not implied: [`/auth.md`](https://researchwith.me/auth.md) is the walkthrough, [`/.well-known/oauth-protected-resource`](https://researchwith.me/.well-known/oauth-protected-resource) is the RFC 9728 protected-resource document, and [`/.well-known/oauth-authorization-server`](https://researchwith.me/.well-known/oauth-authorization-server) (also served at [`/.well-known/openid-configuration`](https://researchwith.me/.well-known/openid-configuration)) relays Supabase's authorization-server metadata plus an Auth.md `agent_auth` block. The relay falls back to a captured copy of that document when the round-trip fails, and labels which it served. No ResearchWithMe API validates a bearer token, so the documents say so and advertise no scopes. See [`docs/oauth-discovery.md`](./docs/oauth-discovery.md).
+
+In the browser, [`public/webmcp.js`](./public/webmcp.js) registers three read-only tools — `search_articles`, `list_categories`, `get_article` — with WebMCP on page load, so an in-tab agent queries the archive instead of scraping it. It registers into both `document.modelContext` (the specification) and `navigator.modelContext` (older preview builds and scanner shims), and does nothing in the browsers that lack the API. See [`docs/webmcp.md`](./docs/webmcp.md).
+
+Outbound bot requests identify themselves with [Web Bot Auth](https://datatracker.ietf.org/wg/webbotauth/about/): [`/.well-known/http-message-signatures-directory`](https://researchwith.me/.well-known/http-message-signatures-directory) serves the Ed25519 JWKS and signs that response over its own authority, and `lib/web-bot-auth.ts` signs each request with `Signature-Agent`, `Signature-Input`, and `Signature` headers. The endpoint returns 503 until a signing key is provisioned — it never advertises a key nobody holds. See [`docs/web-bot-auth.md`](./docs/web-bot-auth.md).
 
 The [API catalog](https://researchwith.me/.well-known/api-catalog) follows RFC 9727 and lists the archive, assistant, and editorial route groups. Its `service-desc` links point to the [OpenAPI 3.1 document](https://researchwith.me/openapi.json), and `service-doc` links point to the [API reference](https://researchwith.me/api-docs). Editor, signed-in, and webhook-secret requirements are documented per operation; publishing the catalog does not grant access. There is no advertised health endpoint.
 
@@ -149,6 +164,7 @@ Full setup, the blueprint-to-code map, the data model, and the security notes ar
 - There is no open manuscript intake: the platform publishes explanations written by approved writers. A reader applies at `/dashboard/access` (GitHub or ORCID identity), an editor approves, and the writer publishes through `/write` and the studio.
 - Writer access is a real, server-enforced decision: an applicant connects GitHub or ORCID with Supabase `linkIdentity`, an editor approves the row in `public.author_applications`, and approval writes the `public.editors` entry. There is no browser-side role and nothing is stored in `localStorage`.
 - The research assistant answers from the local catalog. With `GEMINI_API_KEY` set it asks Gemini to summarize the same records; without a key it returns a deterministic cited answer.
+- The Assistant API (`/api/v1/assistant/answers`, API keys, burst limit, monthly allowance, MCP tool `ask_archive`) is shipped but not switched on. It needs `supabase/migrations/20261114000200_api_keys.sql` (applied to production on 2026-11-14), its own `API_BRIDGE_SECRET` (Worker secret plus a digest row in `private.api_settings`; not the billing secret), and, optionally, the `researchwithme-assistant` Worker (`npm run worker:assistant:deploy`, then uncomment the `ASSISTANT` binding in `wrangler.jsonc`). Without the bridge secret or the migration the API answers `503`. See [`docs/assistant-api.md`](./docs/assistant-api.md).
 
 Environment variables:
 
@@ -159,7 +175,16 @@ Environment variables:
 | `REVALIDATE_SECRET` | Optional. Shared secret for the `/api/revalidate` webhook. |
 | `GEMINI_API_KEY` | Optional. Enables model-written assistant answers. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-3.8-flash`. |
+| `API_BRIDGE_SECRET` | Optional. Secret. Required for the Assistant API; its SHA-256 digest is stored in `private.api_settings`. See `docs/assistant-api.md`, "Owner: deploy". |
+| `API_FREE_MONTHLY_REQUESTS` | Optional. Assistant API answers included per account per UTC month. Defaults to `100`. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
+| `LEMONSQUEEZY_API_KEY` | Optional. Secret. Creates checkouts. Without it `/api/billing/checkout` answers `503`. |
+| `LEMONSQUEEZY_WEBHOOK_SECRET` | Optional. Secret. Verifies webhook signatures; without it every delivery is refused. |
+| `BILLING_BRIDGE_SECRET` | Optional. Secret. Also stored (as a SHA-256 digest) in `private.billing_settings`; see `docs/billing.md` §3. |
+| `LEMONSQUEEZY_STORE_ID` | Optional. Store the checkouts belong to. |
+| `LEMONSQUEEZY_VARIANT_TEARDOWN` | Optional. Variant for the $19 teardown product. |
+| `LEMONSQUEEZY_VARIANT_STAT_TABLES` | Optional. Variant for the $5 Statistical Table Generator. |
+| `LEMONSQUEEZY_TEST_MODE` | Optional. `1` marks checkouts and stored rows as test data; leave unset in production. |
 
 ## Project layout
 
@@ -180,7 +205,7 @@ docs/          audit report, CMS guide, project notes
 
 ## Fonts
 
-The interface follows the πeme v3.1 design system ([`docs/pieme-design-system-v3.1.md`](./docs/pieme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, DOIs, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
+The interface follows the reme v3.1 design system ([`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md)). The Aptos family leads every stack: Aptos Serif for editorial reading, Aptos for interface chrome, Aptos Mono for code, cited-work identifiers, and metadata. Aptos is requested by installed name only (Windows 11 and Microsoft 365 ship it); it is never bundled and there is no CDN. When Aptos is not installed the fallbacks apply: Newsreader and Inter, self-hosted in `app/fonts/` and loaded with `next/font/local` so the browser gets preloaded, size-adjusted faces with no layout shift (both SIL Open Font License 1.1; the licence texts ship next to the files), and JetBrains Mono, requested by installed name with a system mono fallback.
 
 ## Contributing
 

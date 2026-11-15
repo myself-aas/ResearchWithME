@@ -7,7 +7,7 @@
  * enforced by `useDelayedLoading`:
  *  - an indicator appears only after 200ms (fast responses never flash);
  *  - once shown it stays at least 500ms (no jarring blink);
- *  - the shimmer cycle is 1500ms and runs **at most three times** — πeme §7
+ *  - the shimmer cycle is 1500ms and runs **at most three times** — reme §7
  *    forbids indefinite shimmer, while the skill's rhythm is preserved;
  *  - every skeleton mirrors the shape of the content it replaces
  *    (solid drawing / staging), so the swap does not reflow.
@@ -70,7 +70,7 @@ export interface SkeletonShardProps {
 
 /**
  * A single skeleton block with a bounded shimmer.
- * The gradient is built from the πeme surface tokens, not literals.
+ * The gradient is built from the reme surface tokens, not literals.
  */
 export function SkeletonShard({
   className = '',
