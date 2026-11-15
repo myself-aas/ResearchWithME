@@ -39,6 +39,9 @@ describe('renderPage (via handleRequest)', () => {
     expect(html).toContain('Research you can read, check, and reuse.');
     // The <title> carries the site name even for the default document.
     expect(html).toContain('ResearchWithMe');
+    expect(html).toContain('href="/favicon.svg"');
+    expect(html).toContain('href="/apple-touch-icon.png"');
+    expect(html).toContain('href="/site.webmanifest"');
   });
 
   it('escapes the hydration payload so embedded JSON cannot break out of <script>', async () => {

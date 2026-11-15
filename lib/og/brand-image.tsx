@@ -3,11 +3,9 @@
  * reme palette: canvas #F8F7F3, text #161C1A, action #1D4ED8.
  */
 import { ImageResponse } from 'next/og';
+import { BRAND_WORDMARK_DATA } from './logo-data';
 
 export const OG_SIZE = { width: 1200, height: 630 };
-
-// Non-italic pi symbol (U+1D70B MATHEMATICAL SANS-SERIF BOLD SMALL PI)
-const piSymbol = '𝜋';
 
 export function brandOgImage(title: string, subtitle: string) {
   return new ImageResponse(
@@ -26,10 +24,8 @@ export function brandOgImage(title: string, subtitle: string) {
           fontFamily: 'ui-serif, Georgia, serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', fontSize: 54, letterSpacing: '-0.04em' }}>
-                  <span style={{ fontWeight: 700, color: '#1D4ED8' }}>{piSymbol}</span>
-          <span style={{ fontWeight: 400, color: '#161C1A' }}>eme</span>
-        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={BRAND_WORDMARK_DATA} width={200} height={119} alt="ResearchWithMe" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ fontSize: title.length > 60 ? 52 : 64, lineHeight: 1.08, letterSpacing: '-0.03em', maxWidth: 1000 }}>
             {title}

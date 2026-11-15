@@ -1,11 +1,9 @@
+import { BRAND_WORDMARK_DATA } from '@/lib/og/logo-data';
 import { ImageResponse } from 'next/og';
 
 export const alt = 'ResearchWithMe — Open-Access Scholarly Publishing & Research Reviews';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
-
-// Non-italic pi symbol (U+1D70B MATHEMATICAL SANS-SERIF BOLD SMALL PI)
-const piSymbol = '𝜋';
 
 export default function OpengraphImage() {
   return new ImageResponse(
@@ -24,10 +22,7 @@ export default function OpengraphImage() {
           fontFamily: 'ui-serif, Georgia, serif',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', fontFamily: 'ui-serif, Georgia, serif', fontSize: 54, letterSpacing: '-0.04em' }}>
-                  <span style={{ fontWeight: 700, color: '#1D4ED8' }}>{piSymbol}</span>
-          <span style={{ fontWeight: 400, color: '#161C1A' }}>eme</span>
-        </div>
+        <img src={BRAND_WORDMARK_DATA} width={200} height={119} alt="ResearchWithMe" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
           <div style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 940 }}>
             Open science, reviewed in public.
