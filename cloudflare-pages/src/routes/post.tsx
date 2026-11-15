@@ -160,7 +160,7 @@ export default function PostRoute() {
             </header>
 
             <figure className="mt-8 reading-column">
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-sm border border-line bg-surface">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-line bg-surface">
                 {article.coverImage && article.coverImage.startsWith('data:') ? (
                   <picture className="h-full w-full">
                     <source srcSet={article.coverImage} type="image/avif" />

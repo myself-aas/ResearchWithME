@@ -23,6 +23,7 @@ import ApiDocsRoute from './routes/api-docs';
 import AboutRoute from './routes/about';
 import ContactRoute from './routes/contact';
 import PrivacyRoute from './routes/privacy';
+import SettingsPage from '@/components/SettingsPage';
 
 /**
  * Shared route table for the Pages target (Task 10).
@@ -52,6 +53,7 @@ export type RouteId =
   | 'about'
   | 'contact'
   | 'privacy'
+  | 'settings'
   | 'login'
   | 'write'
   | 'dashboard'
@@ -188,6 +190,7 @@ export const ROUTE_DEFINITIONS: ReadonlyArray<RouteDefinition> = [
   { id: 'about', path: '/about', element: <AboutRoute /> },
   { id: 'contact', path: '/contact', element: <ContactRoute /> },
   { id: 'privacy', path: '/privacy', element: <PrivacyRoute /> },
+  { id: 'settings', path: '/settings', element: <SettingsPage /> },
   { id: 'not-found', path: '*', element: <NotFound /> },
 ];
 

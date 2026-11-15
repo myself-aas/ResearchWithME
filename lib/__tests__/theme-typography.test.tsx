@@ -25,7 +25,8 @@ describe('Archival typography, 68ch prose & ThemeToggle', () => {
     expect(resolveEffectiveTheme('system', true)).toBe('dark');
     const html = renderToStaticMarkup(createElement(ThemeToggle));
     expect(html).toContain('min-h-11');
-    expect(html).toContain('aria-label=');
+    expect(html).toContain('<legend');
+    expect(html).toContain('type="radio"');
   });
 });
 
@@ -60,13 +61,11 @@ describe('theme preference lifecycle', () => {
   function mount() {
     root = createRoot(container);
     act(() => root!.render(createElement(ThemeToggle)));
-    return container.querySelector<HTMLSelectElement>('select');
+    return container;
   }
-  function choose(select: HTMLSelectElement, value: string) {
-    act(() => {
-      select.value = value;
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-    });
+  function choose(target: HTMLElement, value: string) {
+    const input = target.querySelector<HTMLInputElement>(`input[value="${value}"]`)!;
+    act(() => input.click());
   }
   function changeOS(value: boolean) {
     dark = value;
@@ -105,9 +104,9 @@ describe('theme preference lifecycle', () => {
   it('keeps header and footer selectors synchronized without competing system listeners', () => {
     root = createRoot(container);
     act(() => root!.render(createElement('div', null, createElement(ThemeToggle), createElement(ThemeToggle))));
-    const selectors = container.querySelectorAll('select');
+    const selectors = container.querySelectorAll('fieldset');
     choose(selectors[0], 'dark');
-    expect(selectors[1].value).toBe('dark');
+    expect(selectors[1].querySelector<HTMLInputElement>('input[value=dark]')?.checked).toBe(true);
     changeOS(false);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });
@@ -116,7 +115,7 @@ describe('theme preference lifecycle', () => {
     localStorage.setItem('rwm-theme', 'dark');
     const select = mount();
     expect(select).not.toBeNull();
-    expect(select!.value).toBe('dark');
+    expect(select!.querySelector<HTMLInputElement>('input[value=dark]')?.checked).toBe(true);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     choose(select!, 'system');
     expect(listeners.size).toBe(1);
@@ -131,12 +130,12 @@ describe('shared pre-paint theme bootstrap', () => {
     const { THEME_INIT_SCRIPT } = await import('@/lib/theme');
     for (const stored of [null, 'invalid', 'light', 'dark', 'system']) {
       document.documentElement.className = '';
-      const fakeWindow = { localStorage: { getItem: () => stored }, matchMedia: () => ({ matches: true }) };
+      const fakeWindow = { localStorage: { getItem: () => stored }, matchMedia: () => ({ matches: true }), addEventListener: () => {} };
       new Function('window', 'document', THEME_INIT_SCRIPT)(fakeWindow, document);
       expect(document.documentElement.classList.contains('dark')).toBe(stored !== 'light');
       expect(document.documentElement.classList.contains('light')).toBe(stored === 'light');
     }
-    const deniedWindow = { localStorage: { getItem() { throw new Error('denied'); } }, matchMedia: () => ({ matches: true }) };
+    const deniedWindow = { localStorage: { getItem() { throw new Error('denied'); } }, matchMedia: () => ({ matches: true }), addEventListener: () => {} };
     new Function('window', 'document', THEME_INIT_SCRIPT)(deniedWindow, document);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
     document.documentElement.className = '';

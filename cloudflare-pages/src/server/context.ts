@@ -103,9 +103,9 @@ export interface PublicConfigSource {
  * else>` here — secrets must not reach the browser bundle.
  */
 function inlineSource(): PublicConfigSource {
-  if (typeof process === 'undefined') return {};
   // The member expressions below must stay literal: vite `define` replaces
-  // them with the inlined public values at build time.
+  // them with the inlined public values at build time. Do not guard on the
+  // process global: it may not exist in workerd after those substitutions.
   return {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,

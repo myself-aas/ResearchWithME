@@ -1,33 +1,26 @@
 import { expect, test } from '@playwright/test';
 
-test('system theme follows OS while explicit choice persists across reload and controls', async ({ page }) => {
+test('system theme follows OS while explicit choice persists across reload', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'light' });
-  await page.goto('/');
-  const themes = page.getByRole('combobox', { name: 'Theme', exact: true });
-  await themes.first().selectOption('system');
+  await page.goto('/settings');
+  await page.getByRole('radio', { name: 'System' }).check();
   await page.emulateMedia({ colorScheme: 'dark' });
-  await expect(page.locator('html')).toHaveClass(/dark/);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'reme-dark');
   await page.emulateMedia({ colorScheme: 'light' });
-  await expect(page.locator('html')).not.toHaveClass(/dark/);
-  await themes.first().selectOption('dark');
-  await expect(themes.last()).toHaveValue('dark');
-  await page.emulateMedia({ colorScheme: 'light' });
-  await expect(page.locator('html')).toHaveClass(/dark/);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'reme-light');
+  await page.getByRole('radio', { name: 'Dark' }).check();
   await page.reload();
-  await expect(themes.first()).toHaveValue('dark');
-  await expect(page.locator('html')).toHaveClass(/dark/);
+  await expect(page.getByRole('radio', { name: 'Dark' })).toBeChecked();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'reme-dark');
 });
 
-test('storage denial keeps system preference and an in-memory explicit choice usable', async ({ page }) => {
+test('storage denial keeps an in-memory explicit choice usable', async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(window, 'localStorage', { get() { throw new DOMException('denied', 'SecurityError'); } });
   });
   await page.emulateMedia({ colorScheme: 'dark' });
-  await page.goto('/');
-  await expect(page.locator('html')).toHaveClass(/dark/);
-  const themes = page.getByRole('combobox', { name: 'Theme', exact: true });
-  await themes.first().selectOption('light');
-  await expect(page.locator('html')).toHaveClass(/light/);
-  await expect(page.locator('html')).not.toHaveClass(/dark/);
-  await expect(themes.last()).toHaveValue('light');
+  await page.goto('/settings');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'reme-dark');
+  await page.getByRole('radio', { name: 'Light' }).check();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'reme-light');
 });

@@ -16,7 +16,8 @@ describe('brand assets', () => {
     expect(wordmark).toContain('/brand/wordmark.svg');
     expect(mark).toContain('/brand/mark.svg');
     expect(wordmark).toContain('aria-label="ResearchWithMe"');
-    expect(wordmark).toContain('dark:invert');
+    expect(wordmark).toContain('bg-primary');
+    expect(wordmark).toContain('mask-image:url(/brand/wordmark.svg)');
     expect(readFileSync('public/brand/wordmark.svg')).toEqual(readFileSync('research-with-me (3).svg'));
     expect(readFileSync('public/favicon.svg')).toEqual(readFileSync('research-with-me-favicon.svg'));
   });

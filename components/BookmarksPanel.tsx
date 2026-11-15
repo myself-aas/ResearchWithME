@@ -156,7 +156,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
         )}
 
         {savedArticles.length === 0 ? (
-          <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
+          <div className="mt-8 card border border-line bg-surface p-8 sm:p-12">
             <Bookmark className="h-7 w-7 text-ink-secondary" aria-hidden="true" />
             <Text as="h2" variant="section-title" className="mt-4">Nothing saved yet</Text>
             <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
@@ -181,7 +181,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
                   id="bookmark-category"
                   value={selectedCategory}
                   onChange={(event) => setSelectedCategory(event.target.value)}
-                  className="min-h-11 rounded-sm border border-line bg-surface px-3 font-sans text-sm text-ink"
+                  className="select min-h-11 border-line bg-surface px-3 font-sans text-base text-ink"
                 >
                   <option value="All">All columns</option>
                   {categories.map((category) => (
@@ -196,7 +196,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
                 <Pressable
                   type="button"
                   onClick={handleExport}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+                  className="btn btn-outline min-h-11 rounded-full px-4"
                 >
                   <Download className="h-4 w-4" aria-hidden="true" />
                   <span>Export Markdown</span>
@@ -229,14 +229,14 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
                       <button
                         type="button"
                         onClick={handleClearAll}
-                        className="min-h-9 font-semibold text-destructive underline underline-offset-4"
+                        className="min-h-11 font-semibold text-destructive underline underline-offset-4"
                       >
                         Yes, clear
                       </button>
                       <button
                         type="button"
                         onClick={() => setConfirmClear(false)}
-                        className="min-h-9 underline underline-offset-4"
+                        className="min-h-11 underline underline-offset-4"
                       >
                         Keep them
                       </button>
@@ -269,7 +269,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
             )}
 
             {filteredArticles.length === 0 ? (
-              <div className="mt-6 rounded-sm border border-line bg-surface p-8">
+              <div className="mt-6 card border border-line bg-surface p-8">
                 <Text as="h2" variant="card-title">No saved articles in this column</Text>
                 <p className="mt-2 font-sans text-sm text-ink-secondary">Choose another column or show the full list.</p>
                 <Pressable

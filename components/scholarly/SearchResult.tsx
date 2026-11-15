@@ -17,7 +17,7 @@ export default function SearchResult<T extends SearchableItem>({ result, href }:
   const label =
     mode === 'lexical' ? 'Lexical' : mode === 'exact-identifier' ? 'Exact identifier' : mode === 'semantic' ? 'Semantic' : 'AI-expanded';
   return (
-    <li className="rounded-md border border-line bg-surface p-4">
+    <li className="rounded-2xl border border-line bg-surface p-4">
       <p className={`font-sans text-[0.8125rem] font-semibold uppercase tracking-[0.04em] ${aiExpanded ? 'text-provenance-ai-assisted' : 'text-text-tertiary'}`}>
         {label}
         {aiExpanded ? ' · generated expansion — verify against sources' : ''}

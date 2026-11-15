@@ -43,7 +43,7 @@ export default function PageState({
         amount={0.1}
         role={role}
         aria-live={role === 'alert' ? 'assertive' : 'polite'}
-        className="border-b border-line pb-12 sm:pb-16"
+        className="rounded-2xl border border-line bg-surface-raised p-6 sm:p-10"
       >
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
           <h1 id="page-state-title" className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-5xl">
@@ -66,14 +66,14 @@ export default function PageState({
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <a
             href={primaryAction.href}
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
+            className="inline-flex min-h-11 items-center justify-center rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
           >
             {primaryAction.label}
           </a>
           {secondaryAction && (
             <a
               href={secondaryAction.href}
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border-strong px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong hover:bg-surface-raised"
+              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-border-strong px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong hover:bg-surface-raised"
             >
               {secondaryAction.label}
             </a>

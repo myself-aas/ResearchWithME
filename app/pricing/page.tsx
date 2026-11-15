@@ -152,7 +152,7 @@ export default async function PricingPage() {
             <section
               key={product.key}
               aria-labelledby={`product-${product.key}`}
-              className="flex flex-col rounded-sm border border-line bg-surface p-6"
+              className="card flex flex-col border border-line bg-surface p-6 sm:p-8"
             >
               <h2
                 id={`product-${product.key}`}
@@ -193,7 +193,7 @@ export default async function PricingPage() {
 
               <div className="mt-6">
                 {!isPurchasable(product.key) ? (
-                  <p className="rounded-sm border border-line bg-surface-subtle px-4 py-3 font-sans text-sm leading-relaxed text-ink-secondary">
+                  <p className="rounded-xl border border-line bg-surface-subtle px-4 py-3 font-sans text-sm leading-relaxed text-ink-secondary">
                     <span className="font-semibold text-ink">Not on sale yet.</span> The files are ready and the
                     checkout is being set up. Nothing can be bought here until it is.
                   </p>
@@ -203,7 +203,7 @@ export default async function PricingPage() {
                   <>
                     <Link
                       href="/login?next=/pricing"
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-sm border border-action-primary bg-action-primary px-4 font-sans text-sm font-semibold uppercase tracking-wider text-on-primary"
+                      className="btn btn-primary min-h-11 w-full rounded-full px-4"
                     >
                       Sign in to buy
                     </Link>
@@ -242,7 +242,7 @@ export default async function PricingPage() {
               <section
                 key={item.key}
                 aria-labelledby={`download-${item.key}`}
-                className="flex flex-col rounded-sm border border-line bg-surface p-6"
+                className="card flex flex-col border border-line bg-surface p-6 sm:p-8"
               >
                 <h3
                   id={`download-${item.key}`}

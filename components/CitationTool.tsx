@@ -17,7 +17,7 @@ import { Text, Link as TextLink } from '@/components/primitives';
 import { VerifyMark } from '@/components/lottie';
 
 const inputClass =
-  'w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-sm text-ink transition-colors focus:border-brand-hover';
+  'input min-h-11 w-full border-border-strong bg-surface-raised px-3 text-base text-ink focus:border-brand-hover';
 
 /**
  * `initialArticles` — the catalogue from the server (metadata only), so the
@@ -166,7 +166,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                     id="citation-source"
                     value={selectedSlug}
                     onChange={(event) => setSelectedSlug(event.target.value)}
-                    className={inputClass}
+                    className="select min-h-11 w-full border-border-strong bg-surface-raised text-base text-ink"
                   >
                     {articles.map((article) => (
                       <option key={article.id} value={article.slug}>
@@ -289,7 +289,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                 rows={format === 'bibtex' || format === 'ris' ? 10 : 5}
                 value={citationEmpty ? '' : citationText}
                 aria-describedby="citation-hint"
-                className="w-full resize-y rounded-lg border border-border-strong bg-surface-raised p-4 font-mono text-sm leading-relaxed text-ink"
+                className="textarea w-full resize-y border-border-strong bg-surface-raised p-4 font-mono text-base leading-relaxed text-ink"
               />
               <p id="citation-hint" className="text-sm text-ink-secondary">
                 {citationEmpty
@@ -308,7 +308,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   type="button"
                   onClick={handleCopy}
                   disabled={citationEmpty}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-50"
+                  className="btn btn-primary min-h-11 rounded-full px-5"
                 >
                   {copied ? <VerifyMark size={16} /> : <Copy className="h-4 w-4" aria-hidden="true" />}
                   <span>{copied ? 'Copied to clipboard' : 'Copy citation'}</span>
@@ -319,7 +319,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                     type="button"
                     onClick={handleDownloadFile}
                     disabled={citationEmpty}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border-strong bg-surface-raised px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-border-strong disabled:opacity-50"
+                    className="btn btn-outline min-h-11 rounded-full px-5"
                   >
                     <Download className="h-4 w-4" aria-hidden="true" />
                     <span>Download .{citationFileExtension(format)}</span>
@@ -338,7 +338,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
             </div>
           </form>
 
-          <aside aria-label="Citation details" className="h-fit space-y-4 rounded-lg border border-line bg-surface-raised p-5">
+          <aside aria-label="Citation details" className="card h-fit space-y-4 border border-line bg-surface p-5">
             <div className="flex items-center gap-2 text-sm font-semibold text-ink">
               <Quote className="h-4 w-4 text-brand-hover" aria-hidden="true" />
               <span>Record details</span>

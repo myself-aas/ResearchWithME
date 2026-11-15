@@ -72,7 +72,7 @@ export default function ReadingProgressDock({
       aria-label="Reading controls"
       className="fixed bottom-5 left-1/2 z-40 -translate-x-1/2 print:hidden"
     >
-      <div className="flex items-center gap-2 rounded-sm border border-line bg-surface/95 px-3 py-1.5 text-ink backdrop-blur-xs">
+      <div className="flex items-center gap-2 rounded-2xl border border-line bg-surface/95 shadow-lg px-3 py-1.5 text-ink backdrop-blur-xs">
         {/* Solid drawing: the ring is the same object as the top bar, at a
             smaller scale — it reads progress without adding a second metric. */}
         <m.svg
@@ -108,7 +108,7 @@ export default function ReadingProgressDock({
           onClick={handleToggleSave}
           aria-pressed={isSaved}
           aria-label={isSaved ? 'Remove from reading list' : 'Save to reading list'}
-          className={`inline-flex h-11 w-11 items-center justify-center rounded-xs border transition-colors ${
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border transition-colors ${
             isSaved
               ? 'border-brand bg-brand text-on-primary'
               : 'border-transparent text-ink-secondary hover:border-line hover:text-ink'
@@ -133,7 +133,7 @@ export default function ReadingProgressDock({
             href={discussionAnchor}
             aria-label="Jump to peer discussion"
             whileTap={{ scale: 0.94 }}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
           >
             <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
           </m.a>
@@ -143,7 +143,7 @@ export default function ReadingProgressDock({
           type="button"
           onClick={scrollToTop}
           aria-label="Scroll to top of manuscript"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xs border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-transparent text-ink-secondary transition-colors hover:border-line hover:text-ink"
         >
           <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
         </Pressable>

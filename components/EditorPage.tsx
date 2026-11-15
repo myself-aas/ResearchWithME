@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import BlogHeader from '@/components/BlogHeader';
+import BlogFooter from '@/components/BlogFooter';
 import { Text } from '@/components/primitives';
 import { EDITOR_IN_CHIEF } from '@/lib/research-data';
 
@@ -8,12 +10,14 @@ import { EDITOR_IN_CHIEF } from '@/lib/research-data';
  */
 export default function EditorPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <BlogHeader />
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-3xl flex-1 px-4 py-12 sm:px-6 lg:px-8">
       <Text as="h1" variant="page-title">
         Editor
       </Text>
 
-      <section className="mt-8 rounded-sm border border-line bg-surface p-6 sm:p-8">
+      <section className="mt-8 rounded-xl border border-line bg-surface p-6 sm:p-8">
         <Link
           href={`/author/${EDITOR_IN_CHIEF.profileSlug}`}
           className="group block focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
@@ -50,6 +54,8 @@ export default function EditorPage() {
           </p>
         </div>
       </section>
+      </main>
+      <BlogFooter />
     </div>
   );
 }

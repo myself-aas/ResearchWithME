@@ -44,7 +44,7 @@ function CopyChip({ label, copied, onCopy }: { label: string; copied: boolean; o
     <button
       type="button"
       onClick={onCopy}
-      className="inline-flex min-h-9 items-center justify-center gap-1 rounded-sm border border-line bg-canvas px-2 py-1 font-mono text-xs font-medium text-ink transition-colors hover:border-brand hover:text-brand"
+      className="inline-flex min-h-11 items-center justify-center gap-1 rounded-xl border border-line bg-canvas px-2 py-1 font-mono text-xs font-medium text-ink transition-colors hover:border-brand hover:text-brand"
     >
       <AnimatePresence initial={false} mode="wait">
         <m.span
@@ -70,15 +70,18 @@ export default function InlineCitationPopover({
   citeHref,
 }: InlineCitationPopoverProps) {
   const [copied, setCopied] = useState<CopiedKind>(null);
+  const [copyError, setCopyError] = useState(false);
 
   async function copyText(kind: Exclude<CopiedKind, null>, value: string) {
     if (!value) return;
     try {
       await navigator.clipboard.writeText(value);
+      setCopyError(false);
       setCopied(kind);
       window.setTimeout(() => setCopied((prev) => (prev === kind ? null : prev)), 2000);
     } catch {
-      /* clipboard blocked */
+      setCopied(null);
+      setCopyError(true);
     }
   }
 
@@ -108,7 +111,7 @@ export default function InlineCitationPopover({
           asChild
         >
           <m.div
-            className="z-50 w-80 max-w-[92vw] rounded-sm border border-line bg-surface-raised p-4 text-left text-ink focus:outline-none"
+            className="z-50 w-80 max-w-[92vw] rounded-2xl border border-line bg-surface-raised p-4 text-left text-ink shadow-xl focus:outline-none"
             initial={{ opacity: 0, y: -6, scale: 0.98, rotate: -0.5 }}
             animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
             transition={{ duration: 0.18, ease: [...EASING.emphasize] }}
@@ -122,7 +125,7 @@ export default function InlineCitationPopover({
               <button
                 type="button"
                 aria-label="Close citation popover"
-                className="inline-flex h-6 w-6 items-center justify-center rounded-xs text-ink-secondary hover:bg-surface-subtle hover:text-ink"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-ink-secondary hover:bg-surface-subtle hover:text-ink"
               >
                 <X className="h-3.5 w-3.5" aria-hidden="true" />
               </button>
@@ -174,9 +177,9 @@ export default function InlineCitationPopover({
             </div>
           )}
 
-          <span role="status" aria-live="polite" className="sr-only">
-            {copied ? 'Copied to clipboard' : ''}
-          </span>
+          <p role="status" aria-live="polite" className={copyError ? 'mt-3 text-xs text-ink-secondary' : 'sr-only'}>
+            {copyError ? 'Clipboard access was blocked. Check your browser permissions or use the citation builder.' : copied ? 'Copied to clipboard' : ''}
+          </p>
           </m.div>
         </Popover.Content>
       </Popover.Portal>

@@ -89,7 +89,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
       </div>
 
       {articles.length === 0 ? (
-        <div className="mt-6 border border-line bg-surface-raised p-8">
+        <div className="mt-6 rounded-2xl border border-line bg-surface-raised p-8">
           <FileText className="h-8 w-8 text-ink-secondary" aria-hidden="true" />
           <Text as="h3" variant="card-title" className="mt-3">
             No articles published yet
@@ -100,14 +100,14 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
           </p>
           <Link
             href="/"
-            className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
+            className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
           >
             Browse the latest reviews
           </Link>
         </div>
       ) : (
         <>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid gap-4 rounded-2xl border border-line bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="sm:col-span-2 lg:col-span-1">
               <label htmlFor="author-article-search" className="mb-1.5 block text-sm font-medium text-ink">
                 Search this archive
@@ -120,7 +120,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                   value={searchQuery}
                   onChange={(event) => setSearchQuery(event.target.value)}
                   placeholder="Title, tag, or artifact"
-                  className="h-11 w-full rounded-md border border-border-strong bg-surface-raised pl-9 pr-3 text-sm text-ink placeholder:text-ink-secondary"
+                  className="h-11 w-full rounded-xl border border-border-strong bg-surface-raised pl-9 pr-3 text-sm text-ink placeholder:text-ink-secondary"
                 />
               </div>
             </div>
@@ -133,7 +133,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                 id="author-category"
                 value={selectedCategory}
                 onChange={(event) => setSelectedCategory(event.target.value)}
-                className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
+                className="h-11 w-full rounded-xl border border-border-strong bg-surface-raised px-3 text-sm text-ink"
               >
                 <option value="All">All categories</option>
                 {categories.map((category) => (
@@ -152,7 +152,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                 id="author-format"
                 value={selectedFormat}
                 onChange={(event) => setSelectedFormat(event.target.value)}
-                className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
+                className="h-11 w-full rounded-xl border border-border-strong bg-surface-raised px-3 text-sm text-ink"
               >
                 <option value="All">All formats</option>
                 {formats.map((format) => (
@@ -171,7 +171,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                 id="author-sort"
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value as SortKey)}
-                className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
+                className="h-11 w-full rounded-xl border border-border-strong bg-surface-raised px-3 text-sm text-ink"
               >
                 <option value="newest">Newest first</option>
                 <option value="likes">Most liked</option>
@@ -187,7 +187,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
           )}
 
           {filteredArticles.length === 0 ? (
-            <div className="mt-6 border border-line bg-surface-raised p-8">
+            <div className="mt-6 rounded-2xl border border-line bg-surface-raised p-8">
               <Text as="h3" variant="card-title">
                 No articles match those filters
               </Text>
@@ -201,17 +201,17 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                   setSelectedCategory('All');
                   setSelectedFormat('All');
                 }}
-                className="mt-5 inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
+                className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover"
               >
                 Clear filters
               </button>
             </div>
           ) : (
-            <ul className="mt-6 divide-y divide-line border-y border-line">
+            <ul className="mt-6 grid gap-3">
               {filteredArticles.map((post) => {
                 const isSaved = savedIds.includes(post.id);
                 return (
-                  <li key={post.id} className="py-6">
+                  <li key={post.id} className="rounded-2xl border border-line bg-surface-raised p-5 sm:p-6">
                     <article>
                       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-secondary">
                         <span className="font-medium text-brand">{post.category}</span>
@@ -238,13 +238,13 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                       <div className="mt-4 flex flex-wrap items-center gap-4 text-sm">
                         <Link
                           href={`/post/${post.slug}`}
-                          className="inline-flex min-h-10 items-center font-semibold text-brand underline-offset-4 hover:underline"
+                          className="inline-flex min-h-11 items-center font-semibold text-brand underline-offset-4 hover:underline"
                         >
                           Read the review
                         </Link>
                         <Link
                           href={`/cite?article=${encodeURIComponent(post.slug)}`}
-                          className="inline-flex min-h-10 items-center gap-1.5 text-ink underline-offset-4 hover:text-ink hover:underline"
+                          className="inline-flex min-h-11 items-center gap-1.5 text-ink underline-offset-4 hover:text-ink hover:underline"
                         >
                           <Quote className="h-4 w-4" aria-hidden="true" />
                           <span>Cite</span>
@@ -257,7 +257,7 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                           type="button"
                           onClick={() => toggleSave(post.id)}
                           aria-pressed={isSaved}
-                          className="inline-flex min-h-10 items-center gap-1.5 text-ink underline-offset-4 hover:text-ink hover:underline"
+                          className="inline-flex min-h-11 items-center gap-1.5 text-ink underline-offset-4 hover:text-ink hover:underline"
                         >
                           <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-brand text-brand' : ''}`} aria-hidden="true" />
                           <span>{isSaved ? 'Saved' : 'Save'}</span>

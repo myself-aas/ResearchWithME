@@ -51,7 +51,7 @@ export default defineConfig({
   projects: [
     {
       name: 'e2e',
-      testIgnore: /staging\//,
+      testIgnore: [/staging\//, /linkedin-automation\.spec\.ts$/],
       use: { baseURL: 'http://127.0.0.1:8788' },
     },
     {

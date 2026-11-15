@@ -42,9 +42,9 @@ export default function BlogHero({
   totalWriters,
 }: BlogHeroProps) {
   return (
-    <section className="border-b border-line bg-canvas" aria-labelledby="platform-title">
-          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-16">
+    <section className="border-b border-line bg-base-100" aria-labelledby="platform-title">
+          <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+            <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-12">
               <div>
                 <Text
                   data-enter="rise"
@@ -108,7 +108,7 @@ export default function BlogHero({
                       onClick={() =>
                         document.getElementById('articles-feed')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                       }
-                      className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+                      className="btn btn-primary min-h-11 rounded-full px-5 font-sans text-sm"
                     >
                       Browse index
                     </Pressable>
@@ -134,7 +134,7 @@ export default function BlogHero({
                               type="button"
                               aria-pressed={active}
                               onClick={() => setSelectedCategory(column)}
-                              className={`relative inline-flex min-h-10 items-center rounded-sm border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
+                              className={`relative inline-flex min-h-10 items-center rounded-full border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
                                 active
                                   ? 'border-brand text-on-primary'
                                   : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
@@ -143,7 +143,7 @@ export default function BlogHero({
                               {active && (
                                 <m.span
                                   layoutId="active-column-pill"
-                                  className="absolute inset-0 rounded-sm bg-brand"
+                                  className="absolute inset-0 rounded-full bg-brand"
                                   transition={{ duration: 0.18, ease: [...EASING.standard] }}
                                 />
                               )}
@@ -170,7 +170,7 @@ export default function BlogHero({
                             type="button"
                             aria-pressed={active}
                             onClick={() => setSelectedFormat(format)}
-                            className={`relative inline-flex min-h-10 items-center rounded-sm border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
+                            className={`relative inline-flex min-h-10 items-center rounded-full border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
                               active
                                 ? 'border-brand text-on-primary'
                                 : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
@@ -179,7 +179,7 @@ export default function BlogHero({
                             {active && (
                               <m.span
                                 layoutId="active-format-pill"
-                                className="absolute inset-0 rounded-sm bg-brand"
+                                className="absolute inset-0 rounded-full bg-brand"
                                 transition={{ duration: 0.18, ease: [...EASING.standard] }}
                               />
                             )}
@@ -194,9 +194,14 @@ export default function BlogHero({
 
               <aside
                 aria-label="Platform summary"
-                className="border-t border-line pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
+                className="border-t border-line pt-6 lg:border-t-0 lg:pt-0"
               >
-                <dl className="grid grid-cols-2 gap-x-6 gap-y-5 divide-y-0 lg:grid-cols-1 lg:divide-y lg:divide-line">
+                <div className="overflow-hidden rounded-3xl bg-base-200 shadow-raised">
+                  {/* Decorative generated artwork, not a photograph of research or people. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/discovery-research.webp" alt="" width="1100" height="467" loading="lazy" className="aspect-[2.35/1] w-full object-cover transition-transform duration-500 motion-safe:hover:scale-[1.03]" />
+                </div>
+                <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-5">
                   <div className="lg:pb-4">
                     <Text as="dt" variant="eyebrow" color="secondary">Published reviews</Text>
                     <dd className="mt-1 font-mono text-2xl font-semibold text-ink">{totalArticles}</dd>

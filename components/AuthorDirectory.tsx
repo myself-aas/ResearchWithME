@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import AuthorAvatar from '@/components/AuthorAvatar';
 import { ArrowRight, Building2, ExternalLink, GitBranch, GraduationCap, Search, Users } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
@@ -138,16 +139,11 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
         >
           {filteredAuthors.map((author) => (
             <StaggerItem as="li" key={author.id} className="flex">
-              <article className="flex w-full flex-col justify-between rounded-sm border border-line bg-surface p-6 transition-colors hover:border-brand">
+              <article className="card flex w-full flex-col justify-between border border-line bg-surface p-6 transition-[border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5">
                 <div>
                   <div className="flex items-start justify-between gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="flex h-12 w-12 items-center justify-center rounded-sm border border-line bg-canvas font-mono text-sm font-semibold text-ink"
-                    >
-                      {author.avatar}
-                    </span>
-                    <span className="rounded-sm border border-line bg-canvas px-2 py-1 font-mono text-xs text-ink-secondary">
+                    <AuthorAvatar author={author} size="md" />
+                    <span className="rounded-full bg-canvas px-3 py-1 font-sans text-xs text-ink-secondary">
                       {author.articleCount} {author.articleCount === 1 ? 'article' : 'articles'}
                     </span>
                   </div>

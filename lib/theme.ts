@@ -13,9 +13,10 @@ export function resolveEffectiveTheme(pref: ThemePreference, prefersDark: boolea
 
 export function applyDocumentTheme(preference: ThemePreference, prefersDark: boolean): 'light' | 'dark' {
   const effective = resolveEffectiveTheme(preference, prefersDark);
+  document.documentElement.dataset.theme = effective === 'dark' ? 'reme-dark' : 'reme-light';
   document.documentElement.classList.toggle('dark', effective === 'dark');
   document.documentElement.classList.toggle('light', preference === 'light');
   return effective;
 }
 
-export const THEME_INIT_SCRIPT = `(function(){var normalize=${normalizeThemePreference.toString()};var resolve=${resolveEffectiveTheme.toString()};var p='system';try{p=normalize(window.localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)}));}catch(e){}var d=!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',resolve(p,d)==='dark');document.documentElement.classList.toggle('light',p==='light');})();`;
+export const THEME_INIT_SCRIPT = `(function(){var normalize=${normalizeThemePreference.toString()};var resolve=${resolveEffectiveTheme.toString()};var p='system';try{p=normalize(window.localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)}));}catch(e){}var q=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)');function update(){var e=resolve(p,!!(q&&q.matches));document.documentElement.dataset.theme=e==='dark'?'reme-dark':'reme-light';document.documentElement.classList.toggle('dark',e==='dark');document.documentElement.classList.toggle('light',p==='light');}update();if(q&&q.addEventListener)q.addEventListener('change',update);window.addEventListener('rwm-theme-change',function(e){p=normalize(e.detail);update();});window.addEventListener('storage',function(e){if(e.key===${JSON.stringify(THEME_STORAGE_KEY)}||e.key===null){p=normalize(e.newValue);update();}});})();`;

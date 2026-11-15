@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Activity,
   BarChart3,
@@ -143,8 +144,12 @@ export default function ArticleFeed({
                 <StaggerItem as="li" key={category} variant="rise">
                   <Link
                     href={`/category/${categoryToSlug(category)}`}
-                    className="group flex h-full flex-col justify-between rounded-sm border border-line bg-surface p-5 transition-colors hover:border-brand hover:bg-surface-subtle"
+                    className="card group h-full overflow-hidden border border-line bg-surface transition-[border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   >
+                    <div className="relative aspect-[2.6/1] overflow-hidden bg-surface-subtle">
+                      <Image src={meta.thumbnail} alt="" fill sizes="(max-width: 767px) 100vw, (max-width: 1279px) 50vw, 33vw" loading="lazy" className="object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]" />
+                    </div>
+                    <div className="flex flex-1 flex-col justify-between p-5">
                     <div>
                       <div className="flex items-center justify-between gap-2 font-mono text-xs text-ink-secondary">
                         <span className="inline-flex items-center gap-1.5 font-semibold text-brand">
@@ -166,10 +171,11 @@ export default function ArticleFeed({
 
                     <div className="mt-4 flex flex-wrap gap-1.5 border-t border-line pt-3 font-mono text-xs text-ink-secondary">
                       {meta.tags.map((tag) => (
-                        <span key={tag} className="rounded-xs border border-line bg-canvas px-1.5 py-0.5">
+                        <span key={tag} className="rounded-full bg-canvas px-2 py-1">
                           {tag}
                         </span>
                       ))}
+                    </div>
                     </div>
                   </Link>
                 </StaggerItem>
@@ -213,7 +219,7 @@ export default function ArticleFeed({
             {activeCategory ? `${activeCategory} reviews` : 'Latest reviews'}
           </h2>
           <p className="mt-1.5 font-mono text-xs text-ink-secondary">
-            {posts.length} {posts.length === 1 ? 'manuscript' : 'manuscripts'}
+            {posts.length} {posts.length === 1 ? 'review' : 'reviews'}
             {selectedFormat !== 'All' ? ` · ${selectedFormat}` : ''}
             {searchQuery ? ` · matching “${searchQuery}”` : ''}
           </p>
@@ -233,7 +239,7 @@ export default function ArticleFeed({
       {posts.length === 0 ? (
         <div className="mt-8 rounded-sm border border-line bg-surface p-8 sm:p-12">
           <Text as="p" variant="eyebrow" color="secondary">
-            {hasFilters ? 'Diagnostic Empty State · Zero Matches' : 'Empty Catalogue'}
+            {hasFilters ? 'No matches' : 'No reviews yet'}
           </Text>
           <Text as="h3" variant="section-title" className="mt-2">
             {hasFilters
@@ -242,7 +248,7 @@ export default function ArticleFeed({
           </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
             {hasFilters
-              ? 'No published article satisfies all of the constraints below simultaneously. Relax a filter or reset to view the full catalogue.'
+              ? 'Try a different search or clear your filters to explore all reviews.'
               : 'New writing will appear here once it is published through the studio.'}
           </p>
 
@@ -283,7 +289,7 @@ export default function ArticleFeed({
 
               return (
                 <MotionItem key={post.id} className="flex min-w-0">
-                  <article className="group flex w-full min-w-0 flex-col justify-between rounded-sm border border-line bg-surface transition-[color,border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5">
+                  <article className="card group flex w-full min-w-0 flex-col justify-between border border-line bg-surface transition-[color,border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5">
                     <div className="flex flex-1 flex-col gap-3 p-5">
                       <div className="flex items-center justify-between gap-2 border-b border-line pb-3">
                         <Text as="span" variant="eyebrow" color="secondary" weight="medium" className="rounded-xs border border-line bg-canvas px-2 py-0.5">
@@ -293,7 +299,7 @@ export default function ArticleFeed({
                           type="button"
                           onClick={() => onToggleSave(post.id)}
                           aria-pressed={isSaved}
-                          className={`inline-flex h-9 w-9 items-center justify-center rounded-sm border transition-colors ${
+                          className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors ${
                             isSaved
                               ? 'border-brand bg-brand text-on-primary'
                               : 'border-line bg-canvas text-ink-secondary hover:bg-surface-subtle hover:text-ink'
@@ -384,7 +390,7 @@ export default function ArticleFeed({
                           type="button"
                           onClick={() => onLikePost(post.id)}
                           aria-pressed={likedPostIds.includes(post.id)}
-                          className="inline-flex min-h-9 items-center gap-1 rounded-sm px-1.5 transition-colors hover:text-brand"
+                          className="inline-flex min-h-11 items-center gap-1 rounded-full px-2 transition-colors hover:text-brand"
                         >
                           <m.span
                             aria-hidden="true"
@@ -405,7 +411,7 @@ export default function ArticleFeed({
                         </Pressable>
                         <Link
                           href={`/post/${post.slug}#discussion`}
-                          className="inline-flex min-h-9 items-center gap-1 rounded-sm px-1.5 transition-colors hover:text-ink"
+                          className="inline-flex min-h-11 items-center gap-1 rounded-full px-2 transition-colors hover:text-ink"
                         >
                           <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
                           <span>{post.commentsCount}</span>

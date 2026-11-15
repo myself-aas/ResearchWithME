@@ -30,30 +30,27 @@ export default function ProvenanceGraph({ objects, relationships, onInspect }: P
   const rows = useMemo(() => graphListRows(relationships, (id) => nodes.find((n) => n.id === id)?.label ?? id.slice(0, 8)), [relationships, nodes]);
   const [mode, setMode] = useState<'list' | 'graph'>('list');
   const [focusIndex, setFocusIndex] = useState(0);
-  const listRef = useRef<HTMLUListElement>(null);
+  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const activeIndex = Math.min(focusIndex, Math.max(0, nodes.length - 1));
 
   const onKeyDown = (e: KeyboardEvent<HTMLUListElement>) => {
+    if (!nodes.length) return;
+    let next = activeIndex;
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-      e.preventDefault();
-      navRef.current = true;
-      setFocusIndex((i) => Math.min(i + 1, nodes.length - 1));
+      next = Math.min(activeIndex + 1, nodes.length - 1);
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-      e.preventDefault();
-      navRef.current = true;
-      setFocusIndex((i) => Math.max(i - 1, 0));
+      next = Math.max(activeIndex - 1, 0);
     } else if ((e.key === 'Enter' || e.key === ' ') && onInspect) {
       e.preventDefault();
-      onInspect(nodes[focusIndex].id);
+      onInspect(nodes[activeIndex].id);
+      return;
+    } else {
+      return;
     }
+    e.preventDefault();
+    setFocusIndex(next);
+    itemRefs.current[next]?.focus();
   };
-
-  // focus follows the roving index
-  const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
-  const navRef = useRef(false);
-  if (navRef.current) {
-    navRef.current = false;
-    itemRefs.current[focusIndex]?.focus();
-  }
 
   return (
     <section aria-label="Provenance graph" className="rounded-md border border-line bg-surface p-4">
@@ -81,7 +78,6 @@ export default function ProvenanceGraph({ objects, relationships, onInspect }: P
         <>
           {/* Canonical accessible list — keyboard navigable node-by-node */}
           <ul
-            ref={listRef}
             aria-label="Knowledge objects"
             className="mt-3 space-y-2"
             onKeyDown={onKeyDown}
@@ -92,7 +88,8 @@ export default function ProvenanceGraph({ objects, relationships, onInspect }: P
                 ref={(el) => {
                   itemRefs.current[i] = el;
                 }}
-                tabIndex={i === focusIndex ? 0 : -1}
+                tabIndex={i === activeIndex ? 0 : -1}
+                onFocus={() => setFocusIndex(i)}
                 aria-label={`${n.type}: ${n.label}`}
                 className={`rounded-sm border border-line px-3 py-2 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus ${n.nodeClass}`}
               >
@@ -124,7 +121,7 @@ export default function ProvenanceGraph({ objects, relationships, onInspect }: P
         </>
       ) : (
         /* Wide-screen graph mode: SVG with labeled edges; list remains one click away */
-        <svg role="img" aria-label={`Provenance graph with ${nodes.length} nodes and ${edges.length} labeled relationships. Use List mode for the accessible equivalent.`} viewBox="0 0 600 300" className="mt-3 w-full">
+        <svg role="img" aria-label={`Provenance graph with ${nodes.length} nodes and ${edges.length} labeled relationships. Use List mode for the accessible equivalent.`} viewBox={`0 0 600 ${Math.max(300, Math.ceil(nodes.length / 4) * 120 + 20)}`} className="mt-3 w-full">
           {nodes.map((n, i) => (
             <g key={n.id}>
               <circle cx={80 + (i % 4) * 150} cy={60 + Math.floor(i / 4) * 120} r="18" fill="currentColor" className={n.nodeClass} opacity="0.85" />

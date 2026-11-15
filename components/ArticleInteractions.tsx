@@ -150,7 +150,7 @@ export default function ArticleInteractions({
         <Pressable
           type="button"
           onClick={share}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
         >
           <Share2 className="h-3.5 w-3.5" aria-hidden="true" />
           <span>Share</span>
@@ -159,7 +159,7 @@ export default function ArticleInteractions({
         <Pressable
           type="button"
           onClick={copyLink}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
         >
           <AnimatePresence initial={false} mode="wait">
             <m.span

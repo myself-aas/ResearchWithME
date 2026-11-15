@@ -71,7 +71,7 @@ function VisualEditor({ id, value, onChange, error }: Props) {
     onChange(next);
   }, [editor, onChange]);
 
-  const buttonClass = 'inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm text-ink-secondary hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
+  const buttonClass = 'inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-ink-secondary hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand';
   const actions = [
     { label: 'Undo', icon: Undo2, action: () => editor.tf.undo() },
     { label: 'Redo', icon: Redo2, action: () => editor.tf.redo() },
@@ -87,7 +87,7 @@ function VisualEditor({ id, value, onChange, error }: Props) {
     <Plate editor={editor} onValueChange={change}>
       <div role="toolbar" aria-label="Text formatting" className="flex flex-wrap items-center gap-1 border-b border-line bg-surface px-2 py-1">
         <label htmlFor={`${id}-block`} className="sr-only">Paragraph style</label>
-        <select id={`${id}-block`} defaultValue="p" onChange={(event) => { editor.tf.setNodes({ type: event.target.value }); editor.tf.focus(); }} className="min-h-11 rounded-sm border border-line bg-surface-raised px-2 text-sm text-ink">
+        <select id={`${id}-block`} defaultValue="p" onChange={(event) => { editor.tf.setNodes({ type: event.target.value }); editor.tf.focus(); }} className="min-h-11 rounded-xl border border-line bg-surface-raised px-2 text-sm text-ink">
           <option value="p">Paragraph</option><option value="h1">Heading 1</option><option value="h2">Heading 2</option><option value="h3">Heading 3</option>
         </select>
         {actions.map(({ label, icon: Icon, action }) => (
@@ -133,13 +133,13 @@ export default function PlateBodyEditor(props: Props) {
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div role="group" aria-label="Body editor mode" className="flex gap-1 rounded-md border border-line bg-surface p-1">
-          {(['visual', 'source'] as const).map((item) => <button key={item} type="button" aria-pressed={mode === item} onClick={() => switchMode(item)} className={`min-h-11 rounded-sm px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-brand ${mode === item ? 'bg-surface-raised text-ink shadow-sm' : 'text-ink-secondary hover:text-ink'}`}>{item === 'visual' ? 'Visual' : 'Markdown'}</button>)}
+        <div role="group" aria-label="Body editor mode" className="flex gap-1 rounded-2xl border border-line bg-surface p-1">
+          {(['visual', 'source'] as const).map((item) => <button key={item} type="button" aria-pressed={mode === item} onClick={() => switchMode(item)} className={`min-h-11 rounded-xl px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-brand ${mode === item ? 'bg-surface-raised text-ink shadow-sm' : 'text-ink-secondary hover:text-ink'}`}>{item === 'visual' ? 'Visual' : 'Markdown'}</button>)}
         </div>
         <span className="text-sm text-ink-secondary">Saved as Markdown</span>
       </div>
       {notice && <p role="status" className="text-sm text-ink-secondary">{notice}</p>}
-      <div className={`overflow-hidden rounded-md border bg-surface-raised ${props.error ? 'border-destructive' : 'border-border-strong'}`}>
+      <div className={`overflow-hidden rounded-2xl border bg-surface-raised ${props.error ? 'border-destructive' : 'border-border-strong'}`}>
         {mode === 'visual' ? <VisualEditor {...props} onChange={handleChange} /> : <textarea id={props.id} aria-labelledby={`${props.id}-label`} aria-describedby={`${props.id}-hint${props.error ? ` ${props.id}-error` : ''}`} aria-invalid={Boolean(props.error)} value={props.value} onChange={(event) => handleChange(event.target.value)} className="min-h-[400px] w-full resize-y bg-surface-raised p-4 font-mono text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand" />}
       </div>
       <p id={`${props.id}-hint`} className="text-sm text-ink-secondary">Use Markdown mode for images, tables, links, and advanced syntax. Your draft stays in this browser until published.</p>

@@ -14,7 +14,7 @@ export default function AuthorWorkSummary({
   const summary = summarizeAuthorWork(articles);
 
   return (
-    <aside aria-labelledby="author-work-summary-heading" className="rounded-md border border-line bg-surface-raised p-5">
+    <aside aria-labelledby="author-work-summary-heading" className="rounded-2xl border border-line bg-surface-raised p-5">
       <h2 id="author-work-summary-heading" className="font-serif text-xl font-bold text-ink">
         Work at a glance
       </h2>

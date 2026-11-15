@@ -101,7 +101,7 @@ export default function AuthorProfileCard({
 
   if (compact) {
     return (
-      <Card aria-labelledby="author-compact-heading" as="section" padding="lg">
+      <Card aria-labelledby="author-compact-heading" as="section" padding="lg" radius="lg">
         <div className="flex items-start gap-3">
           <AuthorAvatar author={author} size="md" />
           <div className="min-w-0">
@@ -142,7 +142,7 @@ export default function AuthorProfileCard({
   }
 
   return (
-    <Card aria-labelledby="author-profile-heading" as="section" padding="xl" className="sm:p-8">
+    <Card aria-labelledby="author-profile-heading" as="section" padding="xl" radius="lg" className="sm:p-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
           <AuthorAvatar author={author} size="xl" />

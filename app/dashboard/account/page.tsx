@@ -124,9 +124,12 @@ export default async function AccountPage() {
           <p className="mt-2 font-serif text-ink-secondary">
             Purchases appear here as soon as Lemon Squeezy confirms them, usually within a minute.
           </p>
+          <Link href="/settings" className="mt-3 inline-block text-sm font-medium text-brand underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
+            Customize settings
+          </Link>
         </header>
 
-        <section aria-labelledby="plan-heading" className="mt-8 rounded-sm border border-line bg-surface p-6">
+        <section aria-labelledby="plan-heading" className="card mt-8 border border-line bg-surface p-6">
           <h2 id="plan-heading" className="font-serif text-xl font-bold text-ink">
             Plan
           </h2>
@@ -215,7 +218,7 @@ export default async function AccountPage() {
           ) : null}
           <ul className="mt-4 grid gap-4 sm:grid-cols-2">
             {onSale.map((product) => (
-              <li key={product.key} className="rounded-sm border border-line bg-surface p-5">
+              <li key={product.key} className="card border border-line bg-surface p-5">
                 <p className="font-serif text-lg font-bold text-ink">{product.name}</p>
                 <p className="mt-1 font-sans text-sm uppercase tracking-wider text-ink-secondary">{product.priceLabel}</p>
                 <div className="mt-4">

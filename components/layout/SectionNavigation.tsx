@@ -72,7 +72,7 @@ export default function SectionNavigation({
       <nav
         aria-label={ariaLabel}
         data-layout-rail="section-navigation"
-        className="rounded-sm border border-line bg-surface p-4 text-ink"
+        className="rounded-2xl border border-line bg-surface p-4 text-ink"
       >
         <h2 className="font-serif text-lg font-semibold text-ink">{heading}</h2>
         <LayoutGroup id={`section-nav-${ariaLabel}`}>
@@ -84,7 +84,7 @@ export default function SectionNavigation({
                   <a
                     href={`#${item.id}`}
                     aria-current={active ? 'location' : undefined}
-                    className={`relative inline-flex min-h-6 w-full items-center gap-2 rounded-sm pl-3 text-ink-secondary underline decoration-line underline-offset-4 transition-colors hover:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
+                    className={`relative inline-flex min-h-11 w-full items-center gap-2 rounded-lg pl-3 text-ink-secondary underline decoration-line underline-offset-4 transition-colors hover:text-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                       active ? 'text-ink' : ''
                     }`}
                   >

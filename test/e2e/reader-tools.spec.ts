@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { makeTestArticle } from '../fixtures/articles';
 
 /**
  * Permanent coverage for the reader tools (Task 12B). Runs against
@@ -16,18 +17,23 @@ test('the assistant renders and the document title tracks client-side navigation
   await expect(page.getByRole('heading', { name: 'Ask the archive a question' })).toBeVisible();
   expect(await page.title()).toBe('Ask the archive — ResearchWithMe');
   // Client-side navigation through the shared header brand link updates the title.
-  await page.getByRole('link', { name: 'ResearchWithMe platform home' }).first().click();
+  await page.getByRole('link', { name: 'ResearchWithMe home' }).first().click();
   await expect(page).toHaveURL(/\/$/);
-  expect(await page.title()).not.toBe('Ask the archive — ResearchWithMe');
+  await expect(page).not.toHaveTitle('Ask the archive — ResearchWithMe');
 });
 
-test('saved bookmarks survive a reload', async ({ page }) => {
-  // Saved ids live in localStorage under the legacy key; the seeded demo corpus
-  // carries post-1 (inside-vllm-and-paged-attention).
+test('saved bookmarks survive navigation and reload', async ({ page }) => {
+  const article = makeTestArticle({ id: 'fixture-saved', title: 'A saved fixture review' });
+  await page.route('**/api/articles', (route) => route.fulfill({ json: { articles: [article] } }));
+  await page.goto('/');
+  const card = page.locator('[data-layout-grid="article-cards"] article');
+  await expect(card).toHaveCount(1);
+  await card.getByRole('button', { name: 'Save A saved fixture review to reading list' }).click();
+  await expect(card.getByRole('button', { name: 'Remove A saved fixture review from reading list' })).toHaveAttribute('aria-pressed', 'true');
   await page.goto('/bookmarks');
-  await page.evaluate(() => window.localStorage.setItem('rwm_saved_posts', JSON.stringify(['post-1'])));
+  await expect(page.getByText('A saved fixture review')).toBeVisible();
   await page.reload();
-  await expect(page.getByText(/Inside vLLM/)).toBeVisible();
+  await expect(page.getByText('A saved fixture review')).toBeVisible();
 });
 
 test('the API reference renders and its group anchors resolve', async ({ page }) => {

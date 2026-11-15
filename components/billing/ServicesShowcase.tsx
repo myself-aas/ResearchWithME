@@ -74,9 +74,9 @@ export default function ServicesShowcase({ variant = 'band', headingId = 'servic
           </p>
         </div>
 
-        <ul className="mt-8 grid gap-px overflow-hidden rounded-sm border border-line bg-line">
+        <ul className="mt-8 grid gap-4 sm:grid-cols-2">
           {BILLING_PRODUCTS.map((product) => (
-            <li key={product.key} className="flex flex-col bg-canvas p-6">
+            <li key={product.key} className="card flex flex-col border border-line bg-canvas p-6 transition-[border-color,box-shadow,transform] duration-200 hover:border-brand hover:shadow-raised motion-safe:hover:-translate-y-0.5">
               <div className="flex items-baseline justify-between gap-4">
                 <h3 className="font-serif text-xl font-semibold text-ink">{product.name}</h3>
                 <p className="shrink-0 font-mono text-base font-semibold text-ink">{product.priceLabel}</p>
