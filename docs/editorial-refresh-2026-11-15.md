@@ -13,3 +13,5 @@ Dark canvas, surfaces, text, primary action, focus, and Daisy aliases were adapt
 ## Reader verification follow-up
 
 Inline checks now cover action failure/rollback, reading controls, Next component SSR fixtures and Pages loader outcomes. See `docs/editorial-verification-2026-11-15.md` for exact coverage and blockers. Browser and end-to-end 404 verification remain outstanding; no independent review was available.
+
+The reader's Next segment loading boundary was removed after a real missing-article request returned HTTP 200; a dev-server browser test now verifies 404. This trades the route-specific loading skeleton for correct missing-article status. Production/Worker behavior still requires a separate HTTP check.
