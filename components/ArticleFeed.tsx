@@ -205,7 +205,7 @@ export default function ArticleFeed({
             <Pressable
               type="button"
               onClick={onClearFilters}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-ink transition-colors hover:bg-surface-subtle"
+              className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-surface px-6 py-2 font-sans text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               All columns
             </Pressable>
@@ -229,7 +229,7 @@ export default function ArticleFeed({
           <Pressable
             type="button"
             onClick={onClearFilters}
-            className="min-h-11 font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-surface px-6 py-2 font-sans text-sm font-semibold text-brand transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Clear all filters
           </Pressable>
@@ -277,7 +277,7 @@ export default function ArticleFeed({
             type="button"
             feedback="lift"
             onClick={onClearFilters}
-            className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full border border-brand bg-brand px-6 py-2 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Reset filters
           </Pressable>

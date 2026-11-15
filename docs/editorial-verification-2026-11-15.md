@@ -48,3 +48,15 @@ Updated five stale unit-test expectations to the authorized editorial colors and
 - The homepage clear-search button was 32px. A new focused test failed before the change; it now passes with a 44×44px button, room for it in the input, a visible focus style, and unchanged clear behavior. The Pages browser harness also measured the 44px target and exercised it.
 - Pages build passed with its existing large-chunk warning. Full `npm test` passed **1062 tests**, with six opt-in browser cases skipped at the time of that run; a seventh browser case was added afterward and all seven opt-in cases passed separately. React `act(...)` and React Router future warnings were emitted. Typecheck, targeted lint and `git diff --check` passed after all changes.
 - Still needed: real Wrangler/Pages browser testing with a server-side article fixture, 200% zoom and manual visual/focus review, production Worker/standalone verification, independent review and the rest of the homepage, discovery, author, tools and studio batches. The browser integration harness does not validate every image, endpoint, motion state or visual appearance.
+
+## Homepage filters and motion batch
+
+- Category and format filter chips now have 44px minimum height while retaining selection semantics. Hero browse and feed reset/category scrolling use immediate behavior when OS reduced motion or the reader's reduced/static mode is active.
+- A browser test caught the document root retaining `scroll-behavior: smooth` in static mode even when descendants were overridden. Both build stylesheets now set the root to `auto` for explicit reduced/static modes. The test failed before and passed after the change.
+- `npm test`: 1065 passed, 9 opt-in browser tests skipped; the same nine browser tests were run separately with the local Chromium/in-process Pages harness and passed. Typecheck, targeted ESLint, token checks and Pages build passed; the build retains its large-chunk warning. Tests do not prove workerd article rendering, 200% zoom or manual visual accessibility.
+
+## Discovery actions batch
+
+- The active-column, clear-all and empty-state reset controls now share a 44px minimum height, pill radius, typography and padding, using outlined versus filled styling. Their existing clear-filter callback remains unchanged. A component test failed on the former inconsistent shape before the update and passed after it.
+- Pages in-process browser harness: **10 passed**, including a mobile test that selects a column, searches for an absent article, checks the three reset actions and clears the query. One initial browser-test locator was ambiguous because two controls share the accessible name “All columns”; scoping it to the article feed resolved the test, without changing production behavior.
+- Pages build, typecheck, targeted lint and token checks passed. Full unit suite: **1066 passed, 10 opt-in browser tests skipped**; those 10 browser cases passed separately. React Router and React act environment warnings remain. This does not complete the broader discovery/author, tools/studio or visual review phases.

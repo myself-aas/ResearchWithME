@@ -17,3 +17,7 @@ Inline checks now cover action failure/rollback, reading controls, Next componen
 The reader's Next segment loading boundary was removed after a real missing-article request returned HTTP 200; a dev-server browser test now verifies 404. This trades the route-specific loading skeleton for correct missing-article status. Production/Worker behavior still requires a separate HTTP check.
 
 The homepage search clear control now has a 44px touch target and focus outline. A Pages in-process browser harness covers a seeded article and the mobile search control; it does not substitute for real workerd article testing or visual review.
+
+Homepage editorial and format filters now use 44px minimum targets. Browse and filter-reset scrolling respects OS and reader motion preferences, including the root scroller in reduced/static modes.
+
+Discovery filter-reset actions now share pill geometry and typography, retaining their existing behavior and filled/outlined visual distinction.

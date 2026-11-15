@@ -588,6 +588,11 @@ html .shadow-2xs {
   animation: none !important;
 }
 
+html[data-motion-mode="reduced"],
+html[data-motion-mode="static"] {
+  scroll-behavior: auto !important;
+}
+
 [data-motion-mode="static"] *,
 [data-motion-mode="static"] *::before,
 [data-motion-mode="static"] *::after {

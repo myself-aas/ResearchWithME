@@ -12,6 +12,8 @@ import ServicesShowcase from '@/components/billing/ServicesShowcase';
 import { Author, BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
 import Reveal from '@/components/motion/Reveal';
+import { useMotionMode } from '@/components/motion/MotionModeProvider';
+import { prefersReducedMotion } from '@/lib/motion/tokens';
 
 interface HomeFeedProps {
   initialCategory?: string;
@@ -33,6 +35,7 @@ export default function HomeFeed({
   initialPosts,
 }: HomeFeedProps) {
   const router = useRouter();
+  const { suppressed } = useMotionMode();
   const pathname = usePathname() || '/';
   const hydrated = useHydratePreferences();
   const storeSavedPostIds = usePreferencesStore((state) => state.savedPostIds);
@@ -107,7 +110,7 @@ export default function HomeFeed({
   const showFeatured = unfiltered && Boolean(featuredPost);
 
   function scrollToFeed() {
-    feedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    feedRef.current?.scrollIntoView({ behavior: suppressed || prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
   }
 
   function handleToggleSave(postId: string) {

@@ -78,6 +78,52 @@ describe.skipIf(!enabled)('Pages reader browser with isolated server fixture', (
       expect(await input.inputValue()).toBe('');
     } finally { await page.close(); }
   });
+  it('keeps filters usable and avoids animated scrolling with reduced motion', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.addInitScript(() => {
+        const state = window as Window & { lastScrollBehavior?: ScrollBehavior };
+        Element.prototype.scrollIntoView = function (options) {
+          if (typeof options === 'object') state.lastScrollBehavior = options.behavior;
+        };
+      });
+      await page.goto(`${origin}/`);
+      const format = page.getByRole('button', { name: 'Paper Review', exact: true });
+      await format.waitFor({ state: 'visible' });
+      const box = await format.boundingBox();
+      expect(box?.height).toBeGreaterThanOrEqual(44);
+      await format.click();
+      expect(await format.getAttribute('aria-pressed')).toBe('true');
+      await page.getByRole('button', { name: 'Clear all filters' }).click();
+      expect(await page.evaluate(() => (window as Window & { lastScrollBehavior?: ScrollBehavior }).lastScrollBehavior)).toBe('auto');
+      expect(await format.getAttribute('aria-pressed')).toBe('false');
+    } finally { await page.close(); }
+  });
+  it('keeps related discovery reset actions aligned and usable', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/`);
+      await page.getByRole('group', { name: 'Editorial Column' }).getByRole('button', { name: 'Research Reviews' }).click();
+      await page.locator('#catalog-search').fill('query-with-no-matches');
+      const actions = ['All columns', 'Clear all filters', 'Reset filters'].map((name) => page.locator('#articles-feed').getByRole('button', { name, exact: true }));
+      for (const action of actions) {
+        await action.waitFor({ state: 'visible' });
+        expect((await action.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+        expect(await action.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('9999px');
+      }
+      await actions[2].click();
+      expect(await page.locator('#catalog-search').inputValue()).toBe('');
+    } finally { await page.close(); }
+  });
+  it('honors the reader static motion preference for the document scroller', async () => {
+    const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'no-preference' });
+    try {
+      await page.addInitScript(() => localStorage.setItem('rwm-motion-mode', 'static'));
+      await page.goto(`${origin}/`);
+      await page.waitForFunction(() => document.documentElement.dataset.motionMode === 'static');
+      expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
+    } finally { await page.close(); }
+  });
   it('renders dark mode and lets the reader save by keyboard', async () => {
     const page = await fixturePage(390, 'dark');
     try {
