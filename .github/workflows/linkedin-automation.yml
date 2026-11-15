@@ -1,0 +1,68 @@
+name: LinkedIn Automation Tests
+
+on:
+  push:
+    paths:
+      - 'lib/linkedin/**'
+      - 'app/api/admin/linkedin/**'
+      - 'app/api/webhooks/article-published/**'
+      - 'app/api/cron/linkedin-batch/**'
+      - 'supabase/migrations/*linkedin*'
+  pull_request:
+    paths:
+      - 'lib/linkedin/**'
+      - 'app/api/admin/linkedin/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run LinkedIn unit tests
+        run: npm run test:linkedin
+        env:
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          LINKEDIN_REDIRECT_URI: ${{ secrets.LINKEDIN_REDIRECT_URI }}
+          LINKEDIN_COMPANY_URN: ${{ secrets.LINKEDIN_COMPANY_URN }}
+          NEXT_PUBLIC_SITE_URL: https://researchwith.me
+      
+      - name: Run type check
+        run: npm run typecheck
+      
+      - name: Run lint
+        run: npm run lint
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Run E2E tests
+        run: npm run test:e2e:linkedin
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000

@@ -40,6 +40,10 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+      "test:linkedin": "vitest run lib/linkedin/__tests__/",
+      "test:linkedin:watch": "vitest lib/linkedin/__tests__/",
+      "test:e2e:linkedin": "playwright test test/e2e/linkedin-automation.spec.ts",
+      "test:all": "npm run test && npm run test:linkedin",
     "tokens:build": "node tokens/scripts/build.mjs",
     "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs",
     "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test && npm run impeccable:source",
@@ -86,6 +90,7 @@
     "server-only": "^0.0.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
+    "zod": "^4.6.7",
     "zustand": "^5.1.0"
   },
   "devDependencies": {
