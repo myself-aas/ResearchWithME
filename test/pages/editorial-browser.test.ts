@@ -21,7 +21,8 @@ async function fixturePage(width: number, theme: 'light' | 'dark'): Promise<Page
 
 describe.skipIf(!enabled)('Pages reader browser with isolated server fixture', () => {
   beforeAll(async () => {
-    const app = createTestApp();
+    const profile = { slug: 'fixture-author', published: true, display_name: 'Fixture Researcher', bio: 'Studies reproducibility.', role: 'Researcher', domain: 'Methods', institution: 'Fixture Lab', avatar_url: '', orcid: '0000-0002-1825-0097', github: 'https://github.com/fixture', website: '', scholar: '', created_at: '2026-01-01T00:00:00.000Z' };
+    const app = createTestApp({ profileRows: [profile] });
     await app.seedPost({ slug: 'editorial-fixture', status: 'published', title: 'A long research review examining reproducibility, methods, evidence, and open scholarly collaboration across scientific disciplines', content: 'This is a deterministic research review fixture with evidence and context.', tags: ['long-tag-about-open-science-and-reproducible-methods'] });
     (globalThis as Record<string, unknown>).__RWM_CLIENT_MANIFEST__ = JSON.parse(await readFile(path.join(dist, '.vite/manifest.json'), 'utf8'));
     server = createServer(async (req, res) => {
@@ -124,6 +125,100 @@ describe.skipIf(!enabled)('Pages reader browser with isolated server fixture', (
       expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe('auto');
     } finally { await page.close(); }
   });
+  it('filters the contributor directory and clears an empty search', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/authors`);
+      await page.getByText('Fixture Researcher').first().waitFor();
+      const group = page.getByRole('group', { name: 'Linked identifier' });
+      await group.getByRole('button', { name: 'Has an ORCID' }).click();
+      expect(await group.getByRole('button', { name: 'Has an ORCID' }).getAttribute('aria-pressed')).toBe('true');
+      expect(await page.getByText('Fixture Researcher').count()).toBeGreaterThan(0);
+      await page.locator('#author-search').fill('no-such-contributor');
+      await page.getByRole('heading', { name: 'No contributors match those filters' }).waitFor();
+      await page.getByRole('button', { name: 'Clear filters' }).click();
+      expect(await page.locator('#author-search').inputValue()).toBe('');
+      expect(await group.getByRole('button', { name: 'All contributors' }).getAttribute('aria-pressed')).toBe('true');
+    } finally { await page.close(); }
+  });
+
+  it('renders author profile actions and public identifiers in dark mode', async () => {
+    const page = await fixturePage(390, 'dark');
+    try {
+      const response = await page.goto(`${origin}/author/fixture-author`);
+      expect(response?.status()).toBe(200);
+      expect(await page.getByRole('heading', { name: 'Fixture Researcher', level: 1 }).count()).toBe(1);
+      for (const action of [page.getByRole('button', { name: 'Share profile' }), page.getByRole('link', { name: 'Writer studio' })]) {
+        await action.waitFor({ state: 'visible' });
+        expect((await action.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+        expect(await action.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('9999px');
+      }
+      expect(await page.getByRole('link', { name: 'ORCID', exact: true }).getAttribute('href')).toBe('https://orcid.org/0000-0002-1825-0097');
+    } finally { await page.close(); }
+  });
+
+  it('requires an external paper title before copying or downloading a citation', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/cite`);
+      await page.getByRole('button', { name: 'External paper or DOI' }).click();
+      expect(await page.locator('#citation-output').inputValue()).toBe('');
+      expect(await page.getByRole('button', { name: 'Copy citation' }).isDisabled()).toBe(true);
+      await page.getByRole('button', { name: 'bibtex', exact: true }).click();
+      expect(await page.getByRole('button', { name: 'Download .bib' }).isDisabled()).toBe(true);
+      await page.locator('#custom-title').fill('A test paper');
+      expect(await page.getByRole('button', { name: 'Copy citation' }).isEnabled()).toBe(true);
+      const output = await page.locator('#citation-output').inputValue();
+      expect(output).toContain('A test paper');
+      expect(output).not.toContain('Maya Lin');
+      expect(output).not.toContain('/post/editorial-fixture');
+      expect(output).not.toContain('ResearchWithMe Press');
+    } finally { await page.close(); }
+  });
+
+  it('confirms clearing the reading list and announces the empty state', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/post/editorial-fixture`);
+      await page.locator('article button').filter({ hasText: /^Save$/ }).click();
+      await page.locator('article button').filter({ hasText: /^Saved$/ }).waitFor();
+      await page.goto(`${origin}/bookmarks`);
+      await page.getByRole('link', { name: 'Read', exact: true }).waitFor();
+      for (const action of [page.getByRole('link', { name: 'Read', exact: true }), page.getByRole('button', { name: 'Remove', exact: true })]) {
+        expect((await action.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+        expect(await action.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('9999px');
+      }
+      await page.getByRole('button', { name: 'Clear list' }).click();
+      await page.getByRole('button', { name: 'Keep them' }).click();
+      expect(await page.getByRole('link', { name: 'Read', exact: true }).count()).toBe(1);
+      await page.getByRole('button', { name: 'Clear list' }).click();
+      await page.getByRole('button', { name: 'Yes, clear' }).click();
+      await page.getByRole('heading', { name: 'Nothing saved yet' }).waitFor();
+      expect(await page.getByRole('status').innerText()).toContain('Reading list cleared');
+      await page.reload();
+      await page.getByRole('heading', { name: 'Nothing saved yet' }).waitFor();
+    } finally { await page.close(); }
+  });
+
+  it('reports a blocked storage write when clearing the reading list', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/post/editorial-fixture`);
+      await page.locator('article button').filter({ hasText: /^Save$/ }).click();
+      await page.locator('article button').filter({ hasText: /^Saved$/ }).waitFor();
+      await page.goto(`${origin}/bookmarks`);
+      await page.getByRole('button', { name: 'Clear list' }).waitFor();
+      await page.evaluate(() => { Storage.prototype.setItem = () => { throw new DOMException('Blocked', 'QuotaExceededError'); }; });
+      await page.getByRole('button', { name: 'Clear list' }).click();
+      await page.getByRole('button', { name: 'Yes, clear' }).click();
+      await page.getByRole('heading', { name: 'Nothing saved yet' }).waitFor();
+      expect(await page.getByRole('alert').innerText()).toContain('will not persist');
+      expect(await page.getByText('Saved items are gone from this device.').count()).toBe(0);
+      await page.reload();
+      await page.getByRole('link', { name: 'Read', exact: true }).waitFor();
+    } finally { await page.close(); }
+  });
+
   it('renders dark mode and lets the reader save by keyboard', async () => {
     const page = await fixturePage(390, 'dark');
     try {

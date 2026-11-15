@@ -9,6 +9,8 @@ export interface CitationSource {
   journal: string;
   doi?: string;
   url?: string;
+  /** Null omits a platform publisher for sources that are not ResearchWithMe publications. */
+  publisher?: string | null;
 }
 
 function splitName(author: string) {
@@ -56,8 +58,7 @@ export function buildCitation(format: CitationFormat, source: CitationSource) {
   title = {${title}},
   author = {${source.author}},
   journal = {${journal}},
-  year = {${year}},${doi ? `\n  doi = {${doi}},` : ''}${link ? `\n  url = {${link}},` : ''}
-  publisher = {ResearchWithMe Press}
+  year = {${year}},${doi ? `\n  doi = {${doi}},` : ''}${link ? `\n  url = {${link}},` : ''}${source.publisher === null ? '' : `\n  publisher = {${source.publisher ?? 'ResearchWithMe Press'}}`}
 }`;
     case 'ris':
       return `TY  - JOUR

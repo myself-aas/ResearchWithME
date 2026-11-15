@@ -21,3 +21,11 @@ The homepage search clear control now has a 44px touch target and focus outline.
 Homepage editorial and format filters now use 44px minimum targets. Browse and filter-reset scrolling respects OS and reader motion preferences, including the root scroller in reduced/static modes.
 
 Discovery filter-reset actions now share pill geometry and typography, retaining their existing behavior and filled/outlined visual distinction.
+
+The contributor directory now uses pill search and identifier filters, and profile Share/Writer studio actions have matching geometry with outlined and filled treatments. Existing attribution, filtering and sharing behavior remain unchanged.
+
+### Citation tool follow-up
+External-paper citations no longer inherit internal article details or the ResearchWithMe BibTeX publisher; an entered title is required before copying or downloading. Source/style controls use the editorial pill shape. Source details still need independent publisher verification; see the verification log for coverage and remaining limitations.
+
+### Reading list follow-up
+Reading-list actions use consistent pill treatments. Confirmation feedback remains visible in the empty state, and blocked storage writes are reported instead of falsely claiming persistent deletion.

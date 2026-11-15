@@ -33,9 +33,9 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
   const [isCustomPaper, setIsCustomPaper] = useState(false);
   const [customTitle, setCustomTitle] = useState('');
   const [customAuthor, setCustomAuthor] = useState('');
-  const [customYear, setCustomYear] = useState('2026');
+  const [customYear, setCustomYear] = useState('');
   const [customDoi, setCustomDoi] = useState('');
-  const [customJournal, setCustomJournal] = useState('ResearchWithMe Studies');
+  const [customJournal, setCustomJournal] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -63,12 +63,13 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
     const fallbackYear = '2026';
     const articleDoi = currentArticle?.reviewedArtifact?.identifier ?? '';
     return {
-      title: isCustomPaper && customTitle ? cleanText(customTitle, 240) : currentArticle?.title ?? 'Untitled article',
-      author: isCustomPaper && customAuthor ? cleanText(customAuthor, 120) : currentArticle?.author.name ?? 'ResearchWithMe Editors',
-      year: isCustomPaper ? cleanText(customYear, 4) || fallbackYear : fallbackYear,
-      journal: isCustomPaper && customJournal ? cleanText(customJournal, 160) : 'ResearchWithMe Technical Reviews',
+      title: isCustomPaper ? cleanText(customTitle, 240) : currentArticle?.title ?? 'Untitled article',
+      author: isCustomPaper ? cleanText(customAuthor, 120) : currentArticle?.author.name ?? 'ResearchWithMe Editors',
+      year: isCustomPaper ? cleanText(customYear, 4) : fallbackYear,
+      journal: isCustomPaper ? cleanText(customJournal, 160) || 'Venue not provided' : 'ResearchWithMe Technical Reviews',
       doi: isCustomPaper ? cleanText(customDoi, 120) : articleDoi,
-      url: currentArticle?.slug ? `https://researchwith.me/post/${currentArticle.slug}` : 'https://researchwith.me',
+      url: isCustomPaper ? undefined : currentArticle?.slug ? `https://researchwith.me/post/${currentArticle.slug}` : 'https://researchwith.me',
+      publisher: isCustomPaper ? null : undefined,
     };
   }, [currentArticle, customAuthor, customDoi, customJournal, customTitle, customYear, isCustomPaper]);
 
@@ -121,7 +122,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
             Build a citation that travels
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink">
-            Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same verified metadata.
+            Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same source details; confirm them against the publisher record.
           </p>
         </header>
 
@@ -135,7 +136,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   type="button"
                   onClick={() => setIsCustomPaper(false)}
                   aria-pressed={!isCustomPaper}
-                  className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     !isCustomPaper
                       ? 'border-ink bg-surface-inverse text-text-inverse'
                       : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
@@ -147,7 +148,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   type="button"
                   onClick={() => setIsCustomPaper(true)}
                   aria-pressed={isCustomPaper}
-                  className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     isCustomPaper
                       ? 'border-ink bg-surface-inverse text-text-inverse'
                       : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
@@ -264,7 +265,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                     type="button"
                     onClick={() => setFormat(item)}
                     aria-pressed={format === item}
-                    className={`min-h-11 rounded-md border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
+                    className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
                       format === item
                         ? 'border-brand bg-brand text-on-primary'
                         : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'

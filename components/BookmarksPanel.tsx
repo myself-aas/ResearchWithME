@@ -90,9 +90,10 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
   }
 
   function handleClearAll() {
-    clearSavedPosts();
+    const ok = clearSavedPosts();
     setConfirmClear(false);
-    setStatus('Reading list cleared. Saved items are gone from this device.');
+    setStatus(ok ? 'Reading list cleared. Saved items are gone from this device.' : null);
+    setError(ok ? null : 'Your browser blocked local storage, so this change will not persist.');
   }
 
   function handleExport() {
@@ -155,6 +156,28 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
           </p>
         )}
 
+        <AnimatePresence initial={false} mode="wait">
+          {status && (
+            <m.p
+              key={status}
+              role="status"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.16, ease: [...EASING.standard] }}
+              className="mt-4 flex items-center gap-2 border-l-2 border-brand bg-surface px-4 py-3 font-sans text-sm text-ink"
+            >
+              <SuccessCheck size={16} className="text-brand" />
+              <span>{status}</span>
+            </m.p>
+          )}
+        </AnimatePresence>
+        {error && (
+          <p role="alert" className="mt-4 border-l-2 border-destructive bg-surface px-4 py-3 font-sans text-sm text-destructive">
+            {error}
+          </p>
+        )}
+
         {savedArticles.length === 0 ? (
           <div className="mt-8 card border border-line bg-surface p-8 sm:p-12">
             <Bookmark className="h-7 w-7 text-ink-secondary" aria-hidden="true" />
@@ -164,7 +187,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
             </p>
             <Link
               href="/"
-              className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+              className="btn btn-primary mt-6 min-h-11 rounded-full px-5"
             >
               <span>Browse the latest reviews</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -246,27 +269,6 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
               </div>
             </div>
 
-            <AnimatePresence initial={false} mode="wait">
-              {status && (
-                <m.p
-                  key={status}
-                  role="status"
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.16, ease: [...EASING.standard] }}
-                  className="mt-4 flex items-center gap-2 border-l-2 border-brand bg-surface px-4 py-3 font-sans text-sm text-ink"
-                >
-                  <SuccessCheck size={16} className="text-brand" />
-                  <span>{status}</span>
-                </m.p>
-              )}
-            </AnimatePresence>
-            {error && (
-              <p role="alert" className="mt-4 border-l-2 border-destructive bg-surface px-4 py-3 font-sans text-sm text-destructive">
-                {error}
-              </p>
-            )}
 
             {filteredArticles.length === 0 ? (
               <div className="mt-6 card border border-line bg-surface p-8">
@@ -276,7 +278,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
                   type="button"
                   feedback="lift"
                   onClick={() => setSelectedCategory('All')}
-                  className="mt-4 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
+                  className="btn btn-primary mt-4 min-h-11 rounded-full px-5"
                 >
                   Show all saved
                 </Pressable>
@@ -308,7 +310,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
                       <div className="flex items-center gap-2 sm:flex-col sm:items-end">
                         <Link
                           href={`/post/${article.slug}`}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+                          className="btn btn-primary min-h-11 rounded-full px-5"
                         >
                           <span>Read</span>
                           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -316,7 +318,7 @@ export default function BookmarksPanel({ initialArticles }: { initialArticles?: 
                         <Pressable
                           type="button"
                           onClick={() => handleRemove(article)}
-                          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-3 py-2 font-sans text-xs font-medium text-ink-secondary transition-colors hover:text-destructive"
+                          className="btn btn-outline min-h-11 rounded-full px-5 hover:text-destructive"
                         >
                           <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                           <span>Remove</span>

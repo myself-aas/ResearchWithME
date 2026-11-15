@@ -31,6 +31,13 @@ describe('buildCitation', () => {
     expect(bibtex).not.toContain('https://doi.org/https://doi.org');
   });
 
+  it('omits the platform publisher when explicitly requested for an external paper', () => {
+    const external = buildCitation('bibtex', { ...source, publisher: null, url: undefined });
+    expect(external).not.toContain('publisher =');
+    expect(external).not.toContain('ResearchWithMe Press');
+    expect(buildCitation('bibtex', source)).toContain('publisher = {ResearchWithMe Press}');
+  });
+
   it('builds RIS with typed fields', () => {
     const ris = buildCitation('ris', source);
     expect(ris).toContain('TY  - JOUR');
