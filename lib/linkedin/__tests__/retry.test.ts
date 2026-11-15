@@ -56,16 +56,12 @@ describe('Retry Logic', () => {
   it('throws after max attempts exhausted', async () => {
     const fn = vi.fn().mockRejectedValue(new LinkedInRateLimitError('Rate limited', 429));
 
-      let caughtError: Error | null = null;
-      try {
-        const promise = withRetry(fn, { maxAttempts: 3, baseDelayMs: 10 });
-        await vi.runAllTimersAsync();
-        await promise;
-      } catch (e) {
-        caughtError = e as Error;
-      }
-    
-      expect(caughtError).toBeInstanceOf(LinkedInRateLimitError);
+    const promise = withRetry(fn, { maxAttempts: 3, baseDelayMs: 10 });
+    // Attach the rejection handler before advancing timers, so Vitest never sees
+    // the exhausted retry promise as an unhandled rejection.
+    const assertion = expect(promise).rejects.toThrow(LinkedInRateLimitError);
+    await vi.runAllTimersAsync();
+    await assertion;
     expect(fn).toHaveBeenCalledTimes(3);
   });
 

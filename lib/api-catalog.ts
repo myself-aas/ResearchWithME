@@ -16,6 +16,12 @@ export const API_GROUPS = [
   { id: 'assistant-api', name: 'Assistant API', path: '/api/v1/assistant/answers', description: 'Ask the Assistant with an API key. Rate limited per key, with a monthly allowance per account.' },
   { id: 'api-usage', name: 'API usage', path: '/api/v1/usage', description: 'Read how much of the monthly Assistant API allowance is used. An API key is required.' },
   { id: 'api-keys', name: 'API keys', path: '/api/account/api-keys', description: 'Create, list, and revoke keys for the versioned Assistant API. A session is required.' },
+  { id: 'linkedin', name: 'LinkedIn administration', path: '/api/admin/linkedin/auth', description: 'Manage LinkedIn authorization, posting, and status.' },
+  { id: 'linkedin-callback', name: 'LinkedIn callback', path: '/api/admin/linkedin/callback', description: 'Complete LinkedIn authorization.' },
+  { id: 'linkedin-post', name: 'LinkedIn posting', path: '/api/admin/linkedin/post', description: 'Post an article as an administrator.' },
+  { id: 'linkedin-status', name: 'LinkedIn status', path: '/api/admin/linkedin/status', description: 'Read LinkedIn posting status as an administrator.' },
+  { id: 'linkedin-cron', name: 'LinkedIn batch', path: '/api/cron/linkedin-batch', description: 'Trigger the LinkedIn batch using a cron secret.' },
+  { id: 'article-webhook', name: 'Article publication webhook', path: '/api/webhooks/article-published', description: 'Receive article publication events for LinkedIn posting. The current handler does not verify a signature.' },
   { id: 'webhooks', name: 'Billing webhook', path: '/api/webhooks/lemonsqueezy', description: 'Receive signed Lemon Squeezy billing events. A webhook signing secret is required.' },
 ] as const;
 

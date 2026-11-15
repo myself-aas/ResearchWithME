@@ -89,6 +89,39 @@ const apiErrors = (...codes: number[]): Record<string, ApiResponse> =>
 
 export const API_OPERATIONS: ApiOperation[] = [
   {
+    group: 'linkedin', method: 'get', path: '/api/admin/linkedin/auth', operationId: 'startLinkedInAuth',
+    summary: 'Start LinkedIn authorization', description: 'Requires a signed-in administrator; redirects to LinkedIn and sets an OAuth state cookie.',
+    security: session, responses: { 307: { description: 'Redirect to LinkedIn.' }, ...errors(401, 403) },
+  },
+  {
+    group: 'linkedin-callback', method: 'get', path: '/api/admin/linkedin/callback', operationId: 'linkedInCallback',
+    summary: 'Complete LinkedIn authorization', description: 'Exchanges the authorization code and redirects to the admin page. The current handler does not validate the state cookie.',
+    parameters: [query('code', 'LinkedIn authorization code.'), query('state', 'OAuth state.'), query('error', 'Authorization error.')],
+    responses: { 307: { description: 'Redirect to the LinkedIn admin page with the result.' } },
+  },
+  {
+    group: 'linkedin-post', method: 'post', path: '/api/admin/linkedin/post', operationId: 'postToLinkedIn',
+    summary: 'Post an article to LinkedIn', description: 'Requires a signed-in administrator.', security: session,
+    requestBody: jsonBody(object({ slug: text }, ['slug']), 'Article slug.'),
+    responses: { 200: json('Post created.', object({ success: boolean, postUrn: text })), ...errors(400, 401, 403, 500) },
+  },
+  {
+    group: 'linkedin-status', method: 'get', path: '/api/admin/linkedin/status', operationId: 'linkedInStatus',
+    summary: 'Get LinkedIn status', description: 'Requires a signed-in administrator.', security: session,
+    responses: { 200: json('Posting metrics and token status.', object({ metrics: { type: 'object' }, tokens: { type: ['object', 'null'] } })), ...errors(401, 403) },
+  },
+  {
+    group: 'linkedin-cron', method: 'get', path: '/api/cron/linkedin-batch', operationId: 'runLinkedInBatch',
+    summary: 'Run the LinkedIn batch', description: 'Triggers a batch using the configured cron secret.', security: [{ CronSecret: [] }],
+    responses: { 200: json('Batch result.', object({ success: boolean })), ...errors(401, 500) },
+  },
+  {
+    group: 'article-webhook', method: 'post', path: '/api/webhooks/article-published', operationId: 'articlePublishedWebhook',
+    summary: 'Receive an article publication event', description: 'Triggers LinkedIn posting for published article inserts. The current handler does not verify a webhook signature.',
+    requestBody: jsonBody(object({ type: text, table: text, record: { type: 'object' } }), 'Database webhook payload.'),
+    responses: { 200: json('Event received.', object({ received: boolean })) },
+  },
+  {
     group: 'articles', method: 'get', path: '/api/articles', operationId: 'listArticles',
     summary: 'List published articles',
     description: 'Returns article metadata and a total count after filtering. The article body is omitted unless full=1; limit applies to the returned array, not the count.',
@@ -387,6 +420,9 @@ export const OPENAPI_DOCUMENT = {
       RevalidateSecret: {
         type: 'apiKey', in: 'header', name: 'x-revalidate-secret',
         description: 'Shared secret configured for database revalidation webhooks.',
+      },
+      CronSecret: {
+        type: 'http', scheme: 'bearer', description: 'The configured CRON_SECRET sent as a bearer token.',
       },
       BillingWebhookSignature: {
         type: 'apiKey', in: 'header', name: 'x-signature',

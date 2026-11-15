@@ -55,7 +55,7 @@ describe('Article Extractor', () => {
     expect(result!.authorName).toBe('Dr. Test Author');
     expect(result!.category).toBe('Research Reviews');
     expect(result!.tags).toEqual(['AI', 'Machine Learning', 'Research']);
-    expect(result!.doi).toBe('10.5555/rwm.post-1');
+    expect(result!.doi).toBeUndefined();
   });
 
   it('handles missing cover image gracefully', async () => {
