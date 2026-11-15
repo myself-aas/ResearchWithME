@@ -1,4 +1,5 @@
 import { TokenStore, TokenSet } from '@/lib/linkedin/token-store';
+import { formatLinkedInPost } from '@/lib/linkedin/content-formatter';
 import { z } from 'zod';
 
 const PostResultSchema = z.object({
@@ -110,12 +111,12 @@ export class LinkedInClient {
   }
 
   private buildPostBody(article: ArticleData): Record<string, unknown> {
-    const content = this.formatPostContent(article);
+      const formatted = formatLinkedInPost(article);
     const authorUrn = `urn:li:organization:${COMPANY_URN.split(':').pop()}`;
 
     const body: Record<string, unknown> = {
       author: authorUrn,
-      commentary: content,
+        commentary: formatted.text,
       visibility: 'PUBLIC',
       distribution: {
         feedDistribution: 'MAIN_FEED',
@@ -125,44 +126,15 @@ export class LinkedInClient {
       lifecycleState: 'PUBLISHED',
     };
 
-    if (article.coverImage) {
+      if (formatted.media) {
       body.media = {
-        media: article.coverImage,
+          media: formatted.media,
         title: article.title,
         description: article.summary.slice(0, 200),
       };
     }
 
     return body;
-  }
-
-  private formatPostContent(article: ArticleData): string {
-    const hashtags = this.generateHashtags(article.category, article.tags);
-    const doiLine = article.doi ? `\n\nDOI: https://doi.org/${article.doi}` : '';
-    const readMore = `\n\nRead the full review: ${article.url}`;
-
-    let content = `📖 New Research Review: ${article.title}\n\n`;
-    content += `${article.summary}${doiLine}${readMore}\n\n`;
-    content += `By ${article.authorName} | ${article.category}\n\n`;
-    content += hashtags;
-
-    // LinkedIn 3000 char limit
-    if (content.length > 2950) {
-      content = content.slice(0, 2900) + '...' + readMore;
-    }
-
-    return content;
-  }
-
-  private generateHashtags(category: string, tags: string[]): string {
-    const categoryTags = category.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const tagHashtags = tags
-      .slice(0, 3)
-      .map(t => t.replace(/[^a-zA-Z0-9]/g, ''))
-      .filter(Boolean);
-    const baseTags = ['ResearchWithMe', 'OpenScience', 'ResearchReview', categoryTags];
-    const allTags = [...new Set([...baseTags, ...tagHashtags])].slice(0, 5);
-    return allTags.map(t => `#${t}`).join(' ');
   }
 
   private async makeRequest(
