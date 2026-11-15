@@ -24,7 +24,7 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
       aria-labelledby="featured-heading"
       className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8"
     >
-      <div className="grid gap-0 overflow-hidden rounded-sm border border-line bg-surface lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="card grid gap-0 overflow-hidden border border-line bg-surface lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <div className="relative min-h-64 overflow-hidden border-b border-line bg-canvas lg:min-h-full lg:border-b-0 lg:border-r">
           {post.coverImage && post.coverImage.startsWith('data:') ? (
             <picture className="h-full w-full">
@@ -41,12 +41,12 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
               alt=""
               loader={isProcessedCover(coverSrc) ? coverLoader : undefined}
               fill
-              priority
+              loading="lazy"
               sizes="(max-width: 1024px) 100vw, 42vw"
               className="object-cover"
             />
           )}
-          <Text as="span" variant="eyebrow" weight="semibold" className="absolute left-4 top-4 rounded-sm border border-line bg-canvas/95 px-2.5 py-1">
+          <Text as="span" variant="eyebrow" weight="semibold" className="absolute left-4 top-4 rounded-full border border-line bg-canvas/95 px-3 py-1">
             Featured review
           </Text>
         </div>

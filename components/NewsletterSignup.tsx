@@ -90,7 +90,7 @@ export default function NewsletterSignup() {
 
   return (
     <section aria-labelledby="newsletter-title" className="border-b border-line pb-12">
-      <div className="rounded-sm border border-line bg-canvas p-6 sm:p-8">
+      <div className="rounded-2xl border border-line bg-surface-subtle p-6 sm:p-8">
         <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <div>
             <Text as="p" variant="eyebrow" color="secondary">
@@ -108,7 +108,7 @@ export default function NewsletterSignup() {
           </div>
 
           {isSubscribed ? (
-            <Card role="status" padding="lg">
+            <Card role="status" padding="lg" radius="lg">
               <p className="flex items-center gap-2 font-sans text-sm font-semibold text-ink">
                 <CheckCircle2 className="h-4 w-4 text-brand" aria-hidden="true" />
                 Saved in this browser
@@ -148,7 +148,7 @@ export default function NewsletterSignup() {
                     aria-invalid={error ? true : undefined}
                     aria-describedby={error ? 'newsletter-error' : undefined}
                     placeholder="researcher@university.edu"
-                    className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
+                    className="h-11 w-full rounded-xl border border-line bg-surface pl-10 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
                   />
                 </div>
                 {error && (
@@ -164,7 +164,7 @@ export default function NewsletterSignup() {
                 </Text>
                 <div className="grid gap-1.5">
                   {TOPICS.map((topic) => (
-                    <label key={topic.key} className="flex min-h-9 items-center gap-2 font-sans text-xs text-ink">
+                    <label key={topic.key} className="flex min-h-11 items-center gap-3 font-sans text-xs text-ink">
                       <input
                         type="checkbox"
                         checked={topics[topic.key]}
@@ -180,7 +180,7 @@ export default function NewsletterSignup() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90 disabled:opacity-60"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-pressed disabled:opacity-60"
               >
                 <Send className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>{isSubmitting ? 'Saving preference…' : 'Subscribe to the digest'}</span>

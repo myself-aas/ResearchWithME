@@ -27,6 +27,9 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
 
   useEffect(() => {
     let active = true;
+    setLoading(true);
+    setLoadError(null);
+    setComments([]);
     async function load() {
       try {
         const res = await fetch(`/api/comments?postId=${encodeURIComponent(postId)}`, { headers: { accept: 'application/json' } });
@@ -157,7 +160,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
   }
 
   return (
-    <section id="discussion" aria-labelledby="discussion-heading" className="border-t border-line pt-10">
+    <section aria-labelledby="discussion-heading" className="border-t border-line pt-10">
       <div className="flex flex-wrap items-baseline justify-between gap-3">
         <h2 id="discussion-heading" className="flex items-center gap-2 font-serif text-2xl font-bold text-ink">
           <MessageSquare className="h-5 w-5 text-brand-hover" aria-hidden="true" />
@@ -172,7 +175,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         Comments are public. Critique the method, reproduce a result, or ask a precise question.
       </p>
 
-      <form onSubmit={submit} className="mt-6 space-y-4 rounded-lg border border-line bg-surface-raised p-5">
+      <form onSubmit={submit} className="mt-6 space-y-4 rounded-2xl border border-line bg-surface-raised p-5 sm:p-6">
         <div>
           <label htmlFor="comment-name" className="mb-1.5 block text-sm font-medium text-ink">
             Name and role
@@ -185,7 +188,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
             maxLength={LIMITS.name}
             autoComplete="name"
             placeholder="Alex V., systems engineer"
-            className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink placeholder:text-ink-secondary"
+            className="h-11 w-full rounded-xl border border-border-strong bg-surface px-3 text-sm text-ink placeholder:text-ink-secondary"
           />
         </div>
 
@@ -200,7 +203,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
             onChange={(event) => setNameText(event.target.value)}
             maxLength={LIMITS.comment}
             placeholder="Describe the result you reproduced, or the part of the method that needs clarification."
-            className="w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
+            className="w-full rounded-xl border border-border-strong bg-surface px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
           />
           <p className="mt-1 text-sm text-ink-secondary">
             {text.length} of {LIMITS.comment} characters
@@ -221,7 +224,7 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex min-h-11 items-center rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-60"
+          className="inline-flex min-h-11 items-center rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-60"
         >
           {submitting ? 'Posting…' : 'Post comment'}
         </button>
@@ -233,9 +236,9 @@ export default function ArticleDiscussion({ postId, commentCount }: { postId: st
         </p>
       )}
 
-      <ul className="mt-6 divide-y divide-line border-t border-line">
+      <ul className="mt-6 grid gap-3">
         {comments.map((comment) => (
-          <li key={comment.id} className="flex gap-3 py-5">
+          <li key={comment.id} className="flex gap-3 rounded-2xl border border-line bg-surface p-5">
             <span
               aria-hidden="true"
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-inverse font-serif text-sm font-bold text-text-inverse"

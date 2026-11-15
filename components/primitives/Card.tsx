@@ -21,6 +21,7 @@ const PADDING = {
 const RADIUS = {
   sm: 'rounded-sm',
   md: 'rounded-md',
+  lg: 'rounded-2xl',
 } as const;
 
 export interface CardProps extends React.HTMLAttributes<HTMLElement> {

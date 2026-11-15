@@ -29,7 +29,7 @@ export default function FilterPanel({ title, options, selected, onChange, multip
     }
   };
   return (
-    <fieldset className="rounded-md border border-line bg-surface p-4">
+    <fieldset className="rounded-2xl border border-line bg-surface p-4">
       <legend className="px-1 font-sans text-sm font-semibold text-text-primary">{title}</legend>
       <ul className="mt-2 space-y-2">
         {options.map((o) => (

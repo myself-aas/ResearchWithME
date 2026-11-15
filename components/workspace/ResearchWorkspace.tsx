@@ -10,7 +10,7 @@
  * Token mapping: semantic surface/border/text tokens.
  * Tests: lib/__tests__/workspace.test.ts.
  */
-import { useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 
 export interface WorkspaceRegion {
   id: 'sources' | 'synthesis' | 'inspector';
@@ -29,6 +29,7 @@ const GRID_COL: Record<string, string> = {
 };
 
 export default function ResearchWorkspace({ regions }: ResearchWorkspaceProps) {
+  const workspaceId = useId();
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
   const toggle = (id: string) => setCollapsed((c) => ({ ...c, [id]: !c[id] }));
 
@@ -40,20 +41,21 @@ export default function ResearchWorkspace({ regions }: ResearchWorkspaceProps) {
           <section
             key={r.id}
             aria-label={r.label}
-            className={`rounded-md border border-line bg-surface ${GRID_COL[r.id] ?? 'lg:col-span-4'}`}
+            className={`min-w-0 rounded-2xl border border-line bg-surface ${GRID_COL[r.id] ?? 'lg:col-span-4'}`}
           >
             <header className="flex items-center justify-between border-b border-line px-4 py-2">
               <h2 className="font-sans text-sm font-semibold text-text-primary">{r.label}</h2>
               <button
                 type="button"
                 aria-expanded={!isCollapsed}
-                className="min-h-11 rounded-sm px-2 font-sans text-xs font-medium text-brand hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                aria-controls={`${workspaceId}-${r.id}`}
+                className="min-h-11 rounded-xl px-3 font-sans text-xs font-medium text-brand hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                 onClick={() => toggle(r.id)}
               >
                 {isCollapsed ? 'Expand' : 'Collapse'}
               </button>
             </header>
-            {!isCollapsed ? <div className="p-4">{r.children}</div> : null}
+            <div id={`${workspaceId}-${r.id}`} hidden={isCollapsed} className="p-4">{r.children}</div>
           </section>
         );
       })}

@@ -88,7 +88,7 @@ export function DashboardHeader({ title, question, period, now, path }: Dashboar
 
       <nav aria-label="Period" className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className="font-sans text-sm font-medium text-ink-secondary">Period</span>
-        <ul className="inline-flex rounded-md border border-border-strong bg-surface-raised p-0.5">
+        <ul className="inline-flex flex-wrap rounded-xl border border-border-strong bg-surface-raised p-1">
           {PERIODS.map((option) => {
             const active = option.key === period.key;
             return (
@@ -97,7 +97,7 @@ export function DashboardHeader({ title, question, period, now, path }: Dashboar
                   href={option.key === PERIODS[0].key ? path : `${path}?period=${option.key}`}
                   aria-current={active ? 'true' : undefined}
                   className={cn(
-                    'inline-flex min-h-10 items-center rounded px-3 font-sans text-sm font-medium transition-colors',
+                    'inline-flex min-h-11 items-center rounded-lg px-3 font-sans text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
                     active ? 'bg-surface-inverse text-text-inverse' : 'text-ink hover:bg-surface',
                   )}
                 >
@@ -129,7 +129,7 @@ export function KpiGrid({
     <section aria-label={label} className="mt-6">
       <ul
         className={cn(
-          'grid gap-px overflow-hidden rounded-lg border border-line bg-line',
+          'grid gap-px overflow-hidden rounded-2xl border border-line bg-line',
           columns === 3 ? 'md:grid-cols-3' : columns === 5 ? 'sm:grid-cols-2 xl:grid-cols-3' : 'sm:grid-cols-2 xl:grid-cols-4',
         )}
       >
@@ -190,7 +190,7 @@ export function Kpi({ label, value, comparison, lead = false, wide = false, defi
           {action && (
             <Link
               href={action.href}
-              className="inline-flex min-h-10 items-center gap-1.5 font-sans text-sm font-semibold text-ink underline decoration-border-strong underline-offset-4 hover:decoration-ink"
+              className="inline-flex min-h-11 items-center gap-1.5 font-sans text-sm font-semibold text-ink underline decoration-border-strong underline-offset-4 hover:decoration-ink"
             >
               {action.label}
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -199,7 +199,7 @@ export function Kpi({ label, value, comparison, lead = false, wide = false, defi
           {definition && (
             // Closed, it sits beside the action; open, it takes its own line.
             <details className="font-sans text-sm text-ink-secondary open:basis-full">
-              <summary className="inline-flex min-h-10 cursor-pointer items-center underline decoration-border-strong underline-offset-4 hover:text-ink">
+              <summary className="inline-flex min-h-11 cursor-pointer items-center underline decoration-border-strong underline-offset-4 hover:text-ink">
                 How this is counted
               </summary>
               <p className="max-w-prose pb-1 leading-relaxed">{definition}</p>

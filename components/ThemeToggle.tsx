@@ -59,20 +59,25 @@ export default function ThemeToggle() {
     window.dispatchEvent(new CustomEvent(THEME_CHANGE_EVENT, { detail: next }));
   }
 
+  const choices = [
+    { value: 'light', label: 'Light', path: 'M480-360q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35Zm0 80q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Zm326-268Z' },
+    { value: 'dark', label: 'Dark', path: 'M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Zm0-80q88 0 158-48.5T740-375q-20 5-40 8t-40 3q-123 0-209.5-86.5T364-660q0-20 3-40t8-40q-78 32-126.5 102T200-480q0 116 82 198t198 82Zm-10-270Z' },
+    { value: 'system', label: 'System', path: null },
+  ] as const;
+
   return (
-    <label className="inline-flex min-h-11 items-center rounded-sm border border-line bg-surface text-ink">
-      <span className="sr-only">Theme</span>
-      <select
-        value={preference}
-        onChange={(event) => choose(event.target.value)}
-        aria-label="Theme"
-        title={`Theme: ${preference} (currently ${effective})`}
-        className="min-h-11 max-w-full rounded-sm bg-surface px-2 font-sans text-base text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:text-sm"
-      >
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="system">System</option>
-      </select>
-    </label>
+    <fieldset>
+      <legend className="font-sans text-sm font-semibold text-ink">Theme</legend>
+      <p className="mt-1 text-sm text-ink-secondary">Choose a theme or follow your device settings. Currently {effective}.</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {choices.map((choice) => (
+          <label key={choice.value} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors ${preference === choice.value ? 'border-brand bg-surface-subtle text-ink' : 'border-line text-ink-secondary hover:bg-surface-subtle hover:text-ink'} focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand`}>
+            <input type="radio" name="theme" value={choice.value} checked={preference === choice.value} onChange={(event) => choose(event.target.value)} className="h-4 w-4 shrink-0 accent-brand" />
+            {choice.path && <svg aria-hidden="true" viewBox="0 -960 960 960" className="h-5 w-5 fill-current"><path d={choice.path} /></svg>}
+            {choice.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }

@@ -27,7 +27,7 @@ export default function ProfilePhotoCard({ userId, author }: { userId: string; a
   return (
     <section
       aria-labelledby="profile-photo-heading"
-      className="mb-6 flex flex-wrap items-center gap-4 rounded-lg border border-line bg-surface-raised p-4"
+      className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-surface-raised p-4"
     >
       <AuthorAvatar author={author} size="xl" />
       <div className="min-w-0 flex-1">

@@ -1,5 +1,22 @@
 {
   "version": 1,
-  "include": ["/*"],
-  "exclude": ["/assets/*", "/images/*", "/fonts/*", "/webmcp.js", "/icon.svg", "/icon.png", "/apple-icon"]
+  "include": [
+    "/*"
+  ],
+  "exclude": [
+    "/assets/*",
+    "/images/*",
+    "/fonts/*",
+    "/webmcp.js",
+    "/icon.svg",
+    "/icon.png",
+    "/apple-icon",
+    "/brand/*",
+    "/downloads/*",
+    "/favicon*",
+    "/site.webmanifest",
+    "/android-chrome-*",
+    "/apple-touch-icon*",
+    "/icon-*.png"
+  ]
 }

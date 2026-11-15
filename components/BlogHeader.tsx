@@ -8,12 +8,15 @@ import { AnimatePresence, LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import {
   Bookmark,
+  Home,
+  Menu,
   BookOpen,
   CheckCircle2,
   LogIn,
   LogOut,
   PenSquare,
   Search,
+  Settings,
   Sparkles,
   Tag,
   User,
@@ -29,7 +32,6 @@ import BrandLogo from './BrandLogo';
 import { Header } from '@/components/ui/header-2';
 import { Button } from '@/components/ui/button';
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
-import ThemeToggle from './ThemeToggle';
 
 const CommandPalette = dynamic(() => import('./search/CommandPalette'), { ssr: false });
 
@@ -114,27 +116,29 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   const secondaryNav = [
     { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
     { href: '/cite', label: 'Cite', icon: Bookmark },
+    { href: '/settings', label: 'Settings', icon: Settings },
     { href: '/editorial-board', label: 'Editor', icon: User },
     { href: isEditor ? '/write' : '/dashboard/access', label: isEditor ? 'Writer studio' : 'Write for us', icon: PenSquare },
   ];
 
   const navLinkClass = (active: boolean) =>
-    `inline-flex min-h-11 items-center gap-1.5 border-b-2 px-3 py-2 font-sans text-xs font-semibold uppercase tracking-wider transition-colors ${
+    `inline-flex min-h-11 items-center gap-1.5 border-b-2 px-3 py-2 font-sans text-sm font-medium transition-colors ${
       active
         ? 'border-brand text-ink'
         : 'border-transparent text-ink-secondary hover:border-line hover:text-ink'
     }`;
 
   return (
+    <>
     <Header open={menuOpen}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-16 items-center justify-between gap-1.5 sm:gap-3">
+        <div className="flex min-h-[60px] items-center justify-between gap-1 sm:gap-3">
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             aria-label="ResearchWithMe home"
           >
-            <BrandLogo size="xl" showText={true} />
+            <BrandLogo size="header" showText={true} />
           </Link>
 
           <nav aria-label="Primary" className="hidden lg:block">
@@ -171,25 +175,19 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               type="button"
               onClick={openPalette}
               {...warmPalette}
-              className="inline-flex min-h-11 items-center gap-2.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink sm:px-3"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               aria-label="Search articles and writers (⌘K)"
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
-              <span className="sr-only xl:not-sr-only">Search articles and writers</span>
-              <kbd className="hidden rounded-sm border border-line bg-canvas px-1.5 py-0.5 font-mono text-xs font-medium text-ink-secondary sm:inline-block">
-                ⌘K
-              </kbd>
             </Pressable>
 
             <Link
               href="/bookmarks"
-              className="relative hidden min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle sm:inline-flex"
+              className="relative hidden min-h-11 min-w-11 items-center justify-center gap-1 rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:inline-flex"
               title={digestSubscribed ? 'Weekly digest subscribed' : 'Reading list'}
               aria-label={digestSubscribed ? 'Reading list — weekly digest subscribed' : 'Reading list'}
             >
               <Bookmark className="h-4 w-4 text-ink-secondary" aria-hidden="true" />
-              <span className="hidden 2xl:inline">Reading list</span>
-              <span className="sr-only 2xl:hidden">Reading list</span>
               {savedTotal > 0 && (
                 <AttentionPulse active={badgePulse} className="rounded-sm">
                   <span className="rounded-sm bg-brand px-1.5 py-0.5 font-mono text-xs font-semibold text-on-primary">
@@ -202,24 +200,22 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               )}
             </Link>
 
-            <ThemeToggle />
-
             {/* Auth / Write CTA — adapts cleanly to three states */}
             {isSignedIn ? (
               <div className="hidden items-center gap-1 md:flex">
                 <Link
-                  href={isEditor ? '/write' : '/dashboard'}
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+                  href="/dashboard/account"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   title={`Signed in as ${user?.name ?? 'a reader'}`}
-                  aria-label={isEditor ? 'Open writer studio' : 'Your account'}
+                  aria-label="Your account"
                 >
                   <User className="h-4 w-4 text-brand" aria-hidden="true" />
-                  <span className="hidden xl:inline">{isEditor ? 'Studio' : 'Account'}</span>
+                  <span className="hidden xl:inline">Account</span>
                 </Link>
                 {isEditor && (
                   <Link
                     href="/write"
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-sm bg-ink px-3 py-1.5 font-sans text-xs font-semibold text-canvas transition-opacity hover:opacity-90"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90"
                   >
                     <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
                     <span>Write</span>
@@ -228,7 +224,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                 <Pressable
                   type="button"
                   onClick={() => signOut?.()}
-                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                   aria-label="Sign out"
                   title="Sign out"
                 >
@@ -240,14 +236,14 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                 <Link
                   href="/login"
                   aria-label="Sign in"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-line bg-surface px-2.5 py-1.5 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 >
                   <LogIn className="h-4 w-4 text-brand" aria-hidden="true" />
                   <span className="hidden xl:inline">Sign in</span>
                 </Link>
                 <Link
                   href="/dashboard/access"
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-sm bg-ink px-3 py-1.5 font-sans text-xs font-semibold text-canvas transition-opacity hover:opacity-90"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90"
                 >
                   <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
                   <span>Write for us</span>
@@ -258,12 +254,12 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             <Button
               ref={menuButtonRef}
               size="icon"
-              variant="outline"
+              variant="ghost"
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              className="lg:hidden"
+              className="rounded-full lg:hidden"
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">
@@ -292,9 +288,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.22, ease: [...EASING.standard] }}
-              className="max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain lg:hidden"
+              className="max-h-[calc(100dvh-60px)] overflow-y-auto overscroll-contain lg:hidden"
             >
-              <div className="mb-4 rounded-sm border border-line bg-surface p-5">
+              <div className="mb-4 border-t border-line bg-canvas py-4">
                 {setSearchQuery && (
                   <div className="mb-4">
                     <label htmlFor="mobile-search" className="mb-1.5 block font-sans text-xs font-medium text-ink">
@@ -365,6 +361,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                           ? 'Publishing permissions are active.'
                           : 'Reader mode. Apply to write to publish reviews.'}
                       </p>
+                      <Link href="/dashboard/account" onClick={() => setMenuOpen(false)} className="mt-2 flex min-h-11 items-center text-brand underline-offset-4 hover:underline">
+                        Your account
+                      </Link>
                       <button
                         type="button"
                         onClick={() => signOut?.()}
@@ -411,5 +410,22 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         />
       )}
     </Header>
+    {!pathname.startsWith('/post/') && !pathname.startsWith('/write') && !pathname.startsWith('/dashboard') && (
+      <nav aria-label="Mobile shortcuts" data-mobile-dock className="dock dock-sm z-40 border-t border-base-300 bg-base-100 text-base-content lg:hidden">
+        <Link href="/" className={pathname === '/' ? 'dock-active' : ''} aria-current={pathname === '/' ? 'page' : undefined}>
+          <Home aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Home</span>
+        </Link>
+        <button type="button" onClick={openPalette} aria-label="Search articles and writers">
+          <Search aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Search</span>
+        </button>
+        <Link href="/bookmarks" className={pathname === '/bookmarks' ? 'dock-active' : ''} aria-current={pathname === '/bookmarks' ? 'page' : undefined}>
+          <Bookmark aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Saved</span>
+        </Link>
+        <button type="button" aria-expanded={menuOpen} aria-controls={menuId} onClick={() => { setMenuOpen(true); window.scrollTo({ top: 0, behavior: 'auto' }); menuButtonRef.current?.focus(); }}>
+          <Menu aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Menu</span>
+        </button>
+      </nav>
+    )}
+    </>
   );
 }

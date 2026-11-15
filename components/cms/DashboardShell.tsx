@@ -129,9 +129,9 @@ export default function DashboardShell({ children, configured, user }: Dashboard
                             href={item.href}
                             aria-current={active ? 'page' : undefined}
                             className={cn(
-                              'inline-flex min-h-11 w-full items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                              'inline-flex min-h-11 w-full items-center gap-2 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
                               active
-                                ? 'bg-surface-inverse text-text-inverse'
+                                ? 'bg-brand text-on-primary'
                                 : 'text-ink hover:bg-surface hover:text-ink',
                             )}
                           >

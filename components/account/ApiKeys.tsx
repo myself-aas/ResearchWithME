@@ -33,7 +33,7 @@ async function errorMessage(response: { json: () => Promise<unknown> }, fallback
 
 const LABEL = 'font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary';
 const FIELD =
-  'h-11 w-full rounded-sm border border-line bg-surface px-3 font-sans text-sm text-ink ' +
+  'h-11 w-full rounded-xl border border-line bg-surface px-3 font-sans text-sm text-ink ' +
   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 
 export default function ApiKeys({ initialKeys, monthlyIncluded, used }: ApiKeysProps) {

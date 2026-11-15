@@ -68,6 +68,7 @@ function serverLoaders(ctx: RequestContext): LoaderMap {
     about: publicLoader('about'),
     contact: publicLoader('contact'),
     privacy: publicLoader('privacy'),
+    settings: () => ({ metadata: { title: 'Settings | ResearchWithMe', description: 'Customize your ResearchWithMe experience.', path: '/settings', type: 'website' } }),
   };
 }
 

@@ -147,7 +147,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
               event.preventDefault();
               runQuery(query);
             }}
-            className="space-y-5"
+            className="space-y-5 rounded-2xl border border-line bg-surface p-5 sm:p-6"
           >
             <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_18rem]">
               <div>
@@ -161,7 +161,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
                   onChange={(event) => setQuery(event.target.value)}
                   disabled={loading}
                   placeholder="What evidence supports the claim that paged attention improves throughput?"
-                  className="w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
+                  className="textarea w-full min-h-28 border-border-strong bg-surface-raised px-3 py-2.5 text-base text-ink placeholder:text-ink-secondary"
                 />
               </div>
 
@@ -174,7 +174,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
                   value={scope}
                   onChange={(event) => setScope(event.target.value)}
                   disabled={loading}
-                  className="h-11 w-full rounded-md border border-border-strong bg-surface-raised px-3 text-sm text-ink"
+                  className="select min-h-11 w-full border-border-strong bg-surface-raised text-base text-ink"
                 >
                   <option value="all">Entire catalog ({articles.length} articles)</option>
                   {articles.map((article) => (
@@ -193,7 +193,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
               <button
                 type="submit"
                 disabled={loading || !query.trim()}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-50"
+                className="btn btn-primary min-h-11 rounded-full px-5"
               >
                 {loading ? (
                   <Spinner size={16} className="text-on-primary" />
@@ -218,7 +218,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
                     setQuery(question);
                     runQuery(question);
                   }}
-                  className="max-w-full rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-left text-sm text-ink transition-colors hover:border-border-strong disabled:opacity-50"
+                  className="min-h-11 max-w-full rounded-full border border-border-strong bg-surface-raised px-4 py-2 text-left text-sm text-ink transition-colors hover:bg-surface disabled:opacity-50"
                 >
                   {question}
                 </button>
@@ -268,7 +268,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.32, ease: [...EASING.enter] }}
-              className="mt-8 rounded-lg border border-line bg-surface-raised"
+              className="card mt-8 overflow-hidden border border-line bg-surface-raised"
             >
               <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-3">
                 <h2 id="answer-heading" className="flex items-center gap-2 font-serif text-lg font-semibold text-ink">
@@ -279,7 +279,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
                 <button
                   type="button"
                   onClick={copyAnswer}
-                  className="inline-flex min-h-10 items-center gap-1.5 rounded-md border border-border-strong px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:border-border-strong"
+                  className="btn btn-ghost min-h-11 gap-1.5 rounded-full px-3"
                 >
                   <AnimatePresence initial={false} mode="wait">
                     <m.span

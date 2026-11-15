@@ -66,7 +66,7 @@ export default function ApiDocsReference() {
             Send JSON where a request body is specified. Some writes reject cross-site browser origins and are rate limited; a 429 response indicates that the caller should retry later. Availability and data depend on the deployment&apos;s configured services.
           </p>
           <p className="mt-4 font-semibold text-ink">Example: list five articles</p>
-          <pre className="mt-2 overflow-x-auto rounded-md bg-surface-inverse p-4 text-xs leading-relaxed text-text-inverse"><code>{`curl '${SITE_URL}/api/articles?limit=5'`}</code></pre>
+          <pre tabIndex={0} aria-label="Example request: list five articles" className="mt-2 overflow-x-auto rounded-md bg-surface-inverse p-4 text-xs leading-relaxed text-text-inverse"><code>{`curl '${SITE_URL}/api/articles?limit=5'`}</code></pre>
         </section>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_16rem]">

@@ -140,18 +140,18 @@ export default function CommandPalette({
         </Dialog.Overlay>
         <Dialog.Content asChild>
           <m.div
-            className="fixed left-1/2 top-[10vh] z-50 w-[min(92vw,42rem)] overflow-hidden rounded-sm border border-line bg-canvas text-ink focus:outline-none"
+            className="fixed left-1/2 top-[max(1rem,8dvh)] z-50 w-[min(calc(100vw-2rem),42rem)] overflow-hidden rounded-2xl border border-line bg-canvas text-ink shadow-2xl focus:outline-none"
             initial={{ opacity: 0, y: -10, scale: 0.98, x: '-50%' }}
             animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
             transition={SPRING.panel}
           >
-          <Dialog.Title className="sr-only">Search articles</Dialog.Title>
+          <Dialog.Title className="sr-only">Search Research With Me</Dialog.Title>
           <Dialog.Description className="sr-only">
             Search articles, writers, and pages…
           </Dialog.Description>
 
-          <Command label="Search articles" shouldFilter={false} loop className="flex flex-col">
-            <div className="flex items-center gap-3 border-b border-line bg-surface px-4 py-3">
+          <Command label="Search articles, writers, and pages" shouldFilter={false} loop className="flex flex-col">
+            <div className="flex items-center gap-2 border-b border-line bg-surface px-4 py-2">
               <Search className="h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />
               <Command.Input
                 value={query}
@@ -164,7 +164,7 @@ export default function CommandPalette({
                   type="button"
                   onClick={() => setQuery('')}
                   aria-label="Clear search query"
-                  className="inline-flex h-7 w-7 items-center justify-center rounded-sm border border-line text-ink-secondary hover:text-ink"
+                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
                 >
                   <X className="h-3.5 w-3.5" aria-hidden="true" />
                 </Pressable>
@@ -173,14 +173,14 @@ export default function CommandPalette({
                 <button
                   type="button"
                   aria-label="Close command palette"
-                  className="rounded-sm border border-line px-1.5 py-0.5 font-mono text-xs text-ink-secondary hover:text-ink"
+                  className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl border border-line px-2 font-mono text-xs text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
                 >
                   ESC
                 </button>
               </Dialog.Close>
             </div>
 
-            <Command.List className="max-h-[62vh] overflow-y-auto divide-y divide-line p-2">
+            <Command.List className="max-h-[min(62dvh,36rem)] overflow-y-auto overscroll-contain divide-y divide-line p-2">
               {showSkeleton ? (
                 <div role="status" aria-live="polite" aria-busy="true" className="px-2.5 py-3">
                   <span className="sr-only">Loading the catalogue index</span>
@@ -221,7 +221,7 @@ export default function CommandPalette({
                           key={item.id}
                           value={item.id}
                           onSelect={() => handleSelect(item.href)}
-                          className="group flex cursor-pointer items-start justify-between gap-3 rounded-sm border border-transparent px-2.5 py-2.5 transition-colors data-[selected=true]:border-brand data-[selected=true]:bg-surface-subtle"
+                          className="group flex min-h-11 cursor-pointer items-start justify-between gap-3 rounded-xl border border-transparent px-3 py-3 transition-colors data-[selected=true]:border-brand data-[selected=true]:bg-surface-subtle"
                         >
                           <div className="flex min-w-0 items-start gap-2.5">
                             <span className="mt-0.5">{renderIcon(item.kind)}</span>
@@ -253,7 +253,7 @@ export default function CommandPalette({
               })}
             </Command.List>
 
-            <div className="flex items-center justify-between border-t border-line bg-surface px-4 py-2 font-mono text-xs text-ink-secondary">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-line bg-surface px-4 py-3 font-mono text-xs text-ink-secondary">
               <span>↑↓ Navigate · ↵ Open · ESC Close</span>
               <span>DOI · GitHub · ORCID</span>
             </div>

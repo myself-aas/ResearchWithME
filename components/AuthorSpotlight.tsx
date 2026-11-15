@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, GitBranch, GraduationCap } from 'lucide-react';
 import type { Author } from '@/lib/blog-data';
+import AuthorAvatar from '@/components/AuthorAvatar';
 import Reveal from '@/components/motion/Reveal';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
 import { Text } from '@/components/primitives';
@@ -55,19 +56,16 @@ export default function AuthorSpotlight({ authors }: { authors: Author[] }) {
           </Link>
         </Reveal>
 
-        <Stagger as="ul" className="divide-y divide-line" amount={0.05} step={0.06}>
+        <Stagger as="ul" className="grid gap-3 pt-5" amount={0.05} step={0.06}>
           {authors.map((author) => (
             <StaggerItem as="li" key={author.id} variant="rise">
               <Link
                 href={`/author/${author.id}`}
-                className="group grid gap-4 px-2 py-6 transition-colors hover:bg-surface sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start sm:gap-6"
+                className="group grid gap-4 rounded-2xl border border-line bg-surface px-5 py-6 transition-colors hover:border-brand hover:bg-surface-subtle sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start sm:gap-6"
               >
-                <span
-                  aria-hidden="true"
-                  className="flex h-12 w-12 items-center justify-center rounded-sm border border-line bg-surface font-mono text-sm font-semibold text-ink transition-colors group-hover:border-brand group-hover:text-brand"
-                >
-                  {author.avatar}
-                </span>
+                <div aria-hidden="true">
+                  <AuthorAvatar author={author} size="md" />
+                </div>
 
                 <span className="min-w-0">
                   <span className="font-serif text-xl font-semibold text-ink transition-colors group-hover:text-brand">

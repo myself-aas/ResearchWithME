@@ -47,7 +47,9 @@ const RAW_FAMILY = /^(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|li
 
 function definedColours(): Set<string> {
   const css = readFileSync(join(root, 'app/globals.css'), 'utf8');
-  return new Set([...css.matchAll(/--color-([a-z0-9-]+)\s*:/g)].map((m) => m[1]));
+  // daisyUI registers these semantic theme roles through its Tailwind plugin.
+  const daisy = ['base-100', 'base-200', 'base-300', 'base-content', 'primary', 'primary-content'];
+  return new Set([...daisy, ...[...css.matchAll(/--color-([a-z0-9-]+)\s*:/g)].map((m) => m[1])]);
 }
 
 function sourceFiles(): string[] {

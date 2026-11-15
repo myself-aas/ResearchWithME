@@ -44,10 +44,10 @@ export default async function LoginPage({
       <main tabIndex={-1} id="main-content" className="mx-auto flex w-full max-w-5xl flex-1 items-center px-4 py-10 sm:px-6 lg:py-16">
         <div className="grid w-full gap-10 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start lg:gap-16">
           <section aria-labelledby="login-title">
-            <h1 id="login-title" className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+            <h1 id="login-title" className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl lg:text-6xl">
               Write, review, and publish
             </h1>
-            <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink">
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-ink-secondary">
               The studio holds drafts privately, publishes to the platform, and keeps reader discussion in one
               moderation queue.
             </p>

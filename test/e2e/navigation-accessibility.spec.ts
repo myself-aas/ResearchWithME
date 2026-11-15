@@ -28,7 +28,7 @@ for (const width of [320, 768, 1024, 1440]) {
   });
 }
 
-const routes = ['/cite', '/authors', '/about', '/privacy', '/api-docs', '/not-a-route'];
+const routes = ['/cite', '/authors', '/about', '/privacy', '/api-docs', '/editorial-board', '/not-a-route'];
 if (process.env.RWM_TEST_NEXT) routes.push('/login', '/dashboard/access', '/dashboard/account');
 for (const route of routes) {
   test(`one focusable main in ${route}`, async ({ page }) => {

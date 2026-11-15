@@ -26,7 +26,7 @@ export default function ContactPage() {
               Contact channels
             </h2>
 
-            <Card padding="xl">
+            <Card padding="xl" radius="lg">
               <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Pitches &amp; submissions
               </Text>
@@ -42,7 +42,7 @@ export default function ContactPage() {
               </p>
             </Card>
 
-            <Card padding="xl">
+            <Card padding="xl" radius="lg">
               <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Purchases
               </Text>
@@ -59,7 +59,7 @@ export default function ContactPage() {
               </p>
             </Card>
 
-            <Card padding="xl">
+            <Card padding="xl" radius="lg">
               <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Corrections
               </Text>
@@ -75,7 +75,7 @@ export default function ContactPage() {
               </p>
             </Card>
 
-            <Card padding="xl">
+            <Card padding="xl" radius="lg">
               <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 Metadata &amp; feeds
               </Text>
@@ -90,7 +90,7 @@ export default function ContactPage() {
               </p>
             </Card>
 
-            <Card padding="xl">
+            <Card padding="xl" radius="lg">
               <Text as="p" variant="eyebrow" color="brand" weight="semibold">
                 RFC 9116 disclosure
               </Text>

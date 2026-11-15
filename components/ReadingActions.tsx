@@ -99,8 +99,8 @@ export default function ReadingActions({
   }
 
   const buttonClass = compact
-    ? 'inline-flex h-11 w-11 items-center justify-center rounded-sm border border-line bg-surface text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink'
-    : 'inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-surface px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle';
+    ? 'inline-flex h-11 w-11 items-center justify-center rounded-xl border border-line bg-surface text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink'
+    : 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle';
 
   return (
     <div>
@@ -112,8 +112,8 @@ export default function ReadingActions({
           className={
             saved
               ? compact
-                ? 'inline-flex h-11 w-11 items-center justify-center rounded-sm border border-brand bg-brand text-on-primary transition-colors'
-                : 'inline-flex min-h-11 items-center gap-2 rounded-sm border border-brand bg-brand px-4 py-2 font-sans text-xs font-medium text-on-primary transition-colors'
+                ? 'inline-flex h-11 w-11 items-center justify-center rounded-xl border border-brand bg-brand text-on-primary transition-colors'
+                : 'inline-flex min-h-11 items-center gap-2 rounded-xl border border-brand bg-brand px-4 py-2 font-sans text-xs font-medium text-on-primary transition-colors'
               : buttonClass
           }
         >

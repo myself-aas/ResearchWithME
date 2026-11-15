@@ -133,7 +133,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
 
   if (!configured) {
     return (
-      <section aria-labelledby="connect-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+      <section aria-labelledby="connect-heading" className="card border border-line bg-surface p-5 sm:p-6">
         <h2 id="connect-heading" className="font-serif text-2xl font-bold text-ink">
           Supabase is not connected
         </h2>
@@ -182,7 +182,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
 
   if (user && !user.isEditor) {
     return (
-      <section aria-labelledby="no-access-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+      <section aria-labelledby="no-access-heading" className="card border border-line bg-surface p-5 sm:p-6">
         <h2 id="no-access-heading" className="font-serif text-2xl font-bold text-ink">
           Signed in, without editor access
         </h2>
@@ -225,7 +225,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
 
   if (user) {
     return (
-      <section aria-labelledby="signed-in-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+      <section aria-labelledby="signed-in-heading" className="card border border-line bg-surface p-5 sm:p-6">
         <h2 id="signed-in-heading" className="font-serif text-2xl font-bold text-ink">
           You are signed in
         </h2>
@@ -260,7 +260,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
   }
 
   return (
-    <section aria-labelledby="signin-heading" className="rounded-lg border border-line bg-surface-raised p-5 sm:p-6">
+    <section aria-labelledby="signin-heading" className="card border border-line bg-surface p-5 sm:p-6">
       <h2 id="signin-heading" className="font-serif text-2xl font-bold text-ink">
         Sign in
       </h2>

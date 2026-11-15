@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { CATEGORIES, categoryToSlug } from '@/lib/blog-data';
 import BrandLogo from '@/components/BrandLogo';
-import ThemeToggle from '@/components/ThemeToggle';
 import { Text, Link as TextLink } from '@/components/primitives';
 
 const exploreLinks = [
@@ -77,7 +76,7 @@ export default function BlogFooter() {
         <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 font-sans text-xs text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
           <p>ResearchWithMe (reme) · Edited by Ashif Ahmed Shuvo</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-            <ThemeToggle />
+            <TextLink href="/settings" variant="quiet">Settings</TextLink>
             <TextLink href="/assistant" variant="quiet" className="inline-flex items-center gap-1">
               <span>Assistant</span>
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

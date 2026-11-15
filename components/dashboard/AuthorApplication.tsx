@@ -137,7 +137,7 @@ export default function AuthorApplication({
           {PROVIDERS.map(({ id, label, blurb }) => {
             const match = linked.find((item) => item.provider === id);
             return (
-              <li key={id} className="rounded-md border border-line p-4">
+              <li key={id} className="rounded-xl border border-line p-4">
                 <p className="flex items-center gap-2 text-sm font-semibold text-ink">
                   <GitBranch className="h-4 w-4 text-brand-hover" aria-hidden="true" />
                   {label}

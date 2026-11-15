@@ -9,7 +9,7 @@
  * the viewport) and the code itself is split, so the article route's first
  * bundle carries the paper, not the conversation.
  *
- * The `#discussion` anchor lives on the wrapping section in the page, so it
+ * The `#discussion` anchor lives on the wrapper below, so it
  * resolves even before the panel has mounted.
  */
 
@@ -30,6 +30,7 @@ export interface DeferredDiscussionProps {
 
 export default function DeferredDiscussion({ postId, commentCount }: DeferredDiscussionProps) {
   return (
+    <div id="discussion" className="scroll-mt-24">
     <LazyMount
       label="Loading the discussion panel"
       minHeight={220}
@@ -44,5 +45,6 @@ export default function DeferredDiscussion({ postId, commentCount }: DeferredDis
     >
       <Discussion postId={postId} commentCount={commentCount} />
     </LazyMount>
+    </div>
   );
 }
