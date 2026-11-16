@@ -171,10 +171,17 @@ These configured checks do not certify every rendered component composition.
 
 ## Brand mark ink (2026-11-16)
 
-The logo mark is the "r" monogram in `public/brand/mark.svg`. It is a single
-path with no colour of its own: `BrandLogo` paints it by masking the file with
-`bg-brand-mark`, so the mark follows the theme instead of shipping a baked-in
+The logo mark is the "r" monogram. The geometry lives in `public/brand/mark.svg`
+and is inlined by `components/BrandMark.tsx`, which is what `BrandLogo` renders.
+The inlined path carries `fill="currentColor"` and is coloured with
+`text-brand-mark`, so the mark follows the theme instead of shipping a baked-in
 fill.
+
+Inlining is not incidental. An external SVG used through `mask-image` or
+`background-image` disappears in Windows High Contrast Mode, and its baked-in
+fill ignores forced colours; an inline `<path>` inherits `currentColor` and can
+be repainted by the OS. `lib/__tests__/branding-header.test.tsx` pins the
+inlined geometry to the shipped file so the two cannot drift.
 
 - **Light:** `brand.mark` = `#3E0000` (`maroon.900`), the incumbent artwork ink, 17.4:1 on white.
 - **Dark:** `brand.mark` = `#F9E6E6` (`maroon.100`), 16.2:1 on the dark canvas.
@@ -190,5 +197,65 @@ The static icons (`favicon.svg`, `icon.svg`, `favicon*.png`, `apple-touch-icon.p
 `#3E0000` baked in, which is the same value as `brand.mark` in the light theme.
 Regenerating them is the only place that literal is allowed to appear.
 
-`BrandLogo` also carries a `forced-colors` fallback so the mask does not vanish
-in Windows High Contrast Mode.
+Accessibility: `BrandLogo` renders the mark only, with no wordmark text, because
+the mark is an "r" and pairing it with "reme." read as the same letter twice.
+The wrapper is `aria-hidden` by default so a wrapping link supplies the single
+accessible name; pass `label` when the mark must name itself.
+
+## Components
+
+The normative component contracts — Source Card, Evidence Card, Claim Card,
+Citation, Research Workspace, Provenance Graph, Scholarly Dialogue, AI-Assisted
+Output, Tables, Forms, Feedback — are §7 of
+[`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md). This
+section records what actually ships and how to consume it; it does not restate
+that spec.
+
+### Three layers
+
+| Layer | Location | Rule |
+|---|---|---|
+| Primitives | `components/primitives/` | Token-driven, mostly server-safe. Import from `@/components/primitives` only. |
+| UI composites | `components/ui/` | Stateful patterns (Dialog, Toast, DataTable, EmptyState, Skeleton, Alert). |
+| Product components | `components/` | Domain surfaces (feed, reading, authors, studio). Compose the two layers above. |
+
+### Primitives
+
+`Box`, `Text`, `Stack`, `Card` (+ `CardHeader`/`CardTitle`/`CardDescription`/
+`CardFooter`), `Button`, `Divider`, `Badge`, `Input`, `Select`, `Textarea`,
+`Link`, `Icon`, `VisuallyHidden`.
+
+All are server-safe except `Button`, `Input`, `Select` and `Textarea`, which are
+client components with built-in label, error and `aria-describedby` wiring.
+`Text` variants are `eyebrow`, `card-title`, `section-title`, `page-title`, plus
+the reme v3.1 §2 display scale. `Link` variants are `inline`, `quiet`, `muted`,
+`plain`; internal paths render `next/link`. Full API: 
+[`docs/design-system/primitives.md`](./docs/design-system/primitives.md).
+
+### Two rules that bind every component
+
+1. **Colour comes from semantic tokens only.** `text-ink`, `bg-surface`,
+   `border-line`, `text-brand-mark`, and so on. Never a raw palette family
+   (`stone-*`, `red-*`, `white`): it does not switch with the theme. A utility
+   naming an undefined token compiles to nothing and the element silently
+   inherits its parent colour.
+2. **Repeated class strings become a primitive variant.** If a string appears
+   more than a few times it belongs in a variant, defined once.
+
+Both are enforced by `lib/__tests__/design-token-usage.test.ts` in
+`npm run quality`; deliberate exceptions go in its `ALLOW` map with a reason.
+
+### Component state contract
+
+Every component that fetches, submits or filters exposes loading, empty, error,
+disabled and success states. Loading skeletons mirror the final layout; empty
+states explain why the view is empty and offer one relevant action; errors name
+the problem and the recovery step. Status is never carried by colour alone — it
+is always paired with a text label.
+
+### Do not
+
+Gradient text, decorative glass or blur, nested cards, a coloured
+`border-left`/`border-right` above 1px, hard offset shadows, monospace as a
+"technical" costume, unicode glyphs standing in for an icon system, or a kicker
+above a heading.
