@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Trash2, Upload } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
+import PublishSplitButton from '@/components/cms/PublishSplitButton';
 import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES, type PublicationType } from '@/lib/blog-data';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import type { CmsPost } from '@/lib/cms/types';
@@ -797,20 +798,23 @@ export default function WritePage() {
                 <Save className="h-4 w-4" aria-hidden="true" />
                 <span>{saveStatus}</span>
               </p>
-              <div className="flex flex-wrap items-center gap-2">
-                {canSelectPublicationType && (
-                  <select
-                    id="write-publication-type"
-                    aria-label="Publication type"
-                    value={draft.publicationType}
-                    onChange={(event) => update('publicationType', event.target.value as PublicationType)}
-                    disabled={publishing}
-                    className="min-h-11 rounded-md border border-border-strong bg-surface-raised px-3.5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-60"
-                  >
-                    <option value="review">Review</option>
-                    <option value="editorial">Editorial</option>
-                  </select>
-                )}
+              {canSelectPublicationType ? (
+                <PublishSplitButton
+                  id="write-publication-type"
+                  value={draft.publicationType}
+                  onChange={(next) => update('publicationType', next)}
+                  label={
+                    publishing
+                      ? 'Publishing…'
+                      : draft.publicationType === 'editorial'
+                        ? 'Publish editorial'
+                        : 'Publish review'
+                  }
+                  disabled={publishing}
+                  submitType="submit"
+                  radius="md"
+                />
+              ) : (
                 <button
                   type="submit"
                   disabled={publishing}
@@ -819,7 +823,7 @@ export default function WritePage() {
                   <Send className="h-4 w-4" aria-hidden="true" />
                   <span>{publishing ? 'Publishing…' : 'Publish review'}</span>
                 </button>
-              </div>
+              )}
             </div>
 
             <p className="flex items-start gap-2 border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">

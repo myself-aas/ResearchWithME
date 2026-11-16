@@ -122,13 +122,17 @@ describe('PostEditor publication type dropdown visibility and submission', () =>
         );
       });
       expect(container.querySelector('#cms-publication-type')).toBeNull();
+      const publishButton = [...container.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('Publish article'),
+      );
+      expect(publishButton).toBeTruthy();
     } finally {
       await act(async () => root.unmount());
       container.remove();
     }
   });
 
-  it('shows the Review/Editorial dropdown beside Publish for Editor-in-Chief and submits selected editorial', async () => {
+  it('shows the unified split Publish button for Editor-in-Chief, updates copy dynamically, and submits editorial', async () => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     const fetchMock = vi.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
       const url = typeof input === 'string' ? input : input.toString();
@@ -165,31 +169,42 @@ describe('PostEditor publication type dropdown visibility and submission', () =>
         );
       });
 
-      const select = container.querySelector<HTMLSelectElement>('#cms-publication-type');
-      expect(select).not.toBeNull();
-      expect(select?.value).toBe('review');
-      expect([...(select?.options ?? [])].map((o) => ({ value: o.value, label: o.text }))).toEqual([
-        { value: 'review', label: 'Review' },
-        { value: 'editorial', label: 'Editorial' },
-      ]);
+      const trigger = container.querySelector<HTMLButtonElement>('#cms-publication-type');
+      expect(trigger).not.toBeNull();
+      expect(trigger?.getAttribute('aria-expanded')).toBe('false');
 
-      // Placed immediately before the Publish button in the action bar.
-      expect(select?.nextElementSibling?.textContent).toContain('Publish article');
-
-      const setSelect = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value')!.set!;
-      await act(async () => {
-        setSelect.call(select, 'editorial');
-        select!.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-      expect(select?.value).toBe('editorial');
-
-      const publishButton = [...container.querySelectorAll('button')].find((button) =>
-        button.textContent?.includes('Publish article'),
+      // Default primary button label reflects "review".
+      const initialPublishButton = [...container.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('Publish review'),
       );
-      expect(publishButton).toBeTruthy();
+      expect(initialPublishButton).toBeTruthy();
+
+      // Open the split menu and verify short option labels.
+      await act(async () => {
+        trigger!.click();
+      });
+      expect(trigger?.getAttribute('aria-expanded')).toBe('true');
+
+      const menuItems = [...container.querySelectorAll<HTMLButtonElement>('[role="menuitemradio"]')];
+      expect(menuItems).toHaveLength(2);
+      expect(menuItems[0].textContent).toContain('Review');
+      expect(menuItems[0].getAttribute('aria-checked')).toBe('true');
+      expect(menuItems[1].textContent).toContain('Editorial');
+      expect(menuItems[1].getAttribute('aria-checked')).toBe('false');
+
+      // Select Editorial — menu closes and button label updates dynamically.
+      await act(async () => {
+        menuItems[1].click();
+      });
+      expect(container.querySelector('[role="menu"]')).toBeNull();
+
+      const editorialPublishButton = [...container.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('Publish editorial'),
+      );
+      expect(editorialPublishButton).toBeTruthy();
 
       await act(async () => {
-        publishButton!.click();
+        editorialPublishButton!.click();
       });
 
       const patchCall = fetchMock.mock.calls.find(
@@ -199,6 +214,22 @@ describe('PostEditor publication type dropdown visibility and submission', () =>
       const submitted = JSON.parse(String(patchCall![1]!.body));
       expect(submitted.publicationType).toBe('editorial');
       expect(submitted.status).toBe('published');
+
+      // After publishing an editorial, the button updates to "Save editorial changes".
+      const saveEditorialButton = [...container.querySelectorAll('button')].find((button) =>
+        button.textContent?.includes('Save editorial changes'),
+      );
+      expect(saveEditorialButton).toBeTruthy();
+
+      // Escape closes an open menu cleanly.
+      await act(async () => {
+        trigger!.click();
+      });
+      expect(container.querySelector('[role="menu"]')).not.toBeNull();
+      await act(async () => {
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+      });
+      expect(container.querySelector('[role="menu"]')).toBeNull();
     } finally {
       await act(async () => root.unmount());
       container.remove();

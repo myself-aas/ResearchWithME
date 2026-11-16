@@ -30,6 +30,7 @@ import { cn } from '@/lib/utils';
 import ConfirmDelete from './ConfirmDelete';
 import dynamic from 'next/dynamic';
 const MarkdownEditor = dynamic(() => import('./MarkdownEditor'), { ssr: false });
+import PublishSplitButton from './PublishSplitButton';
 import StatusBadge from './StatusBadge';
 import {
   fieldClass,
@@ -367,6 +368,18 @@ export default function PostEditor({
 
   const errorKeys = Object.keys(fieldErrors);
   const primaryLabel = status === 'published' ? 'Save published changes' : 'Publish article';
+  const splitPublishLabel =
+    saving === 'published'
+      ? 'Publishing…'
+      : saving === 'draft'
+        ? 'Saving…'
+        : status === 'published'
+          ? form.publicationType === 'editorial'
+            ? 'Save editorial changes'
+            : 'Save review changes'
+          : form.publicationType === 'editorial'
+            ? 'Publish editorial'
+            : 'Publish review';
   const secondaryLabel = status === 'published' ? 'Revert to draft' : 'Save draft';
 
   return (
@@ -848,28 +861,27 @@ export default function PostEditor({
             >
               {secondaryLabel}
             </button>
-            {allowPublicationType && (
-              <select
+            {allowPublicationType ? (
+              <PublishSplitButton
                 id="cms-publication-type"
-                aria-label="Publication type"
                 value={form.publicationType}
-                onChange={(event) => update('publicationType', event.target.value as PublicationType)}
+                onChange={(next) => update('publicationType', next)}
+                label={splitPublishLabel}
                 disabled={Boolean(saving) || deleting}
-                className="min-h-11 rounded-full border border-border-strong bg-surface-raised px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
+                onPublish={() => void save('published')}
+                radius="full"
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => void save('published')}
+                disabled={Boolean(saving) || deleting}
+                className={primaryButtonClass}
               >
-                <option value="review">Review</option>
-                <option value="editorial">Editorial</option>
-              </select>
+                <Send className="h-4 w-4" aria-hidden="true" />
+                <span>{saving === 'published' ? 'Publishing…' : saving === 'draft' ? 'Saving…' : primaryLabel}</span>
+              </button>
             )}
-            <button
-              type="button"
-              onClick={() => void save('published')}
-              disabled={Boolean(saving) || deleting}
-              className={primaryButtonClass}
-            >
-              <Send className="h-4 w-4" aria-hidden="true" />
-              <span>{saving === 'published' ? 'Publishing…' : saving === 'draft' ? 'Saving…' : primaryLabel}</span>
-            </button>
           </div>
         </div>
       </form>
