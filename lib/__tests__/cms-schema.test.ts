@@ -203,3 +203,21 @@ describe('normalizePostInput artifact record', () => {
     expect(result.value.artifact?.identifier).toHaveLength(160);
   });
 });
+
+describe('normalizePostInput publicationType', () => {
+  it('defaults publicationType to review when omitted or unknown', () => {
+    const omitted = normalizePostInput(base());
+    expect(omitted.ok).toBe(true);
+    if (omitted.ok) expect(omitted.value.publicationType).toBe('review');
+
+    const unknown = normalizePostInput(base({ publicationType: 'opinion' }));
+    expect(unknown.ok).toBe(true);
+    if (unknown.ok) expect(unknown.value.publicationType).toBe('review');
+  });
+
+  it('preserves editorial when explicitly requested', () => {
+    const editorial = normalizePostInput(base({ publicationType: 'editorial' }));
+    expect(editorial.ok).toBe(true);
+    if (editorial.ok) expect(editorial.value.publicationType).toBe('editorial');
+  });
+});

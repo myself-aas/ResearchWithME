@@ -103,6 +103,11 @@ describe('cmsPostToArticle', () => {
     expect(article.author.name).toBe('Guest Editor');
     expect(article.author.avatar).toBe('GE');
   });
+
+  it('defaults publicationType to review and preserves editorial', () => {
+    expect(cmsPostToArticle(post).publicationType).toBe('review');
+    expect(cmsPostToArticle({ ...post, publicationType: 'editorial' }).publicationType).toBe('editorial');
+  });
 });
 
 describe('cmsCommentToRecord', () => {

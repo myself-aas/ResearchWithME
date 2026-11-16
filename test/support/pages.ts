@@ -79,6 +79,8 @@ export interface TestAppOptions {
   expiredSessions?: boolean;
   /** Published rows the fake `profiles` table serves to the public client. Default: empty directory. */
   profileRows?: ProfileRow[];
+  /** When true, the fake `editor` role also satisfies `is_editor_in_chief()`. Default: false. */
+  editorInChief?: boolean;
 }
 
 const tempDirs: string[] = [];
@@ -240,6 +242,12 @@ function makeFakeSupabase(options: FakeSupabaseOptions): SupabaseClient & {
           return { data: null, error: { message: 'fake database outage' } };
         }
         return { data: role === 'editor', error: null };
+      }
+      if (name === 'is_editor_in_chief') {
+        if (authorLookupFails) {
+          return { data: null, error: { message: 'fake database outage' } };
+        }
+        return { data: role === 'editor' && options.editorInChief === true, error: null };
       }
       if (name === 'apply_as_author') {
         // A client-level outage (fetch threw, PostgREST unreachable) is the
@@ -576,6 +584,7 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
         summary: input.summary ?? `Deterministic summary for ${input.slug}.`,
         category: input.category ?? 'Research Reviews',
         format: input.format ?? 'Paper Review',
+        publicationType: input.publicationType ?? 'review',
         authorId: input.authorId ?? 'maya-lin',
         authorName: input.authorName ?? 'Maya Lin',
         coverImage: input.coverImage ?? null,
@@ -600,6 +609,7 @@ export function createTestApp(options: TestAppOptions = {}): TestApp {
         summary: patch.summary ?? existing.summary,
         category: patch.category ?? existing.category,
         format: patch.format ?? existing.format,
+        publicationType: patch.publicationType ?? existing.publicationType ?? 'review',
         authorId: patch.authorId ?? existing.authorId ?? 'maya-lin',
         authorName: patch.authorName ?? existing.authorName,
         coverImage: patch.coverImage ?? existing.coverImage,

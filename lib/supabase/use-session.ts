@@ -17,6 +17,8 @@ export interface SessionUser {
    * here can grant access.
    */
   isEditor: boolean;
+  /** Mirrors `public.is_editor_in_chief()`; display hint only. */
+  isEditorInChief?: boolean;
   /** Providers already linked to the account, e.g. ['email', 'github']. */
   providers: string[];
   /** Linked scholarly identities with the handle to cite on an application. */
@@ -38,7 +40,7 @@ function displayName(email: string, metadata: Record<string, unknown>) {
   return email.split('@')[0]?.slice(0, 80) || 'Reader';
 }
 
-function toSessionUser(account: User, isEditor: boolean): SessionUser {
+function toSessionUser(account: User, isEditor: boolean, isEditorInChief: boolean): SessionUser {
   const metadata = (account.user_metadata ?? {}) as Record<string, unknown>;
   const email = account.email ?? '';
   const identities = linkedIdentities(account.identities);
@@ -47,6 +49,7 @@ function toSessionUser(account: User, isEditor: boolean): SessionUser {
     email,
     name: displayName(email, metadata),
     isEditor,
+    isEditorInChief,
     identities,
     providers: (account.identities ?? [])
       .map((identity) => identity.provider)
@@ -86,15 +89,21 @@ export function useSession(): Session {
             return;
           }
           let isEditor = false;
+          let isEditorInChief = false;
           try {
             const { data } = await supabase.rpc('is_editor');
             isEditor = data === true;
+            if (isEditor) {
+              const chiefResult = await supabase.rpc('is_editor_in_chief');
+              isEditorInChief = chiefResult?.data === true;
+            }
           } catch {
             // Fail closed: an unreadable allowlist means the header shows reader
             // affordances, and the server still enforces the real gate.
             isEditor = false;
+            isEditorInChief = false;
           }
-          if (active) setUser(toSessionUser(account, isEditor));
+          if (active) setUser(toSessionUser(account, isEditor, isEditorInChief));
         }
 
         supabase.auth

@@ -1,7 +1,7 @@
 import type { PostgrestError, SupabaseClient } from '@supabase/supabase-js';
 import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
-import { ARTICLE_FORMATS } from './schema';
-import { CmsConflictError, CmsNotFoundError, CmsUnavailableError, CmsValidationError } from './errors';
+import { ARTICLE_FORMATS, isPublicationType } from './schema';
+import { CmsConflictError, CmsError, CmsNotFoundError, CmsUnavailableError, CmsValidationError } from './errors';
 import type { CmsArtifact, CmsArtifactType, CmsComment, CmsPost, CmsPostInput, CmsStore } from './types';
 
 const CATEGORY_SET = new Set<string>(CATEGORIES);
@@ -18,6 +18,7 @@ interface PostRow {
   summary: string | null;
   category: string | null;
   format: string | null;
+  publication_type?: string | null;
   author_id: string | null;
   author_name: string | null;
   cover_image: string | null;
@@ -76,6 +77,7 @@ function rowToPost(row: PostRow): CmsPost {
     summary: row.summary ?? '',
     category: CATEGORY_SET.has(row.category ?? '') ? (row.category as BlogCategory) : 'Research Reviews',
     format: FORMAT_SET.has(row.format ?? '') ? (row.format as ArticleFormat) : 'Paper Review',
+    publicationType: isPublicationType(row.publication_type) ? row.publication_type : 'review',
     authorId: row.author_id,
     authorName: row.author_name ?? 'ResearchWithMe editors',
     coverImage: row.cover_image,
@@ -101,6 +103,7 @@ function postToRow(input: CmsPostInput) {
     summary: input.summary,
     category: input.category,
     format: input.format,
+    publication_type: input.publicationType === 'editorial' ? 'editorial' : 'review',
     author_id: input.authorId,
     author_name: input.authorName,
     cover_image: input.coverImage,
@@ -138,6 +141,13 @@ function fail(error: PostgrestError | null, fallback: string): never {
   if (!error) throw new CmsUnavailableError(fallback);
 
   if (error.code === '23505') throw new CmsConflictError();
+  if (error.code === '42501') {
+    throw new CmsError(
+      error.message || 'You do not have permission to perform this action.',
+      403,
+      'forbidden',
+    );
+  }
   if (error.code === 'PGRST116') throw new CmsNotFoundError('That record was not found.');
   if (error.code === '23514' || error.code === '23502' || error.code === '22P02') {
     throw new CmsValidationError('The record does not meet the publication rules.');

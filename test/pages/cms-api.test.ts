@@ -317,3 +317,121 @@ describe('editorial comment moderation', () => {
     expect(res.status).toBe(403);
   });
 });
+
+describe('Editor-in-Chief editorial publicationType authorization', () => {
+  const CHIEF_APP = () =>
+    createTestApp({ profileRows: [MAYA_PROFILE], editorInChief: true });
+
+  it('forbids a regular editor from creating an editorial post', async () => {
+    const app = EDITOR_APP();
+    const res = await app.request('/api/cms/posts', {
+      as: 'editor',
+      method: 'POST',
+      headers: SITE_HEADERS,
+      body: JSON.stringify(
+        publishedPostBody({ slug: 'unauthorized-editorial', publicationType: 'editorial' }),
+      ),
+    });
+    expect(res.status).toBe(403);
+    expect((await res.json()).error).toContain('Editor-in-Chief');
+  });
+
+  it('allows the Editor-in-Chief to publish an editorial and defaults reviews to review', async () => {
+    const app = CHIEF_APP();
+
+    const editorialRes = await app.request('/api/cms/posts', {
+      as: 'editor',
+      method: 'POST',
+      headers: SITE_HEADERS,
+      body: JSON.stringify(
+        publishedPostBody({ slug: 'chief-editorial-note', publicationType: 'editorial' }),
+      ),
+    });
+    expect(editorialRes.status).toBe(201);
+    const editorialBody = await editorialRes.json();
+    expect(editorialBody.post.publicationType).toBe('editorial');
+
+    const reviewRes = await app.request('/api/cms/posts', {
+      as: 'editor',
+      method: 'POST',
+      headers: SITE_HEADERS,
+      body: JSON.stringify(publishedPostBody({ slug: 'chief-standard-review' })),
+    });
+    expect(reviewRes.status).toBe(201);
+    expect((await reviewRes.json()).post.publicationType).toBe('review');
+
+    // SSR reader shows the Editorial badge on Editorials and omits it on Reviews.
+    const editorialHtml = await (await app.request('/post/chief-editorial-note')).text();
+    expect(editorialHtml).toContain('>Editorial<');
+
+    const reviewHtml = await (await app.request('/post/chief-standard-review')).text();
+    expect(reviewHtml).not.toContain('>Editorial<');
+  });
+
+  it('forbids a regular editor from reclassifying a post, while allowing non-classification edits', async () => {
+    const app = EDITOR_APP();
+    const editorial = await app.seedPost({
+      slug: 'existing-editorial',
+      status: 'draft',
+      publicationType: 'editorial',
+    });
+    const review = await app.seedPost({
+      slug: 'existing-review',
+      status: 'draft',
+      publicationType: 'review',
+    });
+
+    const promote = await app.request(postPath(review.id), {
+      as: 'editor',
+      method: 'PATCH',
+      headers: SITE_HEADERS,
+      body: JSON.stringify({ publicationType: 'editorial' }),
+    });
+    expect(promote.status).toBe(403);
+
+    const demote = await app.request(postPath(editorial.id), {
+      as: 'editor',
+      method: 'PATCH',
+      headers: SITE_HEADERS,
+      body: JSON.stringify({ publicationType: 'review' }),
+    });
+    expect(demote.status).toBe(403);
+
+    // Updating title alone preserves publicationType without error.
+    const titleOnly = await app.request(postPath(editorial.id), {
+      as: 'editor',
+      method: 'PATCH',
+      headers: SITE_HEADERS,
+      body: JSON.stringify({ title: 'Updated headline for the existing editorial' }),
+    });
+    expect(titleOnly.status).toBe(200);
+    expect((await titleOnly.json()).post.publicationType).toBe('editorial');
+  });
+
+  it('allows the Editor-in-Chief to toggle publicationType via PATCH', async () => {
+    const app = CHIEF_APP();
+    const review = await app.seedPost({
+      slug: 'convertible-review',
+      status: 'draft',
+      publicationType: 'review',
+    });
+
+    const promoted = await app.request(postPath(review.id), {
+      as: 'editor',
+      method: 'PATCH',
+      headers: SITE_HEADERS,
+      body: JSON.stringify({ publicationType: 'editorial' }),
+    });
+    expect(promoted.status).toBe(200);
+    expect((await promoted.json()).post.publicationType).toBe('editorial');
+
+    const reverted = await app.request(postPath(review.id), {
+      as: 'editor',
+      method: 'PATCH',
+      headers: SITE_HEADERS,
+      body: JSON.stringify({ publicationType: 'review' }),
+    });
+    expect(reverted.status).toBe(200);
+    expect((await reverted.json()).post.publicationType).toBe('review');
+  });
+});

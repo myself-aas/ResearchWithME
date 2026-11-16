@@ -330,6 +330,11 @@ export default function ArticleFeed({
                       </div>
 
                       <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+                        {post.publicationType === 'editorial' && (
+                          <span className="rounded-full bg-brand px-2 py-0.5 font-sans text-xs font-semibold text-on-primary">
+                            Editorial
+                          </span>
+                        )}
                         <Link
                           href={`/category/${categoryToSlug(post.category)}`}
                           className="inline-flex items-center gap-1 font-semibold text-brand underline-offset-4 hover:underline"

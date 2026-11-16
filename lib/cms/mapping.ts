@@ -39,6 +39,7 @@ export function cmsPostToArticle(post: CmsPost): BlogPost {
     subtitle: post.subtitle || post.summary.slice(0, 140),
     category: post.category,
     format: post.format,
+    publicationType: post.publicationType === 'editorial' ? 'editorial' : 'review',
     author,
     publishedAt: formatDate(published),
     dateISO: published,

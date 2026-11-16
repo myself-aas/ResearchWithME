@@ -15,10 +15,11 @@ import {
   Trash2,
   Upload,
 } from 'lucide-react';
-import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
+import { CATEGORIES, type ArticleFormat, type BlogCategory, type PublicationType } from '@/lib/blog-data';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import { ARTICLE_FORMATS, normalizePostInput } from '@/lib/cms/schema';
 import type { CmsArtifact, CmsPost, FieldErrors } from '@/lib/cms/types';
+import { useDashboardUser } from './DashboardShell';
 import { formatDate } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { uploadCover } from '@/lib/supabase/storage';
@@ -74,6 +75,7 @@ interface PostFormState {
   summary: string;
   category: BlogCategory;
   format: ArticleFormat;
+  publicationType: PublicationType;
   authorId: string;
   coverImage: string;
   tags: string;
@@ -95,6 +97,7 @@ function stateFromPost(post?: CmsPost | null): PostFormState {
     summary: post?.summary ?? '',
     category: post?.category ?? 'Research Reviews',
     format: post?.format ?? 'Paper Review',
+    publicationType: post?.publicationType === 'editorial' ? 'editorial' : 'review',
     authorId: post?.authorId ?? '',
     coverImage: post?.coverImage ?? '',
     tags: (post?.tags ?? []).join(', '),
@@ -118,11 +121,17 @@ function FieldError({ id, message }: { id: string; message?: string }) {
 export default function PostEditor({
   mode,
   initialPost = null,
+  canSelectPublicationType,
 }: {
   mode: 'create' | 'edit';
   initialPost?: CmsPost | null;
+  /** Defaults to true only when signed in as Editor-in-Chief via DashboardShell. */
+  canSelectPublicationType?: boolean;
 }) {
   const router = useRouter();
+  const dashboardUser = useDashboardUser();
+  const allowPublicationType =
+    canSelectPublicationType ?? dashboardUser?.isEditorInChief === true;
   const [postId, setPostId] = useState<string | null>(initialPost?.id ?? null);
   const [status, setStatus] = useState<'draft' | 'published'>(initialPost?.status ?? 'draft');
   const [form, setForm] = useState<PostFormState>(() => stateFromPost(initialPost));
@@ -269,6 +278,7 @@ export default function PostEditor({
       summary: form.summary,
       category: form.category,
       format: form.format,
+      publicationType: form.publicationType,
       authorId: form.authorId,
       coverImage: form.coverImage || null,
       tags: form.tags,
@@ -828,7 +838,7 @@ export default function PostEditor({
                     ? 'All changes saved.'
                     : 'Nothing saved yet.'}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => void save('draft')}
@@ -838,6 +848,19 @@ export default function PostEditor({
             >
               {secondaryLabel}
             </button>
+            {allowPublicationType && (
+              <select
+                id="cms-publication-type"
+                aria-label="Publication type"
+                value={form.publicationType}
+                onChange={(event) => update('publicationType', event.target.value as PublicationType)}
+                disabled={Boolean(saving) || deleting}
+                className="min-h-11 rounded-full border border-border-strong bg-surface-raised px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <option value="review">Review</option>
+                <option value="editorial">Editorial</option>
+              </select>
+            )}
             <button
               type="button"
               onClick={() => void save('published')}

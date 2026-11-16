@@ -13,6 +13,8 @@ export type ArticleFormat =
   | 'Field Notes'
   | 'Case Study';
 
+export type PublicationType = 'review' | 'editorial';
+
 export interface Author {
   id: string;
   name: string;
@@ -50,6 +52,8 @@ export interface BlogPost {
   subtitle: string;
   category: BlogCategory;
   format: ArticleFormat;
+  /** Defaults to 'review'; only the Editor-in-Chief may classify a piece as 'editorial'. */
+  publicationType?: PublicationType;
   author: Author;
   publishedAt: string;
   readTime: string;

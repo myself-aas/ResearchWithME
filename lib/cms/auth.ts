@@ -41,11 +41,22 @@ export async function getDashboardUser(): Promise<DashboardUser | null> {
       console.error('Could not read the editor allowlist:', editorError.message);
     }
 
+    let isEditorInChief = false;
+    if (isEditor === true) {
+      const chiefResult = await supabase.rpc('is_editor_in_chief');
+      if (chiefResult?.error) {
+        console.error('Could not read the editor-in-chief role:', chiefResult.error.message);
+      } else {
+        isEditorInChief = chiefResult?.data === true;
+      }
+    }
+
     return {
       id: data.user.id,
       email: data.user.email ?? '',
       name: displayName(data.user.email ?? undefined, metadata),
       isEditor: isEditor === true,
+      isEditorInChief,
     };
   } catch (error) {
     console.error('Could not read the Supabase session:', error);

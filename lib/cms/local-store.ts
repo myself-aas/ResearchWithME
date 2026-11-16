@@ -72,7 +72,12 @@ export function createLocalCmsStore(options: { dataDir?: string } = {}): CmsStor
   }
 
   function readPosts(): CmsPost[] {
-    return sortByInsertedAt(readArray<CmsPost>(postsFile));
+    return sortByInsertedAt(
+      readArray<CmsPost>(postsFile).map((post) => ({
+        ...post,
+        publicationType: post.publicationType === 'editorial' ? 'editorial' : 'review',
+      })),
+    );
   }
 
   function readComments(): StoredComment[] {
@@ -112,6 +117,7 @@ export function createLocalCmsStore(options: { dataDir?: string } = {}): CmsStor
         const now = new Date().toISOString();
         const post: CmsPost = {
           ...input,
+          publicationType: input.publicationType === 'editorial' ? 'editorial' : 'review',
           id: nextId(posts),
           likes: 0,
           publishedAt: input.status === 'published' ? now : null,
@@ -138,6 +144,7 @@ export function createLocalCmsStore(options: { dataDir?: string } = {}): CmsStor
         const post: CmsPost = {
           ...existing,
           ...input,
+          publicationType: input.publicationType === 'editorial' ? 'editorial' : 'review',
           publishedAt:
             input.status === 'published' ? existing.publishedAt ?? now : null,
           updatedAt: now,
