@@ -25,6 +25,7 @@ colors:
   destructive: "#B91C1C"
   link: "#005BBF"
   visited: "#174EA6"
+  brand-mark: "#3E0000"
   verified: "#1D4ED8"
   replicated: "#047857"
   knowledge-source: "#1D4ED8"
@@ -45,6 +46,7 @@ colors:
   dark-border-strong: "#8B909F"
   dark-focus: "#ADC7FF"
   dark-selection: "#003061"
+  dark-brand-mark: "#F9E6E6"
 typography:
   editorial:
     fontFamily: "'Plus Jakarta Sans', 'Newsreader', Georgia, serif"
@@ -166,3 +168,27 @@ Existing trust accent dots, 10% tints, borders and research-state wording stay
 unchanged. `tokens:check` enforces >=4.5:1 for these text roles on their 10%
 accent tint composited over canvas, surface and surface-raised in both themes.
 These configured checks do not certify every rendered component composition.
+
+## Brand mark ink (2026-11-16)
+
+The logo mark is the "r" monogram in `public/brand/mark.svg`. It is a single
+path with no colour of its own: `BrandLogo` paints it by masking the file with
+`bg-brand-mark`, so the mark follows the theme instead of shipping a baked-in
+fill.
+
+- **Light:** `brand.mark` = `#3E0000` (`maroon.900`), the incumbent artwork ink, 17.4:1 on white.
+- **Dark:** `brand.mark` = `#F9E6E6` (`maroon.100`), 16.2:1 on the dark canvas.
+
+`brand.mark` is deliberately **not** `action.primary`. The mark is an identity
+element, not an affordance; reusing the button blue would make the logo read as
+a control and would tie the masthead to the primary CTA. The maroon is a brand
+commitment carried over from the supplied artwork, promoted here from a literal
+in the SVGs to a semantic role so it can be documented and re-themed.
+
+The static icons (`favicon.svg`, `icon.svg`, `favicon*.png`, `apple-touch-icon.png`,
+`favicon.ico`) are raster/vector files that cannot read CSS variables. They keep
+`#3E0000` baked in, which is the same value as `brand.mark` in the light theme.
+Regenerating them is the only place that literal is allowed to appear.
+
+`BrandLogo` also carries a `forced-colors` fallback so the mask does not vanish
+in Windows High Contrast Mode.

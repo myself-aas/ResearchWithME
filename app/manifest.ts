@@ -11,6 +11,10 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#1D4ED8',
     lang: 'en',
     categories: ['education', 'books', 'productivity'],
+    // Two deliberate artworks: the monogram where the icon renders small
+    // (browser chrome, home screen), the wordmark where it renders large
+    // (install prompt, launcher). Both are the same brand mark, so the set is
+    // consistent even though the lockup differs.
     icons: [
       {
         src: '/icon.svg',

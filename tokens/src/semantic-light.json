@@ -21,6 +21,10 @@
     "link": "#005BBF",
     "visited": "#174EA6"
   },
+  "brand": {
+    "mark": "{primitive.color.maroon.900}",
+    "mark-inverse": "#FFFFFF"
+  },
   "knowledge": {
     "source": "#1D4ED8",
     "evidence": "#059669",

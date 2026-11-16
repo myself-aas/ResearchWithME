@@ -137,6 +137,10 @@
   --color-brand: var(--color-action-primary);
   --color-brand-hover: var(--color-action-primary-hover);
   --color-brand-pressed: var(--color-action-primary-pressed);
+  /* The logo mark's own ink, distinct from the action colour: the wordmark
+     artwork keeps the incumbent maroon, so the mark matches it rather than
+     borrowing the button blue. Remaps per theme from tokens/src/semantic-*. */
+  --color-brand-mark: var(--reme-brand-mark);
   --color-verified: var(--color-trust-verified);
   /* Success states (saved, approved, published). Replicated is the emerald
      trust role that clears AA on every surface in both themes. */

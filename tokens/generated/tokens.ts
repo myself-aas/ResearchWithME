@@ -60,6 +60,14 @@ export const primitive = {
       "500": "#8B5CF6",
       "600": "#7C3AED",
       "700": "#6D28D9"
+    },
+    "maroon": {
+      "50": "#FDF5F5",
+      "100": "#F9E6E6",
+      "300": "#D9A3A3",
+      "500": "#A83A3A",
+      "700": "#7A1414",
+      "900": "#3E0000"
     }
   },
   "typography": {
@@ -190,6 +198,10 @@ export const semanticLight = {
     "link": "#005BBF",
     "visited": "#174EA6"
   },
+  "brand": {
+    "mark": "#3E0000",
+    "mark-inverse": "#FFFFFF"
+  },
   "knowledge": {
     "source": "#1D4ED8",
     "evidence": "#059669",
@@ -268,6 +280,10 @@ export const semanticDark = {
     "destructive": "#F87171",
     "link": "#ADC7FF",
     "visited": "#D5E3FF"
+  },
+  "brand": {
+    "mark": "#F9E6E6",
+    "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
     "source": "#60A5FA",

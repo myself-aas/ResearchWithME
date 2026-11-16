@@ -1,12 +1,24 @@
 import React from 'react';
+import BrandMark from './BrandMark';
 
 interface BrandLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'header';
+  /**
+   * Render the "reme." wordmark beside the monogram. Off by default: the mark
+   * is an "r", so pairing it with a wordmark that also opens with "r" reads as
+   * the same letter twice ("r reme."). The mark carries the identity alone.
+   */
   showText?: boolean;
+  /**
+   * Accessible name for the lockup. Leave unset when the logo sits inside a link
+   * or heading that already carries the name — the mark then stays decorative,
+   * so a screen reader announces one name instead of two.
+   */
+  label?: string;
   className?: string;
 }
 
-export default function BrandLogo({ size = 'md', showText = true, className = '' }: BrandLogoProps) {
+export default function BrandLogo({ size = 'md', showText = false, label, className = '' }: BrandLogoProps) {
   const sizes = {
     sm: { mark: 'h-8 w-8', text: 'text-xl' },
     md: { mark: 'h-10 w-10', text: 'text-2xl' },
@@ -16,9 +28,12 @@ export default function BrandLogo({ size = 'md', showText = true, className = ''
   };
 
   return (
-    <span className={`inline-flex shrink-0 items-center gap-2 ${className}`} role="img" aria-label="ResearchWithMe">
-      <span aria-hidden="true" className={`${sizes[size].mark} block shrink-0 bg-brand`} style={{ maskImage: 'url(/brand/mark.svg)', maskSize: 'contain', maskRepeat: 'no-repeat', maskPosition: 'center', WebkitMaskImage: 'url(/brand/mark.svg)', WebkitMaskSize: 'contain', WebkitMaskRepeat: 'no-repeat', WebkitMaskPosition: 'center' }} />
-      {showText && <span aria-hidden="true" className={`${sizes[size].text} font-serif font-semibold leading-none tracking-tight text-ink`}>reme<span className="text-brand">.</span></span>}
+    <span
+      className={`inline-flex shrink-0 items-center gap-2 ${className}`}
+      {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
+    >
+      <BrandMark className={`${sizes[size].mark} shrink-0 text-brand-mark`} />
+      {showText && <span className={`${sizes[size].text} font-serif font-semibold leading-none tracking-tight text-ink`}>reme<span className="text-brand">.</span></span>}
     </span>
   );
 }
