@@ -47,13 +47,18 @@ export default function FeaturedArticle({ post, isSaved, onToggleSave }: Feature
             />
           )}
           <Text as="span" variant="eyebrow" weight="semibold" className="absolute left-4 top-4 rounded-full border border-line bg-canvas/95 px-3 py-1">
-            Featured review
+            {post.publicationType === 'editorial' ? 'Featured editorial' : 'Featured review'}
           </Text>
         </div>
 
         <div className="flex flex-col justify-between gap-8 p-6 sm:p-10">
           <div>
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
+              {post.publicationType === 'editorial' && (
+                <span className="rounded-full bg-brand px-2.5 py-0.5 font-sans text-xs font-semibold text-on-primary">
+                  Editorial
+                </span>
+              )}
               <Link
                 href={`/category/${categoryToSlug(post.category)}`}
                 className="font-semibold text-brand underline-offset-4 hover:underline"

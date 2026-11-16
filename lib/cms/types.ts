@@ -1,4 +1,6 @@
-import type { ArticleFormat, BlogCategory } from '@/lib/blog-data';
+import type { ArticleFormat, BlogCategory, PublicationType } from '@/lib/blog-data';
+
+export type { PublicationType };
 
 export type CmsStatus = 'draft' | 'published';
 
@@ -23,6 +25,8 @@ export interface DashboardUser {
   name: string;
   /** Present in public.editors. Signing in alone grants no studio access. */
   isEditor: boolean;
+  /** True only when public.editors.role = 'editor-in-chief'. */
+  isEditorInChief?: boolean;
 }
 
 export interface CmsPost {
@@ -36,6 +40,8 @@ export interface CmsPost {
   summary: string;
   category: BlogCategory;
   format: ArticleFormat;
+  /** Defaults to 'review'; only the Editor-in-Chief may publish or change to 'editorial'. */
+  publicationType?: PublicationType;
   authorId: string | null;
   authorName: string;
   coverImage: string | null;
@@ -61,6 +67,7 @@ export interface CmsPostInput {
   summary: string;
   category: BlogCategory;
   format: ArticleFormat;
+  publicationType?: PublicationType;
   /** Non-null: normalizePostInput rejects a missing byline, and the post routes
    *  resolve it against public.profiles before the store ever sees it. */
   authorId: string;

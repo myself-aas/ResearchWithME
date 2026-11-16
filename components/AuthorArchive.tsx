@@ -214,6 +214,11 @@ export default function AuthorArchive({ articles }: { articles: BlogPost[] }) {
                   <li key={post.id} className="rounded-2xl border border-line bg-surface-raised p-5 sm:p-6">
                     <article>
                       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-secondary">
+                        {post.publicationType === 'editorial' && (
+                          <span className="rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-on-primary">
+                            Editorial
+                          </span>
+                        )}
                         <span className="font-medium text-brand">{post.category}</span>
                         <span aria-hidden="true">·</span>
                         <span>{post.format}</span>

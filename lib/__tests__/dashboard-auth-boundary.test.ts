@@ -25,6 +25,37 @@ describe('configured dashboard session and editor boundary', () => {
     getUser.mockResolvedValue({ data: { user: { id: 'user-1', email: 'reader@example.org', user_metadata: {} } }, error: null });
     rpc.mockResolvedValueOnce({ data: false, error: null }).mockResolvedValueOnce({ data: true, error: null });
     expect(await requireEditor()).toMatchObject({ ok: false, status: 403 });
-    expect(await requireEditor()).toMatchObject({ ok: true, mode: 'supabase', user: { id: 'user-1', isEditor: true } });
+    expect(await requireEditor()).toMatchObject({ ok: true, mode: 'supabase', user: { id: 'user-1', isEditor: true, isEditorInChief: false } });
+  });
+  it('grants isEditorInChief only when both is_editor and is_editor_in_chief return true', async () => {
+    getUser.mockResolvedValue({
+      data: { user: { id: 'chief-1', email: 'shuvo.1807016@bau.edu.bd', user_metadata: { full_name: 'Ashif Ahmed Shuvo' } } },
+      error: null,
+    });
+    rpc
+      .mockResolvedValueOnce({ data: true, error: null })
+      .mockResolvedValueOnce({ data: true, error: null });
+    expect(await requireEditor()).toMatchObject({
+      ok: true,
+      mode: 'supabase',
+      user: { id: 'chief-1', isEditor: true, isEditorInChief: true },
+    });
+  });
+  it('fails closed on isEditorInChief when is_editor_in_chief errors', async () => {
+    getUser.mockResolvedValue({
+      data: { user: { id: 'editor-2', email: 'editor@example.org', user_metadata: {} } },
+      error: null,
+    });
+    rpc
+      .mockResolvedValueOnce({ data: true, error: null })
+      .mockResolvedValueOnce({ data: null, error: { message: 'rpc failed' } });
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      expect(await getDashboardUser()).toMatchObject({
+        id: 'editor-2',
+        isEditor: true,
+        isEditorInChief: false,
+      });
+    } finally { consoleError.mockRestore(); }
   });
 });

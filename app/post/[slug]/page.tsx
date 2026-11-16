@@ -140,6 +140,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           <article aria-labelledby="article-title" className="min-w-0">
             <header className="pb-2">
               <p className="flex flex-wrap items-center gap-x-2 gap-y-2 font-sans text-xs text-ink-secondary">
+                {article.publicationType === 'editorial' && (
+                  <span className="rounded-full bg-brand px-3 py-1.5 font-semibold text-on-primary">Editorial</span>
+                )}
                 <span className="rounded-full bg-selection px-3 py-1.5 font-semibold text-brand">{article.category}</span>
                 <span aria-hidden="true">·</span>
                 <span>{article.format}</span>

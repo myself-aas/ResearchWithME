@@ -66,6 +66,10 @@ const createPost: ApiHandler = async (ctx) => {
     return json({ error: parsed.message, fieldErrors: parsed.fieldErrors }, { status: 400 });
   }
 
+  if (parsed.value.publicationType === 'editorial' && gate.user?.isEditorInChief !== true) {
+    return json({ error: 'Only the Editor-in-Chief can publish an Editorial.' }, { status: 403 });
+  }
+
   try {
     const author = await resolvePublishableAuthor(ctx, parsed.value.authorId);
     const value = { ...parsed.value, authorName: author.displayName };
@@ -116,6 +120,15 @@ const patchPost: ApiHandler = async (ctx, params) => {
     const parsed = normalizePostInput({ ...existing, ...incoming });
     if (!parsed.ok) {
       return json({ error: parsed.message, fieldErrors: parsed.fieldErrors }, { status: 400 });
+    }
+
+    const existingType = existing.publicationType === 'editorial' ? 'editorial' : 'review';
+    const requestedType = parsed.value.publicationType === 'editorial' ? 'editorial' : 'review';
+    if (requestedType !== existingType && gate.user?.isEditorInChief !== true) {
+      return json(
+        { error: 'Only the Editor-in-Chief can change a post between Review and Editorial.' },
+        { status: 403 },
+      );
     }
 
     const author = await resolvePublishableAuthor(ctx, parsed.value.authorId);

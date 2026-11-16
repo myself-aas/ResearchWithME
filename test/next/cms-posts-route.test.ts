@@ -56,4 +56,11 @@ describe('POST /api/cms/posts', () => {
     expect((await post(input)).status).toBe(201);
     expect((await post(input)).status).toBe(409);
   });
+
+  it('refuses editorial publicationType when caller is not Editor-in-Chief', async () => {
+    const input = validPostBody({ status: 'draft', publicationType: 'editorial' });
+    const response = await post(input);
+    expect(response.status).toBe(403);
+    expect((await response.json()).error).toContain('Editor-in-Chief');
+  });
 });

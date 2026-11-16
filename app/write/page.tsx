@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, CheckCircle2, Eye, PenSquare, Plus, Save, Send, Trash2, Upload } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
-import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES } from '@/lib/blog-data';
+import PublishSplitButton from '@/components/cms/PublishSplitButton';
+import { ArticleFormat, AUTHORS, BlogCategory, CATEGORIES, type PublicationType } from '@/lib/blog-data';
 import { ApiError, cmsFetch } from '@/lib/cms/client-api';
 import type { CmsPost } from '@/lib/cms/types';
 import { readLocal, removeLocal, writeLocal } from '@/lib/storage';
@@ -43,6 +44,7 @@ interface Draft {
   authorId: string;
   category: BlogCategory;
   format: ArticleFormat;
+  publicationType: PublicationType;
   summary: string;
   content: string;
   takeaways: string[];
@@ -65,6 +67,7 @@ const emptyDraft: Draft = {
   authorId: '',
   category: 'Research Reviews',
   format: 'Paper Review',
+  publicationType: 'review',
   summary: '',
   content: '',
   takeaways: [''],
@@ -85,6 +88,7 @@ const fieldClass =
 export default function WritePage() {
   const router = useRouter();
   const { user } = useSession();
+  const canSelectPublicationType = user?.isEditorInChief === true;
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [tab, setTab] = useState<'editor' | 'preview'>('editor');
   const [hydratedDraft, setHydratedDraft] = useState(false);
@@ -102,6 +106,7 @@ export default function WritePage() {
       setDraft((previous) => ({
         ...previous,
         ...stored,
+        publicationType: stored.publicationType === 'editorial' ? 'editorial' : 'review',
         takeaways: Array.isArray(stored.takeaways) && stored.takeaways.length > 0 ? stored.takeaways : [''],
       }));
       setRestored(true);
@@ -247,6 +252,7 @@ export default function WritePage() {
           status: 'published',
           category: draft.category,
           format: draft.format,
+          ...(canSelectPublicationType ? { publicationType: draft.publicationType } : {}),
           authorId: resolvedAuthorId,
           coverImage:
             draft.coverImage?.trim() ||
@@ -792,14 +798,32 @@ export default function WritePage() {
                 <Save className="h-4 w-4" aria-hidden="true" />
                 <span>{saveStatus}</span>
               </p>
-              <button
-                type="submit"
-                disabled={publishing}
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-6 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-60"
-              >
-                <Send className="h-4 w-4" aria-hidden="true" />
-                <span>{publishing ? 'Publishing…' : 'Publish review'}</span>
-              </button>
+              {canSelectPublicationType ? (
+                <PublishSplitButton
+                  id="write-publication-type"
+                  value={draft.publicationType}
+                  onChange={(next) => update('publicationType', next)}
+                  label={
+                    publishing
+                      ? 'Publishing…'
+                      : draft.publicationType === 'editorial'
+                        ? 'Publish editorial'
+                        : 'Publish review'
+                  }
+                  disabled={publishing}
+                  submitType="submit"
+                  radius="md"
+                />
+              ) : (
+                <button
+                  type="submit"
+                  disabled={publishing}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand px-6 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover disabled:opacity-60"
+                >
+                  <Send className="h-4 w-4" aria-hidden="true" />
+                  <span>{publishing ? 'Publishing…' : 'Publish review'}</span>
+                </button>
+              )}
             </div>
 
             <p className="flex items-start gap-2 border-l-2 border-border-strong pl-4 text-sm leading-relaxed text-ink-secondary">

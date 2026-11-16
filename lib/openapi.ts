@@ -331,7 +331,8 @@ const cmsPostProperties: Record<string, Schema> = {
   title: { type: 'string', minLength: 8, maxLength: 180 }, slug: { type: 'string', maxLength: 96 },
   content: { type: 'string', maxLength: 200000 }, status: { type: 'string', enum: ['draft', 'published'] },
   subtitle: { type: 'string', maxLength: 400 }, summary: { type: 'string', maxLength: 1200 },
-  category: text, format: text, authorId: text, authorName: text, coverImage: { type: ['string', 'null'] },
+  category: text, format: text, publicationType: { type: 'string', enum: ['review', 'editorial'] },
+  authorId: text, authorName: text, coverImage: { type: ['string', 'null'] },
   tags: strings, keyTakeaways: strings, featured: boolean, artifact: { anyOf: [ref('Artifact'), { type: 'null' }] },
 };
 
@@ -339,7 +340,7 @@ const schemas: Record<string, Schema> = {
   Error: object({ error: text, fieldErrors: { type: 'object', additionalProperties: text }, needsConfig: boolean }, ['error']),
   Author: object({ id: text, name: text, avatar: text, bio: text, role: text, domain: text, institution: text, orcid: text, github: text, twitter: text, website: text, scholar: text, joinedDate: text, articleCount: integer, totalReads: text, verifiedVia: text, verifiedIdentifier: text, verifiedTitle: text }, ['id', 'name']),
   Artifact: object({ type: { type: 'string', enum: ['paper', 'github', 'dataset'] }, title: text, url: text, identifier: text, meta: text }, ['type', 'title', 'url', 'identifier', 'meta']),
-  Article: object({ id: text, slug: text, title: text, subtitle: text, category: text, format: text, author: ref('Author'), publishedAt: text, dateISO: text, readTime: text, coverImage: text, featured: boolean, reviewedArtifact: ref('Artifact'), summary: text, content: strings, bodyMarkdown: text, keyTakeaways: strings, tags: strings, likes: integer, commentsCount: integer }, ['id', 'slug', 'title', 'author']),
+  Article: object({ id: text, slug: text, title: text, subtitle: text, category: text, format: text, publicationType: { type: 'string', enum: ['review', 'editorial'] }, author: ref('Author'), publishedAt: text, dateISO: text, readTime: text, coverImage: text, featured: boolean, reviewedArtifact: ref('Artifact'), summary: text, content: strings, bodyMarkdown: text, keyTakeaways: strings, tags: strings, likes: integer, commentsCount: integer }, ['id', 'slug', 'title', 'author']),
   AuthorMetrics: object({ totalArticles: integer, totalLikes: integer, totalComments: integer, domains: strings, reviewedArtifactsCount: integer }, ['totalArticles', 'totalLikes', 'totalComments', 'domains', 'reviewedArtifactsCount']),
   Paper: object({ id: text, slug: text, title: text, subtitle: text, authors: array(object({ name: text, affiliation: text, orcid: text, role: text })), abstract: text, publishedDate: text, year: integer, doi: text, journal: text, volume: text, issue: text, pages: text, topic: text, citationCount: integer, readTime: text, keywords: strings, license: text, pdfFileName: text, dataUrl: text, fullContent: object({ background: text, methodology: text, findings: strings, discussion: text, implications: text, references: strings }) }, ['id', 'slug', 'title']),
   Comment: object({ id: text, postId: text, authorName: text, authorRole: text, avatar: text, timestamp: text, text }, ['id', 'postId', 'authorName', 'avatar', 'timestamp', 'text']),

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
@@ -72,6 +72,12 @@ const studioNav: NavSection[] = [
     ],
   },
 ];
+
+const DashboardUserContext = createContext<DashboardUser | null>(null);
+
+export function useDashboardUser(): DashboardUser | null {
+  return useContext(DashboardUserContext);
+}
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -186,7 +192,9 @@ export default function DashboardShell({ children, configured, user }: Dashboard
                 </p>
               </div>
             )}
-            {children}
+            <DashboardUserContext.Provider value={user}>
+              {children}
+            </DashboardUserContext.Provider>
           </main>
         </div>
       </div>

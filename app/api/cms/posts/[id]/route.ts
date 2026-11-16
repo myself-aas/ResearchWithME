@@ -66,6 +66,15 @@ export async function PATCH(request: Request, props: RouteProps) {
       );
     }
 
+    const existingType = existing.publicationType === 'editorial' ? 'editorial' : 'review';
+    const requestedType = parsed.value.publicationType === 'editorial' ? 'editorial' : 'review';
+    if (requestedType !== existingType && gate.user?.isEditorInChief !== true) {
+      return NextResponse.json(
+        { error: 'Only the Editor-in-Chief can change a post between Review and Editorial.' },
+        { status: 403 },
+      );
+    }
+
     // Same server-derived attribution as on create; a client cannot rename the
     // byline to something the profile does not say.
     const author = await resolvePublishableAuthor(parsed.value.authorId);

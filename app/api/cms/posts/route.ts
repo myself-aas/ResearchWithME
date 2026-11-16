@@ -54,6 +54,13 @@ export async function POST(request: Request) {
     );
   }
 
+  if (parsed.value.publicationType === 'editorial' && gate.user?.isEditorInChief !== true) {
+    return NextResponse.json(
+      { error: 'Only the Editor-in-Chief can publish an Editorial.' },
+      { status: 403 },
+    );
+  }
+
   try {
     // Attribution is server-derived. The byline text comes from the profile, so
     // a request body cannot claim an author name that is not on the profile.

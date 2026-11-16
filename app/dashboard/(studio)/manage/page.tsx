@@ -256,6 +256,11 @@ export default function ManageArticlesPage() {
                       {post.title}
                     </Link>
                     <StatusBadge status={post.status} />
+                    {post.publicationType === 'editorial' && (
+                      <span className="rounded border border-brand/25 bg-brand/5 px-1.5 py-0.5 text-xs font-semibold text-brand">
+                        Editorial
+                      </span>
+                    )}
                     {post.featured && (
                       <span className="rounded border border-brand/25 bg-brand/5 px-1.5 py-0.5 text-xs font-semibold text-brand">
                         Featured

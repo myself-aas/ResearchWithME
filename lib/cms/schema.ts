@@ -1,4 +1,4 @@
-import { CATEGORIES, type ArticleFormat, type BlogCategory } from '@/lib/blog-data';
+import { CATEGORIES, type ArticleFormat, type BlogCategory, type PublicationType } from '@/lib/blog-data';
 import { formatReadingTime, readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured, SUPABASE_URL } from '@/lib/supabase/config';
 import { cleanText, parseTags, safeExternalUrl, slugify } from '@/lib/validation';
@@ -30,6 +30,11 @@ export const ARTICLE_FORMATS: ArticleFormat[] = [
   'Case Study',
 ];
 
+export const PUBLICATION_TYPES: PublicationType[] = ['review', 'editorial'];
+
+export function isPublicationType(value: unknown): value is PublicationType {
+  return value === 'review' || value === 'editorial';
+}
 
 export function isCmsStatus(value: unknown): value is CmsStatus {
   return value === 'draft' || value === 'published';
@@ -164,6 +169,9 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
   const format = ARTICLE_FORMATS.includes(raw.format as ArticleFormat)
     ? (raw.format as ArticleFormat)
     : 'Paper Review';
+  const publicationType: PublicationType = isPublicationType(raw.publicationType)
+    ? raw.publicationType
+    : 'review';
 
   const cover = normalizeCoverImage(raw.coverImage);
   if (!cover.ok) fieldErrors.coverImage = cover.error;
@@ -204,6 +212,7 @@ export function normalizePostInput(input: unknown): PostNormalizationResult {
       summary,
       category,
       format,
+      publicationType,
       authorId,
       authorName,
       coverImage: coverValue,
