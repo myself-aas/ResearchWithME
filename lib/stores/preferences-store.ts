@@ -29,7 +29,7 @@ export interface PreferencesState extends PersistedPreferencesSlice {
   storagePersisted: boolean;
   toggleSavedPost: (id: string) => boolean;
   removeSavedPost: (id: string) => boolean;
-  clearSavedPosts: () => void;
+  clearSavedPosts: () => boolean;
   toggleSavedPaper: (id: string) => boolean;
   setPostLiked: (id: string, liked: boolean) => void;
   subscribeDigest: (email: string, topics: Record<DigestTopicKey, boolean>) => boolean;
@@ -158,6 +158,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         clearSavedPosts() {
           const ok = commitMutation(() => ({ savedPostIds: [] }));
           if (ok) writeLocal('rwm_saved_posts', []);
+          return ok;
         },
 
         toggleSavedPaper(id: string) {

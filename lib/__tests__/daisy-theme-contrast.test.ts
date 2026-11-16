@@ -24,3 +24,19 @@ describe('daisyUI theme contrast', () => {
     });
   }
 });
+
+
+describe('daisyUI and semantic palette alignment', () => {
+  for (const mode of ['light', 'dark']) {
+    it(`${mode} uses the same core colors as the semantic tokens`, () => {
+      const colors = palette(`reme-${mode}`);
+      const tokens = JSON.parse(readFileSync(`tokens/src/semantic-${mode}.json`, 'utf8'));
+      expect(colors['base-100'].toLowerCase()).toBe(tokens.canvas.toLowerCase());
+      expect(colors['base-200'].toLowerCase()).toBe(tokens.surface.toLowerCase());
+      expect(colors['base-300'].toLowerCase()).toBe(tokens['surface-subtle'].toLowerCase());
+      expect(colors['base-content'].toLowerCase()).toBe(tokens['text-primary'].toLowerCase());
+      expect(colors.primary.toLowerCase()).toBe(tokens.action.primary.toLowerCase());
+      expect(colors['primary-content'].toLowerCase()).toBe(tokens.action['on-primary'].toLowerCase());
+    });
+  }
+});

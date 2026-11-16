@@ -57,7 +57,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Name, institution, or domain"
-                className="h-11 w-full rounded-sm border border-line bg-surface pl-9 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
+                className="h-11 w-full rounded-full border border-line bg-surface pl-9 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
               />
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
                     type="button"
                     onClick={() => setIdentifierFilter(filter.value)}
                     aria-pressed={active}
-                    className={`inline-flex min-h-11 items-center gap-1.5 rounded-sm border px-3 py-2 font-sans text-xs font-medium transition-colors ${
+                    className={`inline-flex min-h-11 items-center gap-1.5 rounded-full border px-3 py-2 font-sans text-xs font-medium transition-colors ${
                       active
                         ? 'border-brand bg-brand text-on-primary'
                         : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
@@ -107,7 +107,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
           </p>
           <Link
             href="/"
-            className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-ink px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full border border-brand bg-brand px-6 py-2 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Browse the platform
           </Link>
@@ -126,7 +126,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
               setSearchQuery('');
               setIdentifierFilter('All');
             }}
-            className="mt-6 inline-flex min-h-11 items-center rounded-sm bg-brand px-5 py-2.5 font-sans text-xs font-semibold uppercase tracking-wider text-on-primary transition-colors hover:bg-brand-hover"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-full border border-brand bg-brand px-6 py-2 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             Clear filters
           </button>

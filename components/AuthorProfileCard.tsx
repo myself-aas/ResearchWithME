@@ -168,14 +168,14 @@ export default function AuthorProfileCard({
           <button
             type="button"
             onClick={shareProfile}
-            className="inline-flex min-h-11 items-center gap-2 rounded-sm border border-line bg-canvas px-4 py-2 font-sans text-xs font-medium text-ink transition-colors hover:bg-surface-subtle"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-line bg-surface px-6 py-2 font-sans text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             <Share2 className="h-4 w-4" aria-hidden="true" />
             <span>Share profile</span>
           </button>
           <Link
             href="/write"
-            className="inline-flex min-h-11 items-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-brand bg-brand px-6 py-2 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
           >
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             <span>Writer studio</span>

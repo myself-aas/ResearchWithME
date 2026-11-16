@@ -69,9 +69,11 @@ function formatDate(iso: string | null): string {
 export default async function AccountPage() {
   const user = await getDashboardUser();
   let entitlement: Entitlement = { plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null };
+  let entitlementAvailable = true;
   try {
     if (user) entitlement = await (await getBillingStore()).getEntitlement(user.id);
   } catch (error) {
+    entitlementAvailable = false;
     console.error('Could not read the account entitlement:', error);
   }
 
@@ -129,6 +131,13 @@ export default async function AccountPage() {
           </Link>
         </header>
 
+        {!entitlementAvailable && (
+          <p role="alert" className="mt-8 border-l-2 border-destructive bg-surface px-4 py-3 text-sm text-destructive">
+            We could not load your plan or purchases. Reload this page and check your receipt before buying again.{' '}
+            <Link href="/pricing" className="underline">See product information</Link>.
+          </p>
+        )}
+        {entitlementAvailable && (<>
         <section aria-labelledby="plan-heading" className="card mt-8 border border-line bg-surface p-6">
           <h2 id="plan-heading" className="font-serif text-xl font-bold text-ink">
             Plan
@@ -181,6 +190,8 @@ export default async function AccountPage() {
           )}
         </section>
 
+        </>)}
+
         <section aria-labelledby="api-keys-heading" className="mt-8">
           <h2 id="api-keys-heading" className="font-serif text-xl font-bold text-ink">
             API keys
@@ -207,7 +218,7 @@ export default async function AccountPage() {
           )}
         </section>
 
-        <section aria-labelledby="buy-heading" className="mt-8">
+        {entitlementAvailable && <section aria-labelledby="buy-heading" className="mt-8">
           <h2 id="buy-heading" className="font-serif text-xl font-bold text-ink">
             {hasPurchases ? 'Also available' : 'Available'}
           </h2>
@@ -237,7 +248,7 @@ export default async function AccountPage() {
             </Link>
             .
           </p>
-        </section>
+        </section>}
 
         <LemonSqueezyScript />
       </section>

@@ -9,11 +9,15 @@ export interface CitationSource {
   journal: string;
   doi?: string;
   url?: string;
+  /** Null omits a platform publisher for sources that are not ResearchWithMe publications. */
+  publisher?: string | null;
+  /** Identifies a website review rather than a journal article. */
+  kind?: 'webpage';
 }
 
 function splitName(author: string) {
   const parts = author.replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
-  if (parts.length === 0) return { first: 'Author', last: 'Author' };
+  if (parts.length === 0) return { first: '', last: '' };
   if (parts.length === 1) return { first: parts[0], last: parts[0] };
   return { first: parts.slice(0, -1).join(' '), last: parts[parts.length - 1] };
 }
@@ -31,39 +35,34 @@ function doiUrl(doi: string) {
 
 function bibtexKey(source: CitationSource) {
   const { last } = splitName(source.author);
-  return `${last.toLowerCase().replace(/[^a-z0-9]/g, '')}${source.year.replace(/[^0-9]/g, '') || 'nd'}`;
+  return `${last.toLowerCase().replace(/[^a-z0-9]/g, '') || 'source'}${source.year.replace(/[^0-9]/g, '') || 'nd'}`;
 }
 
 export function buildCitation(format: CitationFormat, source: CitationSource) {
   const { first, last } = splitName(source.author);
   const title = source.title.trim() || 'Untitled';
-  const journal = source.journal.trim() || 'ResearchWithMe';
+  const journal = source.journal.trim();
   const year = source.year.trim() || 'n.d.';
   const doi = cleanDoi(source.doi);
   const link = doiUrl(doi) || source.url?.trim() || '';
 
   switch (format) {
     case 'apa':
-      return `${last}, ${first.charAt(0)}. (${year}). ${title}. ${journal}.${link ? ` ${link}` : ''}`;
+      return `${last ? `${last}, ${first.charAt(0)}. ` : ''}(${year}). ${title}.${journal ? ` ${journal}.` : ''}${link ? ` ${link}` : ''}`;
     case 'mla':
-      return `${last}, ${first}. "${title}." ${journal}, ${year}${link ? `, ${link}` : ''}.`;
+      return `${last ? `${last}, ${first}. ` : ''}"${title}."${journal ? ` ${journal},` : ''} ${year}${link ? `, ${link}` : ''}.`;
     case 'chicago':
-      return `${last}, ${first}. "${title}." ${journal} (${year})${link ? `. ${link}` : ''}.`;
+      return `${last ? `${last}, ${first}. ` : ''}"${title}."${journal ? ` ${journal}` : ''} (${year})${link ? `. ${link}` : ''}.`;
     case 'ieee':
-      return `[1] ${first.charAt(0)}. ${last}, "${title}," ${journal}, ${year}.${doi ? ` doi: ${doi}.` : ''}`;
+      return `[1] ${last ? `${first.charAt(0)}. ${last}, ` : ''}"${title},"${journal ? ` ${journal},` : ''} ${year}.${doi ? ` doi: ${doi}.` : ''}`;
     case 'bibtex':
-      return `@article{${bibtexKey(source)},
-  title = {${title}},
-  author = {${source.author}},
-  journal = {${journal}},
-  year = {${year}},${doi ? `\n  doi = {${doi}},` : ''}${link ? `\n  url = {${link}},` : ''}
-  publisher = {ResearchWithMe Press}
+      return `@${source.kind === 'webpage' ? 'misc' : 'article'}{${bibtexKey(source)},
+  title = {${title}},${source.author.trim() ? `\n  author = {${source.author}},` : ''}${journal ? `\n  journal = {${journal}},` : ''}
+  year = {${year}},${doi ? `\n  doi = {${doi}},` : ''}${link ? `\n  url = {${link}},` : ''}${source.publisher ? `\n  publisher = {${source.publisher}}` : ''}
 }`;
     case 'ris':
-      return `TY  - JOUR
-TI  - ${title}
-AU  - ${source.author}
-JO  - ${journal}
+      return `TY  - ${source.kind === 'webpage' ? 'ELEC' : 'JOUR'}
+TI  - ${title}${source.author.trim() ? `\nAU  - ${source.author}` : ''}${journal ? `\nJO  - ${journal}` : ''}
 PY  - ${year}${doi ? `\nDO  - ${doi}` : ''}${link ? `\nUR  - ${link}` : ''}
 ER  - `;
     default:
@@ -87,7 +86,7 @@ export function shortCitation(source: CitationSource): string {
   const title = source.title.trim() || 'Untitled';
   const year = source.year.trim() || 'n.d.';
   const shortTitle = title.length > 60 ? `${title.slice(0, 57)}…` : title;
-  return `${last}, ${first.charAt(0)}. (${year}). ${shortTitle}.`;
+  return `${last ? `${last}, ${first.charAt(0)}. ` : ''}(${year}). ${shortTitle}.`;
 }
 
 /** Full view: APA (the platform's default full reference). */
@@ -103,11 +102,11 @@ export function cslJson(source: CitationSource): string {
   const link = doiUrl(doi) || source.url?.trim() || '';
   const csl = {
     id: bibtexKey(source),
-    type: 'article-journal',
+    type: source.kind === 'webpage' ? 'webpage' : 'article-journal',
     title: source.title.trim() || 'Untitled',
-    author: [{ family: splitName(source.author).last, given: splitName(source.author).first }],
-    'container-title': source.journal.trim() || 'ResearchWithMe',
-    issued: { 'date-parts': [[Number(source.year.replace(/[^0-9]/g, '')) || 0]] },
+    ...(source.author.trim() ? { author: [{ family: splitName(source.author).last, given: splitName(source.author).first }] } : {}),
+    ...(source.journal.trim() ? { 'container-title': source.journal.trim() } : {}),
+    ...(/^\d{4}$/.test(source.year.trim()) ? { issued: { 'date-parts': [[Number(source.year.trim())]] } } : {}),
     ...(doi ? { DOI: doi } : {}),
     ...(link ? { URL: link } : {}),
   };

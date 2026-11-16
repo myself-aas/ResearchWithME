@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '@/components/primitives';
 import type { BillingProductKey } from '@/lib/billing/catalogue';
 
@@ -44,8 +44,11 @@ export default function CheckoutButton({
 }: CheckoutButtonProps) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
+  const requestPending = useRef(false);
 
   async function start() {
+    if (requestPending.current) return;
+    requestPending.current = true;
     setPending(true);
     setError('');
 
@@ -78,6 +81,7 @@ export default function CheckoutButton({
     } catch {
       setError('The checkout could not be opened. Check your connection and try again.');
     } finally {
+      requestPending.current = false;
       setPending(false);
     }
   }

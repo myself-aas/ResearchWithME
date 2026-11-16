@@ -1,0 +1,95 @@
+[
+  {
+    "html_filename": "Gemini Models.html",
+    "html_sha256": "e4e60a26f9d0071b286c5797a64a237fd9cc36941aa2c11c79b585f737c0c916",
+    "style_blocks": [
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      }
+    ]
+  },
+  {
+    "html_filename": "Google DeepMind.html",
+    "html_sha256": "0904b69d3c4dfaace5b4afbfdf3d55dd67e98b0b118c78df7e36c36989ccefab",
+    "style_blocks": [
+      {
+        "file": "style-c22334a493d0f056.css",
+        "sha256": "c22334a493d0f056f0c3446b03c4eba93a197fcf118336347648074b0fc02712",
+        "bytes": 185
+      }
+    ]
+  },
+  {
+    "html_filename": "Google Labs.html",
+    "html_sha256": "c2bcf642d4f461d09ce3921c1539a232be699c80a6852ca9228b928d9f001242",
+    "style_blocks": [
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      }
+    ]
+  },
+  {
+    "html_filename": "Google Research.html",
+    "html_sha256": "2e78b504f6a4bec7ad96bf58ae26443387bfe4d828cf1aab85983781f692f733",
+    "style_blocks": [
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      }
+    ]
+  },
+  {
+    "html_filename": "Innovation & AI.html",
+    "html_sha256": "b638987b9e498fb3d70fb2b24c2bbedde6c95e504093f7ef1635fee28396909e",
+    "style_blocks": [
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      }
+    ]
+  },
+  {
+    "html_filename": "News from Google _ Google Product and Technology News and Stories.html",
+    "html_sha256": "4b5283c318b5100d9f4aadee47f0e7377c2ebdd499028d18c8169b0d0e888d18",
+    "style_blocks": [
+      {
+        "file": "style-5ad24d7e1e53812b.css",
+        "sha256": "5ad24d7e1e53812b45d8f2aef7a1572a294b88ec96d6f76fc05fb0b98bb09d30",
+        "bytes": 185589
+      }
+    ]
+  },
+  {
+    "html_filename": "Newsletter.html",
+    "html_sha256": "24a618b22fe0b58cfd3268fa8bb836951342fb2ac5eec95da1c75f1c79b2a81c",
+    "style_blocks": [
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      },
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      }
+    ]
+  },
+  {
+    "html_filename": "The latest product and company news from Google.html",
+    "html_sha256": "4f4835b1a9378df39ac7a4f497c400eede9391bc1083f7f547322da768fb779d",
+    "style_blocks": [
+      {
+        "file": "style-f1d38ff5891a0589.css",
+        "sha256": "f1d38ff5891a05891503e6a7f8b67b8ea6d6550c0f0da90c10dd7e9d16eb2e1a",
+        "bytes": 233765
+      }
+    ]
+  }
+]

@@ -23,7 +23,7 @@ export default function BlogFooter() {
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
-            <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="ResearchWithMe home">
+            <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="reme. ResearchWithMe home">
               <BrandLogo size="md" showText={true} />
             </Link>
 

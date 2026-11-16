@@ -17,6 +17,21 @@ describe('ArticleSmoothScroll & ReadingProgressDock', () => {
     expect(document.activeElement).toBe(target);
   });
 
+  it('renders inline reading controls without fixed positioning', () => {
+    const html = renderToStaticMarkup(createElement(MemoryRouter, null, createElement(ReadingProgressDock, {
+      inline: true, itemId: 'post-1', itemKind: 'post', readTime: '9 min read',
+      citationSource: { title: 'A review', author: 'A researcher', year: '2026', journal: 'ResearchWithMe' },
+      citeHref: '/cite?article=post-1', discussionAnchor: '#discussion',
+    })));
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    const controls = container.querySelector('aside[aria-label="Reading controls"]')!;
+    expect(controls.classList.contains('fixed')).toBe(false);
+    expect(controls.querySelector('a[href="#discussion"]')).not.toBeNull();
+    expect(controls.querySelector('[aria-label="Scroll to top of manuscript"]')).not.toBeNull();
+    expect(controls.querySelector('[aria-label="Save to reading list"]')).not.toBeNull();
+  });
+
   it('renders print-hidden floating progress dock with tabular mono progress, cite popover trigger, and bookmark toggle', () => {
     const html = renderToStaticMarkup(
       createElement(

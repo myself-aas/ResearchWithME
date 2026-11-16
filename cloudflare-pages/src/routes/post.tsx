@@ -7,7 +7,6 @@ import ArticleInteractions from '@/components/ArticleInteractions';
 import DeferredDiscussion from '@/components/reader/DeferredDiscussion';
 import ReadingProgress from '@/components/ReadingProgress';
 import MarkdownBody from '@/components/MarkdownBody';
-import VideoEmbed from '@/components/VideoEmbed';
 import ArticleSmoothScroll from '@/components/reader/ArticleSmoothScroll';
 import ReadingProgressDock from '@/components/reader/ReadingProgressDock';
 import InlineCitationPopover from '@/components/reader/InlineCitationPopover';
@@ -70,7 +69,7 @@ export default function PostRoute() {
       <ArticleSmoothScroll />
       <BlogHeader />
 
-      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 sm:pt-10 lg:px-8">
+      <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-5 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-10">
         <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
@@ -97,9 +96,9 @@ export default function PostRoute() {
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:gap-12">
           <article aria-labelledby="article-title" className="min-w-0">
-            <header className="border-b border-line pb-8">
-              <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs text-ink-secondary">
-                <span className="font-semibold text-brand">{article.category}</span>
+            <header className="pb-2">
+              <p className="flex flex-wrap items-center gap-x-2 gap-y-2 font-sans text-xs text-ink-secondary">
+                <span className="rounded-full bg-selection px-3 py-1.5 font-semibold text-brand">{article.category}</span>
                 <span aria-hidden="true">·</span>
                 <span>{article.format}</span>
                 <span aria-hidden="true">·</span>
@@ -108,11 +107,11 @@ export default function PostRoute() {
                 <span>{article.readTime}</span>
               </p>
 
-              <h1 id="article-title" className="mt-3 max-w-4xl font-serif text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
+              <h1 id="article-title" className="mt-5 max-w-4xl break-words font-sans text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-[3.5rem] lg:leading-[1.14]">
                 {article.title}
               </h1>
 
-              <p className="mt-4 reading-column break-words font-serif text-xl leading-relaxed text-ink-secondary">
+              <p className="mt-4 reading-column break-words font-sans text-lg leading-relaxed text-ink-secondary">
                 {article.subtitle}
               </p>
 
@@ -125,7 +124,7 @@ export default function PostRoute() {
                     >
                       <span
                         aria-hidden="true"
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface font-sans text-xs font-semibold text-ink"
                       >
                         {article.author.avatar}
                       </span>
@@ -138,7 +137,7 @@ export default function PostRoute() {
                     <div className="flex min-w-0 items-center gap-3 font-sans text-sm">
                       <span
                         aria-hidden="true"
-                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-sm border border-line bg-surface font-mono text-xs font-semibold text-ink"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface font-sans text-xs font-semibold text-ink"
                       >
                         {article.author.avatar}
                       </span>
@@ -186,29 +185,15 @@ export default function PostRoute() {
                 )}
               </div>
               <figcaption className="mt-2 font-mono text-xs text-ink-secondary">
-                Editorial figure · Primary artifacts are linked and citable below.
+                Editorial figure{article.reviewedArtifact ? ' · The reviewed artifact is linked below.' : ''}
               </figcaption>
             </figure>
 
-            <section aria-labelledby="explainer-video-heading" className="mt-8 reading-column">
-              <div className="mb-3 flex items-center gap-2">
-                <span id="explainer-video-heading" className="inline-flex items-center rounded-sm border border-brand/30 bg-selection/40 px-2.5 py-1 font-mono text-xs font-medium text-brand">
-                  Visual explainer
-                </span>
-              </div>
-              <VideoEmbed
-                src={`/videos/explainer-${article.slug}.mp4`}
-                poster={coverPath}
-                captionsSrc={`/videos/captions/${article.slug}.vtt`}
-                label={`Animated explainer for: ${article.title}`}
-              />
-            </section>
-
-            <section aria-labelledby="takeaways-heading" className="mt-10 reading-column border-y border-line py-6">
+            <section aria-labelledby="takeaways-heading" className="mt-10 reading-column rounded-2xl border border-line bg-surface p-5 sm:p-6">
               <h2 id="takeaways-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Key takeaways
               </h2>
-              <ul className="mt-3 space-y-2.5">
+              <ul className="mt-4 space-y-3">
                 {article.keyTakeaways.map((takeaway) => (
                   <li key={takeaway} className="flex gap-3 font-serif text-base leading-relaxed text-ink">
                     <span aria-hidden="true" className="font-mono text-brand">—</span>
@@ -242,16 +227,15 @@ export default function PostRoute() {
             {article.reviewedArtifact && (
               <section
                 aria-labelledby="artifact-heading"
-                className="mt-10 reading-column rounded-sm border border-line bg-surface p-5"
+                className="mt-10 reading-column rounded-2xl border border-line bg-surface p-5"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 id="artifact-heading" className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                     Artifact under review
                   </h2>
                   <InlineCitationPopover
-                    label="[1]"
-                    source={citationMap['1']}
-                    citeHref={citeHref}
+                    label="Cite artifact"
+                    source={citationMap.artifact}
                   />
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-ink-secondary">
@@ -281,7 +265,7 @@ export default function PostRoute() {
                 <Link
                   key={tag}
                   to={`/?${new URLSearchParams({ search: tag }).toString()}`}
-                  className="rounded-sm border border-line bg-surface px-2.5 py-1 font-mono text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
+                  className="rounded-full border border-line bg-surface px-3 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
                 >
                   #{tag}
                 </Link>
@@ -292,21 +276,31 @@ export default function PostRoute() {
               <AuthorProfileCard author={article.author} compact />
             </div>
 
+            <ReadingProgressDock
+              inline
+              itemId={article.id}
+              itemKind="post"
+              readTime={article.readTime}
+              citationSource={citationMap.rwm}
+              citeHref={citeHref}
+              discussionAnchor="#discussion"
+            />
+
             <div className="mt-10 reading-column">
               <DeferredDiscussion postId={article.id} commentCount={article.commentsCount} />
             </div>
 
             {related.length > 0 && (
-              <section aria-labelledby="related-heading" className="mt-12 reading-column border-t border-line pt-8">
+              <section aria-labelledby="related-heading" className="mt-12 reading-column pt-2">
                 <h2 id="related-heading" className="font-serif text-2xl font-bold text-ink">
                   Related reviews
                 </h2>
-                <ul className="mt-4 divide-y divide-line border-y border-line">
+                <ul className="mt-4 space-y-3">
                   {related.map((item) => (
                     <li key={item.id}>
                       <Link
                         to={`/post/${item.slug}`}
-                        className="group flex flex-col gap-1 py-4 hover:text-brand"
+                        className="group flex flex-col gap-2 rounded-2xl border border-line bg-surface p-5 transition-colors hover:bg-surface-subtle hover:text-brand"
                       >
                         <span className="font-mono text-xs text-ink-secondary">
                           {item.category} · {item.readTime}
@@ -327,9 +321,9 @@ export default function PostRoute() {
 
           <aside
             aria-label="Article tools"
-            className="h-fit space-y-6 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0"
+            className="h-fit space-y-4 border-t border-line pt-8 lg:sticky lg:top-24 lg:border-t-0 lg:pt-0"
           >
-            <div className="rounded-sm border border-line bg-surface p-5">
+            <div className="rounded-2xl border border-line bg-surface p-5">
               <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Cite this review
               </h2>
@@ -345,14 +339,14 @@ export default function PostRoute() {
               </div>
               <Link
                 to={citeHref}
-                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-sm bg-ink px-4 py-2 font-sans text-xs font-semibold uppercase tracking-wider text-canvas transition-opacity hover:opacity-90"
+                className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-action-primary px-6 py-2 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
               >
                 <Quote className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>Open citation builder</span>
               </Link>
             </div>
 
-            <div className="rounded-sm border border-line bg-surface p-5">
+            <div className="rounded-2xl border border-line bg-surface p-5">
               <h2 className="font-mono text-xs font-semibold uppercase tracking-wider text-ink">
                 Archival Record
               </h2>
@@ -388,27 +382,22 @@ export default function PostRoute() {
               </dl>
             </div>
 
-            <div className="rounded-sm border border-line bg-surface p-5 font-sans text-xs leading-relaxed text-ink-secondary">
+            <div className="rounded-2xl border border-line bg-surface p-5 font-sans text-xs leading-relaxed text-ink-secondary">
               <p className="flex items-center gap-2 font-mono uppercase tracking-wider text-ink">
                 <BookOpen className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
                 <span>Verification note</span>
               </p>
               <p className="mt-2">
-                Verify primary equations, benchmarks, and commits against the linked upstream artifact when citing in formal manuscripts.
+                {article.reviewedArtifact
+                  ? 'Verify primary equations, benchmarks, and commits against the linked upstream artifact when citing in formal manuscripts.'
+                  : 'Verify claims against their primary sources when citing in formal manuscripts.'}
               </p>
             </div>
           </aside>
         </div>
       </main>
 
-      <ReadingProgressDock
-        itemId={article.id}
-        itemKind="post"
-        readTime={article.readTime}
-        citationSource={citationMap.rwm}
-        citeHref={citeHref}
-        discussionAnchor="#discussion"
-      />
+
 
       <BlogFooter />
     </div>

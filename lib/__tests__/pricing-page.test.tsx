@@ -77,6 +77,23 @@ describe('/pricing', () => {
     expect(html).not.toContain('$150');
   });
 
+  it('publishes each catalogue product with its own structured price', async () => {
+    const html = await render();
+    const json = html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)?.[1];
+    expect(json).toBeDefined();
+    const offers = JSON.parse(json!).itemListElement as Array<{ name: string; price: string; priceCurrency: string }>;
+    for (const product of BILLING_PRODUCTS) {
+      const offer = offers.find((item) => item.name === product.name);
+      expect(Number(offer?.price)).toBe(Number(product.priceLabel.slice(1)));
+      expect(offer?.priceCurrency).toBe('USD');
+    }
+  });
+
+  it('introduces both products without claiming there is only one', async () => {
+    const html = await render();
+    expect(html).not.toContain('One thing goes further.');
+  });
+
   it('lists the table program at its price, and sells it only once its own variant is set', async () => {
     const off = await render();
     expect(off).toContain('Statistical Table Generator');
@@ -139,6 +156,19 @@ describe('/pricing', () => {
     const html = await render();
     expect(html).not.toContain('Sign in to buy');
     expect(html.match(/<button/g)?.length ?? 0).toBe(1);
+  });
+
+  it('does not expose checkout API credentials or variant IDs in rendered markup', async () => {
+    vi.stubEnv('LEMONSQUEEZY_API_KEY', 'private-key-never-render');
+    vi.stubEnv('LEMONSQUEEZY_STORE_ID', 'private-store-never-render');
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', 'private-variant-one-never-render');
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_STAT_TABLES', 'private-variant-two-never-render');
+    getDashboardUser.mockResolvedValueOnce({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
+    const html = await render();
+    expect(html).not.toContain('private-key-never-render');
+    expect(html).not.toContain('private-store-never-render');
+    expect(html).not.toContain('private-variant-one-never-render');
+    expect(html).not.toContain('private-variant-two-never-render');
   });
 
   it('is in the sitemap with a stable priority', async () => {

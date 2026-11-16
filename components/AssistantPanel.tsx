@@ -48,8 +48,10 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
   const [citations, setCitations] = useState<Citation[]>([]);
   const [articles, setArticles] = useState<BlogPost[]>(initialArticles ?? INITIAL_BLOG_POSTS);
   const [error, setError] = useState<string | null>(null);
+  const [copyError, setCopyError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const answerRef = useRef<HTMLDivElement>(null);
+  const requestPending = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -73,10 +75,13 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
 
   async function runQuery(inquiry: string) {
     const trimmed = inquiry.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || requestPending.current) return;
 
+    requestPending.current = true;
     setLoading(true);
     setError(null);
+    setCopyError(null);
+    setCopied(false);
     setAnswer(null);
     setCitations([]);
 
@@ -101,13 +106,14 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
       }
 
       const data: { answer?: string; citations?: Citation[] } = await res.json();
-      if (!data.answer) throw new Error('The assistant returned an empty answer. Try a narrower question.');
+      if (typeof data.answer !== 'string' || !data.answer.trim()) throw new Error('The assistant returned an empty answer. Try a narrower question.');
       setAnswer(data.answer);
       setCitations(Array.isArray(data.citations) ? data.citations : []);
       window.setTimeout(() => answerRef.current?.focus(), 50);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'The assistant could not complete this request.');
     } finally {
+      requestPending.current = false;
       setLoading(false);
     }
   }
@@ -116,10 +122,11 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
     if (!answer) return;
     try {
       await navigator.clipboard.writeText(answer);
+      setCopyError(null);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
-      setError('Clipboard access was blocked. Select the answer text and copy it manually.');
+      setCopyError('Clipboard access was blocked. Select the answer text and copy it manually.');
     }
   }
 
@@ -298,6 +305,9 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
                 </button>
               </div>
 
+              {copyError && (
+                <p role="alert" className="px-5 pt-4 text-sm text-destructive">{copyError}</p>
+              )}
               <div className="whitespace-pre-line px-5 py-5 text-base leading-relaxed text-ink">{answer}</div>
 
               {citations.length > 0 && (

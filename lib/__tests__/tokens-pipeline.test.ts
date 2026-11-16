@@ -78,22 +78,22 @@ describe('reme token pipeline (tokens/generated)', () => {
     expect(css).toContain('--color-stone-50: var(--reme-color-neutral-50)');
   });
 
-  it('emits exact Archival Paper (light) and Obsidian (dark) palette tokens', () => {
-    expect(tokens.semanticLight.canvas).toBe('#FAF9F6');
-    expect(tokens.semanticLight.surface).toBe('#F3F1EC');
-    expect(tokens.semanticLight['text-primary']).toBe('#121214');
-    expect(tokens.semanticLight['text-secondary']).toBe('#5C5C63');
-    expect(tokens.semanticLight['border-subtle']).toBe('rgba(18, 18, 20, 0.10)');
-    expect(tokens.semanticLight.action.primary).toBe('#1D4ED8');
+  it('emits exact editorial light and dark palette tokens', () => {
+    expect(tokens.semanticLight.canvas).toBe('#F8F9FA');
+    expect(tokens.semanticLight.surface).toBe('#FFFFFF');
+    expect(tokens.semanticLight['text-primary']).toBe('#202124');
+    expect(tokens.semanticLight['text-secondary']).toBe('#5F6368');
+    expect(tokens.semanticLight['border-subtle']).toBe('#DADCE0');
+    expect(tokens.semanticLight.action.primary).toBe('#005BBF');
     expect(tokens.semanticLight.action['on-primary']).toBe('#FFFFFF');
 
-    expect(tokens.semanticDark.canvas).toBe('#0C0D10');
-    expect(tokens.semanticDark.surface).toBe('#14161B');
-    expect(tokens.semanticDark['text-primary']).toBe('#F2F2F5');
-    expect(tokens.semanticDark['text-secondary']).toBe('#9496A1');
-    expect(tokens.semanticDark['border-subtle']).toBe('rgba(255, 255, 255, 0.10)');
-    expect(tokens.semanticDark.action.primary).toBe('#60A5FA');
-    expect(tokens.semanticDark.action['on-primary']).toBe('#0C0D10');
+    expect(tokens.semanticDark.canvas).toBe('#0A0D14');
+    expect(tokens.semanticDark.surface).toBe('#131823');
+    expect(tokens.semanticDark['text-primary']).toBe('#F8F9FA');
+    expect(tokens.semanticDark['text-secondary']).toBe('#AEB4BE');
+    expect(tokens.semanticDark['border-subtle']).toBe('#414754');
+    expect(tokens.semanticDark.action.primary).toBe('#ADC7FF');
+    expect(tokens.semanticDark.action['on-primary']).toBe('#002E68');
   });
 
   it('computes contrast for rgba() hairline tokens composited over canvas and enforces 4.5:1 on action.on-primary', () => {
@@ -156,7 +156,7 @@ describe('component CSS semantic aliases', () => {
     const css = readFileSync(join(process.cwd(), 'tokens/generated/tokens.css'), 'utf8');
     expect(css).toContain('--reme-component-source-card-background: var(--reme-surface)');
     expect(css).toContain('--reme-component-button-primary-radius: var(--reme-radius-md)');
-    expect(tokens.component.sourceCard.background).toBe('#F3F1EC');
+    expect(tokens.component.sourceCard.background).toBe('#FFFFFF');
     expect(tokens.component.button.primary.radius).toBe('0.5rem');
   });
 

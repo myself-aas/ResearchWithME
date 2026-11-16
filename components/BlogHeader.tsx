@@ -8,8 +8,6 @@ import { AnimatePresence, LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import {
   Bookmark,
-  Home,
-  Menu,
   BookOpen,
   CheckCircle2,
   LogIn,
@@ -136,7 +134,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-            aria-label="ResearchWithMe home"
+            aria-label="reme. ResearchWithMe home"
           >
             <BrandLogo size="header" showText={true} />
           </Link>
@@ -178,7 +176,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               aria-label="Search articles and writers (⌘K)"
             >
-              <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <Search className="h-5 w-5 shrink-0" aria-hidden="true" />
             </Pressable>
 
             <Link
@@ -410,22 +408,6 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         />
       )}
     </Header>
-    {!pathname.startsWith('/post/') && !pathname.startsWith('/write') && !pathname.startsWith('/dashboard') && (
-      <nav aria-label="Mobile shortcuts" data-mobile-dock className="dock dock-sm z-40 border-t border-base-300 bg-base-100 text-base-content lg:hidden">
-        <Link href="/" className={pathname === '/' ? 'dock-active' : ''} aria-current={pathname === '/' ? 'page' : undefined}>
-          <Home aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Home</span>
-        </Link>
-        <button type="button" onClick={openPalette} aria-label="Search articles and writers">
-          <Search aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Search</span>
-        </button>
-        <Link href="/bookmarks" className={pathname === '/bookmarks' ? 'dock-active' : ''} aria-current={pathname === '/bookmarks' ? 'page' : undefined}>
-          <Bookmark aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Saved</span>
-        </Link>
-        <button type="button" aria-expanded={menuOpen} aria-controls={menuId} onClick={() => { setMenuOpen(true); window.scrollTo({ top: 0, behavior: 'auto' }); menuButtonRef.current?.focus(); }}>
-          <Menu aria-hidden="true" className="h-5 w-5" /><span className="dock-label">Menu</span>
-        </button>
-      </nav>
-    )}
     </>
   );
 }

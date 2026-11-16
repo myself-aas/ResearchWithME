@@ -31,6 +31,16 @@ describe('citation views (§7)', () => {
     expect(fullCitation(source)).toContain('https://doi.org/10.1000/xyz123');
   });
 
+  it('does not invent journal metadata or a year in a machine-readable website citation', () => {
+    const website: CitationSource = { title: 'A review', author: 'Ada Lovelace', year: '', journal: '', url: 'https://example.com/review', kind: 'webpage' };
+    const csl = JSON.parse(cslJson(website));
+    expect(csl.type).toBe('webpage');
+    expect(csl['container-title']).toBeUndefined();
+    expect(csl.issued).toBeUndefined();
+    expect(machineCitation('bibtex', website)).toContain('@misc{');
+    expect(machineCitation('ris', website)).toContain('TY  - ELEC');
+  });
+
   it('machine views: BibTeX, RIS, CSL-JSON', () => {
     expect(machineCitation('bibtex', source)).toContain('@article{lovelace2026');
     expect(machineCitation('ris', source)).toContain('TY  - JOUR');

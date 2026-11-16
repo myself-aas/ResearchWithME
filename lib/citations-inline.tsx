@@ -8,22 +8,23 @@ const CITATION_TOKEN_PATTERN =
 
 function extractYear(publishedAt: string): string {
   const match = publishedAt.match(/\b(19|20)\d{2}\b/);
-  return match ? match[0] : '2026';
+  return match ? match[0] : '';
 }
 
 export function buildArticleCitationMap(
   article: Pick<
     BlogPost,
-    'id' | 'slug' | 'title' | 'author' | 'publishedAt' | 'reviewedArtifact'
+    'id' | 'slug' | 'title' | 'author' | 'publishedAt' | 'dateISO' | 'reviewedArtifact'
   >,
 ): Record<string, CitationSource> {
-  const year = extractYear(article.publishedAt);
+  const year = extractYear(article.dateISO || article.publishedAt);
   const canonicalPath = `/post/${article.slug}`;
   const selfSource: CitationSource = {
     title: article.title,
     author: article.author.name,
     year,
-    journal: 'ResearchWithMe',
+    journal: '',
+    kind: 'webpage',
     url: `https://researchwith.me${canonicalPath}`,
   };
 
@@ -35,17 +36,18 @@ export function buildArticleCitationMap(
     const artifact = article.reviewedArtifact;
     const artifactSource: CitationSource = {
       title: artifact.title,
-      author: article.author.name,
-      year,
-      journal: artifact.meta || 'Primary Artifact',
-      doi: artifact.identifier,
+      author: '',
+      year: '',
+      journal: '',
+      ...(artifact.type !== 'paper' ? { kind: 'webpage' as const } : {}),
+      ...(/^10\.\d{4,9}\/\S+$/i.test(artifact.identifier) ? { doi: artifact.identifier } : {}),
       url: artifact.url,
     };
-    map['1'] = artifactSource;
-    map[artifact.identifier] = artifactSource;
-    map[artifact.identifier.toLowerCase()] = artifactSource;
-  } else {
-    map['1'] = selfSource;
+    map.artifact = artifactSource;
+    if (artifact.identifier) {
+      map[artifact.identifier] = artifactSource;
+      map[artifact.identifier.toLowerCase()] = artifactSource;
+    }
   }
 
   return map;
