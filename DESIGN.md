@@ -259,3 +259,24 @@ Gradient text, decorative glass or blur, nested cards, a coloured
 `border-left`/`border-right` above 1px, hard offset shadows, monospace as a
 "technical" costume, unicode glyphs standing in for an icon system, or a kicker
 above a heading.
+
+## Literals that are allowed (2026-11-16)
+
+Two files cannot resolve CSS variables and therefore write palette values
+literally. Both are deliberate, and both are listed here so the detector has a
+record of them rather than a silent exception:
+
+- **`public/404.html`** — a static-host fallback. It renders with no stylesheet
+  at all, so it carries `canvas` / `text-primary` / `action.primary` inline. It
+  has no dark theme; a 404 document is one page.
+- **`lib/og/brand-image.tsx` and `app/opengraph-image.tsx`** — social cards are
+  rasterised by `next/og` in a bare browser context. These do **not** hardcode
+  hex any more: they import `semanticLight` from the generated token module, so
+  they track the design system without a rebuild-by-hand step. A card is one
+  image, so it pins the light set by design.
+- **Brand icons** (`favicon.svg`, `icon.svg`, `*.png`, `favicon.ico`) — see
+  "Brand mark ink" above.
+
+Everything else resolves through a token. The guard is
+`lib/__tests__/design-token-usage.test.ts`; the detector rule is
+`design-system-color`.

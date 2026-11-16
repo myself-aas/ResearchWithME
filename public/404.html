@@ -4,9 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>404 — Page not found | ResearchWithMe</title>
+    <!--
+      Static-host fallback only. Next serves app/not-found.tsx in the app runtime;
+      this file exists for hosts that answer with a plain 404 document. It has no
+      stylesheet to draw from, so the palette is written literally here. Keep it
+      equal to DESIGN.md: canvas #F8F9FA, text-primary #202124, primary #005BBF.
+    -->
     <style>
-      body { font-family: system-ui, sans-serif; margin: 4rem auto; max-width: 40rem; line-height: 1.5; color: #161c1a; background: #f8f7f3; }
-      a { color: #4f46e5; }
+      body { font-family: system-ui, sans-serif; margin: 4rem auto; max-width: 40rem; padding: 0 1.5rem; line-height: 1.5; color: #202124; background: #F8F9FA; }
+      a { color: #005BBF; }
     </style>
   </head>
   <body>

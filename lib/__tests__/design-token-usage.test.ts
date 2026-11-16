@@ -14,6 +14,12 @@ import { join, relative } from 'node:path';
  *     left light islands in dark mode and failed WCAG contrast on 9 routes.
  *
  * Email templates are excluded: mail clients have no CSS variables.
+ *
+ * A third context has no CSS at all: code that reads the generated token module
+ * (`@/tokens/generated/tokens`) by key, e.g. `semanticLight['text-primary']`.
+ * That is a property lookup, not a class, so a computed key is skipped below.
+ * An array of class strings (`['text-ink', …]`) is still scanned — the check
+ * requires an identifier, `)` or `]` immediately before the bracket.
  */
 
 const root = process.cwd();
@@ -72,6 +78,12 @@ function colourUtilities() {
     const rel = relative(root, file).replace(/\\/g, '/');
     readFileSync(file, 'utf8').split('\n').forEach((line, i) => {
       for (const m of line.matchAll(literal)) {
+        // `token['text-primary']` indexes an object by token name; not a class.
+        const start = m.index ?? 0;
+        const isComputedKey =
+          /[A-Za-z0-9_$\])]\s*\[$/.test(line.slice(0, start)) &&
+          /^\s*\]/.test(line.slice(start + m[0].length));
+        if (isComputedKey) continue;
         for (const token of m[2].split(/\s+/)) {
           // Strip quotes/punctuation left by nested template strings; skip prose and CSS (`stroke-width:2px;`).
           const cls = token.replace(/^['"`({]+|['"`)},;]+$/g, '');
