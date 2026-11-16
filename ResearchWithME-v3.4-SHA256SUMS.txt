@@ -1,0 +1,4 @@
+479b5a5132718c942014d6437b1101fa7c891179ed02d7580187a977db344f88  ResearchWithME-v3.4-schema.prisma
+816dc23453c5056968b948c0f8cf0a371de5793c7bb796ee058af47bfe7fcd08  ResearchWithME-v3.4-migration.sql
+1d2edc5736032f0fcb53441453b5af0f7c8adf10650bd305cbbfe8f3541676ca  ResearchWithME-master-refactor-development-plan-v3.4.md
+2facfd8aa62ee6ba0c789d7dfbd22ee00b308f63d83e48267510c08fb80814db  ResearchWithME-v3.4-acceptance-criteria.md
