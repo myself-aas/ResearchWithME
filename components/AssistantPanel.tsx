@@ -51,6 +51,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
   const [copyError, setCopyError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const answerRef = useRef<HTMLDivElement>(null);
+  const requestPending = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -74,8 +75,9 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
 
   async function runQuery(inquiry: string) {
     const trimmed = inquiry.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || requestPending.current) return;
 
+    requestPending.current = true;
     setLoading(true);
     setError(null);
     setCopyError(null);
@@ -104,13 +106,14 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
       }
 
       const data: { answer?: string; citations?: Citation[] } = await res.json();
-      if (!data.answer) throw new Error('The assistant returned an empty answer. Try a narrower question.');
+      if (typeof data.answer !== 'string' || !data.answer.trim()) throw new Error('The assistant returned an empty answer. Try a narrower question.');
       setAnswer(data.answer);
       setCitations(Array.isArray(data.citations) ? data.citations : []);
       window.setTimeout(() => answerRef.current?.focus(), 50);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'The assistant could not complete this request.');
     } finally {
+      requestPending.current = false;
       setLoading(false);
     }
   }

@@ -294,6 +294,24 @@ describe.skipIf(!enabled)('Pages reader browser with isolated server fixture', (
     } finally { await page.close(); }
   });
 
+  it('reports a blocked removal of the last saved item and restores it after reload', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/post/editorial-fixture`);
+      await page.locator('article button').filter({ hasText: /^Save$/ }).click();
+      await page.locator('article button').filter({ hasText: /^Saved$/ }).waitFor();
+      await page.goto(`${origin}/bookmarks`);
+      await page.getByRole('button', { name: 'Remove', exact: true }).waitFor();
+      await page.evaluate(() => { Storage.prototype.setItem = () => { throw new DOMException('Blocked', 'QuotaExceededError'); }; });
+      await page.getByRole('button', { name: 'Remove', exact: true }).click();
+      await page.getByRole('heading', { name: 'Nothing saved yet' }).waitFor();
+      expect(await page.getByRole('alert').innerText()).toContain('will not persist');
+      expect(await page.getByText('Removed from your reading list.').count()).toBe(0);
+      await page.reload();
+      await page.getByRole('link', { name: 'Read', exact: true }).waitFor();
+    } finally { await page.close(); }
+  });
+
   it('operates reader actions with keyboard against the fixture article', async () => {
     const page = await fixturePage(390, 'light');
     let patchUrl = '';

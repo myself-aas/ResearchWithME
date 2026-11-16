@@ -158,6 +158,19 @@ describe('/pricing', () => {
     expect(html.match(/<button/g)?.length ?? 0).toBe(1);
   });
 
+  it('does not expose checkout API credentials or variant IDs in rendered markup', async () => {
+    vi.stubEnv('LEMONSQUEEZY_API_KEY', 'private-key-never-render');
+    vi.stubEnv('LEMONSQUEEZY_STORE_ID', 'private-store-never-render');
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', 'private-variant-one-never-render');
+    vi.stubEnv('LEMONSQUEEZY_VARIANT_STAT_TABLES', 'private-variant-two-never-render');
+    getDashboardUser.mockResolvedValueOnce({ id: 'user-1', email: 'r@example.org', name: 'R', isEditor: false });
+    const html = await render();
+    expect(html).not.toContain('private-key-never-render');
+    expect(html).not.toContain('private-store-never-render');
+    expect(html).not.toContain('private-variant-one-never-render');
+    expect(html).not.toContain('private-variant-two-never-render');
+  });
+
   it('is in the sitemap with a stable priority', async () => {
     const entries = await sitemap();
     const pricing = entries.find((entry) => new URL(entry.url).pathname === '/pricing');
