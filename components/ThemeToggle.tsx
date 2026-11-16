@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import {
   applyDocumentTheme,
   normalizeThemePreference,
@@ -13,6 +13,7 @@ export { resolveEffectiveTheme, THEME_STORAGE_KEY, type ThemePreference } from '
 const THEME_CHANGE_EVENT = 'rwm-theme-change';
 
 export default function ThemeToggle() {
+  const groupName = useId();
   const [preference, setPreference] = useState<ThemePreference>('system');
   const [effective, setEffective] = useState<'light' | 'dark'>('light');
   const [ready, setReady] = useState(false);
@@ -71,8 +72,8 @@ export default function ThemeToggle() {
       <p className="mt-1 text-sm text-ink-secondary">Choose a theme or follow your device settings. Currently {effective}.</p>
       <div className="mt-4 flex flex-wrap gap-2">
         {choices.map((choice) => (
-          <label key={choice.value} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-md border px-4 py-2 text-sm transition-colors ${preference === choice.value ? 'border-brand bg-surface-subtle text-ink' : 'border-line text-ink-secondary hover:bg-surface-subtle hover:text-ink'} focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand`}>
-            <input type="radio" name="theme" value={choice.value} checked={preference === choice.value} onChange={(event) => choose(event.target.value)} className="h-4 w-4 shrink-0 accent-brand" />
+          <label key={choice.value} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${preference === choice.value ? 'border-brand bg-surface-subtle text-ink' : 'border-line text-ink-secondary hover:bg-surface-subtle hover:text-ink'} focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand`}>
+            <input type="radio" name={groupName} value={choice.value} checked={preference === choice.value} onChange={(event) => choose(event.target.value)} className="h-4 w-4 shrink-0 accent-brand" />
             {choice.path && <svg aria-hidden="true" viewBox="0 -960 960 960" className="h-5 w-5 fill-current"><path d={choice.path} /></svg>}
             {choice.label}
           </label>

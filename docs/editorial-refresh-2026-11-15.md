@@ -29,3 +29,9 @@ External-paper citations no longer inherit internal article details or the Resea
 
 ### Reading list follow-up
 Reading-list actions use consistent pill treatments. Confirmation feedback remains visible in the empty state, and blocked storage writes are reported instead of falsely claiming persistent deletion.
+
+### Settings follow-up
+Theme choices use consistent pill targets while retaining native radio keyboard interaction. Multiple selector instances use separate radio groups and stay synchronized with the existing theme preference mechanism.
+
+### Audit follow-up
+The shared brand links now include their visible label in their accessible names, and pricing metadata and introduction match the two-product catalogue. See `docs/impeccable-frontend-audit-2026-11-15.md` for the audit, measured coverage, and remaining limitations.

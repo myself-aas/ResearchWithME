@@ -101,12 +101,17 @@ describe('theme preference lifecycle', () => {
     expect(document.documentElement.classList.contains('light')).toBe(true);
   });
 
-  it('keeps header and footer selectors synchronized without competing system listeners', () => {
+  it('keeps multiple theme selectors independently checked and synchronized', () => {
     root = createRoot(container);
     act(() => root!.render(createElement('div', null, createElement(ThemeToggle), createElement(ThemeToggle))));
     const selectors = container.querySelectorAll('fieldset');
     choose(selectors[0], 'dark');
+    expect(selectors[0].querySelector<HTMLInputElement>('input[value=dark]')?.checked).toBe(true);
     expect(selectors[1].querySelector<HTMLInputElement>('input[value=dark]')?.checked).toBe(true);
+    choose(selectors[1], 'light');
+    expect(selectors[0].querySelector<HTMLInputElement>('input[value=light]')?.checked).toBe(true);
+    expect(selectors[1].querySelector<HTMLInputElement>('input[value=light]')?.checked).toBe(true);
+    choose(selectors[0], 'dark');
     changeOS(false);
     expect(document.documentElement.classList.contains('dark')).toBe(true);
   });

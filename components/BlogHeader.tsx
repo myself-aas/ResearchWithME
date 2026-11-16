@@ -134,7 +134,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-            aria-label="ResearchWithMe home"
+            aria-label="reme. ResearchWithMe home"
           >
             <BrandLogo size="header" showText={true} />
           </Link>
