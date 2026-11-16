@@ -58,6 +58,20 @@ describe('/dashboard/account', () => {
     expect(html).toContain('href="/pricing"');
   });
 
+  it('does not claim there are no purchases or offer checkout when the entitlement lookup fails', async () => {
+    getEntitlement.mockRejectedValue(new Error('billing service offline'));
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const html = await render();
+      expect(html).toContain('role="alert"');
+      expect(html).toContain('could not load your plan or purchases');
+      expect(html).not.toContain('No purchases yet');
+      expect(html).not.toContain('buy-teardown');
+      expect(html).not.toContain('Co-pilot credits');
+      expect(html).toContain('href="/pricing"');
+    } finally { consoleError.mockRestore(); }
+  });
+
   it('shows an active subscription plainly', async () => {
     getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'active', aiCredits: 120, currentPeriodEnd: '2026-12-13T00:00:00.000Z' });
     const html = await render();

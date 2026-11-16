@@ -68,6 +68,7 @@ export default async function ApplyToWritePage({
   const linkError = typeof params.link_error === 'string' ? params.link_error.trim().slice(0, 300) : '';
   let applications: Application[] = [];
   let profile: ProfileRow | null = null;
+  let recordsAvailable = true;
 
   if (isSupabaseConfigured) {
     try {
@@ -89,6 +90,7 @@ export default async function ApplyToWritePage({
       if (profileError) throw new Error(profileError.message);
       profile = (profileData as ProfileRow | null) ?? null;
     } catch (error) {
+      recordsAvailable = false;
       console.error('Could not read your author application or profile:', error);
     }
   }
@@ -129,6 +131,12 @@ export default async function ApplyToWritePage({
         )}
       </header>
 
+      {!recordsAvailable ? (
+        <p role="alert" className="border-l-2 border-destructive bg-surface px-4 py-3 text-sm text-destructive">
+          We could not load your application or profile. Reload this page before submitting another application.{' '}
+          <a href="/dashboard/access" className="underline">Reload application status</a>.
+        </p>
+      ) : (<>
       {user &&
         (profile ? (
           <ProfilePhotoCard userId={user.id} author={profileToAuthor(profile)} />
@@ -139,6 +147,7 @@ export default async function ApplyToWritePage({
         ))}
 
       <AuthorApplication applications={applications} isEditor={user?.isEditor ?? false} />
+      </>)}
     </div>
   );
 }
