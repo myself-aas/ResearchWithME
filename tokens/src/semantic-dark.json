@@ -22,7 +22,7 @@
     "visited": "#D5E3FF"
   },
   "brand": {
-    "mark": "{primitive.color.maroon.100}",
+      "mark": "{primitive.color.indigo.300}",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {

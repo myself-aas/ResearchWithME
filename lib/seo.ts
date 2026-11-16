@@ -28,7 +28,7 @@ export interface PageMetadata {
   };
 }
 
-export const SITE_NAME = 'ResearchWithMe';
+export const SITE_NAME = 'reme';
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://researchwith.me').replace(/\/$/, '');
 export const SITE_DESCRIPTION =
   'Open-access scholarly essays, reproducible paper reviews, and rigorous repository teardowns from verified domain experts.';

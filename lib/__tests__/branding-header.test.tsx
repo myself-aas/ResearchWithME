@@ -5,51 +5,24 @@ import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { renderToStaticMarkup } from 'react-dom/server';
 import BrandLogo from '@/components/BrandLogo';
-import BrandMark from '@/components/BrandMark';
 import { Header } from '@/components/ui/header-2';
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
 import manifest from '@/app/manifest';
 
 describe('brand assets', () => {
-  it('renders the monogram lockup as the identity, without a repeated letter', () => {
+  it('renders the wordmark as the identity', () => {
     const logo = renderToStaticMarkup(createElement(BrandLogo));
-    // The mark is the "r" monogram; the wordmark would repeat that letter.
-    expect(logo).toContain('text-brand-mark');
-    expect(logo).not.toContain('reme');
-  });
-
-  it('renders the wordmark only when explicitly asked', () => {
-    const withText = renderToStaticMarkup(createElement(BrandLogo, { showText: true }));
-    expect(withText).toContain('reme');
+    expect(logo).toContain('reme');
+    expect(logo).not.toContain('text-brand-mark');
   });
 
   it('stays decorative when a wrapping link already carries the name', () => {
     const logo = renderToStaticMarkup(createElement(BrandLogo));
-    // The wrapper, not the inner svg, carries the decorative flag.
     expect(logo).toMatch(/^<span class="[^"]*" aria-hidden="true">/);
     const labelled = renderToStaticMarkup(createElement(BrandLogo, { label: 'ResearchWithMe' }));
     expect(labelled).toContain('role="img"');
     expect(labelled).toContain('aria-label="ResearchWithMe"');
     expect(labelled).not.toMatch(/^<span class="[^"]*" aria-hidden/);
-  });
-
-  it('inlines the mark so forced-colors can repaint it', () => {
-    const mark = renderToStaticMarkup(createElement(BrandMark));
-    // currentColor is what the OS overrides; a baked fill would be ignored.
-    expect(mark).toContain('fill="currentColor"');
-    expect(mark).toContain('<svg');
-    expect(mark).toContain('viewBox="0 0 100 100"');
-    expect(mark).toContain('aria-hidden="true"');
-  });
-
-  it('keeps the inlined monogram geometry identical to the shipped file', () => {
-    const file = readFileSync('public/brand/mark.svg', 'utf8');
-    const path = file.match(/ d="([^"]+)"/)?.[1];
-    const transform = file.match(/transform="([^"]+)"/)?.[1];
-    const mark = renderToStaticMarkup(createElement(BrandMark));
-    expect(path).toBeTruthy();
-    expect(mark).toContain(path as string);
-    expect(mark).toContain(transform as string);
   });
 
   it('advertises actual supplied icon files without incorrectly declaring them maskable', () => {

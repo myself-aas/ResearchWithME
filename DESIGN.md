@@ -25,7 +25,7 @@ colors:
   destructive: "#B91C1C"
   link: "#005BBF"
   visited: "#174EA6"
-  brand-mark: "#3E0000"
+  brand-mark: "#005BBF"
   verified: "#1D4ED8"
   replicated: "#047857"
   knowledge-source: "#1D4ED8"
@@ -46,7 +46,7 @@ colors:
   dark-border-strong: "#8B909F"
   dark-focus: "#ADC7FF"
   dark-selection: "#003061"
-  dark-brand-mark: "#F9E6E6"
+  dark-brand-mark: "#ADC7FF"
 typography:
   editorial:
     fontFamily: "'Plus Jakarta Sans', 'Newsreader', Georgia, serif"
@@ -169,38 +169,20 @@ unchanged. `tokens:check` enforces >=4.5:1 for these text roles on their 10%
 accent tint composited over canvas, surface and surface-raised in both themes.
 These configured checks do not certify every rendered component composition.
 
-## Brand mark ink (2026-11-16)
+## Brand mark ink (2026-11-17)
 
-The logo mark is the "r" monogram. The geometry lives in `public/brand/mark.svg`
-and is inlined by `components/BrandMark.tsx`, which is what `BrandLogo` renders.
-The inlined path carries `fill="currentColor"` and is coloured with
-`text-brand-mark`, so the mark follows the theme instead of shipping a baked-in
-fill.
-
-Inlining is not incidental. An external SVG used through `mask-image` or
-`background-image` disappears in Windows High Contrast Mode, and its baked-in
-fill ignores forced colours; an inline `<path>` inherits `currentColor` and can
-be repainted by the OS. `lib/__tests__/branding-header.test.tsx` pins the
-inlined geometry to the shipped file so the two cannot drift.
-
-- **Light:** `brand.mark` = `#3E0000` (`maroon.900`), the incumbent artwork ink, 17.4:1 on white.
-- **Dark:** `brand.mark` = `#F9E6E6` (`maroon.100`), 16.2:1 on the dark canvas.
-
-`brand.mark` is deliberately **not** `action.primary`. The mark is an identity
-element, not an affordance; reusing the button blue would make the logo read as
-a control and would tie the masthead to the primary CTA. The maroon is a brand
-commitment carried over from the supplied artwork, promoted here from a literal
-in the SVGs to a semantic role so it can be documented and re-themed.
+The logo is the "reme." wordmark (Aptos Serif, semibold). The period uses the
+brand accent color (`text-brand`). The wordmark is rendered by
+`components/BrandLogo.tsx` and carries no monogram.
 
 The static icons (`favicon.svg`, `icon.svg`, `favicon*.png`, `apple-touch-icon.png`,
-`favicon.ico`) are raster/vector files that cannot read CSS variables. They keep
-`#3E0000` baked in, which is the same value as `brand.mark` in the light theme.
+`favicon.ico`) are raster/vector files that cannot read CSS variables. They use
+the project's base blue `#005BBF` (light) / `#ADC7FF` (dark) baked in.
 Regenerating them is the only place that literal is allowed to appear.
 
-Accessibility: `BrandLogo` renders the mark only, with no wordmark text, because
-the mark is an "r" and pairing it with "reme." read as the same letter twice.
-The wrapper is `aria-hidden` by default so a wrapping link supplies the single
-accessible name; pass `label` when the mark must name itself.
+Accessibility: `BrandLogo` renders the wordmark only. The wrapper is
+`aria-hidden` by default so a wrapping link supplies the single accessible name;
+pass `label` when the mark must name itself.
 
 ## Components
 

@@ -199,7 +199,7 @@ export const semanticLight = {
     "visited": "#174EA6"
   },
   "brand": {
-    "mark": "#3E0000",
+    "mark": "#1D4ED8",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
@@ -296,7 +296,7 @@ export const semanticDark = {
     "visited": "#D5E3FF"
   },
   "brand": {
-    "mark": "#F9E6E6",
+    "mark": "#93C5FD",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {

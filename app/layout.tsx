@@ -3,7 +3,7 @@ import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from '@/lib/seo';
+import { SITE_DESCRIPTION, SITE_URL, absoluteUrl } from '@/lib/seo';
 import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
@@ -32,11 +32,11 @@ const newsreader = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Open-Access Research Reviews`,
-    template: `%s | ${SITE_NAME}`,
+      default: 'ResearchWithMe',
+      template: `%s | reme`,
   },
   description: SITE_DESCRIPTION,
-  applicationName: SITE_NAME,
+  applicationName: 'ResearchWithMe',
   keywords: [
     'open access research',
     'scholarly publishing',
@@ -46,17 +46,17 @@ export const metadata: Metadata = {
     'open science',
   ],
   openGraph: {
-    title: `${SITE_NAME} — Open-Access Research Reviews & Repository Teardowns`,
+      title: 'ResearchWithMe — Open-Access Research Reviews & Repository Teardowns',
     description: SITE_DESCRIPTION,
     url: absoluteUrl('/'),
-    siteName: SITE_NAME,
+      siteName: 'reme',
     type: 'website',
     locale: 'en_US',
-    images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630, alt: `${SITE_NAME} — Open-Access Research Reviews` }],
+      images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630, alt: 'ResearchWithMe — Open-Access Research Reviews' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME} — Open-Access Research Reviews`,
+      title: 'ResearchWithMe — Open-Access Research Reviews',
     description: SITE_DESCRIPTION,
     images: [absoluteUrl('/opengraph-image')],
   },
