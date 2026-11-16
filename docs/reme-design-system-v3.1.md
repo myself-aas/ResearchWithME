@@ -320,16 +320,45 @@ Motion explains relationship, hierarchy, or state. Use CSS or the Web Animations
 
 Do not use infinite glow, particle streams, decorative telemetry, cursor-follow effects, number-count animations, or motion that implies verification without a real state change.
 
+The reduced-motion contract does not kill motion outright — it converts
+choreography into an instant, still state change. Hierarchy and status must
+still be legible without the movement: it is the traversal that goes, not the
+information.
+
 ```css
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    scroll-behavior: auto !important;
+  html { scroll-behavior: auto !important; }
+
+  [data-enter],
+  [data-reveal],
+  [data-reveal] > *,
+  [class*="transition-colors"],
+  [class*="transition-transform"],
+  [class*="transition-opacity"],
+  [class*="transition-shadow"],
+  [class*="transition-all"] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 ```
+
+**Scope, not `*`.** The selector names the families that animate rather than
+every element. A universal rule also captures components added later, flattening
+their timing with no way to opt back in, and it makes the contract impossible to
+reason about at the call site.
+
+**The loading affordances survive.** `animate-pulse` (skeleton shimmer) and
+`animate-spin` (busy indicator) are intentionally excluded: they carry state, not
+choreography. A frozen skeleton reads as a failed render, and a slow opacity
+pulse is not vestibular motion. Remove transform, parallax, scale, and
+scroll-driven movement — keep the signal that something is still working.
+
+**Nothing may depend on animation to become visible.** Entrance choreography is
+already gated behind `prefers-reduced-motion: no-preference`, and `Reveal` skips
+arming entirely under reduced motion, so content is present at rest rather than
+waiting for a keyframe that will not run.
 
 ## 10. Programmatic Animation and Video
 

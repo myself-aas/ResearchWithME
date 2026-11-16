@@ -30,7 +30,7 @@ Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** 
 |---|---|---|
 | `components/AuthorAvatar.tsx` | Retokenized; Retain | Uploaded profile photo, or a deterministic domain SVG fallback; no network calls. |
 | `components/AuthorDirectory.tsx`, `AuthorArchive.tsx`, `AuthorProfileCard.tsx`, `AuthorSpotlight.tsx` | Retokenized; Retain/Refactor | Directory → FilterPanel + SearchResult mapping. |
-| `components/AuthorImpactRadarChart.tsx` | Refactor → accessible chart | recharts radar; needs table alternative + keyboard access per spec §32 (data viz). |
+| `components/charts/ResearchChart.tsx` | Retain | Replaced the deleted `AuthorImpactRadarChart`. Token-driven recharts figure with a mandatory caption, an always-present data table (§32), disclosed log scale, and no data animation. |
 
 ## CMS / studio
 

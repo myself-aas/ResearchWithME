@@ -7,12 +7,34 @@
     <!--
       Static-host fallback only. Next serves app/not-found.tsx in the app runtime;
       this file exists for hosts that answer with a plain 404 document. It has no
-      stylesheet to draw from, so the palette is written literally here. Keep it
-      equal to DESIGN.md: canvas #F8F9FA, text-primary #202124, primary #005BBF.
+      stylesheet to draw from, so the palette is written literally here. Values
+      are DESIGN.md's: light canvas #F8F9FA / text #202124 / primary #005BBF,
+      dark canvas #0A0D14 / text #F8F9FA / primary #ADC7FF.
     -->
     <style>
-      body { font-family: system-ui, sans-serif; margin: 4rem auto; max-width: 40rem; padding: 0 1.5rem; line-height: 1.5; color: #202124; background: #F8F9FA; }
-      a { color: #005BBF; }
+      :root {
+        color-scheme: light dark;
+        --page-bg: #F8F9FA;
+        --page-ink: #202124;
+        --page-link: #005BBF;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --page-bg: #0A0D14;
+          --page-ink: #F8F9FA;
+          --page-link: #ADC7FF;
+        }
+      }
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 4rem auto;
+        max-width: 40rem;
+        padding: 0 1.5rem;
+        line-height: 1.5;
+        color: var(--page-ink);
+        background: var(--page-bg);
+      }
+      a { color: var(--page-link); }
     </style>
   </head>
   <body>

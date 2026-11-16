@@ -126,6 +126,20 @@
   --color-graph-edge-derives: var(--reme-graph-edge-derives);
   --color-graph-edge-relates: var(--reme-graph-edge-relates);
 
+  /* Chart roles. Charts are rendered by recharts in JS, which cannot read a CSS
+     variable, so `lib/charts/tokens.ts` resolves these same values from the
+     generated token module. Both surfaces read one source; keep them in step. */
+  --color-chart-axis: var(--reme-chart-axis);
+  --color-chart-grid: var(--reme-chart-grid);
+  --color-chart-label: var(--reme-chart-label);
+  --color-chart-series-1: var(--reme-chart-series-1);
+  --color-chart-series-2: var(--reme-chart-series-2);
+  --color-chart-series-3: var(--reme-chart-series-3);
+  --color-chart-series-4: var(--reme-chart-series-4);
+  --color-chart-series-5: var(--reme-chart-series-5);
+  --color-chart-series-6: var(--reme-chart-series-6);
+  --color-chart-series-7: var(--reme-chart-series-7);
+
   /* Component aliases over semantic tokens (kept for existing markup). */
   --color-paper: var(--color-canvas);
   --color-ink: var(--color-text-primary);
@@ -187,7 +201,10 @@
   }
 
   html {
-    font-size: 16px;
+    /* No font-size here on purpose. 16px is already the browser default, and
+       pinning it would override the reader's own text-size preference — every
+       rem in the app inherits from this element, so a user who sets 20px for
+       readability would silently keep getting 16px. Leave the root alone. */
     scroll-behavior: smooth;
     scroll-padding-top: 6rem;
   }
@@ -492,12 +509,30 @@ html .shadow-2xs {
   }
 }
 
-/* reme v3.1 §9 reduced-motion contract. */
+/* reme v3.1 §9 reduced-motion contract.
+   Scoped rather than applied to `*`: a universal rule also captures anything
+   that gains motion later, so a component's own timing would be silently
+   flattened with no way to opt back in. The selector below names the three
+   families that actually animate here — entrance choreography, the scroll
+   reveal, and transitions painted by the utility layer.
+
+   `.animate-pulse` is deliberately excluded. Skeleton shimmer carries the
+   "still loading" state; freezing it would leave a bare grey block that looks
+   like a failed render, and a slow opacity pulse is not vestibular motion.
+   `animate-spin` (the button busy indicator) is kept for the same reason. */
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  html {
     scroll-behavior: auto !important;
+  }
+
+  [data-enter],
+  [data-reveal],
+  [data-reveal] > *,
+  [class*="transition-colors"],
+  [class*="transition-transform"],
+  [class*="transition-opacity"],
+  [class*="transition-shadow"],
+  [class*="transition-all"] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
@@ -716,6 +751,25 @@ html[data-motion-mode="static"] {
   li {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  /* Charts print as their data table (DESIGN §32: a chart must carry an
+     accessible equivalent, and paper has no hover). The table is always in the
+     DOM for a chart, so revealing it and hiding the plot loses no data. */
+  [data-ui-only] {
+    display: none !important;
+  }
+
+  figure[data-chart] table {
+    display: table !important;
+  }
+}
+
+/* Windows High Contrast discards SVG fill/stroke, so a plotted chart becomes an
+   unreadable solid block. Show the data table instead of pretending. */
+@media (forced-colors: active) {
+  [data-chart] [data-ui-only] {
+    display: none;
   }
 }
 

@@ -280,3 +280,26 @@ record of them rather than a silent exception:
 Everything else resolves through a token. The guard is
 `lib/__tests__/design-token-usage.test.ts`; the detector rule is
 `design-system-color`.
+
+## Charts (2026-11-16)
+
+Articles can carry a chart via a fenced `chart` block; see
+[`docs/charts.md`](./docs/charts.md). `recharts` renders it, and the contract is
+DESIGN §32, restated here as what the implementation actually enforces:
+
+- **Caption is mandatory and doubles as the text alternative.** A block without
+  one is refused rather than rendered unlabelled.
+- **Every chart renders a data table.** It is the accessible equivalent, the
+  no-JavaScript state, and the print form.
+- **Missing data is `null`, never `0`.** The table prints "Not reported".
+- **`y-scale: log` is disclosed in text**, and values ≤ 0 are rejected at parse
+  time instead of drawing an axis that lies.
+- **Colour comes from `chart.series` tokens**, seven roles per theme. Verified
+  each run for ≥ 4.5:1 against its canvas and for minimum pairwise CIELAB ΔE
+  under protanopia, deuteranopia, and tritanopia (light ≥ 13.7, dark ≥ 12.4).
+  The palette is not the `knowledge` or `trust` roles: §32 forbids reusing
+  semantic evidence colours for ordinary magnitude.
+- **No animated data.** `isAnimationActive={false}` everywhere; a measurement
+  must not move.
+- **`forced-colors` shows the table**, not a plot the OS has flattened to a
+  solid block.

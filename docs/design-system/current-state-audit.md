@@ -14,7 +14,10 @@ Branch: `arena/d5fd6236-researchwithme`. Token-layer retokenization to reme v3.1
 - **Video:** HeyGen Hyperframes projects under `videos/*` (`.hyperframes`, compositions); no Remotion dependency yet. `components/VideoEmbed.tsx` embeds them.
 - **AI:** `/api/research-assistant` (Gemini via `@google/genai`, catalog-grounded, deterministic fallback).
 - **Editor:** `@mdxeditor/editor` in `components/cms/MarkdownEditor.tsx`; autosave in `/write`.
-- **Charts:** `recharts` in `AuthorImpactRadarChart.tsx`.
+- **Charts:** `recharts` via `components/charts/ResearchChart.tsx`, behind a
+  fenced `chart` block in article Markdown (`docs/charts.md`). The old
+  `AuthorImpactRadarChart.tsx` no longer exists; the token-driven chart replaced
+  it, and every figure now ships the §32 data table that radar never had.
 
 ## Build, rendering, routing
 

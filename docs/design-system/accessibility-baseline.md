@@ -21,7 +21,7 @@
 | Forced colors mode | Untested | Add `forced-color-adjust` pass + test (spec §31) |
 | 200% zoom / 320px reflow | Reflow verified at 320; 200% zoom unverified | Add zoom test to e2e phase |
 | Screen readers | No automated SR smoke tests | Add NVDA/VoiceOver/TalkBack smoke list for critical flows (phase: testing) |
-| Graphs/charts | Radar chart lacks table alternative + keyboard access | Refactor `AuthorImpactRadarChart` with list/table alternative (spec §32) |
+| Graphs/charts | Resolved 2026-11-16: every chart ships a data table, a caption used as the text alternative, keyboard-reachable legend toggles, and a `forced-colors` fallback that shows the table. See `docs/charts.md`. | Verified by `lib/__tests__/chart-render.test.tsx` and `chart-colors.test.ts` |
 
 ## Known gaps vs spec §4
 

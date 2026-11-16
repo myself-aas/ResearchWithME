@@ -28,7 +28,7 @@
 - **Linter:** ESLint 9 flat config (`eslint.config.mjs`): `next/core-web-vitals` + `next/typescript`, plus these as **errors**: `no-explicit-any`, `no-unused-vars` (with `^_` ignore), `react/jsx-no-target-blank`, `jsx-a11y/alt-text`, `jsx-a11y/aria-props`, `jsx-a11y/label-has-associated-control`. Relaxed: `react-hooks/set-state-in-effect: off`.
 - **Current state (run 2026-11-13):** `eslint .` → 0 errors, 1 warning (`import/no-anonymous-default-export` at `open-next.config.ts:18`). `tsc --noEmit` → exit 0.
 - **Design gates** (also part of `npm run quality`):
-  - `impeccable detect app components` → 197 files, **0 findings**, 7 advisories. All 7 are literal colours outside the DESIGN.md palette (e.g. `#4F46E5`, `#555955` in `app/opengraph-image.tsx`, `components/AuthorImpactRadarChart.tsx`).
+  - `impeccable detect app components lib public` → **0 findings, 0 advisories** (2026-11-16). The seven literal-colour advisories recorded here previously were tokenised; the remaining allowed literals are listed in `DESIGN.md` under "Literals that are allowed".
   - `tokens:check` validates tokens and contrast.
   - `lib/__tests__/design-token-usage.test.ts` enforces token use in source.
 - **Stated in `CLAUDE.md`:** Tailwind v4 without arbitrary values where a token exists; motion only via `lib/motion/tokens.ts` and the `@/components/motion` primitives (`docs/motion-system.md`).

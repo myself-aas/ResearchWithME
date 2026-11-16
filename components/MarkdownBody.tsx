@@ -4,6 +4,8 @@ import remarkGfm from 'remark-gfm';
 import type { CitationSource } from '@/lib/citations';
 import { renderWithInlineCitations } from '@/lib/citations-inline';
 import { Link as TextLink } from '@/components/primitives';
+import ChartBlock from '@/components/charts/ChartBlock';
+import { isChartLanguage } from '@/lib/charts/spec';
 
 function isExternal(href: string | undefined) {
   return Boolean(href && /^https?:\/\//i.test(href));
@@ -100,11 +102,26 @@ export default function MarkdownBody({ markdown, citations, citeHref }: Markdown
               </code>
             );
           },
-          pre: ({ children }) => (
-            <pre className="mt-6 overflow-x-auto rounded-sm border border-line bg-surface p-4 leading-relaxed">
-              {children}
-            </pre>
-          ),
+          // ```chart blocks become figures; every other fenced block stays code.
+          // The language tag is the only signal, so an article cannot
+          // accidentally get a chart from ordinary prose.
+          pre: ({ children }) => {
+            const child = Children.toArray(children)[0];
+            if (
+              typeof child === 'object' &&
+              child !== null &&
+              'props' in child &&
+              isChartLanguage((child.props as { className?: string }).className)
+            ) {
+              const source = String((child.props as { children?: unknown }).children ?? '');
+              return <ChartBlock source={source.replace(/\n$/, '')} />;
+            }
+            return (
+              <pre className="mt-6 overflow-x-auto rounded-sm border border-line bg-surface p-4 leading-relaxed">
+                {children}
+              </pre>
+            );
+          },
           table: ({ children }) => (
             <div className="mt-6 overflow-x-auto rounded-sm border border-line">
               <table className="w-full border-collapse text-left font-sans text-sm">{children}</table>

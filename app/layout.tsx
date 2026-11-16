@@ -1,3 +1,4 @@
+import { semanticDark, semanticLight } from '@/tokens/generated/tokens';
 import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
@@ -85,9 +86,12 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   colorScheme: 'light dark',
+  // Browser/OS chrome tint. Read from the semantic tokens so the address bar
+  // matches the page canvas instead of drifting to a retired palette: a
+  // mismatched tint is a visible seam above the UI on every route.
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FAF9F6' },
-    { media: '(prefers-color-scheme: dark)', color: '#0C0D10' },
+    { media: '(prefers-color-scheme: light)', color: semanticLight.canvas },
+    { media: '(prefers-color-scheme: dark)', color: semanticDark.canvas },
   ],
 };
 
