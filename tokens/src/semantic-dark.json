@@ -21,6 +21,10 @@
     "link": "#ADC7FF",
     "visited": "#D5E3FF"
   },
+  "brand": {
+    "mark": "{primitive.color.maroon.100}",
+    "mark-inverse": "#FFFFFF"
+  },
   "knowledge": {
     "source": "#60A5FA",
     "evidence": "#10B981",
@@ -75,5 +79,19 @@
   "domainText": {
     "emerging": "#67E8F9",
     "uncertain": "#FCD34D"
+  },
+  "chart": {
+    "axis": "#AEB4BE",
+    "grid": "#414754",
+    "label": "#AEB4BE",
+    "series": {
+      "1": "#60A5FA",
+      "2": "#67E8F9",
+      "3": "#34D399",
+      "4": "#FDE047",
+      "5": "#FDBA74",
+      "6": "#F87171",
+      "7": "#C4B5FD"
+    }
   }
 }

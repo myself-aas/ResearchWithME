@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { semanticLight } from '@/tokens/generated/tokens';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
@@ -7,10 +8,17 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Open-access research reviews, reproducible papers, and repository teardowns.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#FAF9F6',
-    theme_color: '#1D4ED8',
+    // Install splash and OS chrome. A manifest is static at runtime, so it
+    // cannot read a CSS variable; importing the generated tokens keeps it on
+    // the same values as the app instead of a second copy of the palette.
+    background_color: semanticLight.canvas,
+    theme_color: semanticLight.action.primary,
     lang: 'en',
     categories: ['education', 'books', 'productivity'],
+    // Two deliberate artworks: the monogram where the icon renders small
+    // (browser chrome, home screen), the wordmark where it renders large
+    // (install prompt, launcher). Both are the same brand mark, so the set is
+    // consistent even though the lockup differs.
     icons: [
       {
         src: '/icon.svg',

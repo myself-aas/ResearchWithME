@@ -149,7 +149,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                 <span>{article.readTime}</span>
               </p>
 
-              <h1 id="article-title" className="mt-5 max-w-4xl break-words font-sans text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-[3.5rem] lg:leading-[1.14]">
+              <h1 id="article-title" className="mt-5 max-w-4xl break-words font-sans text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl lg:text-5xl">
                 {article.title}
               </h1>
 

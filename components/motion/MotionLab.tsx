@@ -28,6 +28,7 @@ import {
   type MotionEasingName,
 } from '@/lib/motion/tokens';
 import { PRINCIPLES, easingToCss, type PrincipleId, type PrincipleSpec } from '@/lib/motion/principles';
+import { primitive } from '@/tokens/generated/tokens';
 import { revealVariants } from '@/lib/motion/variants';
 import { useDelayedLoading, useHydrated } from '@/lib/motion/hooks';
 import { useMotionMode } from './MotionModeProvider';
@@ -424,7 +425,7 @@ function AppealDemo() {
   return (
     <Stage height="h-36">
       <m.div
-        whileHover={{ y: -4, scale: 1.02, boxShadow: '0 12px 24px rgba(18,18,20,0.12)' }}
+        whileHover={{ y: -4, scale: 1.02, boxShadow: primitive.shadow.floating }}
         whileTap={{ scale: 0.985 }}
         transition={SPRING.lift}
         className="w-40 rounded-sm border border-line bg-surface p-4"

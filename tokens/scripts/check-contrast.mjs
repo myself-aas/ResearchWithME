@@ -10,6 +10,27 @@ import { dirname, join } from 'node:path';
 const here = dirname(fileURLToPath(import.meta.url));
 const light = JSON.parse(readFileSync(join(here, '..', 'src', 'semantic-light.json'), 'utf8'));
 const dark = JSON.parse(readFileSync(join(here, '..', 'src', 'semantic-dark.json'), 'utf8'));
+const primitive = JSON.parse(readFileSync(join(here, '..', 'src', 'primitive.json'), 'utf8'));
+
+// Semantic files may point at a primitive ({primitive.color.x.y}) the same way
+// the token build does; resolve those here so the gate reads a real hex value.
+const REF = /^\{(.+)\}$/;
+const resolveRef = (value, seen = new Set()) => {
+  if (typeof value !== 'string') return value;
+  const match = value.match(REF);
+  if (!match) return value;
+  const path = match[1];
+  if (seen.has(path)) throw new Error(`Circular token reference: ${[...seen, path].join(' -> ')}`);
+  let cur = { primitive };
+  for (const part of path.split('.')) {
+    if (cur == null || typeof cur !== 'object' || !(part in cur)) {
+      throw new Error(`Unresolved token reference: {${path}}`);
+    }
+    cur = cur[part];
+  }
+  return resolveRef(cur, new Set([...seen, path]));
+};
+for (const theme of [light, dark]) theme.brand.mark = resolveRef(theme.brand.mark);
 
 const RGBA_RE = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([0-9.]+))?\s*\)$/i;
 
@@ -56,6 +77,8 @@ const pairs = (s) => [
   ['destructive on surface', s.action.destructive, s.surface, 4.5],
   ['link on surface', s.action.link, s.surface, 4.5],
   ['visited on surface', s.action.visited, s.surface, 4.5],
+  ['brand mark on canvas', s.brand.mark, s.canvas, 3.0],
+  ['brand mark on surface', s.brand.mark, s.surface, 3.0],
   ['focus ring on canvas', s.focus, s.canvas, 3.0],
   ['focus ring on surface', s.focus, s.surface, 3.0],
   ...['emerging', 'uncertain'].flatMap((status) => {

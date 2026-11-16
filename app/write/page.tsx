@@ -20,8 +20,14 @@ import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
 import dynamic from 'next/dynamic';
 import { Text } from '@/components/primitives';
 import { WorkflowDisclosure } from '@/components/workflows';
-import MarkdownBody from '@/components/MarkdownBody';
 import { RESEARCH_WORKFLOWS } from '@/lib/workflows/research-workflows';
+
+// The preview pane is a tab, not the default view. Loading the Markdown +
+// citation renderer eagerly made every writer download it before typing a word,
+// so it is fetched when the Preview tab is first opened.
+const MarkdownBody = dynamic(() => import('@/components/MarkdownBody'), {
+  loading: () => <p className="text-base text-ink-secondary">Preparing preview…</p>,
+});
 
 const PlateBodyEditor = dynamic(() => import('@/components/editor/PlateBodyEditor'), {
   ssr: false,

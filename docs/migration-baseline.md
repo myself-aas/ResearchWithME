@@ -18,7 +18,7 @@
 - The fixture records demo-mode behavior with the production project blanked, which is deterministic. Known properties of this mode: `PUBLICATIONS_DATA` is empty (every paper is a 404), the author directory is backed solely by `public.profiles` so `/author/*` is 404 without Supabase, `/api/dashboard/applications` returns 503, and `POST /api/revalidate` returns 503 (no secret configured). The 404/405/415/503 semantics here are the baseline for *unconfigured* deployments; a configured production deployment serves CMS content instead and must be re-measured after the bridge exists.
 - The `Link` header on `/` contains font preload URLs with build-specific hashes. Those entries change on every build; they are recorded for completeness but are not reproducible across builds.
 - Pages were served via `next start`, which prints a warning under `output: 'standalone'` but responds correctly; `sitemap.xml` is `application/xml`.
-- The capture server logged repeated `Failed to load dynamic font for π … fetch failed` (no route to fonts.googleapis.com from this environment). Requests still succeeded; the failure is a warning, not an error.
+- The capture server logged repeated `Failed to load dynamic font … fetch failed` (no route to fonts.googleapis.com from this environment). Requests still succeeded; the failure is a warning, not an error.
 
 ## Notable captured behavior (for the parity checklist)
 
