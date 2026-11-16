@@ -33,9 +33,9 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
   const [isCustomPaper, setIsCustomPaper] = useState(false);
   const [customTitle, setCustomTitle] = useState('');
   const [customAuthor, setCustomAuthor] = useState('');
-  const [customYear, setCustomYear] = useState('2026');
+  const [customYear, setCustomYear] = useState('');
   const [customDoi, setCustomDoi] = useState('');
-  const [customJournal, setCustomJournal] = useState('ResearchWithMe Studies');
+  const [customJournal, setCustomJournal] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -60,20 +60,23 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
   const currentArticle = articles.find((article) => article.slug === selectedSlug) ?? articles[0];
 
   const source = useMemo(() => {
-    const fallbackYear = '2026';
-    const articleDoi = currentArticle?.reviewedArtifact?.identifier ?? '';
+    const date = currentArticle?.dateISO || currentArticle?.publishedAt || '';
+    const parsedDate = date ? new Date(date) : null;
+    const publicationYear = parsedDate && !Number.isNaN(parsedDate.getTime()) ? String(parsedDate.getUTCFullYear()) : '';
     return {
-      title: isCustomPaper && customTitle ? cleanText(customTitle, 240) : currentArticle?.title ?? 'Untitled article',
-      author: isCustomPaper && customAuthor ? cleanText(customAuthor, 120) : currentArticle?.author.name ?? 'ResearchWithMe Editors',
-      year: isCustomPaper ? cleanText(customYear, 4) || fallbackYear : fallbackYear,
-      journal: isCustomPaper && customJournal ? cleanText(customJournal, 160) : 'ResearchWithMe Technical Reviews',
-      doi: isCustomPaper ? cleanText(customDoi, 120) : articleDoi,
-      url: currentArticle?.slug ? `https://researchwith.me/post/${currentArticle.slug}` : 'https://researchwith.me',
+      title: isCustomPaper ? cleanText(customTitle, 240) : currentArticle?.title ?? '',
+      author: isCustomPaper ? cleanText(customAuthor, 120) : currentArticle?.author.name ?? '',
+      year: isCustomPaper ? cleanText(customYear, 4) : publicationYear,
+      journal: isCustomPaper ? cleanText(customJournal, 160) : '',
+      doi: isCustomPaper ? cleanText(customDoi, 120) : '',
+      url: isCustomPaper || !currentArticle?.slug ? undefined : `https://researchwith.me/post/${currentArticle.slug}`,
+      publisher: null,
+      kind: isCustomPaper ? undefined : 'webpage' as const,
     };
   }, [currentArticle, customAuthor, customDoi, customJournal, customTitle, customYear, isCustomPaper]);
 
   const citationText = useMemo(() => buildCitation(format, source), [format, source]);
-  const citationEmpty = isCustomPaper && !source.title.trim();
+  const citationEmpty = !source.title.trim();
 
   async function handleCopy() {
     setCopyError(null);
@@ -100,7 +103,8 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
     URL.revokeObjectURL(objectUrl);
   }
 
-  const doiLink = safeExternalUrl(`https://doi.org/${source.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '')}`);
+  const cleanDoi = source.doi.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '').trim();
+  const doiLink = /^10\.\d{4,9}\/\S+$/i.test(cleanDoi) ? safeExternalUrl(`https://doi.org/${cleanDoi}`) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -121,7 +125,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
             Build a citation that travels
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-ink">
-            Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same verified metadata.
+            Choose a published review or an external paper, then copy a formatted citation for LaTeX, Zotero, Mendeley, EndNote, or a reference list. Every format uses the same source details; confirm them against the publisher record.
           </p>
         </header>
 
@@ -135,7 +139,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   type="button"
                   onClick={() => setIsCustomPaper(false)}
                   aria-pressed={!isCustomPaper}
-                  className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     !isCustomPaper
                       ? 'border-ink bg-surface-inverse text-text-inverse'
                       : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
@@ -147,7 +151,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   type="button"
                   onClick={() => setIsCustomPaper(true)}
                   aria-pressed={isCustomPaper}
-                  className={`min-h-11 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+                  className={`min-h-11 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     isCustomPaper
                       ? 'border-ink bg-surface-inverse text-text-inverse'
                       : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
@@ -175,7 +179,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                     ))}
                   </select>
                   <p className="mt-2 max-w-xl text-sm text-ink-secondary">
-                    {currentArticle?.category ?? 'Research'} · {currentArticle?.publishedAt ?? 'Published'} · {currentArticle?.readTime ?? 'Reading time available on the article'}
+                    {currentArticle ? `${currentArticle.category} · ${currentArticle.publishedAt} · ${currentArticle.readTime}` : 'No published articles are available.'}
                   </p>
                 </div>
               ) : (
@@ -264,7 +268,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                     type="button"
                     onClick={() => setFormat(item)}
                     aria-pressed={format === item}
-                    className={`min-h-11 rounded-md border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
+                    className={`min-h-11 rounded-full border px-4 py-2 text-sm font-semibold uppercase tracking-wide transition-colors ${
                       format === item
                         ? 'border-brand bg-brand text-on-primary'
                         : 'border-border-strong bg-surface-raised text-ink hover:border-border-strong'
@@ -293,7 +297,7 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
               />
               <p id="citation-hint" className="text-sm text-ink-secondary">
                 {citationEmpty
-                  ? 'Add a paper title to generate a citation.'
+                  ? isCustomPaper ? 'Add a paper title to generate a citation.' : 'Choose an available published article to generate a citation.'
                   : 'Always confirm the DOI and page numbers against the publisher record before submitting.'}
               </p>
 
@@ -346,15 +350,15 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
             <dl className="space-y-3 text-sm">
               <div>
                 <dt className="text-ink-secondary">Author</dt>
-                <dd className="font-medium text-ink">{source.author}</dd>
+                <dd className="font-medium text-ink">{source.author || 'Not provided'}</dd>
               </div>
               <div>
                 <dt className="text-ink-secondary">Year</dt>
-                <dd className="font-medium text-ink">{source.year}</dd>
+                <dd className="font-medium text-ink">{source.year || 'Not provided'}</dd>
               </div>
               <div>
                 <dt className="text-ink-secondary">Venue</dt>
-                <dd className="font-medium text-ink">{source.journal}</dd>
+                <dd className="font-medium text-ink">{source.journal || 'Not provided'}</dd>
               </div>
               <div>
                 <dt className="text-ink-secondary">DOI</dt>

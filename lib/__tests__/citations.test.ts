@@ -31,6 +31,34 @@ describe('buildCitation', () => {
     expect(bibtex).not.toContain('https://doi.org/https://doi.org');
   });
 
+  it('omits the platform publisher when explicitly requested for an external paper', () => {
+    const external = buildCitation('bibtex', { ...source, publisher: null, url: undefined });
+    expect(external).not.toContain('publisher =');
+    expect(external).not.toContain('ResearchWithMe Press');
+    expect(buildCitation('bibtex', { ...source, publisher: 'A real publisher' })).toContain('publisher = {A real publisher}');
+  });
+
+  it('does not invent a venue or publisher for missing metadata', () => {
+    const minimal = { title: 'Unknown venue', author: 'Ada Lovelace', year: '', journal: '', doi: '' };
+    for (const format of ['apa', 'mla', 'chicago', 'ieee', 'bibtex', 'ris'] as const) {
+      const output = buildCitation(format, minimal);
+      expect(output).not.toContain('ResearchWithMe');
+      expect(output).not.toContain('publisher =');
+      expect(output).not.toContain('journal =');
+      expect(output).not.toContain('JO  -');
+    }
+  });
+
+  it('does not invent an author when the author is unknown', () => {
+    const sourceWithoutAuthor: CitationSource = { title: 'A paper', author: '', year: '', journal: '' };
+    for (const format of ['apa', 'mla', 'chicago', 'ieee', 'bibtex', 'ris'] as const) {
+      const output = buildCitation(format, sourceWithoutAuthor);
+      expect(output).not.toContain('Author');
+      expect(output).not.toContain('author =');
+      expect(output).not.toContain('AU  -');
+    }
+  });
+
   it('builds RIS with typed fields', () => {
     const ris = buildCitation('ris', source);
     expect(ris).toContain('TY  - JOUR');

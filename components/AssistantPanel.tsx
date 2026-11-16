@@ -48,6 +48,7 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
   const [citations, setCitations] = useState<Citation[]>([]);
   const [articles, setArticles] = useState<BlogPost[]>(initialArticles ?? INITIAL_BLOG_POSTS);
   const [error, setError] = useState<string | null>(null);
+  const [copyError, setCopyError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const answerRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +78,8 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
 
     setLoading(true);
     setError(null);
+    setCopyError(null);
+    setCopied(false);
     setAnswer(null);
     setCitations([]);
 
@@ -116,10 +119,11 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
     if (!answer) return;
     try {
       await navigator.clipboard.writeText(answer);
+      setCopyError(null);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2200);
     } catch {
-      setError('Clipboard access was blocked. Select the answer text and copy it manually.');
+      setCopyError('Clipboard access was blocked. Select the answer text and copy it manually.');
     }
   }
 
@@ -298,6 +302,9 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
                 </button>
               </div>
 
+              {copyError && (
+                <p role="alert" className="px-5 pt-4 text-sm text-destructive">{copyError}</p>
+              )}
               <div className="whitespace-pre-line px-5 py-5 text-base leading-relaxed text-ink">{answer}</div>
 
               {citations.length > 0 && (

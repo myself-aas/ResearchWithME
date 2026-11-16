@@ -78,17 +78,17 @@ export const HYDRATION_DATA_KEY = '__RWM_HYDRATION__';
 
 const homeStyles: Record<string, CSSProperties> = {
   main: {
-    fontFamily: 'Georgia, "Times New Roman", serif',
+    fontFamily: 'Plus Jakarta Sans, system-ui, sans-serif',
     maxWidth: '42rem',
     margin: '0 auto',
     padding: '6rem 1.5rem',
-    color: '#161C1A',
+    color: 'var(--reme-text-primary)',
   },
   eyebrow: {
     fontSize: '0.75rem',
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
-    color: '#4F46E5',
+    color: 'var(--reme-action-link)',
     margin: 0,
   },
   wordmark: {
@@ -100,7 +100,7 @@ const homeStyles: Record<string, CSSProperties> = {
   strap: {
     fontSize: '1.125rem',
     lineHeight: 1.6,
-    color: '#3F4542',
+    color: 'var(--reme-text-secondary)',
     margin: 0,
   },
 };
@@ -120,7 +120,7 @@ function RouteErrorBoundary() {
       <h1 style={homeStyles.wordmark}>{heading}</h1>
       <p style={homeStyles.strap}>{detail}</p>
       <p style={{ marginTop: '2rem' }}>
-        <Link to="/" style={{ color: '#4F46E5' }}>
+        <Link to="/" style={{ color: 'var(--reme-action-link)' }}>
           Back to the journal
         </Link>
       </p>

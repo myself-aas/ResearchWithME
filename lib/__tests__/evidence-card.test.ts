@@ -171,6 +171,6 @@ describe('EvidenceCard rendering (§27.2)', () => {
 
   it('component token aliases resolve to semantic values', () => {
     expect(evidenceCardComponentTokens.accent).toBe('#059669'); // knowledge.evidence
-    expect(evidenceCardComponentTokens.background).toBe('#F3F1EC'); // surface
+    expect(evidenceCardComponentTokens.background).toBe('#FFFFFF'); // surface
   });
 });

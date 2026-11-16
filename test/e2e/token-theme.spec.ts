@@ -9,14 +9,14 @@ for (const card of ['source', 'evidence', 'claim']) {
     await page.emulateMedia({ colorScheme: 'light' });
     await page.setContent(`<style>${css}</style><div id="card" style="background:var(--reme-component-${card}-card-background);color:var(--reme-${card === 'claim' ? 'text-primary' : `component-${card}-card-title`})">Evidence</div>`);
     const cardElement = page.locator('#card');
-    await expect(cardElement).toHaveCSS('background-color', 'rgb(243, 241, 236)');
-    await expect(cardElement).toHaveCSS('color', 'rgb(18, 18, 20)');
+    await expect(cardElement).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(cardElement).toHaveCSS('color', 'rgb(32, 33, 36)');
     await page.evaluate(() => document.documentElement.classList.add('dark'));
-    await expect(cardElement).toHaveCSS('background-color', 'rgb(20, 22, 27)');
-    await expect(cardElement).toHaveCSS('color', 'rgb(242, 242, 245)');
+    await expect(cardElement).toHaveCSS('background-color', 'rgb(19, 24, 35)');
+    await expect(cardElement).toHaveCSS('color', 'rgb(248, 249, 250)');
     await page.evaluate(() => document.documentElement.classList.remove('dark'));
-    await expect(cardElement).toHaveCSS('background-color', 'rgb(243, 241, 236)');
-    await expect(cardElement).toHaveCSS('color', 'rgb(18, 18, 20)');
+    await expect(cardElement).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+    await expect(cardElement).toHaveCSS('color', 'rgb(32, 33, 36)');
   });
 }
 
@@ -55,3 +55,16 @@ for (const variant of ['emerging', 'uncertain']) {
     });
   }
 }
+
+
+test('system colors follow preference and explicit light overrides dark', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.setContent(`<style>${css}</style><div id="surface" style="background:var(--reme-surface)">Surface</div>`);
+  const surface = page.locator('#surface');
+  await expect(surface).toHaveCSS('background-color', 'rgb(19, 24, 35)');
+  await page.evaluate(() => document.documentElement.classList.add('light'));
+  await expect(surface).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+  await page.evaluate(() => document.documentElement.classList.remove('light'));
+  await page.emulateMedia({ colorScheme: 'light' });
+  await expect(surface).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+});

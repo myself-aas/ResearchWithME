@@ -6,7 +6,8 @@ import { LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import { ArticleFormat, CATEGORIES } from '@/lib/blog-data';
 import Pressable from './motion/Pressable';
-import { EASING } from '@/lib/motion/tokens';
+import { EASING, prefersReducedMotion } from '@/lib/motion/tokens';
+import { useMotionMode } from '@/components/motion/MotionModeProvider';
 import { Text } from '@/components/primitives';
 
 interface BlogHeroProps {
@@ -41,6 +42,7 @@ export default function BlogHero({
   totalArticles,
   totalWriters,
 }: BlogHeroProps) {
+  const { suppressed } = useMotionMode();
   return (
     <section className="border-b border-line bg-base-100" aria-labelledby="platform-title">
           <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
@@ -89,13 +91,13 @@ export default function BlogHero({
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
                         placeholder="Title, writer, tag, or org/repo"
-                        className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-10 font-sans text-sm text-ink placeholder:text-ink-secondary focus:bg-canvas"
+                        className="h-11 w-full rounded-sm border border-line bg-surface pl-10 pr-12 font-sans text-sm text-ink placeholder:text-ink-secondary focus:bg-canvas"
                       />
                       {searchQuery && (
                         <button
                           type="button"
                           onClick={() => setSearchQuery('')}
-                          className="absolute right-1.5 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
+                          className="absolute right-0 top-1/2 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
                         >
                           <X className="h-4 w-4" aria-hidden="true" />
                           <span className="sr-only">Clear search</span>
@@ -106,7 +108,7 @@ export default function BlogHero({
                       type="button"
                       feedback="lift"
                       onClick={() =>
-                        document.getElementById('articles-feed')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        document.getElementById('articles-feed')?.scrollIntoView({ behavior: suppressed || prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' })
                       }
                       className="btn btn-primary min-h-11 rounded-full px-5 font-sans text-sm"
                     >
@@ -134,7 +136,7 @@ export default function BlogHero({
                               type="button"
                               aria-pressed={active}
                               onClick={() => setSelectedCategory(column)}
-                              className={`relative inline-flex min-h-10 items-center rounded-full border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
+                              className={`relative inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
                                 active
                                   ? 'border-brand text-on-primary'
                                   : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'
@@ -170,7 +172,7 @@ export default function BlogHero({
                             type="button"
                             aria-pressed={active}
                             onClick={() => setSelectedFormat(format)}
-                            className={`relative inline-flex min-h-10 items-center rounded-full border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
+                            className={`relative inline-flex min-h-11 items-center rounded-full border px-3 py-1.5 font-sans text-xs font-medium transition-colors ${
                               active
                                 ? 'border-brand text-on-primary'
                                 : 'border-line bg-surface text-ink-secondary hover:bg-surface-subtle hover:text-ink'

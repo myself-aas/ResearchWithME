@@ -15,10 +15,10 @@ export default function OpengraphImage() {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          background: '#F8F7F3',
-          color: '#161C1A',
+          background: '#F8F9FA',
+          color: '#202124',
           padding: '72px 84px',
-          borderTop: '18px solid #1D4ED8',
+          borderTop: '18px solid #005BBF',
           fontFamily: 'ui-serif, Georgia, serif',
         }}
       >
@@ -27,11 +27,11 @@ export default function OpengraphImage() {
           <div style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 940 }}>
             Open science, reviewed in public.
           </div>
-          <div style={{ fontSize: 30, color: '#5C5C63', fontFamily: 'Inter, system-ui, sans-serif' }}>
+          <div style={{ fontSize: 30, color: '#5F6368', fontFamily: 'Inter, system-ui, sans-serif' }}>
             Article reviews · reproducible research · repository teardowns
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: '#5C5C63' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: '#5F6368' }}>
           <span>researchwith.me</span>
           <span>CC BY 4.0 · Open access</span>
         </div>

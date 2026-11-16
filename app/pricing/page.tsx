@@ -84,7 +84,7 @@ function offerCatalogueJsonLd() {
       description: product.summary,
       url: absoluteUrl(`/pricing#product-${product.key}`),
       priceCurrency: 'USD',
-      price: '19.00',
+      price: product.priceLabel.replace(/^\$/, ''),
     })),
   };
 }
@@ -119,11 +119,11 @@ export default async function PricingPage() {
 
         <header className="max-w-3xl">
           <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">
-            The archive is free. One thing goes further.
+            The archive is free. Explore our products.
           </h1>
           <p className="mt-4 font-serif text-lg leading-relaxed text-ink-secondary">
-            The method behind our repository teardowns, written up so you can apply it to code you did not
-            write. It is priced once, plainly, and there is nothing to renew.
+            Explore the method behind our repository teardowns and a tool for statistical tables. Each is a
+            one-time purchase, with nothing to renew.
           </p>
         </header>
 
