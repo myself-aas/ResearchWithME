@@ -93,7 +93,7 @@ expect(table.textContent).toContain("0"); // distinct null/zero fixture cells
 
 **Interfaces:** Produces immutable `brandImageTokens {canvas,surface,ink,secondary,action}` derived from generated light semantic tokens; exported constant `brandImageFontFamily = "sans-serif"` records an intentional ImageResponse supported fallback. Existing public assets are WOFF2, not an approved Satori TTF/OTF font payload; do not pretend browser font names load them. No font download or browser CSS dependency.
 
-- [ ] **Step 1: Write failing regression `brand_outputs_use_approved_palette_and_supported_glyphs`.** Assert adapter values canvas #FAF9F6/ink #121214/action #1D4ED8. Render short/200-character titles, β/π and punctuation without font fetch from external hosts; assert responses valid PNG with expected sizes. Capture root/post OG and icon masks to inspect clipping; do not claim pixel font equivalence from token assertions.
+- [ ] **Step 1: Write failing regression `brand_outputs_use_approved_palette_and_supported_glyphs`.** Assert adapter values canvas #FAF9F6/ink #121214/action #1D4ED8. Render short/200-character titles, β and punctuation without font fetch from external hosts; assert responses valid PNG with expected sizes. Capture root/post OG and icon masks to inspect clipping; do not claim pixel font equivalence from token assertions.
 
 Assertion excerpt (inside the named test, using its fixtures):
 ```ts
