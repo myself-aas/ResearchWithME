@@ -83,6 +83,18 @@ describe.skipIf(!enabled)('Pages reader browser with isolated server fixture', (
     } finally { await page.close(); }
   });
 
+  it('does not present a review URL as a DOI in the citation popover', async () => {
+    const page = await fixturePage(390, 'light');
+    try {
+      await page.goto(`${origin}/post/editorial-fixture`);
+      await page.getByRole('complementary', { name: 'Article tools' }).getByRole('button', { name: /^Citation Cite:/ }).click();
+      const dialog = page.getByRole('dialog');
+      await dialog.waitFor();
+      expect(await dialog.getByRole('button', { name: 'DOI', exact: true }).count()).toBe(0);
+      expect(await dialog.getByRole('link', { name: /Primary record/ }).count()).toBe(1);
+    } finally { await page.close(); }
+  });
+
   it('does not request or display a nonexistent explainer video', async () => {
     const page = await fixturePage(390, 'light');
     const mediaRequests: string[] = [];

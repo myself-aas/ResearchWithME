@@ -20,10 +20,10 @@ export interface InlineCitationPopoverProps {
 
 function resolveDoiString(source: CitationSource): string {
   const raw = (source.doi ?? '').trim();
-  if (!raw) return source.url ?? '';
+  if (!raw) return '';
   const cleaned = raw.replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '');
-  if (/^10\./.test(cleaned)) return `https://doi.org/${cleaned}`;
-  return raw;
+  if (/^10\.\d{4,9}\/\S+$/i.test(cleaned)) return `https://doi.org/${cleaned}`;
+  return '';
 }
 
 
@@ -135,7 +135,7 @@ export default function InlineCitationPopover({
           <div className="mt-2.5 space-y-1">
             <p className="font-serif text-sm font-semibold leading-snug text-ink">{source.title}</p>
             <p className="font-sans text-xs text-ink-secondary">
-              {source.author} · {source.journal} ({source.year})
+              {[source.author, source.journal, source.year].filter(Boolean).join(' · ') || 'Author, venue and date not provided'}
             </p>
             {source.doi && (
               <p className="break-all font-mono text-xs text-ink">{source.doi}</p>
@@ -143,7 +143,7 @@ export default function InlineCitationPopover({
           </div>
 
           <div className="mt-3 grid grid-cols-3 gap-1.5 border-t border-line pt-3">
-            {COPY_FORMATS.map((format) => (
+            {COPY_FORMATS.filter((format) => format.kind !== 'doi' || Boolean(doiTarget)).map((format) => (
               <CopyChip
                 key={format.kind}
                 label={format.kind === 'doi' ? 'DOI' : format.kind.toUpperCase()}

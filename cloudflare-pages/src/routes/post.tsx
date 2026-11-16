@@ -234,9 +234,8 @@ export default function PostRoute() {
                     Artifact under review
                   </h2>
                   <InlineCitationPopover
-                    label="[1]"
-                    source={citationMap['1']}
-                    citeHref={citeHref}
+                    label="Cite artifact"
+                    source={citationMap.artifact}
                   />
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-ink-secondary">
