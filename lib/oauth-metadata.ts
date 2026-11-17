@@ -68,11 +68,49 @@ export const OAUTH_METADATA_SNAPSHOT = {
   } as Record<string, unknown>,
 };
 
+export interface OAuthMetadataSnapshot {
+  issuerOrigin: string;
+  captured: string;
+  document: Record<string, unknown>;
+}
+
+/**
+ * Returns the active OAuth discovery snapshot. Operators running staging or
+ * alternate Supabase projects can supply `OAUTH_METADATA_SNAPSHOT_JSON`
+ * (JSON matching `{ issuerOrigin, captured, document }`) at runtime without
+ * editing source code; otherwise falls back to the captured production snapshot.
+ */
+export function getOAuthMetadataSnapshot(): OAuthMetadataSnapshot {
+  const raw = process.env.OAUTH_METADATA_SNAPSHOT_JSON?.trim();
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as Partial<OAuthMetadataSnapshot>;
+      if (
+        typeof parsed.issuerOrigin === 'string' &&
+        typeof parsed.captured === 'string' &&
+        parsed.document &&
+        typeof parsed.document === 'object' &&
+        !Array.isArray(parsed.document)
+      ) {
+        return {
+          issuerOrigin: parsed.issuerOrigin,
+          captured: parsed.captured,
+          document: parsed.document as Record<string, unknown>,
+        };
+      }
+    } catch {
+      // Ignore malformed runtime override and fall back to built-in snapshot.
+    }
+  }
+  return OAUTH_METADATA_SNAPSHOT;
+}
+
 /** True when `supabaseUrl` is the project this snapshot was captured from. */
 export function snapshotMatches(supabaseUrl: string): boolean {
   try {
+    const active = getOAuthMetadataSnapshot();
     const configured = new URL(supabaseUrl);
-    const captured = new URL(OAUTH_METADATA_SNAPSHOT.issuerOrigin);
+    const captured = new URL(active.issuerOrigin);
     return (
       configured.protocol === 'https:' &&
       !configured.username &&

@@ -366,6 +366,30 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
           <p className="mt-6 max-w-[60ch] text-sm leading-relaxed text-ink-secondary">
             The assistant is free for every reader and needs no account.
           </p>
+
+          <div className="mt-6 rounded-xl border border-line bg-surface p-4 space-y-2 text-xs">
+            <h2 className="font-sans text-sm font-semibold text-ink">
+              AI Governance &amp; Provenance Boundary
+            </h2>
+            <p className="text-ink-secondary leading-relaxed">
+              Public archive Q&amp;A is strictly isolated from private drafts.{' '}
+              <strong className="text-ink">CONFIDENTIAL</strong> and{' '}
+              <strong className="text-ink">RESTRICTED</strong> workspaces block external AI
+              providers fail-closed, and every draft validation records an auditable AI Provenance
+              entry requiring human approval.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-1">
+              <Link href="/editor" className="font-medium text-brand hover:underline">
+                Open Contextual Draft Verifier →
+              </Link>
+              <Link href="/sources" className="font-medium text-brand hover:underline">
+                Inspect Canonical Sources →
+              </Link>
+              <Link href="/research-os" className="font-medium text-brand hover:underline">
+                Review Assistant Tasks in Research OS →
+              </Link>
+            </div>
+          </div>
         </section>
 
         <section aria-label="How discovery works" className="border-t border-line py-8">

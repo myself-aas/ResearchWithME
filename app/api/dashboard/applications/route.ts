@@ -65,7 +65,7 @@ export async function POST(request: Request) {
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many attempts. Wait a minute before applying again.' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil(limit.retryAfter / 1000)) } },
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } },
     );
   }
 

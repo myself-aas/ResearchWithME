@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { listPublishedAuthors } from '@/lib/author-directory';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -10,7 +11,9 @@ export const dynamic = 'force-dynamic';
  * lib/author-directory.ts -- see the note there on why neither entry point
  * fetches the other.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'authors-list', 120, 60_000);
+  if (limited) return limited;
   try {
     const authors = await listPublishedAuthors();
     return NextResponse.json(

@@ -135,6 +135,12 @@ export function useSession(): Session {
     if (!hasSupabaseBrowserConfig()) return;
     const { getSupabaseBrowserClient } = await import('./client');
     await getSupabaseBrowserClient().auth.signOut();
+    try {
+      const { performLogoutLocalWipe } = await import('@/lib/persistence/logout-wipe');
+      await performLogoutLocalWipe({ clearLocalDrafts: true });
+    } catch {
+      // Non-fatal in non-browser or restricted storage contexts
+    }
     setUser(null);
   }
 

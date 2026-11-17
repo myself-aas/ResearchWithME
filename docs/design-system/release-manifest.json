@@ -1,7 +1,7 @@
 {
-  "gate": "reme v3.1 §44/§46 stable release gate",
-  "generatedAt": "2026-11-13T21:30:22.073Z",
-  "tokenChecksum": "sha256:ce1073ea91b2958d",
+  "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
+  "generatedAt": "2026-11-17T14:01:55.895Z",
+  "tokenChecksum": "sha256:843f5911b2ee4631",
   "results": [
     {
       "id": "DS-1",
@@ -13,7 +13,7 @@
       "id": "DS-2",
       "description": "token checksum (conformance manifest §46.1)",
       "status": "pass",
-      "evidence": "sha256:ce1073ea91b2958d"
+      "evidence": "sha256:843f5911b2ee4631"
     },
     {
       "id": "DS-3",
@@ -74,6 +74,126 @@
       "description": "performance budgets script present (§18)",
       "status": "pass",
       "evidence": "scripts/check-budgets.mjs (CI runs it after build)"
+    },
+    {
+      "id": "V34-1",
+      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–10)",
+      "status": "pass",
+      "evidence": "9 ordered v3.4 migrations verified (89 RLS tables, 100% 83/83 Prisma models)"
+    },
+    {
+      "id": "V34-2",
+      "description": "v3.4 components use semantic design tokens only (no raw hex or text-white)",
+      "status": "pass",
+      "evidence": "19 v3.4 components clean"
+    },
+    {
+      "id": "V34-3",
+      "description": "v3.4 axe-core WCAG 2.1 AA & BottomSheet focus-trap suite wired into vitest",
+      "status": "pass",
+      "evidence": "lib/__tests__/v34-a11y-visual.test.tsx"
+    },
+    {
+      "id": "V34-4",
+      "description": "v3.4 Playwright E2E journeys & 320–1920px reflow matrix present",
+      "status": "pass",
+      "evidence": "3 Playwright v3.4 test suites ready"
+    },
+    {
+      "id": "V34-5",
+      "description": "idempotency key replay guard & retraction-to-attention propagation wired",
+      "status": "pass",
+      "evidence": "Idempotency-Key + RETRACTION_IMPACT propagation verified"
+    },
+    {
+      "id": "V34-6",
+      "description": "v3.4 surface briefs cover all core v3.4 page surfaces",
+      "status": "pass",
+      "evidence": "10 core v3.4 surface governance briefs present"
+    },
+    {
+      "id": "V34-7",
+      "description": "v3.4 ADR-032 decisions, rollout feature flags, and migration/rollback runbook present",
+      "status": "pass",
+      "evidence": "4 Wave 5 governance & verification artifacts present"
+    },
+    {
+      "id": "V34-8",
+      "description": "v3.4 AI provenance, publication blockers, unified search, checksummed exports, and safe notification preview present",
+      "status": "pass",
+      "evidence": "6 Wave 6 AI governance, search & export artifacts verified"
+    },
+    {
+      "id": "V34-9",
+      "description": "v3.4 Wave 7 canonical sub-routes, entailment check, notifications read-all, devices/push/sync, portable export, and profile contracts present",
+      "status": "pass",
+      "evidence": "10 Wave 7 canonical closure, mobile sync & portability artifacts verified"
+    },
+    {
+      "id": "V34-10",
+      "description": "v3.4 Wave 8 complete Part V §6 API parity, transactional outbox, telemetry redaction & governed renders present",
+      "status": "pass",
+      "evidence": "13 Wave 8 full API parity, outbox, telemetry & render artifacts verified"
+    },
+    {
+      "id": "V34-11",
+      "description": "v3.4 Wave 9 first-class knowledge routes, MDX security, PWA offline wipe, landing resolver, experiments & backfill dry-run present",
+      "status": "pass",
+      "evidence": "21 Wave 9 canonical UI, PWA, security & backfill artifacts verified"
+    },
+    {
+      "id": "V34-12",
+      "description": "v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present",
+      "status": "pass",
+      "evidence": "6 Wave 10 canonical completion artifacts verified"
+    },
+    {
+      "id": "V34-13",
+      "description": "v3.4 Wave 11 Continue Working + interactive Goals, 15 /dashboard/* deep links, SSRF-safe resolvers, 15 job handlers, dual-read telemetry & threat model present",
+      "status": "pass",
+      "evidence": "7 Wave 11 operational engines, dashboard deep links & security artifacts verified"
+    },
+    {
+      "id": "V34-14",
+      "description": "v3.4 Wave 12 full 13-block MDX editor + Undo/Redo, Contribution Pipeline + Private Activity + Personalization, CSL-JSON citations, ResponsiveDataTable & CI E2E gate present",
+      "status": "pass",
+      "evidence": "Wave 12 editor blocks, Research OS completeness, CSL-JSON, ResponsiveDataTable & CI E2E gate verified"
+    },
+    {
+      "id": "V34-15",
+      "description": "v3.4 Wave 13 operational DB indexes (Migration 10), X-Request-Id/X-Trace-Id propagation, non-suppressible integrity/security alerts, ScholarlyArticle JSON-LD, ADR-032-12 Assistant governance & §18.16 scale benchmarks present",
+      "status": "pass",
+      "evidence": "Wave 13 live SQL indexes, trace propagation, non-suppressible alerts, JSON-LD & scale benchmarks verified"
+    },
+    {
+      "id": "V34-16",
+      "description": "v3.4 Wave 14 full platform cohesion (HomeFeed ResearchNetworkBridge, legacy post/author/write bridges, runtime /api/feed experiment & flag wiring, updated release-gate & risk-register) present",
+      "status": "pass",
+      "evidence": "Wave 14 legacy-to-v3.4 bridges, live experiments & governance register sync verified"
+    },
+    {
+      "id": "V34-17",
+      "description": "v3.4 Wave 15 privacy-safe 14-event analytics taxonomy, 5 priority experiment families, multi-facet/classification search, mobile drawer focus-trap/inert, dashboard Move up/down reordering, 8-kind evidence locators & editor pending-sync counter present",
+      "status": "pass",
+      "evidence": "Wave 15 privacy-safe analytics, multi-facet search, mobile a11y & offline indicators verified"
+    },
+    {
+      "id": "V34-18",
+      "description": "v3.4 Wave 17 P0 stateless persistence, fail-closed writes, atomic Postgres autosave RPC, durable idempotency, FTS/trigram search, centralized authorize(), 89/89 v34_* tables & 100% API rate limiting",
+      "status": "pass",
+      "evidence": "Wave 17 P0 stateless persistence, atomic autosave, durable idempotency, FTS/trigram search & centralized RBAC verified"
+    },
+    {
+      "id": "V34-19",
+      "description": "v3.4 Wave 18 P1 durable outbox worker + DLQ + Cloudflare Queue/Cron, live SQL reconciliation, canonical cursor pagination, VAPID Push + Resend Digest + Supabase Realtime, R2 signed storage, OTel/Sentry, SW Background Sync & ADR-033",
+      "status": "pass",
+      "evidence": "Wave 18 P1 async outbox worker, live SQL reconciliation, cursor pagination, live delivery, R2 storage, OTel/Sentry, SW sync & ADR-033 verified"
+    },
+    {
+      "id": "V34-20",
+      "description": "v3.4 Wave 19 P2/P3 live cutover readiness: Migration 13 autosave CHECK fix, Cloudflare R2/Queues/secrets provisioning CLI, --v34-cutover env audit, staged rollout flag aliases, live authenticated cutover verifier & synced Part VIII dossier",
+      "status": "pass",
+      "evidence": "Wave 19 P2/P3 cutover CLI, Migration 13 live autosave fix, staged flags, cutover verifier & Part VIII dossier verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

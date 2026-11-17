@@ -33,6 +33,7 @@ export default defineConfig({
       LINKEDIN_CLIENT_SECRET: '',
       LINKEDIN_REDIRECT_URI: '',
       LINKEDIN_COMPANY_URN: '',
+      LINKEDIN_WEBHOOK_SECRET: 'local-test-webhook-secret',
       CRON_SECRET: 'local-test-cron-secret',
       WORKERS_CI: '0',
     },

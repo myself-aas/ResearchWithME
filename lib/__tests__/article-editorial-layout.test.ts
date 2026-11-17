@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-const routes = ['app/post/[slug]/page.tsx', 'cloudflare-pages/src/routes/post.tsx'];
+const routes = ['app/post/[slug]/page.tsx'];
 
 describe('editorial article layout across builds', () => {
   for (const path of routes) {

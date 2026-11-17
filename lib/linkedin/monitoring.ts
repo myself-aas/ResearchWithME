@@ -1,11 +1,10 @@
 import { getSupabasePublicClient } from '@/lib/supabase/server';
-
-export type LinkedInEventType = 'post_attempt' | 'token_refresh' | 'oauth_init' | 'oauth_callback' | 'batch_start' | 'batch_complete';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 export interface LinkedInEvent {
-  type: LinkedInEventType;
+  type: 'post_attempt' | 'token_refresh' | 'webhook_received' | 'batch_run' | 'error';
   slug?: string;
-  status: 'success' | 'failed' | 'pending';
+  status: 'started' | 'success' | 'failed' | 'retrying' | 'skipped';
   postUrn?: string;
   error?: string;
   details?: Record<string, unknown>;
@@ -17,74 +16,115 @@ export interface LinkedInMetrics {
   successfulPosts: number;
   failedPosts: number;
   successRate: number;
-  recentEvents: LinkedInEvent[];
-  lastPostAt: string | null;
+  lastPostAt?: string;
+  lastError?: string;
 }
 
-const EVENTS_TABLE = 'linkedin_events';
+type RpcClient = {
+  rpc: (
+    fn: string,
+    params?: Record<string, unknown>,
+  ) => PromiseLike<{ data: unknown; error: { message: string } | null }>;
+};
 
-export async function logLinkedInEvent(event: LinkedInEvent): Promise<void> {
+export interface MonitoringOptions {
+  client?: RpcClient;
+  bridgeSecret?: string | null;
+}
+
+function resolveBridgeSecret(override?: string | null): string | null {
+  if (override !== undefined) return override;
+  const value = (process.env.LINKEDIN_BRIDGE_SECRET ?? '').trim();
+  return value || null;
+}
+
+function getRpcClient(options?: MonitoringOptions): RpcClient | null {
+  if (options?.client) return options.client;
+  if (!isSupabaseConfigured) return null;
   try {
-    const supabase = getSupabasePublicClient();
-    const { error } = await supabase.from(EVENTS_TABLE).insert({
-      type: event.type,
-      slug: event.slug,
-      status: event.status,
-      post_urn: event.postUrn,
-      error: event.error,
-      details: event.details,
-      created_at: event.timestamp,
+    return getSupabasePublicClient() as unknown as RpcClient;
+  } catch {
+    return null;
+  }
+}
+
+export async function logLinkedInEvent(
+  event: LinkedInEvent,
+  options?: MonitoringOptions,
+): Promise<void> {
+  const client = getRpcClient(options);
+  if (!client) {
+    return;
+  }
+
+  try {
+    const { error } = await client.rpc('linkedin_log_event', {
+      p_type: event.type,
+      p_slug: event.slug ?? null,
+      p_status: event.status,
+      p_post_urn: event.postUrn ?? null,
+      p_error: event.error ?? null,
+      p_details: event.details ?? null,
+      p_secret: resolveBridgeSecret(options?.bridgeSecret),
     });
 
     if (error) {
-      console.error('[LinkedIn Monitoring] Failed to log event:', error);
+      console.error('[LinkedIn Monitoring] Failed to log event:', error.message);
     }
   } catch (err) {
     console.error('[LinkedIn Monitoring] Unexpected error logging event:', err);
   }
 }
 
-export async function getLinkedInMetrics(days: number = 30): Promise<LinkedInMetrics> {
-  const supabase = getSupabasePublicClient();
-  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-
-  const { data, error } = await supabase
-    .from(EVENTS_TABLE)
-    .select('*')
-    .eq('type', 'post_attempt')
-    .gte('created_at', since)
-    .order('created_at', { ascending: false })
-    .limit(100);
-
-  if (error || !data) {
-    return {
-      totalPosts: 0,
-      successfulPosts: 0,
-      failedPosts: 0,
-      successRate: 0,
-      recentEvents: [],
-      lastPostAt: null,
-    };
-  }
-
-  const postAttempts = data.filter(e => e.type === 'post_attempt');
-  const successful = postAttempts.filter(e => e.status === 'success');
-  const failed = postAttempts.filter(e => e.status === 'failed');
-
-  return {
-    totalPosts: postAttempts.length,
-    successfulPosts: successful.length,
-    failedPosts: failed.length,
-    successRate: postAttempts.length > 0 ? (successful.length / postAttempts.length) * 100 : 0,
-    recentEvents: data as LinkedInEvent[],
-    lastPostAt: successful[0]?.created_at || null,
+export async function getLinkedInMetrics(
+  days = 30,
+  options?: MonitoringOptions,
+): Promise<LinkedInMetrics> {
+  const empty: LinkedInMetrics = {
+    totalPosts: 0,
+    successfulPosts: 0,
+    failedPosts: 0,
+    successRate: 0,
   };
+
+  const client = getRpcClient(options);
+  if (!client) return empty;
+
+  try {
+    const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await client.rpc('linkedin_get_metrics', {
+      p_since: since,
+      p_secret: resolveBridgeSecret(options?.bridgeSecret),
+    });
+
+    if (error || !Array.isArray(data)) {
+      return empty;
+    }
+
+    const rows = data as Array<{ type: string; status: string; created_at: string }>;
+    const totalPosts = rows.length;
+    const successfulPosts = rows.filter((e) => e.status === 'success').length;
+    const failedPosts = rows.filter((e) => e.status === 'failed').length;
+    const successRate = totalPosts > 0 ? (successfulPosts / totalPosts) * 100 : 0;
+    const lastPostAt = rows.find((e) => e.status === 'success')?.created_at;
+
+    return {
+      totalPosts,
+      successfulPosts,
+      failedPosts,
+      successRate,
+      lastPostAt,
+    };
+  } catch (err) {
+    console.error('[LinkedIn Monitoring] Failed to get metrics:', err);
+    return empty;
+  }
 }
 
-// Helper to log from client/automation
-export function createEventLogger() {
+export function createEventLogger(options?: MonitoringOptions) {
   return {
-    logPostAttempt: (slug: string, status: 'success' | 'failed', postUrn?: string, error?: string) =>
+    logPostAttempt: (slug: string, status: 'started' | 'success' | 'failed', postUrn?: string, error?: string) =>
       logLinkedInEvent({
         type: 'post_attempt',
         slug,
@@ -92,27 +132,30 @@ export function createEventLogger() {
         postUrn,
         error,
         timestamp: new Date().toISOString(),
-      }),
-    logTokenRefresh: (status: 'success' | 'failed', error?: string) =>
+      }, options),
+
+    logTokenRefresh: (status: 'started' | 'success' | 'failed', error?: string) =>
       logLinkedInEvent({
         type: 'token_refresh',
         status,
         error,
         timestamp: new Date().toISOString(),
-      }),
+      }, options),
+
     logBatchStart: (count: number) =>
       logLinkedInEvent({
-        type: 'batch_start',
-        status: 'pending',
+        type: 'batch_run',
+        status: 'started',
         details: { articleCount: count },
         timestamp: new Date().toISOString(),
-      }),
+      }, options),
+
     logBatchComplete: (posted: number, failed: number) =>
       logLinkedInEvent({
-        type: 'batch_complete',
+        type: 'batch_run',
         status: failed === 0 ? 'success' : 'failed',
         details: { posted, failed },
         timestamp: new Date().toISOString(),
-      }),
+      }, options),
   };
 }

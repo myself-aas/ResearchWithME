@@ -141,7 +141,6 @@ describe('generated CSS consumer contract', () => {
       'app/globals.css': ':root { --reme-local: var(--reme-surface); }',
       'lib/factory.ts': "export const style = { color: 'var(--reme-local, var(--reme-surface))' };",
       'components/Card.tsx': "export const background = 'var(--reme-surface)';",
-      'cloudflare-pages/src/styles.css': 'main { color: var(--reme-local); }',
       'lib/__tests__/fixture.ts': "const missing = 'var(--reme-test-only)';",
       'lib/factory.test.ts': "const missing = 'var(--reme-test-only)';",
     });

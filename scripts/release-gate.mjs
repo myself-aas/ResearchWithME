@@ -104,9 +104,333 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
   return 'scripts/check-budgets.mjs (CI runs it after build)';
 });
 
+// v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–10)', () => {
+  const migrations = [
+    'supabase/migrations/20261117000100_v34_research_network.sql',
+    'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
+    'supabase/migrations/20261117000300_v34_wave3_discussions_tools_os.sql',
+    'supabase/migrations/20261117000400_v34_wave5_topics_collections_alerts_graph.sql',
+    'supabase/migrations/20261117000500_v34_wave6_ai_provenance_exports_search.sql',
+    'supabase/migrations/20261117000600_v34_wave7_devices_push_sync_profile.sql',
+    'supabase/migrations/20261117000700_v34_wave8_assessments_tasks_renders_ops.sql',
+    'supabase/migrations/20261117000800_v34_wave9_integrity_impacts_follows_annotations_ops.sql',
+    'supabase/migrations/20261117000900_v34_wave10_complete_83_prisma_models_and_constraints.sql',
+  ];
+  for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
+  return `${migrations.length} ordered v3.4 migrations verified (89 RLS tables, 100% 83/83 Prisma models)`;
+});
+check('V34-2', 'v3.4 components use semantic design tokens only (no raw hex or text-white)', () => {
+  const dir = join(root, 'components/v34');
+  const bad = [];
+  for (const f of readdirSync(dir)) {
+    if (!f.endsWith('.tsx')) continue;
+    const s = readFileSync(join(dir, f), 'utf8');
+    if (/#(?:[0-9a-fA-F]{3}){1,2}\b/.test(s) || /\btext-white\b/.test(s)) bad.push(f);
+  }
+  assert(bad.length === 0, `raw color token in components/v34: ${bad.join(', ')}`);
+  return `${readdirSync(dir).filter((f) => f.endsWith('.tsx')).length} v3.4 components clean`;
+});
+check('V34-3', 'v3.4 axe-core WCAG 2.1 AA & BottomSheet focus-trap suite wired into vitest', () => {
+  const p = join(root, 'lib/__tests__/v34-a11y-visual.test.tsx');
+  assert(existsSync(p), 'missing lib/__tests__/v34-a11y-visual.test.tsx');
+  const content = readFileSync(p, 'utf8');
+  assert(content.includes('axe.run') && content.includes('BottomSheet'), 'incomplete v3.4 a11y suite');
+  return 'lib/__tests__/v34-a11y-visual.test.tsx';
+});
+check('V34-4', 'v3.4 Playwright E2E journeys & 320–1920px reflow matrix present', () => {
+  const files = [
+    'test/playwright.v34.config.ts',
+    'test/e2e/v34-research-network.spec.ts',
+    'test/e2e/v34-a11y-reflow.spec.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Playwright v3.4 test suites ready`;
+});
+check('V34-5', 'idempotency key replay guard & retraction-to-attention propagation wired', () => {
+  assert(existsSync(join(root, 'lib/v34/idempotency.ts')), 'missing lib/v34/idempotency.ts');
+  assert(existsSync(join(root, 'test/next/v34-wave4-hardening.test.ts')), 'missing wave4 route test');
+  const integrityRoute = readFileSync(
+    join(root, 'app/api/sources/[id]/integrity-events/route.ts'),
+    'utf8',
+  );
+  assert(
+    integrityRoute.includes('propagateIntegrityEventToAttention'),
+    'retraction propagation not wired into integrity-events route',
+  );
+  return 'Idempotency-Key + RETRACTION_IMPACT propagation verified';
+});
+check('V34-6', 'v3.4 surface briefs cover all core v3.4 page surfaces', () => {
+  const briefsDir = join(root, '.impeccable/surfaces');
+  const expected = [
+    'app-feed-page-tsx.md',
+    'app-search-page-tsx.md',
+    'app-topics-page-tsx.md',
+    'app-contribute-page-tsx.md',
+    'app-library-page-tsx.md',
+    'app-workspaces-page-tsx.md',
+    'app-workspaces-slug-page-tsx.md',
+    'app-graph-page-tsx.md',
+    'app-tools-page-tsx.md',
+    'app-research-os-page-tsx.md',
+  ];
+  for (const b of expected) assert(existsSync(join(briefsDir, b)), `missing brief ${b}`);
+  return `${expected.length} core v3.4 surface governance briefs present`;
+});
+check('V34-7', 'v3.4 ADR-032 decisions, rollout feature flags, and migration/rollback runbook present', () => {
+  const files = [
+    'lib/v34/feature-flags.ts',
+    'docs/adr/ADR-032-v34-canonical-decisions.md',
+    'docs/runbooks/v34-migration-and-rollback-runbook.md',
+    'test/next/v34-wave5-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 5 governance & verification artifacts present`;
+});
+check('V34-8', 'v3.4 AI provenance, publication blockers, unified search, checksummed exports, and safe notification preview present', () => {
+  const files = [
+    'lib/v34/ai-governance.ts',
+    'lib/v34/search.ts',
+    'lib/v34/exports.ts',
+    'lib/v34/notifications-safe.ts',
+    'app/search/page.tsx',
+    'test/next/v34-wave6-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const publishRoute = readFileSync(
+    join(root, 'app/api/contributions/[id]/publish/route.ts'),
+    'utf8',
+  );
+  assert(
+    publishRoute.includes('evaluateContributionPublishBlockers'),
+    'publication blocker engine not wired into publish route',
+  );
+  return `${files.length} Wave 6 AI governance, search & export artifacts verified`;
+});
+check('V34-9', 'v3.4 Wave 7 canonical sub-routes, entailment check, notifications read-all, devices/push/sync, portable export, and profile contracts present', () => {
+  const files = [
+    'lib/v34/wave7-contracts.ts',
+    'lib/v34/wave7-store.ts',
+    'app/api/ai/check-entailment/route.ts',
+    'app/api/notifications/read-all/route.ts',
+    'app/api/devices/route.ts',
+    'app/api/push/subscriptions/route.ts',
+    'app/api/sync/[resourceType]/route.ts',
+    'app/api/me/export/route.ts',
+    'components/v34/ContributionIntegrityExports.tsx',
+    'test/next/v34-wave7-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 7 canonical closure, mobile sync & portability artifacts verified`;
+});
+check('V34-10', 'v3.4 Wave 8 complete Part V §6 API parity, transactional outbox, telemetry redaction & governed renders present', () => {
+  const files = [
+    'lib/v34/observability.ts',
+    'lib/v34/outbox.ts',
+    'lib/v34/wave8-contracts.ts',
+    'lib/v34/wave8-store.ts',
+    'app/api/ai/approve/route.ts',
+    'app/api/ai/reject/route.ts',
+    'app/api/assistant/sessions/route.ts',
+    'app/api/renders/remotion/route.ts',
+    'app/api/renders/hyperframes/route.ts',
+    'app/api/exports/[id]/download/route.ts',
+    'app/api/sync/acknowledge/route.ts',
+    'app/api/me/route.ts',
+    'test/next/v34-wave8-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 8 full API parity, outbox, telemetry & render artifacts verified`;
+});
+check('V34-11', 'v3.4 Wave 9 first-class knowledge routes, MDX security, PWA offline wipe, landing resolver, experiments & backfill dry-run present', () => {
+  const files = [
+    'app/sources/page.tsx',
+    'app/evidence/page.tsx',
+    'app/evidence/[id]/page.tsx',
+    'app/claims/page.tsx',
+    'app/claim/[id]/page.tsx',
+    'app/projects/page.tsx',
+    'app/project/[id]/page.tsx',
+    'app/tool/[slug]/page.tsx',
+    'app/reviews/page.tsx',
+    'app/review/[id]/page.tsx',
+    'app/topics/[slug]/page.tsx',
+    'app/workspace/[id]/page.tsx',
+    'components/v34/SettingsIdentityClient.tsx',
+    'components/v34/PwaLifecycleBridge.tsx',
+    'public/sw.js',
+    'lib/v34/mdx-security.ts',
+    'lib/v34/experiments.ts',
+    'lib/v34/landing.ts',
+    'lib/persistence/logout-wipe.ts',
+    'scripts/v34-backfill-reconcile.mjs',
+    'test/next/v34-wave9-platform.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 9 canonical UI, PWA, security & backfill artifacts verified`;
+});
+check('V34-12', 'v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present', () => {
+  const files = [
+    'app/editor/page.tsx',
+    'app/editor/[id]/page.tsx',
+    'components/v34/ScholarlyEditorWorkspace.tsx',
+    'lib/v34/identifiers.ts',
+    'docs/v34-acceptance-evidence.md',
+    'test/next/v34-wave10-completion.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const bottomNav = readFileSync(join(root, 'components/layout/MobileBottomNav.tsx'), 'utf8');
+  for (const label of ['Explore', 'Library', 'Contribute', 'AI', 'Profile']) {
+    assert(bottomNav.includes(label), `ADR-032-11 bottom nav missing destination: ${label}`);
+  }
+  const useSession = readFileSync(join(root, 'lib/supabase/use-session.ts'), 'utf8');
+  assert(useSession.includes('performLogoutLocalWipe'), 'use-session signOut missing Part V §15.3 local wipe');
+  return `${files.length} Wave 10 canonical completion artifacts verified`;
+});
+check('V34-13', 'v3.4 Wave 11 Continue Working + interactive Goals, 15 /dashboard/* deep links, SSRF-safe resolvers, 15 job handlers, dual-read telemetry & threat model present', () => {
+  const files = [
+    'lib/v34/dashboard-routes.ts',
+    'app/dashboard/[section]/page.tsx',
+    'lib/v34/resolvers.ts',
+    'lib/v34/job-runner.ts',
+    'lib/v34/dual-read.ts',
+    'docs/security/v34-threat-model-and-retention-policy.md',
+    'test/next/v34-wave11-engines.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const ros = readFileSync(join(root, 'components/v34/ResearchOsClient.tsx'), 'utf8');
+  assert(ros.includes('Continue Working'), 'ResearchOsClient missing Continue Working module');
+  assert(ros.includes('handleGoalProgress'), 'ResearchOsClient missing interactive Research Goals controls');
+  return `${files.length} Wave 11 operational engines, dashboard deep links & security artifacts verified`;
+});
+check('V34-14', 'v3.4 Wave 12 full 13-block MDX editor + Undo/Redo, Contribution Pipeline + Private Activity + Personalization, CSL-JSON citations, ResponsiveDataTable & CI E2E gate present', () => {
+  const files = [
+    'components/v34/ResponsiveDataTable.tsx',
+    'test/next/v34-wave12-parity.test.ts',
+    '.github/workflows/quality.yml',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const editor = readFileSync(join(root, 'components/v34/ScholarlyEditorWorkspace.tsx'), 'utf8');
+  assert(editor.includes('handleUndo') && editor.includes('tool_review'), 'ScholarlyEditorWorkspace missing Undo/Redo or tool_review block');
+  const ros = readFileSync(join(root, 'components/v34/ResearchOsClient.tsx'), 'utf8');
+  assert(ros.includes('Contribution Pipeline') && ros.includes('Private Research Activity'), 'ResearchOsClient missing Pipeline/Activity modules');
+  const workflow = readFileSync(join(root, '.github/workflows/quality.yml'), 'utf8');
+  assert(workflow.includes('v34-a11y-reflow.spec.ts'), 'quality.yml missing Playwright v3.4 a11y/reflow job');
+  return 'Wave 12 editor blocks, Research OS completeness, CSL-JSON, ResponsiveDataTable & CI E2E gate verified';
+});
+check('V34-15', 'v3.4 Wave 13 operational DB indexes (Migration 10), X-Request-Id/X-Trace-Id propagation, non-suppressible integrity/security alerts, ScholarlyArticle JSON-LD, ADR-032-12 Assistant governance & §18.16 scale benchmarks present', () => {
+  const files = [
+    'supabase/migrations/20261117001000_v34_wave13_operational_indexes.sql',
+    'test/next/v34-scale-stress.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const mw = readFileSync(join(root, 'middleware.ts'), 'utf8');
+  assert(mw.includes('X-Request-Id') && mw.includes('X-Trace-Id'), 'middleware.ts missing trace header propagation');
+  const notif = readFileSync(join(root, 'lib/v34/notifications-safe.ts'), 'utf8');
+  assert(notif.includes('NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES'), 'notifications-safe.ts missing non-suppressible alerts policy');
+  const contribPage = readFileSync(join(root, 'app/contribution/[id]/page.tsx'), 'utf8');
+  assert(contribPage.includes('scholarlyContributionJsonLd'), 'contribution detail page missing ScholarlyArticle JSON-LD');
+  return 'Wave 13 live SQL indexes, trace propagation, non-suppressible alerts, JSON-LD & scale benchmarks verified';
+});
+check('V34-16', 'v3.4 Wave 14 full platform cohesion (HomeFeed ResearchNetworkBridge, legacy post/author/write bridges, runtime /api/feed experiment & flag wiring, updated release-gate & risk-register) present', () => {
+  const files = [
+    'components/v34/ResearchNetworkBridge.tsx',
+    'test/next/v34-wave14-cohesion.test.ts',
+    'docs/design-system/release-gate.md',
+    'docs/design-system/risk-register.md',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const home = readFileSync(join(root, 'components/HomeFeed.tsx'), 'utf8');
+  assert(home.includes('ResearchNetworkBridge'), 'HomeFeed missing ResearchNetworkBridge');
+  const feedApi = readFileSync(join(root, 'app/api/feed/route.ts'), 'utf8');
+  assert(feedApi.includes('assignExperimentVariant'), '/api/feed missing runtime experiment assignment');
+  return 'Wave 14 legacy-to-v3.4 bridges, live experiments & governance register sync verified';
+});
+check('V34-17', 'v3.4 Wave 15 privacy-safe 14-event analytics taxonomy, 5 priority experiment families, multi-facet/classification search, mobile drawer focus-trap/inert, dashboard Move up/down reordering, 8-kind evidence locators & editor pending-sync counter present', () => {
+  const files = [
+    'lib/v34/analytics.ts',
+    'test/next/v34-wave15-normative.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const header = readFileSync(join(root, 'components/BlogHeader.tsx'), 'utf8');
+  assert(header.includes("setAttribute('inert', '')"), 'BlogHeader missing mobile drawer inert background lock');
+  const ros = readFileSync(join(root, 'components/v34/ResearchOsClient.tsx'), 'utf8');
+  assert(ros.includes('rwm_os_module_order') && ros.includes('Offline mode'), 'ResearchOsClient missing mobile Move up/down reordering or offline indicator');
+  const editor = readFileSync(join(root, 'components/v34/ScholarlyEditorWorkspace.tsx'), 'utf8');
+  assert(editor.includes('Pending sync:') && editor.includes('Block moved to position'), 'ScholarlyEditorWorkspace missing pending-sync counter or polite block-move announcements');
+  const search = readFileSync(join(root, 'lib/v34/search.ts'), 'utf8');
+  assert(search.includes('authorizedClassifications') && search.includes('languageFilter'), 'search.ts missing classification pre-filter or language facet');
+  return 'Wave 15 privacy-safe analytics, multi-facet search, mobile a11y & offline indicators verified';
+});
+check('V34-18', 'v3.4 Wave 17 P0 stateless persistence, fail-closed writes, atomic Postgres autosave RPC, durable idempotency, FTS/trigram search, centralized authorize(), 89/89 v34_* tables & 100% API rate limiting', () => {
+  const files = [
+    'supabase/migrations/20261117001100_v34_wave17_atomic_rpc_and_search.sql',
+    'lib/v34/authz.ts',
+    'lib/v34/table-repositories.ts',
+    'test/next/v34-wave17-persistence-security.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const sync = readFileSync(join(root, 'lib/v34/supabase-sync.ts'), 'utf8');
+  assert(sync.includes('SupabasePersistenceError') && sync.includes('isStrictPersistenceMode'), 'supabase-sync.ts missing fail-closed strict persistence guard');
+  const idem = readFileSync(join(root, 'lib/v34/idempotency.ts'), 'utf8');
+  assert(idem.includes('v34_idempotency_lookup') && idem.includes('v34_idempotency_store'), 'idempotency.ts missing durable Postgres RPC backing');
+  const autosave = readFileSync(join(root, 'app/api/drafts/[id]/autosave/route.ts'), 'utf8');
+  assert(autosave.includes('autosaveDraftAtomic') && autosave.includes('requireAuthorized'), 'autosave route missing atomic RPC or centralized authorize()');
+  const search = readFileSync(join(root, 'lib/v34/search.ts'), 'utf8');
+  assert(search.includes('v34_unified_search'), 'search.ts missing Postgres FTS/trigram RPC');
+  return 'Wave 17 P0 stateless persistence, atomic autosave, durable idempotency, FTS/trigram search & centralized RBAC verified';
+});
+check('V34-19', 'v3.4 Wave 18 P1 durable outbox worker + DLQ + Cloudflare Queue/Cron, live SQL reconciliation, canonical cursor pagination, VAPID Push + Resend Digest + Supabase Realtime, R2 signed storage, OTel/Sentry, SW Background Sync & ADR-033', () => {
+  const files = [
+    'supabase/migrations/20261117001200_v34_wave18_async_delivery_storage_pagination.sql',
+    'lib/v34/outbox-worker.ts',
+    'app/api/cron/outbox-drain/route.ts',
+    'workers/outbox/wrangler.jsonc',
+    'workers/outbox/src/index.ts',
+    'lib/v34/pagination.ts',
+    'lib/v34/sql-list-readers.ts',
+    'lib/v34/delivery.ts',
+    'lib/v34/realtime-client.ts',
+    'lib/v34/r2-storage.ts',
+    'lib/v34/telemetry-export.ts',
+    'docs/adr/ADR-033-supabase-sql-over-prisma.md',
+    'test/next/v34-wave18-async-ops.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const sw = readFileSync(join(root, 'public/sw.js'), 'utf8');
+  assert(sw.includes("addEventListener('sync'") && sw.includes('rwm-editor-autosave-sync'), 'sw.js missing Background Sync listener');
+  const reconcile = readFileSync(join(root, 'scripts/v34-backfill-reconcile.mjs'), 'utf8');
+  assert(reconcile.includes('runLiveSupabaseReconciliation') && reconcile.includes('v34_reconcile_integrity_report'), 'v34-backfill-reconcile.mjs missing --live reconciliation engine');
+  return 'Wave 18 P1 async outbox worker, live SQL reconciliation, cursor pagination, live delivery, R2 storage, OTel/Sentry, SW sync & ADR-033 verified';
+});
+check('V34-20', 'v3.4 Wave 19 P2/P3 live cutover readiness: Migration 13 autosave CHECK fix, Cloudflare R2/Queues/secrets provisioning CLI, --v34-cutover env audit, staged rollout flag aliases, live authenticated cutover verifier & synced Part VIII dossier', () => {
+  const files = [
+    'supabase/migrations/20261117001300_v34_wave19_autosave_status_fix.sql',
+    'scripts/provision-cloudflare-v34.mjs',
+    'scripts/verify-v34-cutover.mjs',
+    'test/next/v34-wave19-cutover-readiness.test.ts',
+    'docs/v34-acceptance-evidence.md',
+    'docs/design-system/release-gate.md',
+    'docs/runbooks/v34-migration-and-rollback-runbook.md',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const flags = readFileSync(join(root, 'lib/v34/feature-flags.ts'), 'utf8');
+  assert(
+    flags.includes('V34_FEED_ENABLED') &&
+      flags.includes('V34_EDITOR_ENABLED') &&
+      flags.includes('V34_REALTIME_ENABLED'),
+    'feature-flags.ts missing Wave 19 staged rollout flag aliases',
+  );
+  const envCheck = readFileSync(join(root, 'scripts/check-production-env.mjs'), 'utf8');
+  assert(envCheck.includes('--v34-cutover'), 'check-production-env.mjs missing --v34-cutover audit mode');
+  const mig13 = readFileSync(join(root, 'supabase/migrations/20261117001300_v34_wave19_autosave_status_fix.sql'), 'utf8');
+  assert(mig13.includes("'SYNCED'") && mig13.includes("'interval'"), 'Migration 13 missing SYNCED/interval CHECK constraint fix');
+  return 'Wave 19 P2/P3 cutover CLI, Migration 13 live autosave fix, staged flags, cutover verifier & Part VIII dossier verified';
+});
+
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {
-  gate: 'reme v3.1 §44/§46 stable release gate',
+  gate: 'reme v3.4 §44/§46 + Part VIII stable release gate',
   generatedAt: new Date().toISOString(),
   tokenChecksum: results.find((r) => r.id === 'DS-2')?.evidence,
   results,

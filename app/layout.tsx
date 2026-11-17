@@ -7,12 +7,12 @@ import { SITE_DESCRIPTION, SITE_URL, absoluteUrl } from '@/lib/seo';
 import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
+import PwaLifecycleBridge from '@/components/v34/PwaLifecycleBridge';
 
-// ResearchWithMe follows the reme v3.1 design system (docs/reme-design-system-v3.1.md):
-// the Aptos family (Aptos Serif / Aptos / Aptos Mono) leads each stack and is
-// requested by installed name only in globals.css, never bundled. Newsreader
-// and Inter are the self-hosted OFL fallbacks loaded here via next/font/local;
-// JetBrains Mono is the named mono fallback.
+// Canonical brand typography: self-hosted Plus Jakarta Sans (WOFF2, OFL) leads
+// editorial sans and display/body stacks in app/globals.css; Inter and Newsreader
+// remain bundled here via next/font/local as self-hosted OFL fallbacks, and
+// Aptos Mono / JetBrains Mono back monospace stacks.
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
   variable: '--font-inter',
@@ -118,6 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MotionModeProvider>
           <MotionScope>
             <div className="min-h-screen">
+              <PwaLifecycleBridge />
               <RouteTransition>{children}</RouteTransition>
             </div>
           </MotionScope>

@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   const limit = await rateLimit(clientKey(request, 'a2a'), 12, 60_000);
   if (!limit.allowed) {
     return Response.json({ error: 'Too many requests.' }, {
-      status: 429, headers: { 'Retry-After': String(Math.ceil(limit.retryAfter / 1000)), 'Cache-Control': 'no-store' },
+      status: 429, headers: { 'Retry-After': String(limit.retryAfter), 'Cache-Control': 'no-store' },
     });
   }
   return handleA2aMessage(request, getArticleCatalogue, SITE_URL);

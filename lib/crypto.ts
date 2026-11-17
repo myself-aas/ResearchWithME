@@ -1,63 +1,89 @@
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'node:crypto';
-import { promisify } from 'node:util';
+import crypto from 'node:crypto';
 
-const scryptAsync = promisify(scrypt);
+const ALGORITHM = 'aes-256-gcm';
+const IV_LENGTH = 16;
+const SALT_LENGTH = 16;
+const LEGACY_SALT = 'researchwithme-linkedin-salt';
+const V2_PREFIX = 'v2';
 
-/**
- * Derives a 32-byte key from the encryption secret using scrypt.
- * The secret should be set via ENCRYPTION_SECRET environment variable.
- */
-async function getEncryptionKey(): Promise<Buffer> {
+function requireSecret(): string {
   const secret = process.env.ENCRYPTION_SECRET;
-  if (!secret) {
-    throw new Error('ENCRYPTION_SECRET environment variable is not set');
+  if (!secret || secret.length < 32) {
+    throw new Error('ENCRYPTION_SECRET must be at least 32 characters');
   }
-  // Use a fixed salt for deterministic key derivation (in production, consider per-value salts)
-  const salt = Buffer.from('researchwithme-linkedin-salt', 'utf8');
-  return scryptAsync(secret, salt, 32) as Promise<Buffer>;
+  return secret;
+}
+
+function deriveKey(salt: Buffer | string): Buffer {
+  return crypto.scryptSync(requireSecret(), salt, 32);
 }
 
 /**
- * Encrypts a plaintext string using AES-256-GCM.
- * Returns a base64-encoded string containing: iv:authTag:ciphertext
+ * Encrypts plaintext with AES-256-GCM using a fresh per-ciphertext random salt
+ * and IV (`v2:<salt>:<iv>:<authTag>:<ciphertext>`).
  */
-export async function encrypt(plaintext: string): Promise<string> {
-  const key = await getEncryptionKey();
-  const iv = randomBytes(12); // 96-bit IV for GCM
-  const cipher = createCipheriv('aes-256-gcm', key, iv);
-  
-  const ciphertext = Buffer.concat([
-    cipher.update(plaintext, 'utf8'),
-    cipher.final(),
-  ]);
-  
+export function encrypt(text: string): string {
+  const salt = crypto.randomBytes(SALT_LENGTH);
+  const key = deriveKey(salt);
+  const iv = crypto.randomBytes(IV_LENGTH);
+  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
   const authTag = cipher.getAuthTag();
-  
-  // Combine iv + authTag + ciphertext
-  const combined = Buffer.concat([iv, authTag, ciphertext]);
-  return combined.toString('base64');
+  return `${V2_PREFIX}:${salt.toString('hex')}:${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
 }
 
 /**
- * Decrypts a base64-encoded string encrypted with encrypt().
- * Expects format: iv:authTag:ciphertext (base64 decoded)
+ * Decrypts `v2` (per-ciphertext salt) and legacy 3-part (`<iv>:<tag>:<ct>`)
+ * AES-256-GCM payloads so existing stored tokens remain readable during rotation.
  */
-export async function decrypt(ciphertextB64: string): Promise<string> {
-  const key = await getEncryptionKey();
-  const combined = Buffer.from(ciphertextB64, 'base64');
-  
-  // Extract components: iv (12 bytes) + authTag (16 bytes) + ciphertext (rest)
-  const iv = combined.subarray(0, 12);
-  const authTag = combined.subarray(12, 28);
-  const ciphertext = combined.subarray(28);
-  
-  const decipher = createDecipheriv('aes-256-gcm', key, iv);
-  decipher.setAuthTag(authTag);
-  
-  const plaintext = Buffer.concat([
-    decipher.update(ciphertext),
-    decipher.final(),
-  ]);
-  
-  return plaintext.toString('utf8');
+export function decrypt(encryptedText: string): string {
+  const parts = encryptedText.split(':');
+
+  if (parts.length === 5 && parts[0] === V2_PREFIX) {
+    const [, saltHex, ivHex, authTagHex, encrypted] = parts;
+    const key = deriveKey(Buffer.from(saltHex, 'hex'));
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, Buffer.from(ivHex, 'hex'));
+    decipher.setAuthTag(Buffer.from(authTagHex, 'hex'));
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
+  if (parts.length === 3) {
+    const [ivHex, authTagHex, encrypted] = parts;
+    const key = deriveKey(LEGACY_SALT);
+    const decipher = crypto.createDecipheriv(ALGORITHM, key, Buffer.from(ivHex, 'hex'));
+    decipher.setAuthTag(Buffer.from(authTagHex, 'hex'));
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
+  throw new Error('Invalid encrypted text format');
+}
+
+/**
+ * Constant-time string comparison via SHA-256 digests so differing lengths
+ * cannot leak timing information.
+ */
+export function timingSafeEqualStrings(a: string, b: string): boolean {
+  const digestA = crypto.createHash('sha256').update(a, 'utf8').digest();
+  const digestB = crypto.createHash('sha256').update(b, 'utf8').digest();
+  return crypto.timingSafeEqual(digestA, digestB);
+}
+
+/**
+ * Verifies an HMAC-SHA256 webhook signature (hex or `sha256=<hex>`).
+ */
+export function verifyHmacSha256Signature(
+  rawBody: string,
+  signatureHeader: string | null | undefined,
+  secret: string,
+): boolean {
+  if (!signatureHeader || !secret) return false;
+  const candidate = signatureHeader.trim().replace(/^sha256=/i, '').toLowerCase();
+  if (!/^[0-9a-f]{64}$/.test(candidate)) return false;
+  const expected = crypto.createHmac('sha256', secret).update(rawBody, 'utf8').digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(candidate, 'hex'), Buffer.from(expected, 'hex'));
 }

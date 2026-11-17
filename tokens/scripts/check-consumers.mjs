@@ -25,7 +25,7 @@ function sourceFiles(directory) {
     return entry.isFile() && ['.ts', '.tsx', '.css'].includes(extname(path)) && !/\.(?:test|spec)\.[^.]+$/.test(path) ? [path] : [];
   });
 }
-const files = ['app', 'components', 'lib', 'cloudflare-pages/src'].flatMap((name) => sourceFiles(join(root, name)));
+const files = ['app', 'components', 'lib'].flatMap((name) => sourceFiles(join(root, name)));
 const withoutComments = (text) => text.replace(/\/\*[\s\S]*?\*\//g, '');
 const declarations = new Set();
 for (const path of [generated, ...files.filter((file) => extname(file) === '.css')]) {

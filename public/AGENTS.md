@@ -6,7 +6,7 @@ ResearchWithMe is an open-access review platform (CC BY 4.0). Automated research
 
 - `/llms.txt` — Concise plain-text directory of published reviews, repository teardowns, and reader tools.
 - `/index.md` — Clean Markdown catalog of featured reviews, summaries, and contributing writers.
-- `/api/openapi.json` — OpenAPI 3.1 contract for articles, authors, citations, and search endpoints.
+- `/openapi.json` — OpenAPI 3.1 contract for articles, authors, citations, and search endpoints.
 - `/api/articles` — JSON list of published reviews and technical teardowns.
 - `/api/authors` — JSON list of published writers with their public profiles.
 - `/.well-known/security.txt` — RFC 9116 vulnerability-disclosure policy.

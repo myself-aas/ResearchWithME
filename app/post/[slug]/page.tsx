@@ -109,7 +109,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
       <ReadingProgress />
       <ArticleSmoothScroll />
-      <BlogHeader />
+      <BlogHeader
+        variant="reading"
+        backHref="/articles"
+        backLabel="Articles"
+        contextTitle={article.title}
+      />
 
       <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-5 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-10">
         <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">
@@ -444,6 +449,30 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   ? 'Verify primary equations, benchmarks, and commits against the linked upstream artifact when citing in formal manuscripts.'
                   : 'Verify claims against their primary sources when citing in formal manuscripts.'}
               </p>
+            </Card>
+
+            <Card padding="lg" radius="lg" className="space-y-3 font-sans text-xs">
+              <p className="font-mono font-semibold uppercase tracking-wider text-brand">
+                Contribute to this Record
+              </p>
+              <p className="leading-relaxed text-ink-secondary">
+                Extend this review with structured evidence, replication notes, or formal peer review
+                in the ResearchWithME knowledge network.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/contribute"
+                  className="inline-flex min-h-10 items-center rounded-lg bg-brand px-3 py-1.5 font-semibold text-on-primary hover:opacity-90"
+                >
+                  Add Evidence / Review →
+                </Link>
+                <Link
+                  href="/sources"
+                  className="inline-flex min-h-10 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 font-medium text-ink hover:border-brand"
+                >
+                  Canonical Sources
+                </Link>
+              </div>
             </Card>
           </aside>
         </div>

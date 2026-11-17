@@ -1,36 +1,40 @@
 import { NextResponse } from 'next/server';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { TokenStore, type LinkedInRpcClient } from '@/lib/linkedin/token-store';
 import { getLinkedInMetrics } from '@/lib/linkedin/monitoring';
+import { requireEditorInChief } from '@/lib/cms/auth';
+import { noStoreHeaders } from '@/lib/cms/http';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/v34/http';
 
-export async function GET() {
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'admin-linkedin-status', 60, 60_000);
+  if (limited) return limited;
+  const gate = await requireEditorInChief();
+  if (!gate.ok) {
+    return NextResponse.json({ error: gate.error }, { status: gate.status, headers: noStoreHeaders() });
+  }
+
   const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const rpcClient = supabase as unknown as LinkedInRpcClient;
+  const tokenStore = new TokenStore({ client: rpcClient });
 
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
+  const tokens = await tokenStore.getTokens();
+  const metrics = await getLinkedInMetrics(30, { client: rpcClient });
 
-  const metrics = await getLinkedInMetrics(30);
-  
-  // Also get token status
-  const { data: tokens } = await supabase
-    .from('linkedin_tokens')
-    .select('expires_at, scope, updated_at')
-    .eq('id', 'company_page_tokens')
-    .single();
+  const isConnected = Boolean(tokens);
+  const isExpired = tokens ? tokenStore.isTokenExpired(tokens) : false;
 
-  return NextResponse.json({
-    metrics,
-    tokens: tokens ? {
-      expiresAt: tokens.expires_at,
-      scope: tokens.scope,
-      lastUpdated: tokens.updated_at,
-      isExpired: Date.now() >= tokens.expires_at,
-    } : null,
-  });
+  return NextResponse.json(
+    {
+      connected: isConnected,
+      scope: 'editorial_only',
+      tokenExpired: isExpired,
+      expiresAt: tokens?.expires_at ? new Date(tokens.expires_at).toISOString() : null,
+      metrics,
+    },
+    { headers: noStoreHeaders() },
+  );
 }

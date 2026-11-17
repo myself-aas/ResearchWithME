@@ -39,15 +39,16 @@ cloudflare-env.d.ts
 .dev.vars*
 !.dev.vars.example
 
-# Pages spike/migration build output and test artifacts.
-cloudflare-pages/dist/
-cloudflare-pages/.server/
+# Playwright test artifacts.
 test-results/
 playwright-report/
+playwright-report-v34/
 
 # Supabase CLI local state (version check, temp files).
 supabase/.temp/
 
-# Visual parity captures (npm run parity)
-.parity/
 workers/assistant/worker-configuration.d.ts
+*.whl
+__pycache__/
+*.py[cod]
+products/downloads/*.zip

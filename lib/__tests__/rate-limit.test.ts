@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
+  createCloudflareRateLimitStore,
   createKvRateLimitStore,
   createMemoryRateLimitStore,
   clientKey,
@@ -205,5 +206,44 @@ describe('clientKey', () => {
   it('truncates to 64 characters', () => {
     const key = clientKey(req({ 'cf-connecting-ip': 'a'.repeat(100) }), 'likes');
     expect(key.length).toBe('likes:'.length + 64);
+  });
+});
+
+describe('Cloudflare native rate limit store (zero KV writes)', () => {
+  it('allows and denies based on binding response and reports retryAfter in seconds', async () => {
+    const allowedStore = createCloudflareRateLimitStore({
+      limit: async () => ({ success: true }),
+    });
+    expect(allowedStore.kind).toBe('ratelimit');
+    expect(await allowedStore.hit('likes:1.2.3.4', 10, 60_000)).toEqual({
+      allowed: true,
+      remaining: 9,
+      retryAfter: 0,
+    });
+
+    const deniedStore = createCloudflareRateLimitStore({
+      limit: async () => ({ success: false }),
+    });
+    expect(await deniedStore.hit('likes:1.2.3.4', 10, 60_000)).toEqual({
+      allowed: false,
+      remaining: 0,
+      retryAfter: 60,
+    });
+  });
+
+  it('fails open when the binding throws', async () => {
+    const errSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const store = createCloudflareRateLimitStore({
+      limit: async () => {
+        throw new Error('binding unavailable');
+      },
+    });
+    expect(await store.hit('likes:1.2.3.4', 10, 60_000)).toEqual({
+      allowed: true,
+      remaining: 9,
+      retryAfter: 0,
+    });
+    expect(errSpy).toHaveBeenCalled();
+    errSpy.mockRestore();
   });
 });

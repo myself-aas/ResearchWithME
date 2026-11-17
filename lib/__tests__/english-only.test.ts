@@ -24,7 +24,7 @@ describe('English-only', () => {
   });
 
   it('ships no Bengali or Arabic support', () => {
-    const dirs = ['app', 'components', 'lib', 'cloudflare-pages/src', 'tokens'];
+    const dirs = ['app', 'components', 'lib', 'tokens'];
     const hits: string[] = [];
     for (const dir of dirs) {
       for (const file of walk(path.join(ROOT, dir))) {

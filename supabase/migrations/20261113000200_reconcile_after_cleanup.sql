@@ -16,21 +16,26 @@
 
 begin;
 
--- 1. Ensure the editor-in-chief row exists for Ashif Ahmed Shuvo.
+-- 1. Ensure the editor row exists for Ashif Ahmed Shuvo.
 --    Earlier migrations used a separate allowlist (20261028000100) then
---    consolidated onto public.editors (20261108000100). This upsert guarantees
---    the single named editor is present regardless of migration order.
+--    consolidated onto public.editors (20261108000100). At this point in the
+--    migration sequence public.editors has (user_id, note, added_at); the
+--    `role` column and editor-in-chief promotion are applied in
+--    20261116000100_editorial_publication_type.sql.
 do $$
 begin
   if to_regclass('public.editors') is not null then
-    insert into public.editors (user_id, role, display_name, created_at)
-    select id, 'editor-in-chief', 'Ashif Ahmed Shuvo', now()
+    insert into public.editors (user_id, note, added_at)
+    select id, 'Ashif Ahmed Shuvo (Editor-in-Chief)', now()
       from auth.users
-     where email = 'ashif@researchwith.me'
-        or email = 'hello@researchwith.me'
+     where lower(email) in (
+       'ashif@researchwith.me',
+       'hello@researchwith.me',
+       'shuvo.1807016@bau.edu.bd',
+       'asifahmedshuvo.aas@gmail.com'
+     )
     on conflict (user_id) do update
-      set role = excluded.role,
-          display_name = excluded.display_name;
+      set note = coalesce(public.editors.note, excluded.note);
   end if;
 end $$;
 
@@ -53,7 +58,7 @@ on conflict (id) do update
       allowed_mime_types = excluded.allowed_mime_types;
 
 -- 3. RLS: blog-images is written only by editors (image uploader in
---    components/cms/MarkdownEditor.tsx and lib/supabase/storage.ts).
+--    components/editor/PlateBodyEditor.tsx and lib/supabase/storage.ts).
 --    The profile-images policies are created in 20261113000100; we only add
 --    the blog-images editor-write policy here if it is missing.
 do $$

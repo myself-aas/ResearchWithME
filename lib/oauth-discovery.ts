@@ -29,7 +29,7 @@
  */
 
 import { agentAuthBlock } from './agent-auth';
-import { OAUTH_METADATA_SNAPSHOT, snapshotMatches } from './oauth-metadata';
+import { getOAuthMetadataSnapshot, snapshotMatches } from './oauth-metadata';
 const DISCOVERY_PATH = '/auth/v1/.well-known/oauth-authorization-server';
 const REQUIRED_ENDPOINTS = ['authorization_endpoint', 'token_endpoint', 'jwks_uri'] as const;
 
@@ -125,7 +125,7 @@ export async function loadDiscovery(supabaseUrl: string | undefined): Promise<Di
     console.warn(
       `OAuth discovery relay fell back to the captured snapshot (${reason}). Refresh lib/oauth-metadata.ts when the authorization server changes.`,
     );
-    const doc = OAUTH_METADATA_SNAPSHOT.document as Record<string, unknown>;
+    const doc = getOAuthMetadataSnapshot().document as Record<string, unknown>;
     return { ok: true, doc, source: 'snapshot', issuer: String(doc.issuer) };
   };
 
@@ -202,7 +202,7 @@ export async function oauthDiscoveryResponse(
       'Cache-Control': source === 'upstream' ? 'public, max-age=300' : 'public, max-age=60',
       'X-ResearchWithMe-Source': source,
     };
-    if (source === 'snapshot') headers['X-ResearchWithMe-Metadata-Captured'] = OAUTH_METADATA_SNAPSHOT.captured;
+    if (source === 'snapshot') headers['X-ResearchWithMe-Metadata-Captured'] = getOAuthMetadataSnapshot().captured;
 
     return new Response(method === 'HEAD' ? null : JSON.stringify(body), { headers });
   };

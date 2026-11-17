@@ -33,8 +33,10 @@ export class AssistantService extends WorkerEntrypoint<Env> {
   }
 }
 
-export default {
+const assistantWorker = {
   fetch(): Response {
     return new Response(null, { status: 404 });
   },
 };
+
+export default assistantWorker;

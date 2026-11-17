@@ -1,7 +1,6 @@
 # Coding Conventions
 
-> Regenerated 2026-11-13 against `944f45c`. Counts come from `git grep` over tracked
-> `app components lib cloudflare-pages/src` unless stated otherwise.
+> Snapshot verified against commit `027c746bbbdf3f7a3871c0a7e2b4ecaadec066c9` across 399 production TS/TSX files (`app/`, `components/`, `lib/`, `cloudflare-pages/src/`, `workers/`).
 
 ## Core Sections (Required)
 
@@ -9,76 +8,99 @@
 
 | Item | Rule | Example | Evidence |
 |------|------|---------|----------|
-| Route files and dirs | Next reserved names; kebab-case segments; `[param]`; route groups in parens | `app/dashboard/(studio)/edit/[id]/page.tsx` | `app/` |
-| Components | PascalCase `.tsx`, mostly default export (89 of 107 `.tsx` files in `components/`) | `PapersArchive.tsx`, `AssistantPanel.tsx` | `components/` |
-| `lib/` modules | kebab-case `.ts`; `-core` suffix for platform-free logic | `rate-limit-core.ts`, `author-directory-core.ts` | `lib/` |
-| Functions | camelCase, verb-first; factories `create*`; predicates `is*`/`has*` | `normalizePostInput`, `createSupabaseCmsStore`, `isSameOrigin` | `lib/cms/*` |
-| Types | PascalCase. `interface` is the majority (170 exported vs 96 exported `type`); `type` for unions | `interface CmsPost`, `type EditorGate` | `lib/cms/types.ts`, `lib/cms/auth.ts` |
-| Result unions | `{ ok: true; … } \| { ok: false; … }` | `EditorGate`, normalisation results | `lib/cms/schema.ts`, `lib/cms/auth.ts` |
-| Errors | `Cms<Kind>Error` extends `CmsError` | `CmsConflictError`, `CmsUnavailableError` | `lib/cms/errors.ts` |
-| Constants | UPPER_SNAKE_CASE | `CATALOGUE_TAG`, `SPACE_TIMEOUT_MS`, `DEFAULT_LEGACY_SEEDS` | `lib/cms/catalogue.ts`, `app/api/generate/route.ts` |
-| Rate-limit scopes | `area:action` strings | `cms:create`, `author:apply`, `likes` | `app/api/**` |
-| DB | snake_case SQL, `public.`-qualified; camelCase in TS with explicit mapping | `key_takeaways` ↔ `keyTakeaways` | `supabase/migrations/`, `lib/cms/supabase-store.ts` |
-| Unused bindings | Leading `_` (lint-enforced ignore pattern) | `bodyMarkdown: _bodyMarkdown` | `eslint.config.mjs`, `lib/cms/catalogue.ts` |
-| Private members | No `_`/`#` convention. Privacy means "not exported" | — | `lib/` |
+| Files (React components) | `PascalCase.tsx` inside `components/` (`96/120` default-exported) | `PostEditor.tsx`, `ResearchAssistant.tsx`, `PlateBodyEditor.tsx` | `components/cms/PostEditor.tsx`, `components/editor/PlateBodyEditor.tsx` |
+| Files (App Router) | Next.js reserved lowercase names inside `kebab-case` segments | `page.tsx`, `layout.tsx`, `route.ts`, `[slug]`, `(studio)` | `app/post/[slug]/page.tsx`, `app/dashboard/(studio)/layout.tsx` |
+| Files (Domain/utils/scripts) | `kebab-case.ts` / `kebab-case.mjs` | `rate-limit-core.ts`, `oauth-discovery.ts`, `check-budgets.mjs` | `lib/rate-limit-core.ts`, `scripts/check-budgets.mjs` |
+| Files (Python CLI) | `kebab-case/` package dirs with `snake_case.py` modules | `products/src/statistical-table-generator/apa_tables.py` | `products/src/`, `products/tests/` |
+| Files (SQL migrations) | 14-digit UTC timestamp `YYYYMMDDHHMMSS_snake_case.sql` (2 violations: 8-digit `20261115_linkedin_*.sql`) | `20261116000100_editorial_publication_type.sql` | `supabase/migrations/` |
+| Functions / methods | `camelCase`; React hooks prefixed `use*`; boolean predicates prefixed `is*`/`can*`/`has*` | `getCachedArticleCatalogue`, `useSession`, `isSameOrigin`, `canEditVisually` | `lib/cms/catalogue.ts`, `lib/supabase/use-session.ts`, `lib/cms/http.ts` |
+| Types / interfaces | `PascalCase`; `export interface` preferred for object shapes (`249` interfaces vs `134` type aliases) | `export interface CmsPost`, `export type BlogCategory` | `lib/cms/types.ts`, `lib/blog-data.ts` |
+| Constants / env vars | `UPPER_SNAKE_CASE` for module-level config constants & env vars; public browser vars prefixed `NEXT_PUBLIC_` | `SITE_URL`, `STALLED_DRAFT_DAYS`, `NEXT_PUBLIC_SUPABASE_URL` | `lib/seo.ts`, `lib/dashboard/metrics.ts`, `.env.example` |
+| CSS design tokens | `--reme-*` semantic variables generated from `tokens/src/*.json`; DaisyUI theme names `reme-light`/`reme-dark` | `--reme-color-text-primary`, `--font-sans` | `tokens/generated/tokens.css`, `app/globals.css`, `styles/daisy-themes.css` |
 
 ### 2) Formatting and Linting
 
-- **Formatter:** none (no Prettier, Biome or EditorConfig). The style is single quotes, semicolons and 2-space indentation. One outlier: `lib/utils.ts` (double quotes, no semicolons, shadcn-generated).
-- **Linter:** ESLint 9 flat config (`eslint.config.mjs`): `next/core-web-vitals` + `next/typescript`, plus these as **errors**: `no-explicit-any`, `no-unused-vars` (with `^_` ignore), `react/jsx-no-target-blank`, `jsx-a11y/alt-text`, `jsx-a11y/aria-props`, `jsx-a11y/label-has-associated-control`. Relaxed: `react-hooks/set-state-in-effect: off`.
-- **Current state (run 2026-11-13):** `eslint .` → 0 errors, 1 warning (`import/no-anonymous-default-export` at `open-next.config.ts:18`). `tsc --noEmit` → exit 0.
-- **Design gates** (also part of `npm run quality`):
-  - `impeccable detect app components lib public` → **0 findings, 0 advisories** (2026-11-16). The seven literal-colour advisories recorded here previously were tokenised; the remaining allowed literals are listed in `DESIGN.md` under "Literals that are allowed".
-  - `tokens:check` validates tokens and contrast.
-  - `lib/__tests__/design-token-usage.test.ts` enforces token use in source.
-- **Stated in `CLAUDE.md`:** Tailwind v4 without arbitrary values where a token exists; motion only via `lib/motion/tokens.ts` and the `@/components/motion` primitives (`docs/motion-system.md`).
+- **Formatter:** No Prettier / Biome configuration file exists in the repository (no `.prettierrc*`, `biome.json`, or `.editorconfig`). Formatting follows observed style: 2-space indentation, single quotes in TS/JS, trailing commas in multiline literals, semicolons.
+- **Linter:** ESLint `9.39.1` flat config (`eslint.config.mjs`) extending `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript`.
+- **Design-system static checker:** `impeccable` `4.7.0` configured via `.impeccable/config.json` (run as `npx impeccable detect app components`).
+- **PR title linter:** `.github/workflows/pr-title.yml` validates PR titles with `amannn/action-semantic-pull-request@v5` (Conventional Commits prefixes: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`, `ci`, `perf`, `style`, `build`, `revert`).
+- **Identity guard:** `test/reme-name.test.mjs` (`npm run reme:test`) forbids retired pre-`reme` brand spellings (see regex in `test/reme-name.test.mjs:7`) in any tracked path or text file.
+- **Most relevant enforced rules (`eslint.config.mjs`):**
+  - Ignores `.next/**`, `.open-next/**`, `out/**`, `build/**`, `next-env.d.ts`, `cloudflare-pages/dist/**`, `.agents/**`, `.impeccable/**`, `references/**`, `videos/**`, `public/webmcp.js`, `tokens/generated/**`.
+  - Custom rules on `**/*.{ts,tsx,js,jsx,mjs}`: `react/no-unescaped-entities: 'off'`, `@next/next/no-img-element: 'off'`.
+  - TypeScript strictness (`tsconfig.json`): `"strict": true`, `"noEmit": true`, `"isolatedModules": true`, `"esModuleInterop": true`.
+- **Run commands:**
+  ```bash
+  npm run lint
+  npm run typecheck
+  npm run impeccable:source
+  npm run tokens:build && npm run tokens:check
+  npm run reme:check && npm run reme:test
+  ```
 
 ### 3) Import and Module Conventions
 
-- **Alias:** `@/` → repo root. 867 `@/` imports vs 299 relative. Relative imports stay within a module folder (`lib/cms/*` → `./types`).
-- **Order:** framework/packages, then `@/…`, then relative (e.g. `app/api/cms/posts/route.ts:1-10`).
-- **Boundary directives first:** `'use client'` in 80 files; `import 'server-only'` in 7. Shared `components/` must stay free of `server-only`, or the Pages build fails.
-- **Type-only imports** use `import type` (required by `isolatedModules`).
-- **Barrels:** `components/motion/index.ts` exists, but app code imports each primitive by direct path (`@/components/motion/Reveal`, `…/Pressable`); nothing imports the barrel. `CLAUDE.md` describes the primitives as `from '@/components/motion'`. Both work.
-- **Class-name helper, three copies:** `cn` from `@/lib/utils` (clsx + tailwind-merge, 14 importers); `cx` from `components/primitives/cx` (imported `as cn`, 13 importers inside `components/primitives/`); and `cn` in `lib/format.ts` (plain join, 0 importers). Use `@/lib/utils` for new code outside `primitives/`.
-- **Markup safety:** `dangerouslySetInnerHTML` is used only for JSON-LD (via `jsonLdScript()`, which escapes `<` at `lib/seo/jsonld.ts:166-167`) and the theme-init script in `app/layout.tsx:91`. Model-supplied SVG goes through `sanitizeSvgMarkup()` (`lib/svg.ts`) and is rendered as an `<img>` data URI.
+- **Import grouping/order:** Observed convention (not auto-enforced by a plugin): framework/external packages first (`next/*`, `react`, third-party), then `@/*` internal modules, then relative siblings (`./*`), with `import type` widely used for type-only imports (`app/post/[slug]/page.tsx`, `lib/cms/types.ts`).
+- **Alias vs relative import policy:** `@/*` (mapped to repository root `./*` in `tsconfig.json` and `vitest.config.ts`) dominates across boundaries (`823` `@/` imports vs `303` relative imports). Relative `./` imports are standard within the same domain directory (e.g., `lib/cms/http.ts` importing `./errors` and `./types`).
+- **Server/client boundary directives:**
+  - `85` files begin with `'use client';` across `app/`, `components/`, `lib/`, and `cloudflare-pages/src/`.
+  - `14` server-only modules begin with `import 'server-only';` (`lib/api/{answers,authenticate,key-store,ledger,session}.ts`, `lib/author-directory.ts`, `lib/billing/store.ts`, `lib/cms/{auth,authors,catalogue,read,store}.ts`, `lib/dashboard/data.ts`, `lib/supabase/server.ts`).
+- **Public exports / barrel policy:** Selective barrels exist for UI primitive families (`components/primitives/index.ts` — 34 imports; `components/workflows/index.ts` — 7 imports; `components/lottie/index.ts` — 3 imports). Most components (`96/120` `.tsx`) use `export default`; `lib/` domain modules use named exports almost exclusively.
+- **Class-name helper split (minor inconsistency):** Both `@/lib/utils` (`cn`, 18 importers) and `components/primitives/cx.ts` (`cx`, 13 importers) coexist; `lib/format.ts` also exports `cn` (0 importers).
 
 ### 4) Error and Logging Conventions
 
-| Layer | Strategy | Evidence |
-|---|---|---|
-| Validation | Return a result union with `fieldErrors`; never throw | `lib/cms/schema.ts` |
-| Stores | Throw typed `Cms*Error`; the legacy bridge throws on persistence failure | `lib/cms/errors.ts`, `lib/db.ts` header |
-| Public reads | Catch, `console.error`, return empty | `lib/cms/read.ts` |
-| Route handlers | `errorResponse(error)` or `NextResponse.json({ error: '<sentence>' }, { status })`; `Retry-After` on 429; `noStoreHeaders()` on studio responses | `lib/cms/http.ts`, `app/api/cms/posts/route.ts` |
-| Browser client | `cmsFetch` throws `ApiError` (status + fieldErrors); 401 → `/login?next=` | `lib/cms/client-api.ts` |
-| React | `app/error.tsx`, `app/global-error.tsx`, `app/not-found.tsx` | — |
-
-Client-facing errors are plain-prose `{ error }` strings. Model routes return a generic message (`GENERIC_ERROR` in `app/api/generate/route.ts`).
-
-**Logging:** `console.error`/`console.warn` only, in 44 non-test files. No logger, levels or request IDs. Pattern: `console.error('<sentence>:', error)`.
+- **Error strategy by layer:**
+  - *CMS Domain (`lib/cms/errors.ts`, `lib/cms/http.ts`):* Typed error class hierarchy (`CmsError` base with `status` + `code` -> `CmsValidationError` 400 + `fieldErrors`, `CmsAuthorError` 422 + `fieldErrors`, `CmsConflictError` 409, `CmsNotFoundError` 404, `CmsUnavailableError` 503), translated uniformly via `errorResponse(error)`.
+  - *Metered API v1 (`lib/api/errors.ts`):* Structured JSON envelope `{ error: { code, message, details? } }` with machine-readable codes (`UNAUTHORIZED`, `RATE_LIMITED`, `QUOTA_EXCEEDED`, `INVALID_REQUEST`, `IDEMPOTENCY_CONFLICT`, `UPSTREAM_ERROR`, etc.) and `X-Request-Id`.
+  - *Route Handlers (`app/api/**`):* Return `NextResponse.json({ error: '...' }, { status })` with `Cache-Control: no-store, max-age=0` (`noStoreHeaders()`), never leaking stack traces to clients (exceptions: `app/api/webhooks/article-published/route.ts` and `app/api/cron/linkedin-batch/route.ts` expose `error.message` directly in 500 JSON responses).
+  - *Pure validators/parsers:* Return discriminated union `{ ok: true, value } | { ok: false, ... }` (`readJsonBody`, `normalizeCommentInput`, `authenticateApiKey`, `verifyLemonSqueezySignature`).
+- **Logging style:** Standard `console.error` / `console.warn` / `console.log` (`53` production TS/TSX files call `console.*`); no structured JSON logger (Pino/Winston) or external telemetry SDK is installed.
+- **Sensitive-data redaction rules:**
+  - API keys (`rwm_` + 43 base64url chars) are shown once on creation (`app/api/account/api-keys/route.ts`), stored only as SHA-256 hashes + first 12-character prefix (`lib/api/keys.ts`).
+  - `scripts/dns-aid-cloudflare.mjs` explicitly avoids logging `CLOUDFLARE_API_TOKEN` (verified by `test/dns-aid.test.mjs`).
+  - `lib/linkedin/monitoring.ts` stores `linkedin_events` error messages in Postgres (`details` JSONB) without redaction helpers.
 
 ### 5) Testing Conventions
 
-- Unit tests: `lib/__tests__/<subject>.test.ts(x)`. Harness tests: `test/pages/*.test.ts`, built with `createTestApp()` fakes from `test/support/pages.ts`.
-- `node` environment by default; DOM tests opt in per file with `// @vitest-environment jsdom` (9 files).
-- Real subsystems over mocks: temp dirs via `RWM_DATA_DIR`/`dataDir`, injected stores, `setRateLimitStoreForTesting()`. `vi.mock` appears in 5 files.
-- No coverage threshold. Details in [TESTING.md](./TESTING.md).
+- **Test file naming & location:**
+  - Unit & component tests: `lib/__tests__/*.test.{ts,tsx}` (`116` files) and `lib/linkedin/__tests__/*.test.ts` (`6` files) + snapshots in `lib/__tests__/__snapshots__/`.
+  - Next.js route & SSR tests: `test/next/*.test.ts` (`8` test files + `support.ts`).
+  - Cloudflare Pages parity tests: `test/pages/*.test.ts` (`25` files).
+  - HTTP baseline contract test: `test/contracts/baseline.test.ts` (`1` file).
+  - Zero-dependency Node built-in runner tests: `test/*.test.mjs` (`5` files using `node:test` + `node:assert/strict`).
+  - Playwright E2E specs: `test/e2e/*.spec.ts` (`12` files) + `test/browser/visual-parity.spec.ts`.
+  - Database tests: `supabase/tests/*.test.sql` (pgTAP, `2` files) + `supabase/tests/*.check.mjs` (PGlite, `3` files).
+  - Python CLI tests: `products/tests/test_*.py` (`6` `unittest` files).
+- **Environment opt-in:** Default Vitest environment is `node` (`vitest.config.ts`); DOM/React tests opt in per file via `// @vitest-environment jsdom` (`29` files).
+- **Mocking strategy norm:** `vi.mock(...)` for server/network modules (`33` files), `vi.stubEnv(...)` + `vi.resetModules()` + temp `RWM_DATA_DIR` for route-handler isolation (`test/next/support.ts`), and dependency injection (`fetcher`, `store`, `now`) in pure modules (`lib/dashboard/metrics.ts`, `scripts/dns-aid-cloudflare.mjs`).
+- **Coverage expectation:** No coverage provider or minimum threshold is configured in `vitest.config.ts` or `.github/workflows/quality.yml` (`[TODO]`: establish formal coverage thresholds if desired).
 
 ### 6) Evidence
 
-- `eslint.config.mjs`, `tsconfig.json`, `vitest.config.ts`, `package.json` (`quality`)
-- `lib/cms/{schema,errors,http,auth,client-api}.ts`, `app/api/cms/posts/route.ts`
-- `lib/utils.ts`, `lib/format.ts`, `lib/seo/jsonld.ts`, `lib/svg.ts`
-- `CLAUDE.md`, `DESIGN.md`, `docs/motion-system.md`
-- Command output 2026-11-13: lint (1 warning), typecheck (clean), Impeccable (0 findings / 7 advisories)
+- `eslint.config.mjs`
+- `tsconfig.json`
+- `vitest.config.ts`
+- `.impeccable/config.json`
+- `.github/workflows/pr-title.yml`
+- `lib/cms/errors.ts`
+- `lib/cms/http.ts`
+- `lib/api/errors.ts`
+- `lib/blog-data.ts`
+- `lib/dashboard/metrics.ts`
+- `components/primitives/index.ts`
+- `components/cms/MarkdownEditor.tsx`
+- `test/next/support.ts`
+- `test/reme-name.test.mjs`
 
-## Extended Sections
+## Extended Sections (Optional)
 
-### Commit messages
+### Known Convention Violations to Clean Up
 
-`CLAUDE.md` requires Conventional Commits. In practice, **9 of the last 30** subjects follow the format (`git log --format=%s -30`). Others read like `Add migration for blog-images storage bucket…` or `Fix legacy catalogue counters…`. See CONCERNS `[ASK USER 6]`.
-
-### TypeScript strictness
-
-`strict: true`, `isolatedModules`, `noEmit`, `allowJs`, `resolveJsonModule`, `allowImportingTsExtensions`. Not enabled: `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`. Catch variables are narrowed with `error instanceof Error`, not cast.
+1. **Broken `npm run reme:test` identity guard:** `ResearchWithME-master-refactor-development-plan-v3.4.md` contains retired pre-`reme` brand spellings (matched by `test/reme-name.test.mjs:7`), causing `test/reme-name.test.mjs` (and CI `.github/workflows/quality.yml`) to fail on commit `027c746`.
+2. **Non-standard SQL migration filenames & non-idempotent DDL:** `supabase/migrations/20261115_linkedin_events.sql` and `20261115_linkedin_tokens.sql` break the 14-digit timestamp rule and omit `IF NOT EXISTS` / `DROP POLICY IF EXISTS`.
+3. **Typo in GitHub instructions filename:** `.github/instructions/reme-artcile-writing.instructions.md` (`artcile` -> `article`).
+4. **Inconsistent `Retry-After` units:** `app/api/a2a/route.ts:13`, `app/api/dashboard/applications/route.ts:68`, `app/api/dashboard/applications/[id]/route.ts:37`, `cloudflare-pages/src/server/api/a2a.ts:14`, and `cloudflare-pages/src/server/dispatch.ts:87` divide `limit.retryAfter` (already in seconds) by `1000`.
+5. **Duplicate `cn`/`cx` helpers:** `@/lib/utils` (`cn`), `components/primitives/cx.ts` (`cx`), and unused `cn` in `lib/format.ts`.
+6. **Raw `error.message` leakage:** `app/api/webhooks/article-published/route.ts` and `app/api/cron/linkedin-batch/route.ts` return raw exception messages in HTTP 500 JSON payloads, unlike `lib/cms/http.ts` and `lib/api/errors.ts`.
+7. **HTML injection discipline:** All 8 `dangerouslySetInnerHTML` usages in `app/` and `cloudflare-pages/src/` serialize JSON-LD (`jsonLdScript`) or the theme-init script (`app/layout.tsx:103`), never unescaped user HTML.

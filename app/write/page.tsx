@@ -302,6 +302,31 @@ export default function WritePage() {
             </p>
           </div>
         )}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand/30 bg-surface p-4 text-xs">
+          <div className="space-y-0.5">
+            <p className="font-mono font-semibold uppercase text-brand">
+              Scholarly MDX Workspace (v3.4)
+            </p>
+            <p className="text-ink-secondary">
+              Author structured evidence, claims, tool reviews, equations, and diagrams with offline
+              autosave and 409 conflict recovery.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/contribute"
+              className="inline-flex min-h-10 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 font-medium text-ink hover:border-brand"
+            >
+              Guided Wizard
+            </Link>
+            <Link
+              href="/editor"
+              className="inline-flex min-h-10 items-center rounded-lg bg-brand px-3 py-1.5 font-semibold text-on-primary hover:opacity-90"
+            >
+              Open MDX Workspace →
+            </Link>
+          </div>
+        </div>
         <div className="flex flex-col gap-4 border-b border-line pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">Writer studio</h1>

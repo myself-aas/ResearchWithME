@@ -1,26 +1,55 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { clientIp, createKvRateLimitStore, createMemoryRateLimitStore } from './rate-limit-core';
-import type { KvNamespaceLike, RateLimitOutcome, RateLimitStore } from './rate-limit-core';
+import {
+  clientIp,
+  createCloudflareRateLimitStore,
+  createKvRateLimitStore,
+  createMemoryRateLimitStore,
+} from './rate-limit-core';
+import type {
+  CloudflareRateLimiterLike,
+  KvNamespaceLike,
+  RateLimitOutcome,
+  RateLimitStore,
+} from './rate-limit-core';
 
-export type { KvNamespaceLike, RateLimitOutcome, RateLimitStore } from './rate-limit-core';
-export { createKvRateLimitStore, createMemoryRateLimitStore } from './rate-limit-core';
+export type {
+  CloudflareRateLimiterLike,
+  KvNamespaceLike,
+  RateLimitOutcome,
+  RateLimitStore,
+} from './rate-limit-core';
+export {
+  createCloudflareRateLimitStore,
+  createKvRateLimitStore,
+  createMemoryRateLimitStore,
+} from './rate-limit-core';
 
-/**
- * Reads the `RATE_LIMIT_KV` binding declared in `wrangler.jsonc`.
- *
- * `env` is widened deliberately: the precise shape lives in `cloudflare-env.d.ts`,
- * which `npm run cf-typegen` regenerates from the Wrangler config and which is
- * git-ignored, so this module must compile without it.
- */
-function kvBinding(): KvNamespaceLike | null {
+function cloudflareEnv(): Partial<Record<string, unknown>> | undefined {
   try {
-    const env = getCloudflareContext().env as Partial<Record<string, unknown>> | undefined;
-    const candidate = env?.RATE_LIMIT_KV as KvNamespaceLike | undefined;
-    if (candidate && typeof candidate.get === 'function' && typeof candidate.put === 'function') {
-      return candidate;
-    }
+    return getCloudflareContext().env as Partial<Record<string, unknown>> | undefined;
   } catch {
     // Outside a Worker request (local `next dev`, unit tests) there is no context.
+    return undefined;
+  }
+}
+
+/**
+ * Prefers Cloudflare's native Rate Limiting binding (`APP_RATE_LIMITER`,
+ * zero KV writes on Free plan), falling back to optional `RATE_LIMIT_KV`,
+ * and finally per-isolate memory in local dev/tests.
+ */
+function nativeLimiterBinding(): CloudflareRateLimiterLike | null {
+  const candidate = cloudflareEnv()?.APP_RATE_LIMITER as CloudflareRateLimiterLike | undefined;
+  if (candidate && typeof candidate.limit === 'function') {
+    return candidate;
+  }
+  return null;
+}
+
+function kvBinding(): KvNamespaceLike | null {
+  const candidate = cloudflareEnv()?.RATE_LIMIT_KV as KvNamespaceLike | undefined;
+  if (candidate && typeof candidate.get === 'function' && typeof candidate.put === 'function') {
+    return candidate;
   }
   return null;
 }
@@ -29,8 +58,13 @@ let store: RateLimitStore | null = null;
 
 export function getRateLimitStore(): RateLimitStore {
   if (!store) {
-    const kv = kvBinding();
-    store = kv ? createKvRateLimitStore(kv) : createMemoryRateLimitStore();
+    const nativeLimiter = nativeLimiterBinding();
+    if (nativeLimiter) {
+      store = createCloudflareRateLimitStore(nativeLimiter);
+    } else {
+      const kv = kvBinding();
+      store = kv ? createKvRateLimitStore(kv) : createMemoryRateLimitStore();
+    }
   }
   return store;
 }
@@ -42,7 +76,6 @@ export function setRateLimitStoreForTesting(next: RateLimitStore | null) {
 
 /**
  * Records one hit against `key` and reports whether it is within the window.
- * Always awaited: the KV backend performs I/O.
  */
 export async function rateLimit(key: string, limit: number, windowMs: number): Promise<RateLimitOutcome> {
   return getRateLimitStore().hit(key, limit, windowMs);

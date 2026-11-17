@@ -18,7 +18,7 @@
 @font-face {
   /* impeccable-disable-next-line overused-font: user-approved editorial font, self-hosted with OFL license */
   font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/plus-jakarta-sans-variable.ttf') format('truetype');
+  src: url('/fonts/plus-jakarta-sans-variable.woff2') format('woff2');
   font-style: normal;
   font-weight: 200 800;
   font-display: swap;
@@ -114,12 +114,12 @@
   --color-citation-software: var(--reme-citation-software);
   --color-citation-protocol: var(--reme-citation-protocol);
   --color-citation-webpage: var(--reme-citation-webpage);
-  --color-graph-node-source: var(--reme-graph-node-source);
-  --color-graph-node-evidence: var(--reme-graph-node-evidence);
-  --color-graph-node-claim: var(--reme-graph-node-claim);
-  --color-graph-node-discussion: var(--reme-graph-node-discussion);
-  --color-graph-node-publication: var(--reme-graph-node-publication);
-  --color-graph-node-archived: var(--reme-graph-node-archived);
+  --color-graph-node-source: var(--reme-knowledge-source);
+  --color-graph-node-evidence: var(--reme-knowledge-evidence);
+  --color-graph-node-claim: var(--reme-knowledge-insight);
+  --color-graph-node-discussion: var(--reme-knowledge-discussion);
+  --color-graph-node-publication: var(--reme-knowledge-publication);
+  --color-graph-node-archived: var(--reme-knowledge-archive);
   --color-graph-edge-cites: var(--reme-graph-edge-cites);
   --color-graph-edge-supports: var(--reme-graph-edge-supports);
   --color-graph-edge-contradicts: var(--reme-graph-edge-contradicts);
@@ -282,6 +282,12 @@
   [role="tab"],
   [role="status"] {
     font-family: var(--font-sans);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 1;
   }
 
   p,
@@ -656,15 +662,6 @@ html[data-motion-mode="static"] {
 }
 .reme-lottie svg [fill]:not([fill="none"]) {
   fill: currentColor;
-}
-
-/* MDXEditor (third-party, /write and the studio) paints Select placeholders in
-   its slate-8 (#b9bbc6), 1.9:1 on white. Use the editor's own body-text
-   variable (slate-11) so it tracks the editor's theme rather than the page's
-   — the editor surface stays light in dark mode. [role] raises specificity
-   above the editor's CSS-module rule. */
-.mdxeditor [role="combobox"][data-placeholder] > span:first-child {
-  color: var(--baseText);
 }
 
 /* Research lifecycle diagrams (components/workflows): the connector between
