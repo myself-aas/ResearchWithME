@@ -16,6 +16,8 @@ export async function GET(request: Request) {
   const q = (url.searchParams.get('q') ?? '').trim();
   const typeParam = url.searchParams.get('type')?.trim();
   const integrity = url.searchParams.get('integrity')?.trim() || undefined;
+  const access = url.searchParams.get('access')?.trim() || undefined;
+  const language = url.searchParams.get('language')?.trim() || undefined;
   const topic = url.searchParams.get('topic')?.trim() || undefined;
   const limitRaw = Number(url.searchParams.get('limit') ?? '40');
   const limit = Number.isFinite(limitRaw) ? Math.min(Math.max(1, Math.floor(limitRaw)), 100) : 40;
@@ -33,7 +35,10 @@ export async function GET(request: Request) {
     query: q,
     types,
     integrity,
+    access,
+    language,
     topic,
+    authorizedClassifications: ['PUBLIC'],
     limit,
   });
 

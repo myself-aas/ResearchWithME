@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { recordAnalyticsEvent } from '@/lib/v34/analytics';
 import { CONTRIBUTION_TYPES, type ContributionType } from '@/lib/v34/contracts';
 import { assignExperimentVariant } from '@/lib/v34/experiments';
 import { getAllV34FeatureFlags } from '@/lib/v34/feature-flags';
@@ -27,6 +28,19 @@ export async function GET(request: Request) {
 
   const feed = await getUnifiedResearchFeed({ type, topic, query, sourceIntegrity });
   const feedExperiment = assignExperimentVariant('exp-feed-contribution-cta-v1', subjectKey);
+
+  recordAnalyticsEvent({
+    event: 'feed_viewed',
+    subjectBucket: subjectKey,
+    experimentId: feedExperiment?.experimentId,
+    experimentVariant: feedExperiment?.variant,
+    classification: 'PUBLIC',
+    properties: {
+      surface: 'feed',
+      resultCount: feed.items.length,
+      filterCount: [type !== 'all', Boolean(topic), Boolean(query), Boolean(sourceIntegrity)].filter(Boolean).length,
+    },
+  });
 
   return NextResponse.json({
     items: feed.items,

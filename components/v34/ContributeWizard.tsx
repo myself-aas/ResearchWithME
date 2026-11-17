@@ -95,7 +95,9 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
   const [sourceError, setSourceError] = useState<string | null>(null);
 
   const [evidenceStatement, setEvidenceStatement] = useState('');
-  const [evidenceLocatorKind, setEvidenceLocatorKind] = useState<'section' | 'table' | 'figure' | 'page' | 'commit'>('section');
+  const [evidenceLocatorKind, setEvidenceLocatorKind] = useState<
+    'page' | 'section' | 'figure' | 'table' | 'url' | 'repository' | 'commit' | 'line'
+  >('section');
   const [evidenceLocatorValue, setEvidenceLocatorValue] = useState('');
   const [evidenceLimitation, setEvidenceLimitation] = useState('');
   const [evidenceIds, setEvidenceIds] = useState<string[]>([]);
@@ -595,11 +597,14 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
                     onChange={(e) => setEvidenceLocatorKind(e.target.value as typeof evidenceLocatorKind)}
                     className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
                   >
-                    <option value="section">Section</option>
-                    <option value="table">Table</option>
-                    <option value="figure">Figure</option>
                     <option value="page">Page</option>
-                    <option value="commit">Commit / File</option>
+                    <option value="section">Section</option>
+                    <option value="figure">Figure</option>
+                    <option value="table">Table</option>
+                    <option value="url">URL</option>
+                    <option value="repository">Repository</option>
+                    <option value="commit">Commit</option>
+                    <option value="line">Line reference</option>
                   </select>
                 </div>
                 <div>
@@ -609,9 +614,10 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
                   <input
                     id="ev-locator-value"
                     type="text"
+                    dir="ltr"
                     value={evidenceLocatorValue}
                     onChange={(e) => setEvidenceLocatorValue(e.target.value)}
-                    placeholder="e.g. Section 4.2, Table 3, or commit a1b2c3d"
+                    placeholder="e.g. p. 14, Section 4.2, Table 3, commit a1b2c3d, or L42-L58"
                     className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
                   />
                 </div>

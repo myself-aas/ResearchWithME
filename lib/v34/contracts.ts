@@ -464,7 +464,21 @@ export const CreateEvidenceInputSchema = z.object({
   statement: z.string().trim().min(10).max(2_000),
   quote: z.string().trim().max(2_000).optional(),
   locator: z.object({
-    kind: z.enum(['page', 'section', 'table', 'figure', 'line-range', 'timestamp', 'url-fragment']).default('section'),
+    kind: z
+      .enum([
+        'page',
+        'section',
+        'table',
+        'figure',
+        'url',
+        'repository',
+        'commit',
+        'line',
+        'line-range',
+        'timestamp',
+        'url-fragment',
+      ])
+      .default('section'),
     value: z.string().trim().min(1).max(200),
   }),
   extractionType: z.enum(['direct-quote', 'paraphrase', 'quantitative', 'table-figure', 'code-artifact', 'inferred']),

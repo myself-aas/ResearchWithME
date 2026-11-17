@@ -62,12 +62,14 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   const storeSavedCount = useSavedTotalCount();
   const digestSubscribed = useDigestSubscribed();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuAnnouncement, setMenuAnnouncement] = useState('');
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [paletteEverOpened, setPaletteEverOpened] = useState(false);
   const [badgePulse, setBadgePulse] = useState(false);
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const prevMenuOpenRef = useRef(false);
 
   const savedTotal = savedCount ?? storeSavedCount;
   const warmPalette = useWarmImport(() => import('./search/CommandPalette'));
@@ -98,15 +100,52 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   }, []);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    if (prevMenuOpenRef.current !== menuOpen) {
+      setMenuAnnouncement(menuOpen ? 'Navigation menu opened' : 'Navigation menu closed');
+      prevMenuOpenRef.current = menuOpen;
+    }
+
+    const mainEl = typeof document !== 'undefined' ? document.getElementById('main-content') : null;
+    if (!menuOpen) {
+      mainEl?.removeAttribute('inert');
+      return;
+    }
+
+    // Make background content inert while mobile navigation drawer is open (Part II)
+    mainEl?.setAttribute('inert', '');
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setMenuOpen(false);
         menuButtonRef.current?.focus();
+        return;
+      }
+      if (event.key === 'Tab' && menuRef.current) {
+        const focusables = Array.from(
+          menuRef.current.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        );
+        const toggleBtn = menuButtonRef.current;
+        const ring = toggleBtn ? [toggleBtn, ...focusables] : focusables;
+        if (ring.length === 0) return;
+        const first = ring[0];
+        const last = ring[ring.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     }
+
     document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      mainEl?.removeAttribute('inert');
+    };
   }, [menuOpen]);
 
   useEffect(() => {
@@ -146,6 +185,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
 
   return (
     <>
+    <span role="status" aria-live="polite" className="sr-only">
+      {menuAnnouncement}
+    </span>
     <Header open={menuOpen}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex min-h-[60px] items-center justify-between gap-1 sm:gap-3">

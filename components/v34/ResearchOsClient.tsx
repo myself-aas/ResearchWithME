@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   Archive,
+  ArrowDown,
+  ArrowUp,
   ArrowUpRight,
   Award,
   Bell,
@@ -17,6 +19,7 @@ import {
   Sliders,
   Sparkles,
   Target,
+  WifiOff,
 } from 'lucide-react';
 import { formatShortDate } from '@/lib/formatting/locale';
 import { editorDb, type LocalDraftRecord } from '@/lib/persistence/editor-db';
@@ -99,15 +102,39 @@ export function ResearchOsClient({
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const [newGoalTarget, setNewGoalTarget] = useState(5);
   const [hiddenModules, setHiddenModules] = useState<PersonalizableModuleId[]>([]);
+  const [moduleOrder, setModuleOrder] = useState<PersonalizableModuleId[]>(() =>
+    PERSONALIZABLE_MODULES.map((m) => m.id),
+  );
+  const [offline, setOffline] = useState(false);
   const [preferences, setPreferences] = useState<DashboardPreferencesRecord>(initialPreferences);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const syncOnline = () => setOffline(typeof navigator !== 'undefined' && !navigator.onLine);
+    syncOnline();
+    window.addEventListener('online', syncOnline);
+    window.addEventListener('offline', syncOnline);
+    return () => {
+      window.removeEventListener('online', syncOnline);
+      window.removeEventListener('offline', syncOnline);
+    };
+  }, []);
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem('rwm_os_hidden_modules');
-      if (saved) {
-        const parsed = JSON.parse(saved) as PersonalizableModuleId[];
+      const savedHidden = window.localStorage.getItem('rwm_os_hidden_modules');
+      if (savedHidden) {
+        const parsed = JSON.parse(savedHidden) as PersonalizableModuleId[];
         if (Array.isArray(parsed)) setHiddenModules(parsed);
+      }
+      const savedOrder = window.localStorage.getItem('rwm_os_module_order');
+      if (savedOrder) {
+        const parsed = JSON.parse(savedOrder) as PersonalizableModuleId[];
+        const validIds = new Set<string>(PERSONALIZABLE_MODULES.map((m) => m.id));
+        if (Array.isArray(parsed) && parsed.length === PERSONALIZABLE_MODULES.length && parsed.every((x) => validIds.has(x))) {
+          setModuleOrder(parsed);
+        }
       }
     } catch {
       // Ignore storage access restrictions
@@ -125,7 +152,25 @@ export function ResearchOsClient({
       return next;
     });
   }
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  function moveModule(id: PersonalizableModuleId, delta: -1 | 1) {
+    setModuleOrder((prev) => {
+      const idx = prev.indexOf(id);
+      const target = idx + delta;
+      if (idx < 0 || target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      const [item] = next.splice(idx, 1);
+      next.splice(target, 0, item);
+      try {
+        window.localStorage.setItem('rwm_os_module_order', JSON.stringify(next));
+      } catch {
+        // Ignore storage quota errors
+      }
+      const label = PERSONALIZABLE_MODULES.find((m) => m.id === id)?.label ?? id;
+      setStatusMessage(`Moved ${label} to position ${target + 1} of ${next.length}.`);
+      return next;
+    });
+  }
 
   useEffect(() => {
     let active = true;
@@ -382,9 +427,24 @@ export function ResearchOsClient({
 
   return (
     <div className="space-y-8">
+      {offline && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex items-center gap-2 rounded-lg border border-line bg-surface px-4 py-3 text-xs text-ink-secondary"
+        >
+          <WifiOff className="h-4 w-4 text-brand shrink-0" aria-hidden="true" />
+          <span>
+            Offline mode — showing cached workspace context and {localDrafts.length} locally saved draft
+            {localDrafts.length === 1 ? '' : 's'}. Changes sync automatically when reconnected.
+          </span>
+        </div>
+      )}
+
       {statusMessage && (
         <p
           role="status"
+          aria-live="polite"
           className="rounded-lg border border-brand/30 bg-brand/5 px-3.5 py-2 text-xs font-medium text-brand"
         >
           {statusMessage}
@@ -918,28 +978,56 @@ export function ResearchOsClient({
           </div>
 
           <div className="pt-2 border-t border-line space-y-2">
-            <p className="text-xs font-semibold text-ink">Dashboard Module Personalization</p>
-            <div className="flex flex-wrap gap-1.5">
-              {PERSONALIZABLE_MODULES.map((mod) => {
+            <div>
+              <p className="text-xs font-semibold text-ink">Dashboard Module Personalization</p>
+              <p className="text-xs text-ink-secondary">
+                Reorder or hide secondary modules. Critical integrity alerts and Attention Queue always stay pinned.
+              </p>
+            </div>
+            <ol className="space-y-1.5">
+              {moduleOrder.map((modId, index) => {
+                const mod = PERSONALIZABLE_MODULES.find((m) => m.id === modId);
+                if (!mod) return null;
                 const visible = !hiddenModules.includes(mod.id);
                 return (
-                  <button
+                  <li
                     key={mod.id}
-                    type="button"
-                    aria-pressed={visible}
-                    onClick={() => toggleModuleVisibility(mod.id)}
-                    className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
-                      visible
-                        ? 'border-brand bg-brand/10 text-brand'
-                        : 'border-line bg-canvas text-ink-secondary'
-                    }`}
+                    className="flex items-center justify-between gap-2 rounded-lg border border-line bg-canvas px-2.5 py-1.5"
                   >
-                    {visible ? 'Shown: ' : 'Hidden: '}
-                    {mod.label}
-                  </button>
+                    <button
+                      type="button"
+                      aria-pressed={visible}
+                      onClick={() => toggleModuleVisibility(mod.id)}
+                      className={`text-left text-xs font-medium ${
+                        visible ? 'text-ink' : 'text-ink-secondary line-through'
+                      }`}
+                    >
+                      {index + 1}. {mod.label} ({visible ? 'Shown' : 'Hidden'})
+                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        aria-label={`Move ${mod.label} up`}
+                        disabled={index === 0}
+                        onClick={() => moveModule(mod.id, -1)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-ink hover:border-brand disabled:opacity-40"
+                      >
+                        <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Move ${mod.label} down`}
+                        disabled={index === moduleOrder.length - 1}
+                        onClick={() => moveModule(mod.id, 1)}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-ink hover:border-brand disabled:opacity-40"
+                      >
+                        <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </li>
                 );
               })}
-            </div>
+            </ol>
           </div>
 
           <div className="pt-2 border-t border-line flex flex-wrap items-center justify-between gap-2">

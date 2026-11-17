@@ -346,6 +346,22 @@ check('V34-16', 'v3.4 Wave 14 full platform cohesion (HomeFeed ResearchNetworkBr
   assert(feedApi.includes('assignExperimentVariant'), '/api/feed missing runtime experiment assignment');
   return 'Wave 14 legacy-to-v3.4 bridges, live experiments & governance register sync verified';
 });
+check('V34-17', 'v3.4 Wave 15 privacy-safe 14-event analytics taxonomy, 5 priority experiment families, multi-facet/classification search, mobile drawer focus-trap/inert, dashboard Move up/down reordering, 8-kind evidence locators & editor pending-sync counter present', () => {
+  const files = [
+    'lib/v34/analytics.ts',
+    'test/next/v34-wave15-normative.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const header = readFileSync(join(root, 'components/BlogHeader.tsx'), 'utf8');
+  assert(header.includes("setAttribute('inert', '')"), 'BlogHeader missing mobile drawer inert background lock');
+  const ros = readFileSync(join(root, 'components/v34/ResearchOsClient.tsx'), 'utf8');
+  assert(ros.includes('rwm_os_module_order') && ros.includes('Offline mode'), 'ResearchOsClient missing mobile Move up/down reordering or offline indicator');
+  const editor = readFileSync(join(root, 'components/v34/ScholarlyEditorWorkspace.tsx'), 'utf8');
+  assert(editor.includes('Pending sync:') && editor.includes('Block moved to position'), 'ScholarlyEditorWorkspace missing pending-sync counter or polite block-move announcements');
+  const search = readFileSync(join(root, 'lib/v34/search.ts'), 'utf8');
+  assert(search.includes('authorizedClassifications') && search.includes('languageFilter'), 'search.ts missing classification pre-filter or language facet');
+  return 'Wave 15 privacy-safe analytics, multi-facet search, mobile a11y & offline indicators verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

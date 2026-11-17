@@ -137,17 +137,39 @@ export default function ScholarlyEditorWorkspace({
   const [slashFilter, setSlashFilter] = useState('');
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [saveState, setSaveState] = useState<SaveState>('saved');
+  const [pendingMutations, setPendingMutations] = useState(0);
+  const [politeAnnouncement, setPoliteAnnouncement] = useState('');
   const [conflict, setConflict] = useState<ConflictDetail | null>(null);
   const [snapshots, setSnapshots] = useState<SnapshotSummary[]>([]);
   const [assistantResult, setAssistantResult] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [retractionAddressed, setRetractionAddressed] = useState(false);
 
+  const refreshPendingCount = useCallback(async () => {
+    try {
+      const queued = await editorDb.getMutationsForDraft(initialDraftId);
+      setPendingMutations(queued.length);
+    } catch {
+      // Ignore if IndexedDB is unavailable
+    }
+  }, [initialDraftId]);
+
   const coordinatorRef = useRef<DraftSyncCoordinator | null>(null);
   if (!coordinatorRef.current) {
     coordinatorRef.current = new DraftSyncCoordinator({
-      onStateChange: (nextState) => setSaveState(nextState),
-      onConflict: (detail) => setConflict(detail),
+      onStateChange: (nextState) => {
+        setSaveState(nextState);
+        // Announce meaningful milestones sparingly — never per keystroke (Part I §13)
+        if (nextState === 'synced') setPoliteAnnouncement('Draft synced');
+        else if (nextState === 'saved' || nextState === 'offline') {
+          setPoliteAnnouncement('Draft saved locally');
+        }
+        void refreshPendingCount();
+      },
+      onConflict: (detail) => {
+        setConflict(detail);
+        setPoliteAnnouncement('A newer draft version is available');
+      },
     });
   }
 
@@ -174,20 +196,23 @@ export default function ScholarlyEditorWorkspace({
             );
           }
         }
+        if (active) {
+          await refreshPendingCount();
+        }
       } catch {
         // Fallback to starter document when IndexedDB is unavailable
       }
     })();
 
     const onOnline = () => {
-      void coordinatorRef.current?.flush(initialDraftId);
+      void coordinatorRef.current?.flush(initialDraftId).then(() => refreshPendingCount());
     };
     window.addEventListener('online', onOnline);
     return () => {
       active = false;
       window.removeEventListener('online', onOnline);
     };
-  }, [initialDraftId]);
+  }, [initialDraftId, refreshPendingCount]);
 
   const primarySource = useMemo(
     () => initialSources.find((s) => s.id === primarySourceId) ?? null,
@@ -339,6 +364,7 @@ export default function ScholarlyEditorWorkspace({
         const nextBlocks = [...prev.blocks];
         const [moved] = nextBlocks.splice(fromIndex, 1);
         nextBlocks.splice(toIndex, 0, moved);
+        setPoliteAnnouncement(`Block moved to position ${toIndex + 1} of ${nextBlocks.length}`);
         return { ...prev, blocks: nextBlocks };
       });
     },
@@ -671,6 +697,10 @@ export default function ScholarlyEditorWorkspace({
 
   return (
     <div className="space-y-4">
+      <span role="status" aria-live="polite" className="sr-only">
+        {politeAnnouncement}
+      </span>
+
       {/* Editor Header Bar (Part I §12.5 / Part III §18) */}
       <header className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -683,14 +713,27 @@ export default function ScholarlyEditorWorkspace({
           <span className="font-mono text-xs text-ink-secondary" dir="ltr">
             Draft: {initialDraftId}
           </span>
-          <span
-            role="status"
-            aria-live="polite"
-            className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas px-2.5 py-0.5 font-mono text-xs text-ink"
-          >
+          <span className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas px-2.5 py-0.5 font-mono text-xs text-ink">
             {saveState === 'offline' && <CloudOff className="h-3.5 w-3.5 text-brand" aria-hidden="true" />}
             State: {saveState}
           </span>
+          <span
+            data-testid="pending-mutations-count"
+            className="inline-flex items-center rounded-full border border-line bg-canvas px-2.5 py-0.5 font-mono text-xs text-ink-secondary"
+          >
+            Pending sync: {pendingMutations}
+          </span>
+          {(pendingMutations > 0 || saveState === 'offline' || saveState === 'failed') && (
+            <button
+              type="button"
+              onClick={() =>
+                void coordinatorRef.current?.flush(initialDraftId).then(() => refreshPendingCount())
+              }
+              className="rounded-md border border-brand bg-brand/10 px-2.5 py-1 text-xs font-medium text-brand hover:bg-brand/15"
+            >
+              Retry sync
+            </button>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

@@ -18,7 +18,7 @@ const VALID_TYPES = new Set<string>(SEARCH_ENTITY_TYPES);
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; type?: string; topic?: string }>;
+  searchParams: Promise<{ q?: string; type?: string; topic?: string; integrity?: string; access?: string; language?: string }>;
 }) {
   const params = await searchParams;
   const q = (params.q ?? '').trim();
@@ -31,7 +31,11 @@ export default async function SearchPage({
   const initialResponse = await executeUnifiedSearch({
     query: q,
     types,
+    integrity: params.integrity?.trim() || undefined,
+    access: params.access?.trim() || undefined,
+    language: params.language?.trim() || undefined,
     topic: params.topic?.trim() || undefined,
+    authorizedClassifications: ['PUBLIC'],
   });
 
   return (

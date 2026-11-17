@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T10:43:27.084Z",
+  "generatedAt": "2026-11-17T11:00:07.098Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -170,6 +170,12 @@
       "description": "v3.4 Wave 14 full platform cohesion (HomeFeed ResearchNetworkBridge, legacy post/author/write bridges, runtime /api/feed experiment & flag wiring, updated release-gate & risk-register) present",
       "status": "pass",
       "evidence": "Wave 14 legacy-to-v3.4 bridges, live experiments & governance register sync verified"
+    },
+    {
+      "id": "V34-17",
+      "description": "v3.4 Wave 15 privacy-safe 14-event analytics taxonomy, 5 priority experiment families, multi-facet/classification search, mobile drawer focus-trap/inert, dashboard Move up/down reordering, 8-kind evidence locators & editor pending-sync counter present",
+      "status": "pass",
+      "evidence": "Wave 15 privacy-safe analytics, multi-facet search, mobile a11y & offline indicators verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

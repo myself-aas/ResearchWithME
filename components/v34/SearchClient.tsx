@@ -23,6 +23,9 @@ const TYPE_OPTIONS: Array<{ value: 'all' | SearchEntityType; label: string }> = 
 export default function SearchClient({ initialResponse }: SearchClientProps) {
   const [query, setQuery] = useState(initialResponse.query);
   const [activeType, setActiveType] = useState<'all' | SearchEntityType>('all');
+  const [integrityFilter, setIntegrityFilter] = useState(initialResponse.appliedFilters?.integrity ?? '');
+  const [accessFilter, setAccessFilter] = useState(initialResponse.appliedFilters?.access ?? '');
+  const [languageFilter, setLanguageFilter] = useState(initialResponse.appliedFilters?.language ?? '');
   const [hits, setHits] = useState<SearchHit[]>(initialResponse.hits);
   const [mode, setMode] = useState<'lexical' | 'identifier'>(initialResponse.mode);
   const [total, setTotal] = useState(initialResponse.total);
@@ -48,14 +51,24 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
     };
   }, []);
 
-  async function runSearch(nextQuery: string, nextType: 'all' | SearchEntityType) {
+  async function runSearch(
+    nextQuery: string,
+    nextType: 'all' | SearchEntityType,
+    facets?: { integrity?: string; access?: string; language?: string },
+  ) {
     setLoading(true);
     setErrorMsg(null);
     setSaveNotice(null);
+    const nextIntegrity = facets?.integrity ?? integrityFilter;
+    const nextAccess = facets?.access ?? accessFilter;
+    const nextLanguage = facets?.language ?? languageFilter;
     try {
       const params = new URLSearchParams();
       if (nextQuery.trim()) params.set('q', nextQuery.trim());
       if (nextType !== 'all') params.set('type', nextType);
+      if (nextIntegrity) params.set('integrity', nextIntegrity);
+      if (nextAccess) params.set('access', nextAccess);
+      if (nextLanguage) params.set('language', nextLanguage);
       const res = await fetch(`/api/search?${params.toString()}`);
       if (!res.ok) {
         setErrorMsg('Search service returned an error. Please retry.');
@@ -72,6 +85,17 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
       setLoading(false);
     }
   }
+
+  async function handleResetFilters() {
+    setActiveType('all');
+    setIntegrityFilter('');
+    setAccessFilter('');
+    setLanguageFilter('');
+    await runSearch(query, 'all', { integrity: '', access: '', language: '' });
+  }
+
+  const hasActiveFacets =
+    activeType !== 'all' || Boolean(integrityFilter) || Boolean(accessFilter) || Boolean(languageFilter);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -217,6 +241,74 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
           ))}
         </div>
 
+        {/* Scholarly metadata facets: Integrity, Access & Language (Part V §18.11) */}
+        <div className="grid gap-2 border-t border-line pt-3 sm:grid-cols-4">
+          <label className="space-y-1 text-xs text-ink-secondary">
+            <span className="block font-medium text-ink">Integrity state</span>
+            <select
+              aria-label="Filter by integrity status"
+              value={integrityFilter}
+              onChange={(e) => {
+                const next = e.target.value;
+                setIntegrityFilter(next);
+                void runSearch(query, activeType, { integrity: next });
+              }}
+              className="h-10 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
+            >
+              <option value="">Any integrity state</option>
+              <option value="active">Active / verified</option>
+              <option value="corrected">Corrected</option>
+              <option value="expression-of-concern">Expression of concern</option>
+              <option value="retracted">Retracted</option>
+            </select>
+          </label>
+          <label className="space-y-1 text-xs text-ink-secondary">
+            <span className="block font-medium text-ink">Access state</span>
+            <select
+              aria-label="Filter by access status"
+              value={accessFilter}
+              onChange={(e) => {
+                const next = e.target.value;
+                setAccessFilter(next);
+                void runSearch(query, activeType, { access: next });
+              }}
+              className="h-10 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
+            >
+              <option value="">Any access state</option>
+              <option value="open">Open access</option>
+              <option value="subscription">Subscription</option>
+            </select>
+          </label>
+          <label className="space-y-1 text-xs text-ink-secondary">
+            <span className="block font-medium text-ink">Language</span>
+            <select
+              aria-label="Filter by language"
+              value={languageFilter}
+              onChange={(e) => {
+                const next = e.target.value;
+                setLanguageFilter(next);
+                void runSearch(query, activeType, { language: next });
+              }}
+              className="h-10 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
+            >
+              <option value="">All languages</option>
+              <option value="en">English (en)</option>
+              <option value="bn">Bangla (bn)</option>
+              <option value="ar">Arabic (ar)</option>
+            </select>
+          </label>
+          <div className="flex items-end">
+            <button
+              type="button"
+              onClick={() => void handleResetFilters()}
+              disabled={!hasActiveFacets}
+              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-line bg-canvas px-3 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-40"
+            >
+              Reset filters
+            </button>
+          </div>
+        </div>
+
         {/* Transparent, removable query expansion suggestions (Part V §10.2) */}
         {expansions.length > 0 ? (
           <div className="space-y-2 border-t border-line pt-3">
@@ -275,11 +367,20 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
       </div>
 
       {hits.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-line bg-surface p-8 text-center space-y-2">
+        <div className="rounded-lg border border-dashed border-line bg-surface p-8 text-center space-y-3">
           <p className="font-serif text-lg font-semibold text-ink">No matching scholarly records</p>
           <p className="font-sans text-sm text-ink-secondary">
             Try a broader keyword, switch entity filters to “All objects”, or paste a canonical DOI or arXiv identifier.
           </p>
+          {hasActiveFacets ? (
+            <button
+              type="button"
+              onClick={() => void handleResetFilters()}
+              className="inline-flex min-h-11 items-center rounded-full border border-brand bg-brand/10 px-4 py-2 font-sans text-xs font-semibold text-brand hover:bg-brand/15"
+            >
+              Reset active filters
+            </button>
+          ) : null}
         </div>
       ) : (
         <ul className="space-y-3">

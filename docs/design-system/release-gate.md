@@ -1,7 +1,7 @@
 # reme v3.4 §44/§46 — Stable Release Gate Status
 
 Machine-checkable items are enforced by `scripts/release-gate.mjs` (CI job
-`release-gate`); latest machine manifest: `release-manifest.json` (`28/28` checks).
+`release-gate`); latest machine manifest: `release-manifest.json` (`29/29` checks).
 Full Part VII §11 / Part VIII acceptance dossier: `docs/v34-acceptance-evidence.md`.
 Security threat model & retention policy: `docs/security/v34-threat-model-and-retention-policy.md`.
 Migration & rollback runbook: `docs/runbooks/v34-migration-and-rollback-runbook.md`.

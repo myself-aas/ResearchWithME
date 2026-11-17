@@ -28,6 +28,8 @@ export interface SearchHit {
   matchReason: string;
   score: number;
   integrityStatus?: string;
+  accessState?: string;
+  language?: string;
   identifiers: string[];
   topics: string[];
   updatedAt?: string;
@@ -37,6 +39,12 @@ export interface SearchResponse {
   query: string;
   mode: 'lexical' | 'identifier';
   appliedTypes: SearchEntityType[];
+  appliedFilters?: {
+    integrity?: string;
+    access?: string;
+    language?: string;
+    topic?: string;
+  };
   hits: SearchHit[];
   total: number;
   latencyMs: number;
@@ -120,7 +128,10 @@ export async function executeUnifiedSearch(options: {
   query: string;
   types?: SearchEntityType[];
   integrity?: string;
+  access?: string;
+  language?: string;
   topic?: string;
+  authorizedClassifications?: readonly string[];
   limit?: number;
 }): Promise<SearchResponse> {
   const started = performance.now();
@@ -131,6 +142,13 @@ export async function executeUnifiedSearch(options: {
   const typeSet = new Set(allowedTypes);
   const topicFilter = options.topic?.trim().toLowerCase() ?? '';
   const integrityFilter = options.integrity?.trim().toLowerCase() ?? '';
+  const accessFilter = options.access?.trim().toLowerCase() ?? '';
+  const languageFilter = options.language?.trim().toLowerCase() ?? '';
+  const allowedClassifications = new Set(
+    (options.authorizedClassifications?.length ? options.authorizedClassifications : ['PUBLIC']).map(
+      (c) => c.toUpperCase(),
+    ),
+  );
 
   const parsedIdentifier = rawQuery ? parseSourceIdentifier(rawQuery) : null;
   const mode: 'lexical' | 'identifier' = parsedIdentifier ? 'identifier' : 'lexical';
@@ -152,6 +170,9 @@ export async function executeUnifiedSearch(options: {
 
   for (const s of sources) {
     if (integrityFilter && s.integrityStatus.toLowerCase() !== integrityFilter) continue;
+    if (accessFilter && s.accessState.toLowerCase() !== accessFilter) continue;
+    if (languageFilter && s.language.toLowerCase() !== languageFilter) continue;
+    if (s.accessState === 'restricted' && !allowedClassifications.has('RESTRICTED')) continue;
     const ids = [s.identifierValue, s.canonicalUrl].filter((x): x is string => Boolean(x));
     const exactId =
       parsedIdentifier &&
@@ -181,6 +202,8 @@ export async function executeUnifiedSearch(options: {
           : `Matched source ${lex.matchedFields.join(', ')}`,
         score: exactId ? 100 : lex.score,
         integrityStatus: s.integrityStatus,
+        accessState: s.accessState,
+        language: s.language,
         identifiers: ids,
         topics: [],
         updatedAt: s.updatedAt,
@@ -192,6 +215,8 @@ export async function executeUnifiedSearch(options: {
     if (integrityFilter && c.trustAssessment.sourceIntegrity.toLowerCase() !== integrityFilter) {
       continue;
     }
+    if (accessFilter && accessFilter !== 'open') continue;
+    if (languageFilter && languageFilter !== 'en') continue;
     if (
       topicFilter &&
       !c.topics.some((t) => t.toLowerCase().includes(topicFilter)) &&
@@ -218,6 +243,8 @@ export async function executeUnifiedSearch(options: {
         matchReason: `Matched contribution ${lex.matchedFields.join(', ')}`,
         score: lex.score,
         integrityStatus: c.trustAssessment.sourceIntegrity,
+        accessState: 'open',
+        language: 'en',
         identifiers: c.primarySourceId ? [c.primarySourceId] : [],
         topics: c.topics,
         updatedAt: c.updatedAt,
@@ -226,6 +253,8 @@ export async function executeUnifiedSearch(options: {
   }
 
   for (const t of tools) {
+    if (accessFilter && accessFilter !== 'open') continue;
+    if (languageFilter && languageFilter !== 'en') continue;
     if (topicFilter && !t.topics.some((tp) => tp.toLowerCase().includes(topicFilter))) continue;
     const exactRepo =
       parsedIdentifier?.scheme === 'github' &&
@@ -251,6 +280,8 @@ export async function executeUnifiedSearch(options: {
           : `Matched tool repository ${lex.matchedFields.join(', ')}`,
         score: exactRepo ? 95 : lex.score,
         integrityStatus: 'active',
+        accessState: 'open',
+        language: 'en',
         identifiers: [t.repositoryUrl],
         topics: t.topics,
         updatedAt: t.updatedAt,
@@ -259,6 +290,10 @@ export async function executeUnifiedSearch(options: {
   }
 
   for (const p of projects) {
+    const projectClassification = (p.visibility === 'private' ? 'CONFIDENTIAL' : 'PUBLIC').toUpperCase();
+    if (!allowedClassifications.has(projectClassification)) continue;
+    if (accessFilter && accessFilter !== 'open') continue;
+    if (languageFilter && languageFilter !== 'en') continue;
     const lex = queryTerms.length
       ? lexicalScore(queryTerms, [
           { label: 'title', text: p.title, weight: 5 },
@@ -275,6 +310,8 @@ export async function executeUnifiedSearch(options: {
         mode: 'lexical',
         matchReason: `Matched research project ${lex.matchedFields.join(', ')}`,
         score: lex.score,
+        accessState: 'open',
+        language: 'en',
         identifiers: [],
         topics: [],
         updatedAt: p.updatedAt,
@@ -286,6 +323,8 @@ export async function executeUnifiedSearch(options: {
     if (integrityFilter && cl.assessment.sourceIntegrity.toLowerCase() !== integrityFilter) {
       continue;
     }
+    if (accessFilter && accessFilter !== 'open') continue;
+    if (languageFilter && languageFilter !== 'en') continue;
     const lex = queryTerms.length
       ? lexicalScore(queryTerms, [
           { label: 'statement', text: cl.statement, weight: 5 },
@@ -298,11 +337,13 @@ export async function executeUnifiedSearch(options: {
         type: 'claim',
         title: cl.statement,
         snippet: `Structured ${cl.claimType} claim · lifecycle: ${cl.lifecycle}`,
-        url: `/graph`,
+        url: `/claim/${cl.id}`,
         mode: 'lexical',
         matchReason: `Matched claim ${lex.matchedFields.join(', ')}`,
         score: lex.score,
         integrityStatus: cl.assessment.sourceIntegrity,
+        accessState: 'open',
+        language: 'en',
         identifiers: [],
         topics: [],
         updatedAt: cl.updatedAt,
@@ -311,6 +352,8 @@ export async function executeUnifiedSearch(options: {
   }
 
   for (const tp of topics) {
+    if (accessFilter && accessFilter !== 'open') continue;
+    if (languageFilter && languageFilter !== 'en') continue;
     if (topicFilter && !tp.name.toLowerCase().includes(topicFilter) && !tp.slug.includes(topicFilter)) {
       continue;
     }
@@ -327,10 +370,12 @@ export async function executeUnifiedSearch(options: {
         type: 'topic',
         title: tp.name,
         snippet: tp.description || `${tp.assignmentCount} linked scholarly records`,
-        url: `/feed?topic=${encodeURIComponent(tp.name)}`,
+        url: `/topics/${tp.slug}`,
         mode: 'lexical',
         matchReason: `Matched canonical topic ${lex.matchedFields.join(', ')}`,
         score: lex.score,
+        accessState: 'open',
+        language: 'en',
         identifiers: [tp.slug],
         topics: [tp.name],
         updatedAt: tp.updatedAt,
@@ -345,6 +390,12 @@ export async function executeUnifiedSearch(options: {
     query: rawQuery,
     mode,
     appliedTypes: allowedTypes,
+    appliedFilters: {
+      ...(integrityFilter ? { integrity: integrityFilter } : {}),
+      ...(accessFilter ? { access: accessFilter } : {}),
+      ...(languageFilter ? { language: languageFilter } : {}),
+      ...(topicFilter ? { topic: topicFilter } : {}),
+    },
     hits: limited,
     total: hits.length,
     latencyMs: Math.max(1, Math.round(performance.now() - started)),

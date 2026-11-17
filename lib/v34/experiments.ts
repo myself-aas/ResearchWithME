@@ -64,6 +64,63 @@ export const V34_EXPERIMENTS: readonly ExperimentDefinition[] = [
     minimumRuntimeDays: 14,
     owner: 'Dashboard Owner',
   },
+  {
+    id: 'exp-feed-architecture-v1',
+    hypothesis:
+      'Surfacing a mixed contribution feed (reviews, evidence notes, tool teardowns) alongside editorial essays increases contribution starts without hurting reading depth.',
+    variants: ['article-only', 'mixed-contribution-feed'],
+    primaryMetric: 'contribution_cta_clicked_to_started_rate',
+    guardrails: [
+      'article_read_depth_non_regression',
+      'bounce_rate_non_regression',
+      'low_quality_submission_rate_lte_5pct',
+    ],
+    eligibility: 'all-visitors',
+    minimumRuntimeDays: 14,
+    owner: 'Product Lead',
+  },
+  {
+    id: 'exp-assistant-placement-v1',
+    hypothesis:
+      'Docking a contextual scholarly assistant in reading and drafting views increases evidence verification without raising unsupported AI claims.',
+    variants: ['standalone-route', 'docked-contextual', 'floating-trigger'],
+    primaryMetric: 'verified_citation_check_adoption',
+    guardrails: [
+      'unreviewed_ai_publish_block_rate_zero_regression',
+      'editor_inp_lte_200ms',
+    ],
+    eligibility: 'authenticated-contributors',
+    minimumRuntimeDays: 21,
+    owner: 'AI Governance Lead',
+  },
+  {
+    id: 'exp-article-engagement-v1',
+    hypothesis:
+      'Offering structured "Add evidence" and "Share perspective" prompts outperforms generic comment boxes on scholarly depth.',
+    variants: ['comment-prompt', 'share-perspective-prompt', 'add-evidence-prompt'],
+    primaryMetric: 'evidence_added_per_100_readers',
+    guardrails: [
+      'discussion_report_rate_non_regression',
+      'evidence_locator_completeness_gte_90pct',
+    ],
+    eligibility: 'public-article-readers',
+    minimumRuntimeDays: 14,
+    owner: 'Community Lead',
+  },
+  {
+    id: 'exp-signup-trigger-v1',
+    hypothesis:
+      'Allowing readers to save an item locally before prompting account creation improves save-to-signup conversion.',
+    variants: ['signup-before-save', 'save-first-then-account'],
+    primaryMetric: 'item_saved_to_account_created_7d',
+    guardrails: [
+      'local_draft_loss_rate_zero',
+      'logout_wipe_policy_compliance_100pct',
+    ],
+    eligibility: 'anonymous-visitors',
+    minimumRuntimeDays: 14,
+    owner: 'Growth & Identity Lead',
+  },
 ] as const;
 
 export function getExperimentById(id: string): ExperimentDefinition | null {
