@@ -5,6 +5,27 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Dashboard and account surfaces share one chrome: a social-style profile header
+  (circular photo, name, role/affiliation/member-since, bio, edit/new-article
+  actions) and a sticky, horizontally scrollable section switcher
+  (Desk · My writing · My reading · Articles · Comments · Applications ·
+  Account). The vertical sidebar is gone, and `/dashboard/account` no longer
+  renders a second site header and footer inside the shell.
+- The mobile navigation is now a right-side drawer covering roughly two-thirds of
+  the viewport over a dimmed scrim, with a pinned account/sign-out footer,
+  background scroll lock, Escape and focus-trap behaviour intact.
+- One MDX editor for every studio: `components/editor/MdxEditor.tsx` backs the
+  writer studio, the dashboard studio, and the scholarly workspace. The
+  scholarly MDX pane is editable again (Apply to blocks / Revert) and
+  `lib/v34/mdx-roundtrip.ts` folds it back into structured evidence, claim, and
+  citation blocks losslessly.
+- The writers directory always shows the editorial lead, and the known
+  editor-in-chief resolves to a truthful minimal profile so the Editor page and
+  `/author/myself-aas` no longer 404.
+- `/editor` requires editor access and shows who is signed in plus human save
+  states instead of raw sync enums.
+
 ### Added
 - Artifact storage no longer requires Cloudflare R2. R2 asks for a payment
   method even on its free allowance, so scholarly exports and render manifests

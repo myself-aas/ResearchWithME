@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { redirect } from 'next/navigation';
 import DashboardShell from '@/components/cms/DashboardShell';
 import { getDashboardUser } from '@/lib/cms/auth';
+import { loadDashboardProfile } from '@/lib/dashboard/profile';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export const dynamic = 'force-dynamic';
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const configured = isSupabaseConfigured;
   const user = await getDashboardUser();
+  const profile = await loadDashboardProfile(user);
 
   // The middleware already redirects; this is a second line of defence so the
   // matcher can be edited later without exposing the dashboard.
@@ -34,7 +36,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
 
   return (
-    <DashboardShell configured={configured} user={user}>
+    <DashboardShell configured={configured} user={user} profile={profile}>
       {children}
     </DashboardShell>
   );

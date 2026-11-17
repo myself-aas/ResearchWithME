@@ -2,6 +2,8 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import AccountPage, { metadata } from '@/app/dashboard/account/page';
 import { subscriptionStatusLabel } from '@/lib/billing/status';
 
@@ -34,6 +36,14 @@ beforeEach(() => {
 });
 
 describe('/dashboard/account', () => {
+  it('does not repeat the site header or footer inside the dashboard shell', () => {
+    const source = readFileSync(join(process.cwd(), 'app/dashboard/account/page.tsx'), 'utf8');
+    // The shell already renders BlogHeader/BlogFooter; duplicating them is what
+    // produced two primary menus and two footers on this page.
+    expect(source).not.toContain("from '@/components/BlogHeader'");
+    expect(source).not.toContain("from '@/components/BlogFooter'");
+  });
+
   it('has an API keys section that states the allowance and links to the reference', async () => {
     getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
     const html = await render();

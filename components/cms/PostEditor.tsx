@@ -28,8 +28,7 @@ import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
 import { slugify } from '@/lib/validation';
 import { cn } from '@/lib/utils';
 import ConfirmDelete from './ConfirmDelete';
-import dynamic from 'next/dynamic';
-const PlateBodyEditor = dynamic(() => import('@/components/editor/PlateBodyEditor'), { ssr: false });
+import MdxEditor from '@/components/editor/MdxEditor';
 import PublishSplitButton from './PublishSplitButton';
 import StatusBadge from './StatusBadge';
 import {
@@ -807,7 +806,7 @@ export default function PostEditor({
           <Text id="post-content-label" as="h2" variant="card-title">
             Body
           </Text>
-          <PlateBodyEditor
+          <MdxEditor
             id="post-content"
             value={form.content}
             onChange={(value) => update('content', value)}

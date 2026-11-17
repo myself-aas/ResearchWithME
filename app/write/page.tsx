@@ -15,9 +15,10 @@ import { cleanText, LIMITS, parseTags, slugify } from '@/lib/validation';
 import { readingTimeFromText } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { useSession } from '@/lib/supabase/use-session';
-import { uploadCover } from '@/lib/supabase/storage';
+import { uploadBlogImage, uploadCover } from '@/lib/supabase/storage';
 import type { EncodedImage } from '@/lib/images/process';
 import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
+import MdxEditor from '@/components/editor/MdxEditor';
 import dynamic from 'next/dynamic';
 import { Text } from '@/components/primitives';
 import { WorkflowDisclosure } from '@/components/workflows';
@@ -30,9 +31,6 @@ const MarkdownBody = dynamic(() => import('@/components/MarkdownBody'), {
   loading: () => <p className="text-base text-ink-secondary">Preparing preview…</p>,
 });
 
-const PlateBodyEditor = dynamic(() => import('@/components/editor/PlateBodyEditor'), {
-  ssr: false,
-});
 
 const FORMATS: ArticleFormat[] = ['Paper Review', 'Repo Teardown', 'Deep-Dive Essay', 'Field Notes', 'Case Study'];
 const DRAFT_KEY = 'rwm_writer_draft';
@@ -743,11 +741,12 @@ export default function WritePage() {
                   Article body <span className="text-ink-secondary">(required)</span>
                 </label>
                 <div className="mt-1">
-                  <PlateBodyEditor
+                  <MdxEditor
                     id="write-content"
                     value={draft.content}
                     onChange={(value) => update('content', value)}
                     error={errorField === 'write-content' ? (error ?? undefined) : undefined}
+                    onUploadImage={isSupabaseConfigured ? (file) => uploadBlogImage(file) : undefined}
                   />
                 </div>
                 <p className="mt-1 flex flex-wrap justify-between gap-2 text-sm text-ink-secondary">

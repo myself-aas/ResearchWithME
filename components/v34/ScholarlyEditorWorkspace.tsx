@@ -35,6 +35,8 @@ import {
   type ResearchDocument,
 } from '@/lib/v34/contracts';
 import { validateAndSanitizeMdx } from '@/lib/v34/mdx-security';
+import { parseResearchDocumentFromMdx } from '@/lib/v34/mdx-roundtrip';
+import MdxEditor from '@/components/editor/MdxEditor';
 import { editorDb, type SaveState } from '@/lib/persistence/editor-db';
 import { DraftSyncCoordinator, type ConflictDetail } from '@/lib/persistence/sync-coordinator';
 
@@ -59,7 +61,19 @@ interface SnapshotSummary {
 interface ScholarlyEditorWorkspaceProps {
   initialDraftId: string;
   initialSources: EditorSourceOption[];
+  /** Name of the signed-in editor, shown so drafts are attributable at a glance. */
+  editorName?: string;
 }
+
+const SAVE_STATE_LABEL: Record<SaveState, string> = {
+  editing: 'Unsaved changes',
+  saving: 'Saving…',
+  saved: 'Saved on this device',
+  synced: 'Synced',
+  offline: 'Offline',
+  conflict: 'Version conflict',
+  failed: 'Sync failed',
+};
 
 const SLASH_BLOCK_CATALOG: Array<{
   type: ResearchBlockType;
@@ -118,6 +132,7 @@ function createEmptyDocument(draftId: string, primarySourceId?: string): Researc
 export default function ScholarlyEditorWorkspace({
   initialDraftId,
   initialSources,
+  editorName,
 }: ScholarlyEditorWorkspaceProps) {
   const [contributionType, setContributionType] = useState<ContributionType>('paper-review');
   const [summary, setSummary] = useState('');
@@ -227,6 +242,15 @@ export default function ScholarlyEditorWorkspace({
   const serializedMdx = useMemo(() => serializeResearchDocumentToMdx(doc), [doc]);
   const mdxValidation = useMemo(() => validateAndSanitizeMdx(serializedMdx), [serializedMdx]);
 
+  // The MDX pane edits a draft copy so a half-typed source never corrupts the
+  // structured blocks or triggers autosave churn. "Apply" folds it back in.
+  const [mdxDraft, setMdxDraft] = useState('');
+  const [mdxDirty, setMdxDirty] = useState(false);
+  useEffect(() => {
+    if (!mdxDirty) setMdxDraft(serializedMdx);
+  }, [serializedMdx, mdxDirty]);
+  const mdxDraftValidation = useMemo(() => validateAndSanitizeMdx(mdxDraft), [mdxDraft]);
+
   const blockers = useMemo(
     () =>
       evaluatePublicationBlockers({
@@ -271,6 +295,22 @@ export default function ScholarlyEditorWorkspace({
     [persistNow],
   );
 
+  const applyMdxDraft = useCallback(() => {
+    if (!mdxDraft.trim()) {
+      setStatusMessage('Nothing to apply: the MDX source is empty.');
+      return;
+    }
+    updateDoc((prev) => parseResearchDocumentFromMdx(mdxDraft, prev));
+    setMdxDirty(false);
+    setStatusMessage('MDX source applied to the structured blocks.');
+  }, [mdxDraft, updateDoc]);
+
+  const revertMdxDraft = useCallback(() => {
+    setMdxDraft(serializedMdx);
+    setMdxDirty(false);
+    setStatusMessage('MDX source reset to the current document.');
+  }, [serializedMdx]);
+
   const handleUndo = useCallback(() => {
     setUndoStack((stack) => {
       if (stack.length === 0) return stack;
@@ -299,7 +339,12 @@ export default function ScholarlyEditorWorkspace({
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !(e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement)) {
+      const target = e.target;
+      const inTextField =
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLInputElement ||
+        (target instanceof HTMLElement && target.isContentEditable);
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !inTextField) {
         e.preventDefault();
         if (e.shiftKey) handleRedo();
         else handleUndo();
@@ -715,8 +760,17 @@ export default function ScholarlyEditorWorkspace({
           </span>
           <span className="inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2.5 py-1 font-mono text-xs text-ink">
             {saveState === 'offline' && <CloudOff className="h-3.5 w-3.5 text-brand" aria-hidden="true" />}
-            State: {saveState}
+            {SAVE_STATE_LABEL[saveState]}
           </span>
+          {editorName ? (
+            <span
+              className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas px-2.5 py-1 text-xs text-ink-secondary"
+              title={`Signed in as ${editorName}`}
+            >
+              <ShieldCheck className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+              {editorName}
+            </span>
+          ) : null}
           <span
             data-testid="pending-mutations-count"
             className="inline-flex items-center rounded-full bg-surface-subtle px-2.5 py-1 font-mono text-xs text-ink-secondary"
@@ -935,7 +989,7 @@ export default function ScholarlyEditorWorkspace({
                 }`}
               >
                 <FileCode2 className="h-3.5 w-3.5" aria-hidden="true" />
-                Safe MDX Preview
+                MDX editor
               </button>
             </div>
           </div>
@@ -1161,13 +1215,56 @@ export default function ScholarlyEditorWorkspace({
               </ol>
             </div>
           ) : (
-            <div className="space-y-2">
-              <p className="text-xs text-ink-secondary">
-                Deterministic, allowlisted MDX output:
-              </p>
-              <pre className="overflow-x-auto rounded-lg bg-surface-subtle/60 p-4 font-mono text-xs text-ink">
-                {mdxValidation.sanitizedMdx}
-              </pre>
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-start justify-between gap-2 rounded-lg bg-surface-subtle/60 p-3">
+                <p className="max-w-md text-xs leading-relaxed text-ink-secondary">
+                  The same MDX editor the writer studio uses. Edit the source, then apply it to the
+                  structured blocks — evidence, claim, and citation labels are read back automatically.
+                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={revertMdxDraft}
+                    disabled={!mdxDirty}
+                    className="inline-flex min-h-11 items-center rounded-md border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
+                  >
+                    Revert
+                  </button>
+                  <button
+                    type="button"
+                    onClick={applyMdxDraft}
+                    disabled={!mdxDirty}
+                    className="inline-flex min-h-11 items-center gap-1 rounded-md border border-brand bg-brand px-3 py-2 text-xs font-semibold text-on-primary hover:bg-brand-hover disabled:opacity-40"
+                  >
+                    <Save className="h-3.5 w-3.5" aria-hidden="true" />
+                    Apply to blocks
+                  </button>
+                </div>
+              </div>
+
+              <MdxEditor
+                id="scholarly-mdx-source"
+                value={mdxDraft}
+                onChange={(next) => {
+                  setMdxDirty(true);
+                  setMdxDraft(next);
+                }}
+                label="MDX source"
+                error={
+                  mdxDraftValidation.safe
+                    ? undefined
+                    : `${mdxDraftValidation.violations.length} unsafe construct(s) will be stripped when this is applied.`
+                }
+              />
+
+              <details className="rounded-lg border border-line bg-canvas p-3">
+                <summary className="cursor-pointer text-xs font-semibold text-ink">
+                  Deterministic, allowlisted output preview
+                </summary>
+                <pre className="mt-2 overflow-x-auto rounded-lg bg-surface-subtle/60 p-4 font-mono text-xs text-ink">
+                  {mdxDraftValidation.sanitizedMdx}
+                </pre>
+              </details>
             </div>
           )}
         </section>

@@ -1,5 +1,6 @@
 import AuthorsDirectoryPage from '@/components/AuthorsDirectoryPage';
 import { listPublishedAuthors } from '@/lib/author-directory';
+import { EDITOR_IN_CHIEF } from '@/lib/research-data';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
@@ -12,5 +13,14 @@ export const metadata = pageMetadata({
 
 export default async function AuthorsDirectoryRoute() {
   const authors = await listPublishedAuthors();
-  return <AuthorsDirectoryPage authors={authors} />;
+  return (
+    <AuthorsDirectoryPage
+      authors={authors}
+      editor={{
+        name: EDITOR_IN_CHIEF.name,
+        role: EDITOR_IN_CHIEF.role,
+        slug: EDITOR_IN_CHIEF.profileSlug,
+      }}
+    />
+  );
 }

@@ -3,6 +3,7 @@ import 'server-only';
 import { unstable_cache } from 'next/cache';
 import { cache } from 'react';
 import { AUTHORS, type Author } from '@/lib/blog-data';
+import { EDITOR_IN_CHIEF } from '@/lib/research-data';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { getSupabasePublicClient } from '@/lib/supabase/server';
@@ -89,13 +90,61 @@ export const getCachedPublishedAuthors = unstable_cache(() => directory.listPubl
 });
 
 /**
- * One published profile, or null when no such profile exists.
+ * The editor-in-chief is a real, single role on this product, and the public
+ * "Editor" page links straight to their profile. If their `profiles` row has
+ * not been published yet, that link used to 404, which made both the editor page
+ * and the writers directory look broken. Resolving the known editor to a
+ * truthful minimal profile keeps the link honest without inventing contribution
+ * history: article counts stay at zero until real articles exist.
+ */
+function editorProfileFallback(): Author {
+  return {
+    id: EDITOR_IN_CHIEF.profileSlug,
+    name: EDITOR_IN_CHIEF.name,
+    avatar: '',
+    bio: 'Editor-in-Chief of ResearchWithMe. Reviews published here are checked against their primary sources before they go live.',
+    role: EDITOR_IN_CHIEF.role,
+    domain: 'Editorial',
+    joinedDate: '2026',
+    articleCount: 0,
+  };
+}
+
+function isEditorSlug(id: string): boolean {
+  return id.trim().toLowerCase() === EDITOR_IN_CHIEF.profileSlug.toLowerCase();
+}
+
+const resolvePublishedAuthor = cache(directory.getPublishedAuthor);
+
+/**
+ * One published profile, or null when no such profile exists. Case-insensitive
+ * on the slug; the known editor-in-chief resolves to a minimal profile so the
+ * public Editor page never links to a 404.
  *
  * Null means the author genuinely is not published; anything else throws, so a
  * transient outage surfaces as a 5xx rather than a 404 a crawler would treat
- * as "gone". Case-insensitive on the slug.
+ * as "gone".
  */
-export const getPublishedAuthor = cache(directory.getPublishedAuthor);
+export const getPublishedAuthor = cache(async (id: string): Promise<Author | null> => {
+  const found = await resolvePublishedAuthor(id);
+  if (found) return found;
+  return isEditorSlug(id) ? editorProfileFallback() : null;
+});
 
 /** A published profile plus the published articles attributed to it. */
-export const getAuthorArchive = cache(directory.getAuthorArchive);
+export const getAuthorArchive = cache(async (id: string) => {
+  const archive = await directory.getAuthorArchive(id);
+  if (archive) return archive;
+  if (!isEditorSlug(id)) return null;
+  return {
+    author: editorProfileFallback(),
+    articles: [],
+    metrics: {
+      totalArticles: 0,
+      totalLikes: 0,
+      totalComments: 0,
+      domains: [],
+      reviewedArtifactsCount: 0,
+    },
+  };
+});

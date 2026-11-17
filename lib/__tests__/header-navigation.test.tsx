@@ -51,6 +51,25 @@ describe('responsive header navigation', () => {
     expect(button.getAttribute('aria-expanded')).toBe('false');
     expect(document.activeElement).toBe(button);
   });
+  it('opens a right-side drawer that covers about two-thirds of the viewport', () => {
+    toggle();
+    const dialog = container.querySelector<HTMLElement>('[role="dialog"][aria-label="Navigation menu"]');
+    expect(dialog).not.toBeNull();
+    // Anchored to the right edge, full height, capped at ~21rem, and sized in
+    // viewport units so it reads as a drawer rather than a full-screen takeover.
+    expect(dialog!.className).toContain('right-0');
+    expect(dialog!.className).toContain('inset-y-0');
+    expect(dialog!.className).toContain('w-[72vw]');
+    expect(dialog!.className).toContain('max-w-[21rem]');
+    expect(dialog!.className).toContain('lg:hidden');
+    expect(dialog!.getAttribute('aria-modal')).toBe('true');
+    // A dimmed scrim covers the rest of the page and closes the drawer.
+    const scrim = container.querySelector<HTMLButtonElement>('button[aria-hidden="true"]');
+    expect(scrim).not.toBeNull();
+    act(() => scrim!.click());
+    expect(container.querySelector('[role="dialog"][aria-label="Navigation menu"]')).toBeNull();
+  });
+
   it('closes the mobile menu when switching to desktop', () => {
     const button = toggle();
     desktop = true;
