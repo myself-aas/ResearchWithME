@@ -11,14 +11,17 @@ import SaveToLibraryButton from '@/components/v34/SaveToLibraryButton';
 import { DiscussionSection } from '@/components/v34/DiscussionSection';
 import { PeerReviewSection } from '@/components/v34/PeerReviewSection';
 import { ProvenanceGraphExplorer } from '@/components/v34/ProvenanceGraphExplorer';
+import { ContributionIntegrityExports } from '@/components/v34/ContributionIntegrityExports';
 import { CONTRIBUTION_CATALOG } from '@/lib/v34/contracts';
 import {
   getClaimEvidenceLinks,
   getContributionById,
   getSourceWithDetails,
   listClaims,
+  listContributionVersions,
   listEvidence,
 } from '@/lib/v34/store';
+import { listAiProvenance } from '@/lib/v34/ai-governance';
 import {
   toProvenanceGraphData,
   toScholarlyAssessment,
@@ -80,6 +83,8 @@ export default async function ContributionDetailPage({
   });
   const formalReviews = listFormalReviews(contribution.id);
   const discussions = listDiscussions({ objectType: 'contribution', objectId: contribution.id });
+  const versionHistory = listContributionVersions(contribution.id) ?? [];
+  const aiProvenanceRecords = listAiProvenance({ targetId: contribution.id });
 
   const latestIntegrityEvent = sourceDetails?.integrityEvents[0] ?? null;
   const scholarlyAssessment = toScholarlyAssessment(contribution.trustAssessment, {
@@ -286,6 +291,16 @@ export default async function ContributionDetailPage({
         initialRelationships={provenanceGraph.relationships}
         initialClaimEvidence={scopedLinks}
         showFullGraphLink
+      />
+
+      {/* Wave 6/7: Immutable Versions, AI Provenance Ledger & Checksummed Scholarly Exports */}
+      <ContributionIntegrityExports
+        contributionId={contribution.id}
+        sourceIds={sourceDetails ? [sourceDetails.source.id] : []}
+        evidenceIds={contribution.evidenceIds}
+        claimIds={contribution.claimIds}
+        initialVersions={versionHistory}
+        initialProvenance={aiProvenanceRecords}
       />
 
       {/* Wave 2: Formal Peer Review & Rebuttal Thread (§6) */}

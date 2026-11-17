@@ -1974,3 +1974,127 @@ export function restoreDraftFromSnapshot(input: {
   return { ok: true, draft: updated, restoredFrom: target };
 }
 
+// ── Part VII §4 / Part VIII §B: Contribution <-> Canonical Evidence / Claim Links ──
+
+export function linkEvidenceToContribution(
+  contributionId: string,
+  evidenceId: string,
+): { ok: true; contribution: ContributionRecord } | { ok: false; status: 404; message: string } {
+  const contrib = state.contributions.get(contributionId);
+  if (!contrib) return { ok: false, status: 404, message: 'Contribution not found.' };
+  const ev = state.evidence.get(evidenceId);
+  if (!ev) return { ok: false, status: 404, message: 'Canonical evidence unit not found.' };
+
+  if (contrib.evidenceIds.includes(evidenceId)) {
+    return { ok: true, contribution: contrib };
+  }
+  const updated: ContributionRecord = {
+    ...contrib,
+    evidenceIds: [...contrib.evidenceIds, evidenceId],
+    updatedAt: new Date().toISOString(),
+  };
+  state.contributions.set(updated.id, updated);
+  return { ok: true, contribution: updated };
+}
+
+/** Unlinks without deleting the canonical Evidence object (Part VIII §B). */
+export function unlinkEvidenceFromContribution(
+  contributionId: string,
+  evidenceId: string,
+): { ok: true; contribution: ContributionRecord; canonicalPreserved: true } | { ok: false; status: 404; message: string } {
+  const contrib = state.contributions.get(contributionId);
+  if (!contrib) return { ok: false, status: 404, message: 'Contribution not found.' };
+
+  const updated: ContributionRecord = {
+    ...contrib,
+    evidenceIds: contrib.evidenceIds.filter((id) => id !== evidenceId),
+    updatedAt: new Date().toISOString(),
+  };
+  state.contributions.set(updated.id, updated);
+  return { ok: true, contribution: updated, canonicalPreserved: true };
+}
+
+export function linkClaimToContribution(
+  contributionId: string,
+  claimId: string,
+): { ok: true; contribution: ContributionRecord } | { ok: false; status: 404; message: string } {
+  const contrib = state.contributions.get(contributionId);
+  if (!contrib) return { ok: false, status: 404, message: 'Contribution not found.' };
+  const claim = state.claims.get(claimId);
+  if (!claim) return { ok: false, status: 404, message: 'Canonical claim not found.' };
+
+  if (contrib.claimIds.includes(claimId)) {
+    return { ok: true, contribution: contrib };
+  }
+  const updated: ContributionRecord = {
+    ...contrib,
+    claimIds: [...contrib.claimIds, claimId],
+    updatedAt: new Date().toISOString(),
+  };
+  state.contributions.set(updated.id, updated);
+  return { ok: true, contribution: updated };
+}
+
+/** Unlinks without deleting the canonical Claim object (Part VIII §B). */
+export function unlinkClaimFromContribution(
+  contributionId: string,
+  claimId: string,
+): { ok: true; contribution: ContributionRecord; canonicalPreserved: true } | { ok: false; status: 404; message: string } {
+  const contrib = state.contributions.get(contributionId);
+  if (!contrib) return { ok: false, status: 404, message: 'Contribution not found.' };
+
+  const updated: ContributionRecord = {
+    ...contrib,
+    claimIds: contrib.claimIds.filter((id) => id !== claimId),
+    updatedAt: new Date().toISOString(),
+  };
+  state.contributions.set(updated.id, updated);
+  return { ok: true, contribution: updated, canonicalPreserved: true };
+}
+
+// ── Part V §6.7 / Part VI §13: Canonical Claim-Evidence Relationship curation & deletion ──
+
+export function getEvidenceById(id: string): EvidenceRecord | null {
+  return state.evidence.get(id) ?? null;
+}
+
+function findClaimEvidenceIndexByKey(relationshipId: string): number {
+  const decoded = decodeURIComponent(relationshipId);
+  const sep = decoded.includes('::') ? '::' : ':';
+  const [claimId, evidenceId] = decoded.split(sep);
+  if (!claimId || !evidenceId) return -1;
+  return state.claimEvidence.findIndex(
+    (link) => link.claimId === claimId && link.evidenceId === evidenceId,
+  );
+}
+
+export function updateRelationshipById(
+  relationshipId: string,
+  patch: { status?: 'PROPOSED' | 'ACCEPTED' | 'REJECTED'; rationale?: string; confidence?: number },
+): { ok: true; relationship: ClaimEvidenceLink } | { ok: false; status: 404; message: string } {
+  const idx = findClaimEvidenceIndexByKey(relationshipId);
+  if (idx < 0) return { ok: false, status: 404, message: 'Scholarly relationship not found.' };
+
+  const existing = state.claimEvidence[idx];
+  const updated: ClaimEvidenceLink = {
+    ...existing,
+    status: patch.status ?? existing.status,
+    rationale: patch.rationale !== undefined ? patch.rationale : existing.rationale,
+    confidence: patch.confidence !== undefined ? patch.confidence : existing.confidence,
+  };
+  state.claimEvidence[idx] = updated;
+  return { ok: true, relationship: updated };
+}
+
+export function deleteRelationshipById(
+  relationshipId: string,
+): { ok: true; deletedId: string } | { ok: false; status: 404; message: string } {
+  const idx = findClaimEvidenceIndexByKey(relationshipId);
+  if (idx < 0) {
+    return { ok: false, status: 404, message: 'Scholarly relationship not found.' };
+  }
+  state.claimEvidence.splice(idx, 1);
+  return { ok: true, deletedId: relationshipId };
+}
+
+

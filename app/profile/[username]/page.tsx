@@ -9,6 +9,7 @@ import { CONTRIBUTION_CATALOG } from '@/lib/v34/contracts';
 import { listContributions } from '@/lib/v34/store';
 import { withSupabaseReadTimeout } from '@/lib/v34/supabase-sync';
 import { getRecognitionSummary } from '@/lib/v34/wave3-store';
+import { getPublicProfileByUsername } from '@/lib/v34/wave7-store';
 import { formatDate } from '@/lib/formatting/locale';
 
 export const dynamic = 'force-dynamic';
@@ -44,6 +45,7 @@ export default async function ContributorProfilePage({
     'Open-access researcher contributing evidence-linked paper reviews, tool benchmarks, and replication studies.';
 
   const { summary: recognitionSummary } = getRecognitionSummary(username);
+  const publicProfile = getPublicProfileByUsername(username);
 
   const totals = contributions.reduce(
     (acc, c) => ({
@@ -124,6 +126,54 @@ export default async function ContributorProfilePage({
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.acceptedCorrections}</dd>
             </div>
           </dl>
+
+          {publicProfile && (publicProfile.affiliations.length > 0 || publicProfile.expertise.length > 0) ? (
+            <div className="mt-5 grid gap-4 border-t border-line pt-5 sm:grid-cols-2">
+              {publicProfile.affiliations.length > 0 ? (
+                <div>
+                  <h2 className="font-mono text-xs font-semibold uppercase tracking-wide text-ink-secondary">
+                    Institutional Affiliations
+                  </h2>
+                  <ul className="mt-2 space-y-1.5 font-sans text-xs text-ink">
+                    {publicProfile.affiliations.map((aff) => (
+                      <li key={aff.id} className="rounded-md border border-line bg-canvas px-3 py-2">
+                        <span className="font-semibold">{aff.institution}</span>
+                        <span className="block text-ink-secondary">
+                          {aff.roleTitle}
+                          {aff.startYear ? ` · ${aff.startYear}–${aff.endYear ?? 'present'}` : ''}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+
+              {publicProfile.expertise.length > 0 ? (
+                <div>
+                  <h2 className="font-mono text-xs font-semibold uppercase tracking-wide text-ink-secondary">
+                    Verified Expertise &amp; Identifiers
+                  </h2>
+                  <ul className="mt-2 flex flex-wrap gap-2">
+                    {publicProfile.expertise.map((exp) => (
+                      <li
+                        key={exp.id}
+                        className="rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs text-ink"
+                      >
+                        {exp.label}
+                      </li>
+                    ))}
+                  </ul>
+                  {publicProfile.orcidId || publicProfile.githubHandle ? (
+                    <p className="mt-2 font-mono text-xs text-ink-secondary">
+                      {publicProfile.orcidId ? `ORCID: ${publicProfile.orcidId}` : ''}
+                      {publicProfile.orcidId && publicProfile.githubHandle ? ' · ' : ''}
+                      {publicProfile.githubHandle ? `GitHub: @${publicProfile.githubHandle}` : ''}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
         </header>
 
         <section aria-labelledby="profile-contributions" className="mt-8 space-y-4">

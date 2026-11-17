@@ -23,7 +23,8 @@ export function notificationPreview(
 export type NotificationDedupeSpec =
   | { kind: 'integrity'; eventId: string; userId: string }
   | { kind: 'review-request'; reviewId: string; reviewerId: string }
-  | { kind: 'draft-conflict'; draftId: string; userId: string; serverVersion: number };
+  | { kind: 'draft-conflict'; draftId: string; userId: string; serverVersion: number }
+  | { kind: 'generic'; category: string; targetId: string; userId: string };
 
 export function buildNotificationDedupeKey(spec: NotificationDedupeSpec): string {
   switch (spec.kind) {
@@ -33,5 +34,7 @@ export function buildNotificationDedupeKey(spec: NotificationDedupeSpec): string
       return `review-request:${spec.reviewId}:${spec.reviewerId}`;
     case 'draft-conflict':
       return `draft-conflict:${spec.draftId}:${spec.userId}:${spec.serverVersion}`;
+    case 'generic':
+      return `${spec.category}:${spec.targetId}:${spec.userId}`;
   }
 }

@@ -528,3 +528,152 @@ export async function evaluateContributionPublishBlockers(
 
   return blockers;
 }
+
+// ── Part V §6.11: Claim-Evidence Entailment Verification ───────────────────
+
+export interface EntailmentCheckResult {
+  ok: true;
+  verdict: 'ENTAILED' | 'QUALIFIED' | 'CONTRADICTED' | 'INSUFFICIENT_EVIDENCE';
+  overlapScore: number;
+  rationale: string;
+  provenance: AiProvenanceRecord;
+}
+
+const CONTRADICTION_MARKERS = ['not', 'never', 'no longer', 'fails', 'contradicts', 'refutes', 'retracted', 'cannot'];
+
+export async function checkClaimEntailment(input: {
+  actorId: string;
+  targetId: string;
+  claimId?: string;
+  claimText: string;
+  evidenceIds: string[];
+  evidenceExcerpts: string[];
+  provider: string;
+  model: string;
+  classification: DataClassification;
+  supabase?: SupabaseClient | null;
+}): Promise<
+  | EntailmentCheckResult
+  | { ok: false; status: 403; blocker: PublicationBlocker }
+> {
+  const started = performance.now();
+  if (!isProviderPermittedForClassification(input.provider, input.classification)) {
+    return {
+      ok: false,
+      status: 403,
+      blocker: {
+        code: 'PROHIBITED_EXTERNAL_PROCESSING',
+        message: `Data classification ${input.classification} cannot be processed by external provider "${input.provider}".`,
+        objectId: input.claimId ?? input.targetId,
+      },
+    };
+  }
+
+  const allEvidence = listEvidence();
+  const resolvedExcerpts = [...input.evidenceExcerpts];
+  for (const evId of input.evidenceIds) {
+    const ev = allEvidence.find((item) => item.id === evId);
+    if (ev?.quote) resolvedExcerpts.push(ev.quote);
+    else if (ev?.statement) resolvedExcerpts.push(ev.statement);
+  }
+
+  const claimTokens = normalizeForQuotation(input.claimText)
+    .split(' ')
+    .filter((w: string) => w.length > 3);
+  const combinedEvidence = normalizeForQuotation(resolvedExcerpts.join(' '));
+  const evTokenSet = new Set(combinedEvidence.split(' ').filter((w: string) => w.length > 3));
+
+  if (resolvedExcerpts.length === 0 || claimTokens.length === 0) {
+    const provenance = await recordAiProvenance({
+      actorId: input.actorId,
+      workspaceId: null,
+      targetType: 'claim',
+      targetId: input.claimId ?? input.targetId,
+      provider: input.provider,
+      model: input.model,
+      modelVersion: '3.4.0',
+      operation: 'check-entailment',
+      transformationType: 'check-entailment',
+      dataClassification: input.classification,
+      promptTemplateVersion: 'entailment-v1',
+      retrievalTime: new Date().toISOString(),
+      sourceIds: input.evidenceIds,
+      toolCalls: [
+        {
+          name: 'deterministic_entailment_verifier',
+          status: 'error',
+          summary: 'No evidence excerpts provided to verify claim entailment.',
+        },
+      ],
+      generationTimeMs: Math.max(1, Math.round(performance.now() - started)),
+      citationValidationStatus: 'FAILED',
+      humanReviewStatus: 'PENDING',
+      supabase: input.supabase,
+    });
+    return {
+      ok: true,
+      verdict: 'INSUFFICIENT_EVIDENCE',
+      overlapScore: 0,
+      rationale: 'No canonical evidence excerpts were provided to support this claim.',
+      provenance,
+    };
+  }
+
+  let matched = 0;
+  for (const t of claimTokens) {
+    if (evTokenSet.has(t)) matched += 1;
+  }
+  const overlapScore = Number((matched / claimTokens.length).toFixed(3));
+
+  const claimLower = input.claimText.toLowerCase();
+  const evLower = resolvedExcerpts.join(' ').toLowerCase();
+  const claimNegated = CONTRADICTION_MARKERS.some((m) => claimLower.includes(` ${m} `) || claimLower.startsWith(`${m} `));
+  const evNegated = CONTRADICTION_MARKERS.some((m) => evLower.includes(` ${m} `) || evLower.startsWith(`${m} `));
+  const polarityMismatch = claimNegated !== evNegated && overlapScore >= 0.4;
+
+  let verdict: EntailmentCheckResult['verdict'] = 'INSUFFICIENT_EVIDENCE';
+  let rationale = '';
+  if (polarityMismatch) {
+    verdict = 'CONTRADICTED';
+    rationale = `Evidence shares key terms (${Math.round(overlapScore * 100)}%) but exhibits opposing negation polarity.`;
+  } else if (overlapScore >= 0.55) {
+    verdict = 'ENTAILED';
+    rationale = `Claim terms strongly align with cited evidence excerpts (${Math.round(overlapScore * 100)}% lexical grounding).`;
+  } else if (overlapScore >= 0.28) {
+    verdict = 'QUALIFIED';
+    rationale = `Evidence partially supports the claim (${Math.round(overlapScore * 100)}% overlap); explicit qualification or tighter scope recommended.`;
+  } else {
+    verdict = 'INSUFFICIENT_EVIDENCE';
+    rationale = `Low semantic overlap (${Math.round(overlapScore * 100)}%) between claim and provided evidence excerpts.`;
+  }
+
+  const provenance = await recordAiProvenance({
+    actorId: input.actorId,
+    workspaceId: null,
+    targetType: 'claim',
+    targetId: input.claimId ?? input.targetId,
+    provider: input.provider,
+    model: input.model,
+    modelVersion: '3.4.0',
+    operation: 'check-entailment',
+    transformationType: 'check-entailment',
+    dataClassification: input.classification,
+    promptTemplateVersion: 'entailment-v1',
+    retrievalTime: new Date().toISOString(),
+    sourceIds: input.evidenceIds,
+    toolCalls: [
+      {
+        name: 'deterministic_entailment_verifier',
+        status: verdict === 'ENTAILED' || verdict === 'QUALIFIED' ? 'ok' : 'error',
+        summary: `${verdict}: ${rationale}`,
+      },
+    ],
+    generationTimeMs: Math.max(1, Math.round(performance.now() - started)),
+    citationValidationStatus: verdict === 'ENTAILED' || verdict === 'QUALIFIED' ? 'PASSED' : 'FAILED',
+    humanReviewStatus: verdict === 'ENTAILED' ? 'APPROVED' : 'PENDING',
+    supabase: input.supabase,
+  });
+
+  return { ok: true, verdict, overlapScore, rationale, provenance };
+}
+

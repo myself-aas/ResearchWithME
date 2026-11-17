@@ -20,6 +20,8 @@ import {
 } from './supabase-sync';
 import { getSourceWithDetails } from './store';
 import { getProjectByIdOrSlug } from './wave2-store';
+import { buildNotificationDedupeKey, notificationPreview } from './notifications-safe';
+import type { DataClassification } from './wave6-contracts';
 import type {
   AssistantTaskType,
   AttentionKind,
@@ -114,6 +116,9 @@ export interface NotificationRecord {
   objectType: string | null;
   objectId: string | null;
   actionHref: string | null;
+  classification?: DataClassification;
+  safePreview?: string;
+  dedupeKey?: string;
   readAt: string | null;
   createdAt: string;
 }
@@ -1100,9 +1105,49 @@ function ensureUserList<T extends { userId: string }>(
 }
 
 export function listNotifications(userId: string): NotificationRecord[] {
-  return [...ensureUserList(w3State.notifications, userId)].sort((a, b) =>
-    b.createdAt.localeCompare(a.createdAt),
-  );
+  return [...ensureUserList(w3State.notifications, userId)]
+    .map((n) => {
+      const classification: DataClassification = n.classification ?? 'PUBLIC';
+      const safePreview =
+        n.safePreview ??
+        notificationPreview(classification, { publicTitle: n.title });
+      const dedupeKey =
+        n.dedupeKey ??
+        buildNotificationDedupeKey({
+          kind: 'generic',
+          category: n.kind,
+          targetId: n.objectId ?? n.id,
+          userId,
+        });
+      return { ...n, classification, safePreview, dedupeKey };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+export async function markAllNotificationsRead(input: {
+  userId: string;
+  supabase?: SupabaseClient | null;
+}): Promise<{ markedCount: number; readAt: string }> {
+  const list = ensureUserList(w3State.notifications, input.userId);
+  const readAt = new Date().toISOString();
+  let markedCount = 0;
+  for (let i = 0; i < list.length; i += 1) {
+    if (!list[i].readAt) {
+      list[i] = { ...list[i], readAt };
+      markedCount += 1;
+    }
+  }
+  if (input.supabase && isUuid(input.userId) && markedCount > 0) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_notifications')
+        .update({ read_at: readAt })
+        .eq('user_id', input.userId)
+        .is('read_at', null),
+    );
+  }
+  // ADR-032-09: Reading notifications NEVER resolves open AttentionItems.
+  return { markedCount, readAt };
 }
 
 export async function setNotificationRead(input: {
@@ -1577,4 +1622,118 @@ export async function updateDashboardPreferences(input: {
   }
 
   return updated;
+}
+
+// ── Wave 7: Tool Repository single lookup, URL import & metadata update ────
+
+export function getToolRepositoryByIdOrSlug(idOrSlug: string): ToolRepositoryRecord | null {
+  const norm = idOrSlug.trim().toLowerCase();
+  for (const tool of w3State.tools.values()) {
+    if (tool.id.toLowerCase() === norm || tool.slug.toLowerCase() === norm) {
+      return tool;
+    }
+  }
+  return null;
+}
+
+export async function importToolRepositoryFromUrl(input: {
+  repoUrl: string;
+  name?: string;
+  description?: string;
+  license?: string;
+  primaryLanguage?: string;
+  topics?: string[];
+  actorId: string;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; tool: ToolRepositoryRecord; created: boolean } | { ok: false; status: 400; message: string }> {
+  let parsed: URL;
+  try {
+    parsed = new URL(input.repoUrl);
+  } catch {
+    return { ok: false, status: 400, message: 'Invalid repository URL.' };
+  }
+
+  const host = parsed.hostname.toLowerCase().replace(/^www\./, '');
+  let provider: ToolProvider = 'other';
+  if (host === 'github.com') provider = 'github';
+  else if (host === 'gitlab.com') provider = 'gitlab';
+  else if (host === 'huggingface.co') provider = 'huggingface';
+
+  const parts = parsed.pathname.split('/').filter(Boolean);
+  if (parts.length < 2) {
+    return {
+      ok: false,
+      status: 400,
+      message: 'Repository URL must include owner and repository name (e.g. https://github.com/org/repo).',
+    };
+  }
+  const ownerName = parts[0];
+  const repoName = parts[1].replace(/\.git$/i, '');
+
+  const result = await registerToolRepository({
+    name: input.name?.trim() || `${ownerName}/${repoName}`,
+    provider,
+    ownerName,
+    repoName,
+    repositoryUrl: `https://${host}/${ownerName}/${repoName}`,
+    summary:
+      input.description?.trim() ||
+      `Imported open-source repository ${ownerName}/${repoName} (${provider}).`,
+    license: input.license,
+    primaryLanguage: input.primaryLanguage,
+    topics: input.topics ?? [],
+    actorId: input.actorId,
+    supabase: input.supabase,
+  });
+
+  return { ok: true, tool: result.tool, created: result.created };
+}
+
+export async function updateToolRepository(input: {
+  idOrSlug: string;
+  name?: string;
+  description?: string;
+  license?: string | null;
+  primaryLanguage?: string | null;
+  latestTag?: string | null;
+  stars?: number;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; tool: ToolRepositoryRecord } | { ok: false; status: 404; message: string }> {
+  const existing = getToolRepositoryByIdOrSlug(input.idOrSlug);
+  if (!existing) return { ok: false, status: 404, message: 'Tool repository not found.' };
+
+  const now = new Date().toISOString();
+  const updated: ToolRepositoryRecord = {
+    ...existing,
+    name: input.name ?? existing.name,
+    summary: input.description !== undefined ? input.description : existing.summary,
+    license: input.license !== undefined ? input.license : existing.license,
+    primaryLanguage:
+      input.primaryLanguage !== undefined ? input.primaryLanguage : existing.primaryLanguage,
+    latestReleaseTag:
+      input.latestTag !== undefined ? input.latestTag : existing.latestReleaseTag,
+    starsCount: input.stars !== undefined ? input.stars : existing.starsCount,
+    observedAt: now,
+    updatedAt: now,
+  };
+  w3State.tools.set(updated.id, updated);
+
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_tool_repositories')
+        .update({
+          name: updated.name,
+          summary: updated.summary,
+          license: updated.license,
+          primary_language: updated.primaryLanguage,
+          latest_release_tag: updated.latestReleaseTag,
+          stars_count: updated.starsCount,
+          observed_at: updated.observedAt,
+          updated_at: now,
+        })
+        .eq('id', updated.id),
+    );
+  }
+  return { ok: true, tool: updated };
 }

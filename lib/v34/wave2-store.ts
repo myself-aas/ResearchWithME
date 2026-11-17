@@ -1300,3 +1300,151 @@ export async function recordReviewDecision(input: {
 
   return { ok: true, decision, review: sanitizeReviewForAnonymity(review) };
 }
+
+// ── Part V §6.2 & §6.9: Workspace lookup/update + Formal Review update & submit ──
+
+export function getWorkspaceById(idOrSlug: string): WorkspaceRecord | null {
+  const direct = w2State.workspaces.get(idOrSlug);
+  if (direct) return direct;
+  const norm = idOrSlug.trim().toLowerCase();
+  for (const ws of w2State.workspaces.values()) {
+    if (ws.slug.toLowerCase() === norm || ws.id.toLowerCase() === norm) {
+      return ws;
+    }
+  }
+  return null;
+}
+
+export async function updateWorkspace(input: {
+  workspaceId: string;
+  name?: string;
+  description?: string;
+  visibility?: 'private' | 'workspace' | 'public';
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; workspace: WorkspaceRecord } | { ok: false; status: 404; message: string }> {
+  const existing = w2State.workspaces.get(input.workspaceId);
+  if (!existing) return { ok: false, status: 404, message: 'Workspace not found.' };
+
+  const now = new Date().toISOString();
+  const updated: WorkspaceRecord = {
+    ...existing,
+    name: input.name ?? existing.name,
+    description: input.description !== undefined ? input.description : existing.description,
+    visibility: input.visibility ?? existing.visibility,
+    updatedAt: now,
+  };
+  w2State.workspaces.set(updated.id, updated);
+
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_workspaces')
+        .update({
+          name: updated.name,
+          description: updated.description,
+          visibility: updated.visibility,
+          updated_at: now,
+        })
+        .eq('id', updated.id),
+    );
+  }
+  return { ok: true, workspace: updated };
+}
+
+export async function updateFormalReview(input: {
+  reviewId: string;
+  scope?: string;
+  status?: FormalReviewRecord['status'];
+  dueAt?: string | null;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; review: FormalReviewRecord } | { ok: false; status: 404; message: string }> {
+  const existing = w2State.reviews.get(input.reviewId);
+  if (!existing) return { ok: false, status: 404, message: 'Formal review not found.' };
+
+  const now = new Date().toISOString();
+  const updated: FormalReviewRecord = {
+    ...existing,
+    scope: input.scope ?? existing.scope,
+    status: input.status ?? existing.status,
+    dueAt: input.dueAt !== undefined ? input.dueAt : existing.dueAt,
+    updatedAt: now,
+  };
+  w2State.reviews.set(updated.id, updated);
+
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_reviews')
+        .update({
+          scope: updated.scope,
+          status: updated.status,
+          due_at: updated.dueAt,
+          updated_at: now,
+        })
+        .eq('id', updated.id),
+    );
+  }
+  return { ok: true, review: sanitizeReviewForAnonymity(updated) };
+}
+
+export async function submitFormalReview(input: {
+  reviewId: string;
+  recommendation: ReviewDecisionOutcome;
+  summary: string;
+  actorId: string;
+  actorName: string;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; review: FormalReviewRecord } | { ok: false; status: 404; message: string }> {
+  const existing = w2State.reviews.get(input.reviewId);
+  if (!existing) return { ok: false, status: 404, message: 'Formal review not found.' };
+
+  const now = new Date().toISOString();
+  const summaryItem: ReviewItemRecord = {
+    id: makeId('ri'),
+    reviewId: existing.id,
+    itemType: 'review',
+    scope: 'final-recommendation',
+    body: input.summary,
+    status: 'open',
+    authorId: input.actorId,
+    authorName: existing.anonymous ? 'Anonymous reviewer' : input.actorName,
+    anonymous: existing.anonymous,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  existing.items.push(summaryItem);
+  existing.recommendation = input.recommendation;
+  existing.status = 'SUBMITTED';
+  existing.updatedAt = now;
+  w2State.reviews.set(existing.id, existing);
+
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb.from('v34_review_items').insert({
+        id: summaryItem.id,
+        review_id: existing.id,
+        item_type: summaryItem.itemType,
+        scope: summaryItem.scope,
+        body: summaryItem.body,
+        status: summaryItem.status,
+        author_id: isUuid(input.actorId) ? input.actorId : null,
+        author_name: summaryItem.authorName,
+        anonymous: summaryItem.anonymous,
+      }),
+    );
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_reviews')
+        .update({
+          status: 'SUBMITTED',
+          recommendation: input.recommendation,
+          updated_at: now,
+        })
+        .eq('id', existing.id),
+    );
+  }
+
+  return { ok: true, review: sanitizeReviewForAnonymity(existing) };
+}
+

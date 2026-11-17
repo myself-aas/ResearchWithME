@@ -105,13 +105,14 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 });
 
 // v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
-check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–6)', () => {
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–7)', () => {
   const migrations = [
     'supabase/migrations/20261117000100_v34_research_network.sql',
     'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
     'supabase/migrations/20261117000300_v34_wave3_discussions_tools_os.sql',
     'supabase/migrations/20261117000400_v34_wave5_topics_collections_alerts_graph.sql',
     'supabase/migrations/20261117000500_v34_wave6_ai_provenance_exports_search.sql',
+    'supabase/migrations/20261117000600_v34_wave7_devices_push_sync_profile.sql',
   ];
   for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
   return `${migrations.length} ordered v3.4 migrations verified`;
@@ -202,6 +203,22 @@ check('V34-8', 'v3.4 AI provenance, publication blockers, unified search, checks
     'publication blocker engine not wired into publish route',
   );
   return `${files.length} Wave 6 AI governance, search & export artifacts verified`;
+});
+check('V34-9', 'v3.4 Wave 7 canonical sub-routes, entailment check, notifications read-all, devices/push/sync, portable export, and profile contracts present', () => {
+  const files = [
+    'lib/v34/wave7-contracts.ts',
+    'lib/v34/wave7-store.ts',
+    'app/api/ai/check-entailment/route.ts',
+    'app/api/notifications/read-all/route.ts',
+    'app/api/devices/route.ts',
+    'app/api/push/subscriptions/route.ts',
+    'app/api/sync/[resourceType]/route.ts',
+    'app/api/me/export/route.ts',
+    'components/v34/ContributionIntegrityExports.tsx',
+    'test/next/v34-wave7-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 7 canonical closure, mobile sync & portability artifacts verified`;
 });
 
 const failed = results.filter((r) => r.status === 'fail');

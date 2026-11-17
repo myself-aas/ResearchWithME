@@ -350,3 +350,33 @@ export async function executeUnifiedSearch(options: {
     latencyMs: Math.max(1, Math.round(performance.now() - started)),
   };
 }
+
+// ── Part V §6.10: Fast Search Typeahead Suggestions ────────────────────────
+
+export interface SearchSuggestionItem {
+  label: string;
+  type: SearchEntityType;
+  url: string;
+  hint: string;
+}
+
+export async function getSearchSuggestions(query: string, limit = 8): Promise<SearchSuggestionItem[]> {
+  const q = query.trim();
+  if (!q) {
+    const topics = await listTopics();
+    return topics.slice(0, limit).map((t) => ({
+      label: t.name,
+      type: 'topic',
+      url: `/feed?topic=${encodeURIComponent(t.name)}`,
+      hint: `${t.assignmentCount} linked records`,
+    }));
+  }
+  const result = await executeUnifiedSearch({ query: q, limit });
+  return result.hits.map((h) => ({
+    label: h.title,
+    type: h.type,
+    url: h.url,
+    hint: h.matchReason,
+  }));
+}
+

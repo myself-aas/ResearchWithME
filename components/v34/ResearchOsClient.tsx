@@ -196,6 +196,33 @@ export function ResearchOsClient({
     }
   }
 
+  async function handleMarkAllRead() {
+    setBusyId('read-all');
+    setStatusMessage(null);
+    try {
+      const res = await fetch('/api/notifications/read-all', { method: 'POST' });
+      const data = (await res.json()) as {
+        markedCount?: number;
+        readAt?: string;
+        openAttentionCount?: number;
+        error?: string;
+      };
+      if (!res.ok) {
+        setStatusMessage(data.error || 'Could not mark all notifications read.');
+        return;
+      }
+      const readAt = data.readAt ?? new Date().toISOString();
+      setNotifications((prev) => prev.map((n) => (n.readAt ? n : { ...n, readAt })));
+      setStatusMessage(
+        `Marked ${data.markedCount ?? 0} notification(s) read. ${data.openAttentionCount ?? openAttention.length} open Attention Queue item(s) remain untouched.`,
+      );
+    } catch {
+      setStatusMessage('Network error marking notifications read.');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   const openAttention = attention.filter((a) => a.status === 'OPEN' || a.status === 'ACKNOWLEDGED');
   const unreadNotifs = notifications.filter((n) => n.readAt === null);
 
@@ -287,16 +314,30 @@ export function ResearchOsClient({
           aria-label="Notifications Event History"
           className="lg:col-span-5 rounded-xl border border-line bg-surface p-5 space-y-4"
         >
-          <div>
+          <div className="space-y-1">
             <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-ink-secondary">
               <Bell className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
               Notifications ({unreadNotifs.length} unread)
             </p>
-            <h2 className="text-lg font-bold text-ink">Event History</h2>
-            <p className="text-xs text-ink-secondary">
-              Reading a notification records acknowledgement of an event without silently resolving
-              Attention items.
-            </p>
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <h2 className="text-lg font-bold text-ink">Event History</h2>
+                <p className="text-xs text-ink-secondary">
+                  Reading a notification records acknowledgement of an event without silently resolving
+                  Attention items.
+                </p>
+              </div>
+              {unreadNotifs.length > 0 && (
+                <button
+                  type="button"
+                  disabled={busyId === 'read-all'}
+                  onClick={handleMarkAllRead}
+                  className="inline-flex min-h-9 items-center rounded-lg border border-line bg-canvas px-2.5 py-1 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+                >
+                  {busyId === 'read-all' ? 'Marking…' : 'Mark all read'}
+                </button>
+              )}
+            </div>
           </div>
 
           <ul className="space-y-2.5">
@@ -317,6 +358,11 @@ export function ResearchOsClient({
                   </button>
                 </div>
                 <p className="text-ink-secondary">{notif.body}</p>
+                {notif.safePreview ? (
+                  <p className="font-mono text-xs text-ink-secondary">
+                    Lock-screen preview ({notif.classification ?? 'PUBLIC'}): {notif.safePreview}
+                  </p>
+                ) : null}
                 <div className="flex items-center justify-between text-ink-secondary">
                   <span>{formatShortDate(notif.createdAt)}</span>
                   {notif.actionHref && (
@@ -557,6 +603,18 @@ export function ResearchOsClient({
                 </li>
               ))}
             </ul>
+          </div>
+
+          <div className="pt-2 border-t border-line flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs text-ink-secondary">
+              Portable research archive (SHA-256 checksummed)
+            </span>
+            <a
+              href="/api/me/export?download=1"
+              className="inline-flex min-h-9 items-center rounded-lg border border-line bg-canvas px-3 py-1 text-xs font-medium text-ink hover:border-brand hover:text-brand"
+            >
+              Export my data (JSON)
+            </a>
           </div>
         </section>
       </div>

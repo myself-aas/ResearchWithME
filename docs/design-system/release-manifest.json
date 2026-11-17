@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T02:28:20.280Z",
+  "generatedAt": "2026-11-17T03:16:14.897Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -77,15 +77,15 @@
     },
     {
       "id": "V34-1",
-      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–6)",
+      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–7)",
       "status": "pass",
-      "evidence": "5 ordered v3.4 migrations verified"
+      "evidence": "6 ordered v3.4 migrations verified"
     },
     {
       "id": "V34-2",
       "description": "v3.4 components use semantic design tokens only (no raw hex or text-white)",
       "status": "pass",
-      "evidence": "13 v3.4 components clean"
+      "evidence": "14 v3.4 components clean"
     },
     {
       "id": "V34-3",
@@ -122,6 +122,12 @@
       "description": "v3.4 AI provenance, publication blockers, unified search, checksummed exports, and safe notification preview present",
       "status": "pass",
       "evidence": "6 Wave 6 AI governance, search & export artifacts verified"
+    },
+    {
+      "id": "V34-9",
+      "description": "v3.4 Wave 7 canonical sub-routes, entailment check, notifications read-all, devices/push/sync, portable export, and profile contracts present",
+      "status": "pass",
+      "evidence": "10 Wave 7 canonical closure, mobile sync & portability artifacts verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

@@ -50,8 +50,16 @@ export const API_GROUPS = [
   { id: 'search', name: 'Unified scholarly search', path: '/api/search', description: 'Multi-entity lexical and normalized identifier search across sources, contributions, tools, projects, claims, and topics with match-reason disclosure and transparent expansion.' },
   { id: 'ai-citations', name: 'AI citation validator', path: '/api/ai/validate-citations', description: 'Deterministic verification of citations, source versions, and claim-evidence links before publication with external provider classification guards.' },
   { id: 'ai-quotations', name: 'AI quotation verifier', path: '/api/ai/check-quotation', description: 'Verbatim and normalized quotation verification against canonical source excerpts with quotation-mismatch publication blockers.' },
+  { id: 'ai-entailment', name: 'AI entailment verifier', path: '/api/ai/check-entailment', description: 'Deterministic claim-evidence entailment and contradiction verification with full AI provenance logging.' },
   { id: 'ai-provenance', name: 'AI provenance ledger', path: '/api/ai/provenance', description: 'Audit ledger and human approval workflow for AI-assisted research operations.' },
   { id: 'exports', name: 'Scholarly exports', path: '/api/exports', description: 'Checksummed BibTeX, CSL-JSON, Markdown provenance, and JSON-LD scholarly export artifacts.' },
+  { id: 'devices', name: 'Registered devices', path: '/api/devices', description: 'Manage registered browser and PWA devices with remote revocation and logout wipe.' },
+  { id: 'push-subscriptions', name: 'Push subscriptions', path: '/api/push/subscriptions', description: 'Manage Web Push subscriptions with classification-safe lock-screen preview defaults.' },
+  { id: 'mobile-sync', name: 'Offline delta sync', path: '/api/sync/{resourceType}', description: 'Incremental cursor-based offline sync across drafts, library, notifications, attention, goals, and contributions.' },
+  { id: 'me-profile', name: 'Contributor identity & affiliations', path: '/api/me/profile', description: 'Manage authenticated researcher profile, institutional affiliations, ORCID/GitHub handles, and expertise tags.' },
+  { id: 'me-export', name: 'Portable account data export', path: '/api/me/export', description: 'Download a SHA-256 checksummed JSON export of all personal drafts, library items, goals, and research activity.' },
+  { id: 'profiles', name: 'Public contributor profiles', path: '/api/profiles/{username}', description: 'Public scholarly identity, institutional affiliations, verified expertise, contributions, and event-fact recognition summary.' },
+  { id: 'dashboard-modules', name: 'Dashboard module layout', path: '/api/dashboard/modules/{moduleKey}', description: 'Pin, collapse, hide, or reorder Personal Research OS dashboard modules.' },
 ] as const;
 
 export type ApiGroupId = (typeof API_GROUPS)[number]['id'];

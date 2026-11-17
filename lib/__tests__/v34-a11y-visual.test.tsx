@@ -20,9 +20,12 @@ import { ToolsDirectoryClient } from '@/components/v34/ToolsDirectoryClient';
 import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
 import TopicsClient from '@/components/v34/TopicsClient';
 import SearchClient from '@/components/v34/SearchClient';
+import { ContributionIntegrityExports } from '@/components/v34/ContributionIntegrityExports';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ResponsivePaneLayout from '@/components/layout/ResponsivePaneLayout';
 import { executeUnifiedSearch } from '@/lib/v34/search';
+import { listContributionVersions } from '@/lib/v34/store';
+import { listAiProvenance } from '@/lib/v34/ai-governance';
 import {
   listCitationCollections,
   listSavedSearches,
@@ -132,6 +135,18 @@ describe('v3.4 Wave 4 axe-core WCAG 2.1 A/AA & visual token audit', () => {
       }),
     );
     expect(rSearch.violations).toEqual([]);
+
+    const rIntegrity = await runAxeOnMarkup(
+      createElement(ContributionIntegrityExports, {
+        contributionId: 'contrib-rl-cold-start',
+        sourceIds: ['src-arxiv-2501-12948'],
+        evidenceIds: ['ev-grpo-emergence'],
+        claimIds: ['clm-rl-reasoning-tradeoff'],
+        initialVersions: listContributionVersions('contrib-rl-cold-start') ?? [],
+        initialProvenance: listAiProvenance({ targetId: 'contrib-rl-cold-start' }),
+      }),
+    );
+    expect(rIntegrity.violations).toEqual([]);
 
     const rSave = await runAxeOnMarkup(
       createElement(SaveToLibraryButton, {

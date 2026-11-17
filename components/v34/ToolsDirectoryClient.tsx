@@ -32,6 +32,10 @@ export function ToolsDirectoryClient({
   const [primaryLanguage, setPrimaryLanguage] = useState('Python');
   const [latestReleaseTag, setLatestReleaseTag] = useState('');
 
+  // Quick URL import state (Part V §6.6 POST /api/tools/import)
+  const [importUrl, setImportUrl] = useState('');
+  const [importing, setImporting] = useState(false);
+
   // Link source state
   const [linkingToolId, setLinkingToolId] = useState<string | null>(null);
   const [selectedSourceId, setSelectedSourceId] = useState(availableSources[0]?.id ?? '');
@@ -54,6 +58,45 @@ export function ToolsDirectoryClient({
         .includes(q),
     );
   }, [tools, query]);
+
+  async function handleQuickImport(event: React.FormEvent) {
+    event.preventDefault();
+    if (!importUrl.trim()) return;
+    setImporting(true);
+    setFeedback(null);
+    try {
+      const res = await fetch('/api/tools/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ repoUrl: importUrl.trim() }),
+      });
+      const data = (await res.json()) as {
+        tool?: ToolRepositoryRecord;
+        deduplicated?: boolean;
+        error?: string;
+      };
+      if (!res.ok || !data.tool) {
+        setFeedback(data.error || 'Could not import repository URL.');
+        return;
+      }
+      setTools((prev) => {
+        const exists = prev.some((t) => t.id === data.tool!.id);
+        return exists
+          ? prev.map((t) => (t.id === data.tool!.id ? data.tool! : t))
+          : [data.tool!, ...prev];
+      });
+      setImportUrl('');
+      setFeedback(
+        data.deduplicated
+          ? `Refreshed existing deduplicated repository "${data.tool.ownerName}/${data.tool.repoName}".`
+          : `Imported "${data.tool.ownerName}/${data.tool.repoName}" into the global tool registry.`,
+      );
+    } catch {
+      setFeedback('Network error importing repository URL.');
+    } finally {
+      setImporting(false);
+    }
+  }
 
   async function handleRegister(event: React.FormEvent) {
     event.preventDefault();
@@ -174,6 +217,31 @@ export function ToolsDirectoryClient({
           Register tool repository
         </button>
       </div>
+
+      {/* Part V §6.6: One-step deduplicated GitHub/GitLab URL import */}
+      <form
+        onSubmit={handleQuickImport}
+        aria-label="Import tool repository by URL"
+        className="flex flex-wrap items-end gap-2 rounded-xl border border-line bg-surface p-4"
+      >
+        <label className="min-w-[220px] flex-1 space-y-1 text-xs">
+          <span className="font-semibold text-ink">Quick import repository URL</span>
+          <input
+            type="url"
+            value={importUrl}
+            onChange={(e) => setImportUrl(e.target.value)}
+            placeholder="https://github.com/org/repo"
+            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
+          />
+        </label>
+        <button
+          type="submit"
+          disabled={importing || !importUrl.trim()}
+          className="inline-flex min-h-10 items-center rounded-lg border border-brand bg-brand/10 px-4 py-2 text-xs font-semibold text-brand hover:bg-brand hover:text-on-primary disabled:opacity-50"
+        >
+          {importing ? 'Importing…' : 'Import repository'}
+        </button>
+      </form>
 
       {showRegister && (
         <form
