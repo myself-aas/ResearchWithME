@@ -1,6 +1,6 @@
 # ResearchWithME v3.4 Migration, Verification & Rollback Runbook
 
-- **Applies To:** `ResearchWithME` v3.4 (`supabase/migrations/20261117000100`–`20261117000400`)
+- **Applies To:** `ResearchWithME` v3.4 (`supabase/migrations/20261117000100`–`20261117000500`)
 - **Primary Supabase Project:** `bxyjjbclaklzjxeumeat` (`ap-northeast-1`, Postgres 17)
 - **Feature Flag Registry:** `lib/v34/feature-flags.ts`
 
@@ -36,10 +36,11 @@ All four v3.4 migrations are strictly additive (`CREATE TABLE IF NOT EXISTS`, `A
 | 2 | `20261117000200_v34_wave2_collaboration_reviews.sql` | 10 | Workspaces, WorkspaceMembers, Projects, ProjectMembers, Milestones, ProjectObjects, Formal Reviews, Items, Rebuttals, Decisions |
 | 3 | `20261117000300_v34_wave3_discussions_tools_os.sql` | 9 | Discussions, Comments, ToolRepositories, ToolSourceLinks, ProjectNotes, Notifications, AttentionItems, AssistantTasks, RecognitionEvents, Preferences |
 | 4 | `20261117000400_v34_wave5_topics_collections_alerts_graph.sql` | 8 | Topics, TopicAssignments, WorkspaceTools, SavedSearches, CitationCollections, CitationCollectionItems (single-target CHECK), GraphNodes, GraphEdges (no-self-edge CHECK), GoalProgressEvents (`delta > 0` CHECK) + `paused_at`/`archived_at` on `v34_research_goals` |
+| 5 | `20261117000500_v34_wave6_ai_provenance_exports_search.sql` | 4 | AI Provenance Ledger (`v34_ai_provenance_records`), Checksummed Scholarly Exports (`v34_scholarly_exports`), Immutable Contribution Versions (`v34_contribution_versions`), Workspace Invitations (`v34_workspace_invitations`), and PostgreSQL `tsvector` + `pg_trgm` GIN search indexes |
 
 ### Post-Migration Database Verification SQL
 
-Verify all 46 `v34_*` tables exist and have Row-Level Security enabled:
+Verify all 50 `v34_*` tables exist and have Row-Level Security enabled:
 
 ```sql
 SELECT count(*) AS total_v34_tables,
@@ -51,7 +52,7 @@ WHERE t.table_schema = 'public'
   AND t.table_name LIKE 'v34_%';
 ```
 
-Expected: `total_v34_tables = 46`, `rls_enabled_tables = 46`.
+Expected: `total_v34_tables = 50`, `rls_enabled_tables = 50`.
 
 ---
 

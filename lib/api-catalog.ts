@@ -42,10 +42,16 @@ export const API_GROUPS = [
   { id: 'assistant-tasks', name: 'Assistant tasks', path: '/api/assistant-tasks', description: 'Optional AI-assisted research suggestions requiring explicit human promotion to enter the attention queue.' },
   { id: 'recognition', name: 'Scholarly recognition', path: '/api/recognition', description: 'Event-fact scholarly recognition ledger with non-self validation, reversals, and zero composite vanity scores.' },
   { id: 'dashboard-preferences', name: 'Dashboard preferences', path: '/api/dashboard/preferences', description: 'Personal Research OS default landing behavior, digest cadence, and followed topics.' },
+  { id: 'dashboard-home', name: 'Research OS home', path: '/api/dashboard/home', description: 'Aggregated Personal Research OS snapshot combining attention queue, notifications, goals, library, workspaces, assistant suggestions, and recognition summary.' },
   { id: 'topics', name: 'Topic taxonomy', path: '/api/topics', description: 'First-class FK-backed scholarly topics and canonical assignments across contributions, sources, projects, and tools.' },
   { id: 'saved-searches', name: 'Saved searches & alerts', path: '/api/search/saved', description: 'Personal saved search queries with configurable alert cadence.' },
   { id: 'citation-collections', name: 'Citation collections', path: '/api/citation-collections', description: 'Structured citation collections enforcing single-target items (source, contribution, or evidence) with BibTeX export.' },
   { id: 'graph-projection', name: 'Graph read projection', path: '/api/graph/rebuild', description: 'Inspect and deterministically drop-and-rebuild the GraphNode/GraphEdge read projection from canonical tables.' },
+  { id: 'search', name: 'Unified scholarly search', path: '/api/search', description: 'Multi-entity lexical and normalized identifier search across sources, contributions, tools, projects, claims, and topics with match-reason disclosure and transparent expansion.' },
+  { id: 'ai-citations', name: 'AI citation validator', path: '/api/ai/validate-citations', description: 'Deterministic verification of citations, source versions, and claim-evidence links before publication with external provider classification guards.' },
+  { id: 'ai-quotations', name: 'AI quotation verifier', path: '/api/ai/check-quotation', description: 'Verbatim and normalized quotation verification against canonical source excerpts with quotation-mismatch publication blockers.' },
+  { id: 'ai-provenance', name: 'AI provenance ledger', path: '/api/ai/provenance', description: 'Audit ledger and human approval workflow for AI-assisted research operations.' },
+  { id: 'exports', name: 'Scholarly exports', path: '/api/exports', description: 'Checksummed BibTeX, CSL-JSON, Markdown provenance, and JSON-LD scholarly export artifacts.' },
 ] as const;
 
 export type ApiGroupId = (typeof API_GROUPS)[number]['id'];

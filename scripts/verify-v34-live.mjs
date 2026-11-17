@@ -18,13 +18,14 @@ const BASE_URL = (process.env.BASE_URL || 'http://127.0.0.1:3100').replace(/\/$/
 
 const SSR_PAGES = [
   { path: '/feed', mustContain: ['Research Contributions Feed', 'id="main-content"'] },
+  { path: '/search', mustContain: ['Search ResearchWithME', 'id="main-content"'] },
   { path: '/topics', mustContain: ['Scholarly Topics', 'Canonical Topics', 'id="main-content"'] },
   { path: '/contribute', mustContain: ['id="main-content"'] },
   { path: '/library', mustContain: ['Citation Collections', 'Saved Searches', 'id="main-content"'] },
   { path: '/workspaces', mustContain: ['id="main-content"'] },
   {
     path: '/workspaces/reasoning-cold-start-replication',
-    mustContain: ['Project Working Notes', 'id="main-content"'],
+    mustContain: ['Project Working Notes', 'Workspace Linked Tools', 'id="main-content"'],
   },
   { path: '/graph', mustContain: ['Pending Human Curation', 'id="main-content"'] },
   {
@@ -105,9 +106,22 @@ async function main() {
   const openapi = await openapiRes.json();
   const requiredPaths = [
     '/api/feed',
+    '/api/search',
+    '/api/search/expand',
+    '/api/ai/validate-citations',
+    '/api/ai/check-quotation',
+    '/api/ai/provenance',
+    '/api/exports',
+    '/api/dashboard/home',
+    '/api/library/migrate-bookmarks',
     '/api/contributions',
+    '/api/contributions/{id}/submit-review',
+    '/api/contributions/{id}/archive',
+    '/api/contributions/{id}/versions',
+    '/api/drafts/{id}/restore',
     '/api/workspaces',
     '/api/workspaces/{id}/tools',
+    '/api/workspaces/{id}/invitations',
     '/api/reviews',
     '/api/discussions',
     '/api/discussions/{id}',

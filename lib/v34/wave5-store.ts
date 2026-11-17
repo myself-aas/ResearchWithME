@@ -460,6 +460,7 @@ let w5State: Wave5State = createSeedWave5State();
 
 export function resetWave5StoreForTesting() {
   w5State = createSeedWave5State();
+  workspaceInvitationsMap.clear();
 }
 
 function ensureUserBucket<T>(map: Map<string, T[]>, userId: string): T[] {
@@ -1380,3 +1381,74 @@ export async function recordGoalProgressEvent(input: {
   }
   return { ok: true, event, goal: updated };
 }
+
+// ── 7. Workspace Membership Invitations (Part V §6.2) ──────────────────────
+
+export interface WorkspaceInvitationRecord {
+  id: string;
+  workspaceId: string;
+  invitedEmail: string;
+  role: 'ADMIN' | 'MEMBER' | 'REVIEWER' | 'VIEWER';
+  status: 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'REVOKED' | 'EXPIRED';
+  invitedBy: string | null;
+  expiresAt: string;
+  createdAt: string;
+}
+
+const workspaceInvitationsMap = new Map<string, WorkspaceInvitationRecord[]>();
+
+export function listWorkspaceInvitations(workspaceId: string): WorkspaceInvitationRecord[] {
+  return [...(workspaceInvitationsMap.get(workspaceId) ?? [])];
+}
+
+export async function createWorkspaceInvitation(input: {
+  workspaceId: string;
+  invitedEmail: string;
+  role: WorkspaceInvitationRecord['role'];
+  actorId: string;
+  supabase?: SupabaseClient | null;
+}): Promise<
+  | { ok: true; invitation: WorkspaceInvitationRecord }
+  | { ok: false; status: 403; code: string; message: string }
+> {
+  if (!isWorkspaceMember(input.workspaceId, input.actorId)) {
+    return {
+      ok: false,
+      status: 403,
+      code: 'WORKSPACE_MEMBERSHIP_REQUIRED',
+      message: 'Active workspace membership is required to invite collaborators.',
+    };
+  }
+
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString();
+  const invitation: WorkspaceInvitationRecord = {
+    id: makeId('wsinv'),
+    workspaceId: input.workspaceId,
+    invitedEmail: input.invitedEmail.trim().toLowerCase(),
+    role: input.role,
+    status: 'PENDING',
+    invitedBy: input.actorId,
+    expiresAt,
+    createdAt: now.toISOString(),
+  };
+  const list = workspaceInvitationsMap.get(input.workspaceId) ?? [];
+  list.unshift(invitation);
+  workspaceInvitationsMap.set(input.workspaceId, list);
+
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb.from('v34_workspace_invitations').insert({
+        id: invitation.id,
+        workspace_id: invitation.workspaceId,
+        invited_email: invitation.invitedEmail,
+        role: invitation.role,
+        status: invitation.status,
+        invited_by: isUuid(input.actorId) ? input.actorId : null,
+        expires_at: invitation.expiresAt,
+      }),
+    );
+  }
+  return { ok: true, invitation };
+}
+

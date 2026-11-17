@@ -13,6 +13,7 @@ import { expect, test } from '@playwright/test';
 
 const V34_ROUTES = [
   '/feed',
+  '/search',
   '/topics',
   '/contribute',
   '/library',

@@ -617,6 +617,7 @@ let state: V34MemoryState = createSeedState();
 
 export function resetV34StoreForTesting() {
   state = createSeedState();
+  contributionVersionsMap.clear();
 }
 
 function makeId(prefix: string): string {
@@ -1797,3 +1798,179 @@ export function updateResearchGoal(
   state.goals.set(userId, list);
   return updated;
 }
+
+// ── Wave 6 Lifecycle, Versions, Draft Restore & User Draft Listing ─────────
+
+export interface ContributionVersionSnapshot {
+  id: string;
+  contributionId: string;
+  versionNumber: number;
+  title: string;
+  summary: string;
+  mdx: string;
+  lifecycle: ContributionRecord['lifecycle'];
+  checksumSha256: string;
+  createdAt: string;
+}
+
+const contributionVersionsMap = new Map<string, ContributionVersionSnapshot[]>();
+
+function ensureContributionVersionSeed(contribution: ContributionRecord): ContributionVersionSnapshot[] {
+  let list = contributionVersionsMap.get(contribution.id);
+  if (!list) {
+    const checksum = crypto
+      .createHash('sha256')
+      .update(`${contribution.title}\n${contribution.summary}\n${contribution.mdx}`)
+      .digest('hex');
+    list = [
+      {
+        id: `cv-${contribution.id}-v${contribution.version}`,
+        contributionId: contribution.id,
+        versionNumber: contribution.version,
+        title: contribution.title,
+        summary: contribution.summary,
+        mdx: contribution.mdx,
+        lifecycle: contribution.lifecycle,
+        checksumSha256: checksum,
+        createdAt: contribution.updatedAt,
+      },
+    ];
+    contributionVersionsMap.set(contribution.id, list);
+  }
+  return list;
+}
+
+export function listContributionVersions(contributionId: string): ContributionVersionSnapshot[] | null {
+  const existing = state.contributions.get(contributionId);
+  if (!existing) return null;
+  return [...ensureContributionVersionSeed(existing)].sort(
+    (a, b) => b.versionNumber - a.versionNumber,
+  );
+}
+
+export function submitContributionForReview(
+  contributionId: string,
+): { ok: true; contribution: ContributionRecord; versionSnapshot: ContributionVersionSnapshot } | { ok: false; status: 400 | 404; message: string } {
+  const existing = state.contributions.get(contributionId);
+  if (!existing) return { ok: false, status: 404, message: 'Contribution not found.' };
+  if (existing.lifecycle === 'archived') {
+    return { ok: false, status: 400, message: 'Archived contributions cannot be submitted for peer review.' };
+  }
+
+  const now = new Date().toISOString();
+  const nextVersion = existing.version + 1;
+  const updated: ContributionRecord = {
+    ...existing,
+    lifecycle: 'under-review',
+    version: nextVersion,
+    updatedAt: now,
+  };
+  state.contributions.set(updated.id, updated);
+
+  const list = ensureContributionVersionSeed(existing);
+  const versionSnapshot: ContributionVersionSnapshot = {
+    id: makeId('cv'),
+    contributionId: updated.id,
+    versionNumber: nextVersion,
+    title: updated.title,
+    summary: updated.summary,
+    mdx: updated.mdx,
+    lifecycle: updated.lifecycle,
+    checksumSha256: crypto
+      .createHash('sha256')
+      .update(`${updated.title}\n${updated.summary}\n${updated.mdx}`)
+      .digest('hex'),
+    createdAt: now,
+  };
+  list.unshift(versionSnapshot);
+  contributionVersionsMap.set(updated.id, list);
+
+  return { ok: true, contribution: updated, versionSnapshot };
+}
+
+/**
+ * Archives a contribution without deleting any canonical sources, evidence, or claims
+ * (Part VIII §B invariant).
+ */
+export function archiveContribution(
+  contributionId: string,
+): { ok: true; contribution: ContributionRecord } | { ok: false; status: 404; message: string } {
+  const existing = state.contributions.get(contributionId);
+  if (!existing) return { ok: false, status: 404, message: 'Contribution not found.' };
+
+  const now = new Date().toISOString();
+  const updated: ContributionRecord = {
+    ...existing,
+    lifecycle: 'archived',
+    updatedAt: now,
+  };
+  state.contributions.set(updated.id, updated);
+  return { ok: true, contribution: updated };
+}
+
+export function listUserDrafts(userId: string): ServerDraftRecord[] {
+  return [...state.drafts.values()]
+    .filter((d) => d.authorId === userId)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+export function restoreDraftFromSnapshot(input: {
+  draftId: string;
+  snapshotId: string;
+  authorId: string;
+  expectedServerVersion?: number;
+}): { ok: true; draft: ServerDraftRecord; restoredFrom: ServerDraftSnapshot } | { ok: false; status: 403 | 404 | 409; message: string } {
+  const existing = state.drafts.get(input.draftId);
+  if (!existing) return { ok: false, status: 404, message: 'Draft not found.' };
+  if (existing.authorId !== input.authorId) {
+    return { ok: false, status: 403, message: 'You do not have permission to restore this draft.' };
+  }
+  if (
+    typeof input.expectedServerVersion === 'number' &&
+    existing.version !== input.expectedServerVersion
+  ) {
+    return {
+      ok: false,
+      status: 409,
+      message: `Draft moved to v${existing.version}. Refresh history before restoring.`,
+    };
+  }
+
+  const snapshots = state.draftSnapshots.get(existing.id) ?? [];
+  const target = snapshots.find((s) => s.id === input.snapshotId);
+  if (!target) {
+    return { ok: false, status: 404, message: 'Draft snapshot not found.' };
+  }
+
+  const now = new Date().toISOString();
+  const nextVersion = existing.version + 1;
+  const restoredDoc: ResearchDocument = {
+    ...target.document,
+    id: existing.id,
+    version: nextVersion,
+    updatedAt: now,
+  };
+  const updated: ServerDraftRecord = {
+    ...existing,
+    title: restoredDoc.title || existing.title,
+    document: restoredDoc,
+    mdx: serializeResearchDocumentToMdx(restoredDoc),
+    version: nextVersion,
+    updatedAt: now,
+  };
+  state.drafts.set(updated.id, updated);
+
+  // Preserve full append-only snapshot audit trail
+  snapshots.unshift({
+    id: makeId('snap'),
+    draftId: updated.id,
+    version: nextVersion,
+    document: restoredDoc,
+    reason: 'manual',
+    createdAt: now,
+  });
+  state.draftSnapshots.set(updated.id, snapshots.slice(0, 40));
+
+  return { ok: true, draft: updated, restoredFrom: target };
+}
+

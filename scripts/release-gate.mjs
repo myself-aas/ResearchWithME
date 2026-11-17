@@ -105,12 +105,13 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 });
 
 // v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
-check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–5)', () => {
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–6)', () => {
   const migrations = [
     'supabase/migrations/20261117000100_v34_research_network.sql',
     'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
     'supabase/migrations/20261117000300_v34_wave3_discussions_tools_os.sql',
     'supabase/migrations/20261117000400_v34_wave5_topics_collections_alerts_graph.sql',
+    'supabase/migrations/20261117000500_v34_wave6_ai_provenance_exports_search.sql',
   ];
   for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
   return `${migrations.length} ordered v3.4 migrations verified`;
@@ -159,6 +160,7 @@ check('V34-6', 'v3.4 surface briefs cover all core v3.4 page surfaces', () => {
   const briefsDir = join(root, '.impeccable/surfaces');
   const expected = [
     'app-feed-page-tsx.md',
+    'app-search-page-tsx.md',
     'app-topics-page-tsx.md',
     'app-contribute-page-tsx.md',
     'app-library-page-tsx.md',
@@ -180,6 +182,26 @@ check('V34-7', 'v3.4 ADR-032 decisions, rollout feature flags, and migration/rol
   ];
   for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
   return `${files.length} Wave 5 governance & verification artifacts present`;
+});
+check('V34-8', 'v3.4 AI provenance, publication blockers, unified search, checksummed exports, and safe notification preview present', () => {
+  const files = [
+    'lib/v34/ai-governance.ts',
+    'lib/v34/search.ts',
+    'lib/v34/exports.ts',
+    'lib/v34/notifications-safe.ts',
+    'app/search/page.tsx',
+    'test/next/v34-wave6-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const publishRoute = readFileSync(
+    join(root, 'app/api/contributions/[id]/publish/route.ts'),
+    'utf8',
+  );
+  assert(
+    publishRoute.includes('evaluateContributionPublishBlockers'),
+    'publication blocker engine not wired into publish route',
+  );
+  return `${files.length} Wave 6 AI governance, search & export artifacts verified`;
 });
 
 const failed = results.filter((r) => r.status === 'fail');

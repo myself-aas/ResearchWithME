@@ -19,8 +19,10 @@ import { DiscussionSection } from '@/components/v34/DiscussionSection';
 import { ToolsDirectoryClient } from '@/components/v34/ToolsDirectoryClient';
 import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
 import TopicsClient from '@/components/v34/TopicsClient';
+import SearchClient from '@/components/v34/SearchClient';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ResponsivePaneLayout from '@/components/layout/ResponsivePaneLayout';
+import { executeUnifiedSearch } from '@/lib/v34/search';
 import {
   listCitationCollections,
   listSavedSearches,
@@ -123,6 +125,13 @@ describe('v3.4 Wave 4 axe-core WCAG 2.1 A/AA & visual token audit', () => {
       }),
     );
     expect(rTopics.violations).toEqual([]);
+
+    const rSearch = await runAxeOnMarkup(
+      createElement(SearchClient, {
+        initialResponse: await executeUnifiedSearch({ query: 'PagedAttention' }),
+      }),
+    );
+    expect(rSearch.violations).toEqual([]);
 
     const rSave = await runAxeOnMarkup(
       createElement(SaveToLibraryButton, {

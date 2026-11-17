@@ -6,6 +6,7 @@ import { Text, Link as TextLink } from '@/components/primitives';
 
 const exploreLinks = [
   { href: '/feed', label: 'Research feed' },
+  { href: '/search', label: 'Unified search' },
   { href: '/topics', label: 'Topic taxonomy' },
   { href: '/tools', label: 'Open-source tools' },
   { href: '/research-os', label: 'Personal Research OS' },

@@ -14,7 +14,8 @@ import {
   listSources,
 } from '@/lib/v34/store';
 import { getProjectByIdOrSlug, listWorkspaceMembers } from '@/lib/v34/wave2-store';
-import { listProjectNotes } from '@/lib/v34/wave3-store';
+import { listProjectNotes, listToolRepositories } from '@/lib/v34/wave3-store';
+import { listWorkspaceTools } from '@/lib/v34/wave5-store';
 
 export const dynamic = 'force-dynamic';
 
@@ -96,6 +97,12 @@ export default async function ProjectWorkspacePage({
 
   const workspaceMembers = listWorkspaceMembers(project.workspaceId);
   const projectNotes = await listProjectNotes(project.id);
+  const workspaceToolLinks = listWorkspaceTools(project.workspaceId);
+  const allTools = await listToolRepositories();
+  const toolById = new Map(allTools.map((t) => [t.id, t]));
+  const linkedWorkspaceTools = workspaceToolLinks
+    .map((wt) => ({ ...wt, tool: toolById.get(wt.toolRepositoryId) ?? null }))
+    .filter((wt) => wt.tool !== null);
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -149,6 +156,58 @@ export default async function ProjectWorkspacePage({
           graphRelationships={graph.relationships}
           claimEvidence={scopedLinks}
         />
+
+        {/* ADR-032-07: WorkspaceTool access bridge to deduplicated global ToolRepositories */}
+        <section
+          aria-labelledby="workspace-tools-heading"
+          className="rounded-xl border border-line bg-surface p-5 space-y-3"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 id="workspace-tools-heading" className="font-serif text-xl font-semibold text-ink">
+                Workspace Linked Tools ({linkedWorkspaceTools.length})
+              </h2>
+              <p className="font-sans text-xs text-ink-secondary">
+                Global deduplicated ToolRepositories linked into this workspace via WorkspaceTool without duplicating repository metadata.
+              </p>
+            </div>
+            <Link
+              href="/tools"
+              className="inline-flex min-h-10 items-center rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand"
+            >
+              Browse global tool registry
+            </Link>
+          </div>
+          {linkedWorkspaceTools.length === 0 ? (
+            <p className="font-sans text-sm text-ink-secondary">
+              No global tools are linked to this workspace yet.
+            </p>
+          ) : (
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {linkedWorkspaceTools.map((entry) => (
+                <li
+                  key={entry.toolRepositoryId}
+                  className="rounded-lg border border-line bg-canvas p-3 space-y-1"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="font-serif text-base font-semibold text-ink">
+                      {entry.tool!.name}
+                    </span>
+                    <span className="font-mono text-xs text-brand">
+                      {entry.pinned ? 'Pinned' : 'Linked'} · {entry.tool!.license ?? 'Open source'}
+                    </span>
+                  </div>
+                  <p className="font-mono text-xs text-ink-secondary">
+                    {entry.tool!.ownerName}/{entry.tool!.repoName}
+                  </p>
+                  {entry.notes ? (
+                    <p className="font-sans text-xs text-ink-secondary">{entry.notes}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </main>
       <BlogFooter />
     </div>

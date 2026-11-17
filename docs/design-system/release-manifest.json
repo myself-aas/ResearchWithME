@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T01:59:59.665Z",
+  "generatedAt": "2026-11-17T02:28:20.280Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -77,15 +77,15 @@
     },
     {
       "id": "V34-1",
-      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–5)",
+      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–6)",
       "status": "pass",
-      "evidence": "4 ordered v3.4 migrations verified"
+      "evidence": "5 ordered v3.4 migrations verified"
     },
     {
       "id": "V34-2",
       "description": "v3.4 components use semantic design tokens only (no raw hex or text-white)",
       "status": "pass",
-      "evidence": "12 v3.4 components clean"
+      "evidence": "13 v3.4 components clean"
     },
     {
       "id": "V34-3",
@@ -109,13 +109,19 @@
       "id": "V34-6",
       "description": "v3.4 surface briefs cover all core v3.4 page surfaces",
       "status": "pass",
-      "evidence": "9 core v3.4 surface governance briefs present"
+      "evidence": "10 core v3.4 surface governance briefs present"
     },
     {
       "id": "V34-7",
       "description": "v3.4 ADR-032 decisions, rollout feature flags, and migration/rollback runbook present",
       "status": "pass",
       "evidence": "4 Wave 5 governance & verification artifacts present"
+    },
+    {
+      "id": "V34-8",
+      "description": "v3.4 AI provenance, publication blockers, unified search, checksummed exports, and safe notification preview present",
+      "status": "pass",
+      "evidence": "6 Wave 6 AI governance, search & export artifacts verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"
