@@ -230,7 +230,7 @@ export function ProvenanceGraphExplorer({
 
       {/* Main ProvenanceGraph + Inspector grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-        <div className="lg:col-span-8">
+        <div className="min-w-0 overflow-x-auto lg:col-span-8">
           <ProvenanceGraph
             objects={initialObjects}
             relationships={filteredRelationships}

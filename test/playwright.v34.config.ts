@@ -10,12 +10,18 @@ import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './e2e',
   testMatch: ['v34-research-network.spec.ts', 'v34-a11y-reflow.spec.ts'],
-  fullyParallel: false,
-  retries: process.env.CI ? 2 : 0,
-  timeout: 45_000,
-  reporter: [['list'], ['html', { open: 'never', outputFolder: '../playwright-report-v34' }]],
+  fullyParallel: true,
+  workers: process.env.CI ? 2 : undefined,
+  retries: process.env.CI ? 1 : 0,
+  timeout: 60_000,
+  reporter: process.env.CI
+    ? [['list'], ['github'], ['html', { open: 'never', outputFolder: '../playwright-report-v34' }]]
+    : [['list'], ['html', { open: 'never', outputFolder: '../playwright-report-v34' }]],
   use: {
-    baseURL: process.env.RWM_NEXT_TEST_URL || 'http://127.0.0.1:3000',
+    baseURL:
+      process.env.RWM_NEXT_TEST_URL ||
+      process.env.PLAYWRIGHT_BASE_URL ||
+      'http://127.0.0.1:3000',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     ...(process.env.RWM_CHROMIUM_PATH

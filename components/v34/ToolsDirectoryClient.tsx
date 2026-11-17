@@ -245,7 +245,7 @@ export function ToolsDirectoryClient({
         aria-label="Import tool repository by URL"
         className="flex flex-wrap items-end gap-2 rounded-xl border border-line bg-surface p-4"
       >
-        <label className="min-w-[220px] flex-1 space-y-1 text-xs">
+        <label className="min-w-0 w-full sm:w-auto sm:min-w-[220px] flex-1 space-y-1 text-xs">
           <span className="font-semibold text-ink">Quick import repository URL</span>
           <input
             type="url"

@@ -37,6 +37,12 @@ jobs:
   v34-e2e-a11y:
     needs: quality
     runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:9
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: local-test-publishable-key
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3100
+      WORKERS_CI: "0"
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -57,4 +63,4 @@ jobs:
             sleep 1
           done
           BASE_URL=http://127.0.0.1:3100 node scripts/verify-v34-live.mjs
-          PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 npx playwright test test/e2e/v34-a11y-reflow.spec.ts
+          RWM_NEXT_TEST_URL=http://127.0.0.1:3100 PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 npx playwright test -c test/playwright.v34.config.ts test/e2e/v34-a11y-reflow.spec.ts

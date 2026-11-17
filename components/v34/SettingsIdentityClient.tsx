@@ -436,7 +436,7 @@ export default function SettingsIdentityClient() {
             value={deviceLabel}
             onChange={(e) => setDeviceLabel(e.target.value)}
             placeholder="Label this device (e.g. Lab Workstation)"
-            className="h-11 flex-1 min-w-[200px] rounded-lg border border-line bg-surface px-3 text-sm text-ink"
+            className="h-11 w-full min-w-0 flex-1 sm:w-auto sm:min-w-[200px] rounded-lg border border-line bg-surface px-3 text-sm text-ink"
           />
           <button
             type="submit"
@@ -516,7 +516,7 @@ export default function SettingsIdentityClient() {
             value={tombstonePhrase}
             onChange={(e) => setTombstonePhrase(e.target.value)}
             placeholder="DELETE MY ACCOUNT"
-            className="h-11 flex-1 min-w-[200px] rounded-lg border border-line bg-surface px-3 font-mono text-sm text-ink"
+            className="h-11 w-full min-w-0 flex-1 sm:w-auto sm:min-w-[200px] rounded-lg border border-line bg-surface px-3 font-mono text-sm text-ink"
           />
           <button
             type="submit"

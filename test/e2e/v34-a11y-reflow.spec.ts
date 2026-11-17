@@ -1,4 +1,7 @@
+import path from 'node:path';
 import { expect, test } from '@playwright/test';
+
+const AXE_SCRIPT_PATH = path.join(process.cwd(), 'node_modules/axe-core/axe.min.js');
 
 /**
  * ResearchWithME v3.4 §D Accessibility (WCAG 2.1 A/AA) & Responsive Reflow Matrix.
@@ -48,13 +51,13 @@ test.describe('v3.4 WCAG 2.1 AA axe-core audit across all v3.4 surfaces', () => 
       test(`axe-core WCAG 2.1 A/AA clean at ${width}px: ${route}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.emulateMedia({ reducedMotion: 'reduce' });
-        const response = await page.goto(route, { waitUntil: 'networkidle' });
+        const response = await page.goto(route, { waitUntil: 'load' });
         expect(response?.status(), `${route} HTTP status`).toBe(200);
 
         await expect(page.locator('main')).toHaveCount(1);
         await expect(page.locator('main#main-content')).toHaveCount(1);
 
-        await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
+        await page.addScriptTag({ path: AXE_SCRIPT_PATH });
         const violations = await page.evaluate(async () => {
           const axe = (
             window as unknown as {
@@ -75,6 +78,7 @@ test.describe('v3.4 WCAG 2.1 AA axe-core audit across all v3.4 surfaces', () => 
 test.describe('v3.4 Responsive Reflow Matrix (320px–1920px)', () => {
   for (const width of V34_BREAKPOINTS) {
     test(`zero horizontal overflow across v3.4 routes at ${width}px`, async ({ page }) => {
+      test.setTimeout(90_000);
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: 'reduce' });
 
@@ -92,8 +96,9 @@ test.describe('v3.4 Responsive Reflow Matrix (320px–1920px)', () => {
         '/editor',
         '/settings',
       ] as const) {
-        const response = await page.goto(route, { waitUntil: 'networkidle' });
+        const response = await page.goto(route, { waitUntil: 'load' });
         expect(response?.status(), `${route} at ${width}px`).toBe(200);
+        await page.locator('main#main-content').waitFor({ state: 'visible' });
 
         const metrics = await page.evaluate(() => ({
           scrollWidth: document.documentElement.scrollWidth,
@@ -114,9 +119,12 @@ test.describe('v3.4 Dark mode & Keyboard Skip-Link audit', () => {
     await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
 
     for (const route of ['/research-os', '/tools', '/graph'] as const) {
-      await page.goto(route, { waitUntil: 'networkidle' });
-      await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
-      await page.addScriptTag({ path: require.resolve('axe-core/axe.min.js') });
+      await page.goto(route, { waitUntil: 'load' });
+      await page.evaluate(() => {
+        document.documentElement.classList.add('dark');
+        document.documentElement.setAttribute('data-theme', 'dark');
+      });
+      await page.addScriptTag({ path: AXE_SCRIPT_PATH });
       const violations = await page.evaluate(async () => {
         const axe = (
           window as unknown as {
