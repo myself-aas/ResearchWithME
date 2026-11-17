@@ -740,7 +740,7 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
                     <span>Slash commands</span>
                   </button>
                   <Link
-                    href={`/workspaces?draft=${encodeURIComponent(draftId)}`}
+                    href={`/editor/${encodeURIComponent(draftId)}`}
                     className="inline-flex min-h-10 items-center rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-ink hover:border-brand"
                   >
                     Continue in Workspace →

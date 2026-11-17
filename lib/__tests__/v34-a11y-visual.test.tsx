@@ -22,6 +22,7 @@ import TopicsClient from '@/components/v34/TopicsClient';
 import SearchClient from '@/components/v34/SearchClient';
 import { ContributionIntegrityExports } from '@/components/v34/ContributionIntegrityExports';
 import SettingsIdentityClient from '@/components/v34/SettingsIdentityClient';
+import ScholarlyEditorWorkspace from '@/components/v34/ScholarlyEditorWorkspace';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ResponsivePaneLayout from '@/components/layout/ResponsivePaneLayout';
 import { executeUnifiedSearch } from '@/lib/v34/search';
@@ -343,6 +344,26 @@ describe('v3.4 Wave 4 axe-core WCAG 2.1 A/AA & visual token audit', () => {
 
   it('Wave 9 SettingsIdentityClient passes axe WCAG 2.1 AA', async () => {
     const res = await runAxeOnMarkup(createElement(SettingsIdentityClient));
+    expect(res.violations).toEqual([]);
+  });
+
+  it('Wave 10 ScholarlyEditorWorkspace passes axe WCAG 2.1 AA', async () => {
+    const res = await runAxeOnMarkup(
+      createElement(ScholarlyEditorWorkspace, {
+        initialDraftId: 'draft-a11y-test',
+        initialSources: [
+          {
+            id: 'src-arxiv-2501-12948',
+            title: 'Incentivizing Reasoning Capability in LLMs via RL',
+            authors: ['DeepSeek-AI'],
+            venue: 'arXiv',
+            identifierScheme: 'arxiv',
+            identifierValue: '2501.12948',
+            integrityStatus: 'active',
+          },
+        ],
+      }),
+    );
     expect(res.violations).toEqual([]);
   });
 });

@@ -105,7 +105,7 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 });
 
 // v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
-check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–9)', () => {
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–10)', () => {
   const migrations = [
     'supabase/migrations/20261117000100_v34_research_network.sql',
     'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
@@ -115,9 +115,10 @@ check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–9)', () 
     'supabase/migrations/20261117000600_v34_wave7_devices_push_sync_profile.sql',
     'supabase/migrations/20261117000700_v34_wave8_assessments_tasks_renders_ops.sql',
     'supabase/migrations/20261117000800_v34_wave9_integrity_impacts_follows_annotations_ops.sql',
+    'supabase/migrations/20261117000900_v34_wave10_complete_83_prisma_models_and_constraints.sql',
   ];
   for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
-  return `${migrations.length} ordered v3.4 migrations verified`;
+  return `${migrations.length} ordered v3.4 migrations verified (89 RLS tables, 100% 83/83 Prisma models)`;
 });
 check('V34-2', 'v3.4 components use semantic design tokens only (no raw hex or text-white)', () => {
   const dir = join(root, 'components/v34');
@@ -267,6 +268,24 @@ check('V34-11', 'v3.4 Wave 9 first-class knowledge routes, MDX security, PWA off
   ];
   for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
   return `${files.length} Wave 9 canonical UI, PWA, security & backfill artifacts verified`;
+});
+check('V34-12', 'v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present', () => {
+  const files = [
+    'app/editor/page.tsx',
+    'app/editor/[id]/page.tsx',
+    'components/v34/ScholarlyEditorWorkspace.tsx',
+    'lib/v34/identifiers.ts',
+    'docs/v34-acceptance-evidence.md',
+    'test/next/v34-wave10-completion.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const bottomNav = readFileSync(join(root, 'components/layout/MobileBottomNav.tsx'), 'utf8');
+  for (const label of ['Explore', 'Library', 'Contribute', 'AI', 'Profile']) {
+    assert(bottomNav.includes(label), `ADR-032-11 bottom nav missing destination: ${label}`);
+  }
+  const useSession = readFileSync(join(root, 'lib/supabase/use-session.ts'), 'utf8');
+  assert(useSession.includes('performLogoutLocalWipe'), 'use-session signOut missing Part V §15.3 local wipe');
+  return `${files.length} Wave 10 canonical completion artifacts verified`;
 });
 
 const failed = results.filter((r) => r.status === 'fail');

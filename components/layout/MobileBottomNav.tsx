@@ -2,17 +2,50 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Compass, Library, PlusCircle, User } from 'lucide-react';
+import { Compass, Library, PlusCircle, Sparkles, User } from 'lucide-react';
 
 interface MobileBottomNavProps {
   profileHref?: string;
 }
 
+/**
+ * Mobile Bottom Navigation — Normative ADR-032-11 destinations:
+ *   Explore, Library, Contribute, AI, Profile.
+ * Projects, Reviews, Sources, Evidence, Claims, Dashboard sections, and
+ * Settings live in the mobile navigation drawer.
+ */
 const ITEMS = [
-  { href: '/feed', label: 'Feed', icon: Compass, match: (p: string) => p.startsWith('/feed') || p.startsWith('/contribution/') || p.startsWith('/source/') },
-  { href: '/', label: 'Reviews', icon: BookOpen, match: (p: string) => p === '/' || p.startsWith('/articles') || p.startsWith('/post/') },
-  { href: '/contribute', label: 'Contribute', icon: PlusCircle, accent: true, match: (p: string) => p.startsWith('/contribute') },
-  { href: '/library', label: 'Library', icon: Library, match: (p: string) => p.startsWith('/library') || p.startsWith('/bookmarks') },
+  {
+    href: '/feed',
+    label: 'Explore',
+    icon: Compass,
+    match: (p: string) =>
+      p === '/' ||
+      p.startsWith('/feed') ||
+      p.startsWith('/contribution/') ||
+      p.startsWith('/source') ||
+      p.startsWith('/evidence') ||
+      p.startsWith('/claim'),
+  },
+  {
+    href: '/library',
+    label: 'Library',
+    icon: Library,
+    match: (p: string) => p.startsWith('/library') || p.startsWith('/bookmarks'),
+  },
+  {
+    href: '/contribute',
+    label: 'Contribute',
+    icon: PlusCircle,
+    accent: true,
+    match: (p: string) => p.startsWith('/contribute'),
+  },
+  {
+    href: '/assistant',
+    label: 'AI',
+    icon: Sparkles,
+    match: (p: string) => p.startsWith('/assistant'),
+  },
 ];
 
 export default function MobileBottomNav({ profileHref = '/profile/myself-aas' }: MobileBottomNavProps) {
@@ -21,6 +54,7 @@ export default function MobileBottomNav({ profileHref = '/profile/myself-aas' }:
   // Hide inside immersive writing flows so it never competes with editor toolbars (v3.4 Part III §6.1).
   if (
     pathname.startsWith('/contribute') ||
+    pathname.startsWith('/editor') ||
     pathname.startsWith('/write') ||
     pathname.startsWith('/dashboard')
   ) {

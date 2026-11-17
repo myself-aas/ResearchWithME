@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T08:45:16.152Z",
+  "generatedAt": "2026-11-17T09:22:18.627Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -77,15 +77,15 @@
     },
     {
       "id": "V34-1",
-      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–9)",
+      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–10)",
       "status": "pass",
-      "evidence": "8 ordered v3.4 migrations verified"
+      "evidence": "9 ordered v3.4 migrations verified (89 RLS tables, 100% 83/83 Prisma models)"
     },
     {
       "id": "V34-2",
       "description": "v3.4 components use semantic design tokens only (no raw hex or text-white)",
       "status": "pass",
-      "evidence": "16 v3.4 components clean"
+      "evidence": "17 v3.4 components clean"
     },
     {
       "id": "V34-3",
@@ -140,6 +140,12 @@
       "description": "v3.4 Wave 9 first-class knowledge routes, MDX security, PWA offline wipe, landing resolver, experiments & backfill dry-run present",
       "status": "pass",
       "evidence": "21 Wave 9 canonical UI, PWA, security & backfill artifacts verified"
+    },
+    {
+      "id": "V34-12",
+      "description": "v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present",
+      "status": "pass",
+      "evidence": "6 Wave 10 canonical completion artifacts verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

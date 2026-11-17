@@ -227,7 +227,7 @@ describe('v3.4 Wave 9 — MDX Security, Targeting Flags, Experiments, Landing, P
 
     const report = runReconciliationDryRun();
     expect(report.privacySafeLog).toBe(true);
-    expect(report.v34MigrationCount).toBe(8);
+    expect(report.v34MigrationCount).toBeGreaterThanOrEqual(8);
     expect(report.researchNotes.checksumParityPassed).toBe(true);
     expect(report.tools.deduplicatedGlobalCount).toBe(1);
     expect(report.relationships.normalizedCount).toBe(3);

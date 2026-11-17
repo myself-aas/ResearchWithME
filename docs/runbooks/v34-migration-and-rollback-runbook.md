@@ -1,6 +1,6 @@
 # ResearchWithME v3.4 Migration, Verification & Rollback Runbook
 
-- **Applies To:** `ResearchWithME` v3.4 (`supabase/migrations/20261117000100`–`20261117000800`)
+- **Applies To:** `ResearchWithME` v3.4 (`supabase/migrations/20261117000100`–`20261117000900`)
 - **Primary Supabase Project:** `bxyjjbclaklzjxeumeat` (`ap-northeast-1`, Postgres 17)
 - **Feature Flag Registry:** `lib/v34/feature-flags.ts`
 
@@ -40,14 +40,16 @@ All four v3.4 migrations are strictly additive (`CREATE TABLE IF NOT EXISTS`, `A
 | 6 | `20261117000600_v34_wave7_devices_push_sync_profile.sql` | 5 | Registered Devices (`v34_user_devices`), Web Push Subscriptions (`v34_push_subscriptions`), Contributor Affiliations (`v34_user_affiliations`), Verified Expertise (`v34_user_expertise`), and Workspace Access Requests (`v34_workspace_access_requests`) |
 | 7 | `20261117000700_v34_wave8_assessments_tasks_renders_ops.sql` | 11 | Evidence & Claim Assessments, Library Collections, Project Tasks, Assistant Sessions & Messages, Governed Remotion/Hyperframes Render Jobs, Device Sync Cursors, Transactional Outbox (`v34_outbox_events`), Audit Events (`v34_audit_events`), and Background Jobs (`v34_background_jobs`) |
 | 8 | `20261117000800_v34_wave9_integrity_impacts_follows_annotations_ops.sql` | 11 | Integrity Impact Records, Source-Anchored Annotations (`VALID/DRIFTED/ORPHANED`), Cached Non-Vanity Profile Metrics, Explicit Follow Tables (no self-follow CHECK), Search Alerts, Notification & Webhook Deliveries, Normalized External Identifiers Index, and Legacy Relationship Quarantine |
+| 9 | `20261117000900_v34_wave10_complete_83_prisma_models_and_constraints.sql` | 12 | Completes **100% 83/83 Prisma model coverage** (`v34_source_contributors`, `v34_citations`, `v34_contribution_impact_daily`, `v34_user_activity_events`, `v34_research_activity_days`, `v34_mobile_experience_preferences`, `v34_mobile_dashboard_module_preferences`, `v34_pending_mutations`, FK-backed `v34_{source,contribution,claim,tool}_topics`) + 7 Part VII §3 PostgreSQL `CHECK` integrity constraints (`chk_v34_*`) |
 
 ### Post-Migration Database Verification SQL
 
-Verify all 77 `v34_*` tables exist and have Row-Level Security enabled:
+Verify all 89 `v34_*` tables exist, have Row-Level Security enabled, and enforce the 7 Part VII §3 CHECK constraints:
 
 ```sql
 SELECT count(*) AS total_v34_tables,
-       count(*) FILTER (WHERE c.relrowsecurity) AS rls_enabled_tables
+       count(*) FILTER (WHERE c.relrowsecurity) AS rls_enabled_tables,
+       (SELECT count(*) FROM pg_constraint WHERE conname LIKE 'chk_v34_%') AS wave10_check_constraints
 FROM information_schema.tables t
 JOIN pg_class c ON c.relname = t.table_name
 JOIN pg_namespace n ON n.oid = c.relnamespace AND n.nspname = t.table_schema
@@ -55,7 +57,7 @@ WHERE t.table_schema = 'public'
   AND t.table_name LIKE 'v34_%';
 ```
 
-Expected: `total_v34_tables = 77`, `rls_enabled_tables = 77`.
+Expected: `total_v34_tables = 89`, `rls_enabled_tables = 89`, `wave10_check_constraints = 7`.
 
 ### Dry-Run Backfill & Reconciliation Check
 

@@ -103,6 +103,12 @@ export default function DashboardShell({ children, configured, user }: Dashboard
       const supabase = getSupabaseBrowserClient();
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
+      try {
+        const { performLogoutLocalWipe } = await import('@/lib/persistence/logout-wipe');
+        await performLogoutLocalWipe({ clearLocalDrafts: true });
+      } catch {
+        // Non-fatal if browser blocks storage cleanup
+      }
       router.replace('/login');
       router.refresh();
     } catch {

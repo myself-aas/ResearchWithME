@@ -62,6 +62,8 @@ const SSR_PAGES = [
   { path: '/projects', mustContain: ['Research Projects', 'id="main-content"'] },
   { path: '/project/reasoning-cold-start-replication', mustContain: ['Project Collaborators', 'id="main-content"'] },
   { path: '/reviews', mustContain: ['Formal Peer Reviews', 'Anonymous reviewer', 'id="main-content"'], mustNotContain: ['dr-lin-eval', 'user-reviewer-1'] },
+  { path: '/editor', mustContain: ['Scholarly MDX Workspace', 'MDX Security Guard', 'id="main-content"'] },
+  { path: '/editor/draft-smoke', mustContain: ['Scholarly MDX Workspace', 'draft-smoke', 'id="main-content"'] },
   { path: '/settings', mustContain: ['Scholarly Identity', 'Default Landing Destination', 'id="main-content"'] },
   {
     path: '/profile/myself-aas',

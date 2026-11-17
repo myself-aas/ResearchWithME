@@ -38,14 +38,20 @@ describe('v3.4 mobile-first shell & contribution wizard', () => {
     container.remove();
   });
 
-  it('renders 5 primary links in MobileBottomNav on standard pages and hides inside /contribute', () => {
+  it('renders 5 ADR-032-11 primary links in MobileBottomNav and hides inside /contribute and /editor', () => {
     act(() => root.render(<MobileBottomNav />));
     const nav = container.querySelector('nav[aria-label="Mobile bottom navigation"]');
     expect(nav).not.toBeNull();
     expect(nav?.querySelectorAll('a')).toHaveLength(5);
-    expect(container.textContent).toContain('Contribute');
+    for (const label of ['Explore', 'Library', 'Contribute', 'AI', 'Profile']) {
+      expect(container.textContent).toContain(label);
+    }
 
     currentPath = '/contribute';
+    act(() => root.render(<MobileBottomNav />));
+    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
+
+    currentPath = '/editor/draft-1';
     act(() => root.render(<MobileBottomNav />));
     expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
   });

@@ -554,73 +554,27 @@ export const UpdateResearchGoalInputSchema = z.object({
   status: z.enum(['ACTIVE', 'PAUSED', 'COMPLETED', 'EXPIRED', 'ARCHIVED']).optional(),
 });
 
-// ── 5. Source Identifier Parser (DOI, arXiv, GitHub, URL) ──────────────────
+import {
+  normalizeScholarlyIdentifier,
+  type NormalizedIdentifier,
+} from './identifiers';
 
-export interface ParsedSourceIdentifier {
-  scheme: 'doi' | 'arxiv' | 'github' | 'url';
-  value: string;
-  canonicalUrl: string;
-  inferredType: 'paper' | 'preprint' | 'software' | 'webpage';
-}
+export {
+  normalizeScholarlyIdentifier,
+  verifyIsbnChecksum,
+  verifyIssnChecksum,
+  verifyOrcidChecksum,
+  type CanonicalIdentifierScheme,
+  type InferredSourceKind,
+  type NormalizedIdentifier,
+} from './identifiers';
+
+// ── 5. Source Identifier Parser (DOI, ORCID, PMID, PMCID, ISBN, issn, arXiv, ROR, RRID, Accession, SWHID, GitHub, GitLab, URL) ──
+
+export type ParsedSourceIdentifier = NormalizedIdentifier;
 
 export function parseSourceIdentifier(rawInput: string): ParsedSourceIdentifier | null {
-  const input = rawInput.trim();
-  if (!input) return null;
-
-  // DOI: 10.xxxx/... or https://doi.org/10.xxxx/...
-  const doiMatch = input.match(/^(?:https?:\/\/(?:dx\.)?doi\.org\/|doi:\s*)?(10\.\d{4,9}\/[-._;()/:A-Za-z0-9]+)$/i);
-  if (doiMatch) {
-    const value = doiMatch[1];
-    return {
-      scheme: 'doi',
-      value,
-      canonicalUrl: `https://doi.org/${value}`,
-      inferredType: 'paper',
-    };
-  }
-
-  // arXiv: arXiv:2501.12948 or 2501.12948v2 or https://arxiv.org/abs/2501.12948
-  const arxivMatch = input.match(
-    /^(?:https?:\/\/arxiv\.org\/(?:abs|pdf)\/|arXiv:\s*)?(\d{4}\.\d{4,5}(?:v\d+)?)(?:\.pdf)?$/i,
-  );
-  if (arxivMatch) {
-    const value = arxivMatch[1];
-    return {
-      scheme: 'arxiv',
-      value,
-      canonicalUrl: `https://arxiv.org/abs/${value}`,
-      inferredType: 'preprint',
-    };
-  }
-
-  // GitHub repo URL
-  const ghMatch = input.match(/^https?:\/\/github\.com\/([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+?)(?:\.git)?(?:\/.*)?$/i);
-  if (ghMatch) {
-    const value = ghMatch[1];
-    return {
-      scheme: 'github',
-      value,
-      canonicalUrl: `https://github.com/${value}`,
-      inferredType: 'software',
-    };
-  }
-
-  // General HTTPS URL
-  try {
-    const parsed = new URL(input);
-    if (parsed.protocol === 'https:' || parsed.protocol === 'http:') {
-      return {
-        scheme: 'url',
-        value: parsed.toString(),
-        canonicalUrl: parsed.toString(),
-        inferredType: 'webpage',
-      };
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
+  return normalizeScholarlyIdentifier(rawInput);
 }
 
 export const CONTRIBUTION_CATALOG = CONTRIBUTION_TYPE_CATALOG;

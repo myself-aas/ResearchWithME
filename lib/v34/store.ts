@@ -17,6 +17,7 @@ import {
   parseSourceIdentifier,
   serializeResearchDocumentToMdx,
   type AIProvenance,
+  type CanonicalIdentifierScheme,
   type ContributionType,
   type PublicationBlocker,
   type ResearchDocument,
@@ -33,7 +34,7 @@ export interface SourceRecord {
   publishedDate: string | null;
   venue: string | null;
   canonicalUrl: string | null;
-  identifierScheme: 'doi' | 'arxiv' | 'pmid' | 'isbn' | 'swhid' | 'url' | 'github' | null;
+  identifierScheme: CanonicalIdentifierScheme | null;
   identifierValue: string | null;
   accessState: 'open' | 'subscription' | 'restricted' | 'unknown';
   integrityStatus: 'active' | 'corrected' | 'expression-of-concern' | 'retracted' | 'withdrawn';
