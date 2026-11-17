@@ -95,7 +95,7 @@ export default function DashboardTabs({
                   href={tab.href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap rounded-t-lg border-b-2 px-3 text-sm font-medium transition-colors',
+                    'inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap border-b-2 px-3 text-sm font-medium transition-colors',
                     'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand',
                     active
                       ? 'border-brand text-ink'
