@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T13:36:39.594Z",
+  "generatedAt": "2026-11-17T14:01:55.895Z",
   "tokenChecksum": "sha256:843f5911b2ee4631",
   "results": [
     {
@@ -188,6 +188,12 @@
       "description": "v3.4 Wave 18 P1 durable outbox worker + DLQ + Cloudflare Queue/Cron, live SQL reconciliation, canonical cursor pagination, VAPID Push + Resend Digest + Supabase Realtime, R2 signed storage, OTel/Sentry, SW Background Sync & ADR-033",
       "status": "pass",
       "evidence": "Wave 18 P1 async outbox worker, live SQL reconciliation, cursor pagination, live delivery, R2 storage, OTel/Sentry, SW sync & ADR-033 verified"
+    },
+    {
+      "id": "V34-20",
+      "description": "v3.4 Wave 19 P2/P3 live cutover readiness: Migration 13 autosave CHECK fix, Cloudflare R2/Queues/secrets provisioning CLI, --v34-cutover env audit, staged rollout flag aliases, live authenticated cutover verifier & synced Part VIII dossier",
+      "status": "pass",
+      "evidence": "Wave 19 P2/P3 cutover CLI, Migration 13 live autosave fix, staged flags, cutover verifier & Part VIII dossier verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

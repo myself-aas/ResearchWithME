@@ -63,6 +63,7 @@ interface ResearchOsClientProps {
   initialPreferences: DashboardPreferencesRecord;
   initialPipeline?: PipelineSummary;
   initialActivity?: ActivitySummaryItem[];
+  realtimeEnabled?: boolean;
 }
 
 const PERSONALIZABLE_MODULES = [
@@ -94,6 +95,7 @@ export function ResearchOsClient({
   initialPreferences,
   initialPipeline = { drafts: 0, underReview: 0, published: 0, needsRevision: 0 },
   initialActivity = [],
+  realtimeEnabled = true,
 }: ResearchOsClientProps) {
   const [attention, setAttention] = useState<AttentionItemRecord[]>(initialAttention);
   const [notifications, setNotifications] = useState<NotificationRecord[]>(initialNotifications);
@@ -112,7 +114,9 @@ export function ResearchOsClient({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   usePrivateResearchRealtime(
-    !offline && initialPreferences.userId ? initialPreferences.userId : null,
+    realtimeEnabled && !offline && initialPreferences.userId && initialPreferences.userId !== 'default'
+      ? initialPreferences.userId
+      : null,
     (event) => {
       if (event.table === 'v34_notifications') {
         void fetch('/api/notifications?limit=20')

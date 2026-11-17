@@ -5,6 +5,7 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
 import { getDashboardUser } from '@/lib/cms/auth';
+import { isV34FlagEnabled } from '@/lib/v34/feature-flags';
 import { listContributions, listResearchGoals } from '@/lib/v34/store';
 import { listAuditEvents } from '@/lib/v34/outbox';
 import { listProjects } from '@/lib/v34/wave2-store';
@@ -105,6 +106,7 @@ export default async function ResearchOsPage() {
           initialPreferences={preferences}
           initialPipeline={pipeline}
           initialActivity={activity}
+          realtimeEnabled={Boolean(user) && isV34FlagEnabled('realtime-private-v1')}
         />
       </main>
       <BlogFooter />

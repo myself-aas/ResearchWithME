@@ -31,6 +31,7 @@ export const V34_FEATURE_FLAGS = [
   'provenance-graph-v1',
   'assistant-docked-v1',
   'mobile-bottom-nav-v1',
+  'realtime-private-v1',
 ] as const;
 
 export type V34FeatureFlag = (typeof V34_FEATURE_FLAGS)[number];
@@ -49,25 +50,26 @@ export interface FlagTargetingRule {
   allowedRoles?: string[];
 }
 
-const ENV_KEY_MAP: Record<V34FeatureFlag, string> = {
-  'v34-normalized-relations': 'V34_FLAG_NORMALIZED_RELATIONS',
-  'v34-discussions': 'V34_FLAG_DISCUSSIONS',
-  'v34-goals': 'V34_FLAG_GOALS',
-  'v34-global-tools': 'V34_FLAG_GLOBAL_TOOLS',
-  'v34-graph-projection': 'V34_FLAG_GRAPH_PROJECTION',
-  'v34-citation-collections': 'V34_FLAG_CITATION_COLLECTIONS',
-  'v34-saved-searches': 'V34_FLAG_SAVED_SEARCHES',
-  'v34-topics-taxonomy': 'V34_FLAG_TOPICS_TAXONOMY',
-  'contribution-feed-v1': 'V34_FLAG_CONTRIBUTION_FEED',
-  'contribution-wizard-v1': 'V34_FLAG_CONTRIBUTION_WIZARD',
-  'research-dashboard-v1': 'V34_FLAG_RESEARCH_DASHBOARD',
-  'scholarly-editor-v1': 'V34_FLAG_SCHOLARLY_EDITOR',
-  'offline-sync-v1': 'V34_FLAG_OFFLINE_SYNC',
-  'projects-v1': 'V34_FLAG_PROJECTS',
-  'claims-evidence-v1': 'V34_FLAG_CLAIMS_EVIDENCE',
-  'provenance-graph-v1': 'V34_FLAG_PROVENANCE_GRAPH',
-  'assistant-docked-v1': 'V34_FLAG_ASSISTANT_DOCKED',
-  'mobile-bottom-nav-v1': 'V34_FLAG_MOBILE_BOTTOM_NAV',
+const ENV_KEY_MAP: Record<V34FeatureFlag, string[]> = {
+  'v34-normalized-relations': ['V34_FLAG_NORMALIZED_RELATIONS'],
+  'v34-discussions': ['V34_FLAG_DISCUSSIONS'],
+  'v34-goals': ['V34_FLAG_GOALS'],
+  'v34-global-tools': ['V34_FLAG_GLOBAL_TOOLS'],
+  'v34-graph-projection': ['V34_FLAG_GRAPH_PROJECTION'],
+  'v34-citation-collections': ['V34_FLAG_CITATION_COLLECTIONS'],
+  'v34-saved-searches': ['V34_FLAG_SAVED_SEARCHES'],
+  'v34-topics-taxonomy': ['V34_FLAG_TOPICS_TAXONOMY'],
+  'contribution-feed-v1': ['V34_FEED_ENABLED', 'V34_FLAG_CONTRIBUTION_FEED'],
+  'contribution-wizard-v1': ['V34_FLAG_CONTRIBUTION_WIZARD'],
+  'research-dashboard-v1': ['V34_FLAG_RESEARCH_DASHBOARD'],
+  'scholarly-editor-v1': ['V34_EDITOR_ENABLED', 'V34_FLAG_SCHOLARLY_EDITOR'],
+  'offline-sync-v1': ['V34_FLAG_OFFLINE_SYNC'],
+  'projects-v1': ['V34_FLAG_PROJECTS'],
+  'claims-evidence-v1': ['V34_FLAG_CLAIMS_EVIDENCE'],
+  'provenance-graph-v1': ['V34_FLAG_PROVENANCE_GRAPH'],
+  'assistant-docked-v1': ['V34_FLAG_ASSISTANT_DOCKED'],
+  'mobile-bottom-nav-v1': ['V34_FLAG_MOBILE_BOTTOM_NAV'],
+  'realtime-private-v1': ['V34_REALTIME_ENABLED', 'V34_FLAG_REALTIME'],
 };
 
 function parseFlagEnv(value: string | undefined): boolean | null {
@@ -85,10 +87,13 @@ export function deterministicBucket(flag: string, subjectKey: string): number {
 }
 
 export function isV34FlagEnabled(flag: V34FeatureFlag): boolean {
-  const envKey = ENV_KEY_MAP[flag];
-  const parsed =
-    parseFlagEnv(process.env[envKey]) ?? parseFlagEnv(process.env[`NEXT_PUBLIC_${envKey}`]);
-  return parsed ?? true;
+  const envKeys = ENV_KEY_MAP[flag];
+  for (const envKey of envKeys) {
+    const parsed =
+      parseFlagEnv(process.env[envKey]) ?? parseFlagEnv(process.env[`NEXT_PUBLIC_${envKey}`]);
+    if (parsed !== null) return parsed;
+  }
+  return true;
 }
 
 /**

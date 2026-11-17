@@ -39,6 +39,9 @@ function readEnvFiles() {
 
 const fromFiles = readEnvFiles();
 const read = (name) => (process.env[name] ?? fromFiles[name] ?? '').trim();
+const args = new Set(process.argv.slice(2));
+const v34CutoverMode = args.has('--v34-cutover');
+const jsonMode = args.has('--json');
 
 const url = read('NEXT_PUBLIC_SUPABASE_URL');
 const key =
@@ -50,6 +53,49 @@ if (!url) problems.push('NEXT_PUBLIC_SUPABASE_URL is not set.');
 if (!key) problems.push('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (or _ANON_KEY) is not set.');
 if (/localhost|127\.0\.0\.1/.test(site)) {
   problems.push(`NEXT_PUBLIC_SITE_URL points at ${site}, so canonical links would ship that origin.`);
+}
+
+if (v34CutoverMode) {
+  const r2Keys = ['R2_ACCOUNT_ID', 'R2_BUCKET', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'];
+  const vapidKeys = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'];
+  const missingR2 = r2Keys.filter((k) => !read(k));
+  const missingVapid = vapidKeys.filter((k) => !read(k));
+  const report = {
+    coreBuildReady: problems.length === 0,
+    coreProblems: problems,
+    subsystems: {
+      outboxCron: read('CRON_SECRET') ? 'LIVE' : 'DISABLED_FAIL_CLOSED',
+      r2SignedStorage: missingR2.length === 0 ? 'LIVE' : 'FALLBACK_INLINE',
+      webPushVapid: missingVapid.length === 0 ? 'LIVE' : 'FALLBACK_SKIPPED',
+      resendDigests: read('RESEND_API_KEY') ? 'LIVE' : 'FALLBACK_SKIPPED',
+      otelTraces: read('OTEL_EXPORTER_OTLP_ENDPOINT') ? 'LIVE' : 'FALLBACK_CONSOLE',
+      sentryErrors: read('SENTRY_DSN') ? 'LIVE' : 'FALLBACK_CONSOLE',
+    },
+    missingSecrets: [
+      ...(read('CRON_SECRET') ? [] : ['CRON_SECRET']),
+      ...missingR2,
+      ...missingVapid,
+      ...(read('RESEND_API_KEY') ? [] : ['RESEND_API_KEY']),
+      ...(read('OTEL_EXPORTER_OTLP_ENDPOINT') ? [] : ['OTEL_EXPORTER_OTLP_ENDPOINT']),
+      ...(read('SENTRY_DSN') ? [] : ['SENTRY_DSN']),
+    ],
+    rolloutFlags: {
+      V34_FEED_ENABLED: read('V34_FEED_ENABLED') || 'default(true)',
+      V34_EDITOR_ENABLED: read('V34_EDITOR_ENABLED') || 'default(true)',
+      V34_REALTIME_ENABLED: read('V34_REALTIME_ENABLED') || 'default(true)',
+    },
+  };
+  if (jsonMode) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log('ResearchWithME v3.4 Production Cutover Readiness Audit');
+    console.log(JSON.stringify(report, null, 2));
+  }
+  const strict = args.has('--strict');
+  if (problems.length > 0 || (strict && report.missingSecrets.length > 0)) {
+    process.exit(1);
+  }
+  process.exit(0);
 }
 
 if (problems.length === 0) {

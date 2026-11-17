@@ -403,6 +403,30 @@ check('V34-19', 'v3.4 Wave 18 P1 durable outbox worker + DLQ + Cloudflare Queue/
   assert(reconcile.includes('runLiveSupabaseReconciliation') && reconcile.includes('v34_reconcile_integrity_report'), 'v34-backfill-reconcile.mjs missing --live reconciliation engine');
   return 'Wave 18 P1 async outbox worker, live SQL reconciliation, cursor pagination, live delivery, R2 storage, OTel/Sentry, SW sync & ADR-033 verified';
 });
+check('V34-20', 'v3.4 Wave 19 P2/P3 live cutover readiness: Migration 13 autosave CHECK fix, Cloudflare R2/Queues/secrets provisioning CLI, --v34-cutover env audit, staged rollout flag aliases, live authenticated cutover verifier & synced Part VIII dossier', () => {
+  const files = [
+    'supabase/migrations/20261117001300_v34_wave19_autosave_status_fix.sql',
+    'scripts/provision-cloudflare-v34.mjs',
+    'scripts/verify-v34-cutover.mjs',
+    'test/next/v34-wave19-cutover-readiness.test.ts',
+    'docs/v34-acceptance-evidence.md',
+    'docs/design-system/release-gate.md',
+    'docs/runbooks/v34-migration-and-rollback-runbook.md',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const flags = readFileSync(join(root, 'lib/v34/feature-flags.ts'), 'utf8');
+  assert(
+    flags.includes('V34_FEED_ENABLED') &&
+      flags.includes('V34_EDITOR_ENABLED') &&
+      flags.includes('V34_REALTIME_ENABLED'),
+    'feature-flags.ts missing Wave 19 staged rollout flag aliases',
+  );
+  const envCheck = readFileSync(join(root, 'scripts/check-production-env.mjs'), 'utf8');
+  assert(envCheck.includes('--v34-cutover'), 'check-production-env.mjs missing --v34-cutover audit mode');
+  const mig13 = readFileSync(join(root, 'supabase/migrations/20261117001300_v34_wave19_autosave_status_fix.sql'), 'utf8');
+  assert(mig13.includes("'SYNCED'") && mig13.includes("'interval'"), 'Migration 13 missing SYNCED/interval CHECK constraint fix');
+  return 'Wave 19 P2/P3 cutover CLI, Migration 13 live autosave fix, staged flags, cutover verifier & Part VIII dossier verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {
