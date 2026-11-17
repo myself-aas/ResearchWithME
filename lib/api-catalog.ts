@@ -21,6 +21,7 @@ export const API_GROUPS = [
   { id: 'linkedin-post', name: 'LinkedIn posting', path: '/api/admin/linkedin/post', description: 'Post an article as an administrator.' },
   { id: 'linkedin-status', name: 'LinkedIn status', path: '/api/admin/linkedin/status', description: 'Read LinkedIn posting status as an administrator.' },
   { id: 'linkedin-cron', name: 'LinkedIn batch', path: '/api/cron/linkedin-batch', description: 'Trigger the LinkedIn batch using a cron secret.' },
+  { id: 'outbox-cron', name: 'Outbox cron drain', path: '/api/cron/outbox-drain', description: 'Drain due v3.4 transactional outbox events with FOR UPDATE SKIP LOCKED leases, idempotent receipts, and DLQ retries.' },
   { id: 'article-webhook', name: 'Editorial publication webhook', path: '/api/webhooks/article-published', description: 'HMAC-verified webhook receiving published editorial post events for LinkedIn automation.' },
   { id: 'webhooks', name: 'Billing webhook', path: '/api/webhooks/lemonsqueezy', description: 'Receive signed Lemon Squeezy billing events. A webhook signing secret is required.' },
   { id: 'contributions', name: 'Research contributions', path: '/api/contributions', description: 'Create, update, browse, and publish evidence-linked scholarly contributions.' },

@@ -271,14 +271,14 @@ describe('v3.4 Wave 3 API routes & invariants', () => {
   });
 
   it('§10 keeps Notifications, Attention Items, and Optional Assistant Tasks cleanly separated with explicit promotion', async () => {
-    const initialAttentionRes = await listAttentionRoute();
+    const initialAttentionRes = await listAttentionRoute(new Request('http://localhost/api/attention'));
     const initialAttention = (await initialAttentionRes.json()) as {
       items: Array<{ id: string; status: string }>;
     };
     const initialCount = initialAttention.items.length;
 
     // 1. Marking a notification read does NOT resolve or alter attention items
-    const notifsRes = await listNotificationsRoute();
+    const notifsRes = await listNotificationsRoute(new Request('http://localhost/api/notifications'));
     const notifs = (await notifsRes.json()) as { notifications: Array<{ id: string }> };
     const markReadRes = await markNotificationRoute(
       makeRequest('http://localhost/api/notifications', {
@@ -288,7 +288,7 @@ describe('v3.4 Wave 3 API routes & invariants', () => {
     );
     expect(markReadRes.status).toBe(200);
 
-    const attentionAfterReadRes = await listAttentionRoute();
+    const attentionAfterReadRes = await listAttentionRoute(new Request('http://localhost/api/attention'));
     const attentionAfterRead = (await attentionAfterReadRes.json()) as {
       items: Array<{ id: string; status: string }>;
     };
@@ -311,7 +311,7 @@ describe('v3.4 Wave 3 API routes & invariants', () => {
     };
     expect(createdTask.task.promotedAttentionId).toBeNull();
 
-    const attentionBeforePromoteRes = await listAttentionRoute();
+    const attentionBeforePromoteRes = await listAttentionRoute(new Request('http://localhost/api/attention'));
     const attentionBeforePromote = (await attentionBeforePromoteRes.json()) as {
       items: Array<{ id: string }>;
     };

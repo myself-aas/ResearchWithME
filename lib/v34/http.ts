@@ -12,24 +12,66 @@ import {
   type AuthzCapability,
   type AuthzResource,
 } from './authz';
+import { createRequestContext, logStructuredError } from './observability';
 import { getOptionalAuthSupabase, SupabasePersistenceError } from './supabase-sync';
+import { captureSentryException, exportOtlpSpan } from './telemetry-export';
 
 export { authorize, authorizedClassificationsForActor, requireAuthorized };
 export type { AuthzCapability, AuthzResource };
 
-export function handleV34Error(err: unknown): NextResponse {
+export function handleV34Error(err: unknown, request?: Request, route = '/api/v34'): NextResponse {
+  const ctx = createRequestContext(request ?? {}, { route });
+  const now = Date.now();
   if (err instanceof SupabasePersistenceError) {
+    logStructuredError('api.v34.persistence_error', ctx, err, { operation: err.operation });
+    void captureSentryException('api.v34.persistence_error', ctx, err, {
+      extra: { operation: err.operation },
+    }).catch(() => {});
+    void exportOtlpSpan({
+      name: `v34.persistence_error:${err.operation}`,
+      ctx,
+      startTimeMs: now,
+      endTimeMs: now,
+      status: 'ERROR',
+      attributes: { 'rwm.error_code': err.code, 'rwm.operation': err.operation },
+    }).catch(() => {});
     return NextResponse.json(
       {
         error: err.message,
         code: err.code,
         operation: err.operation,
+        requestId: ctx.requestId,
+        traceId: ctx.traceId,
       },
-      { status: err.status },
+      {
+        status: err.status,
+        headers: {
+          'X-Request-Id': ctx.requestId,
+          'X-Trace-Id': ctx.traceId,
+        },
+      },
     );
   }
+  logStructuredError('api.v34.unhandled_error', ctx, err);
+  void captureSentryException('api.v34.unhandled_error', ctx, err).catch(() => {});
+  void exportOtlpSpan({
+    name: `v34.unhandled_error:${route}`,
+    ctx,
+    startTimeMs: now,
+    endTimeMs: now,
+    status: 'ERROR',
+  }).catch(() => {});
   const message = err instanceof Error ? err.message : 'Unexpected server error.';
-  return NextResponse.json({ error: message, code: 'INTERNAL_ERROR' }, { status: 500 });
+  return NextResponse.json(
+    { error: message, code: 'INTERNAL_ERROR', requestId: ctx.requestId, traceId: ctx.traceId },
+    {
+      status: 500,
+      headers: {
+        'X-Request-Id': ctx.requestId,
+        'X-Trace-Id': ctx.traceId,
+      },
+    },
+  );
 }
 
 export interface ContributorIdentity {

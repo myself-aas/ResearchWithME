@@ -44,6 +44,8 @@ describe('Next.js API baseline inventory', () => {
       { path: '/api/contributions/{id}/submit-review', method: 'POST' },
       { path: '/api/contributions/{id}/versions', method: 'GET' },
       { path: '/api/cron/linkedin-batch', method: 'GET' },
+      { path: '/api/cron/outbox-drain', method: 'GET' },
+      { path: '/api/cron/outbox-drain', method: 'POST' },
       { path: '/api/dashboard/home', method: 'GET' },
       { path: '/api/dashboard/preferences', method: 'GET' },
       { path: '/api/dashboard/preferences', method: 'PATCH' },

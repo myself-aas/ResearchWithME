@@ -4,6 +4,7 @@
  * Implements deterministic, idempotent handlers for ALL 15 required v3.4
  * background jobs wired directly to `lib/v34/outbox.ts`.
  */
+import { publishRealtimePrivateEvent, sendNotificationDigestEmail } from './delivery';
 import {
   enqueueBackgroundJob,
   recordAuditEvent,
@@ -65,14 +66,51 @@ const JOB_HANDLERS: Record<BackgroundJobType, JobHandler> = {
     indexedObjectId: typeof payload.objectId === 'string' ? payload.objectId : null,
     classificationFiltered: true,
   }),
-  'notification.dispatch': async (payload) => ({
-    notificationId: typeof payload.notificationId === 'string' ? payload.notificationId : null,
-    classificationSafePreview: true,
-  }),
-  'notification.digest': async (payload) => ({
-    recipientCount: typeof payload.recipientCount === 'number' ? payload.recipientCount : 1,
-    quietHoursRespected: true,
-  }),
+  'notification.dispatch': async (payload) => {
+    const userId = typeof payload.userId === 'string' ? payload.userId : null;
+    const rt = userId
+      ? await publishRealtimePrivateEvent({
+          userId,
+          event: 'notification.created',
+          classification:
+            payload.classification === 'PUBLIC' ? 'PUBLIC' : 'WORKSPACE',
+          objectType: typeof payload.objectType === 'string' ? payload.objectType : 'notification',
+          objectId: typeof payload.notificationId === 'string' ? payload.notificationId : 'unknown',
+          publicTitle: 'ResearchWithME update',
+        })
+      : { broadcast: false, skipped: true };
+    return {
+      notificationId: typeof payload.notificationId === 'string' ? payload.notificationId : null,
+      classificationSafePreview: true,
+      realtimeBroadcast: rt.broadcast,
+    };
+  },
+  'notification.digest': async (payload) => {
+    const recipientEmail =
+      typeof payload.recipientEmail === 'string' ? payload.recipientEmail : null;
+    const userId = typeof payload.userId === 'string' ? payload.userId : 'digest-user';
+    const digestDate =
+      typeof payload.digestDate === 'string'
+        ? payload.digestDate
+        : new Date().toISOString().slice(0, 10);
+    let sent = false;
+    if (recipientEmail && Array.isArray(payload.items)) {
+      const res = await sendNotificationDigestEmail({
+        userId,
+        recipientEmail,
+        digestDate,
+        items: payload.items as Parameters<typeof sendNotificationDigestEmail>[0]['items'],
+        inQuietHours: Boolean(payload.inQuietHours),
+        digestOff: Boolean(payload.digestOff),
+      });
+      sent = res.ok && !res.skipped;
+    }
+    return {
+      recipientCount: typeof payload.recipientCount === 'number' ? payload.recipientCount : 1,
+      quietHoursRespected: true,
+      resendDispatched: sent,
+    };
+  },
   'contribution.publish': async (payload) => ({
     contributionId: typeof payload.contributionId === 'string' ? payload.contributionId : null,
     immutableVersionFrozen: true,

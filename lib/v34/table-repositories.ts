@@ -573,3 +573,29 @@ export async function persistWebhookDeliveryToSupabase(
     { operation: 'v34_webhook_deliveries.upsert', failClosed: false },
   );
 }
+
+export async function persistOutboxConsumerReceiptToSupabase(
+  supabase: SupabaseClient | null | undefined,
+  input: {
+    consumerName: string;
+    eventId: string;
+    result?: Record<string, unknown>;
+  },
+): Promise<boolean> {
+  if (!supabase && !isStrictPersistenceMode()) return false;
+  if (!isUuid(input.eventId)) return false;
+  return runSupabaseMutation(
+    supabase,
+    (sb) =>
+      sb.from('v34_outbox_consumer_receipts').upsert(
+        {
+          consumer_name: input.consumerName,
+          event_id: input.eventId,
+          processed_at: new Date().toISOString(),
+          result: input.result ?? {},
+        },
+        { onConflict: 'consumer_name,event_id' },
+      ),
+    { operation: 'v34_outbox_consumer_receipts.upsert', failClosed: false },
+  );
+}

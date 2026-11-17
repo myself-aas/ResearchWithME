@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isUuid, runSupabaseMutation } from './supabase-sync';
 import { emitDomainEvent, enqueueBackgroundJob, recordAuditEvent } from './outbox';
+import { createR2PresignedGetUrl, getR2Config, storeArtifactInR2 } from './r2-storage';
 import {
   isProviderPermittedForClassification,
   recordAiProvenance,
@@ -132,6 +133,10 @@ export interface RenderJobRecord {
   inputChecksumSha256: string;
   outputChecksumSha256: string | null;
   outputUrl: string | null;
+  storageProvider: 'inline' | 'r2';
+  storageBucket: string | null;
+  storageKey: string | null;
+  signedUrlExpiresAt: string | null;
   durationSeconds: number;
   tokenChecksum: string;
   payload: Record<string, unknown>;
@@ -763,8 +768,32 @@ export async function createRenderJob(input: {
     )
     .digest('hex');
 
+  const renderId = `rnd_${randomUUID().slice(0, 10)}`;
+  const manifestBody = JSON.stringify(
+    {
+      renderId,
+      engine: input.engine,
+      compositionId: input.compositionId,
+      sourceContributionId: input.sourceContributionId ?? null,
+      durationSeconds: input.durationSeconds,
+      tokenChecksum: CURRENT_TOKEN_CHECKSUM,
+      inputChecksumSha256: inputHash,
+      payload: input.payload,
+      createdAt: now,
+    },
+    null,
+    2,
+  );
+  const stored = await storeArtifactInR2({
+    key: `renders/${input.engine.toLowerCase()}/${input.ownerId}/${renderId}/manifest.json`,
+    body: manifestBody,
+    contentType: 'application/json',
+    filename: `${renderId}.manifest.json`,
+    checksumSha256: inputHash,
+  });
+
   const rec: RenderJobRecord = {
-    id: `rnd_${randomUUID().slice(0, 10)}`,
+    id: renderId,
     ownerId: input.ownerId,
     engine: input.engine,
     compositionId: input.compositionId,
@@ -773,8 +802,12 @@ export async function createRenderJob(input: {
     humanApprovedBy: input.humanApproved ? input.ownerId : null,
     humanApprovedAt: input.humanApproved ? now : null,
     inputChecksumSha256: inputHash,
-    outputChecksumSha256: null,
-    outputUrl: null,
+    outputChecksumSha256: stored.provider === 'r2' ? stored.checksumSha256 : null,
+    outputUrl: stored.signedUrl,
+    storageProvider: stored.provider,
+    storageBucket: stored.bucket,
+    storageKey: stored.key,
+    signedUrlExpiresAt: stored.signedUrlExpiresAt,
     durationSeconds: input.durationSeconds,
     tokenChecksum: CURRENT_TOKEN_CHECKSUM,
     payload: input.payload,
@@ -786,7 +819,13 @@ export async function createRenderJob(input: {
   await enqueueBackgroundJob({
     ownerId: input.ownerId,
     jobType: input.engine === 'REMOTION' ? 'render.remotion' : 'render.hyperframes',
-    payload: { renderId: rec.id, compositionId: rec.compositionId, inputChecksumSha256: inputHash },
+    payload: {
+      renderId: rec.id,
+      compositionId: rec.compositionId,
+      inputChecksumSha256: inputHash,
+      storageProvider: rec.storageProvider,
+      storageKey: rec.storageKey,
+    },
     supabase: input.supabase,
   });
   await emitDomainEvent(
@@ -804,6 +843,12 @@ export async function createRenderJob(input: {
         human_approved_by: isUuid(rec.humanApprovedBy) ? rec.humanApprovedBy : null,
         human_approved_at: rec.humanApprovedAt,
         input_checksum_sha256: rec.inputChecksumSha256,
+        output_checksum_sha256: rec.outputChecksumSha256,
+        output_url: rec.outputUrl,
+        storage_provider: rec.storageProvider,
+        storage_bucket: rec.storageBucket,
+        storage_key: rec.storageKey,
+        signed_url_expires_at: rec.signedUrlExpiresAt,
         duration_seconds: rec.durationSeconds,
         token_checksum: rec.tokenChecksum,
         payload: rec.payload,
@@ -814,7 +859,23 @@ export async function createRenderJob(input: {
 }
 
 export function getRenderJob(renderId: string, ownerId: string): RenderJobRecord | null {
-  return getState().renderJobs.find((r) => r.id === renderId && r.ownerId === ownerId) ?? null;
+  const rec =
+    getState().renderJobs.find((r) => r.id === renderId && r.ownerId === ownerId) ?? null;
+  if (!rec) return null;
+  if (rec.storageProvider === 'r2' && rec.storageKey) {
+    const r2Cfg = getR2Config();
+    if (r2Cfg) {
+      const refreshed = createR2PresignedGetUrl(r2Cfg, rec.storageKey, {
+        responseContentType: 'application/json',
+      });
+      return {
+        ...rec,
+        outputUrl: refreshed.url,
+        signedUrlExpiresAt: refreshed.expiresAt,
+      };
+    }
+  }
+  return rec;
 }
 
 export async function cancelRenderJob(input: {

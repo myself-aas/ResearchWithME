@@ -5,6 +5,7 @@ import { assignExperimentVariant } from '@/lib/v34/experiments';
 import { getAllV34FeatureFlags } from '@/lib/v34/feature-flags';
 import { getUnifiedResearchFeed } from '@/lib/v34/feed';
 import { enforceRateLimit } from '@/lib/v34/http';
+import { paginateArrayWithCursor, parsePaginationParams } from '@/lib/v34/pagination';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -30,6 +31,11 @@ export async function GET(request: Request) {
     'public-feed-visitor';
 
   const feed = await getUnifiedResearchFeed({ type, topic, query, sourceIntegrity });
+  const pagination = parsePaginationParams(url, { limit: 30 });
+  const page = paginateArrayWithCursor(feed.items, pagination, {
+    getSortAt: (item) => item.publishedAt ?? '',
+    getId: (item) => item.id,
+  });
   const feedExperiment = assignExperimentVariant('exp-feed-contribution-cta-v1', subjectKey);
 
   recordAnalyticsEvent({
@@ -40,15 +46,19 @@ export async function GET(request: Request) {
     classification: 'PUBLIC',
     properties: {
       surface: 'feed',
-      resultCount: feed.items.length,
+      resultCount: page.items.length,
       filterCount: [type !== 'all', Boolean(topic), Boolean(query), Boolean(sourceIntegrity)].filter(Boolean).length,
     },
   });
 
   return NextResponse.json({
-    items: feed.items,
+    items: page.items,
     availableTopics: feed.availableTopics,
-    total: feed.items.length,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
     experiments: feedExperiment ? [feedExperiment] : [],
     featureFlags: getAllV34FeatureFlags(),
   });

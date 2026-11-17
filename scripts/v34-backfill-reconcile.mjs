@@ -153,7 +153,80 @@ export function runReconciliationDryRun(sample = {}) {
   };
 }
 
+/**
+ * Executes live SQL reconciliation against a Supabase Postgres instance via
+ * Migration 12's `v34_reconcile_integrity_report()` RPC (zero PII / zero prose).
+ */
+export async function runLiveSupabaseReconciliation(opts = {}) {
+  const supabaseUrl = String(
+    opts.supabaseUrl ?? process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
+  )
+    .trim()
+    .replace(/\/$/, '');
+  const apiKey = String(
+    opts.apiKey ??
+      process.env.SUPABASE_SERVICE_ROLE_KEY ??
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+      '',
+  ).trim();
+  const fetchImpl = opts.fetchImpl ?? fetch;
+
+  if (!supabaseUrl || !apiKey) {
+    throw new Error(
+      'Live reconciliation requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or anon key).',
+    );
+  }
+
+  const res = await fetchImpl(`${supabaseUrl}/rest/v1/rpc/v34_reconcile_integrity_report`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: apiKey,
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: '{}',
+  });
+
+  if (!res.ok) {
+    throw new Error(`v34_reconcile_integrity_report RPC failed with HTTP ${res.status}`);
+  }
+
+  const payload = await res.json();
+  const orphans = payload?.orphans ?? {};
+  const checksumIntegrity = payload?.checksumIntegrity ?? {};
+  const totalOrphans =
+    Number(orphans.claimEvidence ?? 0) +
+    Number(orphans.contributionEvidence ?? 0) +
+    Number(orphans.contributionClaims ?? 0) +
+    Number(orphans.evidenceSources ?? 0);
+  const totalInvalidChecksums =
+    Number(checksumIntegrity.invalidExportChecksums ?? 0) +
+    Number(checksumIntegrity.invalidRenderChecksums ?? 0);
+
+  return {
+    mode: 'live',
+    privacySafeLog: true,
+    reconciled: payload?.status === 'RECONCILED' && totalOrphans === 0 && totalInvalidChecksums === 0,
+    totalOrphans,
+    totalInvalidChecksums,
+    report: payload,
+  };
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const report = runReconciliationDryRun();
-  console.log(JSON.stringify(report, null, 2));
+  const isLive = process.argv.includes('--live');
+  if (isLive) {
+    runLiveSupabaseReconciliation()
+      .then((result) => {
+        console.log(JSON.stringify(result, null, 2));
+        if (!result.reconciled) process.exit(1);
+      })
+      .catch((err) => {
+        console.error(err instanceof Error ? err.message : String(err));
+        process.exit(1);
+      });
+  } else {
+    const report = runReconciliationDryRun();
+    console.log(JSON.stringify(report, null, 2));
+  }
 }

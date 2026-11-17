@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import { parsePaginationParams } from '@/lib/v34/pagination';
+import { listProjectsPage } from '@/lib/v34/sql-list-readers';
 import { CreateProjectInputSchema, PROJECT_STAGES, type ProjectStage } from '@/lib/v34/wave2-contracts';
-import { createProject, listProjects } from '@/lib/v34/wave2-store';
+import { createProject } from '@/lib/v34/wave2-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-projects-read', 120, 60_000);
+  if (limited) return limited;
+
   const url = new URL(request.url);
   const workspaceId = url.searchParams.get('workspaceId') ?? undefined;
   const rawStage = url.searchParams.get('stage') ?? 'all';
@@ -15,8 +20,15 @@ export async function GET(request: Request) {
       ? (rawStage as ProjectStage | 'all')
       : 'all';
 
-  const projects = await listProjects({ workspaceId, stage });
-  return NextResponse.json({ projects, total: projects.length });
+  const page = await listProjectsPage(parsePaginationParams(url), { workspaceId, stage });
+  return NextResponse.json({
+    projects: page.items,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
+  });
 }
 
 export async function POST(request: Request) {

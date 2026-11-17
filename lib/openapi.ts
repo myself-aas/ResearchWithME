@@ -116,6 +116,16 @@ export const API_OPERATIONS: ApiOperation[] = [
     responses: { 200: json('Batch result.', object({ success: boolean })), ...errors(401, 500) },
   },
   {
+    group: 'outbox-cron', method: 'get', path: '/api/cron/outbox-drain', operationId: 'drainOutboxGet',
+    summary: 'Drain due v3.4 outbox events (Cron)', description: 'Claims and processes pending v34_outbox_events with FOR UPDATE SKIP LOCKED leases, idempotent consumer receipts, and DLQ retry scheduling.', security: [{ CronSecret: [] }],
+    responses: { 200: json('Outbox drain summary.', object({ ok: boolean })), ...errors(401, 500, 503) },
+  },
+  {
+    group: 'outbox-cron', method: 'post', path: '/api/cron/outbox-drain', operationId: 'drainOutboxPost',
+    summary: 'Drain due v3.4 outbox events (Queue/Worker)', description: 'Drains pending v34_outbox_events invoked by the dedicated Cloudflare Outbox Worker or scheduler.', security: [{ CronSecret: [] }],
+    responses: { 200: json('Outbox drain summary.', object({ ok: boolean })), ...errors(401, 500, 503) },
+  },
+  {
     group: 'article-webhook', method: 'post', path: '/api/webhooks/article-published', operationId: 'articlePublishedWebhook',
     summary: 'Receive an article publication event', description: 'Triggers LinkedIn posting for published article inserts. The current handler does not verify a webhook signature.',
     requestBody: jsonBody(object({ type: text, table: text, record: { type: 'object' } }), 'Database webhook payload.'),

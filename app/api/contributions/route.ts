@@ -15,12 +15,17 @@ import {
 } from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
 import { validateAndSanitizeMdx } from '@/lib/v34/mdx-security';
-import { createContribution, listContributions, persistContributionToSupabase } from '@/lib/v34/store';
+import { parsePaginationParams } from '@/lib/v34/pagination';
+import { listContributionsPage } from '@/lib/v34/sql-list-readers';
+import { createContribution, persistContributionToSupabase } from '@/lib/v34/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-contributions-read', 120, 60_000);
+  if (limited) return limited;
+
   const url = new URL(request.url);
   const rawType = url.searchParams.get('type') ?? 'all';
   const type =
@@ -31,8 +36,9 @@ export async function GET(request: Request) {
   const query = url.searchParams.get('q') ?? undefined;
   const authorHandle = url.searchParams.get('author') ?? undefined;
   const user = await getDashboardUser();
+  const pagination = parsePaginationParams(url);
 
-  const contributions = listContributions({
+  const page = await listContributionsPage(pagination, {
     includeDraftsForAuthorId: user?.id ?? null,
     type,
     topic,
@@ -40,7 +46,14 @@ export async function GET(request: Request) {
     authorHandle,
   });
 
-  return NextResponse.json({ contributions, total: contributions.length });
+  return NextResponse.json({
+    contributions: page.items,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
+  });
 }
 
 export async function POST(request: Request) {

@@ -1,15 +1,28 @@
 import { NextResponse } from 'next/server';
 import { CreateEvidenceInputSchema } from '@/lib/v34/contracts';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
-import { createEvidence, listEvidence, persistEvidenceToSupabase } from '@/lib/v34/store';
+import { parsePaginationParams } from '@/lib/v34/pagination';
+import { listEvidencePage } from '@/lib/v34/sql-list-readers';
+import { createEvidence, persistEvidenceToSupabase } from '@/lib/v34/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-  const sourceId = new URL(request.url).searchParams.get('sourceId') ?? undefined;
-  const evidence = listEvidence(sourceId);
-  return NextResponse.json({ evidence, total: evidence.length });
+  const limited = await enforceRateLimit(request, 'v34-evidence-read', 120, 60_000);
+  if (limited) return limited;
+
+  const url = new URL(request.url);
+  const sourceId = url.searchParams.get('sourceId') ?? undefined;
+  const page = await listEvidencePage(parsePaginationParams(url), sourceId);
+  return NextResponse.json({
+    evidence: page.items,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
+  });
 }
 
 export async function POST(request: Request) {

@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { formatShortDate } from '@/lib/formatting/locale';
 import { editorDb, type LocalDraftRecord } from '@/lib/persistence/editor-db';
+import { usePrivateResearchRealtime } from '@/lib/v34/realtime-client';
 import type { ResearchGoalRecord } from '@/lib/v34/store';
 import type { ProjectSummary } from '@/lib/v34/wave2-store';
 import {
@@ -109,6 +110,31 @@ export function ResearchOsClient({
   const [preferences, setPreferences] = useState<DashboardPreferencesRecord>(initialPreferences);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  usePrivateResearchRealtime(
+    !offline && initialPreferences.userId ? initialPreferences.userId : null,
+    (event) => {
+      if (event.table === 'v34_notifications') {
+        void fetch('/api/notifications?limit=20')
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data: { notifications?: NotificationRecord[] } | null) => {
+            if (data && Array.isArray(data.notifications)) {
+              setNotifications(data.notifications);
+            }
+          })
+          .catch(() => undefined);
+      } else if (event.table === 'v34_attention_items') {
+        void fetch('/api/attention?limit=20')
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data: { items?: AttentionItemRecord[] } | null) => {
+            if (data && Array.isArray(data.items)) {
+              setAttention(data.items);
+            }
+          })
+          .catch(() => undefined);
+      }
+    },
+  );
 
   useEffect(() => {
     const syncOnline = () => setOffline(typeof navigator !== 'undefined' && !navigator.onLine);

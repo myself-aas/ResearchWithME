@@ -7,6 +7,7 @@
  */
 import crypto from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { createR2PresignedGetUrl, getR2Config, storeArtifactInR2 } from './r2-storage';
 import { getContributionById, getSourceWithDetails } from './store';
 import { isUuid, runSupabaseMutation } from './supabase-sync';
 import { listCitationCollections } from './wave5-store';
@@ -24,6 +25,11 @@ export interface ScholarlyExportRecord {
   filename: string;
   payload: string;
   byteSize: number;
+  storageProvider: 'inline' | 'r2';
+  storageBucket: string | null;
+  storageKey: string | null;
+  signedDownloadUrl: string | null;
+  signedUrlExpiresAt: string | null;
   createdAt: string;
 }
 
@@ -172,18 +178,34 @@ export async function createScholarlyExport(input: {
     ].join('\n');
   }
 
+  const exportId = makeId('exp');
+  const checksumSha256 = sha256(payload);
+  const filename = `${sanitizeBibKey(input.targetId)}.${ext}`;
+  const stored = await storeArtifactInR2({
+    key: `exports/${input.userId}/${exportId}/${filename}`,
+    body: payload,
+    contentType,
+    filename,
+    checksumSha256,
+  });
+
   const record: ScholarlyExportRecord = {
-    id: makeId('exp'),
+    id: exportId,
     userId: input.userId,
     targetType: input.targetType,
     targetId: input.targetId,
     format: input.format,
     status: 'COMPLETED',
-    checksumSha256: sha256(payload),
+    checksumSha256,
     contentType,
-    filename: `${sanitizeBibKey(input.targetId)}.${ext}`,
+    filename,
     payload,
-    byteSize: Buffer.byteLength(payload, 'utf8'),
+    byteSize: stored.byteSize,
+    storageProvider: stored.provider,
+    storageBucket: stored.bucket,
+    storageKey: stored.key,
+    signedDownloadUrl: stored.signedUrl,
+    signedUrlExpiresAt: stored.signedUrlExpiresAt,
     createdAt: new Date().toISOString(),
   };
 
@@ -200,8 +222,12 @@ export async function createScholarlyExport(input: {
         status: record.status,
         checksum_sha256: record.checksumSha256,
         content_type: record.contentType,
-        payload: record.payload,
+        payload: record.storageProvider === 'r2' ? '' : record.payload,
         byte_size: record.byteSize,
+        storage_provider: record.storageProvider,
+        storage_bucket: record.storageBucket,
+        storage_key: record.storageKey,
+        signed_url_expires_at: record.signedUrlExpiresAt,
       }),
     );
   }
@@ -212,5 +238,19 @@ export async function createScholarlyExport(input: {
 export function getScholarlyExport(userId: string, exportId: string): ScholarlyExportRecord | null {
   const rec = exportStore.get(exportId);
   if (!rec || rec.userId !== userId) return null;
+  if (rec.storageProvider === 'r2' && rec.storageKey) {
+    const r2Cfg = getR2Config();
+    if (r2Cfg) {
+      const refreshed = createR2PresignedGetUrl(r2Cfg, rec.storageKey, {
+        responseContentDisposition: `attachment; filename="${rec.filename}"`,
+        responseContentType: rec.contentType,
+      });
+      return {
+        ...rec,
+        signedDownloadUrl: refreshed.url,
+        signedUrlExpiresAt: refreshed.expiresAt,
+      };
+    }
+  }
   return rec;
 }

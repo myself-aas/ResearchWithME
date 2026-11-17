@@ -19,7 +19,12 @@ export async function POST(request: Request) {
 
   return runWithIdempotency(
     request,
-    { scope: 'POST:/api/exports', actorId: auth.actor.id, payloadHashInput: parsed.data },
+    {
+      scope: 'POST:/api/exports',
+      actorId: auth.actor.id,
+      payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
+    },
     async () => {
       const result = await createScholarlyExport({
         userId: auth.actor.id,

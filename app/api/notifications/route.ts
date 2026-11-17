@@ -1,18 +1,34 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import { parsePaginationParams } from '@/lib/v34/pagination';
+import { listNotificationsPage } from '@/lib/v34/sql-list-readers';
 import { UpdateNotificationInputSchema } from '@/lib/v34/wave3-contracts';
-import { listNotifications, setNotificationRead } from '@/lib/v34/wave3-store';
+import { setNotificationRead } from '@/lib/v34/wave3-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-notifications-read', 120, 60_000);
+  if (limited) return limited;
+
   const auth = await requireContributor();
   if (!auth.ok) return auth.response;
 
-  const notifications = listNotifications(auth.actor.id);
-  const unreadCount = notifications.filter((n) => n.readAt === null).length;
-  return NextResponse.json({ notifications, unreadCount, total: notifications.length });
+  const page = await listNotificationsPage(
+    parsePaginationParams(request.url),
+    auth.actor.id,
+    auth.actor.supabase,
+  );
+  return NextResponse.json({
+    notifications: page.items,
+    unreadCount: page.unreadCount,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
+  });
 }
 
 export async function PATCH(request: Request) {

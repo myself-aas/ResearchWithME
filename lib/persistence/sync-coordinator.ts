@@ -171,9 +171,27 @@ export class DraftSyncCoordinator {
 
     if (this.isOnline()) {
       void this.flush(input.draftId);
+    } else {
+      void this.requestBackgroundSync();
     }
 
     return record;
+  }
+
+  /**
+   * Registers the `rwm-editor-autosave-sync` Service Worker Background Sync tag
+   * when mutations are queued offline (Wave 18 P1).
+   */
+  private async requestBackgroundSync(): Promise<void> {
+    if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
+    try {
+      const reg = (await navigator.serviceWorker.ready) as ServiceWorkerRegistration & {
+        sync?: { register: (tag: string) => Promise<void> };
+      };
+      await reg.sync?.register('rwm-editor-autosave-sync');
+    } catch {
+      // Fallback to foreground/online sync handled by PwaLifecycleBridge
+    }
   }
 
   /**

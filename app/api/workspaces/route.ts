@@ -1,14 +1,26 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import { parsePaginationParams } from '@/lib/v34/pagination';
+import { listWorkspacesPage } from '@/lib/v34/sql-list-readers';
 import { CreateWorkspaceInputSchema } from '@/lib/v34/wave2-contracts';
-import { createWorkspace, listWorkspaces } from '@/lib/v34/wave2-store';
+import { createWorkspace } from '@/lib/v34/wave2-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  const workspaces = await listWorkspaces();
-  return NextResponse.json({ workspaces, total: workspaces.length });
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-workspaces-read', 120, 60_000);
+  if (limited) return limited;
+
+  const page = await listWorkspacesPage(parsePaginationParams(request.url));
+  return NextResponse.json({
+    workspaces: page.items,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
+  });
 }
 
 export async function POST(request: Request) {

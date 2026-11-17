@@ -183,7 +183,7 @@ describe('v3.4 Wave 2 API routes: Workspaces, Projects, Formal Reviews & Provena
     });
     expect(detailRes.status).toBe(200);
 
-    const wsList = await getWorkspaces();
+    const wsList = await getWorkspaces(new Request('http://localhost/api/workspaces'));
     expect(((await wsList.json()) as { total: number }).total).toBeGreaterThanOrEqual(1);
   });
 

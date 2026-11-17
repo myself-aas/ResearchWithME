@@ -337,7 +337,7 @@ describe('ResearchWithME v3.4 Wave 7 — Canonical Sub-Routes, Tools Import, AI 
     expect(restricted.status).toBe(403);
 
     // 2. Notifications include safePreview + read-all leaves Attention Queue untouched
-    const notifBefore = await getNotifications();
+    const notifBefore = await getNotifications(new Request('http://localhost/api/notifications'));
     const notifData = await notifBefore.json();
     expect(notifData.notifications[0].safePreview).toBeTruthy();
     const openAttentionBefore = listAttentionItems('local-contributor').filter(

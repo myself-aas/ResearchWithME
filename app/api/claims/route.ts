@@ -1,14 +1,26 @@
 import { NextResponse } from 'next/server';
 import { CreateClaimInputSchema } from '@/lib/v34/contracts';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
-import { createClaim, listClaims, persistClaimToSupabase } from '@/lib/v34/store';
+import { parsePaginationParams } from '@/lib/v34/pagination';
+import { listClaimsPage } from '@/lib/v34/sql-list-readers';
+import { createClaim, persistClaimToSupabase } from '@/lib/v34/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
-  const claims = listClaims();
-  return NextResponse.json({ claims, total: claims.length });
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-claims-read', 120, 60_000);
+  if (limited) return limited;
+
+  const page = await listClaimsPage(parsePaginationParams(request.url));
+  return NextResponse.json({
+    claims: page.items,
+    cursor: page.cursor,
+    limit: page.limit,
+    nextCursor: page.nextCursor,
+    hasMore: page.hasMore,
+    total: page.total,
+  });
 }
 
 export async function POST(request: Request) {

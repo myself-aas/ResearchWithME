@@ -380,6 +380,29 @@ check('V34-18', 'v3.4 Wave 17 P0 stateless persistence, fail-closed writes, atom
   assert(search.includes('v34_unified_search'), 'search.ts missing Postgres FTS/trigram RPC');
   return 'Wave 17 P0 stateless persistence, atomic autosave, durable idempotency, FTS/trigram search & centralized RBAC verified';
 });
+check('V34-19', 'v3.4 Wave 18 P1 durable outbox worker + DLQ + Cloudflare Queue/Cron, live SQL reconciliation, canonical cursor pagination, VAPID Push + Resend Digest + Supabase Realtime, R2 signed storage, OTel/Sentry, SW Background Sync & ADR-033', () => {
+  const files = [
+    'supabase/migrations/20261117001200_v34_wave18_async_delivery_storage_pagination.sql',
+    'lib/v34/outbox-worker.ts',
+    'app/api/cron/outbox-drain/route.ts',
+    'workers/outbox/wrangler.jsonc',
+    'workers/outbox/src/index.ts',
+    'lib/v34/pagination.ts',
+    'lib/v34/sql-list-readers.ts',
+    'lib/v34/delivery.ts',
+    'lib/v34/realtime-client.ts',
+    'lib/v34/r2-storage.ts',
+    'lib/v34/telemetry-export.ts',
+    'docs/adr/ADR-033-supabase-sql-over-prisma.md',
+    'test/next/v34-wave18-async-ops.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const sw = readFileSync(join(root, 'public/sw.js'), 'utf8');
+  assert(sw.includes("addEventListener('sync'") && sw.includes('rwm-editor-autosave-sync'), 'sw.js missing Background Sync listener');
+  const reconcile = readFileSync(join(root, 'scripts/v34-backfill-reconcile.mjs'), 'utf8');
+  assert(reconcile.includes('runLiveSupabaseReconciliation') && reconcile.includes('v34_reconcile_integrity_report'), 'v34-backfill-reconcile.mjs missing --live reconciliation engine');
+  return 'Wave 18 P1 async outbox worker, live SQL reconciliation, cursor pagination, live delivery, R2 storage, OTel/Sentry, SW sync & ADR-033 verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

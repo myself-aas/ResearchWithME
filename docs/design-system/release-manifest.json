@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T12:59:35.542Z",
+  "generatedAt": "2026-11-17T13:36:39.594Z",
   "tokenChecksum": "sha256:843f5911b2ee4631",
   "results": [
     {
@@ -182,6 +182,12 @@
       "description": "v3.4 Wave 17 P0 stateless persistence, fail-closed writes, atomic Postgres autosave RPC, durable idempotency, FTS/trigram search, centralized authorize(), 89/89 v34_* tables & 100% API rate limiting",
       "status": "pass",
       "evidence": "Wave 17 P0 stateless persistence, atomic autosave, durable idempotency, FTS/trigram search & centralized RBAC verified"
+    },
+    {
+      "id": "V34-19",
+      "description": "v3.4 Wave 18 P1 durable outbox worker + DLQ + Cloudflare Queue/Cron, live SQL reconciliation, canonical cursor pagination, VAPID Push + Resend Digest + Supabase Realtime, R2 signed storage, OTel/Sentry, SW Background Sync & ADR-033",
+      "status": "pass",
+      "evidence": "Wave 18 P1 async outbox worker, live SQL reconciliation, cursor pagination, live delivery, R2 storage, OTel/Sentry, SW sync & ADR-033 verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"
