@@ -21,6 +21,7 @@ import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
 import TopicsClient from '@/components/v34/TopicsClient';
 import SearchClient from '@/components/v34/SearchClient';
 import { ContributionIntegrityExports } from '@/components/v34/ContributionIntegrityExports';
+import SettingsIdentityClient from '@/components/v34/SettingsIdentityClient';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ResponsivePaneLayout from '@/components/layout/ResponsivePaneLayout';
 import { executeUnifiedSearch } from '@/lib/v34/search';
@@ -338,5 +339,10 @@ describe('v3.4 Wave 4 axe-core WCAG 2.1 A/AA & visual token audit', () => {
 
     act(() => root.unmount());
     container.remove();
+  });
+
+  it('Wave 9 SettingsIdentityClient passes axe WCAG 2.1 AA', async () => {
+    const res = await runAxeOnMarkup(createElement(SettingsIdentityClient));
+    expect(res.violations).toEqual([]);
   });
 });

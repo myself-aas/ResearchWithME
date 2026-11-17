@@ -123,6 +123,11 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
 
   const secondaryNav = [
     { href: '/research-os', label: 'Research OS', icon: Sparkles },
+    { href: '/projects', label: 'Projects', icon: FolderKanban },
+    { href: '/sources', label: 'Sources', icon: BookOpen },
+    { href: '/evidence', label: 'Evidence', icon: CheckCircle2 },
+    { href: '/claims', label: 'Claims', icon: Compass },
+    { href: '/reviews', label: 'Peer Reviews', icon: User },
     { href: '/tools', label: 'Tool Registry', icon: FolderKanban },
     { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
     { href: '/cite', label: 'Cite', icon: Bookmark },

@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   AlertTriangle,
+  ArrowDown,
   ArrowLeft,
   ArrowRight,
+  ArrowUp,
   CheckCircle2,
   Cloud,
   CloudOff,
@@ -16,6 +18,7 @@ import {
   Plus,
   Send,
   ShieldCheck,
+  Slash,
   Trash2,
 } from 'lucide-react';
 import {
@@ -108,6 +111,7 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
   // Persistence & Sync state (v3.4 §11)
   const [saveState, setSaveState] = useState<SaveState>('saved');
   const [conflict, setConflict] = useState<ConflictDetail | null>(null);
+  const [slashMenuOpen, setSlashMenuOpen] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [publishedSlug, setPublishedSlug] = useState<string | null>(null);
@@ -300,6 +304,17 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
 
   const removeBlock = (id: string) => {
     setBlocks((prev) => (prev.length > 1 ? prev.filter((b) => b.id !== id) : prev));
+  };
+
+  const moveBlock = (index: number, delta: -1 | 1) => {
+    setBlocks((prev) => {
+      const target = index + delta;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(index, 1);
+      if (moved) next.splice(target, 0, moved);
+      return next;
+    });
   };
 
   const handleResolveConflict = async (strategy: 'keep-client' | 'keep-server' | 'merge') => {
@@ -711,9 +726,26 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
 
             <div className="space-y-3 border-t border-line pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-                  Structured document blocks
-                </p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+                    Structured document blocks
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setSlashMenuOpen((prev) => !prev)}
+                    aria-expanded={slashMenuOpen}
+                    className="inline-flex min-h-10 items-center gap-1 rounded-full border border-brand/40 bg-brand/5 px-3 py-1 font-mono text-xs font-medium text-brand hover:bg-brand/10"
+                  >
+                    <Slash className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>Slash commands</span>
+                  </button>
+                  <Link
+                    href={`/workspaces?draft=${encodeURIComponent(draftId)}`}
+                    className="inline-flex min-h-10 items-center rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-ink hover:border-brand"
+                  >
+                    Continue in Workspace →
+                  </Link>
+                </div>
                 <div className="flex flex-wrap gap-1.5">
                   {(['paragraph', 'heading', 'evidence', 'claim', 'limitation', 'code'] as const).map((kind) => (
                     <button
@@ -729,27 +761,86 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
                 </div>
               </div>
 
+              {slashMenuOpen ? (
+                <div
+                  role="menu"
+                  aria-label="Scholarly slash commands"
+                  className="grid gap-2 rounded-lg border border-brand/40 bg-canvas p-3 sm:grid-cols-2 lg:grid-cols-4"
+                >
+                  {(
+                    [
+                      { kind: 'evidence', cmd: '/evidence', desc: 'Source-version-located observation' },
+                      { kind: 'claim', cmd: '/claim', desc: 'Typed scholarly proposition' },
+                      { kind: 'limitation', cmd: '/limitation', desc: 'Scope boundary or caveat' },
+                      { kind: 'citation', cmd: '/citation', desc: 'Inline canonical source reference' },
+                      { kind: 'question', cmd: '/question', desc: 'Open research question' },
+                      { kind: 'callout', cmd: '/callout', desc: 'Methodological note' },
+                      { kind: 'code', cmd: '/code', desc: 'Reproducible snippet' },
+                      { kind: 'heading', cmd: '/heading', desc: 'Section heading' },
+                    ] as const
+                  ).map((item) => (
+                    <button
+                      key={item.cmd}
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        addBlock(item.kind);
+                        setSlashMenuOpen(false);
+                      }}
+                      className="rounded-md border border-line bg-surface p-2.5 text-left hover:border-brand"
+                    >
+                      <span className="block font-mono text-xs font-semibold text-brand">{item.cmd}</span>
+                      <span className="mt-0.5 block text-xs text-ink-secondary">{item.desc}</span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+
               {blocks.map((block, index) => (
                 <div key={block.id} className="rounded-md border border-line bg-canvas p-3">
                   <div className="mb-2 flex items-center justify-between gap-2">
                     <span className="font-mono text-xs font-semibold uppercase text-brand">
                       {index + 1}. {block.type}
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => removeBlock(block.id)}
-                      disabled={blocks.length <= 1}
-                      aria-label={`Remove block ${index + 1}`}
-                      className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-ink-secondary hover:bg-surface-subtle hover:text-destructive disabled:opacity-30"
-                    >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => moveBlock(index, -1)}
+                        disabled={index === 0}
+                        aria-label={`Move block ${index + 1} up`}
+                        className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-ink-secondary hover:bg-surface-subtle hover:text-ink disabled:opacity-30"
+                      >
+                        <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveBlock(index, 1)}
+                        disabled={index === blocks.length - 1}
+                        aria-label={`Move block ${index + 1} down`}
+                        className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-ink-secondary hover:bg-surface-subtle hover:text-ink disabled:opacity-30"
+                      >
+                        <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeBlock(block.id)}
+                        disabled={blocks.length <= 1}
+                        aria-label={`Remove block ${index + 1}`}
+                        className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-ink-secondary hover:bg-surface-subtle hover:text-destructive disabled:opacity-30"
+                      >
+                        <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      </button>
+                    </div>
                   </div>
                   <textarea
                     rows={block.type === 'heading' ? 1 : 3}
                     value={block.text}
-                    onChange={(e) => updateBlock(block.id, { text: e.target.value })}
-                    placeholder={`Write ${block.type} content…`}
+                    onChange={(e) => {
+                      const nextVal = e.target.value;
+                      if (nextVal === '/') setSlashMenuOpen(true);
+                      updateBlock(block.id, { text: nextVal });
+                    }}
+                    placeholder={`Write ${block.type} content… (type / for slash commands)`}
                     className="w-full rounded-md border border-line bg-surface p-2.5 font-sans text-sm text-ink"
                   />
                   {block.type === 'evidence' ? (

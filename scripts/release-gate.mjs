@@ -105,7 +105,7 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 });
 
 // v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
-check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–8)', () => {
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–9)', () => {
   const migrations = [
     'supabase/migrations/20261117000100_v34_research_network.sql',
     'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
@@ -114,6 +114,7 @@ check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–8)', () 
     'supabase/migrations/20261117000500_v34_wave6_ai_provenance_exports_search.sql',
     'supabase/migrations/20261117000600_v34_wave7_devices_push_sync_profile.sql',
     'supabase/migrations/20261117000700_v34_wave8_assessments_tasks_renders_ops.sql',
+    'supabase/migrations/20261117000800_v34_wave9_integrity_impacts_follows_annotations_ops.sql',
   ];
   for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
   return `${migrations.length} ordered v3.4 migrations verified`;
@@ -239,6 +240,33 @@ check('V34-10', 'v3.4 Wave 8 complete Part V §6 API parity, transactional outbo
   ];
   for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
   return `${files.length} Wave 8 full API parity, outbox, telemetry & render artifacts verified`;
+});
+check('V34-11', 'v3.4 Wave 9 first-class knowledge routes, MDX security, PWA offline wipe, landing resolver, experiments & backfill dry-run present', () => {
+  const files = [
+    'app/sources/page.tsx',
+    'app/evidence/page.tsx',
+    'app/evidence/[id]/page.tsx',
+    'app/claims/page.tsx',
+    'app/claim/[id]/page.tsx',
+    'app/projects/page.tsx',
+    'app/project/[id]/page.tsx',
+    'app/tool/[slug]/page.tsx',
+    'app/reviews/page.tsx',
+    'app/review/[id]/page.tsx',
+    'app/topics/[slug]/page.tsx',
+    'app/workspace/[id]/page.tsx',
+    'components/v34/SettingsIdentityClient.tsx',
+    'components/v34/PwaLifecycleBridge.tsx',
+    'public/sw.js',
+    'lib/v34/mdx-security.ts',
+    'lib/v34/experiments.ts',
+    'lib/v34/landing.ts',
+    'lib/persistence/logout-wipe.ts',
+    'scripts/v34-backfill-reconcile.mjs',
+    'test/next/v34-wave9-platform.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 9 canonical UI, PWA, security & backfill artifacts verified`;
 });
 
 const failed = results.filter((r) => r.status === 'fail');

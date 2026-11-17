@@ -7,6 +7,7 @@ import { SITE_DESCRIPTION, SITE_URL, absoluteUrl } from '@/lib/seo';
 import MotionModeProvider from '@/components/motion/MotionModeProvider';
 import MotionScope from '@/components/motion/MotionScope';
 import RouteTransition from '@/components/motion/RouteTransition';
+import PwaLifecycleBridge from '@/components/v34/PwaLifecycleBridge';
 
 // Canonical brand typography: self-hosted Plus Jakarta Sans (WOFF2, OFL) leads
 // editorial sans and display/body stacks in app/globals.css; Inter and Newsreader
@@ -117,6 +118,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MotionModeProvider>
           <MotionScope>
             <div className="min-h-screen">
+              <PwaLifecycleBridge />
               <RouteTransition>{children}</RouteTransition>
             </div>
           </MotionScope>

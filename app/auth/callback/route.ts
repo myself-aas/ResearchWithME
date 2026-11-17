@@ -2,11 +2,19 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { SUPABASE_ANON_KEY, SUPABASE_URL, isSupabaseConfigured } from '@/lib/supabase/config';
 import { safeNextPath } from '@/lib/safe-redirect';
+import { resolvePostAuthDestination, type ConfiguredLanding } from '@/lib/v34/landing';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
-  const next = safeNextPath(request.nextUrl.searchParams.get('next'), '/');
+  const rawNext = request.nextUrl.searchParams.get('next');
+  const configuredLanding = request.cookies.get('rwm_landing')?.value as ConfiguredLanding | undefined;
+  const fallback = configuredLanding
+    ? resolvePostAuthDestination({ configuredLanding })
+    : rawNext
+      ? '/'
+      : resolvePostAuthDestination({});
+  const next = rawNext ? safeNextPath(rawNext, fallback) : fallback;
   const loginUrl = new URL('/login', request.url);
   loginUrl.searchParams.set('next', next);
   // Connecting GitHub or ORCID starts from the application page with a session

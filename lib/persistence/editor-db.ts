@@ -225,6 +225,20 @@ export class EditorDatabase {
     }
   }
 
+  async clearAll(): Promise<void> {
+    this.memDrafts.clear();
+    this.memMutations.clear();
+    this.memSnapshots.clear();
+    if (!hasIndexedDb()) return;
+    try {
+      await this.runTx(STORES.drafts, 'readwrite', (s) => s.clear());
+      await this.runTx(STORES.mutations, 'readwrite', (s) => s.clear());
+      await this.runTx(STORES.snapshots, 'readwrite', (s) => s.clear());
+    } catch {
+      // Best-effort clear when IndexedDB is unavailable
+    }
+  }
+
   clearMemoryForTesting(): void {
     this.memDrafts.clear();
     this.memMutations.clear();

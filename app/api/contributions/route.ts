@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDashboardUser } from '@/lib/cms/auth';
-import { CONTRIBUTION_TYPES, CreateContributionInputSchema, type ContributionType } from '@/lib/v34/contracts';
+import {
+  CONTRIBUTION_TYPES,
+  CreateContributionInputSchema,
+  serializeResearchDocumentToMdx,
+  type ContributionType,
+} from '@/lib/v34/contracts';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
+import { validateAndSanitizeMdx } from '@/lib/v34/mdx-security';
 import { createContribution, listContributions, persistContributionToSupabase } from '@/lib/v34/store';
 
 export const runtime = 'nodejs';
@@ -40,6 +46,20 @@ export async function POST(request: Request) {
 
   const parsed = await parseJsonBody(request, CreateContributionInputSchema);
   if (!parsed.ok) return parsed.response;
+
+  const candidateMdx = parsed.data.document
+    ? serializeResearchDocumentToMdx(parsed.data.document)
+    : '';
+  const mdxCheck = validateAndSanitizeMdx(candidateMdx);
+  if (!mdxCheck.safe) {
+    return NextResponse.json(
+      {
+        error: 'MDX document violated scholarly security allowlist (Part V §16.2).',
+        violations: mdxCheck.violations,
+      },
+      { status: 400 },
+    );
+  }
 
   return runWithIdempotency(
     request,
