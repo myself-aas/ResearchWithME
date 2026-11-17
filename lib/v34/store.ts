@@ -2097,4 +2097,117 @@ export function deleteRelationshipById(
   return { ok: true, deletedId: relationshipId };
 }
 
+// ── Wave 8 Canonical CRUD & Snapshot helpers (Part V §6.4–§6.8) ──────────
+
+export function getSourceById(id: string): SourceRecord | null {
+  return state.sources.get(id) ?? null;
+}
+
+export function updateSource(
+  id: string,
+  patch: Partial<Pick<SourceRecord, 'title' | 'venue' | 'publishedDate' | 'canonicalUrl' | 'integrityStatus'>>,
+): SourceRecord | null {
+  const existing = state.sources.get(id);
+  if (!existing) return null;
+  const updated: SourceRecord = {
+    ...existing,
+    title: patch.title ?? existing.title,
+    venue: patch.venue !== undefined ? patch.venue : existing.venue,
+    publishedDate: patch.publishedDate !== undefined ? patch.publishedDate : existing.publishedDate,
+    canonicalUrl: patch.canonicalUrl !== undefined ? patch.canonicalUrl : existing.canonicalUrl,
+    integrityStatus: patch.integrityStatus ?? existing.integrityStatus,
+    updatedAt: new Date().toISOString(),
+  };
+  state.sources.set(id, updated);
+  return updated;
+}
+
+export function deleteEvidence(
+  id: string,
+): { ok: true; deletedId: string } | { ok: false; status: 404 | 409; message: string } {
+  const existing = state.evidence.get(id);
+  if (!existing) return { ok: false, status: 404, message: 'Evidence not found.' };
+  const referencedByPublished = [...state.contributions.values()].some(
+    (c) => (c.lifecycle === 'published' || c.lifecycle === 'validated') && c.evidenceIds.includes(id),
+  );
+  if (referencedByPublished) {
+    return {
+      ok: false,
+      status: 409,
+      message: 'Canonical evidence cited by a published contribution cannot be hard-deleted (ADR-032).',
+    };
+  }
+  state.evidence.delete(id);
+  state.claimEvidence = state.claimEvidence.filter((l) => l.evidenceId !== id);
+  return { ok: true, deletedId: id };
+}
+
+export function deleteClaim(
+  id: string,
+): { ok: true; deletedId: string } | { ok: false; status: 404 | 409; message: string } {
+  const existing = state.claims.get(id);
+  if (!existing) return { ok: false, status: 404, message: 'Claim not found.' };
+  const referencedByPublished = [...state.contributions.values()].some(
+    (c) => (c.lifecycle === 'published' || c.lifecycle === 'validated') && c.claimIds.includes(id),
+  );
+  if (referencedByPublished) {
+    return {
+      ok: false,
+      status: 409,
+      message: 'Canonical claim linked to a published contribution cannot be hard-deleted (ADR-032).',
+    };
+  }
+  state.claims.delete(id);
+  state.claimEvidence = state.claimEvidence.filter((l) => l.claimId !== id);
+  return { ok: true, deletedId: id };
+}
+
+export function createManualDraftSnapshot(
+  draftId: string,
+  _userId: string,
+  label: string,
+): { ok: true; snapshot: ServerDraftSnapshot; label: string } | { ok: false; status: 404; message: string } {
+  const draft = state.drafts.get(draftId);
+  if (!draft) return { ok: false, status: 404, message: 'Draft not found.' };
+  const snap: ServerDraftSnapshot = {
+    id: makeId('snap'),
+    draftId: draft.id,
+    version: draft.version,
+    document: draft.document,
+    reason: 'manual',
+    createdAt: new Date().toISOString(),
+  };
+  const existing = state.draftSnapshots.get(draft.id) ?? [];
+  existing.unshift(snap);
+  state.draftSnapshots.set(draft.id, existing.slice(0, 50));
+  return { ok: true, snapshot: snap, label };
+}
+
+export function updateLibraryItemById(
+  userId: string,
+  itemId: string,
+  patch: Partial<Pick<LibraryItemRecord, 'collection' | 'note'>>,
+): LibraryItemRecord | null {
+  const items = state.library.get(userId) ?? [];
+  const idx = items.findIndex((i) => i.id === itemId);
+  if (idx < 0) return null;
+  const updated: LibraryItemRecord = {
+    ...items[idx],
+    note: patch.note !== undefined ? patch.note : items[idx].note,
+    collection: patch.collection !== undefined ? patch.collection : items[idx].collection,
+  };
+  items[idx] = updated;
+  state.library.set(userId, items);
+  return updated;
+}
+
+export function deleteLibraryItemById(userId: string, itemId: string): boolean {
+  const items = state.library.get(userId) ?? [];
+  const before = items.length;
+  const remaining = items.filter((i) => i.id !== itemId);
+  state.library.set(userId, remaining);
+  return remaining.length < before;
+}
+
+
 

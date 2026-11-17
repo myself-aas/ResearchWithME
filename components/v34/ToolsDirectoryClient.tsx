@@ -194,6 +194,27 @@ export function ToolsDirectoryClient({
     }
   }
 
+  async function handleRefreshTool(toolId: string) {
+    setBusy(true);
+    setFeedback(null);
+    try {
+      const res = await fetch(`/api/tools/${encodeURIComponent(toolId)}/refresh`, {
+        method: 'POST',
+      });
+      const data = (await res.json()) as { tool?: ToolRepositoryRecord; error?: string };
+      if (!res.ok || !data.tool) {
+        setFeedback(data.error || 'Sign in to refresh repository observations.');
+        return;
+      }
+      setTools((prev) => prev.map((t) => (t.id === toolId ? data.tool! : t)));
+      setFeedback(`Refreshed timestamped repository observation for "${data.tool.name}".`);
+    } catch {
+      setFeedback('Network error refreshing repository observation.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -447,11 +468,21 @@ export function ToolsDirectoryClient({
                     <span className="text-ink-secondary">{tool.primaryLanguage}</span>
                   )}
                 </div>
-                <p className="text-ink-secondary">
-                  Repository metrics observed on{' '}
-                  <time dateTime={tool.observedAt}>{formatShortDate(tool.observedAt)}</time> —
-                  kept separate from immutable Source records.
-                </p>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-ink-secondary">
+                    Repository metrics observed on{' '}
+                    <time dateTime={tool.observedAt}>{formatShortDate(tool.observedAt)}</time> —
+                    kept separate from immutable Source records.
+                  </p>
+                  <button
+                    type="button"
+                    disabled={busy}
+                    onClick={() => handleRefreshTool(tool.id)}
+                    className="rounded border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+                  >
+                    Refresh observation
+                  </button>
+                </div>
               </div>
 
               {/* Linked citable Software Source snapshots (ToolSourceLink) */}

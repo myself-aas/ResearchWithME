@@ -1448,3 +1448,129 @@ export async function submitFormalReview(input: {
   return { ok: true, review: sanitizeReviewForAnonymity(existing) };
 }
 
+// ── Wave 8 Project / Workspace / Review Item helpers (Part V §6.2, §6.5, §6.9) ──
+
+export async function deleteProject(
+  idOrSlug: string,
+  supabase?: SupabaseClient | null,
+): Promise<boolean> {
+  const existing = [...w2State.projects.values()].find(
+    (p) => p.id === idOrSlug || p.slug === idOrSlug,
+  );
+  if (!existing) return false;
+  w2State.projects.delete(existing.id);
+  w2State.projectMembers.delete(existing.id);
+  w2State.milestones.delete(existing.id);
+  w2State.projectObjects.delete(existing.id);
+  if (supabase) {
+    await runSupabaseMutation(supabase, (sb) => sb.from('v34_projects').delete().eq('id', existing.id));
+  }
+  return true;
+}
+
+export async function updateProjectMemberRole(input: {
+  projectId: string;
+  userId: string;
+  role: WorkspaceRole;
+  supabase?: SupabaseClient | null;
+}): Promise<ProjectMemberRecord | null> {
+  const project = [...w2State.projects.values()].find(
+    (p) => p.id === input.projectId || p.slug === input.projectId,
+  );
+  if (!project) return null;
+  const members = w2State.projectMembers.get(project.id) ?? [];
+  const member = members.find((m) => m.userId === input.userId);
+  if (!member) return null;
+  member.role = input.role;
+  w2State.projectMembers.set(project.id, members);
+  if (input.supabase && isUuid(input.userId)) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_project_members')
+        .update({ role: input.role })
+        .eq('project_id', project.id)
+        .eq('user_id', input.userId),
+    );
+  }
+  return member;
+}
+
+export async function updateWorkspaceMemberRole(input: {
+  workspaceId: string;
+  userId: string;
+  role: WorkspaceRole;
+  supabase?: SupabaseClient | null;
+}): Promise<WorkspaceMemberRecord | null> {
+  const members = w2State.workspaceMembers.get(input.workspaceId) ?? [];
+  const member = members.find((m) => m.userId === input.userId);
+  if (!member) return null;
+  member.role = input.role;
+  w2State.workspaceMembers.set(input.workspaceId, members);
+  if (input.supabase && isUuid(input.userId)) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_workspace_members')
+        .update({ role: input.role })
+        .eq('workspace_id', input.workspaceId)
+        .eq('user_id', input.userId),
+    );
+  }
+  return member;
+}
+
+export async function removeWorkspaceMember(input: {
+  workspaceId: string;
+  userId: string;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true } | { ok: false; status: 404 | 409; message: string }> {
+  const members = w2State.workspaceMembers.get(input.workspaceId) ?? [];
+  const target = members.find((m) => m.userId === input.userId);
+  if (!target) return { ok: false, status: 404, message: 'Workspace member not found.' };
+  const owners = members.filter((m) => m.role === 'OWNER');
+  if (target.role === 'OWNER' && owners.length <= 1) {
+    return { ok: false, status: 409, message: 'Cannot remove the sole workspace owner.' };
+  }
+  w2State.workspaceMembers.set(
+    input.workspaceId,
+    members.filter((m) => m.userId !== input.userId),
+  );
+  if (input.supabase && isUuid(input.userId)) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_workspace_members')
+        .delete()
+        .eq('workspace_id', input.workspaceId)
+        .eq('user_id', input.userId),
+    );
+  }
+  return { ok: true };
+}
+
+export async function updateReviewItemDetails(input: {
+  reviewId: string;
+  itemId: string;
+  body?: string;
+  resolved?: boolean;
+  supabase?: SupabaseClient | null;
+}): Promise<ReviewItemRecord | null> {
+  const review = w2State.reviews.get(input.reviewId);
+  if (!review) return null;
+  const item = review.items.find((i) => i.id === input.itemId);
+  if (!item) return null;
+  if (input.body !== undefined) item.body = input.body;
+  if (input.resolved !== undefined) item.status = input.resolved ? 'resolved' : 'open';
+  item.updatedAt = new Date().toISOString();
+  review.updatedAt = item.updatedAt;
+  w2State.reviews.set(review.id, review);
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_review_items')
+        .update({ body: item.body, status: item.status, updated_at: item.updatedAt })
+        .eq('id', item.id),
+    );
+  }
+  return item;
+}
+
+

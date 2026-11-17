@@ -1737,3 +1737,100 @@ export async function updateToolRepository(input: {
   }
   return { ok: true, tool: updated };
 }
+
+// ── Wave 8 Tool Refresh, Discussion Metadata & Assistant Task helpers ──
+
+export async function refreshToolRepositoryMetadata(input: {
+  idOrSlug: string;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; tool: ToolRepositoryRecord; refreshedAt: string } | { ok: false; status: 404; message: string }> {
+  const existing = getToolRepositoryByIdOrSlug(input.idOrSlug);
+  if (!existing) return { ok: false, status: 404, message: 'Tool repository not found.' };
+  const now = new Date().toISOString();
+  const updated: ToolRepositoryRecord = {
+    ...existing,
+    observedAt: now,
+    updatedAt: now,
+  };
+  w3State.tools.set(updated.id, updated);
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_tool_repositories')
+        .update({ observed_at: now, updated_at: now })
+        .eq('id', updated.id),
+    );
+  }
+  return { ok: true, tool: updated, refreshedAt: now };
+}
+
+export async function updateDiscussionMetadata(input: {
+  discussionId: string;
+  title?: string;
+  locked?: boolean;
+  lockReason?: string;
+  actorId: string;
+  supabase?: SupabaseClient | null;
+}): Promise<DiscussionRecord | null> {
+  const disc = w3State.discussions.get(input.discussionId);
+  if (!disc) return null;
+  const now = new Date().toISOString();
+  if (input.title !== undefined) disc.title = input.title;
+  if (input.locked !== undefined) {
+    disc.locked = input.locked;
+    disc.lockedBy = input.locked ? input.actorId : null;
+    disc.lockedReason = input.locked ? input.lockReason ?? 'Locked by moderator.' : null;
+  }
+  disc.updatedAt = now;
+  w3State.discussions.set(disc.id, disc);
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_discussions')
+        .update({
+          title: disc.title,
+          locked: disc.locked,
+          locked_reason: disc.lockedReason,
+          updated_at: now,
+        })
+        .eq('id', disc.id),
+    );
+  }
+  return disc;
+}
+
+export async function updateAssistantTask(input: {
+  userId: string;
+  taskId: string;
+  status?: 'PENDING' | 'COMPLETED' | 'DISMISSED' | 'PROMOTED';
+  title?: string;
+  outputSummary?: string;
+  supabase?: SupabaseClient | null;
+}): Promise<AssistantTaskRecord | null> {
+  const list = w3State.assistantTasks.get(input.userId) ?? [];
+  const task = list.find((t) => t.id === input.taskId);
+  if (!task) return null;
+  if (input.status !== undefined) {
+    const map: Record<string, AssistantTaskRecord['status']> = {
+      PENDING: 'SUGGESTED',
+      COMPLETED: 'COMPLETED',
+      DISMISSED: 'DISMISSED',
+      PROMOTED: 'ACCEPTED',
+    };
+    task.status = map[input.status] ?? task.status;
+  }
+  if (input.title !== undefined) task.title = input.title;
+  if (input.outputSummary !== undefined) task.explanation = input.outputSummary;
+  task.updatedAt = new Date().toISOString();
+  w3State.assistantTasks.set(input.userId, list);
+  if (input.supabase) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_assistant_tasks')
+        .update({ status: task.status, title: task.title, explanation: task.explanation, updated_at: task.updatedAt })
+        .eq('id', task.id),
+    );
+  }
+  return task;
+}
+

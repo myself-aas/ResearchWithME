@@ -33,12 +33,38 @@ export function ContributionIntegrityExports({
   const [provenance, setProvenance] = useState<AiProvenanceRecord[]>(initialProvenance);
   const [busyFormat, setBusyFormat] = useState<string | null>(null);
   const [validating, setValidating] = useState(false);
+  const [decidingId, setDecidingId] = useState<string | null>(null);
   const [lastExport, setLastExport] = useState<{
     id: string;
     format: string;
     checksumSha256: string;
   } | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  async function handleProvenanceDecision(provenanceId: string, action: 'approve' | 'reject') {
+    setDecidingId(provenanceId);
+    setStatusMessage(null);
+    try {
+      const res = await fetch(`/api/ai/${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provenanceId }),
+      });
+      const data = (await res.json()) as { provenance?: AiProvenanceRecord; error?: string };
+      if (!res.ok || !data.provenance) {
+        setStatusMessage(data.error || `Sign in to ${action} AI provenance records.`);
+        return;
+      }
+      setProvenance((prev) => prev.map((r) => (r.id === provenanceId ? data.provenance! : r)));
+      setStatusMessage(
+        `Human verification recorded: AI provenance ${provenanceId.slice(0, 12)} marked ${data.provenance.humanReviewStatus}.`,
+      );
+    } catch {
+      setStatusMessage('Network error recording human review decision.');
+    } finally {
+      setDecidingId(null);
+    }
+  }
 
   async function handleExport(format: (typeof EXPORT_FORMATS)[number]['id']) {
     setBusyFormat(format);
@@ -172,7 +198,7 @@ export function ContributionIntegrityExports({
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs text-ink-secondary">
             <span>SHA-256: {lastExport.checksumSha256}</span>
             <a
-              href={`/api/exports/${encodeURIComponent(lastExport.id)}?download=1`}
+              href={`/api/exports/${encodeURIComponent(lastExport.id)}/download`}
               className="font-semibold text-brand hover:underline"
             >
               Download {lastExport.format}
@@ -216,15 +242,37 @@ export function ContributionIntegrityExports({
               {provenance.slice(0, 4).map((rec) => (
                 <li
                   key={rec.id}
-                  className="rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs text-ink space-y-0.5"
+                  className="rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs text-ink space-y-1.5"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold">{rec.transformationType}</span>
                     <span className="text-brand">{rec.citationValidationStatus}</span>
                   </div>
-                  <p className="text-ink-secondary">
-                    {rec.provider}/{rec.model} · Review: {rec.humanReviewStatus}
-                  </p>
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-ink-secondary">
+                      {rec.provider}/{rec.model} · Review: {rec.humanReviewStatus}
+                    </p>
+                    {rec.humanReviewStatus === 'PENDING' ? (
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          disabled={decidingId === rec.id}
+                          onClick={() => handleProvenanceDecision(rec.id, 'approve')}
+                          className="rounded border border-brand px-2 py-0.5 font-sans text-xs font-medium text-brand hover:bg-brand hover:text-on-primary disabled:opacity-50"
+                        >
+                          Approve
+                        </button>
+                        <button
+                          type="button"
+                          disabled={decidingId === rec.id}
+                          onClick={() => handleProvenanceDecision(rec.id, 'reject')}
+                          className="rounded border border-line px-2 py-0.5 font-sans text-xs font-medium text-ink-secondary hover:border-ink hover:text-ink disabled:opacity-50"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                 </li>
               ))}
             </ul>

@@ -105,7 +105,7 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 });
 
 // v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
-check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–7)', () => {
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–8)', () => {
   const migrations = [
     'supabase/migrations/20261117000100_v34_research_network.sql',
     'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
@@ -113,6 +113,7 @@ check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–7)', () 
     'supabase/migrations/20261117000400_v34_wave5_topics_collections_alerts_graph.sql',
     'supabase/migrations/20261117000500_v34_wave6_ai_provenance_exports_search.sql',
     'supabase/migrations/20261117000600_v34_wave7_devices_push_sync_profile.sql',
+    'supabase/migrations/20261117000700_v34_wave8_assessments_tasks_renders_ops.sql',
   ];
   for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
   return `${migrations.length} ordered v3.4 migrations verified`;
@@ -219,6 +220,25 @@ check('V34-9', 'v3.4 Wave 7 canonical sub-routes, entailment check, notification
   ];
   for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
   return `${files.length} Wave 7 canonical closure, mobile sync & portability artifacts verified`;
+});
+check('V34-10', 'v3.4 Wave 8 complete Part V §6 API parity, transactional outbox, telemetry redaction & governed renders present', () => {
+  const files = [
+    'lib/v34/observability.ts',
+    'lib/v34/outbox.ts',
+    'lib/v34/wave8-contracts.ts',
+    'lib/v34/wave8-store.ts',
+    'app/api/ai/approve/route.ts',
+    'app/api/ai/reject/route.ts',
+    'app/api/assistant/sessions/route.ts',
+    'app/api/renders/remotion/route.ts',
+    'app/api/renders/hyperframes/route.ts',
+    'app/api/exports/[id]/download/route.ts',
+    'app/api/sync/acknowledge/route.ts',
+    'app/api/me/route.ts',
+    'test/next/v34-wave8-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 8 full API parity, outbox, telemetry & render artifacts verified`;
 });
 
 const failed = results.filter((r) => r.status === 'fail');

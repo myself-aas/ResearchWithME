@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
 import { UpdateProjectInputSchema } from '@/lib/v34/wave2-contracts';
-import { getProjectByIdOrSlug, updateProject } from '@/lib/v34/wave2-store';
+import { deleteProject, getProjectByIdOrSlug, updateProject } from '@/lib/v34/wave2-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -31,4 +31,19 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
     return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
   }
   return NextResponse.json({ project: updated });
+}
+
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
+  const limited = await enforceRateLimit(request, 'v34-projects-delete', 15, 60_000);
+  if (limited) return limited;
+
+  const auth = await requireContributor();
+  if (!auth.ok) return auth.response;
+
+  const { id } = await context.params;
+  const ok = await deleteProject(id, auth.actor.supabase);
+  if (!ok) {
+    return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
+  }
+  return NextResponse.json({ deleted: true, id });
 }

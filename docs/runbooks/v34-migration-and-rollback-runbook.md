@@ -1,6 +1,6 @@
 # ResearchWithME v3.4 Migration, Verification & Rollback Runbook
 
-- **Applies To:** `ResearchWithME` v3.4 (`supabase/migrations/20261117000100`–`20261117000600`)
+- **Applies To:** `ResearchWithME` v3.4 (`supabase/migrations/20261117000100`–`20261117000700`)
 - **Primary Supabase Project:** `bxyjjbclaklzjxeumeat` (`ap-northeast-1`, Postgres 17)
 - **Feature Flag Registry:** `lib/v34/feature-flags.ts`
 
@@ -38,10 +38,11 @@ All four v3.4 migrations are strictly additive (`CREATE TABLE IF NOT EXISTS`, `A
 | 4 | `20261117000400_v34_wave5_topics_collections_alerts_graph.sql` | 8 | Topics, TopicAssignments, WorkspaceTools, SavedSearches, CitationCollections, CitationCollectionItems (single-target CHECK), GraphNodes, GraphEdges (no-self-edge CHECK), GoalProgressEvents (`delta > 0` CHECK) + `paused_at`/`archived_at` on `v34_research_goals` |
 | 5 | `20261117000500_v34_wave6_ai_provenance_exports_search.sql` | 4 | AI Provenance Ledger (`v34_ai_provenance_records`), Checksummed Scholarly Exports (`v34_scholarly_exports`), Immutable Contribution Versions (`v34_contribution_versions`), Workspace Invitations (`v34_workspace_invitations`), and PostgreSQL `tsvector` + `pg_trgm` GIN search indexes |
 | 6 | `20261117000600_v34_wave7_devices_push_sync_profile.sql` | 5 | Registered Devices (`v34_user_devices`), Web Push Subscriptions (`v34_push_subscriptions`), Contributor Affiliations (`v34_user_affiliations`), Verified Expertise (`v34_user_expertise`), and Workspace Access Requests (`v34_workspace_access_requests`) |
+| 7 | `20261117000700_v34_wave8_assessments_tasks_renders_ops.sql` | 11 | Evidence & Claim Assessments, Library Collections, Project Tasks, Assistant Sessions & Messages, Governed Remotion/Hyperframes Render Jobs, Device Sync Cursors, Transactional Outbox (`v34_outbox_events`), Audit Events (`v34_audit_events`), and Background Jobs (`v34_background_jobs`) |
 
 ### Post-Migration Database Verification SQL
 
-Verify all 55 `v34_*` tables exist and have Row-Level Security enabled:
+Verify all 66 `v34_*` tables exist and have Row-Level Security enabled:
 
 ```sql
 SELECT count(*) AS total_v34_tables,
@@ -53,7 +54,7 @@ WHERE t.table_schema = 'public'
   AND t.table_name LIKE 'v34_%';
 ```
 
-Expected: `total_v34_tables = 55`, `rls_enabled_tables = 55`.
+Expected: `total_v34_tables = 66`, `rls_enabled_tables = 66`.
 
 ---
 

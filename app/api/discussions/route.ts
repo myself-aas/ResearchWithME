@@ -6,7 +6,8 @@ import {
   DISCUSSION_OBJECT_TYPES,
   type DiscussionObjectType,
 } from '@/lib/v34/wave3-contracts';
-import { createDiscussion, listDiscussions } from '@/lib/v34/wave3-store';
+import { createDiscussion, listDiscussions, updateDiscussionMetadata } from '@/lib/v34/wave3-store';
+import { UpdateDiscussionMetadataInputSchema } from '@/lib/v34/wave8-contracts';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -48,4 +49,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ discussion }, { status: 201 });
     },
   );
+}
+
+export async function PATCH(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-discussions-patch', 20, 60_000);
+  if (limited) return limited;
+
+  const auth = await requireContributor();
+  if (!auth.ok) return auth.response;
+
+  const parsed = await parseJsonBody(request, UpdateDiscussionMetadataInputSchema);
+  if (!parsed.ok) return parsed.response;
+
+  const updated = await updateDiscussionMetadata({
+    ...parsed.data,
+    actorId: auth.actor.id,
+    supabase: auth.actor.supabase,
+  });
+  if (!updated) {
+    return NextResponse.json({ error: 'Discussion not found.' }, { status: 404 });
+  }
+  return NextResponse.json({ discussion: updated });
 }

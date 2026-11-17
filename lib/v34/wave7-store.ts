@@ -577,3 +577,28 @@ export function getSyncDelta(input: {
     count: items.length,
   };
 }
+
+export async function updateUserDevice(input: {
+  userId: string;
+  deviceId: string;
+  label?: string;
+  supabase?: SupabaseClient | null;
+}): Promise<UserDeviceRecord | null> {
+  const list = w7State.devices.get(input.userId) ?? [];
+  const dev = list.find((d) => d.id === input.deviceId && !d.revokedAt);
+  if (!dev) return null;
+  if (input.label !== undefined) dev.label = input.label;
+  dev.lastSeenAt = new Date().toISOString();
+  w7State.devices.set(input.userId, list);
+  if (input.supabase && isUuid(input.userId)) {
+    await runSupabaseMutation(input.supabase, (sb) =>
+      sb
+        .from('v34_user_devices')
+        .update({ label: dev.label, last_seen_at: dev.lastSeenAt })
+        .eq('id', dev.id)
+        .eq('user_id', input.userId),
+    );
+  }
+  return dev;
+}
+

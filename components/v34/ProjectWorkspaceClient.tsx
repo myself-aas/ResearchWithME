@@ -52,6 +52,10 @@ export function ProjectWorkspaceClient({
 }: ProjectWorkspaceClientProps) {
   const [project, setProject] = useState<ProjectSummary>(initialProject);
   const [notes, setNotes] = useState<ProjectNoteRecord[]>(initialNotes);
+  const [tasks, setTasks] = useState<
+    Array<{ id: string; title: string; status: 'TODO' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE'; priority: string }>
+  >([]);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
   const [noteTitle, setNoteTitle] = useState('');
   const [noteBody, setNoteBody] = useState('');
   const [newMilestoneTitle, setNewMilestoneTitle] = useState('');
@@ -229,6 +233,60 @@ export function ProjectWorkspaceClient({
       setStatusMessage('Private project working note saved (ProjectNote).');
     } catch {
       setStatusMessage('Network error saving project note.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleCreateTask(event: React.FormEvent) {
+    event.preventDefault();
+    if (newTaskTitle.trim().length < 2) return;
+    setBusy(true);
+    setStatusMessage(null);
+    try {
+      const res = await fetch(`/api/projects/${encodeURIComponent(project.id)}/tasks`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTaskTitle.trim(), priority: 'MEDIUM' }),
+      });
+      const data = (await res.json()) as {
+        task?: { id: string; title: string; status: 'TODO' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE'; priority: string };
+        error?: string;
+      };
+      if (!res.ok || !data.task) {
+        setStatusMessage(data.error || 'Could not create project task.');
+        return;
+      }
+      setTasks((prev) => [data.task!, ...prev]);
+      setNewTaskTitle('');
+      setStatusMessage('Project task added.');
+    } catch {
+      setStatusMessage('Network error creating project task.');
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleToggleTask(task: {
+    id: string;
+    title: string;
+    status: 'TODO' | 'IN_PROGRESS' | 'BLOCKED' | 'DONE';
+    priority: string;
+  }) {
+    const nextStatus = task.status === 'DONE' ? 'TODO' : 'DONE';
+    setBusy(true);
+    try {
+      const res = await fetch(
+        `/api/projects/${encodeURIComponent(project.id)}/tasks/${encodeURIComponent(task.id)}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: nextStatus }),
+        },
+      );
+      if (res.ok) {
+        setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, status: nextStatus } : t)));
+      }
     } finally {
       setBusy(false);
     }
@@ -565,6 +623,60 @@ export function ProjectWorkspaceClient({
                     </button>
                   </form>
                 )}
+
+                <div className="pt-3 border-t border-line space-y-2">
+                  <p className="font-semibold text-ink">Project Tasks ({tasks.length})</p>
+                  {tasks.length > 0 && (
+                    <ul className="space-y-1.5">
+                      {tasks.map((task) => (
+                        <li
+                          key={task.id}
+                          className="rounded-lg border border-line bg-canvas/60 px-2.5 py-1.5 flex items-center justify-between gap-2"
+                        >
+                          <button
+                            type="button"
+                            onClick={() => handleToggleTask(task)}
+                            disabled={busy}
+                            aria-label={`Toggle task ${task.title}`}
+                            className="inline-flex items-center gap-1.5 text-left text-xs text-ink hover:text-brand disabled:opacity-50"
+                          >
+                            {task.status === 'DONE' ? (
+                              <CheckCircle2 className="h-3.5 w-3.5 text-brand shrink-0" aria-hidden="true" />
+                            ) : (
+                              <Circle className="h-3.5 w-3.5 text-ink-secondary shrink-0" aria-hidden="true" />
+                            )}
+                            <span className={task.status === 'DONE' ? 'line-through text-ink-secondary' : ''}>
+                              {task.title}
+                            </span>
+                          </button>
+                          <span className="rounded-full border border-line bg-surface px-1.5 py-0.5 text-xs text-ink-secondary">
+                            {task.status}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <form onSubmit={handleCreateTask} className="flex gap-1.5">
+                    <label className="sr-only" htmlFor={`project-task-${project.id}`}>
+                      New project task
+                    </label>
+                    <input
+                      id={`project-task-${project.id}`}
+                      type="text"
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      placeholder="Add research task..."
+                      className="flex-1 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs text-ink placeholder:text-ink-secondary"
+                    />
+                    <button
+                      type="submit"
+                      disabled={busy || newTaskTitle.trim().length < 2}
+                      className="rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs font-medium text-ink hover:border-brand disabled:opacity-50"
+                    >
+                      Add
+                    </button>
+                  </form>
+                </div>
 
                 <div className="pt-3 border-t border-line space-y-1.5">
                   <p className="font-semibold text-ink">Quick Links</p>
