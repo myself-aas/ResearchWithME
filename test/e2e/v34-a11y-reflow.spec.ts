@@ -20,8 +20,9 @@ const V34_ROUTES = [
   '/topics',
   '/topics/reasoning-models',
   '/contribute',
-  '/editor',
-  '/editor/draft-smoke',
+  // /editor and /editor/draft-smoke are deliberately editor-only; an anonymous
+  // run lands on /login, so their redirect is asserted by
+  // scripts/verify-v34-live.mjs rather than audited as a public page here.
   '/library',
   '/workspaces',
   '/workspaces/reasoning-cold-start-replication',
@@ -93,7 +94,6 @@ test.describe('v3.4 Responsive Reflow Matrix (320px–1920px)', () => {
         '/claims',
         '/projects',
         '/reviews',
-        '/editor',
         '/settings',
       ] as const) {
         const response = await page.goto(route, { waitUntil: 'load' });

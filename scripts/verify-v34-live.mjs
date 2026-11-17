@@ -69,8 +69,9 @@ const SSR_PAGES = [
   { path: '/projects', mustContain: ['Research Projects', 'id="main-content"'] },
   { path: '/project/reasoning-cold-start-replication', mustContain: ['Project Collaborators', 'id="main-content"'] },
   { path: '/reviews', mustContain: ['Formal Peer Reviews', 'Anonymous reviewer', 'id="main-content"'], mustNotContain: ['dr-lin-eval', 'user-reviewer-1'] },
-  { path: '/editor', mustContain: ['Scholarly MDX Workspace', 'MDX Security Guard', 'id="main-content"'] },
-  { path: '/editor/draft-smoke', mustContain: ['Scholarly MDX Workspace', 'draft-smoke', 'id="main-content"'] },
+  // /editor and /editor/draft-smoke are editor-only by design (they autosave
+  // through /api/drafts/*), so their anonymous response is a redirect to
+  // sign-in. They are asserted as an auth boundary below, not as public pages.
   { path: '/settings', mustContain: ['Scholarly Identity', 'Default Landing Destination', 'id="main-content"'] },
   {
     path: '/profile/myself-aas',
@@ -277,6 +278,18 @@ async function main() {
     console.log(`  PASS  Trace headers on /api/feed (X-Request-Id=${reqId.slice(0, 14)}…, X-Trace-Id=${traceId.slice(0, 14)}…)`);
   } else {
     failures.push(`/api/feed missing X-Request-Id (${reqId}) or X-Trace-Id (${traceId})`);
+  }
+
+  for (const editorPath of ['/editor', '/editor/draft-smoke']) {
+    const r = await fetch(`${BASE_URL}${editorPath}`, { redirect: 'manual' });
+    const loc = r.headers.get('location') || '';
+    if (r.status === 307 && loc.includes('/login?next=%2Feditor')) {
+      console.log(`  PASS  Auth boundary ${editorPath} (307 -> ${loc})`);
+    } else {
+      failures.push(
+        `${editorPath}: expected 307 -> /login?next=%2Feditor, got ${r.status} (${loc})`,
+      );
+    }
   }
 
   for (const section of ['library', 'projects', 'workspace', 'reviews', 'settings']) {
