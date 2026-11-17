@@ -1,141 +1,154 @@
 # Architecture
 
-> Regenerated 2026-11-13 against `944f45c`. Supersedes the earlier version and its appendices.
+> Snapshot updated post-remediation on branch `arena/d0437759-researchwithme` (`2026-11-17`).
 
 ## Core Sections (Required)
 
 ### 1) Architectural Style
 
-- **Primary style:** a Next.js App Router monolith deployed as **one Cloudflare Worker** (OpenNext). The data layer is split into **adapter interfaces with two backends each**: local JSON for credential-free demo/dev, and Supabase for production. A second, parallel build target (`cloudflare-pages/`, Vite + Pages Functions) re-implements the server layer behind a `RuntimeServices` interface and reuses `components/` and `lib/`.
-- **Why this classification:**
-  - `CmsStore` (`lib/cms/types.ts`) → `createLocalCmsStore` / `createSupabaseCmsStore`, chosen in `lib/cms/store.ts` by `isSupabaseConfigured`.
-  - `LegacyStore` (`lib/legacy/types.ts`) → `lib/legacy/local-store.ts` / `lib/legacy/supabase-store.ts`, for durable counters on the seed corpus.
-  - `RateLimitStore` (`lib/rate-limit-core.ts`) → KV when the `RATE_LIMIT_KV` binding exists, memory otherwise (`lib/rate-limit.ts`).
-  - There are no `domain/` or `data/` layers. Route handlers own HTTP and orchestration directly.
+- **Primary style:** Modular monolith (Next.js 15 App Router full-stack web application + Route Handler APIs) deployed to Cloudflare Workers via `@opennextjs/cloudflare` (`wrangler.jsonc`), paired with the bound isolated RPC Worker (`workers/assistant/` via `ASSISTANT` service binding) and standalone Python CLI toolkits (`products/`). The legacy `cloudflare-pages/` mirror has been retired.
+- **Why this classification:** All core domains (editorial CMS, reader experience, billing, metered Assistant API v1, MCP/A2A/WebMCP agent protocols, Resend email, and editorial-only LinkedIn automation) live in one repository under `app/` and `lib/`, share one `package.json`, and run inside a single Worker bundle (`wrangler.jsonc`), separated internally into domain packages under `lib/` rather than independent microservices.
 - **Primary constraints:**
-  1. **Runs with zero credentials.** Every data path forks on `isSupabaseConfigured` (`lib/supabase/config.ts`). Middleware, the editor gate and the stores all have a local branch.
-  2. **Workers runtime.** Read-only FS, no long-lived process, KV-backed ISR cache and tags (`open-next.config.ts`), and `nodejs_compat`.
-  3. **One canonical reader.** CMS posts and the seed catalogue are merged into the same URLs. There is no separate `/blog` (`lib/cms/catalogue.ts`).
-  4. **Content must exist without JavaScript.** Server pages pass `initialPosts`/`initialArticles` so feeds render in HTML (`lib/cms/catalogue.ts` `getFeedArticles` comment). `CLAUDE.md` forbids `initial={{ opacity: 0 }}` on crawlable content.
+  1. **Zero service-role key in application runtime:** The application intentionally avoids shipping `SUPABASE_SERVICE_ROLE_KEY` in the web runtime. Privileged backend writes (Lemon Squeezy webhook ingestion, API key authentication/quota debiting, author applications, editorial classification, and editorial LinkedIn token/event/dedup persistence) run through PostgreSQL `SECURITY DEFINER` RPCs guarded by shared bridge secrets (`BILLING_BRIDGE_SECRET`, `API_BRIDGE_SECRET`, `LINKEDIN_BRIDGE_SECRET`) or session-scoped `auth.uid()` / `is_editor_in_chief()` checks (`supabase/migrations/20261113000300_billing.sql`, `20261114000200_api_keys.sql`, `20261116000100_editorial_publication_type.sql`, `20261116000200_linkedin_editorial_bridge.sql`).
+  2. **Cloudflare Workers edge runtime limits:** No persistent local filesystem in production, strict per-request CPU/memory budgets, awaited or `ctx.waitUntil()` background work, and KV reserved strictly for OpenNext incremental/tag caches (`NEXT_INC_CACHE_KV`, `NEXT_TAG_CACHE_KV`) while general IP rate limiting (`APP_RATE_LIMITER`) and `/api/v1` burst limiting (`API_BURST_LIMITER`) use native Cloudflare Workers Rate Limiting bindings with zero KV writes.
+  3. **Dual human + agent surface:** Every published article is served both as SSR/ISR HTML for browsers and as machine-readable Markdown/JSON via content negotiation (`Accept: text/markdown` -> `/agent-markdown`), `/llms.txt`, `/index.md`, `/openapi.json`, `/mcp` (Streamable HTTP JSON-RPC), `/api/a2a`, `/.well-known/*`, and client-side `public/webmcp.js`.
 
 ### 2) System Flow
 
-**Flow A: public article read (`GET /post/[slug]`)**
-
+#### A. Public Read & Content-Negotiation Flow
 ```text
-app/post/[slug]/page.tsx   (revalidate = 30; no generateStaticParams, so unknown slugs give a real 404)
-  -> cache(getCachedArticleCatalogue)                React cache: metadata + body share one read
-  -> unstable_cache(..., tags:['catalogue'], 30 s)   KV incremental cache on Workers
-  -> getArticleCatalogue()                           lib/cms/catalogue.ts
-       Promise.all(
-         getPublishedCmsPosts()   -> getPublicCmsStore()  cookie-free anon client (RLS: published only) | local JSON
-         getCmsCommentCounts()
-         legacy.getArticles()     -> getPublicLegacyStore()   (on error: DEFAULT_LEGACY_SEEDS)
-       )
-       merge by slug: CMS first, then legacy corpus, then bundled seeds
-  -> notFound() -> app/not-found.tsx
+HTTP Request -> middleware.ts (Accept: text/markdown rewrite?)
+  ├─ text/markdown on public route -> app/agent-markdown/route.ts -> lib/cms/catalogue.ts -> Markdown Response
+  └─ browser HTML -> app/post/[slug]/page.tsx (revalidate=30)
+       -> getCachedArticleCatalogue() (unstable_cache tag: "articles", 30s)
+       -> lib/cms/read.ts -> getPublicCmsStore() (Supabase anon OR local JSON store)
+       -> React RSC + JSON-LD + Client interactions (likes, comments, ResearchAssistant)
 ```
 
-The CMS readers in `lib/cms/read.ts` catch errors and return empty results, so a Supabase outage degrades the page to the bundled catalogue instead of breaking it.
-
-**Flow B: studio write (`POST /api/cms/posts`)**
-
+#### B. Authenticated Metered Assistant API v1 & MCP Flow
 ```text
-PostEditor / write page -> lib/cms/client-api.ts cmsFetch
-  -> isSameOrigin(request)                      403
-  -> requireEditor()                            401 anon / 403 not in public.editors (local mode: allow)
-  -> rateLimit('cms:create', 20 / 60 s)          429 + Retry-After
-  -> readJsonBody -> normalizePostInput          400 / 415 + fieldErrors
-  -> resolvePublishableAuthor(authorId)          422 unless a *published* profile; byline overwritten from profile
-  -> store.getPostBySlug  +  legacy.findArticle  409 on either collision; 503 if legacy check fails
-  -> getEditorCmsStore().createPost              session-scoped client; RLS re-checks is_editor()
-  -> revalidateArticle(slug) if published        invalidates path + 'catalogue' tag
-  -> 201 { post, mode }
+POST /api/v1/assistant/answers (or POST /mcp tool "ask_archive")
+  -> lib/api/authenticate.ts (verify rwm_<43 base64url> format -> SHA-256 hash -> RPC authenticate_api_key with API_BRIDGE_SECRET)
+  -> lib/api/burst.ts (Cloudflare API_BURST_LIMITER 30 req/60s OR KV/memory fallback)
+  -> lib/api/answers.ts (validate question + idempotency key -> reserve quota via RPC reserve_api_quota)
+  -> lib/assistant/service.ts
+       ├─ env.ASSISTANT RPC binding (workers/assistant, currently commented out in wrangler.jsonc)
+       └─ fallback: direct @google/genai (gemini-2.5-flash) against getCachedArticleCatalogue()
+  -> lib/api/ledger.ts (finalize_api_usage on success OR refund_api_usage on failure)
+  -> JSON response with X-Request-Id, X-Quota-Limit/Remaining/Reset, X-Idempotency-Replayed
 ```
 
-**Flow C: writer access.** A reader signs in (email/password or Google, PKCE via `/auth/callback`) → links GitHub/ORCID → `POST /api/dashboard/applications` → an editor approves via `POST /api/dashboard/applications/[id]` → the approval writes `public.editors` (`supabase/migrations/20261108000300_author_applications.sql`).
+#### C. Editorial CMS Write & Cache Revalidation Flow
+```text
+POST /api/cms/posts -> isSameOrigin() -> requireEditor() (Supabase session + RPC is_editor / is_editor_in_chief)
+  -> rateLimit() -> readJsonBody() -> normalizePostInput() -> resolvePublishableAuthor()
+  -> editorial check (publicationType === 'editorial' requires isEditorInChief; DB trigger enforces too)
+  -> getCmsStore() (Supabase authenticated RLS client OR local JSON atomic rename)
+  -> revalidateArticlePaths() (revalidateTag('articles') + revalidatePath for /, /post/[slug], /llms.txt, /index.md, /sitemap.xml)
+```
+
+#### D. Billing Purchase & Entitlement Flow
+```text
+POST /api/billing/checkout -> auth session -> lib/billing/checkout.ts -> Lemon Squeezy POST /v1/checkouts
+  -> User completes checkout on Lemon Squeezy -> Webhook POST /api/webhooks/lemonsqueezy
+  -> HMAC-SHA256 verification (LEMONSQUEEZY_WEBHOOK_SECRET)
+  -> lib/billing/store.ts -> RPC apply_billing_event (guarded by BILLING_BRIDGE_SECRET, idempotent via billing_events)
+  -> GET /api/billing/entitlement -> Supabase RLS read on billing_orders/billing_subscriptions
+```
 
 ### 3) Layer/Module Responsibilities
 
 | Layer or module | Owns | Must not own | Evidence |
 |-----------------|------|--------------|----------|
-| `middleware.ts` | Session refresh; `/dashboard/**` → `/login` for anonymous users | Editor authorisation (that is `requireEditor`) | `middleware.ts` |
-| `app/**/page.tsx` | Rendering, metadata, 404 resolution | Writes | `app/post/[slug]/page.tsx` |
-| `app/api/**/route.ts` | Origin, rate limit, auth gate, parsing, status mapping | Storage details | `app/api/cms/posts/route.ts` |
-| `lib/cms/schema.ts` | Input normalisation, field errors, public-ID namespacing (`cms-<id>`) | I/O | `lib/cms/schema.ts` |
-| `lib/cms/store.ts` | Backend selection; memoised public store; per-request editor store | Queries | `lib/cms/store.ts` |
-| `lib/cms/catalogue.ts` | Merging CMS + legacy + seeds; cached variants tagged `catalogue` | Writes | `lib/cms/catalogue.ts` |
-| `lib/cms/auth.ts` | `getDashboardUser`, `requireEditor`; `is_editor()` RPC **fails closed** | HTTP responses | `lib/cms/auth.ts` |
-| `lib/legacy/*` | Durable likes/comments for seed articles; throws on persistence failure so callers return 503 | New content | `lib/db.ts` header |
-| `lib/supabase/*` | Credentials, browser/server/public clients, OAuth, storage upload, `useSession` | Queries | `lib/supabase/config.ts` |
-| `lib/email/*` | Scenario registry, rendering, Resend sender, off-domain sender refusal | Choosing when to send | `lib/email/send.ts` |
-| `cloudflare-pages/src/server/*` | The same API surface for the Pages target, written against injectable `RuntimeServices` | `next/*` imports | `cloudflare-pages/src/server/context.ts` |
-| `supabase/migrations/` | Schema, RLS, `is_editor()`, application RPCs | App code | 9 SQL files |
+| Edge Middleware (`middleware.ts`) | `Accept: text/markdown` rewrite to `/agent-markdown`; `/dashboard/:path*` session gate + login redirect; `Vary: Accept` header | Database writes, CMS mutations, API key auth | `middleware.ts` |
+| App Router Pages & Layouts (`app/**/page.tsx`, `layout.tsx`) | Route-level data fetching, `generateMetadata`, JSON-LD injection, role redirects (`/dashboard/layout.tsx`, `dashboard/(studio)/layout.tsx`) | Raw SQL, secret credential handling, direct third-party HTTP mutations | `app/page.tsx`, `app/post/[slug]/page.tsx`, `app/dashboard/layout.tsx` |
+| Route Handlers (`app/api/**`, `app/mcp/`, `app/.well-known/**`) | HTTP method routing, CSRF/same-origin checks, rate limits, auth guards, input decoding, HTTP error translation | Reusable domain math, persistence internals, React rendering | `app/api/cms/posts/route.ts`, `app/api/v1/assistant/answers/route.ts`, `app/mcp/route.ts` |
+| Domain Stores & Services (`lib/cms/`, `lib/billing/`, `lib/api/`, `lib/assistant/`, `lib/email/`, `lib/linkedin/`) | Store interfaces (`CmsStore`), schema normalization, DB/RPC wrappers, cryptographic primitives, provider integrations, caching | Next.js page JSX, browser DOM APIs (enforced by `import 'server-only'` in 14 core modules) | `lib/cms/store.ts`, `lib/billing/store.ts`, `lib/api/answers.ts`, `lib/assistant/service.ts` |
+| Protocol & Discovery Layer (`lib/mcp.ts`, `lib/a2a.ts`, `lib/openapi.ts`, `lib/web-bot-auth.ts`, `lib/oauth-discovery.ts`, `lib/api-catalog.ts`) | Machine-readable specifications, JSON-RPC MCP dispatch, A2A agent card & task handling, RFC 9421 Web Bot Auth directory signing, RFC 8414/9728 OAuth discovery | Direct database mutations outside injected callbacks | `lib/mcp.ts`, `lib/a2a.ts`, `lib/web-bot-auth.ts`, `lib/oauth-discovery.ts` |
+| UI & Design System (`components/`, `tokens/`, `styles/`) | Accessible React components, token-driven CSS variables, DaisyUI theme mapping, visual editors (`PostEditor` / `PlateBodyEditor`), charts, motion | Server secrets, direct Supabase admin queries | `components/primitives/`, `tokens/scripts/build.mjs`, `app/globals.css` |
+| Database & Security Boundary (`supabase/migrations/`) | Relational schema, Row-Level Security (RLS), `SECURITY DEFINER` RPCs with locked `search_path = ''`, triggers, Storage bucket limits | Application HTML/JSON presentation | `supabase/migrations/*.sql` |
+| Secondary Mirror (`cloudflare-pages/`) | Vite SSR rendering + Pages Functions route dispatcher for a subset of routes | Separate source of truth for CMS/article types | `cloudflare-pages/src/server/dispatch.ts`, `cloudflare-pages/src/routes.tsx` |
 
 ### 4) Reused Patterns
 
 | Pattern | Where found | Why it exists |
 |---------|-------------|---------------|
-| Adapter/strategy with an env switch | `CmsStore`, `LegacyStore`, `RateLimitStore` | Same callers in demo and production |
-| Pure core + platform shell | `rate-limit-core.ts`/`rate-limit.ts`, `cms/secret-core.ts`/`secret.ts`, `author-directory-core.ts`/`author-directory.ts` | Core logic runs in both build targets and in tests without Next or Worker context |
-| Injectable runtime services | `RuntimeServices` + `createTestApp()` (`test/support/pages.ts`) | Pages handlers are tested in-process with fakes |
-| Discriminated-union results | `normalizePostInput` → `{ok:true,value} \| {ok:false,…fieldErrors}`; `EditorGate` | Field errors reach forms without exceptions |
-| Typed error → HTTP mapping | `Cms*Error` hierarchy + `errorResponse()` (`lib/cms/errors.ts`, `lib/cms/http.ts`) | One mapping for every route |
-| Graceful degradation | `lib/cms/read.ts`; legacy → seeds; assistant → deterministic answer | Outages never blank the site |
-| Two-level caching | React `cache()` per request + `unstable_cache` (KV) per 30 s, invalidated by tag | Low TTFB while keeping real 404s |
-| Lazy module singletons vs request-scoped clients | Public client/store memoised; `createSupabaseServerClient()` never cached | Never leak sessions |
-| Idempotent SQL | `if not exists`, `drop policy if exists`, `on conflict` | `CLAUDE.md` rule; safe re-runs |
+| **Adapter / Strategy (`CmsStore`)** | `lib/cms/store.ts`, `lib/cms/supabase-store.ts`, `lib/cms/local-store.ts` | Transparently switches between Supabase Postgres (production) and atomic-rename local JSON files (local dev/tests) behind one `CmsStore` interface |
+| **Bridge-Secret `SECURITY DEFINER` RPC** | `supabase/migrations/20261113000300_billing.sql`, `20261114000200_api_keys.sql`, `lib/billing/store.ts`, `lib/api/{key-store,ledger}.ts` | Executes privileged system mutations from Workers using only the anon/publishable key + an explicit bridge secret (`BILLING_BRIDGE_SECRET`, `API_BRIDGE_SECRET`), avoiding shipping `SUPABASE_SERVICE_ROLE_KEY` |
+| **Fail-Closed Production Guard** | `lib/cms/store.ts`, `scripts/check-production-env.mjs`, `lib/cms/auth.ts` | Refuses local-filesystem CMS fallback in production (`NODE_ENV === 'production'`, `CF_PAGES`, `VERCEL`, `WORKERS_CI`); enforces `is_editor()` / `is_editor_in_chief()` server-side |
+| **Reserve-Execute-Finalize/Refund Ledger** | `lib/api/answers.ts`, `lib/api/ledger.ts`, `supabase/migrations/20261114000200_api_keys.sql` | Prevents double-billing and lost quota during metered Gemini API calls with 24h idempotency keys (`api_usage_events`) |
+| **Sliding/Fixed Window Rate Limiting with Runtime Backend Auto-Selection** | `lib/rate-limit.ts`, `lib/rate-limit-core.ts`, `lib/api/burst.ts` | Uses Cloudflare native `API_BURST_LIMITER` or `RATE_LIMIT_KV` on Workers, falling back to an in-memory `Map` in Node dev/tests |
+| **Pure-Function Metric / Protocol Separation** | `lib/dashboard/metrics.ts`, `lib/rate-limit-core.ts`, `lib/mcp.ts`, `lib/a2a.ts` | Isolates deterministic logic (injected `now`, injected callbacks) from Next.js/Cloudflare I/O for fast unit testing |
+| **Cached Read-Through Catalogue with Tag Revalidation** | `lib/cms/catalogue.ts`, `lib/cms/revalidate.ts` | Wraps published article reads in `unstable_cache(..., ['articles'], { revalidate: 30, tags: ['articles'] })` and invalidates on CMS writes or `/api/revalidate` |
 
 ### 5) Known Architectural Risks
 
-- **Two server implementations of one API.** `app/api/` (17 files, the production Worker) and `cloudflare-pages/src/server/api/` (12 files, the Pages port) implement the same operations separately. They already differ: client-IP keying for rate limits uses `cf-connecting-ip` in Pages (`cloudflare-pages/src/server/http.ts:17`) but the first `x-forwarded-for` entry in Next (`lib/rate-limit.ts` `clientKey`). The behavioural test suite (`test/pages/*`) exercises **only the Pages copy**. See TESTING and CONCERNS.
-- **Unfinished migration.** `docs/migration-baseline.md` describes a Next → Pages port. Production still deploys the Next build (`wrangler.jsonc`), and the Pages project (`researchwithme-pages`) has no deploy step in CI. Until one target is retired, every API change has to be made twice.
-- **Local mode is unauthenticated by design.** `requireEditor()` allows everything when Supabase is unconfigured, and middleware skips the guard. `scripts/check-production-env.mjs` is the only protection, and it runs on `npm run deploy`/`upload`. It is not wired into the Workers Builds path (`scripts/build-next-or-worker.mjs`).
-- **One KV namespace for three jobs.** ISR cache, tag cache and rate-limit counters share namespace `8d2dc8f0…` and the free plan's 1,000 writes/day, with previews included.
-- **Build-time configuration.** `NEXT_PUBLIC_*` are inlined, so the editor gate's mode is fixed per build.
+- **Broken LinkedIn automation architecture (confirmed first-class feature, editorial posts only):** `lib/linkedin/token-store.ts` and `lib/linkedin/monitoring.ts` query RLS-protected `linkedin_tokens` and `linkedin_events` using `getSupabasePublicClient()` (anon key), contradicting the repo's zero-service-role pattern because `20261115_linkedin_*.sql` grants write/read access ONLY to `service_role`. Additionally, `app/api/webhooks/article-published/route.ts` lacks signature verification, checks `table === 'articles'` instead of `'posts'`, does not filter for `publication_type = 'editorial'`, and leaves `handleArticlePublished()` unawaited (killed by Cloudflare Workers on response close).
+- **Divergent dual Cloudflare deployment (`cloudflare-pages/` vs root Worker; confirmed target: OpenNext Worker only):** `cloudflare-pages/src/server/dispatch.ts` and `registry.ts` reimplement API routing separately from `app/api/` and already omit billing, metered API v1, API keys, LinkedIn, MCP `ask_archive`, `/pricing`, `/motion`, and the role dashboards (`/desk`, `/writing`, `/reading`, `/account`). Confirmed best-practice direction is retiring `cloudflare-pages/` in favor of the OpenNext Worker.
+- **Single shared KV namespace across cache and rate limits (confirmed target: native Workers Rate Limiting bindings):** `wrangler.jsonc` maps `NEXT_INC_CACHE_KV`, `NEXT_TAG_CACHE_KV`, and `RATE_LIMIT_KV` to one namespace (`8d2dc8f0b1bb4839962ae63df8296b31`). Cache purges or write bursts from rate-limiting share the same 1,000 writes/day free-plan quota; budget-friendly best practice moves rate limiting onto native Cloudflare Rate Limiting bindings (zero KV writes).
+- **Unwired RPC Worker (`workers/assistant/`; confirmed target: deploy & bind in production):** `lib/assistant/service.ts` supports offloading Gemini calls to `env.ASSISTANT`, but the service binding is commented out in `wrangler.jsonc`, so all LLM latency executes directly inside the main Next.js Worker isolate.
+- **Duplicate Rich-Text Editors (confirmed target: `platejs` only):** Both `@mdxeditor/editor` (in `/dashboard/(studio)`) and `platejs` + 5 `@platejs/*` packages (in `/write`) coexist as independent editing stacks for Markdown posts; confirmed direction is removing `@mdxeditor/editor` and standardizing on `platejs`.
+- **v3.4 Prisma blueprint vs active Supabase stack (confirmed active target roadmap):** Five root files (`ResearchWithME-v3.4-*`) specify an 83-model Prisma/PostgreSQL architecture confirmed by the owner as the active target roadmap, though zero Prisma runtime code exists in commit `027c746`.
 
 ### 6) Evidence
 
-- `lib/cms/{types,store,catalogue,read,auth,http,errors}.ts`, `lib/legacy/*`, `lib/rate-limit{,-core}.ts`
-- `app/post/[slug]/page.tsx`, `app/api/cms/posts/route.ts`, `middleware.ts`
-- `open-next.config.ts`, `wrangler.jsonc`, `scripts/build-next-or-worker.mjs`, `scripts/check-production-env.mjs`
-- `cloudflare-pages/src/server/{context,dispatch,http}.ts`, `docs/migration-baseline.md`
-- `supabase/migrations/*.sql`
+- `middleware.ts`
+- `wrangler.jsonc`
+- `open-next.config.ts`
+- `app/layout.tsx`
+- `app/agent-markdown/route.ts`
+- `app/api/cms/posts/route.ts`
+- `app/api/v1/assistant/answers/route.ts`
+- `app/mcp/route.ts`
+- `app/api/webhooks/lemonsqueezy/route.ts`
+- `app/api/webhooks/article-published/route.ts`
+- `lib/cms/store.ts`
+- `lib/cms/catalogue.ts`
+- `lib/cms/auth.ts`
+- `lib/api/answers.ts`
+- `lib/api/authenticate.ts`
+- `lib/api/burst.ts`
+- `lib/api/ledger.ts`
+- `lib/assistant/service.ts`
+- `lib/billing/store.ts`
+- `lib/linkedin/token-store.ts`
+- `lib/linkedin/automation.ts`
+- `cloudflare-pages/src/server/dispatch.ts`
+- `workers/assistant/src/index.ts`
+- `supabase/migrations/20261113000300_billing.sql`
+- `supabase/migrations/20261114000200_api_keys.sql`
+- `supabase/migrations/20261116000100_editorial_publication_type.sql`
 
-## Extended Sections
+## Extended Sections (Optional)
 
-### System context
+### Async / Event Topology
 
-```mermaid
-flowchart LR
-    reader([Reader])
-    writer([Approved writer / editor])
-    platform["ResearchWithMe Worker<br/>researchwith.me"]
-    supabase[("Supabase<br/>Postgres + RLS, Auth,<br/>Storage, Realtime")]
-    gemini["Gemini API<br/>(optional)"]
-    hf["Hugging Face Space<br/>(optional, editor-only)"]
-    kv[("Cloudflare KV<br/>cache, tags, rate limits")]
+```text
+1. Lemon Squeezy Order/Subscription Event
+   Lemon Squeezy -> HTTPS POST /api/webhooks/lemonsqueezy (HMAC X-Signature)
+                 -> RPC apply_billing_event (idempotent via public.billing_events)
 
-    reader -->|HTTPS| platform
-    writer -->|HTTPS + session| platform
-    platform -->|anon reads, session writes| supabase
-    platform -->|assistant, editor avatars| gemini
-    platform -->|/api/generate| hf
-    platform --> kv
-    writer -.->|studio realtime| supabase
+2. Hourly LinkedIn Batch Cron (GitHub Actions)
+   .github/workflows/linkedin-automation.yml (cron: "0 * * * *")
+     -> curl GET /api/cron/linkedin-batch (Bearer CRON_SECRET)
+     -> lib/linkedin/automation.ts -> LinkedIn v2 UGC Posts API (broken: no posted filter + anon-key RLS conflict)
+
+3. Article Published Webhook (Intended Supabase Database Webhook)
+   Supabase Webhook -> POST /api/webhooks/article-published (NO signature verification; expects table==='articles' instead of 'posts')
+                    -> unawaited handleArticlePublished() -> LinkedIn API
+
+4. On-Demand Cache Revalidation
+   CMS mutation OR POST /api/revalidate (Bearer REVALIDATE_SECRET)
+     -> lib/cms/revalidate.ts -> revalidateTag('articles') + revalidatePath(...)
+
+5. Transactional Email Dispatch
+   Caller -> lib/email/send.ts -> Resend REST API (retry on 429/5xx, up to 3 attempts, 400ms/1200ms backoff)
 ```
 
-Resend isn't shown because the production Next build has no code path that sends email today (see INTEGRATIONS §1). Without Supabase credentials, every store falls back to local JSON.
+### Failure-Mode & Resilience Posture
 
-### Failure-mode posture
-
-| Failure | Behaviour | Evidence |
-|---|---|---|
-| Supabase read fails (public) | Empty CMS result, page renders from legacy/seed catalogue | `lib/cms/read.ts`, `lib/cms/catalogue.ts` |
-| Legacy store fails | `DEFAULT_LEGACY_SEEDS` | `lib/cms/catalogue.ts` |
-| Legacy check fails during create | 503, no write | `app/api/cms/posts/route.ts:73-81` |
-| `is_editor()` RPC errors | Treated as non-editor | `lib/cms/auth.ts` |
-| Gemini missing/failing | Deterministic cited answer + `notice` | `app/api/research-assistant/route.ts` |
-| HF Space slow | `withTimeout()` race at 60 s (the Gradio call itself isn't cancelled), generic 502 | `app/api/generate/route.ts:10,27,115` |
-| Gemini slow | `AbortSignal.timeout(MODEL_TIMEOUT_MS)` | `app/api/research-assistant/route.ts:149`, `app/api/author-avatar/route.ts:162` |
-| KV rate-limit read error | Fails open | `lib/__tests__/rate-limit.test.ts` |
+- **Catalogue / Supabase read outage:** `lib/cms/catalogue.ts` caches published articles for 30s; `getPublicCmsStore()` throws `CmsUnavailableError` (HTTP `503`) if Supabase is configured and unreachable (never silently falls back to local JSON in production).
+- **Gemini AI outage / timeout:** `lib/assistant/service.ts` enforces a `25_000 ms` `AbortSignal.timeout`; metered API v1 (`lib/api/answers.ts`) automatically calls `refund_api_usage` so failed upstream Gemini calls do not consume monthly quota.
+- **Cloudflare KV failure:** `lib/rate-limit.ts` catches KV read/write errors and falls back to the in-memory `Map` limiter (per-isolate, non-global) rather than crashing requests.
+- **Email delivery outage:** `lib/email/send.ts` retries transient 429/5xx responses with exponential backoff (respecting `Retry-After`) and skips real sends in local dev unless `EMAIL_ALLOW_LOCAL_TEST=true`.
+- **OAuth issuer discovery failure:** `lib/oauth-discovery.ts` caches issuer checks for 5 minutes (negative cache 30s) with a 3s timeout, falling back gracefully on `/.well-known/oauth-protected-resource`.

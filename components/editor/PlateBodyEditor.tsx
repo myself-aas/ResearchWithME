@@ -5,7 +5,7 @@ import type { RenderElementProps, RenderLeafProps } from 'platejs';
 import { Plate, PlateContent, usePlateEditor } from 'platejs/react';
 import { MarkdownPlugin } from '@platejs/markdown';
 import { toggleList } from '@platejs/list';
-import { Bold, Italic, List, ListOrdered, Code2, Quote, Undo2, Redo2 } from 'lucide-react';
+import { Bold, Italic, List, ListOrdered, Code2, Quote, Undo2, Redo2, ImagePlus } from 'lucide-react';
 import { canEditVisually, platePlugins } from '@/lib/editor/plate-markdown';
 
 interface Props {
@@ -13,6 +13,8 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   error?: string;
+  disabled?: boolean;
+  onUploadImage?: (file: File) => Promise<string>;
 }
 
 function renderElement({ attributes, children, element }: RenderElementProps) {
@@ -104,6 +106,8 @@ function VisualEditor({ id, value, onChange, error }: Props) {
 export default function PlateBodyEditor(props: Props) {
   const [mode, setMode] = useState<'visual' | 'source'>(() => canEditVisually(props.value) ? 'visual' : 'source');
   const [notice, setNotice] = useState(() => canEditVisually(props.value) ? '' : 'This draft contains Markdown that the visual editor cannot safely represent. Source mode preserves it.');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const lastValue = useRef(props.value);
 
   useEffect(() => {
@@ -130,17 +134,66 @@ export default function PlateBodyEditor(props: Props) {
     setMode(next);
   }
 
+  async function handleImageSelected(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file || !props.onUploadImage) return;
+    setUploadingImage(true);
+    setNotice('');
+    try {
+      const url = await props.onUploadImage(file);
+      const alt = file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim() || 'Figure';
+      const separator = props.value.trimEnd().length > 0 ? '\n\n' : '';
+      const next = `${props.value.trimEnd()}${separator}![${alt}](${url})\n`;
+      setMode('source');
+      setNotice('Image uploaded and inserted in Markdown mode.');
+      handleChange(next);
+    } catch (uploadError) {
+      setNotice(uploadError instanceof Error ? uploadError.message : 'Image upload failed. Please try again.');
+    } finally {
+      setUploadingImage(false);
+    }
+  }
+
+  const words = props.value.trim() ? props.value.trim().split(/\s+/).length : 0;
+  const readMinutes = Math.max(1, Math.round(words / 220));
+
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div role="group" aria-label="Body editor mode" className="flex gap-1 rounded-2xl border border-line bg-surface p-1">
-          {(['visual', 'source'] as const).map((item) => <button key={item} type="button" aria-pressed={mode === item} onClick={() => switchMode(item)} className={`min-h-11 rounded-xl px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-brand ${mode === item ? 'bg-surface-raised text-ink shadow-sm' : 'text-ink-secondary hover:text-ink'}`}>{item === 'visual' ? 'Visual' : 'Markdown'}</button>)}
+        <div className="flex flex-wrap items-center gap-2">
+          <div role="group" aria-label="Body editor mode" className="flex gap-1 rounded-2xl border border-line bg-surface p-1">
+            {(['visual', 'source'] as const).map((item) => <button key={item} type="button" disabled={props.disabled} aria-pressed={mode === item} onClick={() => switchMode(item)} className={`min-h-11 rounded-xl px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-brand ${mode === item ? 'bg-surface-raised text-ink shadow-sm' : 'text-ink-secondary hover:text-ink'}`}>{item === 'visual' ? 'Visual' : 'Markdown'}</button>)}
+          </div>
+          {props.onUploadImage && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleImageSelected}
+                className="sr-only"
+                aria-label="Upload body image"
+              />
+              <button
+                type="button"
+                disabled={props.disabled || uploadingImage}
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-line bg-surface-raised px-3 text-sm font-medium text-ink transition-colors hover:border-border-strong focus-visible:outline-2 focus-visible:outline-brand disabled:opacity-50"
+              >
+                <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                <span>{uploadingImage ? 'Uploading image…' : 'Insert image'}</span>
+              </button>
+            </>
+          )}
         </div>
-        <span className="text-sm text-ink-secondary">Saved as Markdown</span>
+        <span className="text-sm text-ink-secondary">
+          Saved as Markdown{words > 0 ? ` · ${words} words · ${readMinutes} min read` : ''}
+        </span>
       </div>
       {notice && <p role="status" className="text-sm text-ink-secondary">{notice}</p>}
-      <div className={`overflow-hidden rounded-2xl border bg-surface-raised ${props.error ? 'border-destructive' : 'border-border-strong'}`}>
-        {mode === 'visual' ? <VisualEditor {...props} onChange={handleChange} /> : <textarea id={props.id} aria-labelledby={`${props.id}-label`} aria-describedby={`${props.id}-hint${props.error ? ` ${props.id}-error` : ''}`} aria-invalid={Boolean(props.error)} value={props.value} onChange={(event) => handleChange(event.target.value)} className="min-h-[400px] w-full resize-y bg-surface-raised p-4 font-mono text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand" />}
+      <div className={`overflow-hidden rounded-2xl border bg-surface-raised ${props.error ? 'border-destructive' : 'border-border-strong'} ${props.disabled ? 'pointer-events-none opacity-60' : ''}`}>
+        {mode === 'visual' ? <VisualEditor {...props} onChange={handleChange} /> : <textarea id={props.id} disabled={props.disabled} aria-labelledby={`${props.id}-label`} aria-describedby={`${props.id}-hint${props.error ? ` ${props.id}-error` : ''}`} aria-invalid={Boolean(props.error)} value={props.value} onChange={(event) => handleChange(event.target.value)} className="min-h-[400px] w-full resize-y bg-surface-raised p-4 font-mono text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand" />}
       </div>
       <p id={`${props.id}-hint`} className="text-sm text-ink-secondary">Use Markdown mode for images, tables, links, and advanced syntax. Your draft stays in this browser until published.</p>
       {props.error && <p id={`${props.id}-error`} role="alert" className="text-sm text-destructive">{props.error}</p>}

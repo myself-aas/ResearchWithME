@@ -1,32 +1,35 @@
 import { NextResponse } from 'next/server';
 import { getAuthUrl } from '@/lib/linkedin/oauth';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { requireEditorInChief } from '@/lib/cms/auth';
+import { noStoreHeaders } from '@/lib/cms/http';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const gate = await requireEditorInChief();
+  if (!gate.ok) {
+    return NextResponse.json({ error: gate.error }, { status: gate.status, headers: noStoreHeaders() });
   }
 
-  // Verify admin role
-  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-  if (profile?.role !== 'admin') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+  if (!process.env.LINKEDIN_CLIENT_ID || !process.env.LINKEDIN_REDIRECT_URI) {
+    return NextResponse.json(
+      { error: 'LinkedIn OAuth is not configured on this deployment.' },
+      { status: 503, headers: noStoreHeaders() },
+    );
   }
 
   const state = crypto.randomUUID();
   const authUrl = getAuthUrl(state);
 
-  // Store state in session/cookie for validation
   const response = NextResponse.redirect(authUrl);
+  response.headers.set('Cache-Control', 'no-store, max-age=0');
   response.cookies.set('linkedin_oauth_state', state, {
     httpOnly: true,
-    secure: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
     maxAge: 600, // 10 minutes
-    path: '/',
+    path: '/api/admin/linkedin',
   });
 
   return response;

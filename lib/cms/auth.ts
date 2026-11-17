@@ -84,3 +84,27 @@ export async function requireEditor(): Promise<EditorGate> {
 
   return { ok: true, user, mode: 'supabase' };
 }
+
+/**
+ * Strict Editor-in-Chief guard for sensitive administrative integrations
+ * (such as LinkedIn OAuth & editorial automation). Always fails closed when
+ * Supabase is unconfigured or the caller is not an allowlisted Editor-in-Chief.
+ */
+export async function requireEditorInChief(): Promise<
+  | { ok: true; user: DashboardUser }
+  | { ok: false; status: 401 | 403; error: string }
+> {
+  if (!isSupabaseConfigured) {
+    return { ok: false, status: 401, error: 'Unauthorized' };
+  }
+
+  const user = await getDashboardUser();
+  if (!user) {
+    return { ok: false, status: 401, error: 'Unauthorized' };
+  }
+  if (!user.isEditorInChief) {
+    return { ok: false, status: 403, error: 'Forbidden' };
+  }
+
+  return { ok: true, user };
+}

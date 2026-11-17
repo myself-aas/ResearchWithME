@@ -37,14 +37,15 @@ describe('LinkedIn Integration', () => {
   });
 
   it('full flow: extract article -> format -> post', async () => {
-    // Mock article data
+    // Mock editorial article data (LinkedIn automation applies to editorials only)
     const mockArticle = {
       id: 'post-integration',
       slug: 'integration-test',
       title: 'Integration Test Article',
       subtitle: 'Testing the full pipeline',
       category: 'Research Reviews',
-      format: 'Paper Review',
+      format: 'Deep-Dive Essay',
+      publicationType: 'editorial',
       author: { id: 'a1', name: 'Test Author', avatar: 'TA', role: 'Researcher', domain: 'AI' },
       publishedAt: 'January 15, 2026',
       readTime: '10 min read',
@@ -98,7 +99,8 @@ describe('LinkedIn Integration', () => {
       title: 'Article with "Quotes" & <Tags>',
       subtitle: 'Subtitle',
       category: 'Research Reviews',
-      format: 'Paper Review',
+      format: 'Deep-Dive Essay',
+      publicationType: 'editorial',
       author: { id: 'a1', name: 'Author', avatar: 'A', role: 'Researcher', domain: 'AI' },
       publishedAt: 'January 15, 2026',
       readTime: '5 min read',

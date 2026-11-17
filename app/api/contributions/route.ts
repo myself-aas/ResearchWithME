@@ -1,0 +1,59 @@
+import { NextResponse } from 'next/server';
+import { getDashboardUser } from '@/lib/cms/auth';
+import { CONTRIBUTION_TYPES, CreateContributionInputSchema, type ContributionType } from '@/lib/v34/contracts';
+import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import { runWithIdempotency } from '@/lib/v34/idempotency';
+import { createContribution, listContributions, persistContributionToSupabase } from '@/lib/v34/store';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const rawType = url.searchParams.get('type') ?? 'all';
+  const type =
+    rawType === 'all' || (CONTRIBUTION_TYPES as readonly string[]).includes(rawType)
+      ? (rawType as ContributionType | 'all')
+      : 'all';
+  const topic = url.searchParams.get('topic') ?? undefined;
+  const query = url.searchParams.get('q') ?? undefined;
+  const authorHandle = url.searchParams.get('author') ?? undefined;
+  const user = await getDashboardUser();
+
+  const contributions = listContributions({
+    includeDraftsForAuthorId: user?.id ?? null,
+    type,
+    topic,
+    query,
+    authorHandle,
+  });
+
+  return NextResponse.json({ contributions, total: contributions.length });
+}
+
+export async function POST(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-contributions-write', 20, 60_000);
+  if (limited) return limited;
+
+  const auth = await requireContributor();
+  if (!auth.ok) return auth.response;
+
+  const parsed = await parseJsonBody(request, CreateContributionInputSchema);
+  if (!parsed.ok) return parsed.response;
+
+  return runWithIdempotency(
+    request,
+    { scope: 'v34-contributions-create', actorId: auth.actor.id, payloadHashInput: parsed.data },
+    async () => {
+      const contribution = createContribution({
+        ...parsed.data,
+        authorId: auth.actor.id,
+        authorHandle: auth.actor.handle,
+        authorName: auth.actor.name,
+      });
+
+      await persistContributionToSupabase(auth.actor.supabase, contribution);
+      return NextResponse.json({ contribution }, { status: 201 });
+    },
+  );
+}

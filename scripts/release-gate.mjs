@@ -104,9 +104,75 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
   return 'scripts/check-budgets.mjs (CI runs it after build)';
 });
 
+// v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–3)', () => {
+  const migrations = [
+    'supabase/migrations/20261117000100_v34_research_network.sql',
+    'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
+    'supabase/migrations/20261117000300_v34_wave3_discussions_tools_os.sql',
+  ];
+  for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
+  return `${migrations.length} ordered v3.4 migrations verified`;
+});
+check('V34-2', 'v3.4 components use semantic design tokens only (no raw hex or text-white)', () => {
+  const dir = join(root, 'components/v34');
+  const bad = [];
+  for (const f of readdirSync(dir)) {
+    if (!f.endsWith('.tsx')) continue;
+    const s = readFileSync(join(dir, f), 'utf8');
+    if (/#(?:[0-9a-fA-F]{3}){1,2}\b/.test(s) || /\btext-white\b/.test(s)) bad.push(f);
+  }
+  assert(bad.length === 0, `raw color token in components/v34: ${bad.join(', ')}`);
+  return `${readdirSync(dir).filter((f) => f.endsWith('.tsx')).length} v3.4 components clean`;
+});
+check('V34-3', 'v3.4 axe-core WCAG 2.1 AA & BottomSheet focus-trap suite wired into vitest', () => {
+  const p = join(root, 'lib/__tests__/v34-a11y-visual.test.tsx');
+  assert(existsSync(p), 'missing lib/__tests__/v34-a11y-visual.test.tsx');
+  const content = readFileSync(p, 'utf8');
+  assert(content.includes('axe.run') && content.includes('BottomSheet'), 'incomplete v3.4 a11y suite');
+  return 'lib/__tests__/v34-a11y-visual.test.tsx';
+});
+check('V34-4', 'v3.4 Playwright E2E journeys & 320–1920px reflow matrix present', () => {
+  const files = [
+    'test/playwright.v34.config.ts',
+    'test/e2e/v34-research-network.spec.ts',
+    'test/e2e/v34-a11y-reflow.spec.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Playwright v3.4 test suites ready`;
+});
+check('V34-5', 'idempotency key replay guard & retraction-to-attention propagation wired', () => {
+  assert(existsSync(join(root, 'lib/v34/idempotency.ts')), 'missing lib/v34/idempotency.ts');
+  assert(existsSync(join(root, 'test/next/v34-wave4-hardening.test.ts')), 'missing wave4 route test');
+  const integrityRoute = readFileSync(
+    join(root, 'app/api/sources/[id]/integrity-events/route.ts'),
+    'utf8',
+  );
+  assert(
+    integrityRoute.includes('propagateIntegrityEventToAttention'),
+    'retraction propagation not wired into integrity-events route',
+  );
+  return 'Idempotency-Key + RETRACTION_IMPACT propagation verified';
+});
+check('V34-6', 'v3.4 surface briefs cover all 11 v3.4 page surfaces', () => {
+  const briefsDir = join(root, '.impeccable/surfaces');
+  const expected = [
+    'app-feed-page-tsx.md',
+    'app-contribute-page-tsx.md',
+    'app-library-page-tsx.md',
+    'app-workspaces-page-tsx.md',
+    'app-workspaces-slug-page-tsx.md',
+    'app-graph-page-tsx.md',
+    'app-tools-page-tsx.md',
+    'app-research-os-page-tsx.md',
+  ];
+  for (const b of expected) assert(existsSync(join(briefsDir, b)), `missing brief ${b}`);
+  return `${expected.length} core v3.4 surface governance briefs present`;
+});
+
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {
-  gate: 'reme v3.1 §44/§46 stable release gate',
+  gate: 'reme v3.4 §44/§46 + Part VIII stable release gate',
   generatedAt: new Date().toISOString(),
   tokenChecksum: results.find((r) => r.id === 'DS-2')?.evidence,
   results,

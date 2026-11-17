@@ -10,9 +10,14 @@ import {
   Bookmark,
   BookOpen,
   CheckCircle2,
+  Compass,
+  FolderKanban,
+  GitBranch,
+  Library,
   LogIn,
   LogOut,
   PenSquare,
+  PlusCircle,
   Search,
   Settings,
   Sparkles,
@@ -27,6 +32,7 @@ import { EASING, TRANSITION } from '@/lib/motion/tokens';
 import AttentionPulse from './motion/AttentionPulse';
 import Pressable from './motion/Pressable';
 import BrandLogo from './BrandLogo';
+import MobileBottomNav from './layout/MobileBottomNav';
 import { Header } from '@/components/ui/header-2';
 import { Button } from '@/components/ui/button';
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
@@ -40,8 +46,12 @@ interface BlogHeaderProps {
 }
 
 const primaryNav = [
+  { href: '/feed', label: 'Feed', icon: Compass, match: (path: string) => path.startsWith('/feed') || path.startsWith('/contribution/') || path.startsWith('/source/') },
+  { href: '/workspaces', label: 'Workspaces', icon: FolderKanban, match: (path: string) => path.startsWith('/workspaces') },
+  { href: '/graph', label: 'Graph', icon: GitBranch, match: (path: string) => path.startsWith('/graph') },
   { href: '/', label: 'Home', icon: BookOpen, match: (path: string) => path === '/' || path.startsWith('/articles') || path.startsWith('/post/') || path.startsWith('/category/') },
-  { href: '/authors', label: 'Writers', icon: Users, match: (path: string) => path.startsWith('/author') },
+  { href: '/library', label: 'Library', icon: Library, match: (path: string) => path.startsWith('/library') },
+  { href: '/authors', label: 'Writers', icon: Users, match: (path: string) => path.startsWith('/author') || path.startsWith('/profile/') },
   { href: '/assistant', label: 'Assistant', icon: Sparkles, match: (path: string) => path.startsWith('/assistant') },
   { href: '/pricing', label: 'Products', icon: Tag, match: (path: string) => path.startsWith('/pricing') },
 ];
@@ -112,6 +122,8 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   }
 
   const secondaryNav = [
+    { href: '/research-os', label: 'Research OS', icon: Sparkles },
+    { href: '/tools', label: 'Tool Registry', icon: FolderKanban },
     { href: '/bookmarks', label: 'Reading list', icon: Bookmark },
     { href: '/cite', label: 'Cite', icon: Bookmark },
     { href: '/settings', label: 'Settings', icon: Settings },
@@ -198,9 +210,16 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               )}
             </Link>
 
-            {/* Auth / Write CTA — adapts cleanly to three states */}
+            {/* Auth / Contribute CTA — adapts cleanly to three states */}
             {isSignedIn ? (
               <div className="hidden items-center gap-1 md:flex">
+                <Link
+                  href="/contribute"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-brand px-4 py-1.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
+                >
+                  <PlusCircle className="h-4 w-4" aria-hidden="true" />
+                  <span>Contribute</span>
+                </Link>
                 <Link
                   href="/dashboard/account"
                   className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
@@ -240,11 +259,11 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   <span className="hidden xl:inline">Sign in</span>
                 </Link>
                 <Link
-                  href="/dashboard/access"
+                  href="/contribute"
                   className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90"
                 >
-                  <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>Write for us</span>
+                  <PlusCircle className="h-4 w-4" aria-hidden="true" />
+                  <span>Contribute</span>
                 </Link>
               </div>
             )}
@@ -408,6 +427,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         />
       )}
     </Header>
+    <MobileBottomNav profileHref={isSignedIn ? '/dashboard/account' : '/profile/myself-aas'} />
     </>
   );
 }

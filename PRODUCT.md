@@ -29,8 +29,8 @@ Scholars read research papers across desktop and mobile viewports, inspect math 
 ## Brand Commitments
 - Name: ResearchWithMe
 - Editorial voice: Scholarly, precise, restrained, transparent, evidence-based.
-- Typography: The Aptos family. Aptos Serif for headlines and reading copy, Aptos for interface chrome, Aptos Mono for code and data tables. The overall feel is a newspaper of record for open research.
-- Palette: Warm archival stone background, deep amber/ochre accents, emerald verification indicators, high-contrast ink text.
+- Typography: Self-hosted Plus Jakarta Sans (WOFF2, OFL) for display headlines, reading copy, and interface chrome (with self-hosted Newsreader/Inter fallbacks), paired with Aptos Mono / JetBrains Mono for code, DOIs, and data tables.
+- Palette: Cool archival neutral canvas (`#F8F9FA`), crisp white cards (`#FFFFFF`), cobalt editorial accent (`#005BBF`), high-contrast dark ink (`#1F2329`), and WCAG AA semantic evidence badges.
 
 ## Evidence on Hand
 - Published articles across domains including Computational Neuroscience, Distributed ML Infrastructure, Climate Telemetry, Quantum Algorithms, and Genomic Pipelines.

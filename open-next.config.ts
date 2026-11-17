@@ -14,12 +14,14 @@ import kvNextTagCache from '@opennextjs/cloudflare/overrides/tag-cache/kv-next-t
 // OpenNext does not infer a different runner from whichever lockfile it finds.
 // `defineCloudflareConfig` only passes through the keys it knows, so the
 // buildCommand override is spread ON TOP of its result.
-export default {
+const openNextConfig = {
   ...defineCloudflareConfig({
-  incrementalCache: kvIncrementalCache,
-  tagCache: kvNextTagCache,
-  queue: memoryQueue,
-  enableCacheInterception: true,
+    incrementalCache: kvIncrementalCache,
+    tagCache: kvNextTagCache,
+    queue: memoryQueue,
+    enableCacheInterception: true,
   }),
   buildCommand: 'npm run build',
 };
+
+export default openNextConfig;

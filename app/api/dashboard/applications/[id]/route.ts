@@ -34,7 +34,7 @@ export async function POST(
   if (!limit.allowed) {
     return NextResponse.json(
       { error: 'Too many review actions. Wait a minute before continuing.' },
-      { status: 429, headers: { 'Retry-After': String(Math.ceil(limit.retryAfter / 1000)) } },
+      { status: 429, headers: { 'Retry-After': String(limit.retryAfter) } },
     );
   }
 

@@ -8,7 +8,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import ThemeToggle, { resolveEffectiveTheme } from '@/components/ThemeToggle';
 
 describe('Archival typography, 68ch prose & ThemeToggle', () => {
-  it.each(['app/globals.css', 'cloudflare-pages/src/globals.css'])('%s enforces font stacks and 68ch reading measure', (file) => {
+  it.each(['app/globals.css'])('%s enforces font stacks and 68ch reading measure', (file) => {
     const css = readFileSync(join(process.cwd(), file), 'utf8');
     expect(css).toContain('JetBrains Mono');
     expect(css).toContain('68ch');

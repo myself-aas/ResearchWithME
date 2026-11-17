@@ -1,18 +1,19 @@
+import crypto from 'node:crypto';
 import { test, expect } from '@playwright/test';
 
 // No LinkedIn account, live Supabase project, or posting operation is used.
 // Positive authenticated publishing requires a separate isolated integration
 // environment; these tests cover the real unauthenticated HTTP boundaries.
-test.describe('LinkedIn automation HTTP boundaries', () => {
+test.describe('LinkedIn automation HTTP boundaries (editorial-only)', () => {
   test('the sign-in page is reachable without a pre-existing session', async ({ page }) => {
     await page.goto('/login');
     await expect(page.getByRole('heading', { name: 'Write, review, and publish' })).toBeVisible();
     await expect(page.getByLabel('Email address')).toBeVisible();
   });
 
-  for (const path of ['/api/admin/linkedin/auth', '/api/admin/linkedin/status']) {
+  for (const path of ['/api/admin/linkedin/auth', '/api/admin/linkedin/callback', '/api/admin/linkedin/status']) {
     test(`${path} rejects an anonymous request`, async ({ request }) => {
-      const response = await request.get(path);
+      const response = await request.get(path, { maxRedirects: 0 });
       expect(response.status()).toBe(401);
       expect(await response.json()).toEqual({ error: 'Unauthorized' });
     });
@@ -33,19 +34,26 @@ test.describe('LinkedIn automation HTTP boundaries', () => {
     }
   });
 
-  test('the OAuth callback rejects missing parameters without contacting LinkedIn', async ({ request }) => {
-    const response = await request.get('/api/admin/linkedin/callback', { maxRedirects: 0 });
-    expect(response.status()).toBe(307);
-    const redirect = new URL(response.headers().location, response.url());
-    expect(redirect.pathname).toBe('/admin/linkedin');
-    expect(redirect.searchParams.get('error')).toBe('missing_params');
+  test('the article webhook rejects unsigned requests with 401', async ({ request }) => {
+    const response = await request.post('/api/webhooks/article-published', {
+      data: { type: 'INSERT', table: 'posts', record: { status: 'published', publication_type: 'editorial', slug: 'ed-1' } },
+    });
+    expect(response.status()).toBe(401);
   });
 
-  test('a draft event is acknowledged without attempting a post', async ({ request }) => {
+  test('a signed non-editorial or draft post event is skipped cleanly without posting', async ({ request }) => {
+    const secret = process.env.LINKEDIN_WEBHOOK_SECRET || 'local-test-webhook-secret';
+    const rawBody = JSON.stringify({
+      type: 'INSERT',
+      table: 'posts',
+      record: { status: 'published', publication_type: 'review', slug: 'review-example' },
+    });
+    const sig = `sha256=${crypto.createHmac('sha256', secret).update(rawBody, 'utf8').digest('hex')}`;
     const response = await request.post('/api/webhooks/article-published', {
-      data: { type: 'INSERT', table: 'articles', record: { status: 'draft', slug: 'unpublished-example' } },
+      headers: { 'content-type': 'application/json', 'x-webhook-signature': sig },
+      data: rawBody,
     });
     expect(response.status()).toBe(200);
-    expect(await response.json()).toEqual({ received: true });
+    expect(await response.json()).toEqual({ received: true, skipped: true, reason: 'not_editorial' });
   });
 });

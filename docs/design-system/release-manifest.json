@@ -1,7 +1,7 @@
 {
-  "gate": "reme v3.1 §44/§46 stable release gate",
-  "generatedAt": "2026-11-13T21:30:22.073Z",
-  "tokenChecksum": "sha256:ce1073ea91b2958d",
+  "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
+  "generatedAt": "2026-11-17T01:39:58.679Z",
+  "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
       "id": "DS-1",
@@ -13,7 +13,7 @@
       "id": "DS-2",
       "description": "token checksum (conformance manifest §46.1)",
       "status": "pass",
-      "evidence": "sha256:ce1073ea91b2958d"
+      "evidence": "sha256:eb18cbef276243f6"
     },
     {
       "id": "DS-3",
@@ -74,6 +74,42 @@
       "description": "performance budgets script present (§18)",
       "status": "pass",
       "evidence": "scripts/check-budgets.mjs (CI runs it after build)"
+    },
+    {
+      "id": "V34-1",
+      "description": "v3.4 ordered Supabase SQL migrations present (Waves 1–3)",
+      "status": "pass",
+      "evidence": "3 ordered v3.4 migrations verified"
+    },
+    {
+      "id": "V34-2",
+      "description": "v3.4 components use semantic design tokens only (no raw hex or text-white)",
+      "status": "pass",
+      "evidence": "11 v3.4 components clean"
+    },
+    {
+      "id": "V34-3",
+      "description": "v3.4 axe-core WCAG 2.1 AA & BottomSheet focus-trap suite wired into vitest",
+      "status": "pass",
+      "evidence": "lib/__tests__/v34-a11y-visual.test.tsx"
+    },
+    {
+      "id": "V34-4",
+      "description": "v3.4 Playwright E2E journeys & 320–1920px reflow matrix present",
+      "status": "pass",
+      "evidence": "3 Playwright v3.4 test suites ready"
+    },
+    {
+      "id": "V34-5",
+      "description": "idempotency key replay guard & retraction-to-attention propagation wired",
+      "status": "pass",
+      "evidence": "Idempotency-Key + RETRACTION_IMPACT propagation verified"
+    },
+    {
+      "id": "V34-6",
+      "description": "v3.4 surface briefs cover all 11 v3.4 page surfaces",
+      "status": "pass",
+      "evidence": "8 core v3.4 surface governance briefs present"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

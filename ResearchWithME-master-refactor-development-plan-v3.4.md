@@ -3,7 +3,7 @@ name: ResearchWithME Master Refactor and Development Plan
 version: 3.4.0
 status: finalized-implementation-plan
 product: ResearchWithME
-design_system: pieme-v3.1
+design_system: reme-v3.1
 updated: 2026-11-17
 scope:
   - product-strategy
@@ -57,7 +57,7 @@ The keywords **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** are
 
 **Document type:** Advanced technical product, UX, frontend, backend, experimentation, accessibility, research-integrity, and delivery plan  
 **Product:** ResearchWithME  
-**Design system:** πeme / ResearchWithME Design System  
+**Design system:** reme / ResearchWithME Design System  
 **Target:** Transform the current publication-oriented application into a contribution-centered research network and scholarly workspace  
 **Status:** Implementation blueprint  
 
@@ -3076,27 +3076,27 @@ CSS custom properties cannot be used directly in media-query conditions in stand
 ## 3. Container rules
 
 ```css
-.pieme-page {
+.reme-page {
   inline-size: min(100%, 112.5rem);
   margin-inline: auto;
   padding-inline: 1rem;
 }
 
-.pieme-reading {
+.reme-reading {
   inline-size: min(100%, 48rem);
   margin-inline: auto;
 }
 
 @media (min-width: 48rem) {
-  .pieme-page { padding-inline: 1.5rem; }
+  .reme-page { padding-inline: 1.5rem; }
 }
 
 @media (min-width: 64rem) {
-  .pieme-page { padding-inline: 2rem; }
+  .reme-page { padding-inline: 2rem; }
 }
 
 @media (min-width: 90rem) {
-  .pieme-page { padding-inline: 3rem; }
+  .reme-page { padding-inline: 3rem; }
 }
 ```
 
@@ -3332,7 +3332,7 @@ Prefer `dvh` over `vh` for full-height mobile overlays. Test Android Chrome addr
 This part is normative at component level. Every stable component must implement its documented anatomy, variants, states, responsive transformations, accessibility behavior, localization behavior, permission behavior, and test evidence.
 
 **Product:** ResearchWithME  
-**Design system:** πeme / ResearchWithME Design System  
+**Design system:** reme / ResearchWithME Design System  
 **Version:** 1.0  
 **Status:** Implementation specification  
 **Target:** Next.js/React, TypeScript, PostgreSQL/Prisma, responsive web and PWA  
@@ -4698,9 +4698,9 @@ export function ResponsivePane({
       data-pane-state={state}
       aria-label={title}
       hidden={state === 'hidden'}
-      className="pieme-pane"
+      className="reme-pane"
     >
-      <header className="pieme-pane__header">
+      <header className="reme-pane__header">
         <h2>{title}</h2>
         <button
           type="button"
@@ -4711,7 +4711,7 @@ export function ResponsivePane({
           {state === 'expanded' ? 'Collapse' : 'Expand'}
         </button>
       </header>
-      <div className="pieme-pane__body">{children}</div>
+      <div className="reme-pane__body">{children}</div>
     </section>
   );
 }

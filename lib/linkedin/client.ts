@@ -1,4 +1,4 @@
-import { TokenStore, TokenSet } from '@/lib/linkedin/token-store';
+import { TokenStore, TokenSet, type TokenStoreOptions } from '@/lib/linkedin/token-store';
 import { formatLinkedInPost } from '@/lib/linkedin/content-formatter';
 import { createEventLogger } from '@/lib/linkedin/monitoring';
 import { z } from 'zod';
@@ -20,6 +20,7 @@ export interface ArticleData {
   category: string;
   tags: string[];
   doi?: string;
+  publicationType?: 'review' | 'editorial';
 }
 
 const COMPANY_URN = process.env.LINKEDIN_COMPANY_URN || 'urn:li:organization:144133153';
@@ -27,8 +28,13 @@ const API_BASE = 'https://api.linkedin.com/rest';
 const API_VERSION = '2024-07';
 
 export class LinkedInClient {
-  private tokenStore = new TokenStore();
-  private logger = createEventLogger();
+  private tokenStore: TokenStore;
+  private logger: ReturnType<typeof createEventLogger>;
+
+  constructor(options: TokenStoreOptions = {}) {
+    this.tokenStore = new TokenStore(options);
+    this.logger = createEventLogger(options);
+  }
 
   async postArticle(article: ArticleData): Promise<PostResult> {
     try {

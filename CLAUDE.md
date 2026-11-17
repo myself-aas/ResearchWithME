@@ -54,7 +54,8 @@ All interface motion is governed by `docs/motion-system.md` (reme §9/§10). Rea
 - Check `/motion` in `full`, `reduced`, and `static` modes after any motion change.
 
 ## Design system
-- Fonts: Aptos family. Aptos Serif is primary (headings + reading copy), Aptos (sans) for UI chrome, Aptos Mono for code. Aptos is requested by installed name only (never bundled); self-hosted Newsreader/Inter in `app/fonts/` are the fallbacks. No CDN.
+- Fonts: Self-hosted `Plus Jakarta Sans` (WOFF2, OFL in `public/fonts/`) leads display, editorial reading, and UI stacks; self-hosted Newsreader and Inter in `app/fonts/` (`next/font/local`) serve as OFL fallbacks, and Aptos Mono / JetBrains Mono back code and scholarly identifiers. No third-party font CDN.
+- Palette: Cool neutral `#F8F9FA` canvas, `#FFFFFF` raised surfaces, `#005BBF` cobalt brand/action accent, high-contrast neutral ink (`#1F2329`), and semantic status accents (emerald verified, cobalt emerging, amber uncertain, red contradicted) from `tokens/src/*.json`.
 - Tailwind v4: no arbitrary values for spacing or colour that exist as tokens.
 - Follow `DESIGN.md` for surface-level design decisions; per-route detail is in `.impeccable/surfaces/`.
 

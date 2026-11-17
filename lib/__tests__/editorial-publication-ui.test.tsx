@@ -14,7 +14,7 @@ import type { CmsPost, DashboardUser } from '@/lib/cms/types';
 
 vi.mock('@/components/BlogHeader', () => ({ default: () => <header /> }));
 vi.mock('@/components/BlogFooter', () => ({ default: () => <footer /> }));
-vi.mock('@/components/cms/MarkdownEditor', () => ({
+vi.mock('@/components/editor/PlateBodyEditor', () => ({
   default: ({ value, onChange }: { value: string; onChange: (next: string) => void }) => (
     <textarea id="post-content" value={value} onChange={(event) => onChange(event.target.value)} />
   ),

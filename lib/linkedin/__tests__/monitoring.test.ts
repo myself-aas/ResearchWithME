@@ -1,15 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Use vi.hoisted to define mocks before vi.mock is hoisted
 const { mockSupabase } = vi.hoisted(() => ({
   mockSupabase: {
-    from: vi.fn().mockReturnThis(),
-    insert: vi.fn().mockReturnThis(),
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    gte: vi.fn().mockReturnThis(),
-    order: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
+    rpc: vi.fn(),
   },
 }));
 
@@ -23,60 +16,57 @@ vi.mock('@/lib/supabase/config', () => ({
 
 import { logLinkedInEvent, getLinkedInMetrics } from '@/lib/linkedin/monitoring';
 
-describe('LinkedIn Monitoring', () => {
+describe('LinkedIn Monitoring (Bridge RPC)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    process.env.LINKEDIN_BRIDGE_SECRET = 'bridge-test-secret';
   });
 
-  it('logs post attempt event', async () => {
-    mockSupabase.insert.mockResolvedValue({ error: null });
+  it('logs post attempt event via linkedin_log_event RPC', async () => {
+    mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
     await logLinkedInEvent({
       type: 'post_attempt',
-      slug: 'test-article',
+      slug: 'test-editorial',
       status: 'success',
       postUrn: 'urn:li:share:123',
       timestamp: new Date().toISOString(),
     });
 
-    expect(mockSupabase.from).toHaveBeenCalledWith('linkedin_events');
-    expect(mockSupabase.insert).toHaveBeenCalledWith(
+    expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'linkedin_log_event',
       expect.objectContaining({
-        type: 'post_attempt',
-        slug: 'test-article',
-        status: 'success',
-        post_urn: 'urn:li:share:123',
-      })
+        p_type: 'post_attempt',
+        p_slug: 'test-editorial',
+        p_status: 'success',
+        p_post_urn: 'urn:li:share:123',
+        p_secret: 'bridge-test-secret',
+      }),
     );
   });
 
   it('logs post failure with error details', async () => {
-    mockSupabase.insert.mockResolvedValue({ error: null });
+    mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
     await logLinkedInEvent({
       type: 'post_attempt',
-      slug: 'test-article',
+      slug: 'test-editorial',
       status: 'failed',
       error: 'Rate limited',
       timestamp: new Date().toISOString(),
     });
 
-    expect(mockSupabase.insert).toHaveBeenCalledWith(
+    expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'linkedin_log_event',
       expect.objectContaining({
-        status: 'failed',
-        error: 'Rate limited',
-      })
+        p_status: 'failed',
+        p_error: 'Rate limited',
+      }),
     );
   });
 
-  it('retrieves metrics for dashboard', async () => {
-    // The monitoring code chains .eq().gte().order().limit() after .select()
-    // So we need to mock the chain properly
-    mockSupabase.select.mockReturnValue(mockSupabase);
-    mockSupabase.eq.mockReturnValue(mockSupabase);
-    mockSupabase.gte.mockReturnValue(mockSupabase);
-    mockSupabase.order.mockReturnValue(mockSupabase);
-    mockSupabase.limit.mockResolvedValue({
+  it('retrieves metrics via linkedin_get_metrics RPC', async () => {
+    mockSupabase.rpc.mockResolvedValue({
       data: [
         { type: 'post_attempt', status: 'success', created_at: '2026-01-15T10:00:00Z' },
         { type: 'post_attempt', status: 'success', created_at: '2026-01-15T11:00:00Z' },
@@ -86,6 +76,12 @@ describe('LinkedIn Monitoring', () => {
     });
 
     const metrics = await getLinkedInMetrics();
+    expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'linkedin_get_metrics',
+      expect.objectContaining({
+        p_secret: 'bridge-test-secret',
+      }),
+    );
     expect(metrics.totalPosts).toBe(3);
     expect(metrics.successfulPosts).toBe(2);
     expect(metrics.failedPosts).toBe(1);

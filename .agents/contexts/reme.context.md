@@ -6,4 +6,4 @@ Article bodies are Markdown in the CMS. The authoritative write shape is `CmsPos
 
 Safety boundaries: do not probe `POST /agent/auth` or other signup endpoints during discovery; registration may create accounts, issue credentials or send email. When OAuth metadata is unavailable, use the self-contained `/auth.md` rather than asserting an OAuth flow. Treat account creation, CMS publishing, DNS updates, IndexNow and external submissions as explicit human-authorized actions. Do not request or persist secrets in prompts, draft files, hooks, or MCP resources.
 
-For code work, the repository has Next.js and Cloudflare Pages targets. Validate both where a route is shared. Use `.agents/references/skills-sh.md` for reviewed external skill choices, but read the exact installed version before relying on its instructions.
+For code work, the repository runs Next.js on Cloudflare Workers (`@opennextjs/cloudflare` via `wrangler.jsonc`), plus the isolated `workers/assistant/` RPC Worker. Use `.agents/references/skills-sh.md` for reviewed external skill choices, but read the exact installed version before relying on its instructions.

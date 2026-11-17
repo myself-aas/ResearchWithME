@@ -21,6 +21,10 @@ jobs:
         run: npm run tokens:build && npm run tokens:check
       - name: Lint, typecheck, tests, Impeccable source scan
         run: npm run lint && npm run typecheck && npm run test && npm run impeccable:source
+      - name: Protocol, DNS-AID, WebMCP, and Assistant Worker checks
+        run: npm run dns:test && npm run webmcp:test && npm run worker:assistant:check
+      - name: Python CLI product tests
+        run: python3 -m unittest discover -s products/tests -p 'test_*.py'
       - name: reme offline draft checks
         run: npm run reme:check && npm run reme:test
       - name: Production build

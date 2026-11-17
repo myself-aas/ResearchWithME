@@ -72,7 +72,6 @@ const securityHeaders = [
   // Deployed on Cloudflare (HTTPS enforced at the edge); HSTS is safe to send.
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'Content-Security-Policy', value: cspDirectives },
-  { key: 'Content-Security-Policy-Report-Only', value: cspDirectives },
 ];
 
 const nextConfig: NextConfig = {

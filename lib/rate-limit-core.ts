@@ -1,16 +1,23 @@
 /**
  * Framework-neutral fixed-window rate limiting.
  *
- * Everything in this module is dependency-free so it can be bundled by the
- * Next.js build (via lib/rate-limit.ts) and by the Cloudflare Pages SSR
- * bundle (via cloudflare-pages/src/server/context.ts). The Next-facing
- * wrapper keeps its original signatures in lib/rate-limit.ts.
+ * Everything in this module is dependency-free so it can run on Cloudflare
+ * Workers (via native Rate Limiting bindings or optional KV) and in Node.js
+ * local development/tests (in-memory fallback).
  */
 
 export interface RateLimitOutcome {
   allowed: boolean;
   remaining: number;
   retryAfter: number;
+}
+
+/**
+ * Structural view of Cloudflare's native Workers Rate Limiting binding
+ * (`ratelimits` in wrangler.jsonc). Consumes zero KV writes on the Free plan.
+ */
+export interface CloudflareRateLimiterLike {
+  limit(options: { key: string }): Promise<{ success: boolean }>;
 }
 
 /**
@@ -24,8 +31,32 @@ export interface KvNamespaceLike {
 }
 
 export interface RateLimitStore {
-  readonly kind: 'kv' | 'memory';
+  readonly kind: 'ratelimit' | 'kv' | 'memory';
   hit(key: string, limit: number, windowMs: number): Promise<RateLimitOutcome>;
+}
+
+/**
+ * Native Cloudflare Workers Rate Limiting store (`APP_RATE_LIMITER`).
+ * Zero KV writes and fail-open on binding errors so rate-limit transport
+ * glitches never cause an outage.
+ */
+export function createCloudflareRateLimitStore(limiter: CloudflareRateLimiterLike): RateLimitStore {
+  return {
+    kind: 'ratelimit',
+
+    async hit(key, limit, windowMs) {
+      const retryAfterSeconds = Math.max(1, Math.ceil(windowMs / 1000));
+      try {
+        const { success } = await limiter.limit({ key });
+        return success
+          ? { allowed: true, remaining: Math.max(0, limit - 1), retryAfter: 0 }
+          : { allowed: false, remaining: 0, retryAfter: retryAfterSeconds };
+      } catch (error) {
+        console.error('Native rate limiter failed; failing open:', error);
+        return { allowed: true, remaining: Math.max(0, limit - 1), retryAfter: 0 };
+      }
+    },
+  };
 }
 
 /** Keys are namespaced so they cannot collide with the OpenNext cache prefixes. */

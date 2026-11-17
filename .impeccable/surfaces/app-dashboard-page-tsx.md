@@ -2,7 +2,7 @@
 version: 1
 slug: "app-dashboard-page-tsx"
 primary_target: "app/dashboard/(studio)/page.tsx"
-related_targets: ["components/cms/PostEditor.tsx","components/cms/MarkdownEditor.tsx","components/cms/DashboardShell.tsx","components/media/ImageCropDialog.tsx"]
+related_targets: ["components/cms/PostEditor.tsx","components/editor/PlateBodyEditor.tsx","components/cms/DashboardShell.tsx","components/media/ImageCropDialog.tsx"]
 ---
 
 # Studio: New Article

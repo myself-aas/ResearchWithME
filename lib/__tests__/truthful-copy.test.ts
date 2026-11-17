@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 const ROOT = process.cwd();
-const SCAN_DIRS = ['app', 'components', 'lib', 'cloudflare-pages/src', 'emails', 'public'];
+const SCAN_DIRS = ['app', 'components', 'lib', 'emails', 'public'];
 const EXCLUDED_DIRS = new Set([
   'node_modules',
   '.next',

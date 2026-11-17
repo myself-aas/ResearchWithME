@@ -18,7 +18,7 @@
 @font-face {
   /* impeccable-disable-next-line overused-font: user-approved editorial font, self-hosted with OFL license */
   font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/plus-jakarta-sans-variable.ttf') format('truetype');
+  src: url('/fonts/plus-jakarta-sans-variable.woff2') format('woff2');
   font-style: normal;
   font-weight: 200 800;
   font-display: swap;
@@ -656,15 +656,6 @@ html[data-motion-mode="static"] {
 }
 .reme-lottie svg [fill]:not([fill="none"]) {
   fill: currentColor;
-}
-
-/* MDXEditor (third-party, /write and the studio) paints Select placeholders in
-   its slate-8 (#b9bbc6), 1.9:1 on white. Use the editor's own body-text
-   variable (slate-11) so it tracks the editor's theme rather than the page's
-   — the editor surface stays light in dark mode. [role] raises specificity
-   above the editor's CSS-module rule. */
-.mdxeditor [role="combobox"][data-placeholder] > span:first-child {
-  color: var(--baseText);
 }
 
 /* Research lifecycle diagrams (components/workflows): the connector between

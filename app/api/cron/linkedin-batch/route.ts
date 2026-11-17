@@ -1,26 +1,44 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { checkAndPostNewArticles } from '@/lib/linkedin/automation';
-import { headers } from 'next/headers';
+import { noStoreHeaders } from '@/lib/cms/http';
+import { timingSafeEqualStrings } from '@/lib/crypto';
 
-// This route should be called by a cron job (e.g., Vercel Cron, GitHub Actions, or external scheduler)
-// Protect with CRON_SECRET
-export async function GET(_request: Request) {
-  const headersList = await headers();
-  const authHeader = headersList.get('authorization');
-  const cronSecret = process.env.CRON_SECRET;
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
 
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+export async function GET(request: NextRequest) {
+  const cronSecret = (process.env.CRON_SECRET ?? '').trim();
+  if (!cronSecret) {
+    return NextResponse.json(
+      { error: 'Cron secret is not configured.' },
+      { status: 503, headers: noStoreHeaders() },
+    );
+  }
+
+  const authHeader = request.headers.get('authorization') ?? '';
+  const expected = `Bearer ${cronSecret}`;
+  if (!timingSafeEqualStrings(authHeader, expected)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: noStoreHeaders() });
   }
 
   try {
     const result = await checkAndPostNewArticles();
-    return NextResponse.json({ success: true, ...result });
+    return NextResponse.json(
+      {
+        success: true,
+        scope: 'editorial_only',
+        posted: result.posted,
+        failed: result.failed,
+        skipped: result.skipped,
+        timestamp: new Date().toISOString(),
+      },
+      { headers: noStoreHeaders() },
+    );
   } catch (error) {
-    console.error('[LinkedIn Cron] Batch posting failed:', error);
-    return NextResponse.json({ 
-      success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error' 
-    }, { status: 500 });
+    console.error('[LinkedIn Cron] Batch job failed:', error);
+    return NextResponse.json(
+      { error: 'LinkedIn batch job failed.' },
+      { status: 500, headers: noStoreHeaders() },
+    );
   }
 }

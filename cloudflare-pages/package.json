@@ -1,6 +1,0 @@
-{
-  "name": "researchwithme-pages",
-  "version": "0.0.0",
-  "private": true,
-  "description": "Standalone project root for the ResearchWithMe Cloudflare Pages app (wrangler pages dev/CI resolve the nearest package.json upward; keeping one here stops the repo-root Worker config from being picked up)."
-}

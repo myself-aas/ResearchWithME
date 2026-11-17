@@ -50,34 +50,33 @@
 			// See https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
 			"service": "researchwithme"
+		},
+		{
+			// Dedicated Assistant RPC Worker (workers/assistant), called over RPC
+			// from lib/assistant/service.ts to isolate Gemini synthesis latency.
+			// Deploy `npm run worker:assistant:deploy` (with GEMINI_API_KEY secret)
+			// before deploying this Worker.
+			"binding": "ASSISTANT",
+			"service": "researchwithme-assistant",
+			"entrypoint": "AssistantService"
 		}
-		// The Assistant's model call can run in its own Worker (workers/assistant),
-		// called over RPC from lib/assistant/service.ts. The binding is off until
-		// that Worker exists: `main` deploys automatically, and a deploy that names
-		// a Worker the account does not have fails. Until then the site answers
-		// in-process. To turn it on: `npm run worker:assistant:deploy`, set its
-		// GEMINI_API_KEY secret, then add a comma after the brace above and
-		// uncomment:
-		// { "binding": "ASSISTANT", "service": "researchwithme-assistant", "entrypoint": "AssistantService" }
 	],
-	// Free-plan setup: no R2 or Images bindings, so next/image serves originals.
-	// One KV namespace (researchwithme-opennext-cache) backs both OpenNext
-	// caches; their key prefixes don't overlap (see open-next.config.ts).
-	// RATE_LIMIT_KV points at the same namespace with its own `rl:` prefix
-	// (lib/rate-limit.ts). Sharing it means rate-limiter writes draw on the same
-	// free 1,000-writes-a-day budget as the page cache; to separate them, run
-	// `npx wrangler kv namespace create researchwithme-rate-limit` and use that id
-	// for RATE_LIMIT_KV only. Without any RATE_LIMIT_KV binding the limiter
-	// silently falls back to a per-isolate in-memory count.
+	// Budget-friendly free-plan setup: no R2 or Images bindings, so next/image
+	// serves originals. One KV namespace (researchwithme-opennext-cache) backs
+	// OpenNext's incremental & tag caches only; their prefixes do not overlap.
+	// General IP rate limiting runs on Cloudflare's native Rate Limiting binding
+	// (`APP_RATE_LIMITER` below) so rate-limit traffic consumes zero KV writes
+	// against the free-tier 1,000-writes/day ceiling.
 	"kv_namespaces": [
 		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-		{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 	],
 	"ratelimits": [
 		// Burst limit for /api/v1 (lib/api/burst.ts). Approximate by design; the
 		// exact monthly count lives in Postgres. namespace_id is account-wide.
-		{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } }
+		{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } },
+		// General IP rate limiter (lib/rate-limit.ts): zero KV writes, free plan.
+		{ "name": "APP_RATE_LIMITER", "namespace_id": "2002", "simple": { "limit": 30, "period": 60 } }
 	],
 	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
 	// pull request. A preview is a branch of the Worker, not the production
@@ -85,24 +84,17 @@
 	// to be named again here, or the preview deploy stops with
 	// "Your Wrangler configuration is missing a `previews` block".
 	//
-	// These point at the production namespace deliberately. OpenNext scopes every
-	// key by build id, so a preview's entries are unreachable from production and
-	// vice versa: the incremental cache stores
-	// `incremental-cache/<buildId>/<sha256>.cache`
-	// (node_modules/@opennextjs/cloudflare/dist/api/overrides/incremental-cache/
-	// kv-incremental-cache.js) and the tag cache stores `<buildId>/<tag>`
-	// (…/tag-cache/kv-next-tag-cache.js). What the two do share is the free
-	// plan's 1,000 KV writes a day; to split that as well, create a second
-	// namespace and swap the ids here — see README, "Worker Previews".
-	//
-	// `WORKER_SELF_REFERENCE` is deliberately absent: Worker Previews do not
-	// support service bindings, so a preview renders and caches but does not
-	// re-render itself through OpenNext's queue.
+	// `WORKER_SELF_REFERENCE` and `ASSISTANT` are deliberately absent in previews:
+	// Worker Previews do not support service bindings, so a preview renders and
+	// caches and falls back to in-process assistant synthesis.
 	"previews": {
 		"kv_namespaces": [
 			{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
-			{ "binding": "RATE_LIMIT_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
+		],
+		"ratelimits": [
+			{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } },
+			{ "name": "APP_RATE_LIMITER", "namespace_id": "2002", "simple": { "limit": 30, "period": 60 } }
 		]
 	},
 	"observability": {
