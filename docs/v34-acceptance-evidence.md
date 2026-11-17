@@ -15,7 +15,7 @@
 | :--- | :---: | :--- |
 | 83 models & 87 enums, zero `ResearchNote`, generic `Follow`, or canonical `KnowledgeRelationship` | **PASS** | `ResearchWithME-v3.4-schema.prisma` verified programmatically by `test/next/v34-wave10-completion.test.ts` |
 | Intentional `onDelete` policies across all relations | **PASS** | `supabase/migrations/20261117000100`–`20261117000900` (`RESTRICT` on Evidence/Claims/SourceVersions referenced by published outputs, `CASCADE` on derived Graph/presentation links) |
-| 100% SQL table & RLS coverage | **PASS** | **89/89 `v34_*` tables** live on `bxyjjbclaklzjxeumeat` with `rowsecurity = true` + 7 Part VII §3 `CHECK` constraints (`chk_v34_*`) |
+| 100% SQL table & RLS coverage + production operational indexes | **PASS** | **89/89 `v34_*` tables** live on `bxyjjbclaklzjxeumeat` with `rowsecurity = true` + 7 Part VII §3 `CHECK` constraints (`chk_v34_*`) + 13 Wave 13 operational/FK indexes (Migration 10) |
 | Idempotent, resumable dry-run backfill, checksum parity & quarantine report | **PASS** | `scripts/v34-backfill-reconcile.mjs --dry-run` + `test/next/v34-wave9-platform.test.ts` |
 | Production masked-clone lock-budget rehearsal & 14-day post-cutover validation | **OPERATOR** | Runbook §2–§4 (`docs/runbooks/v34-migration-and-rollback-runbook.md`) |
 
@@ -69,5 +69,6 @@
 | Part VII §4 Dual-Read Fallback Telemetry & 14-day zero-fallback contract readiness gate | **PASS** | `lib/v34/dual-read.ts`, `test/next/v34-wave11-engines.test.ts` |
 | First-load JS shell budget `<= 200 KB` gzip | **PASS** | `npm run budgets` (`<= 200 KB` gzip verified post-build) |
 | Live API p95 SLOs (`<= 400ms` autosave, `<= 500ms` dashboard/tools/reviews, `<= 700ms` search) & 28 SSR/deep-link routes `200` | **PASS** | `scripts/verify-v34-live.mjs` (measured 2–5ms p95 on production Next.js server) |
-| Automated release gate (`26/26` machine checks) & GitHub Actions CI (`quality.yml` + `v34-e2e-a11y` Playwright job) | **PASS** | `scripts/release-gate.mjs` -> `docs/design-system/release-manifest.json`, `.github/workflows/quality.yml` |
+| Part V §18.14 Non-suppressible integrity/security alerts + Part V §13.1 `X-Request-Id`/`X-Trace-Id` propagation + Part I §6.2 `ScholarlyArticle` JSON-LD + Part V §18.16 scale benchmarks (10k citations / 5k graph nodes / 100 concurrent annotations) | **PASS** | `lib/v34/notifications-safe.ts`, `middleware.ts`, `lib/seo/jsonld.ts`, `app/contribution/[id]/page.tsx`, `components/AssistantPanel.tsx`, `test/next/v34-scale-stress.test.ts` |
+| Automated release gate (`27/27` machine checks) & GitHub Actions CI (`quality.yml` + `v34-e2e-a11y` Playwright job) | **PASS** | `scripts/release-gate.mjs` -> `docs/design-system/release-manifest.json`, `.github/workflows/quality.yml` |
 | 7-day zero-mismatch dual-write / 14-day zero-fallback window, PITR rehearsal & human owner sign-offs | **OPERATOR** | `docs/design-system/release-gate.md`, `docs/runbooks/v34-migration-and-rollback-runbook.md`, `docs/security/v34-threat-model-and-retention-policy.md` |

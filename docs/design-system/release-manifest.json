@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T09:50:37.631Z",
+  "generatedAt": "2026-11-17T09:58:09.955Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -158,6 +158,12 @@
       "description": "v3.4 Wave 12 full 13-block MDX editor + Undo/Redo, Contribution Pipeline + Private Activity + Personalization, CSL-JSON citations, ResponsiveDataTable & CI E2E gate present",
       "status": "pass",
       "evidence": "Wave 12 editor blocks, Research OS completeness, CSL-JSON, ResponsiveDataTable & CI E2E gate verified"
+    },
+    {
+      "id": "V34-15",
+      "description": "v3.4 Wave 13 operational DB indexes (Migration 10), X-Request-Id/X-Trace-Id propagation, non-suppressible integrity/security alerts, ScholarlyArticle JSON-LD, ADR-032-12 Assistant governance & §18.16 scale benchmarks present",
+      "status": "pass",
+      "evidence": "Wave 13 live SQL indexes, trace propagation, non-suppressible alerts, JSON-LD & scale benchmarks verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

@@ -38,3 +38,56 @@ export function buildNotificationDedupeKey(spec: NotificationDedupeSpec): string
       return `${spec.category}:${spec.targetId}:${spec.userId}`;
   }
 }
+
+/**
+ * Part V §18.14 — Integrity and security alerts cannot be fully suppressed.
+ */
+export const NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES = [
+  'integrity_alert',
+  'security_alert',
+] as const;
+
+export type NotificationCategory =
+  | (typeof NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES)[number]
+  | 'review_deadline'
+  | 'mention'
+  | 'topic_digest'
+  | 'assistant_suggestion';
+
+export interface EffectiveChannelDecision {
+  category: NotificationCategory;
+  inAppEnabled: boolean;
+  pushEnabled: boolean;
+  suppressible: boolean;
+  overrideReason: string | null;
+}
+
+export function resolveEffectiveNotificationPolicy(input: {
+  category: NotificationCategory;
+  userMuted?: boolean;
+  inQuietHours?: boolean;
+  digestOff?: boolean;
+}): EffectiveChannelDecision {
+  const isMandatory = (NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES as readonly string[]).includes(
+    input.category,
+  );
+  if (isMandatory) {
+    return {
+      category: input.category,
+      inAppEnabled: true,
+      pushEnabled: true,
+      suppressible: false,
+      overrideReason:
+        'Integrity and security alerts cannot be fully suppressed (Part V §18.14).',
+    };
+  }
+
+  const muted = Boolean(input.userMuted || (input.category === 'topic_digest' && input.digestOff));
+  return {
+    category: input.category,
+    inAppEnabled: !muted,
+    pushEnabled: !muted && !input.inQuietHours,
+    suppressible: true,
+    overrideReason: null,
+  };
+}

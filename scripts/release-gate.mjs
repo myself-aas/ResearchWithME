@@ -318,6 +318,20 @@ check('V34-14', 'v3.4 Wave 12 full 13-block MDX editor + Undo/Redo, Contribution
   assert(workflow.includes('v34-a11y-reflow.spec.ts'), 'quality.yml missing Playwright v3.4 a11y/reflow job');
   return 'Wave 12 editor blocks, Research OS completeness, CSL-JSON, ResponsiveDataTable & CI E2E gate verified';
 });
+check('V34-15', 'v3.4 Wave 13 operational DB indexes (Migration 10), X-Request-Id/X-Trace-Id propagation, non-suppressible integrity/security alerts, ScholarlyArticle JSON-LD, ADR-032-12 Assistant governance & §18.16 scale benchmarks present', () => {
+  const files = [
+    'supabase/migrations/20261117001000_v34_wave13_operational_indexes.sql',
+    'test/next/v34-scale-stress.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const mw = readFileSync(join(root, 'middleware.ts'), 'utf8');
+  assert(mw.includes('X-Request-Id') && mw.includes('X-Trace-Id'), 'middleware.ts missing trace header propagation');
+  const notif = readFileSync(join(root, 'lib/v34/notifications-safe.ts'), 'utf8');
+  assert(notif.includes('NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES'), 'notifications-safe.ts missing non-suppressible alerts policy');
+  const contribPage = readFileSync(join(root, 'app/contribution/[id]/page.tsx'), 'utf8');
+  assert(contribPage.includes('scholarlyContributionJsonLd'), 'contribution detail page missing ScholarlyArticle JSON-LD');
+  return 'Wave 13 live SQL indexes, trace propagation, non-suppressible alerts, JSON-LD & scale benchmarks verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import {
+  NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES,
+  resolveEffectiveNotificationPolicy,
+} from '@/lib/v34/notifications-safe';
 import { UpdateDashboardPreferencesInputSchema } from '@/lib/v34/wave3-contracts';
 import { getDashboardPreferences, updateDashboardPreferences } from '@/lib/v34/wave3-store';
 
@@ -11,7 +15,16 @@ export async function GET() {
   if (!auth.ok) return auth.response;
 
   const preferences = getDashboardPreferences(auth.actor.id);
-  return NextResponse.json({ preferences });
+  return NextResponse.json({
+    preferences,
+    nonSuppressibleChannels: NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES,
+    mandatoryPolicies: NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES.map((category) =>
+      resolveEffectiveNotificationPolicy({
+        category,
+        digestOff: preferences.digestFrequency === 'off',
+      }),
+    ),
+  });
 }
 
 export async function PATCH(request: Request) {
@@ -30,5 +43,8 @@ export async function PATCH(request: Request) {
     supabase: auth.actor.supabase,
   });
 
-  return NextResponse.json({ preferences });
+  return NextResponse.json({
+    preferences,
+    nonSuppressibleChannels: NON_SUPPRESSIBLE_NOTIFICATION_CATEGORIES,
+  });
 }

@@ -118,11 +118,11 @@ describe('v3.4 Wave 10 — 100% Prisma/SQL Parity, 14-Scheme Identifiers, Multil
     expect(models).not.toContain('Follow');
     expect(models).not.toContain('KnowledgeRelationship');
 
-    // Collect every v34_* table created across all 9 ordered migrations
+    // Collect every v34_* table created across all ordered migrations (10+ including operational index hardening)
     const migrationFiles = readdirSync(join(ROOT, 'supabase/migrations'))
       .filter((f) => f.includes('_v34_'))
       .sort();
-    expect(migrationFiles).toHaveLength(9);
+    expect(migrationFiles.length).toBeGreaterThanOrEqual(10);
 
     const sqlTables = new Set<string>();
     let allSql = '';

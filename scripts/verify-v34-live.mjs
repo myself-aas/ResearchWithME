@@ -54,6 +54,7 @@ const SSR_PAGES = [
       'Anonymous reviewer',
       'Informal Discussion',
       'Scholarly Integrity &amp; Reproducible Artifacts',
+      'ScholarlyArticle',
       'id="main-content"',
     ],
     mustNotContain: ['dr-lin-eval', 'user-reviewer-1'],
@@ -267,7 +268,16 @@ async function main() {
     }
   }
 
-  // 4. Part I §26.2 /dashboard/* canonical deep links fail closed when unauthenticated
+  // 4. Part I §26.2 /dashboard/* canonical deep links fail closed when unauthenticated + Part V §13.1 trace propagation
+  const traceProbe = await fetch(`${BASE_URL}/api/feed`);
+  const reqId = traceProbe.headers.get('x-request-id');
+  const traceId = traceProbe.headers.get('x-trace-id');
+  if (reqId && traceId) {
+    console.log(`  PASS  Trace headers on /api/feed (X-Request-Id=${reqId.slice(0, 14)}…, X-Trace-Id=${traceId.slice(0, 14)}…)`);
+  } else {
+    failures.push(`/api/feed missing X-Request-Id (${reqId}) or X-Trace-Id (${traceId})`);
+  }
+
   for (const section of ['library', 'projects', 'workspace', 'reviews', 'settings']) {
     const r = await fetch(`${BASE_URL}/dashboard/${section}`, { redirect: 'manual' });
     const loc = r.headers.get('location') || '';

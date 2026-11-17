@@ -30,6 +30,7 @@ import {
 import { listFormalReviews } from '@/lib/v34/wave2-store';
 import { listDiscussions } from '@/lib/v34/wave3-store';
 import { formatDate } from '@/lib/formatting/locale';
+import { jsonLdScript, scholarlyContributionJsonLd } from '@/lib/seo/jsonld';
 
 export const dynamic = 'force-dynamic';
 
@@ -409,8 +410,26 @@ export default async function ContributionDetailPage({
     </div>
   );
 
+  const structuredData = scholarlyContributionJsonLd({
+    id: contribution.id,
+    title: contribution.title,
+    summary: contribution.summary,
+    authorName: contribution.authorName,
+    authorHandle: contribution.authorHandle,
+    datePublished: contribution.publishedAt,
+    dateModified: contribution.updatedAt,
+    version: contribution.version,
+    topics: contribution.topics,
+    primarySourceUrl: sourceDetails?.source.canonicalUrl ?? null,
+    primarySourceTitle: sourceDetails?.source.title ?? null,
+  });
+
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(structuredData) }}
+      />
       <BlogHeader />
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pb-16">
         <div className="mb-4">

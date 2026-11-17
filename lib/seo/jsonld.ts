@@ -235,3 +235,52 @@ export function contactPageJsonLd() {
     },
   };
 }
+
+export interface ScholarlyContributionJsonLdInput {
+  id: string;
+  title: string;
+  summary: string;
+  authorName: string;
+  authorHandle: string;
+  datePublished?: string | null;
+  dateModified: string;
+  version: number;
+  topics?: string[];
+  primarySourceUrl?: string | null;
+  primarySourceTitle?: string | null;
+}
+
+/**
+ * Schema.org `ScholarlyArticle` JSON-LD for canonical v3.4 Contributions (Part I §6.2).
+ */
+export function scholarlyContributionJsonLd(input: ScholarlyContributionJsonLdInput) {
+  const pageUrl = absoluteUrl(`/contribution/${encodeURIComponent(input.id)}`);
+  return {
+    '@context': 'https://schema.org',
+    '@id': `${pageUrl}#scholarly-article`,
+    '@type': 'ScholarlyArticle',
+    headline: input.title,
+    description: input.summary,
+    mainEntityOfPage: pageUrl,
+    url: pageUrl,
+    version: String(input.version),
+    author: {
+      '@type': 'Person',
+      name: input.authorName,
+      url: absoluteUrl(`/profile/${encodeURIComponent(input.authorHandle)}`),
+    },
+    publisher: organizationEntity(),
+    ...(input.datePublished ? { datePublished: toIsoDate(input.datePublished) } : {}),
+    dateModified: toIsoDate(input.dateModified),
+    ...(input.topics && input.topics.length > 0 ? { keywords: input.topics.join(', ') } : {}),
+    ...(input.primarySourceUrl
+      ? {
+          isBasedOn: {
+            '@type': 'CreativeWork',
+            url: input.primarySourceUrl,
+            ...(input.primarySourceTitle ? { name: input.primarySourceTitle } : {}),
+          },
+        }
+      : {}),
+  };
+}
