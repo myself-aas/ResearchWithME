@@ -85,8 +85,8 @@ Two facts worth knowing before you change anything:
         │ Supabase  bxyjjbclaklzjxeumeat   │──────────┘  (database webhook)
         │  Postgres + RLS                  │
         │  Auth (email+password, Google,   │
-        │   LinkedIn; GitHub/ORCID as      │
-        │   identity links)                │
+        │   LinkedIn, Discord; GitHub/     │
+        │   ORCID as identity links)       │
         │  Storage: blog-images (5 MB)     │
         │  Realtime: posts, comments       │
         └──────────────────────────────────┘
@@ -374,12 +374,12 @@ on conflict (user_id) do nothing;
 ### 5.4 Authentication
 
 **Authentication → Sign In / Providers**: enable Email (password only — magic links are no longer
-used), Google, and LinkedIn (OIDC). These are the three ways a reader signs in; the buttons and
-scopes are listed in `docs/sign-in-providers.md`.
+used), Google, LinkedIn (OIDC), and Discord. These are the four ways a reader signs in; the buttons
+and scopes are listed in `docs/sign-in-providers.md`.
 
 LinkedIn uses the **OpenID Connect** connector (`linkedin_oidc`, scopes `openid profile email`), not
 the deprecated legacy `linkedin` provider. Its client ID and secret live only in Supabase; the
-provider console must trust `https://bxyjjbclaklzjxeumeat.supabase.co/auth/v1/callback`.
+provider consoles must trust `https://bxyjjbclaklzjxeumeat.supabase.co/auth/v1/callback`.
 
 GitHub and the custom ORCID provider (identifier `orcid`, called as `custom:orcid`, issuer
 `https://orcid.org`, scope `openid`) are configured as **identity links**, not sign-in methods: a
@@ -770,7 +770,7 @@ code server-side before middleware sees the request.
 1. **Authentication → URL Configuration**: Site URL `https://researchwith.me`; Redirect URLs
    `https://researchwith.me/auth/callback`, `https://www.researchwith.me/auth/callback`,
    `http://localhost:3000/auth/callback`.
-2. Per provider (Google, LinkedIn, GitHub, ORCID), the provider's *own* callback is
+2. Per provider (Google, LinkedIn, Discord, GitHub, ORCID), the provider's *own* callback is
    `https://<ref>.supabase.co/auth/v1/callback` — a very common mismatch.
 3. Magic-link email template keeps `{{ .ConfirmationURL }}`; the app passes `redirect_to` through
    `next`.
@@ -974,7 +974,7 @@ Checklist to finish:
 - [ ] `Workers Builds: researchwithme` green on `main`
 - [ ] `Quality` green on `main`
 - [ ] `/api/revalidate` returns 200 with the header, 401 without
-- [ ] `/login` → Google **and** LinkedIn → `/auth/callback` → `/dashboard` works and is gated
+- [ ] `/login` → Google, LinkedIn, **and** Discord → `/auth/callback` → `/dashboard` works and is gated
 - [ ] publishing a post changes `/` without a redeploy
 - [ ] `npx wrangler deployments list` shows the deployment you just made
 

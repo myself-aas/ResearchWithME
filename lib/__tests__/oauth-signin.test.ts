@@ -16,8 +16,8 @@ beforeEach(() => {
 });
 
 describe('OAuth sign-in providers', () => {
-  it('offers exactly the two providers rendered on /login', () => {
-    expect(SIGN_IN_PROVIDERS).toEqual(['google', 'linkedin']);
+  it('offers exactly the three providers rendered on /login', () => {
+    expect(SIGN_IN_PROVIDERS).toEqual(['google', 'linkedin', 'discord']);
   });
 
   it('starts Google with the openid/email/profile scopes', async () => {
@@ -60,6 +60,27 @@ describe('OAuth sign-in providers', () => {
       },
     });
     expect(navigate).toHaveBeenCalledWith('https://www.linkedin.com/oauth/v2/authorization?x=1');
+  });
+
+  it('starts Discord with identify/email only — never bot or guild permissions', async () => {
+    state.signInWithOAuth.mockResolvedValue({
+      data: { url: 'https://discord.com/oauth2/authorize?x=1' },
+      error: null,
+    });
+    const navigate = vi.fn();
+
+    const result = await startOAuthSignIn('discord', '/dashboard', navigate);
+
+    expect(result).toEqual({ ok: true });
+    const call = state.signInWithOAuth.mock.calls[0][0];
+    expect(call.provider).toBe('discord');
+    expect(call.options.scopes).toBe('identify email');
+    expect(call.options.scopes).not.toContain('bot');
+    expect(call.options.scopes).not.toContain('guilds');
+    expect(call.options.redirectTo).toBe(
+      `${window.location.origin}/auth/callback?next=%2Fdashboard`,
+    );
+    expect(navigate).toHaveBeenCalledWith('https://discord.com/oauth2/authorize?x=1');
   });
 
   it("sanitises the post-sign-in path so an external return URL cannot hijack the callback", async () => {

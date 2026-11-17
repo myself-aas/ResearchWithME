@@ -33,12 +33,13 @@ describe('sign-in failures reported by the auth callback', () => {
     expect(render('Provider is not enabled')).toContain('not switched on yet');
   });
 
-  it('offers both Google and LinkedIn as ways in', () => {
+  it('offers Google, LinkedIn, and Discord as ways in', () => {
     const html = render();
     expect(html).toContain('aria-label="Sign in with a provider"');
     expect(html).toContain('Continue with Google');
     expect(html).toContain('Continue with LinkedIn');
-    expect(html).toContain('Three ways in');
+    expect(html).toContain('Continue with Discord');
+    expect(html).toContain('Four ways in');
   });
 });
 

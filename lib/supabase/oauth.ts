@@ -4,13 +4,13 @@ import type { Provider } from '@supabase/supabase-js';
 import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from './client';
 import { safeNextPath } from '../safe-redirect';
 
-export type OAuthProviderId = 'google' | 'linkedin' | 'github' | 'orcid';
+export type OAuthProviderId = 'google' | 'linkedin' | 'discord' | 'github' | 'orcid';
 
 /** Providers a reader may attach to an existing account to apply as a writer. */
 export type LinkableProviderId = 'github' | 'orcid';
 
 /** The providers offered on /login, in the order they are rendered. */
-export const SIGN_IN_PROVIDERS = ['google', 'linkedin'] as const;
+export const SIGN_IN_PROVIDERS = ['google', 'linkedin', 'discord'] as const;
 export type SignInProviderId = (typeof SIGN_IN_PROVIDERS)[number];
 
 /**
@@ -23,6 +23,7 @@ export type SignInProviderId = (typeof SIGN_IN_PROVIDERS)[number];
 const SUPABASE_PROVIDER: Record<OAuthProviderId, Provider> = {
   google: 'google',
   linkedin: 'linkedin_oidc',
+  discord: 'discord',
   github: 'github',
   orcid: 'custom:orcid',
 };
@@ -34,6 +35,9 @@ const SCOPES: Record<OAuthProviderId, string> = {
   // LinkedIn's OIDC product grants exactly these three; `w_member_social` is a
   // posting permission and does not belong on a sign-in request.
   linkedin: 'openid profile email',
+  // Discord sign-in needs the identity and the address, nothing else. Never
+  // `bot`, `guilds`, or `permissions` — those belong to a bot install link.
+  discord: 'identify email',
 };
 
 export function authCallbackUrl(next: string) {
@@ -46,7 +50,8 @@ function normaliseError(error: unknown, fallback: string) {
 }
 
 /**
- * Sign in with Google or LinkedIn. Email and password go straight to Supabase;
+ * Sign in with Google, LinkedIn, or Discord. Email and password go straight to
+ * Supabase;
  * GitHub and ORCID are identity links on an existing account rather than a way
  * in — see `linkScholarlyIdentity`.
  *

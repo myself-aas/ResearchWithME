@@ -27,7 +27,7 @@ interface LoginFormProps {
 function mapAuthError(message: string) {
   const normalised = message.toLowerCase();
   if (normalised.includes('invalid login credentials')) {
-    return 'That email and password do not match. Check the address, or use Google or LinkedIn above.';
+    return 'That email and password do not match. Check the address, or use Google, LinkedIn, or Discord above.';
   }
   if (normalised.includes('email not confirmed')) {
     return 'Confirm the email address from your invitation, then sign in again.';
@@ -80,6 +80,18 @@ function GoogleMark() {
   );
 }
 
+/** Discord's mark, inline for the same reason as Google's. */
+function DiscordMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
+      <path
+        fill="#5865F2"
+        d="M20.32 4.37a19.8 19.8 0 0 0-4.89-1.52.07.07 0 0 0-.08.04c-.21.37-.44.86-.6 1.24a18.3 18.3 0 0 0-5.49 0c-.16-.39-.4-.87-.62-1.24a.08.08 0 0 0-.08-.04 19.7 19.7 0 0 0-4.88 1.52.07.07 0 0 0-.04.03C.53 9.05-.32 13.58.1 18.06a.08.08 0 0 0 .03.05 19.9 19.9 0 0 0 5.99 3.03.08.08 0 0 0 .08-.03c.46-.63.88-1.29 1.23-1.99a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.89.08.08 0 0 1 0-.13l.37-.29a.07.07 0 0 1 .08-.01 14.2 14.2 0 0 0 12.06 0 .07.07 0 0 1 .08.01l.37.29a.08.08 0 0 1 0 .13 12.3 12.3 0 0 1-1.88.89.08.08 0 0 0-.04.11c.36.7.77 1.36 1.23 1.99a.08.08 0 0 0 .08.03 19.8 19.8 0 0 0 6-3.03.08.08 0 0 0 .03-.05c.5-5.18-.84-9.68-3.55-13.66a.06.06 0 0 0-.03-.03ZM8.02 15.33c-1.18 0-2.16-1.09-2.16-2.42s.96-2.42 2.16-2.42c1.21 0 2.17 1.1 2.16 2.42 0 1.33-.96 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.15-1.09-2.15-2.42s.95-2.42 2.15-2.42c1.21 0 2.18 1.1 2.16 2.42 0 1.33-.95 2.42-2.16 2.42Z"
+      />
+    </svg>
+  );
+}
+
 export default function LoginForm({ configured, user, next, initialError = '' }: LoginFormProps) {
   const router = useRouter();
   const emailId = useId();
@@ -88,7 +100,9 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [pending, setPending] = useState<'password' | 'google' | 'linkedin' | 'signout' | null>(null);
+  const [pending, setPending] = useState<
+    'password' | 'google' | 'linkedin' | 'discord' | 'signout' | null
+  >(null);
   const [error, setError] = useState<string | null>(initialError ? mapAuthError(initialError) : null);
 
   function fail(message: string) {
@@ -128,7 +142,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
     }
   }
 
-  async function signInWithProvider(provider: 'google' | 'linkedin') {
+  async function signInWithProvider(provider: 'google' | 'linkedin' | 'discord') {
     if (pending) return;
     setPending(provider);
     setError(null);
@@ -298,8 +312,8 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         Sign in
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
-        Three ways in: Google, LinkedIn, or your email and password. Any of them signs you in as a
-        reader; publishing access is granted separately, from your dashboard.
+        Four ways in: Google, LinkedIn, Discord, or your email and password. Any of them signs you
+        in as a reader; publishing access is granted separately, from your dashboard.
       </p>
 
       {error && (
@@ -311,7 +325,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         </div>
       )}
 
-      <div role="group" aria-label="Sign in with a provider" className="mt-5 grid gap-2 sm:grid-cols-2">
+      <div role="group" aria-label="Sign in with a provider" className="mt-5 grid gap-2">
         <button
           type="button"
           onClick={() => signInWithProvider('google')}
@@ -329,6 +343,15 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         >
           <Linkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{pending === 'linkedin' ? 'Opening LinkedIn…' : 'Continue with LinkedIn'}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => signInWithProvider('discord')}
+          disabled={pending !== null}
+          className={cn(secondaryButtonClass, 'w-full')}
+        >
+          <DiscordMark />
+          <span>{pending === 'discord' ? 'Opening Discord…' : 'Continue with Discord'}</span>
         </button>
       </div>
 

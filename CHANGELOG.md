@@ -6,12 +6,13 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
-- Sign-in offers Google, LinkedIn, and email/password. LinkedIn uses Supabase's
-  OpenID Connect provider (`linkedin_oidc`, scopes `openid profile email`), not
-  the deprecated legacy connector; both provider buttons carry their marks and
-  an "Opening …" state. A disabled provider now explains itself instead of
-  echoing the upstream error, and a signed-in reader landing on `/login` gets a
-  "Go to your dashboard" action rather than only the writer application.
+- Sign-in offers Google, LinkedIn, Discord, and email/password. LinkedIn uses
+  Supabase's OpenID Connect provider (`linkedin_oidc`, scopes `openid profile
+  email`), not the deprecated legacy connector; Discord uses `discord` with
+  `identify email` only. All three provider buttons carry their marks and an
+  "Opening …" state. A disabled provider now explains itself instead of echoing
+  the upstream error, and a signed-in reader landing on `/login` gets a "Go to
+  your dashboard" action rather than only the writer application.
 - Profiles are editable by their owner. `/dashboard/profile` (new Profile tab)
   edits name, `/author/` slug, role, institution, field, bio, ORCID, GitHub,
   website, Scholar, and directory visibility, with the photo card beside the
@@ -40,9 +41,11 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   states instead of raw sync enums.
 
 ### Added
-- LinkedIn and Google sign-in documentation: `docs/sign-in-providers.md` records
-  the provider matrix, scopes, the verified Supabase configuration, the
-  provider-console redirect URL, and the failure messages, and
+- Google, LinkedIn, and Discord sign-in documentation:
+  `docs/sign-in-providers.md` records the provider matrix, scopes, the verified
+  Supabase configuration, the provider-console redirect URLs (including the
+  warning that a Discord bot-install URL is not a sign-in URL), and the failure
+  messages, and
   `docs/design-system/login-oauth-audit-2026-11-17.md` holds the review.
 - Truthful profile counters. `supabase/migrations/20261117001500_v34_profile_social_counts.sql`
   adds the `v34_profile_social_counts(uuid)` aggregate (followers, saves
