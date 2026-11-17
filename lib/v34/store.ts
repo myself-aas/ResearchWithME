@@ -954,6 +954,99 @@ export function listClaims(): ClaimRecord[] {
   return [...state.claims.values()];
 }
 
+export function getClaimById(id: string): {
+  claim: ClaimRecord;
+  evidenceLinks: ClaimEvidenceLink[];
+  evidence: EvidenceRecord[];
+} | null {
+  const claim = state.claims.get(id);
+  if (!claim) return null;
+  const evidenceLinks = state.claimEvidence.filter((l) => l.claimId === id);
+  const evidence = evidenceLinks
+    .map((l) => state.evidence.get(l.evidenceId))
+    .filter((e): e is EvidenceRecord => Boolean(e));
+  return { claim, evidenceLinks, evidence };
+}
+
+export function updateClaim(
+  id: string,
+  patch: Partial<Pick<ClaimRecord, 'statement' | 'claimType' | 'assessment'>>,
+): ClaimRecord | null {
+  const existing = state.claims.get(id);
+  if (!existing) return null;
+  const updated: ClaimRecord = {
+    ...existing,
+    statement: patch.statement ?? existing.statement,
+    claimType: patch.claimType ?? existing.claimType,
+    assessment: patch.assessment ?? existing.assessment,
+    objectVersion: existing.objectVersion + 1,
+    updatedAt: new Date().toISOString(),
+  };
+  state.claims.set(id, updated);
+  return updated;
+}
+
+export function removeClaimEvidenceLink(
+  claimId: string,
+  evidenceId: string,
+  relationship?: 'SUPPORTS' | 'CONTRADICTS' | 'QUALIFIES',
+): boolean {
+  const before = state.claimEvidence.length;
+  state.claimEvidence = state.claimEvidence.filter(
+    (l) =>
+      !(
+        l.claimId === claimId &&
+        l.evidenceId === evidenceId &&
+        (!relationship || l.relationship === relationship)
+      ),
+  );
+  return state.claimEvidence.length < before;
+}
+
+export function listSourceVersions(sourceId: string): SourceVersionRecord[] | null {
+  if (!state.sources.has(sourceId)) return null;
+  return [...state.sourceVersions.values()]
+    .filter((v) => v.sourceId === sourceId)
+    .sort((a, b) => b.retrievedAt.localeCompare(a.retrievedAt));
+}
+
+export async function createSourceVersion(input: {
+  sourceId: string;
+  versionLabel: string;
+  snapshotUrl?: string;
+  supabase?: SupabaseClient | null;
+}): Promise<{ ok: true; version: SourceVersionRecord } | { ok: false; status: 404; message: string }> {
+  const source = state.sources.get(input.sourceId);
+  if (!source) return { ok: false, status: 404, message: 'Source not found.' };
+
+  const now = new Date().toISOString();
+  const version: SourceVersionRecord = {
+    id: makeId('sv'),
+    sourceId: source.id,
+    versionLabel: input.versionLabel,
+    retrievedAt: now,
+    snapshotUrl: input.snapshotUrl ?? source.canonicalUrl,
+  };
+  state.sourceVersions.set(version.id, version);
+  source.updatedAt = now;
+  state.sources.set(source.id, source);
+
+  if (input.supabase) {
+    try {
+      await input.supabase.from('v34_source_versions').insert({
+        id: version.id,
+        source_id: version.sourceId,
+        version_label: version.versionLabel,
+        retrieved_at: version.retrievedAt,
+        snapshot_url: version.snapshotUrl,
+      });
+    } catch {
+      // Best-effort RLS sync
+    }
+  }
+  return { ok: true, version };
+}
+
 export function createClaim(input: {
   claimType: ClaimRecord['claimType'];
   statement: string;

@@ -42,6 +42,10 @@ export const API_GROUPS = [
   { id: 'assistant-tasks', name: 'Assistant tasks', path: '/api/assistant-tasks', description: 'Optional AI-assisted research suggestions requiring explicit human promotion to enter the attention queue.' },
   { id: 'recognition', name: 'Scholarly recognition', path: '/api/recognition', description: 'Event-fact scholarly recognition ledger with non-self validation, reversals, and zero composite vanity scores.' },
   { id: 'dashboard-preferences', name: 'Dashboard preferences', path: '/api/dashboard/preferences', description: 'Personal Research OS default landing behavior, digest cadence, and followed topics.' },
+  { id: 'topics', name: 'Topic taxonomy', path: '/api/topics', description: 'First-class FK-backed scholarly topics and canonical assignments across contributions, sources, projects, and tools.' },
+  { id: 'saved-searches', name: 'Saved searches & alerts', path: '/api/search/saved', description: 'Personal saved search queries with configurable alert cadence.' },
+  { id: 'citation-collections', name: 'Citation collections', path: '/api/citation-collections', description: 'Structured citation collections enforcing single-target items (source, contribution, or evidence) with BibTeX export.' },
+  { id: 'graph-projection', name: 'Graph read projection', path: '/api/graph/rebuild', description: 'Inspect and deterministically drop-and-rebuild the GraphNode/GraphEdge read projection from canonical tables.' },
 ] as const;
 
 export type ApiGroupId = (typeof API_GROUPS)[number]['id'];

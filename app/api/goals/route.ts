@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server';
 import { CreateResearchGoalInputSchema, UpdateResearchGoalInputSchema } from '@/lib/v34/contracts';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import { runWithIdempotency } from '@/lib/v34/idempotency';
 import {
   createResearchGoal,
-  listResearchGoals,
   persistResearchGoalToSupabase,
   updateResearchGoal,
 } from '@/lib/v34/store';
+import { listHydratedResearchGoals } from '@/lib/v34/wave5-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,7 +16,7 @@ export async function GET() {
   const auth = await requireContributor();
   if (!auth.ok) return auth.response;
 
-  const goals = listResearchGoals(auth.actor.id);
+  const goals = listHydratedResearchGoals(auth.actor.id);
   return NextResponse.json({ goals, total: goals.length });
 }
 
@@ -29,9 +30,15 @@ export async function POST(request: Request) {
   const parsed = await parseJsonBody(request, CreateResearchGoalInputSchema);
   if (!parsed.ok) return parsed.response;
 
-  const goal = createResearchGoal(auth.actor.id, parsed.data);
-  await persistResearchGoalToSupabase(auth.actor.supabase, goal);
-  return NextResponse.json({ goal }, { status: 201 });
+  return runWithIdempotency(
+    request,
+    { scope: 'POST:/api/goals', actorId: auth.actor.id, payloadHashInput: parsed.data },
+    async () => {
+      const goal = createResearchGoal(auth.actor.id, parsed.data);
+      await persistResearchGoalToSupabase(auth.actor.supabase, goal);
+      return NextResponse.json({ goal }, { status: 201 });
+    },
+  );
 }
 
 export async function PATCH(request: Request) {

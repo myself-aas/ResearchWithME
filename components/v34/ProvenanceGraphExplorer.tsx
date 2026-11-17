@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import { Check, ExternalLink, GitBranch, Sparkles, X } from 'lucide-react';
+import { Check, ExternalLink, GitBranch, RefreshCw, Sparkles, X } from 'lucide-react';
 import ProvenanceGraph from '@/components/graph/ProvenanceGraph';
 import type { KnowledgeRelationship } from '@/lib/schemas/scholarly';
 import type { ClaimEvidenceLink } from '@/lib/v34/store';
@@ -32,7 +32,45 @@ export function ProvenanceGraphExplorer({
   const [edgeFilter, setEdgeFilter] = useState<EdgeFilter>('all');
   const [selectedId, setSelectedId] = useState<string | null>(initialObjects[0]?.id ?? null);
   const [curatingKey, setCuratingKey] = useState<string | null>(null);
+  const [rebuilding, setRebuilding] = useState(false);
+  const [projectionMeta, setProjectionMeta] = useState<{
+    nodes: number;
+    edges: number;
+    rebuiltAt: string;
+  } | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  async function handleRebuildProjection() {
+    if (rebuilding) return;
+    setRebuilding(true);
+    setStatusMessage(null);
+    try {
+      const res = await fetch('/api/graph/rebuild', { method: 'POST' });
+      const data = (await res.json()) as {
+        rebuilt?: boolean;
+        nodeCount?: number;
+        edgeCount?: number;
+        projection?: { rebuiltAt: string; rebuildDurationMs: number };
+        error?: string;
+      };
+      if (!res.ok || !data.rebuilt) {
+        setStatusMessage(data.error || 'Could not rebuild graph projection.');
+        return;
+      }
+      setProjectionMeta({
+        nodes: data.nodeCount ?? 0,
+        edges: data.edgeCount ?? 0,
+        rebuiltAt: data.projection?.rebuiltAt ?? new Date().toISOString(),
+      });
+      setStatusMessage(
+        `Rebuilt graph read projection from canonical tables (${data.nodeCount ?? 0} nodes, ${data.edgeCount ?? 0} edges in ${data.projection?.rebuildDurationMs ?? 1}ms).`,
+      );
+    } catch {
+      setStatusMessage('Network error while rebuilding graph projection.');
+    } finally {
+      setRebuilding(false);
+    }
+  }
 
   const objectById = useMemo(
     () => new Map(initialObjects.map((item) => [item.id, item])),
@@ -135,16 +173,33 @@ export function ProvenanceGraphExplorer({
           <h2 className="text-lg sm:text-xl font-bold tracking-tight text-ink">{heading}</h2>
           <p className="text-sm text-ink-secondary max-w-2xl">{description}</p>
         </div>
-        {showFullGraphLink && (
-          <Link
-            href="/graph"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:border-brand hover:text-brand"
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => void handleRebuildProjection()}
+            disabled={rebuilding}
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
           >
-            Open full graph explorer
-            <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
-          </Link>
-        )}
+            <RefreshCw className={`h-3.5 w-3.5 ${rebuilding ? 'animate-spin' : ''}`} aria-hidden="true" />
+            <span>{rebuilding ? 'Rebuilding…' : 'Rebuild projection'}</span>
+          </button>
+          {showFullGraphLink && (
+            <Link
+              href="/graph"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:border-brand hover:text-brand"
+            >
+              Open full graph explorer
+              <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
+          )}
+        </div>
       </div>
+
+      {projectionMeta ? (
+        <p className="font-mono text-xs text-ink-secondary">
+          Derived read projection verified: {projectionMeta.nodes} canonical nodes · {projectionMeta.edges} edges (zero self-edges) · rebuilt at {projectionMeta.rebuiltAt}
+        </p>
+      ) : null}
 
       {/* Filter pills — explicit text labels, never color-only */}
       <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Filter provenance relationships">

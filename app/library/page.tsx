@@ -3,21 +3,28 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import LibraryClient from '@/components/v34/LibraryClient';
 import { getDashboardUser } from '@/lib/cms/auth';
-import { listLibraryItems, listResearchGoals } from '@/lib/v34/store';
+import { listLibraryItems } from '@/lib/v34/store';
+import {
+  listCitationCollections,
+  listHydratedResearchGoals,
+  listSavedSearches,
+} from '@/lib/v34/wave5-store';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Personal Research Library',
   description:
-    'Organize saved sources, contributions, collections, and calm Personal Research OS goals.',
+    'Organize saved sources, citation collections with BibTeX export, saved search alerts, and calm Personal Research OS goals.',
 };
 
 export default async function LibraryPage() {
   const user = await getDashboardUser();
   const userId = user?.id ?? 'local-contributor';
   const items = listLibraryItems(userId);
-  const goals = listResearchGoals(userId);
+  const goals = listHydratedResearchGoals(userId);
+  const citationCollections = listCitationCollections(userId);
+  const savedSearches = listSavedSearches(userId);
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -28,14 +35,19 @@ export default async function LibraryPage() {
             Personal Research OS
           </p>
           <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Research Library &amp; Goals
+            Research Library, Citations &amp; Goals
           </h1>
           <p className="mt-2 max-w-2xl font-sans text-sm text-ink-secondary sm:text-base">
-            Curate canonical sources and contributions into collections, and monitor calm, substantive research milestones.
+            Curate canonical sources and contributions into citation collections, manage saved search alerts, and monitor calm research milestones.
           </p>
         </header>
 
-        <LibraryClient initialItems={items} initialGoals={goals} />
+        <LibraryClient
+          initialItems={items}
+          initialGoals={goals}
+          initialCitationCollections={citationCollections}
+          initialSavedSearches={savedSearches}
+        />
       </main>
       <BlogFooter />
     </div>

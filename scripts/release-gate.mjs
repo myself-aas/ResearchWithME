@@ -105,11 +105,12 @@ check('PERF-1', 'performance budgets script present (§18)', () => {
 });
 
 // v3.4 Knowledge Network & Personal Research OS Hardening (§A–§G)
-check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–3)', () => {
+check('V34-1', 'v3.4 ordered Supabase SQL migrations present (Waves 1–5)', () => {
   const migrations = [
     'supabase/migrations/20261117000100_v34_research_network.sql',
     'supabase/migrations/20261117000200_v34_wave2_workspaces_reviews.sql',
     'supabase/migrations/20261117000300_v34_wave3_discussions_tools_os.sql',
+    'supabase/migrations/20261117000400_v34_wave5_topics_collections_alerts_graph.sql',
   ];
   for (const m of migrations) assert(existsSync(join(root, m)), `missing migration ${m}`);
   return `${migrations.length} ordered v3.4 migrations verified`;
@@ -154,10 +155,11 @@ check('V34-5', 'idempotency key replay guard & retraction-to-attention propagati
   );
   return 'Idempotency-Key + RETRACTION_IMPACT propagation verified';
 });
-check('V34-6', 'v3.4 surface briefs cover all 11 v3.4 page surfaces', () => {
+check('V34-6', 'v3.4 surface briefs cover all core v3.4 page surfaces', () => {
   const briefsDir = join(root, '.impeccable/surfaces');
   const expected = [
     'app-feed-page-tsx.md',
+    'app-topics-page-tsx.md',
     'app-contribute-page-tsx.md',
     'app-library-page-tsx.md',
     'app-workspaces-page-tsx.md',
@@ -168,6 +170,16 @@ check('V34-6', 'v3.4 surface briefs cover all 11 v3.4 page surfaces', () => {
   ];
   for (const b of expected) assert(existsSync(join(briefsDir, b)), `missing brief ${b}`);
   return `${expected.length} core v3.4 surface governance briefs present`;
+});
+check('V34-7', 'v3.4 ADR-032 decisions, rollout feature flags, and migration/rollback runbook present', () => {
+  const files = [
+    'lib/v34/feature-flags.ts',
+    'docs/adr/ADR-032-v34-canonical-decisions.md',
+    'docs/runbooks/v34-migration-and-rollback-runbook.md',
+    'test/next/v34-wave5-routes.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  return `${files.length} Wave 5 governance & verification artifacts present`;
 });
 
 const failed = results.filter((r) => r.status === 'fail');

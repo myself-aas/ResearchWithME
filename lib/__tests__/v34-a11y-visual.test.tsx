@@ -18,8 +18,15 @@ import { ProjectWorkspaceClient } from '@/components/v34/ProjectWorkspaceClient'
 import { DiscussionSection } from '@/components/v34/DiscussionSection';
 import { ToolsDirectoryClient } from '@/components/v34/ToolsDirectoryClient';
 import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
+import TopicsClient from '@/components/v34/TopicsClient';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ResponsivePaneLayout from '@/components/layout/ResponsivePaneLayout';
+import {
+  listCitationCollections,
+  listSavedSearches,
+  listTopics,
+  resetWave5StoreForTesting,
+} from '@/lib/v34/wave5-store';
 import { getUnifiedResearchFeed } from '@/lib/v34/feed';
 import { toProvenanceGraphData } from '@/lib/v34/scholarly-adapter';
 import {
@@ -78,6 +85,7 @@ describe('v3.4 Wave 4 axe-core WCAG 2.1 A/AA & visual token audit', () => {
     resetV34StoreForTesting();
     resetWave2StoreForTesting();
     resetWave3StoreForTesting();
+    resetWave5StoreForTesting();
   });
 
   afterEach(() => {
@@ -103,9 +111,18 @@ describe('v3.4 Wave 4 axe-core WCAG 2.1 A/AA & visual token audit', () => {
       createElement(LibraryClient, {
         initialItems: listLibraryItems('default'),
         initialGoals: listResearchGoals('default'),
+        initialCitationCollections: listCitationCollections('default'),
+        initialSavedSearches: listSavedSearches('default'),
       }),
     );
     expect(rLib.violations).toEqual([]);
+
+    const rTopics = await runAxeOnMarkup(
+      createElement(TopicsClient, {
+        initialTopics: await listTopics(),
+      }),
+    );
+    expect(rTopics.violations).toEqual([]);
 
     const rSave = await runAxeOnMarkup(
       createElement(SaveToLibraryButton, {

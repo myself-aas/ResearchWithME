@@ -5,12 +5,17 @@ import BrandLogo from '@/components/BrandLogo';
 import { Text, Link as TextLink } from '@/components/primitives';
 
 const exploreLinks = [
-  { href: '/', label: 'Articles' },
+  { href: '/feed', label: 'Research feed' },
+  { href: '/topics', label: 'Topic taxonomy' },
+  { href: '/tools', label: 'Open-source tools' },
+  { href: '/research-os', label: 'Personal Research OS' },
+  { href: '/graph', label: 'Provenance graph' },
+  { href: '/workspaces', label: 'Workspaces' },
+  { href: '/', label: 'Editorial archive' },
   { href: '/authors', label: 'Writers' },
   { href: '/assistant', label: 'Assistant' },
   { href: '/cite', label: 'Citation builder' },
   { href: '/pricing', label: 'Products and pricing' },
-  { href: '/bookmarks', label: 'Reading list' },
   { href: '/editorial-board', label: 'Editor' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },

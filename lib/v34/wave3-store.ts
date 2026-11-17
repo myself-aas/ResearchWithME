@@ -637,6 +637,10 @@ export async function createDiscussion(input: {
   return discussion;
 }
 
+export function getDiscussionById(discussionId: string): DiscussionRecord | null {
+  return w3State.discussions.get(discussionId) ?? null;
+}
+
 export async function addDiscussionComment(input: {
   discussionId: string;
   body: string;
