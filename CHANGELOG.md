@@ -6,6 +6,13 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+- Profiles are editable by their owner. `/dashboard/profile` (new Profile tab)
+  edits name, `/author/` slug, role, institution, field, bio, ORCID, GitHub,
+  website, Scholar, and directory visibility, with the photo card beside the
+  form. `lib/profile/validation.ts` mirrors the database constraints, so a taken
+  slug or a malformed ORCID is explained inline. The write is one upsert on the
+  caller's own row under the existing owner-only policies; "Edit profile" now
+  opens this page instead of the dead `/settings` link.
 - Dashboard and account surfaces share one chrome: a social-style profile header
   (circular photo, name, role/affiliation/member-since, bio, edit/new-article
   actions) and a sticky, horizontally scrollable section switcher
@@ -27,6 +34,13 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   states instead of raw sync enums.
 
 ### Added
+- Truthful profile counters. `supabase/migrations/20261117001500_v34_profile_social_counts.sql`
+  adds the `v34_profile_social_counts(uuid)` aggregate (followers, saves
+  received, published reviews) over the existing follow graph, library, and
+  contribution tables, executable by signed-in users only and returning counts
+  rather than identities. The profile header shows the three numbers when the
+  aggregate succeeds and hides the strip entirely when it does not — a measured
+  zero still renders as `0`. Applied to the live project.
 - Artifact storage no longer requires Cloudflare R2. R2 asks for a payment
   method even on its free allowance, so scholarly exports and render manifests
   now default to **Supabase Storage** (private bucket, signed URLs, Free plan,

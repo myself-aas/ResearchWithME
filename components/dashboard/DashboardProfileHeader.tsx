@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { LogOut, PenSquare, Settings2, ShieldCheck } from 'lucide-react';
 import type { DashboardProfileSummary } from '@/lib/dashboard/profile';
+import { socialStats } from '@/lib/profile/counters';
 
 import { isProfileImageUrl } from '@/lib/images/urls';
 
@@ -36,6 +37,7 @@ export default function DashboardProfileHeader({
   onSignOut: () => void;
 }) {
   const affiliation = profile.institution || profile.domain;
+  const stats = profile.counts ? socialStats(profile.counts, { isSelf: true }) : [];
 
   return (
     <section
@@ -71,7 +73,7 @@ export default function DashboardProfileHeader({
 
           <div className="flex flex-wrap items-center justify-end gap-1.5 pt-12 sm:pt-14">
             <Link
-              href="/settings"
+              href="/dashboard/profile"
               className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-canvas px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:text-sm"
             >
               <Settings2 className="h-4 w-4" aria-hidden="true" />
@@ -134,6 +136,23 @@ export default function DashboardProfileHeader({
                 : 'Your reading list, saved work, and account live in the tabs below.'}
             </p>
           )}
+
+          {stats.length > 0 ? (
+            <dl
+              aria-label="Profile activity"
+              className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-ink-secondary"
+            >
+              {stats.map((stat) => (
+                <div key={stat.key} className="inline-flex items-baseline gap-1.5">
+                  <dt className="sr-only">{stat.label}</dt>
+                  <dd>
+                    <span className="font-semibold text-ink">{stat.value.toLocaleString('en-GB')}</span>{' '}
+                    {stat.noun}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
         </div>
 
         {signOutError ? (

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   BookOpen,
   FileText,
+  IdCard,
   LayoutDashboard,
   LineChart,
   MessageSquare,
@@ -22,12 +23,14 @@ interface Tab {
 }
 
 const readingTab: Tab = { href: '/dashboard/reading', label: 'My reading', icon: BookOpen };
+const profileTab: Tab = { href: '/dashboard/profile', label: 'Profile', icon: IdCard };
 const accountTab: Tab = { href: '/dashboard/account', label: 'Account', icon: UserRound };
 
-/** Every signed-in account: their reading, the application, and the account. */
+/** Every signed-in account: their reading, the application, profile, account. */
 export const readerTabs: Tab[] = [
   readingTab,
   { href: '/dashboard/access', label: 'Apply to write', icon: ShieldCheck },
+  profileTab,
   accountTab,
 ];
 
@@ -43,6 +46,7 @@ export const studioTabs: Tab[] = [
   { href: '/dashboard/manage', label: 'Articles', icon: FileText },
   { href: '/dashboard/comments', label: 'Comments', icon: MessageSquare },
   { href: '/dashboard/applications', label: 'Applications', icon: UserCheck },
+  profileTab,
   accountTab,
 ];
 

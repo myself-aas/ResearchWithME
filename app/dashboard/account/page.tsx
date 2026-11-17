@@ -266,6 +266,12 @@ export default async function AccountPage() {
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Link
+            href="/dashboard/profile"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle"
+          >
+            Edit name, bio & links
+          </Link>
+          <Link
             href="/dashboard/access#profile"
             className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle"
           >

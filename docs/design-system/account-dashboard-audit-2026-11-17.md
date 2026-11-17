@@ -18,8 +18,8 @@ navigation contract in `docs/design-system/page-layout-matrix.md`.
 | 7 | **Editor page linked to a 404.** The public Editor page points at `/author/myself-aas`; unpublished profile → `notFound()`. | High | Fixed |
 | 8 | **Editor workspace had no access gate or identity.** Anyone could type into a draft that could never autosave (`/api/drafts/*` requires an allowlisted editor), and the header showed a raw `State: saved` token. | Medium | Fixed |
 | 9 | **Two different authoring surfaces.** `/write` and the dashboard used the Plate MDX editor; `/editor` used plain `<textarea>` blocks with a read-only MDX `<pre>`. | Medium | Fixed |
-| 10 | Profile facts (bio, institution, ORCID) have no editor UI; only the photo can be changed. | Medium | Open — needs a profile form |
-| 11 | Dashboard KPIs have no social counters (followers, saves received); adding fake numbers would violate the "no invented statistics" rule. | Low | Deliberately not added |
+| 10 | Profile facts (bio, institution, ORCID) have no editor UI; only the photo can be changed. | Medium | Fixed — `/dashboard/profile` edits every column of the owner's row |
+| 11 | Dashboard KPIs have no social counters (followers, saves received); adding fake numbers would violate the "no invented statistics" rule. | Low | Fixed — header counters come from a real aggregate over `v34_user_follows` / `v34_library_items` / `v34_contributions`; the strip is omitted when the query fails |
 
 ## What changed
 
@@ -88,11 +88,28 @@ navigation contract in `docs/design-system/page-layout-matrix.md`.
   primary nav and one footer; `/authors` shows the editorial lead;
   `/author/myself-aas` renders a profile; `/editor` exposes the shared editor.
 
-## Still open
+## Closed after the second pass
 
-1. A real profile form (bio, institution, ORCID/GitHub links) — currently only
-   the photo is editable, from `/dashboard/access`.
-2. Social counters on the profile header once the schema has truthful counts
-   (saves received, reviews published), never placeholders.
+1. **Profile form — shipped.** `app/dashboard/profile/page.tsx` (tab: Profile)
+   edits name, profile URL, role, institution, field, bio, ORCID, GitHub,
+   website, Scholar, and the directory-publish switch; the photo card moved onto
+   the same screen. Validation lives in `lib/profile/validation.ts` and mirrors
+   the database checks, including the `^[a-z0-9]+(-[a-z0-9]+)*$` slug rule. The
+   write is a single upsert against the caller's own row, so the owner-only
+   insert/update policies from `20261108000500_restrict_profile_writes.sql`
+   remain the authority. "Edit profile" in the header and the account page now
+   point here instead of `/settings`.
+2. **Social counters — shipped from real rows.** Migration
+   `20261117001500_v34_profile_social_counts.sql` adds
+   `public.v34_profile_social_counts(uuid)`: a `security definer`, `stable`
+   aggregate returning followers (`v34_user_follows.followee_id`), saves
+   received (library entries whose `item_type = 'contribution'` join back to the
+   author's `v34_contributions`), and published reviews (`lifecycle =
+   'published'`). It is executable by `authenticated` only and returns counts, no
+   identities. Applied to the live project and verified. `loadProfileSocialCounts`
+   reads it; a zero renders as `0`, an unavailable aggregate renders no strip at
+   all, and no placeholder is possible.
 3. Keep `docs/design-system/page-layout-matrix.md` in sync if the tab set
-   changes; it is the contract the dashboard tests read.
+   changes; it is the contract the dashboard tests read. `/dashboard/profile` is
+   now listed there, and `.impeccable/surfaces/app-dashboard-profile-page-tsx.md`
+   carries the surface brief.
