@@ -7,7 +7,11 @@
  */
 import crypto from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { createR2PresignedGetUrl, getR2Config, storeArtifactInR2 } from './r2-storage';
+import {
+  createArtifactSignedUrl,
+  storeArtifact,
+  type ArtifactStorageProvider,
+} from './artifact-storage';
 import { getContributionById, getSourceWithDetails } from './store';
 import { isUuid, runSupabaseMutation } from './supabase-sync';
 import { listCitationCollections } from './wave5-store';
@@ -25,7 +29,7 @@ export interface ScholarlyExportRecord {
   filename: string;
   payload: string;
   byteSize: number;
-  storageProvider: 'inline' | 'r2';
+  storageProvider: ArtifactStorageProvider;
   storageBucket: string | null;
   storageKey: string | null;
   signedDownloadUrl: string | null;
@@ -181,7 +185,7 @@ export async function createScholarlyExport(input: {
   const exportId = makeId('exp');
   const checksumSha256 = sha256(payload);
   const filename = `${sanitizeBibKey(input.targetId)}.${ext}`;
-  const stored = await storeArtifactInR2({
+  const stored = await storeArtifact({
     key: `exports/${input.userId}/${exportId}/${filename}`,
     body: payload,
     contentType,
@@ -222,7 +226,7 @@ export async function createScholarlyExport(input: {
         status: record.status,
         checksum_sha256: record.checksumSha256,
         content_type: record.contentType,
-        payload: record.storageProvider === 'r2' ? '' : record.payload,
+        payload: record.storageProvider === 'inline' ? record.payload : '',
         byte_size: record.byteSize,
         storage_provider: record.storageProvider,
         storage_bucket: record.storageBucket,
@@ -235,22 +239,34 @@ export async function createScholarlyExport(input: {
   return { ok: true, exportRecord: record };
 }
 
-export function getScholarlyExport(userId: string, exportId: string): ScholarlyExportRecord | null {
+/**
+ * Loads a scholarly export and re-mints its signed download URL when the
+ * artifact lives in object storage (Supabase Storage or R2). Signing is a
+ * network call for Supabase, hence the async signature.
+ */
+export async function getScholarlyExport(
+  userId: string,
+  exportId: string,
+): Promise<ScholarlyExportRecord | null> {
   const rec = exportStore.get(exportId);
   if (!rec || rec.userId !== userId) return null;
-  if (rec.storageProvider === 'r2' && rec.storageKey) {
-    const r2Cfg = getR2Config();
-    if (r2Cfg) {
-      const refreshed = createR2PresignedGetUrl(r2Cfg, rec.storageKey, {
-        responseContentDisposition: `attachment; filename="${rec.filename}"`,
-        responseContentType: rec.contentType,
-      });
-      return {
-        ...rec,
-        signedDownloadUrl: refreshed.url,
-        signedUrlExpiresAt: refreshed.expiresAt,
-      };
-    }
+  if (!rec.storageKey || rec.storageProvider === 'inline') return rec;
+
+  try {
+    const refreshed = await createArtifactSignedUrl({
+      provider: rec.storageProvider,
+      key: rec.storageKey,
+      filename: rec.filename,
+    });
+    if (!refreshed) return rec;
+    return {
+      ...rec,
+      signedDownloadUrl: refreshed.url,
+      signedUrlExpiresAt: refreshed.expiresAt,
+    };
+  } catch {
+    // A storage hiccup must not make the export record unreadable; callers get
+    // the last signed URL we minted at upload time.
+    return rec;
   }
-  return rec;
 }

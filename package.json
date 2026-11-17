@@ -36,6 +36,8 @@
     "worker:outbox:check": "tsc -p workers/outbox && wrangler deploy --dry-run -c workers/outbox/wrangler.jsonc --outdir .wrangler/outbox-dry-run",
     "worker:outbox:deploy": "wrangler deploy -c workers/outbox/wrangler.jsonc",
     "cloudflare:provision:dry": "node scripts/provision-cloudflare-v34.mjs --dry-run --deploy-workers",
+    "storage:provision:supabase": "node scripts/provision-supabase-storage-v34.mjs",
+    "storage:check:supabase": "node scripts/provision-supabase-storage-v34.mjs --check",
     "env:check:v34": "node scripts/check-production-env.mjs --v34-cutover",
     "verify:v34:cutover": "node scripts/verify-v34-cutover.mjs",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",

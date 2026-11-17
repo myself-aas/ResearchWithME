@@ -4,7 +4,9 @@
  *
  * Idempotently provisions Cloudflare infrastructure and syncs runtime secrets for
  * the v3.4 async platform without ever echoing secret values to stdout/argv:
- *   1. R2 bucket: `researchwithme-artifacts`
+ *   1. R2 bucket: `researchwithme-artifacts` (OPTIONAL — R2 requires a payment
+ *      method on the Cloudflare account. Use `--skip-r2` and store artifacts in
+ *      Supabase Storage instead: `npm run storage:provision:supabase`.)
  *   2. Queues:    `researchwithme-outbox` and `researchwithme-outbox-dlq`
  *   3. Secrets:   `CRON_SECRET`, `R2_ACCOUNT_ID`, `R2_BUCKET`, `R2_ACCESS_KEY_ID`,
  *                 `R2_SECRET_ACCESS_KEY`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`,
@@ -17,6 +19,10 @@
  *   node scripts/provision-cloudflare-v34.mjs --dry-run
  *   node scripts/provision-cloudflare-v34.mjs --generate-vapid
  *   node scripts/provision-cloudflare-v34.mjs --apply --deploy-workers
+ *   node scripts/provision-cloudflare-v34.mjs --apply --skip-r2   # no credit card
+ *
+ * Queues, Cron, VAPID keys and observability secrets work on Cloudflare's free
+ * plan without billing info; only the R2 bucket needs a payment method.
  */
 import { execFileSync, spawnSync } from 'node:child_process';
 import { generateKeyPairSync, randomBytes } from 'node:crypto';
@@ -124,15 +130,22 @@ export function auditSecretReadiness(env = /** @type {Record<string, string | un
 export function buildProvisioningPlan(opts = {}) {
   const env = opts.env ?? { ...readLocalEnvFile(opts.cwd), ...process.env };
   const deployWorkers = Boolean(opts.deployWorkers);
+  const skipR2 = Boolean(opts.skipR2);
   const secrets = auditSecretReadiness(env);
 
+  const r2Commands = skipR2
+    ? []
+    : [
+        {
+          step: 'create-r2-bucket',
+          description: `Create R2 bucket ${CLOUDFLARE_V34_RESOURCES.r2Bucket}`,
+          args: ['wrangler', 'r2', 'bucket', 'create', CLOUDFLARE_V34_RESOURCES.r2Bucket],
+          idempotentConflictPattern: 'already exists',
+        },
+      ];
+
   const commands = [
-    {
-      step: 'create-r2-bucket',
-      description: `Create R2 bucket ${CLOUDFLARE_V34_RESOURCES.r2Bucket}`,
-      args: ['wrangler', 'r2', 'bucket', 'create', CLOUDFLARE_V34_RESOURCES.r2Bucket],
-      idempotentConflictPattern: 'already exists',
-    },
+    ...r2Commands,
     ...CLOUDFLARE_V34_RESOURCES.queues.map((queue) => ({
       step: `create-queue:${queue}`,
       description: `Create Cloudflare Queue ${queue}`,
@@ -176,7 +189,17 @@ export function buildProvisioningPlan(opts = {}) {
   return {
     mode: opts.apply ? 'apply' : 'dry-run',
     accountId: CLOUDFLARE_V34_RESOURCES.accountId,
-    r2Bucket: CLOUDFLARE_V34_RESOURCES.r2Bucket,
+    r2Bucket: skipR2 ? null : CLOUDFLARE_V34_RESOURCES.r2Bucket,
+    skipped: skipR2
+      ? [
+          {
+            step: 'create-r2-bucket',
+            reason:
+              'ARTIFACT_STORAGE_PROVIDER=supabase — artifacts live in Supabase Storage, which needs no payment method.',
+            alternative: 'npm run storage:provision:supabase -- --apply',
+          },
+        ]
+      : [],
     queues: CLOUDFLARE_V34_RESOURCES.queues,
     commands,
     secretUploads,
@@ -280,8 +303,9 @@ if (isCli) {
 
   const apply = args.has('--apply');
   const deployWorkers = args.has('--deploy-workers');
+  const skipR2 = args.has('--skip-r2');
   try {
-    const output = executeProvisioning({ apply, deployWorkers });
+    const output = executeProvisioning({ apply, deployWorkers, skipR2 });
     console.log(JSON.stringify(output, null, 2));
   } catch (err) {
     console.error(err instanceof Error ? err.message : String(err));

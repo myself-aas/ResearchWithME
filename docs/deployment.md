@@ -466,6 +466,7 @@ npx wrangler secret put GEMINI_API_KEY
 npx wrangler secret put LEMONSQUEEZY_API_KEY
 npx wrangler secret put LEMONSQUEEZY_WEBHOOK_SECRET
 npx wrangler secret put BILLING_BRIDGE_SECRET
+npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY   # artifact storage, see docs/artifact-storage.md
 # GEMINI_MODEL is a plaintext var — add it as a Worker variable in the dashboard
 # Likewise LEMONSQUEEZY_STORE_ID, the three LEMONSQUEEZY_VARIANT_* ids, and
 # LEMONSQUEEZY_TEST_MODE. After setting BILLING_BRIDGE_SECRET, insert the same
@@ -474,6 +475,12 @@ npx wrangler secret put BILLING_BRIDGE_SECRET
 ```
 
 Secrets survive a deploy; they are per-Worker, not per-version.
+
+`SUPABASE_SERVICE_ROLE_KEY` backs artifact storage (scholarly exports and render
+manifests). It is optional: without it those artifacts fall back to inline
+Postgres storage. Cloudflare R2 is **not** required — R2 asks for a payment
+method even on its free allowance — so the default backend is Supabase Storage,
+which needs no card. Full setup, limits and verification: `docs/artifact-storage.md`.
 
 ### 6.6 Previews
 

@@ -6,6 +6,14 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Artifact storage no longer requires Cloudflare R2. R2 asks for a payment
+  method even on its free allowance, so scholarly exports and render manifests
+  now default to **Supabase Storage** (private bucket, signed URLs, Free plan,
+  no card). `lib/v34/artifact-storage.ts` resolves `supabase → r2 → inline`,
+  overridable with `ARTIFACT_STORAGE_PROVIDER`; `supabase/migrations/20261117001400_v34_supabase_artifact_storage.sql`
+  provisions the bucket and widens `storage_provider` to accept `supabase`; and
+  `npm run storage:provision:supabase` (plus `--check`) provisions it through
+  the Storage API. Setup and limits: `docs/artifact-storage.md`.
 - Assistant API. The database migration is applied; the API answers `503`
   until the owner sets `API_BRIDGE_SECRET` and its digest row
   (`docs/assistant-api.md`, "Owner: deploy"):
