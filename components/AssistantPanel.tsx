@@ -368,9 +368,9 @@ export default function AssistantPanel({ initialArticles }: { initialArticles?: 
           </p>
 
           <div className="mt-6 rounded-xl border border-line bg-surface p-4 space-y-2 text-xs">
-            <p className="font-mono font-semibold uppercase text-brand">
-              AI Governance &amp; Provenance Boundary (ADR-032-12)
-            </p>
+            <h2 className="font-sans text-sm font-semibold text-ink">
+              AI Governance &amp; Provenance Boundary
+            </h2>
             <p className="text-ink-secondary leading-relaxed">
               Public archive Q&amp;A is strictly isolated from private drafts.{' '}
               <strong className="text-ink">CONFIDENTIAL</strong> and{' '}

@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { AnimatePresence, LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import {
+  ArrowLeft,
   Bookmark,
   BookOpen,
   CheckCircle2,
@@ -43,6 +44,10 @@ interface BlogHeaderProps {
   searchQuery?: string;
   setSearchQuery?: (query: string) => void;
   savedCount?: number;
+  variant?: 'default' | 'reading' | 'editor';
+  contextTitle?: string;
+  backHref?: string;
+  backLabel?: string;
 }
 
 const primaryNav = [
@@ -56,9 +61,18 @@ const primaryNav = [
   { href: '/pricing', label: 'Products', icon: Tag, match: (path: string) => path.startsWith('/pricing') },
 ];
 
-export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: BlogHeaderProps) {
+export default function BlogHeader({
+  searchQuery,
+  setSearchQuery,
+  savedCount,
+  variant = 'default',
+  contextTitle,
+  backHref,
+  backLabel,
+}: BlogHeaderProps) {
   const pathname = usePathname() || '/';
   const { user, signOut } = useSession();
+  const isCompact = variant === 'reading' || variant === 'editor';
   const storeSavedCount = useSavedTotalCount();
   const digestSubscribed = useDigestSubscribed();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -190,45 +204,84 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
     </span>
     <Header open={menuOpen}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-5 xl:px-8">
-        <div className="flex min-h-[60px] items-center justify-between gap-1 sm:gap-2 xl:gap-3">
-          <Link
-            href="/"
-            className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-            aria-label="reme. ResearchWithMe home"
-          >
-                      <BrandLogo size="header" />
-          </Link>
+        <div
+          className={`flex items-center justify-between gap-1 sm:gap-2 xl:gap-3 ${
+            isCompact ? 'min-h-[56px]' : 'min-h-[60px]'
+          }`}
+        >
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            {isCompact ? (
+              <Link
+                href={backHref ?? '/feed'}
+                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-2.5 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                aria-label={backLabel ?? 'Back to research feed'}
+              >
+                <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="hidden sm:inline">{backLabel ?? 'Back'}</span>
+              </Link>
+            ) : null}
 
-          <nav aria-label="Primary" className="hidden min-w-0 lg:block">
-            <LayoutGroup id="reme-primary-nav">
-              <ul className="flex items-center gap-0 xl:gap-0.5">
-                {primaryNav.map((item) => {
-                  const active = item.match(pathname);
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        aria-current={active ? 'page' : undefined}
-                        className={`${navLinkClass(active)} relative`}
-                      >
-                        <span>{item.label}</span>
-                        {active ? (
-                          <m.span
-                            layoutId="reme-nav-underline"
-                            aria-hidden="true"
-                            className="absolute inset-x-2 -bottom-[2px] h-0.5 rounded-full bg-ink"
-                            transition={{ layout: TRANSITION.reveal }}
-                          />
-                        ) : null}
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </LayoutGroup>
-          </nav>
+            <Link
+              href={isSignedIn ? '/?view=public' : '/'}
+              className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              aria-label="reme. ResearchWithMe home"
+            >
+              <BrandLogo size="header" />
+            </Link>
+
+            {isCompact && contextTitle ? (
+              <span
+                className="hidden min-w-0 truncate border-l border-line pl-3 font-sans text-sm font-medium text-ink-secondary md:block md:max-w-[260px] lg:max-w-[420px]"
+                title={contextTitle}
+              >
+                {contextTitle}
+              </span>
+            ) : null}
+          </div>
+
+          {!isCompact ? (
+            <nav aria-label="Primary" className="hidden min-w-0 lg:block">
+              <LayoutGroup id="reme-primary-nav">
+                <ul className="flex items-center gap-0 xl:gap-0.5">
+                  {primaryNav.map((item) => {
+                    const active = item.match(pathname);
+                    const href = item.href === '/' && isSignedIn ? '/?view=public' : item.href;
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={href}
+                          aria-current={active ? 'page' : undefined}
+                          className={`${navLinkClass(active)} relative`}
+                        >
+                          <span>{item.label}</span>
+                          {active ? (
+                            <m.span
+                              layoutId="reme-nav-underline"
+                              aria-hidden="true"
+                              className="absolute inset-x-2 -bottom-[2px] h-0.5 rounded-full bg-ink"
+                              transition={{ layout: TRANSITION.reveal }}
+                            />
+                          ) : null}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </LayoutGroup>
+            </nav>
+          ) : null}
 
           <div className="flex shrink-0 items-center gap-1 xl:gap-2">
+            {variant === 'editor' ? (
+              <Link
+                href="/library"
+                className="hidden min-h-11 items-center gap-1.5 rounded-full px-3 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink sm:inline-flex"
+              >
+                <Library className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span>Library</span>
+              </Link>
+            ) : null}
+
             <Pressable
               type="button"
               onClick={openPalette}
@@ -239,35 +292,39 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <Search className="h-5 w-5 shrink-0" aria-hidden="true" />
             </Pressable>
 
-            <Link
-              href="/bookmarks"
-              className="relative hidden min-h-11 min-w-11 items-center justify-center gap-1 rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:inline-flex"
-              title={digestSubscribed ? 'Weekly digest subscribed' : 'Reading list'}
-              aria-label={digestSubscribed ? 'Reading list — weekly digest subscribed' : 'Reading list'}
-            >
-              <Bookmark className="h-4 w-4 text-ink-secondary" aria-hidden="true" />
-              {savedTotal > 0 && (
-                <AttentionPulse active={badgePulse} className="rounded-sm">
-                  <span className="rounded-sm bg-brand px-1.5 py-0.5 font-mono text-xs font-semibold text-on-primary">
-                    {savedTotal}
-                  </span>
-                </AttentionPulse>
-              )}
-              {digestSubscribed && (
-                <CheckCircle2 className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-              )}
-            </Link>
+            {variant !== 'editor' ? (
+              <Link
+                href="/bookmarks"
+                className="relative hidden min-h-11 min-w-11 items-center justify-center gap-1 rounded-full text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:inline-flex"
+                title={digestSubscribed ? 'Weekly digest subscribed' : 'Reading list'}
+                aria-label={digestSubscribed ? 'Reading list — weekly digest subscribed' : 'Reading list'}
+              >
+                <Bookmark className="h-4 w-4 text-ink-secondary" aria-hidden="true" />
+                {savedTotal > 0 && (
+                  <AttentionPulse active={badgePulse} className="rounded-sm">
+                    <span className="rounded-sm bg-brand px-1.5 py-0.5 font-mono text-xs font-semibold text-on-primary">
+                      {savedTotal}
+                    </span>
+                  </AttentionPulse>
+                )}
+                {digestSubscribed && (
+                  <CheckCircle2 className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+                )}
+              </Link>
+            ) : null}
 
             {/* Auth / Contribute CTA — adapts cleanly to three states */}
             {isSignedIn ? (
               <div className="hidden items-center gap-1 md:flex">
-                <Link
-                  href="/contribute"
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-brand px-3 py-1.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 xl:px-4"
-                >
-                  <PlusCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  <span>Contribute</span>
-                </Link>
+                {variant === 'default' ? (
+                  <Link
+                    href="/contribute"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-brand px-3 py-1.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 xl:px-4"
+                  >
+                    <PlusCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Contribute</span>
+                  </Link>
+                ) : null}
                 <Link
                   href="/dashboard/account"
                   className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2.5 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand xl:px-3"
@@ -277,7 +334,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   <User className="h-4 w-4 text-brand" aria-hidden="true" />
                   <span className="hidden xl:inline">Account</span>
                 </Link>
-                {isEditor && (
+                {isEditor && variant === 'default' && (
                   <Link
                     href="/write"
                     className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90 xl:px-4"
@@ -306,13 +363,15 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                   <LogIn className="h-4 w-4 text-brand" aria-hidden="true" />
                   <span className="hidden xl:inline">Sign in</span>
                 </Link>
-                <Link
-                  href="/contribute"
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90 xl:px-4"
-                >
-                  <PlusCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
-                  <span>Contribute</span>
-                </Link>
+                {variant === 'default' ? (
+                  <Link
+                    href="/contribute"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90 xl:px-4"
+                  >
+                    <PlusCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>Contribute</span>
+                  </Link>
+                ) : null}
               </div>
             )}
 
@@ -324,7 +383,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              className="rounded-full lg:hidden"
+              className={`min-h-11 min-w-11 rounded-full ${isCompact ? '' : 'lg:hidden'}`}
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">
@@ -353,7 +412,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.22, ease: [...EASING.standard] }}
-              className="max-h-[calc(100dvh-60px)] overflow-y-auto overscroll-contain lg:hidden"
+              className={`max-h-[calc(100dvh-60px)] overflow-y-auto overscroll-contain ${
+                isCompact ? '' : 'lg:hidden'
+              }`}
             >
               <div className="mb-4 border-t border-line bg-canvas py-4">
                 {setSearchQuery && (
@@ -445,14 +506,14 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                         <Link
                           href="/login"
                           aria-label="Sign in"
-                          className="inline-flex min-h-9 items-center gap-1 rounded-sm border border-line bg-canvas px-2.5 py-1.5 text-ink hover:bg-surface-subtle"
+                          className="inline-flex min-h-11 items-center gap-1 rounded-sm border border-line bg-canvas px-3 py-2 text-ink hover:bg-surface-subtle"
                         >
                           <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
                           Sign in
                         </Link>
                         <Link
                           href="/dashboard/access"
-                          className="inline-flex min-h-9 items-center gap-1 rounded-sm bg-ink px-2.5 py-1.5 font-semibold text-canvas hover:opacity-90"
+                          className="inline-flex min-h-11 items-center gap-1 rounded-sm bg-ink px-3 py-2 font-semibold text-canvas hover:opacity-90"
                         >
                           <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
                           Write for us
@@ -475,7 +536,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
         />
       )}
     </Header>
-    <MobileBottomNav profileHref={isSignedIn ? '/dashboard/account' : '/profile/myself-aas'} />
+    <MobileBottomNav
+      profileHref={isSignedIn ? '/dashboard/account' : '/login?next=%2Fdashboard%2Faccount'}
+    />
     </>
   );
 }

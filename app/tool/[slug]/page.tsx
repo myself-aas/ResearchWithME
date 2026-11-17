@@ -113,8 +113,8 @@ export default async function ToolDetailPage({
             Linked Citable Software Sources ({tool.linkedSources.length})
           </h2>
           <p className="text-xs text-ink-secondary">
-            Per ADR-032-05, mutable Git repositories are kept distinct from immutable archived
-            software releases used in scholarly citations.
+            Mutable Git repositories are kept distinct from immutable archived software releases
+            used in scholarly citations.
           </p>
           {tool.linkedSources.length === 0 ? (
             <p className="rounded-xl border border-line bg-surface p-4 text-sm text-ink-secondary">

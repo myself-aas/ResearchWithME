@@ -29,10 +29,7 @@ export default function EvidenceDirectoryPage() {
       >
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-brand">
-              First-Class Knowledge Unit · ADR-032-01
-            </p>
-            <h1 className="mt-1 font-serif text-3xl font-bold text-ink sm:text-4xl">
+            <h1 className="font-serif text-3xl font-bold text-ink sm:text-4xl">
               Evidence Registry
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-ink-secondary">
@@ -91,7 +88,7 @@ export default function EvidenceDirectoryPage() {
                 )}
 
                 {ev.limitation && (
-                  <p className="rounded-lg border border-line bg-canvas/70 px-3 py-2 text-xs text-ink-secondary">
+                  <p className="rounded-lg bg-surface-subtle/60 px-3 py-2 text-xs text-ink-secondary">
                     <strong className="text-ink">Limitation:</strong> {ev.limitation}
                   </p>
                 )}

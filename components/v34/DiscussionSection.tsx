@@ -123,16 +123,13 @@ export function DiscussionSection({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase tracking-wide text-ink-secondary">
-            <MessageCircle className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-            Informal Discussion · Separate from Formal Peer Review
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-ink">
-            Community Q&amp;A &amp; Replication Notes
+          <h2 className="inline-flex items-center gap-2 text-lg sm:text-xl font-bold tracking-tight text-ink">
+            <MessageCircle className="h-5 w-5 text-brand" aria-hidden="true" />
+            <span>Community Q&amp;A &amp; Replication Notes</span>
           </h2>
           <p className="text-sm text-ink-secondary max-w-2xl">
-            Ask clarifying questions, share informal replication runs, or discuss follow-up ideas.
-            Formal methodological critiques and decisions belong in the Peer Review section above.
+            Informal Discussion · Separate from Formal Peer Review. Ask clarifying questions, share
+            informal replication runs, or discuss follow-up ideas.
           </p>
         </div>
 
@@ -148,7 +145,7 @@ export function DiscussionSection({
       {showNewThread && (
         <form
           onSubmit={handleStartDiscussion}
-          className="rounded-xl border border-line bg-canvas p-4 space-y-3"
+          className="border-t border-line pt-4 space-y-3"
         >
           <label className="block space-y-1 text-xs">
             <span className="font-medium text-ink">Thread title</span>
@@ -159,7 +156,7 @@ export function DiscussionSection({
               value={newTitle}
               onChange={(e) => setNewTitle(e.target.value)}
               placeholder="e.g. Hyperparameter sensitivity on smaller checkpoints?"
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+              className="min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
             />
           </label>
           <label className="block space-y-1 text-xs">
@@ -169,13 +166,13 @@ export function DiscussionSection({
               value={newBody}
               onChange={(e) => setNewBody(e.target.value)}
               placeholder="Share context, hardware configuration, or follow-up questions..."
-              className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+              className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
             />
           </label>
           <button
             type="submit"
             disabled={busy}
-            className="rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
+            className="inline-flex min-h-11 items-center rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
           >
             {busy ? 'Posting…' : 'Create discussion thread'}
           </button>
@@ -188,11 +185,11 @@ export function DiscussionSection({
         </p>
       )}
 
-      <div className="space-y-4">
+      <div className="divide-y divide-line">
         {discussions.map((disc) => (
           <article
             key={disc.id}
-            className="rounded-xl border border-line bg-canvas/60 p-4 space-y-3"
+            className="py-4 first:pt-0 last:pb-0 space-y-3"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
@@ -204,7 +201,7 @@ export function DiscussionSection({
               </div>
               <div className="flex items-center gap-2">
                 {disc.locked && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2.5 py-0.5 text-xs font-medium text-ink-secondary">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2.5 py-0.5 text-xs font-medium text-ink-secondary">
                     <Lock className="h-3 w-3" aria-hidden="true" />
                     Locked
                   </span>
@@ -213,7 +210,7 @@ export function DiscussionSection({
                   type="button"
                   disabled={busy}
                   onClick={() => handleToggleLock(disc)}
-                  className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs text-ink-secondary hover:text-ink"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink-secondary hover:text-ink"
                 >
                   {disc.locked ? (
                     <>
@@ -231,9 +228,9 @@ export function DiscussionSection({
             </div>
 
             {disc.comments.length > 0 && (
-              <ol className="space-y-2 border-t border-line pt-3">
+              <ol className="divide-y divide-line rounded-lg bg-surface-subtle/50 px-3">
                 {disc.comments.map((c) => (
-                  <li key={c.id} className="rounded-lg border border-line bg-surface p-3 space-y-1">
+                  <li key={c.id} className="py-3 space-y-1">
                     <div className="flex items-center justify-between gap-2 text-xs text-ink-secondary">
                       <span className="font-semibold text-ink">{c.authorName}</span>
                       <span>
@@ -248,7 +245,7 @@ export function DiscussionSection({
             )}
 
             {disc.locked ? (
-              <p className="rounded-lg border border-line bg-surface-subtle px-3 py-2 text-xs text-ink-secondary">
+              <p className="rounded-lg bg-surface-subtle px-3 py-2 text-xs text-ink-secondary">
                 {disc.lockedReason || 'This discussion thread is locked and no longer accepts replies.'}
               </p>
             ) : (
@@ -267,7 +264,7 @@ export function DiscussionSection({
                     setReplyDrafts((prev) => ({ ...prev, [disc.id]: e.target.value }))
                   }
                   placeholder="Write an informal reply or replication note..."
-                  className="flex-1 rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                  className="min-h-11 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
                 />
                 <button
                   type="submit"

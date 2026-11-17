@@ -162,15 +162,14 @@ export function ProvenanceGraphExplorer({
   return (
     <section
       aria-label={heading}
-      className="rounded-xl border border-line bg-surface p-5 sm:p-6 space-y-5"
+      className="border-t border-line pt-6 space-y-5"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand">
-            <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
-            Scholarly Provenance
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-ink">{heading}</h2>
+          <h2 className="inline-flex items-center gap-2 text-lg sm:text-xl font-bold tracking-tight text-ink">
+            <GitBranch className="h-5 w-5 text-brand" aria-hidden="true" />
+            <span>{heading}</span>
+          </h2>
           <p className="text-sm text-ink-secondary max-w-2xl">{description}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -178,7 +177,7 @@ export function ProvenanceGraphExplorer({
             type="button"
             onClick={() => void handleRebuildProjection()}
             disabled={rebuilding}
-            className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${rebuilding ? 'animate-spin' : ''}`} aria-hidden="true" />
             <span>{rebuilding ? 'Rebuilding…' : 'Rebuild projection'}</span>
@@ -186,7 +185,7 @@ export function ProvenanceGraphExplorer({
           {showFullGraphLink && (
             <Link
               href="/graph"
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:border-brand hover:text-brand"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-surface px-3.5 py-2 text-xs font-medium text-ink hover:border-brand hover:text-brand"
             >
               Open full graph explorer
               <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -217,7 +216,7 @@ export function ProvenanceGraphExplorer({
             type="button"
             onClick={() => setEdgeFilter(key)}
             aria-pressed={edgeFilter === key}
-            className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+            className={`min-h-11 rounded-full border px-3.5 py-2 text-xs font-medium transition-colors ${
               edgeFilter === key
                 ? 'border-brand bg-brand text-on-primary'
                 : 'border-line bg-surface text-ink-secondary hover:border-brand hover:text-ink'
@@ -240,7 +239,7 @@ export function ProvenanceGraphExplorer({
 
         <aside
           aria-label="Selected provenance object"
-          className="lg:col-span-4 rounded-xl border border-line bg-canvas/60 p-4 space-y-3"
+          className="lg:col-span-4 rounded-xl bg-surface-subtle/60 p-4 space-y-3"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-ink-secondary">
             Node Inspector
@@ -248,7 +247,7 @@ export function ProvenanceGraphExplorer({
           {selectedObject ? (
             <div className="space-y-3">
               <div className="space-y-1">
-                <span className="inline-flex items-center rounded-full border border-line bg-surface px-2.5 py-0.5 text-xs font-semibold uppercase text-brand">
+                <span className="inline-flex items-center rounded-full bg-surface px-2.5 py-0.5 text-xs font-semibold uppercase text-brand">
                   {selectedObject.type}
                 </span>
                 <h3 className="text-sm font-semibold text-ink leading-snug">
@@ -262,7 +261,7 @@ export function ProvenanceGraphExplorer({
               {selectedObject.href && (
                 <Link
                   href={selectedObject.href}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:underline"
+                  className="inline-flex min-h-11 items-center gap-1 text-xs font-medium text-brand hover:underline"
                 >
                   Open canonical record
                   <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
@@ -276,19 +275,19 @@ export function ProvenanceGraphExplorer({
                 {connectedEdges.length === 0 ? (
                   <p className="text-xs text-ink-secondary">No edges attached to this node yet.</p>
                 ) : (
-                  <ul className="space-y-1.5 text-xs">
+                  <ul className="divide-y divide-line text-xs">
                     {connectedEdges.map((edge) => {
                       const fromTitle = objectById.get(edge.fromId)?.title ?? edge.fromId;
                       const toTitle = objectById.get(edge.toId)?.title ?? edge.toId;
                       return (
                         <li
                           key={edge.id}
-                          className="rounded-lg border border-line bg-surface p-2 space-y-0.5"
+                          className="py-2 first:pt-0 last:pb-0 space-y-0.5"
                         >
                           <div className="flex flex-wrap items-center gap-1.5">
                             <span className="font-semibold text-ink">{edge.label}</span>
                             {edge.inferred && (
-                              <span className="rounded border border-brand/40 bg-brand/10 px-1.5 py-0.5 text-xs text-brand">
+                              <span className="rounded bg-brand/10 px-1.5 py-0.5 text-xs text-brand">
                                 AI proposed
                               </span>
                             )}
@@ -313,7 +312,7 @@ export function ProvenanceGraphExplorer({
 
       {/* Human Curation Queue for AI-Proposed Edges (v3.4 Acceptance Criterion E) */}
       {proposedLinks.length > 0 && (
-        <div className="rounded-xl border border-brand/30 bg-brand/5 p-4 space-y-3">
+        <div className="border-t border-line pt-5 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand">
               <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
@@ -325,7 +324,7 @@ export function ProvenanceGraphExplorer({
             </span>
           </div>
 
-          <ul className="space-y-2">
+          <ul className="divide-y divide-line rounded-lg bg-brand/5 px-4">
             {proposedLinks.map((link) => {
               const key = `${link.claimId}:${link.evidenceId}:${link.relationship}`;
               const evidenceLabel = objectById.get(link.evidenceId)?.title ?? link.evidenceId;
@@ -335,11 +334,11 @@ export function ProvenanceGraphExplorer({
               return (
                 <li
                   key={key}
-                  className="rounded-lg border border-line bg-surface p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+                  className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                 >
                   <div className="space-y-1 text-xs">
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="rounded bg-canvas border border-line px-2 py-0.5 font-semibold text-ink">
+                      <span className="rounded bg-surface px-2 py-0.5 font-semibold text-ink">
                         {link.relationship}
                       </span>
                       <span className="text-ink-secondary">
@@ -363,7 +362,7 @@ export function ProvenanceGraphExplorer({
                       type="button"
                       disabled={busy}
                       onClick={() => curateProposedEdge(link, 'ACCEPTED')}
-                      className="inline-flex items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-brand px-3.5 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
                     >
                       <Check className="h-3.5 w-3.5" aria-hidden="true" />
                       Accept edge
@@ -372,7 +371,7 @@ export function ProvenanceGraphExplorer({
                       type="button"
                       disabled={busy}
                       onClick={() => curateProposedEdge(link, 'REJECTED')}
-                      className="inline-flex items-center gap-1 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink hover:border-destructive hover:text-destructive disabled:opacity-50"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-surface px-3.5 py-2 text-xs font-medium text-ink hover:border-destructive hover:text-destructive disabled:opacity-50"
                     >
                       <X className="h-3.5 w-3.5" aria-hidden="true" />
                       Reject edge

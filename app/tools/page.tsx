@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Code2, FolderKanban, GitBranch } from 'lucide-react';
+import { FolderKanban, GitBranch } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { ToolsDirectoryClient } from '@/components/v34/ToolsDirectoryClient';
@@ -27,10 +27,6 @@ export default async function ToolsDirectoryPage() {
       >
         <header className="border-b border-line pb-6 flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase tracking-wide text-brand">
-              <Code2 className="h-3.5 w-3.5" aria-hidden="true" />
-              Global Open-Source Tool Registry
-            </div>
             <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               Research Tool Repositories
             </h1>

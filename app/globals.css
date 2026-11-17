@@ -284,6 +284,12 @@
     font-family: var(--font-sans);
   }
 
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 1;
+  }
+
   p,
   li,
   blockquote,

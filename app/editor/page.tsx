@@ -26,7 +26,12 @@ export default async function ScholarlyEditorIndexPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
-      <BlogHeader />
+      <BlogHeader
+        variant="editor"
+        backHref="/feed"
+        backLabel="Back to feed"
+        contextTitle="Scholarly MDX Workspace"
+      />
       <main
         id="main-content"
         tabIndex={-1}

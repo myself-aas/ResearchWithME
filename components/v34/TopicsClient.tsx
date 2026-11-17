@@ -132,13 +132,13 @@ export default function TopicsClient({ initialTopics }: TopicsClientProps) {
                 <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-line pt-3">
                   <Link
                     href={`/feed?topic=${encodeURIComponent(topic.name)}`}
-                    className="inline-flex min-h-10 items-center rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand"
+                    className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3.5 py-2 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand"
                   >
                     View in feed
                   </Link>
                   <Link
                     href="/graph"
-                    className="inline-flex min-h-10 items-center rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-ink-secondary hover:text-ink"
+                    className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3.5 py-2 font-sans text-xs font-medium text-ink-secondary hover:text-ink"
                   >
                     Inspect in graph
                   </Link>

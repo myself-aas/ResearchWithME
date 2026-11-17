@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { FolderKanban, GitBranch } from 'lucide-react';
+import { FolderKanban } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { ProvenanceGraphExplorer } from '@/components/v34/ProvenanceGraphExplorer';
@@ -46,10 +46,6 @@ export default async function ProvenanceGraphPage() {
       >
         <header className="border-b border-line pb-6 flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase tracking-wide text-brand">
-              <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
-              Canonical Knowledge Network
-            </div>
             <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               Claim–Evidence Provenance Graph
             </h1>

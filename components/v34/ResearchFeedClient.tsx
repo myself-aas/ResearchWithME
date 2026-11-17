@@ -170,21 +170,21 @@ export default function ResearchFeedClient({
           Research network snapshot
         </h2>
         <dl className="mt-3 grid grid-cols-2 gap-3">
-          <div className="rounded-md border border-line bg-canvas p-3">
+          <div className="rounded-md bg-surface-subtle/60 p-3">
             <dt className="font-sans text-xs text-ink-secondary">Published items</dt>
             <dd className="mt-1 font-mono text-lg font-semibold text-ink">{initialItems.length}</dd>
           </div>
-          <div className="rounded-md border border-line bg-canvas p-3">
+          <div className="rounded-md bg-surface-subtle/60 p-3">
             <dt className="font-sans text-xs text-ink-secondary">Canonical sources</dt>
             <dd className="mt-1 font-mono text-lg font-semibold text-ink">{sourceCount}</dd>
           </div>
         </dl>
-        <div className="mt-3 flex flex-col gap-1.5 border-t border-line pt-3">
-          <Link href="/library" className="inline-flex min-h-10 items-center gap-2 font-sans text-xs font-medium text-brand hover:underline">
+        <div className="mt-3 flex flex-col gap-1 border-t border-line pt-3">
+          <Link href="/library" className="inline-flex min-h-11 items-center gap-2 font-sans text-xs font-medium text-brand hover:underline">
             <BookOpen className="h-4 w-4" aria-hidden="true" />
             <span>Open Personal Research Library</span>
           </Link>
-          <Link href="/assistant" className="inline-flex min-h-10 items-center gap-2 font-sans text-xs font-medium text-brand hover:underline">
+          <Link href="/assistant" className="inline-flex min-h-11 items-center gap-2 font-sans text-xs font-medium text-brand hover:underline">
             <Sparkles className="h-4 w-4" aria-hidden="true" />
             <span>Ask the Research Assistant</span>
           </Link>

@@ -230,7 +230,7 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
                 setActiveType(opt.value);
                 void runSearch(query, opt.value);
               }}
-              className={`min-h-10 rounded-full px-3 py-1 font-sans text-xs font-medium ${
+              className={`min-h-11 rounded-full px-3.5 py-2 font-sans text-xs font-medium ${
                 activeType === opt.value
                   ? 'bg-brand text-on-primary'
                   : 'border border-line bg-canvas text-ink-secondary hover:text-ink'
@@ -253,7 +253,7 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
                 setIntegrityFilter(next);
                 void runSearch(query, activeType, { integrity: next });
               }}
-              className="h-10 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
+              className="h-11 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
             >
               <option value="">Any integrity state</option>
               <option value="active">Active / verified</option>
@@ -272,7 +272,7 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
                 setAccessFilter(next);
                 void runSearch(query, activeType, { access: next });
               }}
-              className="h-10 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
+              className="h-11 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
             >
               <option value="">Any access state</option>
               <option value="open">Open access</option>
@@ -289,7 +289,7 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
                 setLanguageFilter(next);
                 void runSearch(query, activeType, { language: next });
               }}
-              className="h-10 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
+              className="h-11 w-full rounded-md border border-line bg-canvas px-2.5 text-xs text-ink"
             >
               <option value="">All languages</option>
               <option value="en">English (en)</option>
@@ -302,7 +302,7 @@ export default function SearchClient({ initialResponse }: SearchClientProps) {
               type="button"
               onClick={() => void handleResetFilters()}
               disabled={!hasActiveFacets}
-              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-line bg-canvas px-3 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-40"
+              className="inline-flex h-11 w-full items-center justify-center rounded-md border border-line bg-canvas px-3 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-40"
             >
               Reset filters
             </button>

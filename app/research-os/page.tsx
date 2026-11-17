@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Code2, Compass, FolderKanban, Layers } from 'lucide-react';
+import { Code2, Compass, FolderKanban } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 export default async function ResearchOsPage() {
   const user = await getDashboardUser();
   const userId = user?.id ?? 'default';
-  const handle = user?.email?.split('@')[0] || 'myself-aas';
+  const handle = user?.email?.split('@')[0] ?? 'guest-researcher';
 
   const [projects, contributions] = await Promise.all([listProjects(), listContributions()]);
   const attention = listAttentionItems(userId);
@@ -61,10 +61,6 @@ export default async function ResearchOsPage() {
       >
         <header className="border-b border-line pb-6 flex flex-wrap items-end justify-between gap-4">
           <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase tracking-wide text-brand">
-              <Layers className="h-3.5 w-3.5" aria-hidden="true" />
-              Personal Research OS
-            </div>
             <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               Research Operations Hub
             </h1>

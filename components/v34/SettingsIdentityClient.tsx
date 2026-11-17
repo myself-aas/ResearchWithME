@@ -294,7 +294,7 @@ export default function SettingsIdentityClient() {
               dir="ltr"
               value={githubHandle}
               onChange={(e) => setGithubHandle(e.target.value)}
-              placeholder="myself-aas"
+              placeholder="github-username"
               className="h-11 w-full rounded-lg border border-line bg-canvas px-3 font-mono text-sm text-ink"
             />
             <button
@@ -463,7 +463,7 @@ export default function SettingsIdentityClient() {
                   type="button"
                   onClick={() => handleRevokeDevice(dev.id)}
                   disabled={busy}
-                  className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-destructive hover:border-destructive"
+                  className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-destructive hover:border-destructive"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                   Revoke

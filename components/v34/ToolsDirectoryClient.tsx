@@ -252,13 +252,13 @@ export function ToolsDirectoryClient({
             value={importUrl}
             onChange={(e) => setImportUrl(e.target.value)}
             placeholder="https://github.com/org/repo"
-            className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
+            className="min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
           />
         </label>
         <button
           type="submit"
           disabled={importing || !importUrl.trim()}
-          className="inline-flex min-h-10 items-center rounded-lg border border-brand bg-brand/10 px-4 py-2 text-xs font-semibold text-brand hover:bg-brand hover:text-on-primary disabled:opacity-50"
+          className="inline-flex min-h-11 items-center rounded-lg border border-brand bg-brand/10 px-4 py-2 text-xs font-semibold text-brand hover:bg-brand hover:text-on-primary disabled:opacity-50"
         >
           {importing ? 'Importing…' : 'Import repository'}
         </button>
@@ -388,14 +388,14 @@ export function ToolsDirectoryClient({
             <button
               type="submit"
               disabled={busy}
-              className="rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary disabled:opacity-50"
+              className="inline-flex min-h-11 items-center rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary disabled:opacity-50"
             >
               {busy ? 'Registering…' : 'Register / refresh repository'}
             </button>
             <button
               type="button"
               onClick={() => setShowRegister(false)}
-              className="rounded-lg border border-line px-3 py-2 text-xs text-ink-secondary"
+              className="inline-flex min-h-11 items-center rounded-lg border border-line px-3.5 py-2 text-xs text-ink-secondary"
             >
               Cancel
             </button>
@@ -422,7 +422,7 @@ export function ToolsDirectoryClient({
                   {tool.provider} · {tool.ownerName}/{tool.repoName}
                 </span>
                 {tool.license && (
-                  <span className="rounded-full border border-line bg-canvas px-2.5 py-0.5 font-mono text-xs text-ink-secondary">
+                  <span className="rounded-full bg-surface-subtle px-2.5 py-0.5 font-mono text-xs text-ink-secondary">
                     {tool.license}
                   </span>
                 )}
@@ -444,7 +444,7 @@ export function ToolsDirectoryClient({
               </div>
 
               {/* Timestamped observation metrics (§8 invariant) */}
-              <div className="rounded-lg border border-line bg-canvas/60 p-3 space-y-1.5 text-xs">
+              <div className="rounded-lg bg-surface-subtle/60 p-3 space-y-1.5 text-xs">
                 <div className="flex flex-wrap items-center gap-4 text-ink">
                   {tool.starsCount !== null && (
                     <span className="inline-flex items-center gap-1 font-medium">
@@ -478,7 +478,7 @@ export function ToolsDirectoryClient({
                     type="button"
                     disabled={busy}
                     onClick={() => handleRefreshTool(tool.id)}
-                    className="rounded border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+                    className="inline-flex min-h-11 items-center rounded-md border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
                   >
                     Refresh observation
                   </button>
@@ -497,7 +497,7 @@ export function ToolsDirectoryClient({
                     onClick={() =>
                       setLinkingToolId((prev) => (prev === tool.id ? null : tool.id))
                     }
-                    className="text-xs font-medium text-brand hover:underline"
+                    className="inline-flex min-h-11 items-center text-xs font-medium text-brand hover:underline"
                   >
                     + Link source snapshot
                   </button>

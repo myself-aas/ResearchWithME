@@ -147,19 +147,22 @@ export function ContributionIntegrityExports({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
-            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-            Provenance, Versions &amp; Checksummed Exports
-          </p>
-          <h2 id="integrity-exports-heading" className="font-serif text-xl font-semibold text-ink">
-            Scholarly Integrity &amp; Reproducible Artifacts
+          <h2
+            id="integrity-exports-heading"
+            className="inline-flex items-center gap-2 font-serif text-xl font-semibold text-ink"
+          >
+            <ShieldCheck className="h-5 w-5 text-brand" aria-hidden="true" />
+            <span>Scholarly Integrity &amp; Reproducible Artifacts</span>
           </h2>
+          <p className="mt-1 font-sans text-xs text-ink-secondary">
+            Provenance verification, immutable version snapshots, and SHA-256 checksummed exports.
+          </p>
         </div>
         <button
           type="button"
           disabled={validating}
           onClick={handleValidateCitations}
-          className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3.5 py-2 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
         >
           <FileCheck2 className="h-3.5 w-3.5" aria-hidden="true" />
           {validating ? 'Verifying citations…' : 'Verify citations'}
@@ -169,7 +172,7 @@ export function ContributionIntegrityExports({
       {statusMessage ? (
         <p
           role="status"
-          className="rounded-lg border border-brand/30 bg-brand/5 px-3 py-2 font-sans text-xs font-medium text-brand"
+          className="rounded-lg bg-brand/10 px-3 py-2 font-sans text-xs font-medium text-brand"
         >
           {statusMessage}
         </p>
@@ -187,7 +190,7 @@ export function ContributionIntegrityExports({
               type="button"
               disabled={busyFormat !== null}
               onClick={() => handleExport(fmt.id)}
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3.5 py-2 font-sans text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
             >
               <Download className="h-3.5 w-3.5" aria-hidden="true" />
               {busyFormat === fmt.id ? 'Generating…' : fmt.label}
@@ -195,11 +198,11 @@ export function ContributionIntegrityExports({
           ))}
         </div>
         {lastExport ? (
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs text-ink-secondary">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-subtle/60 px-3 py-2 font-mono text-xs text-ink-secondary">
             <span>SHA-256: {lastExport.checksumSha256}</span>
             <a
               href={`/api/exports/${encodeURIComponent(lastExport.id)}/download`}
-              className="font-semibold text-brand hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-brand hover:underline"
             >
               Download {lastExport.format}
             </a>
@@ -214,11 +217,11 @@ export function ContributionIntegrityExports({
             <History className="h-3.5 w-3.5" aria-hidden="true" />
             Immutable Versions ({initialVersions.length})
           </h3>
-          <ul className="space-y-1.5">
+          <ul className="divide-y divide-line rounded-lg bg-surface-subtle/50 px-3">
             {initialVersions.map((ver) => (
               <li
                 key={ver.id}
-                className="flex items-center justify-between rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs text-ink"
+                className="flex items-center justify-between py-2.5 font-mono text-xs text-ink"
               >
                 <span>
                   v{ver.versionNumber} · {ver.lifecycle}
@@ -234,15 +237,15 @@ export function ContributionIntegrityExports({
             AI Provenance Ledger ({provenance.length})
           </h3>
           {provenance.length === 0 ? (
-            <p className="rounded-lg border border-line bg-canvas px-3 py-2 font-sans text-xs text-ink-secondary">
+            <p className="rounded-lg bg-surface-subtle/50 px-3 py-2.5 font-sans text-xs text-ink-secondary">
               No AI assistance or automated verification records logged for this contribution yet.
             </p>
           ) : (
-            <ul className="space-y-1.5">
+            <ul className="divide-y divide-line rounded-lg bg-surface-subtle/50 px-3">
               {provenance.slice(0, 4).map((rec) => (
                 <li
                   key={rec.id}
-                  className="rounded-lg border border-line bg-canvas px-3 py-2 font-mono text-xs text-ink space-y-1.5"
+                  className="py-2.5 font-mono text-xs text-ink space-y-1.5"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-semibold">{rec.transformationType}</span>
@@ -258,7 +261,7 @@ export function ContributionIntegrityExports({
                           type="button"
                           disabled={decidingId === rec.id}
                           onClick={() => handleProvenanceDecision(rec.id, 'approve')}
-                          className="rounded border border-brand px-2 py-0.5 font-sans text-xs font-medium text-brand hover:bg-brand hover:text-on-primary disabled:opacity-50"
+                          className="inline-flex min-h-11 items-center rounded-md border border-brand px-3 py-2 font-sans text-xs font-medium text-brand hover:bg-brand hover:text-on-primary disabled:opacity-50"
                         >
                           Approve
                         </button>
@@ -266,7 +269,7 @@ export function ContributionIntegrityExports({
                           type="button"
                           disabled={decidingId === rec.id}
                           onClick={() => handleProvenanceDecision(rec.id, 'reject')}
-                          className="rounded border border-line px-2 py-0.5 font-sans text-xs font-medium text-ink-secondary hover:border-ink hover:text-ink disabled:opacity-50"
+                          className="inline-flex min-h-11 items-center rounded-md border border-line px-3 py-2 font-sans text-xs font-medium text-ink-secondary hover:border-ink hover:text-ink disabled:opacity-50"
                         >
                           Reject
                         </button>

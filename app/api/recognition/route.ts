@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getDashboardUser } from '@/lib/cms/auth';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
 import {
@@ -15,9 +16,19 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
-  const handle = new URL(request.url).searchParams.get('handle') || 'myself-aas';
-  const result = getRecognitionSummary(handle);
-  return NextResponse.json(result);
+  const paramHandle = new URL(request.url).searchParams.get('handle')?.trim();
+  if (paramHandle) {
+    return NextResponse.json(getRecognitionSummary(paramHandle));
+  }
+  const user = await getDashboardUser();
+  const actorHandle = user?.email?.split('@')[0]?.trim();
+  if (!actorHandle) {
+    return NextResponse.json(
+      { error: 'Specify ?handle=<username> or sign in to view your recognition summary.' },
+      { status: 400 },
+    );
+  }
+  return NextResponse.json(getRecognitionSummary(actorHandle));
 }
 
 export async function POST(request: Request) {

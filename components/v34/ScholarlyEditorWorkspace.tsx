@@ -488,7 +488,7 @@ export default function ScholarlyEditorWorkspace({
           id="editor-primary-source"
           value={primarySourceId}
           onChange={(e) => setPrimarySourceId(e.target.value)}
-          className="mt-1.5 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
+          className="mt-1.5 min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
         >
           <option value="">None selected</option>
           {initialSources.map((src) => (
@@ -500,10 +500,10 @@ export default function ScholarlyEditorWorkspace({
       </div>
 
       {primarySource && (
-        <div className="rounded-lg border border-line bg-canvas p-3 text-xs space-y-1.5">
+        <div className="rounded-lg bg-surface-subtle/60 p-3 text-xs space-y-1.5">
           <div className="flex items-center justify-between gap-2">
             <span className="font-semibold text-ink">{primarySource.title}</span>
-            <span className="rounded-full border border-line px-2 py-0.5 font-mono text-ink-secondary">
+            <span className="rounded-full bg-surface px-2 py-0.5 font-mono text-ink-secondary">
               {primarySource.integrityStatus}
             </span>
           </div>
@@ -537,10 +537,10 @@ export default function ScholarlyEditorWorkspace({
           value={identifierInput}
           onChange={(e) => setIdentifierInput(e.target.value)}
           placeholder="DOI, ORCID, PMID, PMCID, arXiv, ISBN, ROR, RRID…"
-          className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
+          className="min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
         />
         {parsedIdentifier && (
-          <div className="rounded-lg border border-line bg-canvas p-2.5 text-xs space-y-1">
+          <div className="rounded-lg bg-surface-subtle/60 p-2.5 text-xs space-y-1">
             <div className="flex items-center justify-between">
               <span className="font-mono font-semibold text-brand uppercase">
                 {parsedIdentifier.scheme}
@@ -559,7 +559,7 @@ export default function ScholarlyEditorWorkspace({
                 setIdentifierInput('');
                 setStatusMessage(`Inserted citation anchor for ${parsedIdentifier.scheme.toUpperCase()}: ${parsedIdentifier.value}`);
               }}
-              className="mt-1 inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand"
+              className="mt-1 inline-flex min-h-11 items-center gap-1 rounded-md border border-line bg-surface px-3 py-2 text-xs font-medium text-ink hover:border-brand"
             >
               <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               Insert Citation Block
@@ -572,9 +572,9 @@ export default function ScholarlyEditorWorkspace({
 
   const reviewPaneContent = (
     <div className="space-y-4">
-      <div className="rounded-lg border border-line bg-canvas p-3 text-xs space-y-1.5">
+      <div className="rounded-lg bg-surface-subtle/60 p-3 text-xs space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-ink">MDX Security Guard (Part V §16.2)</span>
+          <span className="font-semibold text-ink">MDX Security Guard</span>
           <span className="font-mono text-brand">
             {mdxValidation.safe ? 'PASS' : `${mdxValidation.violations.length} issue(s)`}
           </span>
@@ -593,16 +593,16 @@ export default function ScholarlyEditorWorkspace({
           Publication Preconditions ({blockers.length} blocker{blockers.length === 1 ? '' : 's'})
         </h3>
         {blockers.length === 0 ? (
-          <p className="flex items-center gap-1.5 rounded-lg border border-line bg-canvas p-3 text-xs text-ink">
+          <p className="flex items-center gap-1.5 rounded-lg bg-surface-subtle/60 p-3 text-xs text-ink">
             <CheckCircle2 className="h-4 w-4 text-brand shrink-0" aria-hidden="true" />
             All publication blockers satisfied. Ready for submission or formal review.
           </p>
         ) : (
-          <ul className="space-y-2">
+          <ul className="divide-y divide-line rounded-lg bg-surface-subtle/60 px-3">
             {blockers.map((b) => (
               <li
                 key={b.code}
-                className="flex items-start gap-2 rounded-lg border border-line bg-canvas p-2.5 text-xs text-ink-secondary"
+                className="flex items-start gap-2 py-2.5 text-xs text-ink-secondary"
               >
                 <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
                 <span>{b.message}</span>
@@ -617,8 +617,8 @@ export default function ScholarlyEditorWorkspace({
   const assistantPaneContent = (
     <div className="space-y-3 text-xs">
       <p className="text-ink-secondary">
-        Contextual scholarly assistant (ADR-032-12): verifies citations and evidence entailment
-        without silently overwriting your canonical draft.
+        Contextual scholarly assistant: verifies citations and evidence entailment without silently
+        overwriting your canonical draft.
       </p>
       <div className="flex flex-wrap gap-2">
         <button
@@ -642,14 +642,14 @@ export default function ScholarlyEditorWorkspace({
         <div
           role="status"
           aria-live="polite"
-          className="rounded-lg border border-line bg-canvas p-3 text-ink"
+          className="rounded-lg bg-surface-subtle/60 p-3 text-ink"
         >
           {assistantResult}
         </div>
       )}
       <Link
         href="/assistant"
-        className="inline-flex items-center gap-1 font-medium text-brand hover:underline"
+        className="inline-flex min-h-11 items-center gap-1 font-medium text-brand hover:underline"
       >
         Open full-screen Assistant workspace →
       </Link>
@@ -669,11 +669,11 @@ export default function ScholarlyEditorWorkspace({
       {snapshots.length === 0 ? (
         <p className="text-ink-secondary">No snapshots recorded yet for this draft.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-line rounded-lg bg-surface-subtle/60 px-3">
           {snapshots.map((snap) => (
             <li
               key={snap.id}
-              className="flex items-center justify-between gap-2 rounded-lg border border-line bg-canvas p-2.5"
+              className="flex items-center justify-between gap-2 py-2.5"
             >
               <div>
                 <p className="font-mono font-semibold text-ink">v{snap.version} · {snap.reason}</p>
@@ -683,7 +683,7 @@ export default function ScholarlyEditorWorkspace({
                 <button
                   type="button"
                   onClick={() => restoreSnapshot(snap)}
-                  className="rounded-md border border-line bg-surface px-2.5 py-1 font-medium text-ink hover:border-brand"
+                  className="inline-flex min-h-11 items-center rounded-md border border-line bg-surface px-3 py-2 font-medium text-ink hover:border-brand"
                 >
                   Restore
                 </button>
@@ -706,20 +706,20 @@ export default function ScholarlyEditorWorkspace({
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/contribute"
-            className="rounded-md border border-line bg-canvas px-2.5 py-1.5 text-xs font-medium text-ink hover:border-brand"
+            className="inline-flex min-h-11 items-center rounded-md border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand"
           >
             ← Wizard
           </Link>
           <span className="font-mono text-xs text-ink-secondary" dir="ltr">
             Draft: {initialDraftId}
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full border border-line bg-canvas px-2.5 py-0.5 font-mono text-xs text-ink">
+          <span className="inline-flex items-center gap-1 rounded-full bg-surface-subtle px-2.5 py-1 font-mono text-xs text-ink">
             {saveState === 'offline' && <CloudOff className="h-3.5 w-3.5 text-brand" aria-hidden="true" />}
             State: {saveState}
           </span>
           <span
             data-testid="pending-mutations-count"
-            className="inline-flex items-center rounded-full border border-line bg-canvas px-2.5 py-0.5 font-mono text-xs text-ink-secondary"
+            className="inline-flex items-center rounded-full bg-surface-subtle px-2.5 py-1 font-mono text-xs text-ink-secondary"
           >
             Pending sync: {pendingMutations}
           </span>
@@ -729,7 +729,7 @@ export default function ScholarlyEditorWorkspace({
               onClick={() =>
                 void coordinatorRef.current?.flush(initialDraftId).then(() => refreshPendingCount())
               }
-              className="rounded-md border border-brand bg-brand/10 px-2.5 py-1 text-xs font-medium text-brand hover:bg-brand/15"
+              className="inline-flex min-h-11 items-center rounded-md border border-brand bg-brand/10 px-3 py-2 text-xs font-medium text-brand hover:bg-brand/15"
             >
               Retry sync
             </button>
@@ -742,7 +742,7 @@ export default function ScholarlyEditorWorkspace({
             onClick={handleUndo}
             disabled={undoStack.length === 0}
             aria-label="Undo last document change"
-            className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-line bg-canvas px-2.5 py-1.5 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
+            className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
           >
             <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
             Undo
@@ -752,7 +752,7 @@ export default function ScholarlyEditorWorkspace({
             onClick={handleRedo}
             disabled={redoStack.length === 0}
             aria-label="Redo document change"
-            className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-line bg-canvas px-2.5 py-1.5 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
+            className="inline-flex min-h-11 items-center gap-1 rounded-lg border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
           >
             <Redo2 className="h-3.5 w-3.5" aria-hidden="true" />
             Redo
@@ -761,7 +761,7 @@ export default function ScholarlyEditorWorkspace({
           <button
             type="button"
             onClick={() => setSourcesOpen((v) => !v)}
-            className="hidden min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink hover:border-brand lg:inline-flex"
+            className="hidden min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand lg:inline-flex"
             aria-pressed={sourcesOpen}
           >
             <PanelLeft className="h-4 w-4" aria-hidden="true" />
@@ -770,7 +770,7 @@ export default function ScholarlyEditorWorkspace({
           <button
             type="button"
             onClick={() => setInspectorOpen((v) => !v)}
-            className="hidden min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink hover:border-brand lg:inline-flex"
+            className="hidden min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand lg:inline-flex"
             aria-pressed={inspectorOpen}
           >
             <PanelRight className="h-4 w-4" aria-hidden="true" />
@@ -904,7 +904,7 @@ export default function ScholarlyEditorWorkspace({
                 id="editor-contrib-type"
                 value={contributionType}
                 onChange={(e) => setContributionType(e.target.value as ContributionType)}
-                className="mt-1 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
+                className="mt-1 min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
               >
                 {(Object.keys(CONTRIBUTION_TYPE_CATALOG) as ContributionType[]).map((key) => (
                   <option key={key} value={key}>
@@ -917,7 +917,7 @@ export default function ScholarlyEditorWorkspace({
               <button
                 type="button"
                 onClick={() => setActiveTab('canvas')}
-                className={`min-h-10 rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                className={`min-h-11 rounded-lg border px-3.5 py-2 text-xs font-medium ${
                   activeTab === 'canvas'
                     ? 'border-brand bg-brand/10 text-brand'
                     : 'border-line bg-canvas text-ink-secondary'
@@ -928,7 +928,7 @@ export default function ScholarlyEditorWorkspace({
               <button
                 type="button"
                 onClick={() => setActiveTab('mdx')}
-                className={`inline-flex min-h-10 items-center gap-1 rounded-lg border px-3 py-1.5 text-xs font-medium ${
+                className={`inline-flex min-h-11 items-center gap-1 rounded-lg border px-3.5 py-2 text-xs font-medium ${
                   activeTab === 'mdx'
                     ? 'border-brand bg-brand/10 text-brand'
                     : 'border-line bg-canvas text-ink-secondary'
@@ -950,7 +950,7 @@ export default function ScholarlyEditorWorkspace({
               value={doc.title}
               onChange={(e) => updateDoc((prev) => ({ ...prev, title: e.target.value }))}
               placeholder="Clear, verifiable scholarly title (supports multilingual and RTL scripts)…"
-              className="mt-1 w-full rounded-lg border border-line bg-canvas px-3 py-2.5 font-serif text-lg font-semibold text-ink"
+              className="mt-1 min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2.5 font-serif text-lg font-semibold text-ink"
             />
           </div>
 
@@ -977,7 +977,7 @@ export default function ScholarlyEditorWorkspace({
                 <button
                   type="button"
                   onClick={() => setSlashOpen((v) => !v)}
-                  className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-semibold text-ink hover:border-brand"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-line bg-canvas px-3.5 py-2 text-xs font-semibold text-ink hover:border-brand"
                 >
                   <Plus className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
                   / Insert Block
@@ -988,7 +988,7 @@ export default function ScholarlyEditorWorkspace({
                 <div
                   role="menu"
                   aria-label="Slash command block menu"
-                  className="rounded-xl border border-brand/40 bg-canvas p-3 space-y-2"
+                  className="rounded-xl bg-surface-subtle/60 p-3 space-y-2"
                 >
                   <input
                     type="search"
@@ -996,7 +996,7 @@ export default function ScholarlyEditorWorkspace({
                     value={slashFilter}
                     onChange={(e) => setSlashFilter(e.target.value)}
                     placeholder="Filter block type (evidence, claim, citation, limitation, code…)"
-                    className="w-full rounded-lg border border-line bg-surface px-3 py-1.5 text-xs text-ink"
+                    className="min-h-11 w-full rounded-lg border border-line bg-surface px-3 py-2 text-xs text-ink"
                   />
                   <div className="grid gap-1.5 sm:grid-cols-3">
                     {filteredSlashItems.map((item) => (
@@ -1005,7 +1005,7 @@ export default function ScholarlyEditorWorkspace({
                         type="button"
                         role="menuitem"
                         onClick={() => addBlock(item.type)}
-                        className="rounded-lg border border-line bg-surface p-2 text-left hover:border-brand"
+                        className="min-h-11 rounded-lg border border-line bg-surface p-2 text-left hover:border-brand"
                       >
                         <span className="block text-xs font-semibold text-ink">{item.label}</span>
                         <span className="block text-xs text-ink-secondary">{item.hint}</span>
@@ -1028,7 +1028,7 @@ export default function ScholarlyEditorWorkspace({
                       }
                       setDragIndex(null);
                     }}
-                    className="rounded-xl border border-line bg-canvas p-3 space-y-2"
+                    className="rounded-xl bg-surface-subtle/60 p-3 space-y-2"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -1042,7 +1042,7 @@ export default function ScholarlyEditorWorkspace({
                           onChange={(e) =>
                             updateBlock(block.id, { type: e.target.value as ResearchBlockType })
                           }
-                          className="rounded-md border border-line bg-surface px-2 py-1 font-mono text-xs text-ink"
+                          className="min-h-11 rounded-md border border-line bg-surface px-2.5 py-2 font-mono text-xs text-ink"
                         >
                           {BLOCK_TYPES.map((t) => (
                             <option key={t} value={t}>
@@ -1058,27 +1058,27 @@ export default function ScholarlyEditorWorkspace({
                           aria-label={`Move block ${index + 1} up`}
                           disabled={index === 0}
                           onClick={() => moveBlock(index, index - 1)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line bg-surface text-ink disabled:opacity-40"
+                          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-line bg-surface text-ink disabled:opacity-40"
                         >
-                          <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+                          <ArrowUp className="h-4 w-4" aria-hidden="true" />
                         </button>
                         <button
                           type="button"
                           aria-label={`Move block ${index + 1} down`}
                           disabled={index === doc.blocks.length - 1}
                           onClick={() => moveBlock(index, index + 1)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line bg-surface text-ink disabled:opacity-40"
+                          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-line bg-surface text-ink disabled:opacity-40"
                         >
-                          <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+                          <ArrowDown className="h-4 w-4" aria-hidden="true" />
                         </button>
                         <button
                           type="button"
                           aria-label={`Remove block ${index + 1}`}
                           disabled={doc.blocks.length <= 1}
                           onClick={() => removeBlock(block.id)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line bg-surface text-ink disabled:opacity-40"
+                          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-line bg-surface text-ink disabled:opacity-40"
                         >
-                          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </button>
                       </div>
                     </div>
@@ -1090,7 +1090,7 @@ export default function ScholarlyEditorWorkspace({
                         value={block.locator ?? ''}
                         onChange={(e) => updateBlock(block.id, { locator: e.target.value })}
                         placeholder="Structured locator (e.g., Table 2, p. 14, Section 3.1)…"
-                        className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-xs text-ink"
+                        className="min-h-11 w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-ink"
                       />
                     )}
 
@@ -1103,7 +1103,7 @@ export default function ScholarlyEditorWorkspace({
                           value={block.repoUrl ?? ''}
                           onChange={(e) => updateBlock(block.id, { repoUrl: e.target.value })}
                           placeholder="https://github.com/org/repo"
-                          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-xs text-ink"
+                          className="min-h-11 w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-ink"
                         />
                         <input
                           type="text"
@@ -1112,7 +1112,7 @@ export default function ScholarlyEditorWorkspace({
                           value={block.licenseSpdx ?? ''}
                           onChange={(e) => updateBlock(block.id, { licenseSpdx: e.target.value })}
                           placeholder="SPDX license (e.g., Apache-2.0, MIT)"
-                          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-xs text-ink"
+                          className="min-h-11 w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-ink"
                         />
                       </div>
                     )}
@@ -1163,9 +1163,9 @@ export default function ScholarlyEditorWorkspace({
           ) : (
             <div className="space-y-2">
               <p className="text-xs text-ink-secondary">
-                Deterministic, allowlisted MDX output (Part I §10.6 + Part V §16.2):
+                Deterministic, allowlisted MDX output:
               </p>
-              <pre className="overflow-x-auto rounded-lg border border-line bg-canvas p-4 font-mono text-xs text-ink">
+              <pre className="overflow-x-auto rounded-lg bg-surface-subtle/60 p-4 font-mono text-xs text-ink">
                 {mdxValidation.sanitizedMdx}
               </pre>
             </div>
@@ -1192,7 +1192,7 @@ export default function ScholarlyEditorWorkspace({
                   role="tab"
                   aria-selected={inspectorTab === tabKey}
                   onClick={() => setInspectorTab(tabKey)}
-                  className={`min-h-10 rounded-md border px-2 py-1 text-xs font-medium ${
+                  className={`min-h-11 rounded-md border px-2 py-2 text-xs font-medium ${
                     inspectorTab === tabKey
                       ? 'border-brand bg-brand/10 text-brand'
                       : 'border-line bg-canvas text-ink-secondary'

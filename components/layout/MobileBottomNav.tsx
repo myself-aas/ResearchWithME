@@ -9,7 +9,7 @@ interface MobileBottomNavProps {
 }
 
 /**
- * Mobile Bottom Navigation — Normative ADR-032-11 destinations:
+ * Mobile Bottom Navigation — Primary mobile destinations:
  *   Explore, Library, Contribute, AI, Profile.
  * Projects, Reviews, Sources, Evidence, Claims, Dashboard sections, and
  * Settings live in the mobile navigation drawer.
@@ -48,7 +48,9 @@ const ITEMS = [
   },
 ];
 
-export default function MobileBottomNav({ profileHref = '/profile/myself-aas' }: MobileBottomNavProps) {
+export default function MobileBottomNav({
+  profileHref = '/login?next=%2Fdashboard%2Faccount',
+}: MobileBottomNavProps) {
   const pathname = usePathname() || '/';
 
   // Hide inside immersive writing flows so it never competes with editor toolbars (v3.4 Part III §6.1).

@@ -24,10 +24,7 @@ export default async function ResearchFeedPage() {
       <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pb-16">
         <header className="mb-8 flex flex-col justify-between gap-4 border-b border-line pb-6 sm:flex-row sm:items-end">
           <div className="min-w-0 max-w-2xl">
-            <p className="font-mono text-xs font-semibold uppercase tracking-widest text-brand">
-              Open Research Network
-            </p>
-            <h1 className="mt-2 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+            <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
               Research Contributions Feed
             </h1>
             <p className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary sm:text-base">

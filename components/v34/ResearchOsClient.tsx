@@ -458,22 +458,24 @@ export function ResearchOsClient({
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
-              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
-              Continue Working
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+              <Clock className="h-4 w-4 text-brand" aria-hidden="true" />
+              <span>Continue Working</span>
+            </h2>
+            <p className="text-xs text-ink-secondary">
+              Resume your active scholarly drafts and workspace projects.
             </p>
-            <h2 className="text-lg font-bold text-ink">Resume Your Active Research Context</h2>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link
               href="/contribute"
-              className="inline-flex min-h-10 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink hover:border-brand"
+              className="inline-flex min-h-11 items-center rounded-lg border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink hover:border-brand"
             >
               + New Contribution
             </Link>
             <Link
               href="/editor"
-              className="inline-flex min-h-10 items-center rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-on-primary hover:opacity-90"
+              className="inline-flex min-h-11 items-center rounded-lg bg-brand px-3.5 py-2 text-xs font-semibold text-on-primary hover:opacity-90"
             >
               Open MDX Workspace →
             </Link>
@@ -485,12 +487,12 @@ export function ResearchOsClient({
             <Link
               key={draft.id}
               href={`/editor/${encodeURIComponent(draft.id)}`}
-              className="flex flex-col justify-between rounded-lg border border-line bg-canvas p-3.5 transition-colors hover:border-brand"
+              className="flex min-h-24 flex-col justify-between rounded-lg bg-surface-subtle/60 p-3.5 transition-colors hover:bg-surface-subtle"
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2 text-xs">
                   <span className="font-mono font-semibold text-brand uppercase">Draft</span>
-                  <span className="rounded-full border border-line px-2 py-0.5 font-mono text-ink-secondary">
+                  <span className="rounded-full bg-surface px-2 py-0.5 font-mono text-ink-secondary">
                     {draft.saveState}
                   </span>
                 </div>
@@ -508,12 +510,12 @@ export function ResearchOsClient({
             <Link
               key={proj.id}
               href={`/project/${proj.slug}`}
-              className="flex flex-col justify-between rounded-lg border border-line bg-canvas p-3.5 transition-colors hover:border-brand"
+              className="flex min-h-24 flex-col justify-between rounded-lg bg-surface-subtle/60 p-3.5 transition-colors hover:bg-surface-subtle"
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between gap-2 text-xs">
                   <span className="font-mono font-semibold text-brand uppercase">Project</span>
-                  <span className="rounded-full border border-line px-2 py-0.5 font-mono text-ink-secondary">
+                  <span className="rounded-full bg-surface px-2 py-0.5 font-mono text-ink-secondary">
                     {proj.stage}
                   </span>
                 </div>
@@ -535,26 +537,24 @@ export function ResearchOsClient({
         >
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
-                <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
-                Attention Queue ({openAttention.length} active)
-              </p>
-              <h2 className="text-lg font-bold text-ink">Actions Required From You</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+                <AlertTriangle className="h-4 w-4 text-brand" aria-hidden="true" />
+                <span>Attention Queue ({openAttention.length} active)</span>
+              </h2>
               <p className="text-xs text-ink-secondary">
-                Items requiring explicit resolution (review deadlines, unresolved citations, or
-                promoted tasks).
+                Actions required from you (review deadlines, unresolved citations, or promoted tasks).
               </p>
             </div>
           </div>
 
-          <ul className="space-y-3">
+          <ul className="divide-y divide-line">
             {attention.map((item) => (
               <li
                 key={item.id}
-                className="rounded-lg border border-line bg-canvas/60 p-3.5 space-y-2"
+                className="py-3.5 first:pt-0 last:pb-0 space-y-2"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
-                  <span className="rounded-full border border-brand/30 bg-brand/10 px-2.5 py-0.5 font-mono font-semibold text-brand">
+                  <span className="rounded-full bg-brand/10 px-2.5 py-0.5 font-mono font-semibold text-brand">
                     {item.kind.replace(/_/g, ' ')} · {item.severity}
                   </span>
                   <span className="font-mono text-ink-secondary">Status: {item.status}</span>
@@ -566,20 +566,20 @@ export function ResearchOsClient({
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                   <Link
                     href={item.actionHref}
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-brand hover:underline"
+                    className="inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-brand hover:underline"
                   >
                     {item.actionLabel}
                     <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
-                  <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     {item.status !== 'RESOLVED' && (
                       <button
                         type="button"
                         disabled={busyId === item.id}
                         onClick={() => handleAttentionStatus(item.id, 'RESOLVED')}
-                        className="inline-flex items-center gap-1 rounded-lg bg-brand px-2.5 py-1 text-xs font-medium text-on-primary disabled:opacity-50"
+                        className="inline-flex min-h-11 items-center gap-1 rounded-lg bg-brand px-3.5 py-2 text-xs font-medium text-on-primary disabled:opacity-50"
                       >
-                        <Check className="h-3 w-3" aria-hidden="true" />
+                        <Check className="h-3.5 w-3.5" aria-hidden="true" />
                         Resolve
                       </button>
                     )}
@@ -588,7 +588,7 @@ export function ResearchOsClient({
                         type="button"
                         disabled={busyId === item.id}
                         onClick={() => handleAttentionStatus(item.id, 'ACKNOWLEDGED')}
-                        className="rounded-lg border border-line bg-surface px-2.5 py-1 text-xs text-ink hover:border-brand disabled:opacity-50"
+                        className="inline-flex min-h-11 items-center rounded-lg border border-line bg-canvas px-3.5 py-2 text-xs text-ink hover:border-brand disabled:opacity-50"
                       >
                         Acknowledge
                       </button>
@@ -604,37 +604,34 @@ export function ResearchOsClient({
           aria-label="Notifications Event History"
           className="lg:col-span-5 rounded-xl border border-line bg-surface p-5 space-y-4"
         >
-          <div className="space-y-1">
-            <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-ink-secondary">
-              <Bell className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-              Notifications ({unreadNotifs.length} unread)
-            </p>
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
-                <h2 className="text-lg font-bold text-ink">Event History</h2>
-                <p className="text-xs text-ink-secondary">
-                  Reading a notification records acknowledgement of an event without silently resolving
-                  Attention items.
-                </p>
-              </div>
-              {unreadNotifs.length > 0 && (
-                <button
-                  type="button"
-                  disabled={busyId === 'read-all'}
-                  onClick={handleMarkAllRead}
-                  className="inline-flex min-h-9 items-center rounded-lg border border-line bg-canvas px-2.5 py-1 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
-                >
-                  {busyId === 'read-all' ? 'Marking…' : 'Mark all read'}
-                </button>
-              )}
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+                <Bell className="h-4 w-4 text-brand" aria-hidden="true" />
+                <span>Event History ({unreadNotifs.length} unread)</span>
+              </h2>
+              <p className="text-xs text-ink-secondary">
+                Reading a notification records acknowledgement of an event without silently resolving
+                Attention items.
+              </p>
             </div>
+            {unreadNotifs.length > 0 && (
+              <button
+                type="button"
+                disabled={busyId === 'read-all'}
+                onClick={handleMarkAllRead}
+                className="inline-flex min-h-11 items-center rounded-lg border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand hover:text-brand disabled:opacity-50"
+              >
+                {busyId === 'read-all' ? 'Marking…' : 'Mark all read'}
+              </button>
+            )}
           </div>
 
-          <ul className="space-y-2.5">
+          <ul className="divide-y divide-line">
             {notifications.map((notif) => (
               <li
                 key={notif.id}
-                className="rounded-lg border border-line bg-canvas/50 p-3 space-y-1.5 text-xs"
+                className="py-3 first:pt-0 last:pb-0 space-y-1.5 text-xs"
               >
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-semibold text-ink">{notif.title}</p>
@@ -642,7 +639,7 @@ export function ResearchOsClient({
                     type="button"
                     disabled={busyId === notif.id}
                     onClick={() => handleToggleNotificationRead(notif)}
-                    className="shrink-0 rounded border border-line bg-surface px-2 py-0.5 text-xs text-ink-secondary hover:text-ink"
+                    className="inline-flex min-h-11 shrink-0 items-center rounded-md border border-line bg-canvas px-3 py-2 text-xs text-ink-secondary hover:text-ink"
                   >
                     {notif.readAt ? 'Mark unread' : 'Mark read'}
                   </button>
@@ -656,7 +653,10 @@ export function ResearchOsClient({
                 <div className="flex items-center justify-between text-ink-secondary">
                   <span>{formatShortDate(notif.createdAt)}</span>
                   {notif.actionHref && (
-                    <Link href={notif.actionHref} className="font-medium text-brand hover:underline">
+                    <Link
+                      href={notif.actionHref}
+                      className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
+                    >
                       Inspect
                     </Link>
                   )}
@@ -674,22 +674,21 @@ export function ResearchOsClient({
           className="lg:col-span-6 rounded-xl border border-line bg-surface p-5 space-y-4"
         >
           <div>
-            <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
-              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-              Optional Assistant Suggestions
-            </p>
-            <h2 className="text-lg font-bold text-ink">Assistant Tasks</h2>
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+              <Sparkles className="h-4 w-4 text-brand" aria-hidden="true" />
+              <span>Assistant Tasks</span>
+            </h2>
             <p className="text-xs text-ink-secondary">
-              Assistant suggestions NEVER create mandatory attention automatically. Promote only the
-              tasks you want tracked in your Attention Queue.
+              Optional Assistant Suggestions never create mandatory attention automatically. Promote
+              only the tasks you want tracked in your Attention Queue.
             </p>
           </div>
 
-          <ul className="space-y-3">
+          <ul className="divide-y divide-line">
             {assistantTasks.map((task) => (
               <li
                 key={task.id}
-                className="rounded-lg border border-line bg-canvas/50 p-3.5 space-y-2 text-xs"
+                className="py-3.5 first:pt-0 last:pb-0 space-y-2 text-xs"
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="rounded bg-surface-subtle px-2 py-0.5 font-mono text-ink">
@@ -701,7 +700,7 @@ export function ResearchOsClient({
                 <p className="text-ink-secondary">{task.explanation}</p>
                 <div className="pt-1">
                   {task.promotedAttentionId ? (
-                    <span className="inline-flex items-center gap-1 font-medium text-brand">
+                    <span className="inline-flex min-h-11 items-center gap-1 font-medium text-brand">
                       <Check className="h-3.5 w-3.5" aria-hidden="true" />
                       Promoted to Attention Queue
                     </span>
@@ -710,7 +709,7 @@ export function ResearchOsClient({
                       type="button"
                       disabled={busyId === task.id}
                       onClick={() => handlePromoteTask(task)}
-                      className="rounded-lg border border-brand bg-brand/10 px-3 py-1.5 font-medium text-brand hover:bg-brand hover:text-on-primary transition-colors disabled:opacity-50"
+                      className="inline-flex min-h-11 items-center rounded-lg border border-brand bg-brand/10 px-3.5 py-2 font-medium text-brand hover:bg-brand hover:text-on-primary transition-colors disabled:opacity-50"
                     >
                       Promote to Attention Queue
                     </button>
@@ -728,16 +727,18 @@ export function ResearchOsClient({
         >
           <div className="flex items-start justify-between gap-2">
             <div>
-              <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
-                <Target className="h-3.5 w-3.5" aria-hidden="true" />
-                Research Goals
-              </p>
-              <h2 className="text-lg font-bold text-ink">Substantive Progress</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+                <Target className="h-4 w-4 text-brand" aria-hidden="true" />
+                <span>Research Goals</span>
+              </h2>
               <p className="text-xs text-ink-secondary">
                 Goals track validated scholarly work (never login streaks or vanity scores).
               </p>
             </div>
-            <Link href="/library" className="text-xs font-medium text-brand hover:underline">
+            <Link
+              href="/library"
+              className="inline-flex min-h-11 items-center text-xs font-medium text-brand hover:underline"
+            >
               Manage in Library
             </Link>
           </div>
@@ -752,7 +753,7 @@ export function ResearchOsClient({
               value={newGoalTitle}
               onChange={(e) => setNewGoalTitle(e.target.value)}
               placeholder="Add substantive goal (e.g., Audit 5 primary citations)…"
-              className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
+              className="min-h-11 min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
             />
             <label htmlFor="new-goal-target" className="sr-only">
               Goal target count
@@ -764,25 +765,25 @@ export function ResearchOsClient({
               max={100}
               value={newGoalTarget}
               onChange={(e) => setNewGoalTarget(Number(e.target.value) || 1)}
-              className="w-16 rounded-lg border border-line bg-canvas px-2 py-2 font-mono text-xs text-ink"
+              className="min-h-11 w-16 rounded-lg border border-line bg-canvas px-2 py-2 font-mono text-xs text-ink"
             />
             <button
               type="submit"
               disabled={busyId === 'goal-create' || !newGoalTitle.trim()}
-              className="inline-flex min-h-10 items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-on-primary disabled:opacity-40"
+              className="inline-flex min-h-11 items-center gap-1 rounded-lg bg-brand px-3.5 py-2 text-xs font-semibold text-on-primary disabled:opacity-40"
             >
               <Plus className="h-3.5 w-3.5" aria-hidden="true" />
               Add Goal
             </button>
           </form>
 
-          <ul className="space-y-3">
+          <ul className="divide-y divide-line">
             {goals.map((goal) => {
               const pct = Math.min(100, Math.round((goal.currentValue / Math.max(1, goal.targetValue)) * 100));
               return (
                 <li
                   key={goal.id}
-                  className="rounded-lg border border-line bg-canvas/50 p-3.5 space-y-2 text-xs"
+                  className="py-3.5 first:pt-0 last:pb-0 space-y-2 text-xs"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-semibold text-sm text-ink">{goal.title}</span>
@@ -791,7 +792,7 @@ export function ResearchOsClient({
                     </span>
                   </div>
                   <div
-                    className="h-2 w-full rounded-full bg-surface border border-line overflow-hidden"
+                    className="h-2 w-full rounded-full bg-surface-subtle overflow-hidden"
                     role="progressbar"
                     aria-valuenow={pct}
                     aria-valuemin={0}
@@ -801,25 +802,25 @@ export function ResearchOsClient({
                     <div className="h-full bg-brand" style={{ width: `${pct}%` }} />
                   </div>
                   {goal.status !== 'ARCHIVED' && (
-                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
                       {goal.status === 'ACTIVE' && (
                         <>
                           <button
                             type="button"
                             disabled={busyId === `goal-prog-${goal.id}`}
                             onClick={() => void handleGoalProgress(goal.id)}
-                            className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand"
+                            className="inline-flex min-h-11 items-center gap-1 rounded-md border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand"
                           >
-                            <Plus className="h-3 w-3" aria-hidden="true" />
+                            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
                             Log +1
                           </button>
                           <button
                             type="button"
                             disabled={busyId === `goal-pause-${goal.id}`}
                             onClick={() => void handleGoalLifecycle(goal.id, 'pause')}
-                            className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-secondary hover:border-brand"
+                            className="inline-flex min-h-11 items-center gap-1 rounded-md border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink-secondary hover:border-brand"
                           >
-                            <Pause className="h-3 w-3" aria-hidden="true" />
+                            <Pause className="h-3.5 w-3.5" aria-hidden="true" />
                             Pause
                           </button>
                         </>
@@ -829,9 +830,9 @@ export function ResearchOsClient({
                           type="button"
                           disabled={busyId === `goal-resume-${goal.id}`}
                           onClick={() => void handleGoalLifecycle(goal.id, 'resume')}
-                          className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand"
+                          className="inline-flex min-h-11 items-center gap-1 rounded-md border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink hover:border-brand"
                         >
-                          <Play className="h-3 w-3" aria-hidden="true" />
+                          <Play className="h-3.5 w-3.5" aria-hidden="true" />
                           Resume
                         </button>
                       )}
@@ -839,9 +840,9 @@ export function ResearchOsClient({
                         type="button"
                         disabled={busyId === `goal-archive-${goal.id}`}
                         onClick={() => void handleGoalLifecycle(goal.id, 'archive')}
-                        className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-secondary hover:border-brand"
+                        className="inline-flex min-h-11 items-center gap-1 rounded-md border border-line bg-canvas px-3 py-2 text-xs font-medium text-ink-secondary hover:border-brand"
                       >
-                        <Archive className="h-3 w-3" aria-hidden="true" />
+                        <Archive className="h-3.5 w-3.5" aria-hidden="true" />
                         Archive
                       </button>
                     </div>
@@ -861,16 +862,14 @@ export function ResearchOsClient({
           className="lg:col-span-7 rounded-xl border border-line bg-surface p-5 space-y-4"
         >
           <div>
-            <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
-              <Award className="h-3.5 w-3.5" aria-hidden="true" />
-              Event-Derived Scholarly Recognition
-            </p>
-            <h2 className="text-lg font-bold text-ink">
-              Verified Contributions for @{initialRecognition.recipientHandle}
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+              <Award className="h-4 w-4 text-brand" aria-hidden="true" />
+              <span>Verified Contributions for @{initialRecognition.recipientHandle}</span>
             </h2>
             <p className="text-xs text-ink-secondary">
-              Derived strictly from non-self verified events ({initialRecognition.windowLabel}). No
-              opaque composite reputation score is stored or ranked.
+              Event-Derived Scholarly Recognition derived strictly from non-self verified events (
+              {initialRecognition.windowLabel}). No opaque composite reputation score is stored or
+              ranked.
             </p>
           </div>
 
@@ -885,7 +884,7 @@ export function ResearchOsClient({
                 ['Completed reviews', initialRecognition.completedReviews],
               ] as Array<[string, number]>
             ).map(([label, count]) => (
-              <div key={label} className="rounded-lg border border-line bg-canvas p-3">
+              <div key={label} className="rounded-lg bg-surface-subtle/60 p-3">
                 <dt className="text-ink-secondary">{label}</dt>
                 <dd className="mt-1 font-mono text-xl font-semibold text-ink">{count}</dd>
               </div>
@@ -898,11 +897,13 @@ export function ResearchOsClient({
           className="lg:col-span-5 rounded-xl border border-line bg-surface p-5 space-y-4"
         >
           <div>
-            <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-ink-secondary">
-              <Sliders className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-              Landing &amp; Topic Follows
+            <h2 className="inline-flex items-center gap-2 text-lg font-bold text-ink">
+              <Sliders className="h-4 w-4 text-brand" aria-hidden="true" />
+              <span>Workspace Preferences</span>
+            </h2>
+            <p className="text-xs text-ink-secondary">
+              Configure your default landing route, followed topics, and module layout.
             </p>
-            <h2 className="text-lg font-bold text-ink">Workspace Preferences</h2>
           </div>
 
           <fieldset className="space-y-2">
@@ -915,7 +916,7 @@ export function ResearchOsClient({
                   disabled={busyId === 'prefs'}
                   onClick={() => handleUpdateLanding(opt)}
                   aria-pressed={preferences.defaultLanding === opt}
-                  className={`rounded-lg border px-3 py-2 text-xs font-medium ${
+                  className={`min-h-11 rounded-lg border px-3 py-2 text-xs font-medium ${
                     preferences.defaultLanding === opt
                       ? 'border-brand bg-brand text-on-primary'
                       : 'border-line bg-canvas text-ink hover:border-brand'
@@ -941,7 +942,7 @@ export function ResearchOsClient({
                     disabled={busyId === `topic-${topic.slug}`}
                     onClick={() => handleToggleTopic(topic.slug, topic.label)}
                     aria-pressed={followed}
-                    className={`rounded-full border px-3 py-1 text-xs font-medium ${
+                    className={`min-h-11 rounded-full border px-3.5 py-2 text-xs font-medium ${
                       followed
                         ? 'border-brand bg-brand/10 text-brand'
                         : 'border-line bg-canvas text-ink-secondary hover:text-ink'
@@ -965,7 +966,7 @@ export function ResearchOsClient({
                 <li key={proj.id}>
                   <Link
                     href={`/workspaces/${proj.slug}`}
-                    className="font-medium text-brand hover:underline"
+                    className="inline-flex min-h-11 items-center font-medium text-brand hover:underline"
                   >
                     {proj.title}
                   </Link>
@@ -984,7 +985,7 @@ export function ResearchOsClient({
                 Reorder or hide secondary modules. Critical integrity alerts and Attention Queue always stay pinned.
               </p>
             </div>
-            <ol className="space-y-1.5">
+            <ol className="divide-y divide-line rounded-lg bg-surface-subtle/50 px-3">
               {moduleOrder.map((modId, index) => {
                 const mod = PERSONALIZABLE_MODULES.find((m) => m.id === modId);
                 if (!mod) return null;
@@ -992,13 +993,13 @@ export function ResearchOsClient({
                 return (
                   <li
                     key={mod.id}
-                    className="flex items-center justify-between gap-2 rounded-lg border border-line bg-canvas px-2.5 py-1.5"
+                    className="flex items-center justify-between gap-2 py-2"
                   >
                     <button
                       type="button"
                       aria-pressed={visible}
                       onClick={() => toggleModuleVisibility(mod.id)}
-                      className={`text-left text-xs font-medium ${
+                      className={`min-h-11 flex-1 text-left text-xs font-medium ${
                         visible ? 'text-ink' : 'text-ink-secondary line-through'
                       }`}
                     >
@@ -1010,18 +1011,18 @@ export function ResearchOsClient({
                         aria-label={`Move ${mod.label} up`}
                         disabled={index === 0}
                         onClick={() => moveModule(mod.id, -1)}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-ink hover:border-brand disabled:opacity-40"
+                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-line bg-surface text-ink hover:border-brand disabled:opacity-40"
                       >
-                        <ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+                        <ArrowUp className="h-4 w-4" aria-hidden="true" />
                       </button>
                       <button
                         type="button"
                         aria-label={`Move ${mod.label} down`}
                         disabled={index === moduleOrder.length - 1}
                         onClick={() => moveModule(mod.id, 1)}
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-ink hover:border-brand disabled:opacity-40"
+                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-line bg-surface text-ink hover:border-brand disabled:opacity-40"
                       >
-                        <ArrowDown className="h-3.5 w-3.5" aria-hidden="true" />
+                        <ArrowDown className="h-4 w-4" aria-hidden="true" />
                       </button>
                     </div>
                   </li>
@@ -1036,7 +1037,7 @@ export function ResearchOsClient({
             </span>
             <a
               href="/api/me/export?download=1"
-              className="inline-flex min-h-9 items-center rounded-lg border border-line bg-canvas px-3 py-1 text-xs font-medium text-ink hover:border-brand hover:text-brand"
+              className="inline-flex min-h-11 items-center rounded-lg border border-line bg-canvas px-3.5 py-2 text-xs font-medium text-ink hover:border-brand hover:text-brand"
             >
               Export my data (JSON)
             </a>
@@ -1054,12 +1055,15 @@ export function ResearchOsClient({
             >
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <p className="font-mono text-xs font-semibold uppercase text-brand">
-                    Contribution Pipeline
+                  <h2 className="text-lg font-bold text-ink">Contribution Pipeline</h2>
+                  <p className="text-xs text-ink-secondary">
+                    Track drafts, peer reviews, and published contributions.
                   </p>
-                  <h2 className="text-lg font-bold text-ink">Scholarly Publishing Queue</h2>
                 </div>
-                <Link href="/editor" className="text-xs font-medium text-brand hover:underline">
+                <Link
+                  href="/editor"
+                  className="inline-flex min-h-11 items-center text-xs font-medium text-brand hover:underline"
+                >
                   Open Editor →
                 </Link>
               </div>
@@ -1075,7 +1079,7 @@ export function ResearchOsClient({
                   <li key={label}>
                     <Link
                       href={href}
-                      className="block rounded-lg border border-line bg-canvas p-3 transition-colors hover:border-brand"
+                      className="block rounded-lg bg-surface-subtle/60 p-3 transition-colors hover:bg-surface-subtle"
                     >
                       <span className="block text-ink-secondary">{label}</span>
                       <span className="mt-1 block font-mono text-xl font-semibold text-ink">
@@ -1094,25 +1098,22 @@ export function ResearchOsClient({
               className="lg:col-span-6 rounded-xl border border-line bg-surface p-5 space-y-4"
             >
               <div>
-                <p className="font-mono text-xs font-semibold uppercase text-ink-secondary">
-                  Private Research Activity
-                </p>
-                <h2 className="text-lg font-bold text-ink">Recent Verified Operations</h2>
+                <h2 className="text-lg font-bold text-ink">Private Research Activity</h2>
                 <p className="text-xs text-ink-secondary">
                   Private to your account. Never exposes anonymous reviewer identities or confidential excerpts.
                 </p>
               </div>
               {initialActivity.length === 0 ? (
-                <p className="rounded-lg border border-line bg-canvas p-3 text-xs text-ink-secondary">
+                <p className="rounded-lg bg-surface-subtle/60 p-3 text-xs text-ink-secondary">
                   No recent private research operations recorded yet. Saving a draft, resolving a source,
                   or recording goal progress will appear here.
                 </p>
               ) : (
-                <ul className="space-y-2 text-xs">
+                <ul className="divide-y divide-line text-xs">
                   {initialActivity.map((ev) => (
                     <li
                       key={ev.id}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-canvas px-3 py-2"
+                      className="flex flex-wrap items-center justify-between gap-2 py-2.5"
                     >
                       <span className="font-mono text-ink">
                         {ev.action} · {ev.targetType}

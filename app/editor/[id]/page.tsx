@@ -34,7 +34,12 @@ export default async function ScholarlyEditorDraftPage({
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
-      <BlogHeader />
+      <BlogHeader
+        variant="editor"
+        backHref="/feed"
+        backLabel="Back to feed"
+        contextTitle={`Draft · ${id}`}
+      />
       <main
         id="main-content"
         tabIndex={-1}

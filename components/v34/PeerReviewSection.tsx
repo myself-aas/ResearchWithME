@@ -234,31 +234,29 @@ export function PeerReviewSection({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-brand">
-            <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
-            Formal Peer Review · Version {contributionVersion}
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight text-ink">
-            Structured Review &amp; Author Rebuttals
+          <h2 className="inline-flex items-center gap-2 text-lg sm:text-xl font-bold tracking-tight text-ink">
+            <ShieldCheck className="h-5 w-5 text-brand" aria-hidden="true" />
+            <span>Structured Review &amp; Author Rebuttals (v{contributionVersion})</span>
           </h2>
           <p className="text-sm text-ink-secondary max-w-2xl">
-            Formal reviews are version-aware, auditable, and distinct from casual discussion.
-            Anonymous reviewer identities are strictly redacted across all responses.
+            Formal Peer Review · Version {contributionVersion} — version-aware, auditable, and
+            distinct from casual discussion. Anonymous reviewer identities are strictly redacted
+            across all responses.
           </p>
         </div>
 
         {activeReview && (
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-full border border-line bg-canvas px-2.5 py-1 font-medium text-ink">
+            <span className="rounded-full bg-surface-subtle px-2.5 py-1 font-medium text-ink">
               Status: {activeReview.status.replace(/_/g, ' ')}
             </span>
             {activeReview.recommendation && (
-              <span className="rounded-full border border-brand/30 bg-brand/10 px-2.5 py-1 font-medium text-brand">
+              <span className="rounded-full bg-brand/10 px-2.5 py-1 font-medium text-brand">
                 Recommendation: {activeReview.recommendation.replace(/_/g, ' ')}
               </span>
             )}
             {activeReview.anonymous && (
-              <span className="rounded-full border border-line bg-canvas px-2.5 py-1 text-ink-secondary">
+              <span className="rounded-full bg-surface-subtle px-2.5 py-1 text-ink-secondary">
                 Anonymous review active
               </span>
             )}
@@ -276,16 +274,16 @@ export function PeerReviewSection({
           onReply={handleReplySelect}
         />
       ) : (
-        <div className="rounded-lg border border-dashed border-line p-4 text-sm text-ink-secondary">
+        <div className="rounded-lg bg-surface-subtle/60 p-4 text-sm text-ink-secondary">
           No formal peer review items have been filed for version {contributionVersion} yet. Start a
           structured review below.
         </div>
       )}
 
       {/* Interactive Composer */}
-      <div className="rounded-xl border border-line bg-canvas/50 p-4 space-y-4">
+      <div className="border-t border-line pt-5 space-y-4">
         <div
-          className="flex flex-wrap items-center gap-2 border-b border-line pb-3"
+          className="flex flex-wrap items-center gap-2"
           role="tablist"
           aria-label="Formal review composer mode"
         >
@@ -302,10 +300,10 @@ export function PeerReviewSection({
               role="tab"
               aria-selected={mode === key}
               onClick={() => setMode(key)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`min-h-11 rounded-lg px-3.5 py-2 text-xs font-medium transition-colors ${
                 mode === key
                   ? 'bg-brand text-on-primary'
-                  : 'border border-line bg-surface text-ink-secondary hover:text-ink'
+                  : 'border border-line bg-canvas text-ink-secondary hover:text-ink'
               }`}
             >
               {label}
@@ -321,7 +319,7 @@ export function PeerReviewSection({
                 <select
                   value={itemType}
                   onChange={(e) => setItemType(e.target.value as 'review' | 'suggestion' | 'comment')}
-                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                  className="min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
                 >
                   <option value="review">Formal review critique</option>
                   <option value="suggestion">Actionable suggestion (accept/reject)</option>
@@ -336,7 +334,7 @@ export function PeerReviewSection({
                   value={scope}
                   onChange={(e) => setScope(e.target.value)}
                   placeholder="e.g. Section 2 · Evidence & limitations"
-                  className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                  className="min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
                 />
               </label>
             </div>
@@ -348,12 +346,12 @@ export function PeerReviewSection({
                 value={reviewBody}
                 onChange={(e) => setReviewBody(e.target.value)}
                 placeholder="Evaluate methodological rigor, locator accuracy, or missing scope boundaries..."
-                className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
               />
             </label>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <label className="inline-flex items-center gap-2 text-xs text-ink-secondary cursor-pointer">
+              <label className="inline-flex min-h-11 items-center gap-2 text-xs text-ink-secondary cursor-pointer">
                 <input
                   type="checkbox"
                   checked={anonymous}
@@ -366,7 +364,7 @@ export function PeerReviewSection({
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
               >
                 <MessageSquareQuote className="h-3.5 w-3.5" aria-hidden="true" />
                 {submitting ? 'Submitting…' : 'Post formal review item'}
@@ -382,13 +380,13 @@ export function PeerReviewSection({
                 Select review items addressed by this rebuttal (required)
               </legend>
               {activeReview && activeReview.items.length > 0 ? (
-                <div className="space-y-1.5">
+                <div className="divide-y divide-line rounded-lg bg-surface-subtle/50 px-3">
                   {activeReview.items.map((item) => {
                     const checked = selectedItemIds.includes(item.id);
                     return (
                       <label
                         key={item.id}
-                        className="flex items-start gap-2 rounded-lg border border-line bg-surface p-2.5 text-xs cursor-pointer"
+                        className="flex min-h-11 items-start gap-2 py-2.5 text-xs cursor-pointer"
                       >
                         <input
                           type="checkbox"
@@ -421,14 +419,14 @@ export function PeerReviewSection({
                 value={rebuttalBody}
                 onChange={(e) => setRebuttalBody(e.target.value)}
                 placeholder="Explain revisions made, cite supporting evidence, or clarify scope..."
-                className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
               />
             </label>
 
             <button
               type="submit"
               disabled={submitting || !activeReview}
-              className="rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
+              className="inline-flex min-h-11 items-center rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
             >
               {submitting ? 'Submitting…' : 'Submit linked rebuttal'}
             </button>
@@ -442,7 +440,7 @@ export function PeerReviewSection({
               <select
                 value={decisionOutcome}
                 onChange={(e) => setDecisionOutcome(e.target.value as ReviewDecisionOutcome)}
-                className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                className="min-h-11 w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
               >
                 <option value="ACCEPT">Accept</option>
                 <option value="MINOR_REVISION">Minor revision</option>
@@ -458,14 +456,14 @@ export function PeerReviewSection({
                 value={decisionRationale}
                 onChange={(e) => setDecisionRationale(e.target.value)}
                 placeholder="Summarize why this version meets or needs revisions against evidence and scope standards..."
-                className="w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink"
+                className="w-full rounded-lg border border-line bg-canvas px-3 py-2 text-sm text-ink"
               />
             </label>
 
             <button
               type="submit"
               disabled={submitting || !activeReview}
-              className="rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
+              className="inline-flex min-h-11 items-center rounded-lg bg-brand px-4 py-2 text-xs font-medium text-on-primary hover:opacity-90 disabled:opacity-50"
             >
               {submitting ? 'Recording…' : 'Record editorial decision'}
             </button>

@@ -51,12 +51,14 @@ export default async function TopicDetailPage({
           / <span className="font-mono text-ink">{topic.slug}</span>
         </nav>
 
-        <header className="rounded-xl border border-line bg-surface p-6 space-y-2">
-          <p className="font-mono text-xs uppercase tracking-wider text-brand">
-            Canonical Topic · {topic.assignmentCount} Assignment(s)
-          </p>
+        <header className="border-b border-line pb-6 space-y-2">
           <h1 className="font-serif text-3xl font-bold text-ink">{topic.name}</h1>
-          <p className="text-sm text-ink-secondary">{topic.description}</p>
+          <p className="text-sm text-ink-secondary">
+            {topic.description} ·{' '}
+            <span className="font-mono text-xs text-ink">
+              {topic.assignmentCount} linked scholarly object(s)
+            </span>
+          </p>
         </header>
 
         <section aria-labelledby="topic-assignments-heading" className="mt-8 space-y-3">

@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import ContributeWizard from '@/components/v34/ContributeWizard';
@@ -37,20 +35,15 @@ export default async function ContributePage({
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
-      <BlogHeader />
+      <BlogHeader
+        variant="editor"
+        backHref="/feed"
+        backLabel="Back to research feed"
+        contextTitle="New Research Contribution"
+      />
       <main id="main-content" className="mx-auto w-full max-w-4xl flex-1 px-4 pb-16 pt-8 sm:px-6 lg:px-8">
         <div className="mb-6">
-          <Link
-            href="/feed"
-            className="inline-flex min-h-11 items-center gap-1.5 font-sans text-sm text-ink-secondary hover:text-ink"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span>Back to research feed</span>
-          </Link>
-          <p className="mt-3 font-mono text-xs font-semibold uppercase tracking-widest text-brand">
-            Contribution Studio
-          </p>
-          <h1 className="mt-1 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
+          <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
             Publish a Research Contribution
           </h1>
           <p className="mt-2 font-sans text-sm text-ink-secondary">

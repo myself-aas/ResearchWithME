@@ -29,10 +29,7 @@ export default function ClaimsDirectoryPage() {
       >
         <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
           <div>
-            <p className="font-mono text-xs uppercase tracking-wider text-brand">
-              First-Class Knowledge Unit · ADR-032-01
-            </p>
-            <h1 className="mt-1 font-serif text-3xl font-bold text-ink sm:text-4xl">
+            <h1 className="font-serif text-3xl font-bold text-ink sm:text-4xl">
               Claims Directory
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-ink-secondary">

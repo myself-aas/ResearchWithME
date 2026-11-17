@@ -84,10 +84,10 @@ export default async function ContributorProfilePage({
         <header className="rounded-xl border border-line bg-surface p-5 sm:p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 max-w-2xl">
-              <p className="font-mono text-xs font-semibold uppercase tracking-widest text-brand">
-                Research Contributor · @{username}
+              <h1 className="font-serif text-3xl font-semibold text-ink">{displayName}</h1>
+              <p className="mt-1 font-mono text-xs text-ink-secondary">
+                Research contributor · @{username}
               </p>
-              <h1 className="mt-1 font-serif text-3xl font-semibold text-ink">{displayName}</h1>
               <p className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">{bio}</p>
             </div>
             <Link
@@ -101,27 +101,27 @@ export default async function ContributorProfilePage({
 
           {/* Event-derived non-vanity scholarly recognition metrics (v3.4 §11 — no composite scores) */}
           <dl className="mt-6 grid grid-cols-2 gap-3 border-t border-line pt-5 sm:grid-cols-6">
-            <div className="rounded-md border border-line bg-canvas p-3">
+            <div className="rounded-md bg-surface-subtle/60 p-3">
               <dt className="font-sans text-xs text-ink-secondary">Helpful reviews</dt>
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.helpfulReviews}</dd>
             </div>
-            <div className="rounded-md border border-line bg-canvas p-3">
+            <div className="rounded-md bg-surface-subtle/60 p-3">
               <dt className="font-sans text-xs text-ink-secondary">Referenced</dt>
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.referenced}</dd>
             </div>
-            <div className="rounded-md border border-line bg-canvas p-3">
+            <div className="rounded-md bg-surface-subtle/60 p-3">
               <dt className="font-sans text-xs text-ink-secondary">Saved</dt>
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.saved}</dd>
             </div>
-            <div className="rounded-md border border-line bg-canvas p-3">
+            <div className="rounded-md bg-surface-subtle/60 p-3">
               <dt className="font-sans text-xs text-ink-secondary">Evidence reused</dt>
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.evidenceUsed}</dd>
             </div>
-            <div className="rounded-md border border-line bg-canvas p-3">
+            <div className="rounded-md bg-surface-subtle/60 p-3">
               <dt className="font-sans text-xs text-ink-secondary">Replications</dt>
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.replications}</dd>
             </div>
-            <div className="rounded-md border border-line bg-canvas p-3">
+            <div className="rounded-md bg-surface-subtle/60 p-3">
               <dt className="font-sans text-xs text-ink-secondary">Accepted corrections</dt>
               <dd className="mt-1 font-mono text-lg font-semibold text-ink">{displayTotals.acceptedCorrections}</dd>
             </div>
@@ -134,9 +134,9 @@ export default async function ContributorProfilePage({
                   <h2 className="font-mono text-xs font-semibold uppercase tracking-wide text-ink-secondary">
                     Institutional Affiliations
                   </h2>
-                  <ul className="mt-2 space-y-1.5 font-sans text-xs text-ink">
+                  <ul className="mt-2 divide-y divide-line font-sans text-xs text-ink">
                     {publicProfile.affiliations.map((aff) => (
-                      <li key={aff.id} className="rounded-md border border-line bg-canvas px-3 py-2">
+                      <li key={aff.id} className="py-2">
                         <span className="font-semibold">{aff.institution}</span>
                         <span className="block text-ink-secondary">
                           {aff.roleTitle}

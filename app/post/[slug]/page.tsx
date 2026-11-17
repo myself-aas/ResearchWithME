@@ -109,7 +109,12 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }} />
       <ReadingProgress />
       <ArticleSmoothScroll />
-      <BlogHeader />
+      <BlogHeader
+        variant="reading"
+        backHref="/articles"
+        backLabel="Articles"
+        contextTitle={article.title}
+      />
 
       <main tabIndex={-1} id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-5 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-10">
         <nav aria-label="Breadcrumb" className="mb-6 font-mono text-xs text-ink-secondary">

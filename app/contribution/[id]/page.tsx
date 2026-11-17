@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ExternalLink, FileCheck2, Link2, ShieldAlert, Sparkles } from 'lucide-react';
+import { ExternalLink, FileCheck2, Link2, ShieldAlert, Sparkles } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import ResponsivePaneLayout from '@/components/layout/ResponsivePaneLayout';
@@ -342,7 +342,7 @@ export default async function ContributionDetailPage({
           <div className="mt-3 flex flex-wrap gap-2">
             <Link
               href={`/source/${sourceDetails.source.id}`}
-              className="inline-flex min-h-10 items-center rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-ink hover:bg-surface-subtle"
+              className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3.5 py-2 font-sans text-xs font-medium text-ink hover:bg-surface-subtle"
             >
               Inspect source record
             </Link>
@@ -351,7 +351,7 @@ export default async function ContributionDetailPage({
                 href={sourceDetails.source.canonicalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-10 items-center gap-1 rounded-full border border-line bg-canvas px-3 py-1 font-sans text-xs font-medium text-brand hover:bg-surface-subtle"
+                className="inline-flex min-h-11 items-center gap-1 rounded-full border border-line bg-canvas px-3.5 py-2 font-sans text-xs font-medium text-brand hover:bg-surface-subtle"
               >
                 <span>Open original</span>
                 <ExternalLink className="h-3 w-3" aria-hidden="true" />
@@ -381,25 +381,25 @@ export default async function ContributionDetailPage({
           <span>Scholarly recognition</span>
         </div>
         <dl className="mt-3 grid grid-cols-2 gap-2 font-sans text-xs">
-          <div className="rounded-md border border-line bg-canvas p-2.5">
+          <div className="rounded-md bg-surface-subtle/60 p-2.5">
             <dt className="text-ink-secondary">Helpful reviews</dt>
             <dd className="mt-0.5 font-mono text-base font-semibold text-ink">
               {contribution.recognition.helpfulReviews}
             </dd>
           </div>
-          <div className="rounded-md border border-line bg-canvas p-2.5">
+          <div className="rounded-md bg-surface-subtle/60 p-2.5">
             <dt className="text-ink-secondary">Referenced</dt>
             <dd className="mt-0.5 font-mono text-base font-semibold text-ink">
               {contribution.recognition.referenced}
             </dd>
           </div>
-          <div className="rounded-md border border-line bg-canvas p-2.5">
+          <div className="rounded-md bg-surface-subtle/60 p-2.5">
             <dt className="text-ink-secondary">Saved</dt>
             <dd className="mt-0.5 font-mono text-base font-semibold text-ink">
               {contribution.recognition.saved}
             </dd>
           </div>
-          <div className="rounded-md border border-line bg-canvas p-2.5">
+          <div className="rounded-md bg-surface-subtle/60 p-2.5">
             <dt className="text-ink-secondary">Linked evidence</dt>
             <dd className="mt-0.5 font-mono text-base font-semibold text-ink">
               {linkedEvidence.length}
@@ -430,18 +430,13 @@ export default async function ContributionDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(structuredData) }}
       />
-      <BlogHeader />
-      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pb-16">
-        <div className="mb-4">
-          <Link
-            href="/feed"
-            className="inline-flex min-h-11 items-center gap-1.5 font-sans text-sm text-ink-secondary hover:text-ink"
-          >
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-            <span>Back to research feed</span>
-          </Link>
-        </div>
-
+      <BlogHeader
+        variant="reading"
+        backHref="/feed"
+        backLabel="Back to research feed"
+        contextTitle={contribution.title}
+      />
+      <main id="main-content" className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-6 sm:px-6 lg:px-8 lg:pb-16">
         <ResponsivePaneLayout
           main={mainContent}
           rightRail={rightRail}
