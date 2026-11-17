@@ -177,7 +177,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
   ];
 
   const navLinkClass = (active: boolean) =>
-    `inline-flex min-h-11 items-center gap-1.5 border-b-2 px-3 py-2 font-sans text-sm font-medium transition-colors ${
+    `inline-flex min-h-11 items-center gap-1.5 whitespace-nowrap border-b-2 px-2 py-2 font-sans text-sm font-medium transition-colors xl:px-3 ${
       active
         ? 'border-brand text-ink'
         : 'border-transparent text-ink-secondary hover:border-line hover:text-ink'
@@ -189,8 +189,8 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
       {menuAnnouncement}
     </span>
     <Header open={menuOpen}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-[60px] items-center justify-between gap-1 sm:gap-3">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-5 xl:px-8">
+        <div className="flex min-h-[60px] items-center justify-between gap-1 sm:gap-2 xl:gap-3">
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
@@ -199,9 +199,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                       <BrandLogo size="header" />
           </Link>
 
-          <nav aria-label="Primary" className="hidden lg:block">
+          <nav aria-label="Primary" className="hidden min-w-0 lg:block">
             <LayoutGroup id="reme-primary-nav">
-              <ul className="flex items-center gap-0.5">
+              <ul className="flex items-center gap-0 xl:gap-0.5">
                 {primaryNav.map((item) => {
                   const active = item.match(pathname);
                   return (
@@ -228,7 +228,7 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
             </LayoutGroup>
           </nav>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 xl:gap-2">
             <Pressable
               type="button"
               onClick={openPalette}
@@ -263,14 +263,14 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
               <div className="hidden items-center gap-1 md:flex">
                 <Link
                   href="/contribute"
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-brand px-4 py-1.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-brand px-3 py-1.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 xl:px-4"
                 >
-                  <PlusCircle className="h-4 w-4" aria-hidden="true" />
+                  <PlusCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
                   <span>Contribute</span>
                 </Link>
                 <Link
                   href="/dashboard/account"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2.5 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand xl:px-3"
                   title={`Signed in as ${user?.name ?? 'a reader'}`}
                   aria-label="Your account"
                 >
@@ -280,9 +280,9 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                 {isEditor && (
                   <Link
                     href="/write"
-                    className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90"
+                    className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90 xl:px-4"
                   >
-                    <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
+                    <PenSquare className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span>Write</span>
                   </Link>
                 )}
@@ -301,16 +301,16 @@ export default function BlogHeader({ searchQuery, setSearchQuery, savedCount }: 
                 <Link
                   href="/login"
                   aria-label="Sign in"
-                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2.5 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand xl:px-3"
                 >
                   <LogIn className="h-4 w-4 text-brand" aria-hidden="true" />
                   <span className="hidden xl:inline">Sign in</span>
                 </Link>
                 <Link
                   href="/contribute"
-                  className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-ink px-4 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90"
+                  className="inline-flex min-h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full bg-ink px-3 py-1.5 font-sans text-sm font-medium text-canvas transition-opacity hover:opacity-90 xl:px-4"
                 >
-                  <PlusCircle className="h-4 w-4" aria-hidden="true" />
+                  <PlusCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
                   <span>Contribute</span>
                 </Link>
               </div>

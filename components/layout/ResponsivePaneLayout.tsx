@@ -33,11 +33,11 @@ export default function ResponsivePaneLayout({
 
   const gridCols =
     leftRail && rightRail
-      ? 'lg:grid-cols-[240px_minmax(0,1fr)_300px]'
+      ? 'lg:grid-cols-[220px_minmax(0,1fr)_270px] xl:grid-cols-[240px_minmax(0,1fr)_300px]'
       : leftRail
-        ? 'lg:grid-cols-[260px_minmax(0,1fr)]'
+        ? 'lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[260px_minmax(0,1fr)]'
         : rightRail
-          ? 'md:grid-cols-[minmax(0,1fr)_300px]'
+          ? 'md:grid-cols-[minmax(0,1fr)_270px] xl:grid-cols-[minmax(0,1fr)_300px]'
           : 'grid-cols-1';
 
   return (
