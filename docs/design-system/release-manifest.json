@@ -1,7 +1,7 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T11:08:00.494Z",
-  "tokenChecksum": "sha256:eb18cbef276243f6",
+  "generatedAt": "2026-11-17T11:26:25.692Z",
+  "tokenChecksum": "sha256:843f5911b2ee4631",
   "results": [
     {
       "id": "DS-1",
@@ -13,7 +13,7 @@
       "id": "DS-2",
       "description": "token checksum (conformance manifest §46.1)",
       "status": "pass",
-      "evidence": "sha256:eb18cbef276243f6"
+      "evidence": "sha256:843f5911b2ee4631"
     },
     {
       "id": "DS-3",

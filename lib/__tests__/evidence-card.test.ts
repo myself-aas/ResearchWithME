@@ -170,7 +170,7 @@ describe('EvidenceCard rendering (§27.2)', () => {
   });
 
   it('component token aliases resolve to semantic values', () => {
-    expect(evidenceCardComponentTokens.accent).toBe('#059669'); // knowledge.evidence
+    expect(evidenceCardComponentTokens.accent).toBe('#047857'); // knowledge.evidence (WCAG AA on surface)
     expect(evidenceCardComponentTokens.background).toBe('#FFFFFF'); // surface
   });
 });

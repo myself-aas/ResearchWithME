@@ -512,7 +512,7 @@ export default function LibraryClient({
                       <button
                         type="button"
                         onClick={() => void handleRecordGoalProgress(goal)}
-                        aria-label={`Record progress for ${goal.title}`}
+                        aria-label={`+1 — Record progress for ${goal.title}`}
                         className="inline-flex min-h-10 items-center gap-1 rounded-full border border-brand bg-brand/10 px-2.5 py-1 font-mono text-xs font-semibold text-brand hover:bg-brand/15"
                       >
                         <Plus className="h-3.5 w-3.5" aria-hidden="true" />
