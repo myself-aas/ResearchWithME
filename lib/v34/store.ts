@@ -9,9 +9,18 @@
 import crypto from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
-import { getOptionalPublicSupabase, runSupabaseQuery } from './supabase-sync';
 import { slugify } from '@/lib/validation';
-import { isUuid, runSupabaseMutation } from './supabase-sync';
+import { computePayloadFingerprint } from './idempotency';
+import {
+  getOptionalPublicSupabase,
+  isStrictPersistenceMode,
+  isUuid,
+  runSupabaseMutation,
+  runSupabaseQuery,
+  runSupabaseRpc,
+  shouldUseDemoSeeds,
+  SupabasePersistenceError,
+} from './supabase-sync';
 import {
   evaluatePublicationBlockers,
   parseSourceIdentifier,
@@ -616,8 +625,27 @@ function createSeedState(): V34MemoryState {
 
 let state: V34MemoryState = createSeedState();
 
+function buildDemoSeedIdSet(seed: V34MemoryState): Set<string> {
+  return new Set([
+    ...seed.sources.keys(),
+    ...seed.sourceVersions.keys(),
+    ...seed.evidence.keys(),
+    ...seed.claims.keys(),
+    ...seed.contributions.keys(),
+  ]);
+}
+
+let DEMO_SEED_IDS: Set<string> = buildDemoSeedIdSet(state);
+
+function filterVisibleRecords<T extends { id: string }>(items: Iterable<T>): T[] {
+  const arr = [...items];
+  if (!isStrictPersistenceMode()) return arr;
+  return arr.filter((item) => !DEMO_SEED_IDS.has(item.id));
+}
+
 export function resetV34StoreForTesting() {
   state = createSeedState();
+  DEMO_SEED_IDS = buildDemoSeedIdSet(state);
   contributionVersionsMap.clear();
 }
 
@@ -628,25 +656,30 @@ function makeId(prefix: string): string {
 /** Optional best-effort sync to Supabase when v34 tables exist in the remote DB. */
 async function trySupabasePublicRead<T>(
   query: (client: SupabaseClient) => PromiseLike<{ data: T | null; error: { message: string } | null }>,
+  supabase?: SupabaseClient | null,
 ): Promise<T | null> {
-  if (!isSupabaseConfigured) return null;
-  return runSupabaseQuery<T>(getOptionalPublicSupabase(), query);
+  const client = supabase ?? (isSupabaseConfigured ? getOptionalPublicSupabase() : null);
+  if (!client) return null;
+  return runSupabaseQuery<T>(client, query);
 }
 
 // ── Sources & Integrity ────────────────────────────────────────────────────
 
-export async function listSources(): Promise<SourceRecord[]> {
-  const remote = await trySupabasePublicRead<Record<string, unknown>[]>((sb) =>
-    sb.from('v34_sources').select('*').order('updated_at', { ascending: false }).limit(50),
+export async function listSources(supabase?: SupabaseClient | null): Promise<SourceRecord[]> {
+  const remote = await trySupabasePublicRead<Record<string, unknown>[]>(
+    (sb) => sb.from('v34_sources').select('*').order('updated_at', { ascending: false }).limit(50),
+    supabase,
   );
-  const byId = new Map<string, SourceRecord>(state.sources);
-  if (remote) {
-    for (const row of remote) {
-      const mapped = mapRemoteSource(row);
-      byId.set(mapped.id, mapped);
-    }
+  // Wave 17 P0: NEVER merge in-memory demo seeds on top of live Postgres reads.
+  if (remote !== null) {
+    return remote
+      .map(mapRemoteSource)
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
-  return [...byId.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  if (!shouldUseDemoSeeds(false)) {
+    return [];
+  }
+  return [...state.sources.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
 function mapRemoteSource(row: Record<string, unknown>): SourceRecord {
@@ -668,29 +701,41 @@ function mapRemoteSource(row: Record<string, unknown>): SourceRecord {
   };
 }
 
-export async function getSourceWithDetails(id: string): Promise<{
+export async function getSourceWithDetails(
+  id: string,
+  supabase?: SupabaseClient | null,
+): Promise<{
   source: SourceRecord;
   versions: SourceVersionRecord[];
   integrityEvents: IntegrityEventRecord[];
   evidence: EvidenceRecord[];
   contributions: ContributionRecord[];
 } | null> {
-  const local = state.sources.get(id);
-  let source = local ?? null;
+  const remote = await trySupabasePublicRead<Record<string, unknown>>(
+    (sb) => sb.from('v34_sources').select('*').eq('id', id).maybeSingle(),
+    supabase,
+  );
+  let source: SourceRecord | null = remote ? mapRemoteSource(remote) : null;
 
   if (!source) {
-    const remote = await trySupabasePublicRead<Record<string, unknown>>((sb) =>
-      sb.from('v34_sources').select('*').eq('id', id).maybeSingle(),
-    );
-    if (remote) source = mapRemoteSource(remote);
+    const local = state.sources.get(id) ?? null;
+    if (local && (!isStrictPersistenceMode() || !DEMO_SEED_IDS.has(local.id))) {
+      source = local;
+    }
   }
   if (!source) return null;
 
-  const versions = [...state.sourceVersions.values()].filter((v) => v.sourceId === source.id);
+  const versions = filterVisibleRecords(state.sourceVersions.values()).filter(
+    (v) => v.sourceId === source.id,
+  );
   const integrityEvents = state.integrityEvents.get(source.id) ?? [];
-  const evidence = [...state.evidence.values()].filter((e) => e.sourceId === source.id);
-  const contributions = [...state.contributions.values()].filter(
-    (c) => c.lifecycle === 'published' && (c.primarySourceId === source.id || evidence.some((e) => c.evidenceIds.includes(e.id))),
+  const evidence = filterVisibleRecords(state.evidence.values()).filter(
+    (e) => e.sourceId === source.id,
+  );
+  const contributions = filterVisibleRecords(state.contributions.values()).filter(
+    (c) =>
+      c.lifecycle === 'published' &&
+      (c.primarySourceId === source.id || evidence.some((e) => c.evidenceIds.includes(e.id))),
   );
 
   return { source, versions, integrityEvents, evidence, contributions };
@@ -761,30 +806,68 @@ export async function resolveOrCreateSource(input: {
   state.sources.set(source.id, source);
   state.sourceVersions.set(version.id, version);
 
-  if (input.supabase && input.userId) {
-    try {
-      await input.supabase.from('v34_sources').upsert({
-        id: source.id,
-        source_type: source.sourceType,
-        title: source.title,
-        authors: source.authors,
-        published_date: source.publishedDate,
-        venue: source.venue,
-        canonical_url: source.canonicalUrl,
-        identifier_scheme: source.identifierScheme,
-        identifier_value: source.identifierValue,
-        access_state: source.accessState,
-        integrity_status: source.integrityStatus,
-        created_by: input.userId,
-      });
-      await input.supabase.from('v34_source_versions').upsert({
-        id: version.id,
-        source_id: source.id,
-        version_label: version.versionLabel,
-        snapshot_url: version.snapshotUrl,
-      });
-    } catch {
-      // Fall back to in-memory state if remote table is not yet migrated.
+  if (input.supabase || isStrictPersistenceMode()) {
+    await runSupabaseMutation(
+      input.supabase,
+      (sb) =>
+        sb.from('v34_sources').upsert({
+          id: source.id,
+          source_type: source.sourceType,
+          title: source.title,
+          authors: source.authors,
+          published_date: source.publishedDate,
+          venue: source.venue,
+          canonical_url: source.canonicalUrl,
+          identifier_scheme: source.identifierScheme,
+          identifier_value: source.identifierValue,
+          access_state: source.accessState,
+          integrity_status: source.integrityStatus,
+          created_by: isUuid(input.userId) ? input.userId : null,
+        }),
+      { operation: 'v34_sources.upsert', failClosed: true },
+    );
+    await runSupabaseMutation(
+      input.supabase,
+      (sb) =>
+        sb.from('v34_source_versions').upsert({
+          id: version.id,
+          source_id: source.id,
+          version_label: version.versionLabel,
+          snapshot_url: version.snapshotUrl,
+        }),
+      { operation: 'v34_source_versions.upsert', failClosed: true },
+    );
+    if (source.identifierScheme && source.identifierValue) {
+      await runSupabaseMutation(
+        input.supabase,
+        (sb) =>
+          sb.from('v34_external_identifiers').upsert({
+            id: `ext-${source.id}-${source.identifierScheme}`,
+            entity_type: 'source',
+            entity_id: source.id,
+            scheme: source.identifierScheme,
+            normalized_value: source.identifierValue,
+            raw_value: input.query.trim(),
+            verified: true,
+          }),
+        { operation: 'v34_external_identifiers.upsert', failClosed: false },
+      );
+    }
+    if (source.authors.length > 0) {
+      await runSupabaseMutation(
+        input.supabase,
+        (sb) =>
+          sb.from('v34_source_contributors').upsert(
+            source.authors.map((name, idx) => ({
+              id: `sc-${source.id}-${idx}`,
+              source_id: source.id,
+              display_name: name,
+              role: 'author',
+              position: idx,
+            })),
+          ),
+        { operation: 'v34_source_contributors.upsert', failClosed: false },
+      );
     }
   }
 
@@ -860,20 +943,50 @@ export async function recordIntegrityEvent(input: {
     }
   }
 
-  if (input.supabase) {
-    try {
-      await input.supabase.from('v34_integrity_events').insert({
-        id: event.id,
+  if (input.supabase || isStrictPersistenceMode()) {
+    await runSupabaseMutation(
+      input.supabase,
+      (sb) =>
+        sb.from('v34_integrity_events').insert({
+          id: event.id,
+          source_id: event.sourceId,
+          source_version_id: event.sourceVersionId,
+          status: event.status,
+          summary: event.summary,
+          notice_url: event.noticeUrl,
+          disposition: event.disposition,
+          recorded_by: isUuid(event.recordedBy) ? event.recordedBy : null,
+        }),
+      { operation: 'v34_integrity_events.insert', failClosed: true },
+    );
+    const impactRows = [
+      ...affectedContributionIds.map((targetId) => ({
+        id: `imp-${event.id}-${targetId}`,
+        integrity_event_id: event.id,
         source_id: event.sourceId,
-        source_version_id: event.sourceVersionId,
-        status: event.status,
-        summary: event.summary,
-        notice_url: event.noticeUrl,
-        disposition: event.disposition,
-        recorded_by: event.recordedBy,
-      });
-    } catch {
-      // Best effort remote sync.
+        target_type: 'contribution',
+        target_id: targetId,
+        impact_status: 'open',
+        severity: event.status === 'retracted' || event.status === 'withdrawn' ? 'critical' : 'warning',
+        rationale: event.summary,
+      })),
+      ...affectedEvidenceIds.map((targetId) => ({
+        id: `imp-${event.id}-${targetId}`,
+        integrity_event_id: event.id,
+        source_id: event.sourceId,
+        target_type: 'evidence',
+        target_id: targetId,
+        impact_status: 'open',
+        severity: event.status === 'retracted' || event.status === 'withdrawn' ? 'critical' : 'warning',
+        rationale: event.summary,
+      })),
+    ];
+    if (impactRows.length > 0) {
+      await runSupabaseMutation(
+        input.supabase,
+        (sb) => sb.from('v34_integrity_impact_records').upsert(impactRows),
+        { operation: 'v34_integrity_impact_records.upsert', failClosed: false },
+      );
     }
   }
 
@@ -889,7 +1002,7 @@ export async function recordIntegrityEvent(input: {
 // ── Evidence, Claims & Explicit Relationships ──────────────────────────────
 
 export function listEvidence(sourceId?: string): EvidenceRecord[] {
-  const all = [...state.evidence.values()];
+  const all = filterVisibleRecords(state.evidence.values());
   return sourceId ? all.filter((e) => e.sourceId === sourceId) : all;
 }
 
@@ -953,7 +1066,7 @@ export function updateEvidence(
 }
 
 export function listClaims(): ClaimRecord[] {
-  return [...state.claims.values()];
+  return filterVisibleRecords(state.claims.values());
 }
 
 export function getClaimById(id: string): {
@@ -1033,18 +1146,19 @@ export async function createSourceVersion(input: {
   source.updatedAt = now;
   state.sources.set(source.id, source);
 
-  if (input.supabase) {
-    try {
-      await input.supabase.from('v34_source_versions').insert({
-        id: version.id,
-        source_id: version.sourceId,
-        version_label: version.versionLabel,
-        retrieved_at: version.retrievedAt,
-        snapshot_url: version.snapshotUrl,
-      });
-    } catch {
-      // Best-effort RLS sync
-    }
+  if (input.supabase || isStrictPersistenceMode()) {
+    await runSupabaseMutation(
+      input.supabase,
+      (sb) =>
+        sb.from('v34_source_versions').insert({
+          id: version.id,
+          source_id: version.sourceId,
+          version_label: version.versionLabel,
+          retrieved_at: version.retrievedAt,
+          snapshot_url: version.snapshotUrl,
+        }),
+      { operation: 'v34_source_versions.insert', failClosed: true },
+    );
   }
   return { ok: true, version };
 }
@@ -1230,51 +1344,307 @@ export async function persistContributionToSupabase(
   supabase: SupabaseClient | null | undefined,
   contrib: ContributionRecord,
 ): Promise<boolean> {
-  if (!supabase) return false;
-  return runSupabaseMutation(supabase, (sb) =>
-    sb.from('v34_contributions').upsert({
-      id: contrib.id,
-      slug: contrib.slug,
-      author_id: isUuid(contrib.authorId) ? contrib.authorId : null,
-      author_handle: contrib.authorHandle,
-      author_name: contrib.authorName,
-      contribution_type: contrib.contributionType,
-      title: contrib.title,
-      subtitle: contrib.subtitle,
-      summary: contrib.summary,
-      document: contrib.document,
-      mdx: contrib.mdx,
-      primary_source_id: contrib.primarySourceId,
-      primary_source_version_id: contrib.primarySourceVersionId,
-      topics: contrib.topics,
-      tags: contrib.tags,
-      limitations: contrib.limitations,
-      trust_assessment: contrib.trustAssessment,
-      ai_provenance: contrib.aiProvenance,
-      lifecycle: contrib.lifecycle,
-      version: contrib.version,
-      published_at: contrib.publishedAt,
-    }),
+  if (!supabase && !isStrictPersistenceMode()) return false;
+  await runSupabaseMutation(
+    supabase,
+    (sb) =>
+      sb.from('v34_contributions').upsert({
+        id: contrib.id,
+        slug: contrib.slug,
+        author_id: isUuid(contrib.authorId) ? contrib.authorId : null,
+        author_handle: contrib.authorHandle,
+        author_name: contrib.authorName,
+        contribution_type: contrib.contributionType,
+        title: contrib.title,
+        subtitle: contrib.subtitle,
+        summary: contrib.summary,
+        document: contrib.document,
+        mdx: contrib.mdx,
+        primary_source_id: contrib.primarySourceId,
+        primary_source_version_id: contrib.primarySourceVersionId,
+        topics: contrib.topics,
+        tags: contrib.tags,
+        limitations: contrib.limitations,
+        trust_assessment: contrib.trustAssessment,
+        ai_provenance: contrib.aiProvenance,
+        lifecycle: contrib.lifecycle,
+        version: contrib.version,
+        published_at: contrib.publishedAt,
+      }),
+    { operation: 'v34_contributions.upsert', failClosed: true },
   );
+
+  const versionId = `${contrib.id}-v${contrib.version}`;
+  const checksum = crypto.createHash('sha256').update(contrib.mdx || contrib.title).digest('hex');
+  await runSupabaseMutation(
+    supabase,
+    (sb) =>
+      sb.from('v34_contribution_versions').upsert({
+        id: versionId,
+        contribution_id: contrib.id,
+        version_number: contrib.version,
+        title: contrib.title,
+        summary: contrib.summary,
+        mdx: contrib.mdx,
+        lifecycle: contrib.lifecycle,
+        checksum_sha256: checksum,
+        created_by: isUuid(contrib.authorId) ? contrib.authorId : null,
+      }),
+    { operation: 'v34_contribution_versions.upsert', failClosed: false },
+  );
+
+  if (contrib.evidenceIds.length > 0) {
+    await runSupabaseMutation(
+      supabase,
+      (sb) =>
+        sb.from('v34_contribution_evidence').upsert(
+          contrib.evidenceIds.map((evidenceId) => ({
+            contribution_id: contrib.id,
+            evidence_id: evidenceId,
+            added_by: isUuid(contrib.authorId) ? contrib.authorId : null,
+          })),
+        ),
+      { operation: 'v34_contribution_evidence.upsert', failClosed: false },
+    );
+  }
+
+  if (contrib.claimIds.length > 0) {
+    await runSupabaseMutation(
+      supabase,
+      (sb) =>
+        sb.from('v34_contribution_claims').upsert(
+          contrib.claimIds.map((claimId) => ({
+            contribution_id: contrib.id,
+            claim_id: claimId,
+            added_by: isUuid(contrib.authorId) ? contrib.authorId : null,
+          })),
+        ),
+      { operation: 'v34_contribution_claims.upsert', failClosed: false },
+    );
+  }
+
+  if (contrib.topics.length > 0) {
+    await runSupabaseMutation(
+      supabase,
+      (sb) =>
+        sb.from('v34_contribution_topics').upsert(
+          contrib.topics.map((topic) => ({
+            contribution_id: contrib.id,
+            topic_id: `topic-${slugify(topic)}`,
+          })),
+        ),
+      { operation: 'v34_contribution_topics.upsert', failClosed: false },
+    );
+  }
+
+  if (contrib.primarySourceVersionId) {
+    await runSupabaseMutation(
+      supabase,
+      (sb) =>
+        sb.from('v34_citations').upsert({
+          id: `cit-${versionId}-${contrib.primarySourceVersionId}`,
+          contribution_version_id: versionId,
+          source_version_id: contrib.primarySourceVersionId,
+          locator: 'primary-source',
+          quote_excerpt: contrib.summary.slice(0, 280),
+          verified: true,
+        }),
+      { operation: 'v34_citations.upsert', failClosed: false },
+    );
+  }
+
+  return true;
 }
 
 export async function persistDraftToSupabase(
   supabase: SupabaseClient | null | undefined,
   draft: ServerDraftRecord,
+  snapshotReason: 'interval' | 'manual' | 'pre-publish' | 'conflict' = 'manual',
 ): Promise<boolean> {
-  if (!supabase || !isUuid(draft.authorId)) return false;
-  return runSupabaseMutation(supabase, (sb) =>
-    sb.from('v34_drafts').upsert({
-      id: draft.id,
-      author_id: draft.authorId,
-      contribution_type: draft.contributionType,
-      title: draft.title,
-      document: draft.document,
-      mdx: draft.mdx,
-      version: draft.version,
-      last_mutation_id: draft.lastMutationId,
-    }),
+  if (!supabase && !isStrictPersistenceMode()) return false;
+  if (!isUuid(draft.authorId)) {
+    if (isStrictPersistenceMode()) {
+      throw new SupabasePersistenceError({
+        message: 'Authenticated UUID author required to persist draft.',
+        status: 401,
+        code: 'PERSISTENCE_FORBIDDEN',
+        operation: 'v34_drafts.upsert',
+      });
+    }
+    return false;
+  }
+  await runSupabaseMutation(
+    supabase,
+    (sb) =>
+      sb.from('v34_drafts').upsert({
+        id: draft.id,
+        author_id: draft.authorId,
+        contribution_type: draft.contributionType,
+        title: draft.title,
+        document: draft.document,
+        mdx: draft.mdx,
+        version: draft.version,
+        last_mutation_id: draft.lastMutationId,
+      }),
+    { operation: 'v34_drafts.upsert', failClosed: true },
   );
+  const snapId = `snap-${draft.id}-v${draft.version}-${(draft.lastMutationId ?? 'manual').slice(0, 12)}`;
+  await runSupabaseMutation(
+    supabase,
+    (sb) =>
+      sb.from('v34_draft_snapshots').upsert({
+        id: snapId,
+        draft_id: draft.id,
+        version: draft.version,
+        document: draft.document,
+        reason: snapshotReason,
+      }),
+    { operation: 'v34_draft_snapshots.upsert', failClosed: true },
+  );
+  return true;
+}
+
+/**
+ * Wave 17 P0 Atomic Postgres Draft Autosave.
+ *
+ * When a live Supabase client is present (or strict persistence mode is active),
+ * executes `public.v34_autosave_draft_atomic` in a SINGLE PostgreSQL ACID
+ * transaction across:
+ *   1. `v34_idempotency_keys` (durable replay / conflict guard)
+ *   2. `v34_drafts` (`SELECT ... FOR UPDATE` optimistic concurrency check)
+ *   3. `v34_draft_snapshots` (immutable version snapshot)
+ *   4. `v34_pending_mutations` (resolved sync receipt)
+ *
+ * Fails closed (`SupabasePersistenceError` -> HTTP 503/403/409) on database
+ * errors; falls back to in-memory `autosaveDraft` ONLY in local dev / Vitest.
+ */
+export async function autosaveDraftAtomic(input: {
+  draftId: string;
+  authorId: string;
+  mutationId: string;
+  baseVersion: number;
+  contributionType: ContributionType;
+  title: string;
+  document: ResearchDocument;
+  reason: 'interval' | 'manual' | 'pre-publish' | 'conflict';
+  supabase?: SupabaseClient | null;
+}): Promise<
+  | { ok: true; draft: ServerDraftRecord; replayed: boolean; storage: 'postgres' | 'memory' }
+  | {
+      ok: false;
+      status: 401 | 403 | 409;
+      code?: string;
+      message: string;
+      conflict?: {
+        serverVersion: number;
+        serverDocument: ResearchDocument;
+        clientDocument: ResearchDocument;
+      };
+    }
+> {
+  const strict = isStrictPersistenceMode();
+  const usePostgres = Boolean((input.supabase && isUuid(input.authorId)) || strict);
+
+  if (usePostgres) {
+    if (!input.supabase || !isUuid(input.authorId)) {
+      throw new SupabasePersistenceError({
+        message: 'Authenticated database session required for atomic draft autosave.',
+        status: 503,
+        code: 'PERSISTENCE_UNAVAILABLE',
+        operation: 'rpc:v34_autosave_draft_atomic',
+      });
+    }
+
+    const mdx = serializeResearchDocumentToMdx(input.document);
+    const fingerprint = computePayloadFingerprint({
+      draftId: input.draftId,
+      baseVersion: input.baseVersion,
+      contributionType: input.contributionType,
+      title: input.title,
+      document: input.document,
+    });
+
+    const rpcResult = await runSupabaseRpc<{
+      ok: boolean;
+      status?: number;
+      code?: string;
+      error?: string;
+      replayed?: boolean;
+      draft?: ServerDraftRecord;
+      conflict?: {
+        baseVersion: number;
+        serverVersion: number;
+        serverDraft?: ServerDraftRecord;
+      };
+    }>(
+      input.supabase,
+      'v34_autosave_draft_atomic',
+      {
+        p_draft_id: input.draftId,
+        p_contribution_type: input.contributionType,
+        p_title: input.title,
+        p_document: input.document,
+        p_mdx: mdx,
+        p_base_version: input.baseVersion,
+        p_mutation_id: input.mutationId,
+        p_fingerprint: fingerprint,
+        p_reason: input.reason,
+      },
+      { failClosed: true },
+    );
+
+    if (!rpcResult) {
+      throw new SupabasePersistenceError({
+        message: 'Atomic draft autosave returned an empty database response.',
+        status: 503,
+        code: 'PERSISTENCE_FAILED',
+        operation: 'rpc:v34_autosave_draft_atomic',
+      });
+    }
+
+    if (!rpcResult.ok) {
+      const status =
+        rpcResult.status === 401 || rpcResult.status === 403 ? rpcResult.status : 409;
+      return {
+        ok: false,
+        status,
+        code: rpcResult.code,
+        message: rpcResult.error ?? 'Draft autosave rejected.',
+        conflict: rpcResult.conflict?.serverDraft
+          ? {
+              serverVersion: rpcResult.conflict.serverVersion,
+              serverDocument: rpcResult.conflict.serverDraft.document,
+              clientDocument: input.document,
+            }
+          : undefined,
+      };
+    }
+
+    if (!rpcResult.draft) {
+      throw new SupabasePersistenceError({
+        message: 'Atomic draft autosave succeeded without returning draft state.',
+        status: 503,
+        code: 'PERSISTENCE_FAILED',
+        operation: 'rpc:v34_autosave_draft_atomic',
+      });
+    }
+
+    return {
+      ok: true,
+      draft: rpcResult.draft,
+      replayed: Boolean(rpcResult.replayed),
+      storage: 'postgres',
+    };
+  }
+
+  const localResult = autosaveDraft(input);
+  if (!localResult.ok) {
+    return localResult;
+  }
+  return {
+    ...localResult,
+    storage: 'memory',
+  };
 }
 
 export async function persistLibraryItemToSupabase(
@@ -1325,7 +1695,7 @@ export function listContributions(options?: {
   query?: string;
   authorHandle?: string;
 }): ContributionRecord[] {
-  const items = [...state.contributions.values()].filter((item) => {
+  const items = filterVisibleRecords(state.contributions.values()).filter((item) => {
     const visible =
       item.lifecycle === 'published' ||
       (options?.includeDraftsForAuthorId && item.authorId === options.includeDraftsForAuthorId);

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAllV34FeatureFlags } from '@/lib/v34/feature-flags';
-import { requireContributor } from '@/lib/v34/http';
+import { enforceRateLimit, requireContributor } from '@/lib/v34/http';
 import {
   listClaims,
   listContributions,
@@ -31,7 +31,10 @@ export const dynamic = 'force-dynamic';
  * Strictly preserves boundary between Library, Sources, Goals, Projects,
  * Attention, Notifications, and optional Assistant Suggestions.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-dashboard-home', 90, 60_000);
+  if (limited) return limited;
+
   const started = performance.now();
   const auth = await requireContributor();
   if (!auth.ok) return auth.response;

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanupLoadedRoutes, loadRoute } from './support';
 
-type Handler = () => Promise<Response>;
+type Handler = (request: Request) => Promise<Response>;
 
 let GET: Handler;
 
@@ -40,7 +40,7 @@ afterEach(async () => {
 describe('GET /api/billing/entitlement', () => {
   it('is 401 when nobody is signed in', async () => {
     getDashboardUser.mockResolvedValue(null);
-    expect((await GET()).status).toBe(401);
+    expect((await GET(new Request('https://researchwith.me/api/billing/entitlement'))).status).toBe(401);
     expect(getEntitlement).not.toHaveBeenCalled();
   });
 
@@ -48,7 +48,7 @@ describe('GET /api/billing/entitlement', () => {
     getDashboardUser.mockResolvedValue({ id: 'user-1', email: 'reader@example.org', name: 'Reader', isEditor: false });
     getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'active', aiCredits: 0, currentPeriodEnd: null });
 
-    const res = await GET();
+    const res = await GET(new Request('https://researchwith.me/api/billing/entitlement'));
     expect(res.status).toBe(200);
     expect(res.headers.get('cache-control')).toContain('no-store');
     expect(await res.json()).toEqual({
@@ -60,6 +60,6 @@ describe('GET /api/billing/entitlement', () => {
   it('is 500 when the store cannot be read', async () => {
     getDashboardUser.mockResolvedValue({ id: 'user-1', email: 'reader@example.org', name: 'Reader', isEditor: false });
     getEntitlement.mockRejectedValue(new Error('connection reset'));
-    expect((await GET()).status).toBe(500);
+    expect((await GET(new Request('https://researchwith.me/api/billing/entitlement'))).status).toBe(500);
   });
 });

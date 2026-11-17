@@ -31,6 +31,7 @@ export async function POST(
       scope: `POST:/api/claims/${id}/evidence`,
       actorId: auth.actor.id,
       payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
     },
     async () => {
       const result = linkClaimEvidence({

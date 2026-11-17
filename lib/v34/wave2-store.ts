@@ -11,9 +11,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { slugify } from '@/lib/validation';
 import {
   getOptionalPublicSupabase,
+  isStrictPersistenceMode,
   isUuid,
   runSupabaseMutation,
   runSupabaseQuery,
+  shouldUseDemoSeeds,
 } from './supabase-sync';
 import { getContributionById } from './store';
 import type {
@@ -455,9 +457,11 @@ function createWave2Seed(): Wave2State {
 }
 
 let w2State: Wave2State = createWave2Seed();
+let W2_SEED_REVIEW_IDS = new Set<string>(w2State.reviews.keys());
 
 export function resetWave2StoreForTesting() {
   w2State = createWave2Seed();
+  W2_SEED_REVIEW_IDS = new Set<string>(w2State.reviews.keys());
 }
 
 function makeId(prefix: string): string {
@@ -471,23 +475,25 @@ export async function listWorkspaces(supabase?: SupabaseClient | null): Promise<
   const remote = await runSupabaseQuery<Record<string, unknown>[]>(sb, (c) =>
     c.from('v34_workspaces').select('*').order('updated_at', { ascending: false }).limit(50),
   );
-  const byId = new Map<string, WorkspaceRecord>(w2State.workspaces);
-  if (remote) {
-    for (const row of remote) {
-      const rec: WorkspaceRecord = {
-        id: String(row.id),
-        slug: String(row.slug),
-        name: String(row.name),
-        description: String(row.description ?? ''),
-        visibility: (row.visibility as WorkspaceRecord['visibility']) ?? 'public',
-        ownerId: typeof row.owner_id === 'string' ? row.owner_id : null,
-        createdAt: String(row.created_at),
-        updatedAt: String(row.updated_at),
-      };
-      byId.set(rec.id, rec);
-    }
+  // Wave 17 P0: NEVER merge in-memory demo seeds onto live Postgres reads.
+  if (remote !== null) {
+    return remote
+      .map(
+        (row): WorkspaceRecord => ({
+          id: String(row.id),
+          slug: String(row.slug),
+          name: String(row.name),
+          description: String(row.description ?? ''),
+          visibility: (row.visibility as WorkspaceRecord['visibility']) ?? 'public',
+          ownerId: typeof row.owner_id === 'string' ? row.owner_id : null,
+          createdAt: String(row.created_at),
+          updatedAt: String(row.updated_at),
+        }),
+      )
+      .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
-  return [...byId.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  if (!shouldUseDemoSeeds(false)) return [];
+  return [...w2State.workspaces.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
 export async function createWorkspace(input: {
@@ -621,27 +627,29 @@ export async function listProjects(
   const remote = await runSupabaseQuery<Record<string, unknown>[]>(sb, (c) =>
     c.from('v34_projects').select('*').order('updated_at', { ascending: false }).limit(50),
   );
-  const byId = new Map<string, ResearchProjectRecord>(w2State.projects);
-  if (remote) {
-    for (const row of remote) {
-      const rec: ResearchProjectRecord = {
-        id: String(row.id),
-        workspaceId: String(row.workspace_id),
-        slug: String(row.slug),
-        title: String(row.title),
-        objective: String(row.objective ?? ''),
-        stage: (row.stage as ProjectStage) ?? 'SCOPING',
-        visibility: (row.visibility as ResearchProjectRecord['visibility']) ?? 'public',
-        topics: Array.isArray(row.topics) ? row.topics.map(String) : [],
-        ownerId: typeof row.owner_id === 'string' ? row.owner_id : null,
-        createdAt: String(row.created_at),
-        updatedAt: String(row.updated_at),
-      };
-      byId.set(rec.id, rec);
-    }
+  let records: ResearchProjectRecord[];
+  // Wave 17 P0: NEVER merge in-memory demo seeds onto live Postgres reads.
+  if (remote !== null) {
+    records = remote.map((row) => ({
+      id: String(row.id),
+      workspaceId: String(row.workspace_id),
+      slug: String(row.slug),
+      title: String(row.title),
+      objective: String(row.objective ?? ''),
+      stage: (row.stage as ProjectStage) ?? 'SCOPING',
+      visibility: (row.visibility as ResearchProjectRecord['visibility']) ?? 'public',
+      topics: Array.isArray(row.topics) ? row.topics.map(String) : [],
+      ownerId: typeof row.owner_id === 'string' ? row.owner_id : null,
+      createdAt: String(row.created_at),
+      updatedAt: String(row.updated_at),
+    }));
+  } else if (shouldUseDemoSeeds(false)) {
+    records = [...w2State.projects.values()];
+  } else {
+    records = [];
   }
 
-  return [...byId.values()]
+  return records
     .filter((p) => {
       if (options?.workspaceId && p.workspaceId !== options.workspaceId) return false;
       if (options?.stage && options.stage !== 'all' && p.stage !== options.stage) return false;
@@ -1021,7 +1029,9 @@ function sanitizeReviewForAnonymity(review: FormalReviewRecord): FormalReviewRec
 }
 
 export function listFormalReviews(contributionId?: string): FormalReviewRecord[] {
+  const strict = isStrictPersistenceMode();
   return [...w2State.reviews.values()]
+    .filter((r) => !strict || !W2_SEED_REVIEW_IDS.has(r.id))
     .filter((r) => !contributionId || r.contributionId === contributionId)
     .map(sanitizeReviewForAnonymity)
     .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));

@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
-import { enforceRateLimit } from '@/lib/v34/http';
+import { getDashboardUser } from '@/lib/cms/auth';
+import { isSupabaseConfigured } from '@/lib/supabase/config';
+import {
+  authorizedClassificationsForActor,
+  enforceRateLimit,
+  requireAuthorized,
+} from '@/lib/v34/http';
 import { executeUnifiedSearch } from '@/lib/v34/search';
+import { getOptionalAuthSupabase } from '@/lib/v34/supabase-sync';
 import { SEARCH_ENTITY_TYPES, type SearchEntityType } from '@/lib/v34/wave6-contracts';
 
 export const runtime = 'nodejs';
@@ -11,6 +18,17 @@ const VALID_TYPE_SET = new Set<string>(SEARCH_ENTITY_TYPES);
 export async function GET(request: Request) {
   const limited = await enforceRateLimit(request, 'v34-search-query', 60, 60_000);
   if (limited) return limited;
+
+  const user = isSupabaseConfigured ? await getDashboardUser().catch(() => null) : null;
+  const actor = user
+    ? { id: user.id, isEditor: user.isEditor, mode: 'supabase' as const }
+    : null;
+
+  const authz = requireAuthorized(actor, 'search:read', {
+    kind: 'search',
+    classification: 'PUBLIC',
+  });
+  if (!authz.ok) return authz.response;
 
   const url = new URL(request.url);
   const q = (url.searchParams.get('q') ?? '').trim();
@@ -31,6 +49,8 @@ export async function GET(request: Request) {
     if (requested.length > 0) types = requested;
   }
 
+  const supabase = actor ? await getOptionalAuthSupabase() : null;
+
   const result = await executeUnifiedSearch({
     query: q,
     types,
@@ -38,7 +58,9 @@ export async function GET(request: Request) {
     access,
     language,
     topic,
-    authorizedClassifications: ['PUBLIC'],
+    actor,
+    authorizedClassifications: authorizedClassificationsForActor(actor),
+    supabase,
     limit,
   });
 

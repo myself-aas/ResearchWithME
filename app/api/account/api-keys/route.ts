@@ -2,6 +2,7 @@ import { apiError, apiJson } from '@/lib/api/errors';
 import { getApiKeyStore } from '@/lib/api/key-store';
 import { MAX_ACTIVE_KEYS, generateApiKey, hashApiKey } from '@/lib/api/keys';
 import { requireAccount } from '@/lib/api/session';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,6 +16,9 @@ function unavailable(error: unknown) {
 }
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'account-api-keys-list', 60, 60_000);
+  if (limited) return limited;
+
   const account = await requireAccount(request);
   if (!account.ok) return account.response;
   try {
@@ -25,6 +29,9 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const limited = await enforceRateLimit(request, 'account-api-keys-create', 20, 60_000);
+  if (limited) return limited;
+
   const account = await requireAccount(request);
   if (!account.ok) return account.response;
 

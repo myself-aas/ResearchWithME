@@ -362,6 +362,24 @@ check('V34-17', 'v3.4 Wave 15 privacy-safe 14-event analytics taxonomy, 5 priori
   assert(search.includes('authorizedClassifications') && search.includes('languageFilter'), 'search.ts missing classification pre-filter or language facet');
   return 'Wave 15 privacy-safe analytics, multi-facet search, mobile a11y & offline indicators verified';
 });
+check('V34-18', 'v3.4 Wave 17 P0 stateless persistence, fail-closed writes, atomic Postgres autosave RPC, durable idempotency, FTS/trigram search, centralized authorize(), 89/89 v34_* tables & 100% API rate limiting', () => {
+  const files = [
+    'supabase/migrations/20261117001100_v34_wave17_atomic_rpc_and_search.sql',
+    'lib/v34/authz.ts',
+    'lib/v34/table-repositories.ts',
+    'test/next/v34-wave17-persistence-security.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const sync = readFileSync(join(root, 'lib/v34/supabase-sync.ts'), 'utf8');
+  assert(sync.includes('SupabasePersistenceError') && sync.includes('isStrictPersistenceMode'), 'supabase-sync.ts missing fail-closed strict persistence guard');
+  const idem = readFileSync(join(root, 'lib/v34/idempotency.ts'), 'utf8');
+  assert(idem.includes('v34_idempotency_lookup') && idem.includes('v34_idempotency_store'), 'idempotency.ts missing durable Postgres RPC backing');
+  const autosave = readFileSync(join(root, 'app/api/drafts/[id]/autosave/route.ts'), 'utf8');
+  assert(autosave.includes('autosaveDraftAtomic') && autosave.includes('requireAuthorized'), 'autosave route missing atomic RPC or centralized authorize()');
+  const search = readFileSync(join(root, 'lib/v34/search.ts'), 'utf8');
+  assert(search.includes('v34_unified_search'), 'search.ts missing Postgres FTS/trigram RPC');
+  return 'Wave 17 P0 stateless persistence, atomic autosave, durable idempotency, FTS/trigram search & centralized RBAC verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

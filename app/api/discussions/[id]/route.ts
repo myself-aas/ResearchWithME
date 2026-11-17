@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server';
+import { enforceRateLimit } from '@/lib/v34/http';
 import { getDiscussionById } from '@/lib/v34/wave3-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ id: string }> },
 ) {
+  const limited = await enforceRateLimit(request, 'v34-discussions-get', 120, 60_000);
+  if (limited) return limited;
+
   const { id } = await context.params;
   const discussion = getDiscussionById(id);
   if (!discussion) {

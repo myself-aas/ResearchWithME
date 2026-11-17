@@ -1,11 +1,15 @@
 import { apiError } from '@/lib/api/errors';
 import { getApiKeyStore } from '@/lib/api/key-store';
 import { requireAccount } from '@/lib/api/session';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function DELETE(request: Request, context: { params: Promise<{ keyId: string }> }) {
+  const limited = await enforceRateLimit(request, 'account-api-keys-delete', 30, 60_000);
+  if (limited) return limited;
+
   const account = await requireAccount(request);
   if (!account.ok) return account.response;
 

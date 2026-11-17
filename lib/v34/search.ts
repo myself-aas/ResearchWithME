@@ -7,7 +7,14 @@
  *  - Discloses explicit `matchReason` and search `mode` (`lexical` | `identifier`)
  *  - Supports transparent, user-editable query expansion terms (`expandSearchQuery`)
  */
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { authorizedClassificationsForActor, type AuthzActor } from './authz';
 import { parseSourceIdentifier } from './contracts';
+import {
+  getOptionalPublicSupabase,
+  isStrictPersistenceMode,
+  runSupabaseRpc,
+} from './supabase-sync';
 import {
   listClaims,
   listContributions,
@@ -17,6 +24,23 @@ import { listProjects } from './wave2-store';
 import { listToolRepositories } from './wave3-store';
 import { listTopics } from './wave5-store';
 import type { SearchEntityType } from './wave6-contracts';
+
+interface PostgresUnifiedSearchRow {
+  id: string;
+  entity_type: SearchEntityType;
+  title: string;
+  snippet: string | null;
+  url: string;
+  mode: 'lexical' | 'identifier';
+  match_reason: string;
+  score: number;
+  integrity_status: string | null;
+  access_state: string | null;
+  language: string | null;
+  identifiers: string[] | null;
+  topics: string[] | null;
+  updated_at: string | null;
+}
 
 export interface SearchHit {
   id: string;
@@ -38,6 +62,7 @@ export interface SearchHit {
 export interface SearchResponse {
   query: string;
   mode: 'lexical' | 'identifier';
+  engine?: 'postgres-fts-trigram' | 'local-lexical';
   appliedTypes: SearchEntityType[];
   appliedFilters?: {
     integrity?: string;
@@ -131,7 +156,9 @@ export async function executeUnifiedSearch(options: {
   access?: string;
   language?: string;
   topic?: string;
+  actor?: AuthzActor | null;
   authorizedClassifications?: readonly string[];
+  supabase?: SupabaseClient | null;
   limit?: number;
 }): Promise<SearchResponse> {
   const started = performance.now();
@@ -144,14 +171,83 @@ export async function executeUnifiedSearch(options: {
   const integrityFilter = options.integrity?.trim().toLowerCase() ?? '';
   const accessFilter = options.access?.trim().toLowerCase() ?? '';
   const languageFilter = options.language?.trim().toLowerCase() ?? '';
+  const derivedClassifications = options.authorizedClassifications?.length
+    ? options.authorizedClassifications
+    : authorizedClassificationsForActor(options.actor ?? null);
   const allowedClassifications = new Set(
-    (options.authorizedClassifications?.length ? options.authorizedClassifications : ['PUBLIC']).map(
-      (c) => c.toUpperCase(),
-    ),
+    derivedClassifications.map((c) => c.toUpperCase()),
   );
 
   const parsedIdentifier = rawQuery ? parseSourceIdentifier(rawQuery) : null;
   const mode: 'lexical' | 'identifier' = parsedIdentifier ? 'identifier' : 'lexical';
+  const appliedFilters = {
+    ...(integrityFilter ? { integrity: integrityFilter } : {}),
+    ...(accessFilter ? { access: accessFilter } : {}),
+    ...(languageFilter ? { language: languageFilter } : {}),
+    ...(topicFilter ? { topic: topicFilter } : {}),
+  };
+
+  // Wave 17 P0: Native PostgreSQL FTS + pg_trgm + normalized identifier RPC
+  const sb = options.supabase ?? getOptionalPublicSupabase();
+  if (sb) {
+    const remoteRows = await runSupabaseRpc<PostgresUnifiedSearchRow[]>(sb, 'v34_unified_search', {
+      p_query: rawQuery,
+      p_types: allowedTypes,
+      p_integrity: integrityFilter || null,
+      p_access: accessFilter || null,
+      p_language: languageFilter || null,
+      p_topic: topicFilter || null,
+      p_classifications: [...allowedClassifications].map((c) => c.toLowerCase()),
+      p_identifier_scheme: parsedIdentifier?.scheme ?? null,
+      p_identifier_value: parsedIdentifier?.value ?? null,
+      p_limit: options.limit ?? 40,
+    });
+
+    if (remoteRows !== null) {
+      const pgHits: SearchHit[] = remoteRows.map((row) => ({
+        id: row.id,
+        type: row.entity_type,
+        title: row.title,
+        snippet: row.snippet ?? '',
+        url: row.url,
+        mode: row.mode === 'identifier' ? 'identifier' : 'lexical',
+        matchReason: row.match_reason,
+        score: Number(row.score ?? 1),
+        ...(row.integrity_status ? { integrityStatus: row.integrity_status } : {}),
+        ...(row.access_state ? { accessState: row.access_state } : {}),
+        ...(row.language ? { language: row.language } : {}),
+        identifiers: Array.isArray(row.identifiers) ? row.identifiers : [],
+        topics: Array.isArray(row.topics) ? row.topics : [],
+        ...(row.updated_at ? { updatedAt: row.updated_at } : {}),
+      }));
+
+      return {
+        query: rawQuery,
+        mode,
+        engine: 'postgres-fts-trigram',
+        appliedTypes: allowedTypes,
+        appliedFilters,
+        hits: pgHits,
+        total: pgHits.length,
+        latencyMs: Math.max(1, Math.round(performance.now() - started)),
+      };
+    }
+  }
+
+  // Strict persistence mode: never leak in-memory demo seeds on degraded DB reads
+  if (isStrictPersistenceMode()) {
+    return {
+      query: rawQuery,
+      mode,
+      engine: 'postgres-fts-trigram',
+      appliedTypes: allowedTypes,
+      appliedFilters,
+      hits: [],
+      total: 0,
+      latencyMs: Math.max(1, Math.round(performance.now() - started)),
+    };
+  }
+
   const queryTerms = rawQuery
     .toLowerCase()
     .split(/\s+/)
@@ -389,13 +485,9 @@ export async function executeUnifiedSearch(options: {
   return {
     query: rawQuery,
     mode,
+    engine: 'local-lexical',
     appliedTypes: allowedTypes,
-    appliedFilters: {
-      ...(integrityFilter ? { integrity: integrityFilter } : {}),
-      ...(accessFilter ? { access: accessFilter } : {}),
-      ...(languageFilter ? { language: languageFilter } : {}),
-      ...(topicFilter ? { topic: topicFilter } : {}),
-    },
+    appliedFilters,
     hits: limited,
     total: hits.length,
     latencyMs: Math.max(1, Math.round(performance.now() - started)),

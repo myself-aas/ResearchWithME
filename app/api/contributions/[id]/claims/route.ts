@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import { enforceRateLimit, parseJsonBody, requireAuthorized, requireContributor } from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
 import {
   getContributionById,
@@ -27,16 +27,25 @@ export async function POST(
   if (!existing) {
     return NextResponse.json({ error: 'Contribution not found.' }, { status: 404 });
   }
-  if (existing.authorId && existing.authorId !== auth.actor.id && !auth.actor.isEditor) {
-    return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });
-  }
+  const authz = requireAuthorized(auth.actor, 'contribution:write', {
+    kind: 'contribution',
+    id: existing.id,
+    ownerId: existing.authorId,
+    classification: 'PUBLIC',
+  });
+  if (!authz.ok) return authz.response;
 
   const parsed = await parseJsonBody(request, ContributionLinkClaimInputSchema);
   if (!parsed.ok) return parsed.response;
 
   return runWithIdempotency(
     request,
-    { scope: `POST:/api/contributions/${id}/claims`, actorId: auth.actor.id, payloadHashInput: parsed.data },
+    {
+      scope: `POST:/api/contributions/${id}/claims`,
+      actorId: auth.actor.id,
+      payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
+    },
     async () => {
       const result = linkClaimToContribution(id, parsed.data.claimId);
       if (!result.ok) {

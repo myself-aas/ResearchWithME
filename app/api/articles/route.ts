@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getArticleCatalogue } from '@/lib/cms/catalogue';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 
 export async function GET(request: NextRequest) {
+  const limited = await enforceRateLimit(request, 'articles-list', 120, 60_000);
+  if (limited) return limited;
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');

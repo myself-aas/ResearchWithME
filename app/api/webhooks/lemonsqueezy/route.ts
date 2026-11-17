@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { billingEventIgnoredReason, normaliseBillingEvent } from '@/lib/billing/events';
 import { verifyLemonSignature } from '@/lib/billing/signature';
 import { getBillingStore, isBillingConfigured } from '@/lib/billing/store';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -45,6 +46,9 @@ export async function POST(request: Request) {
       { status: 503 },
     );
   }
+
+  const limited = await enforceRateLimit(request, 'webhook-lemonsqueezy', 120, 60_000);
+  if (limited) return limited;
 
   const declared = Number(request.headers.get('content-length') ?? '0');
   if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {

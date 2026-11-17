@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { noStoreHeaders } from '@/lib/cms/http';
 import { getBillingStore, isBillingConfigured } from '@/lib/billing/store';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -15,7 +16,9 @@ export const dynamic = 'force-dynamic';
  * local equivalent. Never cached — a purchase should be visible on the next
  * request, not after a 30 s window.
  */
-export async function GET() {
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'billing-entitlement', 60, 60_000);
+  if (limited) return limited;
   const user = await getDashboardUser();
   if (!user) {
     return NextResponse.json(

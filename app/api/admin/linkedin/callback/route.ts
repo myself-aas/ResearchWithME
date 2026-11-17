@@ -5,6 +5,7 @@ import { requireEditorInChief } from '@/lib/cms/auth';
 import { noStoreHeaders } from '@/lib/cms/http';
 import { timingSafeEqualStrings } from '@/lib/crypto';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,9 @@ function dashboardRedirect(request: NextRequest, params: Record<string, string>)
 }
 
 export async function GET(request: NextRequest) {
+  const limited = await enforceRateLimit(request, 'admin-linkedin-callback', 20, 60_000);
+  if (limited) return limited;
+
   const gate = await requireEditorInChief();
   if (!gate.ok) {
     return NextResponse.json({ error: gate.error }, { status: gate.status, headers: noStoreHeaders() });

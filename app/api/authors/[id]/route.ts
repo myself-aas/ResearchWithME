@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { getAuthorArchive } from '@/lib/author-directory';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -13,6 +14,8 @@ export const dynamic = 'force-dynamic';
  * for every author.
  */
 export async function GET(request: Request, props: { params: Promise<{ id: string }> }) {
+  const limited = await enforceRateLimit(request, 'authors-get', 120, 60_000);
+  if (limited) return limited;
   try {
     const { id } = await props.params;
     if (!id) {

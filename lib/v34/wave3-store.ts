@@ -17,10 +17,15 @@ import {
   isUuid,
   runSupabaseMutation,
   runSupabaseQuery,
+  shouldUseDemoSeeds,
 } from './supabase-sync';
 import { getSourceWithDetails } from './store';
 import { getProjectByIdOrSlug } from './wave2-store';
 import { buildNotificationDedupeKey, notificationPreview } from './notifications-safe';
+import {
+  persistMobileExperiencePrefToSupabase,
+  persistRecognitionSignalToSupabase,
+} from './table-repositories';
 import type { DataClassification } from './wave6-contracts';
 import type {
   AssistantTaskType,
@@ -801,35 +806,36 @@ export async function listToolRepositories(options?: {
   const remote = await runSupabaseQuery<Record<string, unknown>[]>(sb, (c) =>
     c.from('v34_tool_repositories').select('*').order('updated_at', { ascending: false }).limit(50),
   );
-  const byId = new Map<string, ToolRepositoryRecord>(w3State.tools);
-  if (remote) {
-    for (const row of remote) {
-      const id = String(row.id);
-      if (byId.has(id)) continue;
-      byId.set(id, {
-        id,
-        slug: String(row.slug),
-        name: String(row.name),
-        provider: (row.provider as ToolProvider) ?? 'github',
-        ownerName: String(row.owner_name ?? 'open-source'),
-        repoName: String(row.repo_name ?? row.slug),
-        repositoryUrl: String(row.repository_url),
-        summary: String(row.summary ?? ''),
-        license: typeof row.license === 'string' ? row.license : null,
-        primaryLanguage: typeof row.primary_language === 'string' ? row.primary_language : null,
-        topics: Array.isArray(row.topics) ? row.topics.map(String) : [],
-        starsCount: typeof row.stars_count === 'number' ? row.stars_count : null,
-        forksCount: typeof row.forks_count === 'number' ? row.forks_count : null,
-        latestReleaseTag: typeof row.latest_release_tag === 'string' ? row.latest_release_tag : null,
-        observedAt: String(row.observed_at ?? row.updated_at ?? new Date().toISOString()),
-        linkedSources: [],
-        createdAt: String(row.created_at),
-        updatedAt: String(row.updated_at),
-      });
-    }
+  // Wave 17 P0: NEVER merge in-memory demo seeds onto live Postgres reads.
+  let tools: ToolRepositoryRecord[];
+  if (remote !== null) {
+    tools = remote.map((row) => ({
+      id: String(row.id),
+      slug: String(row.slug),
+      name: String(row.name),
+      provider: (row.provider as ToolProvider) ?? 'github',
+      ownerName: String(row.owner_name ?? 'open-source'),
+      repoName: String(row.repo_name ?? row.slug),
+      repositoryUrl: String(row.repository_url),
+      summary: String(row.summary ?? ''),
+      license: typeof row.license === 'string' ? row.license : null,
+      primaryLanguage: typeof row.primary_language === 'string' ? row.primary_language : null,
+      topics: Array.isArray(row.topics) ? row.topics.map(String) : [],
+      starsCount: typeof row.stars_count === 'number' ? row.stars_count : null,
+      forksCount: typeof row.forks_count === 'number' ? row.forks_count : null,
+      latestReleaseTag: typeof row.latest_release_tag === 'string' ? row.latest_release_tag : null,
+      observedAt: String(row.observed_at ?? row.updated_at ?? new Date().toISOString()),
+      linkedSources: [],
+      createdAt: String(row.created_at),
+      updatedAt: String(row.updated_at),
+    }));
+  } else if (shouldUseDemoSeeds(false)) {
+    tools = [...w3State.tools.values()];
+  } else {
+    tools = [];
   }
 
-  return [...byId.values()]
+  return tools
     .filter((tool) => {
       if (options?.topic && !tool.topics.some((t) => t.toLowerCase() === options.topic!.toLowerCase())) {
         return false;
@@ -1508,6 +1514,22 @@ export async function recordRecognitionEvent(input: {
         object_id: event.objectId,
       }),
     );
+    const kindMap: Record<RecognitionEventType, 'helpful_review' | 'referenced' | 'evidence_used' | 'validated_insight' | 'replication_documented'> = {
+      REVIEW_HELPFUL: 'helpful_review',
+      CONTRIBUTION_REFERENCED: 'referenced',
+      EVIDENCE_REUSED: 'evidence_used',
+      CORRECTION_ACCEPTED: 'validated_insight',
+      REPLICATION_REPORTED: 'replication_documented',
+      REVIEW_COMPLETED: 'helpful_review',
+    };
+    if (event.objectType === 'contribution') {
+      await persistRecognitionSignalToSupabase(input.supabase, {
+        id: `rsig-${event.id}`,
+        contributionId: event.objectId,
+        actorId: input.actorId,
+        kind: kindMap[event.eventType],
+      });
+    }
   }
 
   return {
@@ -1619,6 +1641,9 @@ export async function updateDashboardPreferences(input: {
         updated_at: now,
       }),
     );
+    await persistMobileExperiencePrefToSupabase(input.supabase, {
+      userId: input.userId,
+    });
   }
 
   return updated;

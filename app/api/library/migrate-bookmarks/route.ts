@@ -31,6 +31,7 @@ export async function POST(request: Request) {
       scope: 'POST:/api/library/migrate-bookmarks',
       actorId: auth.actor.id,
       payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
     },
     async () => {
       const existingKeys = new Set(

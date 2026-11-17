@@ -368,7 +368,7 @@ describe('ResearchWithME v3.4 Wave 6 — Search, AI Governance, Lifecycle, Expor
     expect(await dlRes.text()).toContain('@misc{');
 
     // 3. Aggregated /api/dashboard/home
-    const homeRes = await getDashboardHome();
+    const homeRes = await getDashboardHome(new Request('http://localhost/api/dashboard/home'));
     expect(homeRes.status).toBe(200);
     const home = await homeRes.json();
     expect(home.attentionQueue).toBeDefined();

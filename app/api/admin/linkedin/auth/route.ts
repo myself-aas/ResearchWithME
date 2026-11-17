@@ -2,11 +2,14 @@ import { NextResponse } from 'next/server';
 import { getAuthUrl } from '@/lib/linkedin/oauth';
 import { requireEditorInChief } from '@/lib/cms/auth';
 import { noStoreHeaders } from '@/lib/cms/http';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'admin-linkedin-auth', 20, 60_000);
+  if (limited) return limited;
   const gate = await requireEditorInChief();
   if (!gate.ok) {
     return NextResponse.json({ error: gate.error }, { status: gate.status, headers: noStoreHeaders() });

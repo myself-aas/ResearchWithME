@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
 import { AutosaveDraftInputSchema } from '@/lib/v34/contracts';
-import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
-import { autosaveDraft, persistDraftToSupabase } from '@/lib/v34/store';
+import {
+  enforceRateLimit,
+  handleV34Error,
+  parseJsonBody,
+  requireAuthorized,
+  requireContributor,
+} from '@/lib/v34/http';
+import { autosaveDraftAtomic, getDraft } from '@/lib/v34/store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -17,31 +23,45 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
   if (!parsed.ok) return parsed.response;
 
   const { id } = await context.params;
-  const result = autosaveDraft({
-    draftId: id,
-    authorId: auth.actor.id,
-    ...parsed.data,
+  const existing = getDraft(id, auth.actor.id);
+  const authz = requireAuthorized(auth.actor, 'draft:write', {
+    kind: 'draft',
+    id,
+    ownerId: existing?.authorId ?? auth.actor.id,
+    classification: 'CONFIDENTIAL',
   });
+  if (!authz.ok) return authz.response;
 
-  if (!result.ok) {
+  try {
+    const result = await autosaveDraftAtomic({
+      draftId: id,
+      authorId: auth.actor.id,
+      supabase: auth.actor.supabase,
+      ...parsed.data,
+    });
+
+    if (!result.ok) {
+      return NextResponse.json(
+        {
+          error: result.message,
+          code: result.code,
+          conflict: result.conflict,
+        },
+        { status: result.status },
+      );
+    }
+
     return NextResponse.json(
+      { draft: result.draft, replayed: result.replayed },
       {
-        error: result.message,
-        conflict: result.conflict,
+        status: 200,
+        headers: {
+          'X-Idempotency-Replayed': result.replayed ? 'true' : 'false',
+          'X-Persistence-Storage': result.storage,
+        },
       },
-      { status: result.status },
     );
+  } catch (err) {
+    return handleV34Error(err);
   }
-
-  await persistDraftToSupabase(auth.actor.supabase, result.draft);
-
-  return NextResponse.json(
-    { draft: result.draft, replayed: result.replayed },
-    {
-      status: 200,
-      headers: {
-        'X-Idempotency-Replayed': result.replayed ? 'true' : 'false',
-      },
-    },
-  );
 }

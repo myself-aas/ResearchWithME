@@ -165,8 +165,8 @@ describe('Hardened LinkedIn routes (editorial-only)', () => {
   describe('Admin LinkedIn OAuth & manual post routes', () => {
     it('blocks non-Editor-in-Chief on auth, callback, status, and post', async () => {
       mockGate.mockResolvedValue({ ok: false, status: 403, error: 'Forbidden' });
-      expect((await authGet()).status).toBe(403);
-      expect((await statusGet()).status).toBe(403);
+      expect((await authGet(new Request('https://researchwith.me/api/admin/linkedin/auth'))).status).toBe(403);
+      expect((await statusGet(new Request('https://researchwith.me/api/admin/linkedin/status'))).status).toBe(403);
       expect(
         (await callbackGet(new NextRequest('https://researchwith.me/api/admin/linkedin/callback?code=c&state=s'))).status,
       ).toBe(403);

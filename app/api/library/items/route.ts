@@ -28,7 +28,12 @@ export async function POST(request: Request) {
 
   return runWithIdempotency(
     request,
-    { scope: 'v34-library-items-create', actorId: auth.actor.id, payloadHashInput: parsed.data },
+    {
+      scope: 'v34-library-items-create',
+      actorId: auth.actor.id,
+      payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
+    },
     async () => {
       const itemType = mapObjectType(parsed.data.targetType);
       const item = upsertLibraryItem(auth.actor.id, {

@@ -1,12 +1,26 @@
 import { NextResponse } from 'next/server';
-import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import {
+  enforceRateLimit,
+  handleV34Error,
+  parseJsonBody,
+  requireAuthorized,
+  requireContributor,
+} from '@/lib/v34/http';
 import { UpdateProjectInputSchema } from '@/lib/v34/wave2-contracts';
-import { deleteProject, getProjectByIdOrSlug, updateProject } from '@/lib/v34/wave2-store';
+import {
+  deleteProject,
+  getProjectByIdOrSlug,
+  listWorkspaceMembers,
+  updateProject,
+} from '@/lib/v34/wave2-store';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: Request, context: { params: Promise<{ id: string }> }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
+  const limited = await enforceRateLimit(request, 'v34-projects-get', 120, 60_000);
+  if (limited) return limited;
+
   const { id } = await context.params;
   const project = await getProjectByIdOrSlug(id);
   if (!project) {
@@ -26,11 +40,32 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
   if (!parsed.ok) return parsed.response;
 
   const { id } = await context.params;
-  const updated = await updateProject(id, parsed.data, auth.actor.supabase);
-  if (!updated) {
-    return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
+  const existing = await getProjectByIdOrSlug(id, auth.actor.supabase);
+  if (existing) {
+    const member = listWorkspaceMembers(existing.workspaceId).find(
+      (m) => m.userId === auth.actor.id && m.status === 'ACTIVE',
+    );
+    const authz = requireAuthorized(auth.actor, 'project:write', {
+      kind: 'project',
+      id: existing.id,
+      ownerId: existing.ownerId,
+      workspaceId: existing.workspaceId,
+      workspaceRole: member?.role ?? null,
+      isWorkspaceMember: Boolean(member),
+      visibility: existing.visibility,
+    });
+    if (!authz.ok) return authz.response;
   }
-  return NextResponse.json({ project: updated });
+
+  try {
+    const updated = await updateProject(id, parsed.data, auth.actor.supabase);
+    if (!updated) {
+      return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
+    }
+    return NextResponse.json({ project: updated });
+  } catch (err) {
+    return handleV34Error(err);
+  }
 }
 
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
@@ -41,9 +76,30 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
   if (!auth.ok) return auth.response;
 
   const { id } = await context.params;
-  const ok = await deleteProject(id, auth.actor.supabase);
-  if (!ok) {
-    return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
+  const existing = await getProjectByIdOrSlug(id, auth.actor.supabase);
+  if (existing) {
+    const member = listWorkspaceMembers(existing.workspaceId).find(
+      (m) => m.userId === auth.actor.id && m.status === 'ACTIVE',
+    );
+    const authz = requireAuthorized(auth.actor, 'project:delete', {
+      kind: 'project',
+      id: existing.id,
+      ownerId: existing.ownerId,
+      workspaceId: existing.workspaceId,
+      workspaceRole: member?.role ?? null,
+      isWorkspaceMember: Boolean(member),
+      visibility: existing.visibility,
+    });
+    if (!authz.ok) return authz.response;
   }
-  return NextResponse.json({ deleted: true, id });
+
+  try {
+    const ok = await deleteProject(id, auth.actor.supabase);
+    if (!ok) {
+      return NextResponse.json({ error: 'Project not found.' }, { status: 404 });
+    }
+    return NextResponse.json({ deleted: true, id });
+  } catch (err) {
+    return handleV34Error(err);
+  }
 }

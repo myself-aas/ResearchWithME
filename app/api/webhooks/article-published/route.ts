@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { handleArticlePublished } from '@/lib/linkedin/automation';
 import { noStoreHeaders } from '@/lib/cms/http';
 import { verifyHmacSha256Signature } from '@/lib/crypto';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,9 @@ interface PostWebhookPayload {
 }
 
 export async function POST(request: NextRequest) {
+  const limited = await enforceRateLimit(request, 'webhook-article-published', 60, 60_000);
+  if (limited) return limited;
+
   const webhookSecret = (process.env.LINKEDIN_WEBHOOK_SECRET ?? '').trim();
   if (!webhookSecret) {
     return NextResponse.json(

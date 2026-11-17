@@ -26,9 +26,11 @@ import {
   isUuid,
   runSupabaseMutation,
   runSupabaseQuery,
+  shouldUseDemoSeeds,
 } from './supabase-sync';
 import { listWorkspaceMembers } from './wave2-store';
 import { listToolRepositories } from './wave3-store';
+import { linkTopicToEntityInSupabase } from './table-repositories';
 import type {
   AlertCadence,
   CollectionVisibility,
@@ -475,36 +477,40 @@ function ensureUserBucket<T>(map: Map<string, T[]>, userId: string): T[] {
 
 // ── 1. Topics & FK-backed Assignments ──────────────────────────────────────
 
-export async function listTopics(): Promise<TopicWithCounts[]> {
-  const remote = await runSupabaseQuery<Record<string, unknown>[]>(
-    getOptionalPublicSupabase(),
-    (sb) => sb.from('v34_topics').select('*').order('name', { ascending: true }).limit(100),
+export async function listTopics(supabase?: SupabaseClient | null): Promise<TopicWithCounts[]> {
+  const sb = supabase ?? getOptionalPublicSupabase();
+  const remote = await runSupabaseQuery<Record<string, unknown>[]>(sb, (c) =>
+    c.from('v34_topics').select('*').order('name', { ascending: true }).limit(100),
   );
-  if (remote) {
-    for (const row of remote) {
-      const id = String(row.id);
-      if (!w5State.topics.has(id)) {
-        w5State.topics.set(id, {
-          id,
-          slug: String(row.slug),
-          name: String(row.name),
-          description: String(row.description ?? ''),
-          parentTopicId: row.parent_topic_id ? String(row.parent_topic_id) : null,
-          createdAt: String(row.created_at ?? new Date().toISOString()),
-          updatedAt: String(row.updated_at ?? new Date().toISOString()),
-        });
-      }
-    }
+
+  // Wave 17 P0: NEVER merge in-memory demo seeds onto live Postgres reads.
+  let topicsList: TopicRecord[];
+  if (remote !== null) {
+    topicsList = remote.map((row) => ({
+      id: String(row.id),
+      slug: String(row.slug),
+      name: String(row.name),
+      description: String(row.description ?? ''),
+      parentTopicId: row.parent_topic_id ? String(row.parent_topic_id) : null,
+      createdAt: String(row.created_at ?? new Date().toISOString()),
+      updatedAt: String(row.updated_at ?? new Date().toISOString()),
+    }));
+  } else if (shouldUseDemoSeeds(false)) {
+    topicsList = [...w5State.topics.values()];
+  } else {
+    topicsList = [];
   }
 
   const assignmentsByTopic = new Map<string, TopicAssignmentRecord[]>();
-  for (const a of w5State.topicAssignments.values()) {
-    const bucket = assignmentsByTopic.get(a.topicId) ?? [];
-    bucket.push(a);
-    assignmentsByTopic.set(a.topicId, bucket);
+  if (remote === null && shouldUseDemoSeeds(false)) {
+    for (const a of w5State.topicAssignments.values()) {
+      const bucket = assignmentsByTopic.get(a.topicId) ?? [];
+      bucket.push(a);
+      assignmentsByTopic.set(a.topicId, bucket);
+    }
   }
 
-  return [...w5State.topics.values()]
+  return topicsList
     .map((topic) => {
       const assignments = assignmentsByTopic.get(topic.id) ?? [];
       return {
@@ -601,6 +607,17 @@ export async function assignTopicToTarget(input: {
         assigned_by: isUuid(input.actorId) ? input.actorId : null,
       }),
     );
+    if (
+      assignment.targetType === 'source' ||
+      assignment.targetType === 'tool' ||
+      assignment.targetType === 'contribution'
+    ) {
+      await linkTopicToEntityInSupabase(input.supabase, {
+        targetType: assignment.targetType,
+        targetId: assignment.targetId,
+        topicId: assignment.topicId,
+      });
+    }
   }
   return { ok: true, assignment };
 }

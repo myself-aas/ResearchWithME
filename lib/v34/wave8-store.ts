@@ -18,6 +18,7 @@ import {
   listUserDrafts,
 } from './store';
 import { getWorkspaceById, listWorkspaceMembers } from './wave2-store';
+import { persistAssistantMessageToSupabase } from './table-repositories';
 import {
   listAttentionItems,
   listNotifications,
@@ -711,6 +712,25 @@ export async function postAssistantSessionMessage(input: {
   };
   getState().assistantMessages.push(assistantMessage);
   session.updatedAt = assistantMessage.createdAt;
+
+  if (input.supabase) {
+    await persistAssistantMessageToSupabase(input.supabase, {
+      sessionId: session.id,
+      userId: input.userId,
+      role: 'user',
+      content: userMessage.content,
+      citedSourceIds,
+      provenanceId: null,
+    });
+    await persistAssistantMessageToSupabase(input.supabase, {
+      sessionId: session.id,
+      userId: input.userId,
+      role: 'assistant',
+      content: assistantMessage.content,
+      citedSourceIds,
+      provenanceId: provenance.id,
+    });
+  }
 
   return { ok: true, userMessage, assistantMessage, provenanceId: provenance.id };
 }

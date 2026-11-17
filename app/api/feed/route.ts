@@ -4,11 +4,14 @@ import { CONTRIBUTION_TYPES, type ContributionType } from '@/lib/v34/contracts';
 import { assignExperimentVariant } from '@/lib/v34/experiments';
 import { getAllV34FeatureFlags } from '@/lib/v34/feature-flags';
 import { getUnifiedResearchFeed } from '@/lib/v34/feed';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
+  const limited = await enforceRateLimit(request, 'v34-feed-get', 120, 60_000);
+  if (limited) return limited;
   const url = new URL(request.url);
   const rawType = url.searchParams.get('type') ?? 'all';
   const type =

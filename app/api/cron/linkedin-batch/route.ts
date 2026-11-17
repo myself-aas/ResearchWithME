@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkAndPostNewArticles } from '@/lib/linkedin/automation';
 import { noStoreHeaders } from '@/lib/cms/http';
 import { timingSafeEqualStrings } from '@/lib/crypto';
+import { enforceRateLimit } from '@/lib/v34/http';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const limited = await enforceRateLimit(request, 'cron-linkedin-batch', 15, 60_000);
+  if (limited) return limited;
   const cronSecret = (process.env.CRON_SECRET ?? '').trim();
   if (!cronSecret) {
     return NextResponse.json(

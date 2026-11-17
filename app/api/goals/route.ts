@@ -32,7 +32,12 @@ export async function POST(request: Request) {
 
   return runWithIdempotency(
     request,
-    { scope: 'POST:/api/goals', actorId: auth.actor.id, payloadHashInput: parsed.data },
+    {
+      scope: 'POST:/api/goals',
+      actorId: auth.actor.id,
+      payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
+    },
     async () => {
       const goal = createResearchGoal(auth.actor.id, parsed.data);
       await persistResearchGoalToSupabase(auth.actor.supabase, goal);

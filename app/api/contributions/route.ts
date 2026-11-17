@@ -6,7 +6,13 @@ import {
   serializeResearchDocumentToMdx,
   type ContributionType,
 } from '@/lib/v34/contracts';
-import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
+import {
+  enforceRateLimit,
+  handleV34Error,
+  parseJsonBody,
+  requireAuthorized,
+  requireContributor,
+} from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
 import { validateAndSanitizeMdx } from '@/lib/v34/mdx-security';
 import { createContribution, listContributions, persistContributionToSupabase } from '@/lib/v34/store';
@@ -61,19 +67,35 @@ export async function POST(request: Request) {
     );
   }
 
+  const authz = requireAuthorized(auth.actor, 'contribution:write', {
+    kind: 'contribution',
+    ownerId: auth.actor.id,
+    classification: 'PUBLIC',
+  });
+  if (!authz.ok) return authz.response;
+
   return runWithIdempotency(
     request,
-    { scope: 'v34-contributions-create', actorId: auth.actor.id, payloadHashInput: parsed.data },
+    {
+      scope: 'v34-contributions-create',
+      actorId: auth.actor.id,
+      payloadHashInput: parsed.data,
+      supabase: auth.actor.supabase,
+    },
     async () => {
-      const contribution = createContribution({
-        ...parsed.data,
-        authorId: auth.actor.id,
-        authorHandle: auth.actor.handle,
-        authorName: auth.actor.name,
-      });
+      try {
+        const contribution = createContribution({
+          ...parsed.data,
+          authorId: auth.actor.id,
+          authorHandle: auth.actor.handle,
+          authorName: auth.actor.name,
+        });
 
-      await persistContributionToSupabase(auth.actor.supabase, contribution);
-      return NextResponse.json({ contribution }, { status: 201 });
+        await persistContributionToSupabase(auth.actor.supabase, contribution);
+        return NextResponse.json({ contribution }, { status: 201 });
+      } catch (err) {
+        return handleV34Error(err);
+      }
     },
   );
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { enforceRateLimit } from '@/lib/v34/http';
 import { listContributions } from '@/lib/v34/store';
 import { getRecognitionSummary } from '@/lib/v34/wave3-store';
 import { getPublicProfileByUsername } from '@/lib/v34/wave7-store';
@@ -7,9 +8,12 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ username: string }> },
 ) {
+  const limited = await enforceRateLimit(request, 'v34-profiles-get', 120, 60_000);
+  if (limited) return limited;
+
   const { username } = await context.params;
   const profile = getPublicProfileByUsername(username);
   if (!profile) {

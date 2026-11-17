@@ -5,7 +5,32 @@ import { getDashboardUser, type DashboardUser } from '@/lib/cms/auth';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { clientKey, rateLimit } from '@/lib/rate-limit';
 import { slugify } from '@/lib/validation';
-import { getOptionalAuthSupabase } from './supabase-sync';
+import {
+  authorize,
+  authorizedClassificationsForActor,
+  requireAuthorized,
+  type AuthzCapability,
+  type AuthzResource,
+} from './authz';
+import { getOptionalAuthSupabase, SupabasePersistenceError } from './supabase-sync';
+
+export { authorize, authorizedClassificationsForActor, requireAuthorized };
+export type { AuthzCapability, AuthzResource };
+
+export function handleV34Error(err: unknown): NextResponse {
+  if (err instanceof SupabasePersistenceError) {
+    return NextResponse.json(
+      {
+        error: err.message,
+        code: err.code,
+        operation: err.operation,
+      },
+      { status: err.status },
+    );
+  }
+  const message = err instanceof Error ? err.message : 'Unexpected server error.';
+  return NextResponse.json({ error: message, code: 'INTERNAL_ERROR' }, { status: 500 });
+}
 
 export interface ContributorIdentity {
   id: string;
@@ -65,11 +90,12 @@ export async function requireContributor(): Promise<ContributorGate> {
 }
 
 export async function enforceRateLimit(
-  request: Request,
+  request: Request | undefined,
   scope: string,
   limit = 30,
   windowMs = 60_000,
 ): Promise<NextResponse | null> {
+  if (!request) return null;
   const outcome = await rateLimit(clientKey(request, scope), limit, windowMs);
   if (!outcome.allowed) {
     return NextResponse.json(
