@@ -17,6 +17,8 @@ export const ALLOWED_MDX_COMPONENTS = new Set([
   'LimitationBox',
   'ToolReviewCard',
   'DataTable',
+  'EquationBlock',
+  'DiagramBlock',
   'FigureBlock',
   'Callout',
 ]);

@@ -303,6 +303,21 @@ check('V34-13', 'v3.4 Wave 11 Continue Working + interactive Goals, 15 /dashboar
   assert(ros.includes('handleGoalProgress'), 'ResearchOsClient missing interactive Research Goals controls');
   return `${files.length} Wave 11 operational engines, dashboard deep links & security artifacts verified`;
 });
+check('V34-14', 'v3.4 Wave 12 full 13-block MDX editor + Undo/Redo, Contribution Pipeline + Private Activity + Personalization, CSL-JSON citations, ResponsiveDataTable & CI E2E gate present', () => {
+  const files = [
+    'components/v34/ResponsiveDataTable.tsx',
+    'test/next/v34-wave12-parity.test.ts',
+    '.github/workflows/quality.yml',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const editor = readFileSync(join(root, 'components/v34/ScholarlyEditorWorkspace.tsx'), 'utf8');
+  assert(editor.includes('handleUndo') && editor.includes('tool_review'), 'ScholarlyEditorWorkspace missing Undo/Redo or tool_review block');
+  const ros = readFileSync(join(root, 'components/v34/ResearchOsClient.tsx'), 'utf8');
+  assert(ros.includes('Contribution Pipeline') && ros.includes('Private Research Activity'), 'ResearchOsClient missing Pipeline/Activity modules');
+  const workflow = readFileSync(join(root, '.github/workflows/quality.yml'), 'utf8');
+  assert(workflow.includes('v34-a11y-reflow.spec.ts'), 'quality.yml missing Playwright v3.4 a11y/reflow job');
+  return 'Wave 12 editor blocks, Research OS completeness, CSL-JSON, ResponsiveDataTable & CI E2E gate verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

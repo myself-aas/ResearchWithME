@@ -11,7 +11,14 @@ import { ArrowLeft, Copy, Download, Quote } from 'lucide-react';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { BlogPost, INITIAL_BLOG_POSTS } from '@/lib/blog-data';
-import { CITATION_FORMATS, CitationFormat, buildCitation, citationFileExtension } from '@/lib/citations';
+import {
+  CITATION_FORMATS,
+  CitationFormat,
+  buildCitation,
+  citationFileExtension,
+  shortCitation,
+} from '@/lib/citations';
+import { normalizeScholarlyIdentifier } from '@/lib/v34/identifiers';
 import { cleanText, safeExternalUrl, slugify } from '@/lib/validation';
 import { Text, Link as TextLink } from '@/components/primitives';
 import { VerifyMark } from '@/components/lottie';
@@ -243,17 +250,26 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   </div>
                   <div>
                     <label htmlFor="custom-doi" className="mb-1.5 block text-sm font-medium text-ink">
-                      DOI or arXiv identifier
+                      DOI, arXiv, PMID, ORCID, or repository URL
                     </label>
                     <input
                       id="custom-doi"
                       type="text"
+                      dir="ltr"
                       value={customDoi}
                       onChange={(event) => setCustomDoi(event.target.value)}
                       autoComplete="off"
-                      placeholder="10.1038/s41587-026-01234-5"
-                      className={inputClass}
+                      placeholder="10.1038/s41587-026-01234-5 or arXiv:2501.12948"
+                      className={`${inputClass} font-mono`}
                     />
+                    {customDoi.trim() && (() => {
+                      const normalized = normalizeScholarlyIdentifier(customDoi);
+                      return normalized ? (
+                        <p className="mt-1 font-mono text-xs text-brand" dir="ltr">
+                          Normalized {normalized.scheme.toUpperCase()}: {normalized.value}
+                        </p>
+                      ) : null;
+                    })()}
                   </div>
                 </div>
               )}
@@ -278,6 +294,12 @@ export default function CitationTool({ initialArticles }: { initialArticles?: Bl
                   </button>
                 ))}
               </div>
+              {!citationEmpty && (
+                <p className="rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink-secondary">
+                  <span className="font-mono font-semibold uppercase text-ink">Inline short ref: </span>
+                  {shortCitation(source)}
+                </p>
+              )}
             </fieldset>
 
             <div className="space-y-3">

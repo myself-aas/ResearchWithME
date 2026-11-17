@@ -3,6 +3,7 @@ import { evaluateContributionPublishBlockers } from '@/lib/v34/ai-governance';
 import { PublishContributionInputSchema, type AIProvenance } from '@/lib/v34/contracts';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
+import { enqueueAndRunJob } from '@/lib/v34/job-runner';
 import { getContributionById, persistContributionToSupabase, publishContribution } from '@/lib/v34/store';
 
 export const runtime = 'nodejs';
@@ -71,6 +72,11 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       }
 
       await persistContributionToSupabase(auth.actor.supabase, result.contribution);
+      await enqueueAndRunJob({
+        ownerId: auth.actor.id,
+        jobType: 'contribution.publish',
+        payload: { contributionId: result.contribution.id },
+      });
       return NextResponse.json({ contribution: result.contribution });
     },
   );

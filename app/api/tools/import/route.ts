@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, parseJsonBody, requireContributor } from '@/lib/v34/http';
 import { runWithIdempotency } from '@/lib/v34/idempotency';
+import { enqueueAndRunJob } from '@/lib/v34/job-runner';
+import { buildRepositoryObservation } from '@/lib/v34/resolvers';
 import { importToolRepositoryFromUrl } from '@/lib/v34/wave3-store';
 import { ImportToolRepoInputSchema } from '@/lib/v34/wave7-contracts';
 
@@ -21,6 +23,7 @@ export async function POST(request: Request) {
     request,
     { scope: 'POST:/api/tools/import', actorId: auth.actor.id, payloadHashInput: parsed.data },
     async () => {
+      const observation = buildRepositoryObservation(parsed.data.repoUrl);
       const result = await importToolRepositoryFromUrl({
         ...parsed.data,
         actorId: auth.actor.id,
@@ -29,9 +32,18 @@ export async function POST(request: Request) {
       if (!result.ok) {
         return NextResponse.json({ error: result.message }, { status: result.status });
       }
+      await enqueueAndRunJob({
+        ownerId: auth.actor.id,
+        jobType: 'search.index',
+        payload: {
+          objectId: result.tool.id,
+          host: observation?.host ?? 'github',
+        },
+      });
       return NextResponse.json(
         {
           tool: result.tool,
+          observation,
           created: result.created,
           deduplicated: !result.created,
         },

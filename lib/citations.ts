@@ -1,6 +1,14 @@
-export type CitationFormat = 'apa' | 'mla' | 'chicago' | 'ieee' | 'bibtex' | 'ris';
+export type CitationFormat = 'apa' | 'mla' | 'chicago' | 'ieee' | 'bibtex' | 'ris' | 'csl-json';
 
-export const CITATION_FORMATS: CitationFormat[] = ['apa', 'mla', 'chicago', 'ieee', 'bibtex', 'ris'];
+export const CITATION_FORMATS: CitationFormat[] = [
+  'apa',
+  'mla',
+  'chicago',
+  'ieee',
+  'bibtex',
+  'ris',
+  'csl-json',
+];
 
 export interface CitationSource {
   title: string;
@@ -65,6 +73,8 @@ export function buildCitation(format: CitationFormat, source: CitationSource) {
 TI  - ${title}${source.author.trim() ? `\nAU  - ${source.author}` : ''}${journal ? `\nJO  - ${journal}` : ''}
 PY  - ${year}${doi ? `\nDO  - ${doi}` : ''}${link ? `\nUR  - ${link}` : ''}
 ER  - `;
+    case 'csl-json':
+      return cslJson(source);
     default:
       return '';
   }
@@ -73,6 +83,7 @@ ER  - `;
 export function citationFileExtension(format: CitationFormat) {
   if (format === 'ris') return 'ris';
   if (format === 'bibtex') return 'bib';
+  if (format === 'csl-json') return 'json';
   return 'txt';
 }
 

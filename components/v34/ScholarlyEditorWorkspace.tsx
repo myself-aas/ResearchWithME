@@ -15,10 +15,12 @@ import {
   PanelLeft,
   PanelRight,
   Plus,
+  Redo2,
   Save,
   ShieldCheck,
   Sparkles,
   Trash2,
+  Undo2,
 } from 'lucide-react';
 import BottomSheet from '@/components/layout/BottomSheet';
 import {
@@ -72,6 +74,10 @@ const SLASH_BLOCK_CATALOG: Array<{
   { type: 'citation', label: 'Citation anchor', hint: 'Direct DOI / arXiv / PMID reference', defaultText: '' },
   { type: 'limitation', label: 'Limitation', hint: 'Scope boundary or threat to validity', defaultText: '' },
   { type: 'question', label: 'Open question', hint: 'Unresolved inquiry for peer review', defaultText: '' },
+  { type: 'tool_review', label: 'Tool review', hint: 'Repository evaluation, license & reproducibility', defaultText: '' },
+  { type: 'table', label: 'Data table', hint: 'Structured comparison or benchmark table', defaultText: '| Metric | Baseline | Observed |\n| --- | --- | --- |\n| Accuracy | 0.0% | 0.0% |' },
+  { type: 'equation', label: 'Equation (LaTeX)', hint: 'Formal mathematical expression', defaultText: 'E = mc^2' },
+  { type: 'diagram', label: 'Diagram (Mermaid)', hint: 'Structured workflow or provenance diagram', defaultText: 'graph LR\n  Source --> Evidence --> Claim' },
   { type: 'code', label: 'Code / snippet', hint: 'Reproducible command or implementation note', defaultText: '' },
   { type: 'callout', label: 'Editorial callout', hint: 'Methodology or disclosure note', defaultText: '' },
 ];
@@ -120,6 +126,8 @@ export default function ScholarlyEditorWorkspace({
   const [doc, setDoc] = useState<ResearchDocument>(() =>
     createEmptyDocument(initialDraftId, initialSources[0]?.id),
   );
+  const [undoStack, setUndoStack] = useState<ResearchDocument[]>([]);
+  const [redoStack, setRedoStack] = useState<ResearchDocument[]>([]);
   const [activeTab, setActiveTab] = useState<'canvas' | 'mdx'>('canvas');
   const [sourcesOpen, setSourcesOpen] = useState(true);
   const [inspectorOpen, setInspectorOpen] = useState(true);
@@ -228,6 +236,8 @@ export default function ScholarlyEditorWorkspace({
   const updateDoc = useCallback(
     (updater: (prev: ResearchDocument) => ResearchDocument) => {
       setDoc((prev) => {
+        setUndoStack((stack) => [...stack.slice(-29), prev]);
+        setRedoStack([]);
         const next = updater({ ...prev, updatedAt: new Date().toISOString() });
         void persistNow(next);
         return next;
@@ -235,6 +245,44 @@ export default function ScholarlyEditorWorkspace({
     },
     [persistNow],
   );
+
+  const handleUndo = useCallback(() => {
+    setUndoStack((stack) => {
+      if (stack.length === 0) return stack;
+      const previous = stack[stack.length - 1];
+      setDoc((current) => {
+        setRedoStack((r) => [...r.slice(-29), current]);
+        void persistNow(previous);
+        return previous;
+      });
+      return stack.slice(0, -1);
+    });
+  }, [persistNow]);
+
+  const handleRedo = useCallback(() => {
+    setRedoStack((stack) => {
+      if (stack.length === 0) return stack;
+      const next = stack[stack.length - 1];
+      setDoc((current) => {
+        setUndoStack((u) => [...u.slice(-29), current]);
+        void persistNow(next);
+        return next;
+      });
+      return stack.slice(0, -1);
+    });
+  }, [persistNow]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !(e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement)) {
+        e.preventDefault();
+        if (e.shiftKey) handleRedo();
+        else handleUndo();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [handleUndo, handleRedo]);
 
   const addBlock = useCallback(
     (type: ResearchBlockType, insertAfterIndex?: number) => {
@@ -646,6 +694,26 @@ export default function ScholarlyEditorWorkspace({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleUndo}
+            disabled={undoStack.length === 0}
+            aria-label="Undo last document change"
+            className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-line bg-canvas px-2.5 py-1.5 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
+          >
+            <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
+            Undo
+          </button>
+          <button
+            type="button"
+            onClick={handleRedo}
+            disabled={redoStack.length === 0}
+            aria-label="Redo document change"
+            className="inline-flex min-h-10 items-center gap-1 rounded-lg border border-line bg-canvas px-2.5 py-1.5 text-xs font-medium text-ink hover:border-brand disabled:opacity-40"
+          >
+            <Redo2 className="h-3.5 w-3.5" aria-hidden="true" />
+            Redo
+          </button>
           {/* Desktop pane toggles */}
           <button
             type="button"
@@ -983,9 +1051,40 @@ export default function ScholarlyEditorWorkspace({
                       />
                     )}
 
+                    {block.type === 'tool_review' && (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        <input
+                          type="url"
+                          dir="ltr"
+                          aria-label={`Block ${index + 1} repository URL`}
+                          value={block.repoUrl ?? ''}
+                          onChange={(e) => updateBlock(block.id, { repoUrl: e.target.value })}
+                          placeholder="https://github.com/org/repo"
+                          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-xs text-ink"
+                        />
+                        <input
+                          type="text"
+                          dir="ltr"
+                          aria-label={`Block ${index + 1} SPDX license`}
+                          value={block.licenseSpdx ?? ''}
+                          onChange={(e) => updateBlock(block.id, { licenseSpdx: e.target.value })}
+                          placeholder="SPDX license (e.g., Apache-2.0, MIT)"
+                          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-xs text-ink"
+                        />
+                      </div>
+                    )}
+
                     <textarea
                       aria-label={`Block ${index + 1} content`}
-                      rows={block.type === 'heading' ? 1 : 3}
+                      dir={
+                        block.type === 'code' ||
+                        block.type === 'equation' ||
+                        block.type === 'diagram' ||
+                        block.type === 'table'
+                          ? 'ltr'
+                          : undefined
+                      }
+                      rows={block.type === 'heading' ? 1 : block.type === 'table' || block.type === 'diagram' ? 4 : 3}
                       value={block.text}
                       onChange={(e) => {
                         const val = e.target.value;
@@ -1004,8 +1103,15 @@ export default function ScholarlyEditorWorkspace({
                           moveBlock(index, index + 1);
                         }
                       }}
-                      placeholder={`Enter ${block.type} content…`}
-                      className="w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink"
+                      placeholder={`Enter ${block.type.replace(/_/g, ' ')} content…`}
+                      className={`w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink ${
+                        block.type === 'code' ||
+                        block.type === 'equation' ||
+                        block.type === 'diagram' ||
+                        block.type === 'table'
+                          ? 'font-mono text-xs'
+                          : ''
+                      }`}
                     />
                   </li>
                 ))}

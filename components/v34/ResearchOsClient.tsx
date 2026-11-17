@@ -35,6 +35,20 @@ import type {
   RecognitionSummary,
 } from '@/lib/v34/wave3-store';
 
+interface PipelineSummary {
+  drafts: number;
+  underReview: number;
+  published: number;
+  needsRevision: number;
+}
+
+interface ActivitySummaryItem {
+  id: string;
+  action: string;
+  targetType: string;
+  createdAt: string;
+}
+
 interface ResearchOsClientProps {
   initialAttention: AttentionItemRecord[];
   initialNotifications: NotificationRecord[];
@@ -43,7 +57,19 @@ interface ResearchOsClientProps {
   initialProjects: ProjectSummary[];
   initialRecognition: RecognitionSummary;
   initialPreferences: DashboardPreferencesRecord;
+  initialPipeline?: PipelineSummary;
+  initialActivity?: ActivitySummaryItem[];
 }
+
+const PERSONALIZABLE_MODULES = [
+  { id: 'pipeline', label: 'Contribution Pipeline' },
+  { id: 'activity', label: 'Private Activity' },
+  { id: 'assistant', label: 'Assistant Tasks' },
+  { id: 'goals', label: 'Research Goals' },
+  { id: 'recognition', label: 'Recognition' },
+] as const;
+
+type PersonalizableModuleId = (typeof PERSONALIZABLE_MODULES)[number]['id'];
 
 const AVAILABLE_TOPICS = [
   { slug: 'machine-learning', label: 'Machine Learning' },
@@ -62,6 +88,8 @@ export function ResearchOsClient({
   initialProjects,
   initialRecognition,
   initialPreferences,
+  initialPipeline = { drafts: 0, underReview: 0, published: 0, needsRevision: 0 },
+  initialActivity = [],
 }: ResearchOsClientProps) {
   const [attention, setAttention] = useState<AttentionItemRecord[]>(initialAttention);
   const [notifications, setNotifications] = useState<NotificationRecord[]>(initialNotifications);
@@ -70,8 +98,33 @@ export function ResearchOsClient({
   const [localDrafts, setLocalDrafts] = useState<LocalDraftRecord[]>([]);
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const [newGoalTarget, setNewGoalTarget] = useState(5);
+  const [hiddenModules, setHiddenModules] = useState<PersonalizableModuleId[]>([]);
   const [preferences, setPreferences] = useState<DashboardPreferencesRecord>(initialPreferences);
   const [busyId, setBusyId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem('rwm_os_hidden_modules');
+      if (saved) {
+        const parsed = JSON.parse(saved) as PersonalizableModuleId[];
+        if (Array.isArray(parsed)) setHiddenModules(parsed);
+      }
+    } catch {
+      // Ignore storage access restrictions
+    }
+  }, []);
+
+  function toggleModuleVisibility(id: PersonalizableModuleId) {
+    setHiddenModules((prev) => {
+      const next = prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id];
+      try {
+        window.localStorage.setItem('rwm_os_hidden_modules', JSON.stringify(next));
+      } catch {
+        // Ignore storage quota errors
+      }
+      return next;
+    });
+  }
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -864,6 +917,31 @@ export function ResearchOsClient({
             </ul>
           </div>
 
+          <div className="pt-2 border-t border-line space-y-2">
+            <p className="text-xs font-semibold text-ink">Dashboard Module Personalization</p>
+            <div className="flex flex-wrap gap-1.5">
+              {PERSONALIZABLE_MODULES.map((mod) => {
+                const visible = !hiddenModules.includes(mod.id);
+                return (
+                  <button
+                    key={mod.id}
+                    type="button"
+                    aria-pressed={visible}
+                    onClick={() => toggleModuleVisibility(mod.id)}
+                    className={`rounded-full border px-2.5 py-1 text-xs font-medium ${
+                      visible
+                        ? 'border-brand bg-brand/10 text-brand'
+                        : 'border-line bg-canvas text-ink-secondary'
+                    }`}
+                  >
+                    {visible ? 'Shown: ' : 'Hidden: '}
+                    {mod.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="pt-2 border-t border-line flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs text-ink-secondary">
               Portable research archive (SHA-256 checksummed)
@@ -877,6 +955,91 @@ export function ResearchOsClient({
           </div>
         </section>
       </div>
+
+      {/* Fourth Row: Contribution Pipeline & Private Research Activity (Part I §26.4) */}
+      {(!hiddenModules.includes('pipeline') || !hiddenModules.includes('activity')) && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {!hiddenModules.includes('pipeline') && (
+            <section
+              aria-label="Contribution Pipeline"
+              className="lg:col-span-6 rounded-xl border border-line bg-surface p-5 space-y-4"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="font-mono text-xs font-semibold uppercase text-brand">
+                    Contribution Pipeline
+                  </p>
+                  <h2 className="text-lg font-bold text-ink">Scholarly Publishing Queue</h2>
+                </div>
+                <Link href="/editor" className="text-xs font-medium text-brand hover:underline">
+                  Open Editor →
+                </Link>
+              </div>
+              <ul className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                {(
+                  [
+                    ['Drafts', initialPipeline.drafts + localDrafts.length, '/editor'],
+                    ['Needs Revision', initialPipeline.needsRevision, '/reviews'],
+                    ['Under Review', initialPipeline.underReview, '/reviews'],
+                    ['Published', initialPipeline.published, '/feed'],
+                  ] as Array<[string, number, string]>
+                ).map(([label, count, href]) => (
+                  <li key={label}>
+                    <Link
+                      href={href}
+                      className="block rounded-lg border border-line bg-canvas p-3 transition-colors hover:border-brand"
+                    >
+                      <span className="block text-ink-secondary">{label}</span>
+                      <span className="mt-1 block font-mono text-xl font-semibold text-ink">
+                        {count}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {!hiddenModules.includes('activity') && (
+            <section
+              aria-label="Private Research Activity"
+              className="lg:col-span-6 rounded-xl border border-line bg-surface p-5 space-y-4"
+            >
+              <div>
+                <p className="font-mono text-xs font-semibold uppercase text-ink-secondary">
+                  Private Research Activity
+                </p>
+                <h2 className="text-lg font-bold text-ink">Recent Verified Operations</h2>
+                <p className="text-xs text-ink-secondary">
+                  Private to your account. Never exposes anonymous reviewer identities or confidential excerpts.
+                </p>
+              </div>
+              {initialActivity.length === 0 ? (
+                <p className="rounded-lg border border-line bg-canvas p-3 text-xs text-ink-secondary">
+                  No recent private research operations recorded yet. Saving a draft, resolving a source,
+                  or recording goal progress will appear here.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-xs">
+                  {initialActivity.map((ev) => (
+                    <li
+                      key={ev.id}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-line bg-canvas px-3 py-2"
+                    >
+                      <span className="font-mono text-ink">
+                        {ev.action} · {ev.targetType}
+                      </span>
+                      <span className="font-mono text-ink-secondary">
+                        {formatShortDate(ev.createdAt)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
+        </div>
+      )}
     </div>
   );
 }

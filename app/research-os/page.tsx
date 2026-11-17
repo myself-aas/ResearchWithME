@@ -5,7 +5,8 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import { ResearchOsClient } from '@/components/v34/ResearchOsClient';
 import { getDashboardUser } from '@/lib/cms/auth';
-import { listResearchGoals } from '@/lib/v34/store';
+import { listContributions, listResearchGoals } from '@/lib/v34/store';
+import { listAuditEvents } from '@/lib/v34/outbox';
 import { listProjects } from '@/lib/v34/wave2-store';
 import {
   getDashboardPreferences,
@@ -28,13 +29,28 @@ export default async function ResearchOsPage() {
   const userId = user?.id ?? 'default';
   const handle = user?.email?.split('@')[0] || 'myself-aas';
 
-  const [projects] = await Promise.all([listProjects()]);
+  const [projects, contributions] = await Promise.all([listProjects(), listContributions()]);
   const attention = listAttentionItems(userId);
   const notifications = listNotifications(userId);
   const assistantTasks = listAssistantTasks(userId);
   const goals = listResearchGoals(userId);
   const { summary: recognition } = getRecognitionSummary(handle);
   const preferences = getDashboardPreferences(userId);
+  const auditEvents = listAuditEvents(userId === 'default' ? undefined : userId).slice(0, 6);
+
+  const pipeline = {
+    drafts: contributions.filter((c) => c.lifecycle === 'draft').length,
+    underReview: contributions.filter((c) => c.lifecycle === 'under-review').length,
+    published: contributions.filter((c) => c.lifecycle === 'published' || c.lifecycle === 'validated').length,
+    needsRevision: contributions.filter((c) => c.lifecycle === 'active').length,
+  };
+
+  const activity = auditEvents.map((e) => ({
+    id: e.id,
+    action: e.action,
+    targetType: e.targetType,
+    createdAt: e.createdAt,
+  }));
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
@@ -91,6 +107,8 @@ export default async function ResearchOsPage() {
           initialProjects={projects}
           initialRecognition={recognition}
           initialPreferences={preferences}
+          initialPipeline={pipeline}
+          initialActivity={activity}
         />
       </main>
       <BlogFooter />

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
+import { ResponsiveDataTable } from '@/components/v34/ResponsiveDataTable';
 import { pageMetadata } from '@/lib/seo';
 import { listSources, listEvidence, listSourceVersions } from '@/lib/v34/store';
 
@@ -121,6 +122,63 @@ export default async function SourcesDirectoryPage() {
               </article>
             );
           })}
+        </section>
+
+        <section aria-label="Canonical source comparison table" className="mt-10 space-y-3">
+          <div>
+            <h2 className="font-serif text-xl font-bold text-ink">
+              Structured Source Integrity Matrix
+            </h2>
+            <p className="text-xs text-ink-secondary">
+              Desktop tabular comparison collapsing automatically into stacked record cards on
+              mobile with explicit missing-value labels (Part III §27).
+            </p>
+          </div>
+          <ResponsiveDataTable
+            caption="Canonical scholarly sources and integrity metadata"
+            rows={sources}
+            rowKey={(src) => src.id}
+            columns={[
+              {
+                key: 'title',
+                header: 'Source',
+                render: (src) => (
+                  <Link href={`/source/${src.id}`} className="font-medium text-brand hover:underline">
+                    {src.title}
+                  </Link>
+                ),
+              },
+              {
+                key: 'identifier',
+                header: 'Identifier',
+                monoLtr: true,
+                missingLabel: 'No persistent ID',
+                render: (src) =>
+                  src.identifierScheme && src.identifierValue
+                    ? `${src.identifierScheme.toUpperCase()}:${src.identifierValue}`
+                    : null,
+              },
+              {
+                key: 'venue',
+                header: 'Venue',
+                missingLabel: 'Not reported',
+                render: (src) => src.venue || null,
+              },
+              {
+                key: 'published',
+                header: 'Published',
+                monoLtr: true,
+                missingLabel: 'Undated',
+                render: (src) => src.publishedDate || null,
+              },
+              {
+                key: 'integrity',
+                header: 'Integrity',
+                monoLtr: true,
+                render: (src) => src.integrityStatus,
+              },
+            ]}
+          />
         </section>
       </main>
       <BlogFooter />

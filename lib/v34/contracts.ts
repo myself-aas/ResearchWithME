@@ -180,6 +180,10 @@ export const BLOCK_TYPES = [
   'question',
   'code',
   'callout',
+  'tool_review',
+  'table',
+  'equation',
+  'diagram',
 ] as const;
 
 export type ResearchBlockType = (typeof BLOCK_TYPES)[number];
@@ -197,6 +201,8 @@ export const ResearchBlockSchema = z.object({
   relation: z.enum(['SUPPORTS', 'CONTRADICTS', 'QUALIFIES']).optional(),
   language: z.string().max(40).optional(),
   limitation: z.string().max(2_000).optional(),
+  repoUrl: z.string().max(500).optional(),
+  licenseSpdx: z.string().max(64).optional(),
 });
 
 export type ResearchBlock = z.infer<typeof ResearchBlockSchema>;
@@ -284,6 +290,30 @@ export function serializeResearchDocumentToMdx(doc: ResearchDocument): string {
       }
       case 'callout': {
         sections.push(`> **Note**\n> ${body.replace(/\n/g, '\n> ')}`);
+        break;
+      }
+      case 'tool_review': {
+        const meta = [
+          block.repoUrl ? `Repository: ${sanitizeMdxAttr(block.repoUrl)}` : '',
+          block.licenseSpdx ? `License: ${sanitizeMdxAttr(block.licenseSpdx)}` : '',
+        ]
+          .filter(Boolean)
+          .join(' · ');
+        sections.push(
+          `> **Tool Review**${meta ? ` (${meta})` : ''}\n> ${body.replace(/\n/g, '\n> ')}`,
+        );
+        break;
+      }
+      case 'table': {
+        sections.push(rawBody);
+        break;
+      }
+      case 'equation': {
+        sections.push(`$$\n${rawBody}\n$$`);
+        break;
+      }
+      case 'diagram': {
+        sections.push(`\`\`\`mermaid\n${rawBody}\n\`\`\``);
         break;
       }
     }
