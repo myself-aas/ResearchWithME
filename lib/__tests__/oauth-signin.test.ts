@@ -62,7 +62,7 @@ describe('OAuth sign-in providers', () => {
     expect(navigate).toHaveBeenCalledWith('https://www.linkedin.com/oauth/v2/authorization?x=1');
   });
 
-  it('starts Discord with identify/email only — never bot or guild permissions', async () => {
+  it('starts Discord with the owner-approved OIDC scopes — never bot or guild permissions', async () => {
     state.signInWithOAuth.mockResolvedValue({
       data: { url: 'https://discord.com/oauth2/authorize?x=1' },
       error: null,
@@ -74,9 +74,10 @@ describe('OAuth sign-in providers', () => {
     expect(result).toEqual({ ok: true });
     const call = state.signInWithOAuth.mock.calls[0][0];
     expect(call.provider).toBe('discord');
-    expect(call.options.scopes).toBe('identify email');
+    expect(call.options.scopes).toBe('openid identify email connections');
     expect(call.options.scopes).not.toContain('bot');
     expect(call.options.scopes).not.toContain('guilds');
+    expect(call.options.scopes).not.toContain('permissions');
     expect(call.options.redirectTo).toBe(
       `${window.location.origin}/auth/callback?next=%2Fdashboard`,
     );

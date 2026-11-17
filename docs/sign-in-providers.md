@@ -2,20 +2,22 @@
 
 ResearchWithMe signs readers in with **Google**, **LinkedIn (OpenID Connect)**, **Discord**, or **email and password**. All four create or resume a normal reader session. Publishing access is separate: it comes from the `editors` allowlist and the writer application, never from the provider that was used to sign in.
 
+The identity stack is **Supabase Auth only**. Firebase is not used, and no Firebase SDK or analytics is present in the application.
+
 ## What the application does
 
 | Provider | Supabase identifier (`provider`) | Scopes requested | Button |
 | --- | --- | --- | --- |
 | Google | `google` | `openid email profile` | Continue with Google |
 | LinkedIn | `linkedin_oidc` | `openid profile email` | Continue with LinkedIn |
-| Discord | `discord` | `identify email` | Continue with Discord |
+| Discord | `discord` | `openid identify email connections` | Continue with Discord |
 | Email + password | — | — | Sign in |
 
 - `lib/supabase/oauth.ts` is the single place that maps a UI provider to a Supabase provider and its scopes. `SIGN_IN_PROVIDERS` is the list rendered on `/login`.
 - The redirect target is always `/auth/callback?next=<safe path>`. `lib/safe-redirect.ts` rejects absolute, protocol-relative, backslash, control-character, `/login`, and `/auth/callback` targets, so an OAuth round trip cannot be turned into an open redirect.
 - `/auth/callback` exchanges the PKCE code **server-side** with `@supabase/ssr`, then redirects to `next` (default `/dashboard`). Provider errors return to `/login` with an escaped `error_description`; identity-link failures return to `/dashboard/access`.
 - `startOAuthSignIn` uses `skipBrowserRedirect` and navigates only after Supabase returns an authorization URL. A provider that is disabled produces an error on the page, not a blank tab.
-- Discord requests only `identify email`. A Discord *bot install* link (`bot`, `guilds`, `permissions=…`, usually with `permissions=8` for administrator) is a different kind of URL and must never be used here: signing in never grants the app access to a server.
+- Discord requests `openid identify email connections`, matching the owner's OAuth URL. `connections` lets the app read the member's linked third-party accounts (GitHub, Steam, and so on) for profile enrichment; it is broader than authentication needs and is used deliberately. A Discord *bot install* link (`bot`, `guilds`, `permissions=…`, usually with `permissions=8` for administrator) is a different kind of URL and is never used here: signing in never grants the app access to a server.
 - GitHub and ORCID are **not** sign-in buttons. They are identity links (`linkIdentity`) attached to an existing account when applying to write, so connecting them cannot replace a reader's session.
 
 ## Supabase project configuration
@@ -49,7 +51,7 @@ https://bxyjjbclaklzjxeumeat.supabase.co/auth/v1/callback
 
 - **Google Cloud Console → APIs & Services → Credentials → OAuth 2.0 Client**: add that URL as an *Authorized redirect URI*. The app's own `/auth/callback` is a different URL and must not be used here.
 - **LinkedIn Developers → App → Auth → Authorized redirect URLs**: add the same Supabase URL. The app needs the **Sign In with LinkedIn using OpenID Connect** product (scopes `openid`, `profile`, `email`). The legacy "Sign In with LinkedIn" product is closed to new apps and is not used. The LinkedIn app may also carry `w_member_social` for the posting integration; sign-in never requests it.
-- **Discord Developer Portal → OAuth2 → Redirects**: add the same Supabase URL. Only the `identify` and `email` scopes are used for sign-in. Never generate or paste a bot authorization URL here — that URL type carries `bot` and permissions, and it is not a sign-in flow.
+- **Discord Developer Portal → OAuth2 → Redirects**: add the same Supabase URL. Sign-in requests `openid identify email connections`. Never generate or paste a bot authorization URL here — that URL type carries `bot` and permissions, and it is not a sign-in flow.
 
 LinkedIn posting (`/api/admin/linkedin/*`, `lib/linkedin/*`) is a separate integration with its own LinkedIn app credentials. Do not reuse the sign-in provider's secret for posting.
 
@@ -78,6 +80,6 @@ LinkedIn posting (`/api/admin/linkedin/*`, `lib/linkedin/*`) is a separate integ
 - Signed-out `/login` shows one provider group with all three buttons and the email form.
 - A Google sign-in lands on `/dashboard` with a reader session.
 - A LinkedIn sign-in does the same, with or without an emailed address.
-- A Discord sign-in asks only for identity and email — never for server access, bot permissions, or guild membership.
+- A Discord sign-in asks for identity, email, and linked connections — never for server access, bot permissions, or guild membership.
 - A signed-in reader can reach `/dashboard` from `/login` instead of being stranded on the "without editor access" panel.
 - GitHub and ORCID still appear only as identity links on `/dashboard/access`.

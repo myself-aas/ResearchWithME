@@ -35,9 +35,10 @@ const SCOPES: Record<OAuthProviderId, string> = {
   // LinkedIn's OIDC product grants exactly these three; `w_member_social` is a
   // posting permission and does not belong on a sign-in request.
   linkedin: 'openid profile email',
-  // Discord sign-in needs the identity and the address, nothing else. Never
-  // `bot`, `guilds`, or `permissions` — those belong to a bot install link.
-  discord: 'identify email',
+  // Matches the owner's Discord OAuth URL: OIDC plus the member's identity,
+  // address, and linked connections. Never `bot`, `guilds`, or `permissions` —
+  // those belong to a bot install link, not to signing in.
+  discord: 'openid identify email connections',
 };
 
 export function authCallbackUrl(next: string) {

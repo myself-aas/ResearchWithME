@@ -15,11 +15,11 @@ Method: read the sign-in path end to end (`app/login/page.tsx` → `components/a
 | 5 | **A signed-in reader was stranded on `/login`.** The "without editor access" panel offered only the writer application. | Medium | Fixed |
 | 6 | **The surface brief was stale.** It described GitHub/ORCID sign-in and magic links, neither of which is a sign-in path. | Low | Fixed |
 | 7 | **Deployment docs described "two ways" and lumped GitHub/ORCID in with sign-in.** | Medium — setup instructions that produce a broken button | Fixed |
-| 8 | **The supplied Discord URL was a bot install link, not an OAuth sign-in URL.** It carried `bot`, `guilds`, and `permissions=8` (administrator). Reusing it for sign-in would ask readers to hand the app control of their servers. | High if copied | Guarded — the app requests `identify email` only, and a test asserts `bot`/`guilds` never appear in the scopes. |
+| 8 | **Two different Discord URLs were supplied.** The first was a bot install link carrying `bot`, `guilds`, and `permissions=8` (administrator); the second is the correct OAuth sign-in shape with `scope=openid identify email connections`. Using the first for sign-in would ask readers to hand the app control of their servers. | High if copied | Guarded — the app requests exactly the second URL's scopes (`openid identify email connections`), and a test asserts `bot`, `guilds`, and `permissions` never appear. |
 
 ## What changed
 
-- `lib/supabase/oauth.ts` — `OAuthProviderId` gains `linkedin` and `discord`. LinkedIn maps to **`linkedin_oidc`** (`openid profile email`, not the deprecated legacy connector); Discord maps to **`discord`** (`identify email`). `SIGN_IN_PROVIDERS` is exported as the rendered list, and `startOAuthSignIn` accepts an injectable navigation function so the redirect is testable. GitHub and ORCID remain identity links (`linkScholarlyIdentity`), untouched.
+- `lib/supabase/oauth.ts` — `OAuthProviderId` gains `linkedin` and `discord`. LinkedIn maps to **`linkedin_oidc`** (`openid profile email`, not the deprecated legacy connector); Discord maps to **`discord`** (`openid identify email connections`, matching the owner's OAuth URL). `SIGN_IN_PROVIDERS` is exported as the rendered list, and `startOAuthSignIn` accepts an injectable navigation function so the redirect is testable. GitHub and ORCID remain identity links (`linkScholarlyIdentity`), untouched.
 - `components/auth/LoginForm.tsx` — one labelled group of three full-width provider buttons (**Google**, **LinkedIn**, **Discord**), each with its mark and an "Opening …" state; the email form remains below. Copy now says four ways in. A disabled provider gets a plain-English error. The signed-in-without-editor panel gains **Go to your dashboard** as its primary action.
 - `docs/sign-in-providers.md` — provider matrix, scopes, the verified Supabase configuration, provider-console callback URLs (including Discord's OAuth2 redirect setting), failure messages, the bot-URL warning, and the operator checklist.
 - `docs/deployment.md`, `docs/supabase-cms.md` — topology, setup, and verification checklists updated to Email + Google + LinkedIn (OIDC) + Discord, with GitHub/ORCID explicitly described as identity links.
@@ -47,8 +47,9 @@ Provider-console evidence supplied by the owner:
 
 Application checks:
 
-- Provider mapping and scopes asserted for all three buttons; LinkedIn is sent as `linkedin_oidc`, never `linkedin`; Discord as `discord` with exactly `identify email`.
+- Provider mapping and scopes asserted for all three buttons; LinkedIn is sent as `linkedin_oidc`, never `linkedin`; Discord as `discord` with exactly `openid identify email connections`.
 - A regression test fails if `bot`, `guilds`, or permission scopes are added to the Discord sign-in request.
+- Firebase is not present anywhere in the repository; Supabase Auth is the only identity stack.
 - The callback path is sanitised: a protocol-relative or external `next` falls back to `/`, and `/login`/`/auth/callback` cannot be used as a destination.
 - Missing authorization URL and provider errors surface on the page without navigating away.
 - Clicking any provider button calls `startOAuthSignIn` with the requested `next`; all three are sign-ins, not identity links.

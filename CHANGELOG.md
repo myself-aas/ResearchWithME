@@ -9,7 +9,7 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Sign-in offers Google, LinkedIn, Discord, and email/password. LinkedIn uses
   Supabase's OpenID Connect provider (`linkedin_oidc`, scopes `openid profile
   email`), not the deprecated legacy connector; Discord uses `discord` with
-  `identify email` only. All three provider buttons carry their marks and an
+  `openid identify email connections`. All three provider buttons carry their marks and an
   "Opening …" state. A disabled provider now explains itself instead of echoing
   the upstream error, and a signed-in reader landing on `/login` gets a "Go to
   your dashboard" action rather than only the writer application.

@@ -23,7 +23,7 @@ A reading-room invitation rather than a SaaS card: an editorial column explainin
 - WCAG 2.1 AA contrast, visible focus, labelled inputs, and announced auth errors. Provider buttons are in one labelled group; the icons are decorative.
 - Reflow to 320px; the form never causes horizontal scrolling. The three provider buttons keep their order (Google, LinkedIn, Discord) and remain full-width at every breakpoint.
 - OAuth codes are exchanged on /auth/callback, never on a protected route; the `next` path is sanitised against external and protocol-relative targets.
-- Provider buttons only for providers actually enabled in Supabase Auth (Google, LinkedIn OIDC, Discord). Discord asks for `identify email` only — never `bot`, guild, or permission scopes. GitHub and ORCID are identity links on an existing session, not ways in — they never appear here. No fabricated SSO. Sign-in never implies studio access.
+- Provider buttons only for providers actually enabled in Supabase Auth (Google, LinkedIn OIDC, Discord). Discord asks for `openid identify email connections` — never `bot`, guild, or permission scopes. GitHub and ORCID are identity links on an existing session, not ways in — they never appear here. No fabricated SSO. Sign-in never implies studio access.
 - Errors state the recovery; input survives a failed attempt. A disabled provider says so in words rather than opening a blank window.
 
 ## Checks
