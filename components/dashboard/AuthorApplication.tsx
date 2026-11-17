@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useId, useState } from 'react';
 import { AlertCircle, BadgeCheck, CheckCircle2, Clock, GitBranch, Send, XCircle } from 'lucide-react';
 import type { AuthorApplication } from '@/lib/applications';
@@ -116,9 +117,9 @@ export default function AuthorApplication({
           <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" />
           <span>
             This account already has publishing access.{' '}
-            <a href="/dashboard" className="font-semibold underline underline-offset-4">
+            <Link href="/dashboard" className="font-semibold underline underline-offset-4">
               Open the studio
-            </a>{' '}
+            </Link>{' '}
             to write, or review other writers in the applications queue.
           </span>
         </p>
@@ -202,9 +203,9 @@ export default function AuthorApplication({
             </p>
           )}
           {current.status === 'approved' && (
-            <a href="/dashboard" className={cn(primaryButtonClass, 'mt-4')}>
+            <Link href="/dashboard" className={cn(primaryButtonClass, 'mt-4')}>
               Open the editorial studio
-            </a>
+            </Link>
           )}
         </section>
       ) : (

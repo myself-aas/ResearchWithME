@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T09:22:18.627Z",
+  "generatedAt": "2026-11-17T09:37:07.738Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -146,6 +146,12 @@
       "description": "v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present",
       "status": "pass",
       "evidence": "6 Wave 10 canonical completion artifacts verified"
+    },
+    {
+      "id": "V34-13",
+      "description": "v3.4 Wave 11 Continue Working + interactive Goals, 15 /dashboard/* deep links, SSRF-safe resolvers, 15 job handlers, dual-read telemetry & threat model present",
+      "status": "pass",
+      "evidence": "7 Wave 11 operational engines, dashboard deep links & security artifacts verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

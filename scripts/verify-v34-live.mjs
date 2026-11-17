@@ -35,9 +35,11 @@ const SSR_PAGES = [
   {
     path: '/research-os',
     mustContain: [
+      'Continue Working',
       'Attention Queue',
       'Event History',
       'Optional Assistant Suggestions',
+      'Add Goal',
       'Event-Derived Scholarly Recognition',
       'id="main-content"',
     ],
@@ -258,6 +260,19 @@ async function main() {
     } else {
       console.log(
         `  PASS  SLO ${ep.label}: HTTP ${ep.expectedStatus}, p95=${p95}ms <= ${ep.budgetMs}ms`,
+      );
+    }
+  }
+
+  // 4. Part I §26.2 /dashboard/* canonical deep links fail closed when unauthenticated
+  for (const section of ['library', 'projects', 'workspace', 'reviews', 'settings']) {
+    const r = await fetch(`${BASE_URL}/dashboard/${section}`, { redirect: 'manual' });
+    const loc = r.headers.get('location') || '';
+    if (r.status === 307 && loc.includes(`/login?next=%2Fdashboard%2F${section}`)) {
+      console.log(`  PASS  Auth boundary /dashboard/${section} (307 -> ${loc})`);
+    } else {
+      failures.push(
+        `/dashboard/${section}: expected 307 -> /login?next=%2Fdashboard%2F${section}, got ${r.status} (${loc})`,
       );
     }
   }

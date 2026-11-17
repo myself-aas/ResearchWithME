@@ -5,6 +5,7 @@
 - **Supabase Project Verified Live:** `bxyjjbclaklzjxeumeat` (`ap-northeast-1`, Postgres 17.11)
 - **Decision Register:** `docs/adr/ADR-032-v34-canonical-decisions.md` (`ADR-032-01`–`ADR-032-13`)
 - **Migration & Rollback Runbook:** `docs/runbooks/v34-migration-and-rollback-runbook.md`
+- **Security Threat Model & Retention Policy:** `docs/security/v34-threat-model-and-retention-policy.md`
 
 ---
 
@@ -43,10 +44,11 @@
 
 | Criterion | Status | Evidence Artifact |
 | :--- | :---: | :--- |
-| 27 first-class v3.4 App Router pages + `.impeccable/surfaces/*` briefs | **PASS** | `app/{feed,search,topics,topics/[slug],contribute,editor,editor/[id],library,workspaces,workspaces/[slug],workspace/[id],projects,project/[id],sources,source/[id],evidence,evidence/[id],claims,claim/[id],reviews,review/[id],tools,tool/[slug],graph,research-os,contribution/[id],profile/[username]}` + `lib/__tests__/surface-briefs.test.ts` |
+| 28 first-class v3.4 App Router pages + 15 Part I §26.2 `/dashboard/*` deep links + `.impeccable/surfaces/*` briefs | **PASS** | `app/{feed,search,topics,topics/[slug],contribute,editor,editor/[id],library,workspaces,workspaces/[slug],workspace/[id],projects,project/[id],sources,source/[id],evidence,evidence/[id],claims,claim/[id],reviews,review/[id],tools,tool/[slug],graph,research-os,contribution/[id],profile/[username],dashboard/[section]}` + `lib/v34/dashboard-routes.ts` |
+| Personal Research OS (`Continue Working` + Attention Queue vs Notifications + interactive `Research Goals`) | **PASS** | `components/v34/ResearchOsClient.tsx`, `app/research-os/page.tsx`, `app/api/goals/*`, `app/api/dashboard/*` |
 | ADR-032-02 shared Wizard (`ContributeWizard`) <-> multi-pane Scholarly MDX Workspace (`ScholarlyEditorWorkspace`) | **PASS** | `components/v34/ContributeWizard.tsx` -> `/editor/[id]` sharing `EditorDatabase` & `ResearchDocument` |
 | ADR-032-11 mobile bottom nav (`Explore`, `Library`, `Contribute`, `AI`, `Profile`) + Drawer secondary links | **PASS** | `components/layout/MobileBottomNav.tsx`, `components/BlogHeader.tsx`, `lib/__tests__/v34-responsive-shell.test.tsx` |
-| WCAG 2.1/2.2 AA axe-core + BottomSheet focus-trap + 320–1920px reflow matrix | **PASS** | `lib/__tests__/v34-a11y-visual.test.tsx`, `test/e2e/v34-a11y-reflow.spec.ts` (42 Playwright tests) |
+| WCAG 2.1/2.2 AA axe-core + BottomSheet focus-trap + 320–1920px reflow matrix (26 v3.4 routes) | **PASS** | `lib/__tests__/v34-a11y-visual.test.tsx`, `test/e2e/v34-a11y-reflow.spec.ts` |
 | Multilingual scholarly text (Bangla `বাংলা`, Arabic RTL, mixed-script) + LTR identifier isolation (`dir="ltr"`) | **PASS** | `lib/v34/identifiers.ts`, `lib/v34/mdx-security.ts`, `test/next/v34-wave10-completion.test.ts` |
 | Classification-safe PWA Service Worker & automatic logout local wipe | **PASS** | `public/sw.js`, `components/v34/PwaLifecycleBridge.tsx`, `lib/persistence/logout-wipe.ts`, wired into `lib/supabase/use-session.ts` & `components/cms/DashboardShell.tsx` |
 
@@ -62,7 +64,9 @@
 
 | Criterion | Status | Evidence Artifact |
 | :--- | :---: | :--- |
+| SSRF-safe Part V §11 Academic & Repository Resolver Waterfall + Part V §9 15-job Background Processor + STRIDE Threat Model & Retention Policy | **PASS** | `lib/v34/resolvers.ts`, `lib/v34/job-runner.ts`, `docs/security/v34-threat-model-and-retention-policy.md`, `test/next/v34-wave11-engines.test.ts` |
+| Part VII §4 Dual-Read Fallback Telemetry & 14-day zero-fallback contract readiness gate | **PASS** | `lib/v34/dual-read.ts`, `test/next/v34-wave11-engines.test.ts` |
 | First-load JS shell budget `<= 200 KB` gzip | **PASS** | `npm run budgets` (`<= 200 KB` gzip verified post-build) |
-| Live API p95 SLOs (`<= 400ms` autosave, `<= 500ms` dashboard/tools/reviews, `<= 700ms` search) | **PASS** | `scripts/verify-v34-live.mjs` (measured 2–4ms p95 on production Next.js server) |
-| Automated release gate (`24/24` machine checks) | **PASS** | `scripts/release-gate.mjs` -> `docs/design-system/release-manifest.json` |
-| 7-day zero-mismatch dual-write / 14-day zero-fallback window, PITR rehearsal & human owner sign-offs | **OPERATOR** | `docs/design-system/release-gate.md` & `docs/runbooks/v34-migration-and-rollback-runbook.md` |
+| Live API p95 SLOs (`<= 400ms` autosave, `<= 500ms` dashboard/tools/reviews, `<= 700ms` search) & 28 SSR/deep-link routes `200` | **PASS** | `scripts/verify-v34-live.mjs` (measured 2–5ms p95 on production Next.js server) |
+| Automated release gate (`25/25` machine checks) | **PASS** | `scripts/release-gate.mjs` -> `docs/design-system/release-manifest.json` |
+| 7-day zero-mismatch dual-write / 14-day zero-fallback window, PITR rehearsal & human owner sign-offs | **OPERATOR** | `docs/design-system/release-gate.md`, `docs/runbooks/v34-migration-and-rollback-runbook.md`, `docs/security/v34-threat-model-and-retention-policy.md` |

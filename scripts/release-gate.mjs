@@ -287,6 +287,22 @@ check('V34-12', 'v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme iden
   assert(useSession.includes('performLogoutLocalWipe'), 'use-session signOut missing Part V §15.3 local wipe');
   return `${files.length} Wave 10 canonical completion artifacts verified`;
 });
+check('V34-13', 'v3.4 Wave 11 Continue Working + interactive Goals, 15 /dashboard/* deep links, SSRF-safe resolvers, 15 job handlers, dual-read telemetry & threat model present', () => {
+  const files = [
+    'lib/v34/dashboard-routes.ts',
+    'app/dashboard/[section]/page.tsx',
+    'lib/v34/resolvers.ts',
+    'lib/v34/job-runner.ts',
+    'lib/v34/dual-read.ts',
+    'docs/security/v34-threat-model-and-retention-policy.md',
+    'test/next/v34-wave11-engines.test.ts',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const ros = readFileSync(join(root, 'components/v34/ResearchOsClient.tsx'), 'utf8');
+  assert(ros.includes('Continue Working'), 'ResearchOsClient missing Continue Working module');
+  assert(ros.includes('handleGoalProgress'), 'ResearchOsClient missing interactive Research Goals controls');
+  return `${files.length} Wave 11 operational engines, dashboard deep links & security artifacts verified`;
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import PageState from '@/components/PageState';
 import AuthorApplication from '@/components/dashboard/AuthorApplication';
@@ -134,7 +135,7 @@ export default async function ApplyToWritePage({
       {!recordsAvailable ? (
         <p role="alert" className="border-l-2 border-destructive bg-surface px-4 py-3 text-sm text-destructive">
           We could not load your application or profile. Reload this page before submitting another application.{' '}
-          <a href="/dashboard/access" className="underline">Reload application status</a>.
+          <Link href="/dashboard/access" className="underline">Reload application status</Link>.
         </p>
       ) : (<>
       {user &&

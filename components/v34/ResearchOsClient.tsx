@@ -1,19 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
+  Archive,
   ArrowUpRight,
   Award,
   Bell,
   Check,
+  Clock,
   FolderKanban,
+  Pause,
+  Play,
+  Plus,
   Sliders,
   Sparkles,
   Target,
 } from 'lucide-react';
 import { formatShortDate } from '@/lib/formatting/locale';
+import { editorDb, type LocalDraftRecord } from '@/lib/persistence/editor-db';
 import type { ResearchGoalRecord } from '@/lib/v34/store';
 import type { ProjectSummary } from '@/lib/v34/wave2-store';
 import {
@@ -60,9 +66,104 @@ export function ResearchOsClient({
   const [attention, setAttention] = useState<AttentionItemRecord[]>(initialAttention);
   const [notifications, setNotifications] = useState<NotificationRecord[]>(initialNotifications);
   const [assistantTasks, setAssistantTasks] = useState<AssistantTaskRecord[]>(initialAssistantTasks);
+  const [goals, setGoals] = useState<ResearchGoalRecord[]>(initialGoals);
+  const [localDrafts, setLocalDrafts] = useState<LocalDraftRecord[]>([]);
+  const [newGoalTitle, setNewGoalTitle] = useState('');
+  const [newGoalTarget, setNewGoalTarget] = useState(5);
   const [preferences, setPreferences] = useState<DashboardPreferencesRecord>(initialPreferences);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const drafts = await editorDb.listDrafts();
+        if (active) setLocalDrafts(drafts.slice(0, 4));
+      } catch {
+        // Ignore if IndexedDB is unavailable in restricted browser context
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function handleGoalProgress(goalId: string) {
+    setBusyId(`goal-prog-${goalId}`);
+    setStatusMessage(null);
+    try {
+      const res = await fetch(`/api/goals/${encodeURIComponent(goalId)}/progress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ delta: 1, note: 'Logged validated research step' }),
+      });
+      const data = (await res.json()) as { goal?: ResearchGoalRecord; error?: string };
+      if (!res.ok || !data.goal) {
+        setStatusMessage(data.error || 'Sign in to record research goal progress.');
+        return;
+      }
+      setGoals((prev) => prev.map((g) => (g.id === goalId ? data.goal! : g)));
+      setStatusMessage(`Goal progress updated: ${data.goal.currentValue}/${data.goal.targetValue}.`);
+    } catch {
+      setStatusMessage('Network error updating goal progress.');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleGoalLifecycle(goalId: string, action: 'pause' | 'resume' | 'archive') {
+    setBusyId(`goal-${action}-${goalId}`);
+    setStatusMessage(null);
+    try {
+      const res = await fetch(`/api/goals/${encodeURIComponent(goalId)}/${action}`, {
+        method: 'POST',
+      });
+      const data = (await res.json()) as { goal?: ResearchGoalRecord; error?: string };
+      if (!res.ok || !data.goal) {
+        setStatusMessage(data.error || `Sign in to ${action} this research goal.`);
+        return;
+      }
+      setGoals((prev) => prev.map((g) => (g.id === goalId ? data.goal! : g)));
+      setStatusMessage(`Goal "${data.goal.title}" is now ${data.goal.status.toLowerCase()}.`);
+    } catch {
+      setStatusMessage(`Network error trying to ${action} goal.`);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function handleCreateGoal(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = newGoalTitle.trim();
+    if (!trimmed) return;
+    setBusyId('goal-create');
+    setStatusMessage(null);
+    try {
+      const res = await fetch('/api/goals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: trimmed,
+          metric: 'EVIDENCE_ATTACHED',
+          targetValue: Math.max(1, Math.min(100, Number(newGoalTarget) || 5)),
+          period: 'MONTHLY',
+        }),
+      });
+      const data = (await res.json()) as { goal?: ResearchGoalRecord; error?: string };
+      if (!res.ok || !data.goal) {
+        setStatusMessage(data.error || 'Sign in to create a personal research goal.');
+        return;
+      }
+      setGoals((prev) => [data.goal!, ...prev]);
+      setNewGoalTitle('');
+      setStatusMessage(`Created research goal "${data.goal.title}".`);
+    } catch {
+      setStatusMessage('Network error creating research goal.');
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   async function handleAttentionStatus(id: string, status: AttentionStatus) {
     setBusyId(id);
@@ -236,6 +337,82 @@ export function ResearchOsClient({
           {statusMessage}
         </p>
       )}
+
+      {/* Priority #1 Module: Continue Working (Part I §26.4 / Part III §10) */}
+      <section
+        aria-label="Continue Working"
+        className="rounded-xl border border-line bg-surface p-5 space-y-4"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="inline-flex items-center gap-1.5 font-mono text-xs font-semibold uppercase text-brand">
+              <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+              Continue Working
+            </p>
+            <h2 className="text-lg font-bold text-ink">Resume Your Active Research Context</h2>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link
+              href="/contribute"
+              className="inline-flex min-h-10 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 text-xs font-medium text-ink hover:border-brand"
+            >
+              + New Contribution
+            </Link>
+            <Link
+              href="/editor"
+              className="inline-flex min-h-10 items-center rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-on-primary hover:opacity-90"
+            >
+              Open MDX Workspace →
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          {localDrafts.map((draft) => (
+            <Link
+              key={draft.id}
+              href={`/editor/${encodeURIComponent(draft.id)}`}
+              className="flex flex-col justify-between rounded-lg border border-line bg-canvas p-3.5 transition-colors hover:border-brand"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <span className="font-mono font-semibold text-brand uppercase">Draft</span>
+                  <span className="rounded-full border border-line px-2 py-0.5 font-mono text-ink-secondary">
+                    {draft.saveState}
+                  </span>
+                </div>
+                <p className="font-serif text-sm font-semibold text-ink">
+                  {draft.title || 'Untitled scholarly draft'}
+                </p>
+              </div>
+              <p className="mt-2 text-xs text-ink-secondary">
+                Resume in MDX Workspace →
+              </p>
+            </Link>
+          ))}
+
+          {initialProjects.slice(0, Math.max(1, 3 - localDrafts.length)).map((proj) => (
+            <Link
+              key={proj.id}
+              href={`/project/${proj.slug}`}
+              className="flex flex-col justify-between rounded-lg border border-line bg-canvas p-3.5 transition-colors hover:border-brand"
+            >
+              <div className="space-y-1">
+                <div className="flex items-center justify-between gap-2 text-xs">
+                  <span className="font-mono font-semibold text-brand uppercase">Project</span>
+                  <span className="rounded-full border border-line px-2 py-0.5 font-mono text-ink-secondary">
+                    {proj.stage}
+                  </span>
+                </div>
+                <p className="font-serif text-sm font-semibold text-ink">{proj.title}</p>
+              </div>
+              <p className="mt-2 text-xs text-ink-secondary">
+                {proj.workspaceName} · Open workbench →
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* Top Row: Attention Queue vs Notifications (strict §10 distinction) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -432,6 +609,7 @@ export function ResearchOsClient({
         </section>
 
         <section
+          id="goals"
           aria-label="Personal Research Goals"
           className="lg:col-span-6 rounded-xl border border-line bg-surface p-5 space-y-4"
         >
@@ -451,18 +629,52 @@ export function ResearchOsClient({
             </Link>
           </div>
 
+          <form onSubmit={handleCreateGoal} className="flex flex-wrap gap-2">
+            <label htmlFor="new-goal-title" className="sr-only">
+              New research goal title
+            </label>
+            <input
+              id="new-goal-title"
+              type="text"
+              value={newGoalTitle}
+              onChange={(e) => setNewGoalTitle(e.target.value)}
+              placeholder="Add substantive goal (e.g., Audit 5 primary citations)…"
+              className="min-w-0 flex-1 rounded-lg border border-line bg-canvas px-3 py-2 text-xs text-ink"
+            />
+            <label htmlFor="new-goal-target" className="sr-only">
+              Goal target count
+            </label>
+            <input
+              id="new-goal-target"
+              type="number"
+              min={1}
+              max={100}
+              value={newGoalTarget}
+              onChange={(e) => setNewGoalTarget(Number(e.target.value) || 1)}
+              className="w-16 rounded-lg border border-line bg-canvas px-2 py-2 font-mono text-xs text-ink"
+            />
+            <button
+              type="submit"
+              disabled={busyId === 'goal-create' || !newGoalTitle.trim()}
+              className="inline-flex min-h-10 items-center gap-1 rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-on-primary disabled:opacity-40"
+            >
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+              Add Goal
+            </button>
+          </form>
+
           <ul className="space-y-3">
-            {initialGoals.map((goal) => {
+            {goals.map((goal) => {
               const pct = Math.min(100, Math.round((goal.currentValue / Math.max(1, goal.targetValue)) * 100));
               return (
                 <li
                   key={goal.id}
                   className="rounded-lg border border-line bg-canvas/50 p-3.5 space-y-2 text-xs"
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="font-semibold text-sm text-ink">{goal.title}</span>
                     <span className="font-mono text-ink-secondary">
-                      {goal.currentValue} / {goal.targetValue} ({pct}%)
+                      {goal.currentValue} / {goal.targetValue} ({pct}%) · {goal.status}
                     </span>
                   </div>
                   <div
@@ -475,6 +687,52 @@ export function ResearchOsClient({
                   >
                     <div className="h-full bg-brand" style={{ width: `${pct}%` }} />
                   </div>
+                  {goal.status !== 'ARCHIVED' && (
+                    <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                      {goal.status === 'ACTIVE' && (
+                        <>
+                          <button
+                            type="button"
+                            disabled={busyId === `goal-prog-${goal.id}`}
+                            onClick={() => void handleGoalProgress(goal.id)}
+                            className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand"
+                          >
+                            <Plus className="h-3 w-3" aria-hidden="true" />
+                            Log +1
+                          </button>
+                          <button
+                            type="button"
+                            disabled={busyId === `goal-pause-${goal.id}`}
+                            onClick={() => void handleGoalLifecycle(goal.id, 'pause')}
+                            className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-secondary hover:border-brand"
+                          >
+                            <Pause className="h-3 w-3" aria-hidden="true" />
+                            Pause
+                          </button>
+                        </>
+                      )}
+                      {goal.status === 'PAUSED' && (
+                        <button
+                          type="button"
+                          disabled={busyId === `goal-resume-${goal.id}`}
+                          onClick={() => void handleGoalLifecycle(goal.id, 'resume')}
+                          className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:border-brand"
+                        >
+                          <Play className="h-3 w-3" aria-hidden="true" />
+                          Resume
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        disabled={busyId === `goal-archive-${goal.id}`}
+                        onClick={() => void handleGoalLifecycle(goal.id, 'archive')}
+                        className="inline-flex min-h-9 items-center gap-1 rounded-md border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-secondary hover:border-brand"
+                      >
+                        <Archive className="h-3 w-3" aria-hidden="true" />
+                        Archive
+                      </button>
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -485,6 +743,7 @@ export function ResearchOsClient({
       {/* Third Row: Event-Derived Recognition (§11) & Landing/Topics Preferences (§13) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <section
+          id="recognition"
           aria-label="Scholarly Recognition Summary"
           className="lg:col-span-7 rounded-xl border border-line bg-surface p-5 space-y-4"
         >

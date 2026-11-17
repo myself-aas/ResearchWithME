@@ -15,15 +15,28 @@ const V34_ROUTES = [
   '/feed',
   '/search',
   '/topics',
+  '/topics/reasoning-models',
   '/contribute',
+  '/editor',
+  '/editor/draft-smoke',
   '/library',
   '/workspaces',
   '/workspaces/reasoning-cold-start-replication',
+  '/projects',
+  '/project/reasoning-cold-start-replication',
+  '/sources',
+  '/source/src-arxiv-2501-12948',
+  '/evidence',
+  '/evidence/ev-grpo-emergence',
+  '/claims',
+  '/claim/clm-rl-reasoning-tradeoff',
+  '/reviews',
   '/graph',
   '/tools',
+  '/tool/vllm-project-vllm',
   '/research-os',
   '/contribution/contrib-rl-cold-start',
-  '/source/src-arxiv-2501-12948',
+  '/settings',
   '/profile/myself-aas',
 ] as const;
 
@@ -65,7 +78,20 @@ test.describe('v3.4 Responsive Reflow Matrix (320px–1920px)', () => {
       await page.setViewportSize({ width, height: 900 });
       await page.emulateMedia({ reducedMotion: 'reduce' });
 
-      for (const route of ['/feed', '/workspaces', '/graph', '/tools', '/research-os'] as const) {
+      for (const route of [
+        '/feed',
+        '/workspaces',
+        '/graph',
+        '/tools',
+        '/research-os',
+        '/sources',
+        '/evidence',
+        '/claims',
+        '/projects',
+        '/reviews',
+        '/editor',
+        '/settings',
+      ] as const) {
         const response = await page.goto(route, { waitUntil: 'networkidle' });
         expect(response?.status(), `${route} at ${width}px`).toBe(200);
 
