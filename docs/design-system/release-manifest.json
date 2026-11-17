@@ -1,6 +1,6 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-17T09:58:09.955Z",
+  "generatedAt": "2026-11-17T10:43:27.084Z",
   "tokenChecksum": "sha256:eb18cbef276243f6",
   "results": [
     {
@@ -85,7 +85,7 @@
       "id": "V34-2",
       "description": "v3.4 components use semantic design tokens only (no raw hex or text-white)",
       "status": "pass",
-      "evidence": "18 v3.4 components clean"
+      "evidence": "19 v3.4 components clean"
     },
     {
       "id": "V34-3",
@@ -164,6 +164,12 @@
       "description": "v3.4 Wave 13 operational DB indexes (Migration 10), X-Request-Id/X-Trace-Id propagation, non-suppressible integrity/security alerts, ScholarlyArticle JSON-LD, ADR-032-12 Assistant governance & §18.16 scale benchmarks present",
       "status": "pass",
       "evidence": "Wave 13 live SQL indexes, trace propagation, non-suppressible alerts, JSON-LD & scale benchmarks verified"
+    },
+    {
+      "id": "V34-16",
+      "description": "v3.4 Wave 14 full platform cohesion (HomeFeed ResearchNetworkBridge, legacy post/author/write bridges, runtime /api/feed experiment & flag wiring, updated release-gate & risk-register) present",
+      "status": "pass",
+      "evidence": "Wave 14 legacy-to-v3.4 bridges, live experiments & governance register sync verified"
     }
   ],
   "verdict": "MACHINE-CHECKS-PASS (human sign-off still required — see release-gate.md)"

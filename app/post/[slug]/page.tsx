@@ -445,6 +445,30 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   : 'Verify claims against their primary sources when citing in formal manuscripts.'}
               </p>
             </Card>
+
+            <Card padding="lg" radius="lg" className="space-y-3 font-sans text-xs">
+              <p className="font-mono font-semibold uppercase tracking-wider text-brand">
+                Contribute to this Record
+              </p>
+              <p className="leading-relaxed text-ink-secondary">
+                Extend this review with structured evidence, replication notes, or formal peer review
+                in the ResearchWithME knowledge network.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href="/contribute"
+                  className="inline-flex min-h-10 items-center rounded-lg bg-brand px-3 py-1.5 font-semibold text-on-primary hover:opacity-90"
+                >
+                  Add Evidence / Review →
+                </Link>
+                <Link
+                  href="/sources"
+                  className="inline-flex min-h-10 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 font-medium text-ink hover:border-brand"
+                >
+                  Canonical Sources
+                </Link>
+              </div>
+            </Card>
           </aside>
         </div>
       </main>

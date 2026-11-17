@@ -17,6 +17,7 @@
 const BASE_URL = (process.env.BASE_URL || 'http://127.0.0.1:3100').replace(/\/$/, '');
 
 const SSR_PAGES = [
+  { path: '/', mustContain: ['Research Contribution Network', 'Start a Contribution', 'id="main-content"'] },
   { path: '/feed', mustContain: ['Research Contributions Feed', 'id="main-content"'] },
   { path: '/search', mustContain: ['Search ResearchWithME', 'id="main-content"'] },
   { path: '/topics', mustContain: ['Scholarly Topics', 'Canonical Topics', 'id="main-content"'] },

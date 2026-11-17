@@ -332,6 +332,20 @@ check('V34-15', 'v3.4 Wave 13 operational DB indexes (Migration 10), X-Request-I
   assert(contribPage.includes('scholarlyContributionJsonLd'), 'contribution detail page missing ScholarlyArticle JSON-LD');
   return 'Wave 13 live SQL indexes, trace propagation, non-suppressible alerts, JSON-LD & scale benchmarks verified';
 });
+check('V34-16', 'v3.4 Wave 14 full platform cohesion (HomeFeed ResearchNetworkBridge, legacy post/author/write bridges, runtime /api/feed experiment & flag wiring, updated release-gate & risk-register) present', () => {
+  const files = [
+    'components/v34/ResearchNetworkBridge.tsx',
+    'test/next/v34-wave14-cohesion.test.ts',
+    'docs/design-system/release-gate.md',
+    'docs/design-system/risk-register.md',
+  ];
+  for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
+  const home = readFileSync(join(root, 'components/HomeFeed.tsx'), 'utf8');
+  assert(home.includes('ResearchNetworkBridge'), 'HomeFeed missing ResearchNetworkBridge');
+  const feedApi = readFileSync(join(root, 'app/api/feed/route.ts'), 'utf8');
+  assert(feedApi.includes('assignExperimentVariant'), '/api/feed missing runtime experiment assignment');
+  return 'Wave 14 legacy-to-v3.4 bridges, live experiments & governance register sync verified';
+});
 
 const failed = results.filter((r) => r.status === 'fail');
 const manifest = {

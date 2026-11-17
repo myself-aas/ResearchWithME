@@ -89,6 +89,19 @@ export default async function AuthorDetailPage({ params }: PageProps) {
 
         <AuthorProfileCard author={author} metrics={metrics} headingLevel="h1" />
 
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-xs">
+          <p className="text-ink-secondary">
+            View structured scholarly contributions, projects, and event-derived recognition on the
+            canonical v3.4 contributor profile.
+          </p>
+          <Link
+            href={`/profile/${encodeURIComponent(author.id)}`}
+            className="font-semibold text-brand hover:underline"
+          >
+            Open Contributor Profile →
+          </Link>
+        </div>
+
         <AuthorArchiveLayout articles={articles} />
 
         <p className="mt-10 border-t border-line pt-6 text-sm leading-relaxed text-ink-secondary">
