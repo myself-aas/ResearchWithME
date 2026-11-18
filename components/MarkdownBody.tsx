@@ -117,13 +117,28 @@ export default function MarkdownBody({ markdown, citations, citeHref }: Markdown
               return <ChartBlock source={source.replace(/\n$/, '')} />;
             }
             return (
-              <pre className="mt-6 overflow-x-auto rounded-sm border border-line bg-surface p-4 leading-relaxed">
+              // A wide code block scrolls inside its own box. Without a tab
+              // stop, keyboard users cannot reach the scrollbar, so the block
+              // becomes a labelled, focusable region (WCAG 2.1.1).
+              <pre
+                tabIndex={0}
+                role="region"
+                aria-label="Code block"
+                className="mt-6 overflow-x-auto rounded-sm border border-line bg-surface p-4 leading-relaxed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              >
                 {children}
               </pre>
             );
           },
           table: ({ children }) => (
-            <div className="mt-6 overflow-x-auto rounded-sm border border-line">
+            // Same rule as code blocks: a table that is wider than a phone
+            // must be scrollable with the keyboard, not only by touch.
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Table"
+              className="mt-6 overflow-x-auto rounded-sm border border-line focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
               <table className="w-full border-collapse text-left font-sans text-sm">{children}</table>
             </div>
           ),

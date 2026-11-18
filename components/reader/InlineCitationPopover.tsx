@@ -15,7 +15,20 @@ export interface InlineCitationPopoverProps {
   label: string;
   source: CitationSource;
   citeHref?: string;
+  /**
+   * `inline` is a link-sized trigger for running prose (WCAG exempts links
+   * inside a sentence from the target-size minimum). `control` is a standalone
+   * 44px control for a toolbar or card, where the trigger is the only target.
+   */
+  variant?: 'inline' | 'control';
 }
+
+const TRIGGER_CLASSES = {
+  inline:
+    'inline-flex items-baseline rounded-xs px-1 py-0.5 font-mono text-xs font-medium text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:bg-selection',
+  control:
+    'inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-4 font-sans text-sm font-medium text-ink transition-colors hover:border-brand hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
+} as const;
 
 
 function resolveDoiString(source: CitationSource): string {
@@ -68,6 +81,7 @@ export default function InlineCitationPopover({
   label,
   source,
   citeHref,
+  variant = 'inline',
 }: InlineCitationPopoverProps) {
   const [copied, setCopied] = useState<CopiedKind>(null);
   const [copyError, setCopyError] = useState(false);
@@ -98,7 +112,7 @@ export default function InlineCitationPopover({
         <button
           type="button"
           aria-label={`Citation ${label}: ${source.title}`}
-          className="inline-flex items-baseline rounded-xs px-1 py-0.5 font-mono text-xs font-medium text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:bg-selection"
+          className={TRIGGER_CLASSES[variant]}
         >
           {label}
         </button>

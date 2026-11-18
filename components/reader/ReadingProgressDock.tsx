@@ -103,7 +103,7 @@ export default function ReadingProgressDock({
 
         <span aria-hidden="true" className="h-4 w-px bg-line" />
 
-        <InlineCitationPopover label="Cite" source={citationSource} citeHref={citeHref} />
+        <InlineCitationPopover label="Cite" source={citationSource} citeHref={citeHref} variant="control" />
 
         <Pressable
           type="button"
