@@ -940,7 +940,7 @@ export default function ScholarlyEditorWorkspace({
 
         {/* Primary Draft Canvas */}
         <section
-          aria-label="Scholarly MDX draft canvas"
+          aria-label="Scholarly draft canvas"
           className={`rounded-xl border border-line bg-surface p-4 sm:p-6 space-y-4 ${
             sourcesOpen && inspectorOpen
               ? 'lg:col-span-6'
@@ -977,7 +977,7 @@ export default function ScholarlyEditorWorkspace({
                     : 'border-line bg-canvas text-ink-secondary'
                 }`}
               >
-                Structured Blocks
+                Structured blocks
               </button>
               <button
                 type="button"
@@ -989,7 +989,7 @@ export default function ScholarlyEditorWorkspace({
                 }`}
               >
                 <FileCode2 className="h-3.5 w-3.5" aria-hidden="true" />
-                MDX editor
+                Rich text
               </button>
             </div>
           </div>
@@ -1218,8 +1218,9 @@ export default function ScholarlyEditorWorkspace({
             <div className="space-y-3">
               <div className="flex flex-wrap items-start justify-between gap-2 rounded-lg bg-surface-subtle/60 p-3">
                 <p className="max-w-md text-xs leading-relaxed text-ink-secondary">
-                  The same MDX editor the writer studio uses. Edit the source, then apply it to the
-                  structured blocks — evidence, claim, and citation labels are read back automatically.
+                  The same rich text editor the writer studio uses. Write visually or insert a
+                  Markdown/MDX block, then apply the source to the structured blocks — evidence,
+                  claim, and citation labels are read back automatically.
                 </p>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
@@ -1249,7 +1250,7 @@ export default function ScholarlyEditorWorkspace({
                   setMdxDirty(true);
                   setMdxDraft(next);
                 }}
-                label="MDX source"
+                label="Rich text & MDX"
                 error={
                   mdxDraftValidation.safe
                     ? undefined

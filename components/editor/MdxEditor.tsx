@@ -37,7 +37,7 @@ export default function MdxEditor({
   value,
   onChange,
   label,
-  hint = 'Markdown with safe MDX blocks. The toolbar covers bold, italic, lists, quotes, code, and image uploads.',
+  hint = 'Rich text with safe MDX blocks. Grouped toolbars cover headings H1–H6, lists, quotes, code, links, and every allowlisted MDX component; tables and components open in Markdown source.',
   error,
   disabled,
   onUploadImage,
@@ -48,7 +48,7 @@ export default function MdxEditor({
       {label || !hideBadge ? (
         <div className="mb-1.5 flex flex-wrap items-center justify-between gap-2">
           {label ? (
-            <label htmlFor={id} className="font-sans text-sm font-medium text-ink">
+            <label id={`${id}-label`} htmlFor={id} className="font-sans text-sm font-medium text-ink">
               {label}
             </label>
           ) : (
@@ -64,6 +64,7 @@ export default function MdxEditor({
       ) : null}
       <PlateBodyEditor
         id={id}
+        label={label}
         value={value}
         onChange={onChange}
         error={error}
