@@ -148,15 +148,15 @@ export default async function AccountPage() {
 
             <dl className="mt-4 grid gap-4 sm:grid-cols-3">
               <div>
-                <dt className="font-sans text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">Status</dt>
+                <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Status</dt>
                 <dd className="mt-1 font-serif text-base text-ink">{shownStatus}</dd>
               </div>
               <div>
-                <dt className="font-sans text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">Plan</dt>
+                <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Plan</dt>
                 <dd className="mt-1 font-serif text-base text-ink">{planLabel}</dd>
               </div>
               <div>
-                <dt className="font-sans text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">
+                <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">
                   Co-pilot credits
                 </dt>
                 <dd className="mt-1 font-serif text-base text-ink">{entitlement.aiCredits}</dd>
@@ -267,19 +267,19 @@ export default async function AccountPage() {
         <div className="mt-3 flex flex-wrap gap-2">
           <Link
             href="/dashboard/profile"
-            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Edit name, bio & links
           </Link>
           <Link
             href="/dashboard/access#profile"
-            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Photo & writer identity
           </Link>
           <Link
             href="/settings"
-            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Appearance & connected accounts
           </Link>

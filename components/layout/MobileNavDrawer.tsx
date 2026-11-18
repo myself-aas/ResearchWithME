@@ -142,7 +142,7 @@ export default function MobileNavDrawer({
               </nav>
 
               <nav aria-label="Secondary" className="mt-4 border-t border-line pt-3">
-                <p className="mb-1.5 px-3 font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">
+                <p className="mb-1.5 px-3 font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
                   Tools
                 </p>
                 <ul className="grid gap-0.5">
@@ -172,7 +172,7 @@ export default function MobileNavDrawer({
                       Signed in as <span className="font-semibold text-ink">{userName}</span>
                     </span>
                   </p>
-                  <p className="px-1 text-[11px] text-ink-secondary">
+                  <p className="px-1 text-xs text-ink-secondary">
                     {isEditor ? 'Editor access is active.' : 'Reader account.'}
                   </p>
                   <div className="mt-1 grid grid-cols-2 gap-2">
@@ -198,7 +198,7 @@ export default function MobileNavDrawer({
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
-                  <p className="px-1 text-[11px] leading-relaxed text-ink-secondary">
+                  <p className="px-1 text-xs leading-relaxed text-ink-secondary">
                     Reader mode. Sign in to publish reviews or sync your reading list.
                   </p>
                   <div className="grid grid-cols-2 gap-2">

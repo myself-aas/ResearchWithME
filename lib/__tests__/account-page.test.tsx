@@ -53,6 +53,29 @@ describe('/dashboard/account', () => {
     expect(html).toContain('href="/api-docs#assistant-api"');
   });
 
+  it('is a single scrolling column on a phone, with stacked cards and 44px targets', async () => {
+    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+    const html = await render();
+    // One column until lg, facts stack until sm, and the product grid is one-up
+    // until sm: nothing forces a horizontal scroll at 320px.
+    expect(html).toContain('mx-auto w-full max-w-4xl');
+    expect(html).toContain('mt-6 grid gap-4 lg:grid-cols-2');
+    expect(html).toContain('mt-4 grid gap-4 sm:grid-cols-3');
+    expect(html).toContain('mt-4 grid gap-3 sm:grid-cols-2');
+    expect(html).not.toMatch(/w-\[\d+px\]/);
+    expect(html).not.toMatch(/text-\[\d+(?:\.\d+)?px\]/);
+    // Every profile chip is a 44px target with the shared focus ring.
+    const chips = [...html.matchAll(/<a [^>]*>/g)]
+      .map((match) => match[0])
+      .filter((tag) => /href="\/(?:dashboard\/profile|dashboard\/access#profile|settings)"/.test(tag));
+    expect(chips).toHaveLength(3);
+    for (const tag of chips) {
+      expect(tag).toContain('min-h-11');
+      expect(tag).toContain('focus-visible:outline-2');
+      expect(tag).not.toContain('whitespace-nowrap');
+    }
+  });
+
   it('offers nothing to buy while the store has no product', async () => {
     vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '');
     getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });

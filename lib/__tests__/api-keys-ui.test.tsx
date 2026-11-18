@@ -67,6 +67,9 @@ describe('ApiKeys', () => {
     expect(fetchMock).toHaveBeenCalledWith('/api/account/api-keys', expect.objectContaining({ method: 'POST', body: JSON.stringify({ name: 'laptop' }) }));
     const field = container.querySelector('input[readonly]') as HTMLInputElement;
     expect(field.value).toBe(KEY);
+    // At sm+ the field shares the row with Copy/Done instead of overflowing it.
+    expect(field.className).toContain('sm:flex-1');
+    expect(field.className).toContain('sm:w-auto');
     expect(container.textContent).toContain('This key is shown once. Store it now.');
     expect(container.textContent).toContain('laptop');
     await click('Done');
@@ -89,6 +92,22 @@ describe('ApiKeys', () => {
     await click('Keep key');
     expect(container.textContent).not.toContain('Requests that use this key will be refused.');
   });
+  it('wraps a long key name in the revoke confirmation on narrow screens', async () => {
+    const longName = 'github-actions-production-'.padEnd(60, 'x');
+    await render({ initialKeys: [{ ...record, name: longName }] });
+    await click('Revoke');
+    const confirmation = [...container.querySelectorAll('p')].find((node) =>
+      node.textContent?.includes('Requests that use this key')
+    );
+    expect(confirmation?.textContent).toContain(longName);
+    expect(confirmation?.className).toContain('break-words');
+    // The key row and its actions stack below sm and let the details shrink.
+    const row = container.querySelector('li > div');
+    expect(row?.className).toContain('flex-col');
+    expect(row?.className).toContain('sm:flex-row');
+    expect(row?.firstElementChild?.className).toContain('min-w-0');
+  });
+
   it('marks a key revoked after the server confirms', async () => {
     fetchMock.mockResolvedValue(reply(204));
     await render({ initialKeys: [record] });

@@ -55,7 +55,7 @@ export default function MdxEditor({
             <span />
           )}
           {hideBadge ? null : (
-            <span className="inline-flex items-center gap-1 font-mono text-[11px] font-semibold uppercase tracking-wider text-ink-secondary">
+            <span className="inline-flex items-center gap-1 font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
               <FileCode2 className="h-3.5 w-3.5" aria-hidden="true" />
               MDX
             </span>

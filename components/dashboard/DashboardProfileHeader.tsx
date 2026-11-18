@@ -71,17 +71,17 @@ export default function DashboardProfileHeader({
             )}
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-1.5 pt-12 sm:pt-14">
+          <div className="flex flex-wrap items-center justify-end gap-1 pt-12 sm:gap-1.5 sm:pt-14">
             <Link
               href="/dashboard/profile"
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-canvas px-3 text-xs font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:text-sm"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-canvas px-2.5 text-xs font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:px-3 sm:text-sm"
             >
               <Settings2 className="h-4 w-4" aria-hidden="true" />
               <span>Edit profile</span>
             </Link>
             <Link
               href={isEditor ? '/dashboard' : '/dashboard/access'}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-brand px-3 text-xs font-semibold text-on-primary transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:text-sm"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-brand px-2.5 text-xs font-semibold text-on-primary transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand sm:px-3 sm:text-sm"
             >
               <PenSquare className="h-4 w-4" aria-hidden="true" />
               <span>{isEditor ? 'New article' : 'Write for us'}</span>
