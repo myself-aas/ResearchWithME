@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { enforceRateLimit, requireContributor } from '@/lib/v34/http';
-import { createR2PresignedGetUrl, getR2Config } from '@/lib/v34/r2-storage';
+import { createArtifactSignedUrl } from '@/lib/v34/artifact-storage';
 import { cancelRenderJob, getRenderJob } from '@/lib/v34/wave8-store';
 
 export const runtime = 'nodejs';
@@ -14,14 +14,18 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   if (!auth.ok) return auth.response;
 
   const { id } = await context.params;
-  const render = getRenderJob(id, auth.actor.id);
+  const render = await getRenderJob(id, auth.actor.id);
   if (!render) {
     return NextResponse.json({ error: 'Render job not found.' }, { status: 404 });
   }
-  const r2Config = render.storageProvider === 'r2' && render.storageKey ? getR2Config() : null;
-  const freshSigned = r2Config && render.storageKey
-    ? createR2PresignedGetUrl(r2Config, render.storageKey, { expiresInSeconds: 900 })
-    : null;
+  const freshSigned =
+    render.storageKey && render.storageProvider !== 'inline'
+      ? await createArtifactSignedUrl({
+          provider: render.storageProvider,
+          key: render.storageKey,
+          expiresInSeconds: 900,
+        }).catch(() => null)
+      : null;
 
   return NextResponse.json({
     render: freshSigned

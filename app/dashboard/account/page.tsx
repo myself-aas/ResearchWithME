@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import BlogHeader from '@/components/BlogHeader';
-import BlogFooter from '@/components/BlogFooter';
 import ApiKeys from '@/components/account/ApiKeys';
 import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
@@ -118,121 +116,129 @@ export default async function AccountPage() {
   const onSale = BILLING_PRODUCTS.filter((product) => isPurchasable(product.key));
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas">
-      <BlogHeader />
-      <section className="mx-auto w-full max-w-4xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8">
-        <header className="border-b border-line pb-6">
-          <h1 className="font-serif text-3xl font-bold tracking-tight text-ink sm:text-4xl">Your account</h1>
-          <p className="mt-2 font-serif text-ink-secondary">
-            Purchases appear here as soon as Lemon Squeezy confirms them, usually within a minute.
+    <div className="mx-auto w-full max-w-4xl">
+      <header className="flex flex-wrap items-end justify-between gap-3 border-b border-line pb-5">
+        <div>
+          <h1 className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">Account</h1>
+          <p className="mt-1 max-w-prose text-sm leading-relaxed text-ink-secondary">
+            Plan, purchases, and API access. Reading stays free either way.
           </p>
-          <Link href="/settings" className="mt-3 inline-block text-sm font-medium text-brand underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
-            Customize settings
-          </Link>
-        </header>
+        </div>
+        <Link
+          href="/pricing"
+          className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        >
+          See products
+        </Link>
+      </header>
 
-        {!entitlementAvailable && (
-          <p role="alert" className="mt-8 border-l-2 border-destructive bg-surface px-4 py-3 text-sm text-destructive">
-            We could not load your plan or purchases. Reload this page and check your receipt before buying again.{' '}
-            <Link href="/pricing" className="underline">See product information</Link>.
+      {!entitlementAvailable && (
+        <p role="alert" className="mt-6 border-l-2 border-destructive bg-surface px-4 py-3 text-sm text-destructive">
+          We could not load your plan or purchases. Reload this page and check your receipt before buying again.{' '}
+          <Link href="/pricing" className="underline">See product information</Link>.
+        </p>
+      )}
+
+      {entitlementAvailable && (
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <section aria-labelledby="plan-heading" className="card border border-line bg-surface p-5 sm:p-6">
+            <h2 id="plan-heading" className="font-serif text-lg font-bold text-ink">
+              Plan
+            </h2>
+
+            <dl className="mt-4 grid gap-4 sm:grid-cols-3">
+              <div>
+                <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Status</dt>
+                <dd className="mt-1 font-serif text-base text-ink">{shownStatus}</dd>
+              </div>
+              <div>
+                <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Plan</dt>
+                <dd className="mt-1 font-serif text-base text-ink">{planLabel}</dd>
+              </div>
+              <div>
+                <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+                  Co-pilot credits
+                </dt>
+                <dd className="mt-1 font-serif text-base text-ink">{entitlement.aiCredits}</dd>
+              </div>
+            </dl>
+
+            {status.note && !hasOneTimePurchase ? (
+              <p
+                role={status.alert ? 'alert' : undefined}
+                className={`mt-4 text-sm leading-relaxed ${status.alert ? 'text-destructive' : 'text-ink-secondary'}`}
+              >
+                {status.note}
+              </p>
+            ) : null}
+
+            {periodEnd ? (
+              <p className="mt-3 text-sm text-ink-secondary">
+                {active ? 'Renews' : 'Access until'} {periodEnd}.
+              </p>
+            ) : null}
+          </section>
+
+          <section aria-labelledby="purchases-heading" className="card border border-line bg-surface p-5 sm:p-6">
+            <h2 id="purchases-heading" className="font-serif text-lg font-bold text-ink">
+              Purchases
+            </h2>
+            {hasPurchases ? (
+              <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+                Receipts are emailed by Lemon Squeezy, the merchant of record. If a receipt is missing, check the
+                address you paid with — it is not necessarily the address on this account.
+              </p>
+            ) : (
+              <p className="mt-2 text-sm leading-relaxed text-ink-secondary">No purchases yet.</p>
+            )}
+          </section>
+        </div>
+      )}
+
+      <section aria-labelledby="api-keys-heading" className="mt-4 card border border-line bg-surface p-5 sm:p-6">
+        <h2 id="api-keys-heading" className="font-serif text-lg font-bold text-ink">
+          API keys
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+          A key lets a script or an agent ask the Assistant, which answers only from published reviews. Use is free
+          up to the monthly allowance.{' '}
+          <Link href="/api-docs#assistant-api" className="underline">
+            Read the API reference
+          </Link>
+          .
+        </p>
+        {!user ? (
+          <p className="mt-4 text-sm leading-relaxed text-ink-secondary">
+            Keys belong to an account, and this deployment has no sign-in configured, so none can be created here.
+          </p>
+        ) : apiKeysAvailable ? (
+          <div className="mt-4">
+            <ApiKeys initialKeys={apiKeys} monthlyIncluded={included} used={used} />
+          </div>
+        ) : (
+          <p role="alert" className="mt-4 text-sm leading-relaxed text-destructive">
+            API keys could not be loaded. Reload the page; if this continues, the keys feature may not be set up on
+            this deployment yet.
           </p>
         )}
-        {entitlementAvailable && (<>
-        <section aria-labelledby="plan-heading" className="card mt-8 border border-line bg-surface p-6">
-          <h2 id="plan-heading" className="font-serif text-xl font-bold text-ink">
-            Plan
-          </h2>
+      </section>
 
-          <dl className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div>
-              <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Status</dt>
-              <dd className="mt-1 font-serif text-lg text-ink">{shownStatus}</dd>
-            </div>
-            <div>
-              <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">Plan</dt>
-              <dd className="mt-1 font-serif text-lg text-ink">{planLabel}</dd>
-            </div>
-            <div>
-              <dt className="font-sans text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-                Co-pilot credits
-              </dt>
-              <dd className="mt-1 font-serif text-lg text-ink">{entitlement.aiCredits}</dd>
-            </div>
-          </dl>
-
-          {status.note && !hasOneTimePurchase ? (
-            <p
-              role={status.alert ? 'alert' : undefined}
-              className={`mt-4 font-serif leading-relaxed ${status.alert ? 'text-destructive' : 'text-ink-secondary'}`}
-            >
-              {status.note}
-            </p>
-          ) : null}
-
-          {periodEnd ? (
-            <p className="mt-3 font-serif text-ink-secondary">
-              {active ? 'Renews' : 'Access until'} {periodEnd}.
-            </p>
-          ) : null}
-        </section>
-
-        <section aria-labelledby="purchases-heading" className="mt-8">
-          <h2 id="purchases-heading" className="font-serif text-xl font-bold text-ink">
-            Purchases
-          </h2>
-          {hasPurchases ? (
-            <p className="mt-2 font-serif leading-relaxed text-ink-secondary">
-              Receipts are emailed by Lemon Squeezy, the merchant of record. If a receipt is missing, check the
-              address you paid with — it is not necessarily the address on this account.
-            </p>
-          ) : (
-            <p className="mt-2 font-serif leading-relaxed text-ink-secondary">No purchases yet.</p>
-          )}
-        </section>
-
-        </>)}
-
-        <section aria-labelledby="api-keys-heading" className="mt-8">
-          <h2 id="api-keys-heading" className="font-serif text-xl font-bold text-ink">
-            API keys
-          </h2>
-          <p className="mt-2 font-serif leading-relaxed text-ink-secondary">
-            A key lets a script or an agent ask the Assistant, which answers only from published reviews. Use is free
-            up to the monthly allowance.{' '}
-            <Link href="/api-docs#assistant-api" className="underline">
-              Read the API reference
-            </Link>
-            .
-          </p>
-          {!user ? (
-            <p className="mt-4 font-serif leading-relaxed text-ink-secondary">
-              Keys belong to an account, and this deployment has no sign-in configured, so none can be created here.
-            </p>
-          ) : apiKeysAvailable ? (
-            <ApiKeys initialKeys={apiKeys} monthlyIncluded={included} used={used} />
-          ) : (
-            <p role="alert" className="mt-4 font-serif leading-relaxed text-destructive">
-              API keys could not be loaded. Reload the page; if this continues, the keys feature may not be set up on
-              this deployment yet.
-            </p>
-          )}
-        </section>
-
-        {entitlementAvailable && <section aria-labelledby="buy-heading" className="mt-8">
-          <h2 id="buy-heading" className="font-serif text-xl font-bold text-ink">
+      {entitlementAvailable && (
+        <section aria-labelledby="buy-heading" className="mt-4 card border border-line bg-surface p-5 sm:p-6">
+          <h2 id="buy-heading" className="font-serif text-lg font-bold text-ink">
             {hasPurchases ? 'Also available' : 'Available'}
           </h2>
           {onSale.length === 0 ? (
-            <p className="mt-2 font-serif leading-relaxed text-ink-secondary">
+            <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
               Nothing is on sale yet. The checkout is being set up.
             </p>
           ) : null}
-          <ul className="mt-4 grid gap-4 sm:grid-cols-2">
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {onSale.map((product) => (
-              <li key={product.key} className="card border border-line bg-surface p-5">
-                <p className="font-serif text-lg font-bold text-ink">{product.name}</p>
-                <p className="mt-1 font-sans text-sm uppercase tracking-wider text-ink-secondary">{product.priceLabel}</p>
-                <div className="mt-4">
+              <li key={product.key} className="rounded-xl border border-line bg-canvas p-4">
+                <p className="font-serif text-base font-bold text-ink">{product.name}</p>
+                <p className="mt-1 font-sans text-xs uppercase tracking-wider text-ink-secondary">{product.priceLabel}</p>
+                <div className="mt-3">
                   <CheckoutButton
                     product={product.key}
                     label={product.mode === 'subscription' ? 'Subscribe' : 'Buy'}
@@ -241,18 +247,46 @@ export default async function AccountPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-6 font-serif leading-relaxed text-ink-secondary">
+          <p className="mt-4 text-sm leading-relaxed text-ink-secondary">
             Reading stays free whether or not anything appears on this page.{' '}
             <Link href="/pricing" className="underline">
               See all products
             </Link>
             .
           </p>
-        </section>}
+        </section>
+      )}
 
-        <LemonSqueezyScript />
+      <section aria-labelledby="profile-heading" id="profile" className="mt-4 card border border-line bg-surface p-5 sm:p-6">
+        <h2 id="profile-heading" className="font-serif text-lg font-bold text-ink">
+          Profile & identity
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
+          Your photo and byline details appear on the public writers directory and on every article you publish.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <Link
+            href="/dashboard/profile"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Edit name, bio & links
+          </Link>
+          <Link
+            href="/dashboard/access#profile"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Photo & writer identity
+          </Link>
+          <Link
+            href="/settings"
+            className="inline-flex min-h-11 items-center rounded-full border border-line bg-canvas px-3 text-sm font-semibold text-ink transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+          >
+            Appearance & connected accounts
+          </Link>
+        </div>
       </section>
-      <BlogFooter />
+
+      <LemonSqueezyScript />
     </div>
   );
 }

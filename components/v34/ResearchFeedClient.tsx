@@ -52,30 +52,33 @@ export default function ResearchFeedClient({
     });
   }, [initialItems, query, selectedTopic, selectedType]);
 
+  const hasActiveFilters = selectedType !== 'all' || selectedTopic !== 'all' || query.trim().length > 0;
+
   const leftRail = (
     <div className="space-y-5 rounded-lg border border-line bg-surface p-4">
       <div>
-        <label htmlFor="feed-search" className="block font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-          Search network
+        <label className="block">
+          <span className="block font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+            Search network
+          </span>
+          <span className="relative mt-2 block">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" aria-hidden="true" />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Title, claim, topic, author…"
+              className="h-11 w-full rounded-md border border-line bg-canvas pl-9 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary focus-visible:outline-2 focus-visible:outline-brand"
+            />
+          </span>
         </label>
-        <div className="relative mt-2">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-secondary" aria-hidden="true" />
-          <input
-            id="feed-search"
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Title, claim, topic, author…"
-            className="h-11 w-full rounded-md border border-line bg-canvas pl-9 pr-3 font-sans text-sm text-ink placeholder:text-ink-secondary focus-visible:outline-2 focus-visible:outline-brand"
-          />
-        </div>
       </div>
 
       <div>
         <p className="font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
           Contribution type
         </p>
-        <div className="mt-2 flex flex-col gap-1">
+        <div role="group" aria-label="Contribution type" className="mt-2 flex flex-col gap-1">
           <button
             type="button"
             onClick={() => setSelectedType('all')}
@@ -128,22 +131,23 @@ export default function ResearchFeedClient({
 
       {availableTopics.length > 0 ? (
         <div>
-          <label htmlFor="feed-topic" className="block font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
-            Topic
+          <label className="block">
+            <span className="block font-mono text-xs font-semibold uppercase tracking-wider text-ink-secondary">
+              Topic
+            </span>
+            <select
+              value={selectedTopic}
+              onChange={(e) => setSelectedTopic(e.target.value)}
+              className="mt-2 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink focus-visible:outline-2 focus-visible:outline-brand"
+            >
+              <option value="all">All topics</option>
+              {availableTopics.map((topic) => (
+                <option key={topic} value={topic}>
+                  {topic}
+                </option>
+              ))}
+            </select>
           </label>
-          <select
-            id="feed-topic"
-            value={selectedTopic}
-            onChange={(e) => setSelectedTopic(e.target.value)}
-            className="mt-2 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink focus-visible:outline-2 focus-visible:outline-brand"
-          >
-            <option value="all">All topics</option>
-            {availableTopics.map((topic) => (
-              <option key={topic} value={topic}>
-                {topic}
-              </option>
-            ))}
-          </select>
         </div>
       ) : null}
     </div>
@@ -217,9 +221,13 @@ export default function ResearchFeedClient({
 
       {filteredItems.length === 0 ? (
         <div className="rounded-lg border border-dashed border-line bg-surface p-8 text-center">
-          <p className="font-sans text-base font-semibold text-ink">No matching contributions yet</p>
+          <p className="font-sans text-base font-semibold text-ink">
+            {hasActiveFilters ? 'No matching contributions yet' : 'No contributions published yet'}
+          </p>
           <p className="mt-1 font-sans text-sm text-ink-secondary">
-            Try clearing a filter or start the first structured contribution on this topic.
+            {hasActiveFilters
+              ? 'Try clearing a filter or start the first structured contribution on this topic.'
+              : 'This network has no published contributions yet. Start the first structured contribution.'}
           </p>
           <Link
             href="/contribute"
@@ -238,7 +246,8 @@ export default function ResearchFeedClient({
             >
               {item.sourceIntegrity !== 'active' ? (
                 <div
-                  role="alert"
+                  role="note"
+                  aria-label="Source integrity"
                   className="mb-3 flex items-center gap-2 rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 font-sans text-xs font-medium text-destructive"
                 >
                   <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -264,22 +273,26 @@ export default function ResearchFeedClient({
                 <time dateTime={item.publishedAt}>{formatDate(item.publishedAt)}</time>
               </div>
 
-              <h2 className="mt-2 font-serif text-lg font-semibold leading-snug text-ink sm:text-xl">
-                <Link href={item.href} className="hover:text-brand focus-visible:outline-2 focus-visible:outline-brand">
+              <h2 className="mt-2 break-words font-serif text-lg font-semibold leading-snug text-ink sm:text-xl">
+                <Link href={item.href} className="hover:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
                   {item.title}
                 </Link>
               </h2>
 
-              <p className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
+              <p className="mt-2 break-words font-sans text-sm leading-relaxed text-ink-secondary">
                 {item.summary}
               </p>
 
               {item.sourceTitle ? (
-                <div className="mt-3 flex items-center gap-2 rounded-md border border-line bg-canvas px-3 py-2 font-sans text-xs text-ink-secondary">
+                <div className="mt-3 flex min-h-11 items-center gap-2 rounded-md border border-line bg-canvas px-3 font-sans text-xs text-ink-secondary">
                   <Link2 className="h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
                   <span className="shrink-0 font-semibold text-ink">Source:</span>
                   {item.sourceHref?.startsWith('/') ? (
-                    <Link href={item.sourceHref} className="truncate text-brand hover:underline">
+                    <Link
+                      href={item.sourceHref}
+                      title={item.sourceTitle}
+                      className="inline-flex min-h-11 min-w-0 items-center truncate text-brand hover:underline"
+                    >
                       {item.sourceTitle}
                     </Link>
                   ) : item.sourceHref ? (
@@ -287,7 +300,8 @@ export default function ResearchFeedClient({
                       href={item.sourceHref}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="truncate text-brand hover:underline"
+                      title={item.sourceTitle}
+                      className="inline-flex min-h-11 min-w-0 items-center truncate text-brand hover:underline"
                     >
                       {item.sourceTitle}
                     </a>

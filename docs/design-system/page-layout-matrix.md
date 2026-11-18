@@ -29,6 +29,7 @@ Breakpoints follow the design-system layout scale. Collection cards use one colu
 | `/dashboard/applications` | Studio workflow | Existing shell plus application review content. | Keep review actions near their records. |
 | `/dashboard/comments` | Studio workflow | Existing shell plus comment moderation content. | Keep moderation task-specific. |
 | `/dashboard/manage` | Studio workflow | Existing shell plus post-management content. | Preserve the existing studio structure. |
+| `/dashboard/profile` | Studio workflow | Existing shell plus the profile form, grouped into identity, affiliation, links, and about. | Editing the caller's own directory row; no second sidebar and no metrics that a query did not return. |
 | `/dashboard/edit/[id]` | Studio editor | Existing shell and focused editor canvas. | Editing remains a focused task. |
 | `/articles` | Redirect | Redirects to the canonical discovery route. | No standalone page layout. |
 | `/not-found` | Focused state | Single-column recovery message. | Offer relevant navigation without decorative panels. |

@@ -127,7 +127,7 @@ export default function ApiKeys({ initialKeys, monthlyIncluded, used }: ApiKeysP
               readOnly
               value={fresh.key}
               onFocus={(event) => event.currentTarget.select()}
-              className={`${FIELD} font-mono`}
+              className={`${FIELD} font-mono sm:min-w-0 sm:flex-1 sm:w-auto`}
             />
             <Button type="button" variant="secondary" onClick={copy}>
               {copied ? 'Copied' : 'Copy'}
@@ -178,7 +178,7 @@ export default function ApiKeys({ initialKeys, monthlyIncluded, used }: ApiKeysP
               </div>
               {!key.revokedAt && confirming === key.id ? (
                 <div className="mt-3">
-                  <p className="font-serif text-ink">
+                  <p className="break-words font-serif text-ink">
                     Revoke “{key.name}”? Requests that use this key will be refused. This cannot be undone.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-3">
@@ -217,7 +217,7 @@ export default function ApiKeys({ initialKeys, monthlyIncluded, used }: ApiKeysP
       </form>
 
       {error ? (
-        <p role="alert" className="mt-3 font-sans text-sm text-destructive">
+        <p role="alert" className="mt-3 break-words font-sans text-sm text-destructive">
           {error}
         </p>
       ) : null}

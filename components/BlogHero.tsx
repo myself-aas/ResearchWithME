@@ -53,7 +53,7 @@ export default function BlogHero({
                   style={{ '--enter-delay': '0ms' } as React.CSSProperties}
                   as="p" variant="eyebrow" color="secondary"
                 >
-                  Open access · CC BY 4.0 · Independent reviews
+                  Open access · Independent reviews
                 </Text>
                 <h1
                   id="platform-title"

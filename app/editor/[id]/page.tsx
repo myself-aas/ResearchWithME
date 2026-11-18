@@ -1,6 +1,8 @@
+import { redirect } from 'next/navigation';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import ScholarlyEditorWorkspace from '@/components/v34/ScholarlyEditorWorkspace';
+import { requireEditor } from '@/lib/cms/auth';
 import { pageMetadata } from '@/lib/seo';
 import { listSources } from '@/lib/v34/store';
 
@@ -21,6 +23,11 @@ export default async function ScholarlyEditorDraftPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const gate = await requireEditor();
+  if (!gate.ok) {
+    redirect(gate.status === 401 ? '/login?next=%2Feditor' : '/dashboard/access?error=not-editor');
+  }
+
   const { id } = await params;
   const sources = (await listSources()).map((s) => ({
     id: s.id,
@@ -48,7 +55,11 @@ export default async function ScholarlyEditorDraftPage({
         <h1 className="mb-4 font-serif text-2xl font-bold text-ink sm:text-3xl">
           Scholarly MDX Workspace
         </h1>
-        <ScholarlyEditorWorkspace initialDraftId={id} initialSources={sources} />
+        <ScholarlyEditorWorkspace
+          initialDraftId={id}
+          initialSources={sources}
+          editorName={gate.user?.name ?? 'Local demo editor'}
+        />
       </main>
       <BlogFooter />
     </div>

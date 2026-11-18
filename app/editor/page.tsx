@@ -1,6 +1,8 @@
+import { redirect } from 'next/navigation';
 import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import ScholarlyEditorWorkspace from '@/components/v34/ScholarlyEditorWorkspace';
+import { requireEditor } from '@/lib/cms/auth';
 import { pageMetadata } from '@/lib/seo';
 import { listSources } from '@/lib/v34/store';
 
@@ -14,6 +16,14 @@ export const metadata = pageMetadata({
 });
 
 export default async function ScholarlyEditorIndexPage() {
+  // The workspace autosaves through `/api/drafts/*`, which only accepts an
+  // allowlisted editor. Sending everyone else to sign-in is honest: the old
+  // page let anyone type into a draft that could never reach the server.
+  const gate = await requireEditor();
+  if (!gate.ok) {
+    redirect(gate.status === 401 ? '/login?next=%2Feditor' : '/dashboard/access?error=not-editor');
+  }
+
   const sources = (await listSources()).map((s) => ({
     id: s.id,
     title: s.title,
@@ -40,7 +50,11 @@ export default async function ScholarlyEditorIndexPage() {
         <h1 className="mb-4 font-serif text-2xl font-bold text-ink sm:text-3xl">
           Scholarly MDX Workspace
         </h1>
-        <ScholarlyEditorWorkspace initialDraftId="draft-workspace-default" initialSources={sources} />
+        <ScholarlyEditorWorkspace
+          initialDraftId="draft-workspace-default"
+          initialSources={sources}
+          editorName={gate.user?.name ?? 'Local demo editor'}
+        />
       </main>
       <BlogFooter />
     </div>

@@ -60,11 +60,54 @@ if (v34CutoverMode) {
   const vapidKeys = ['VAPID_PUBLIC_KEY', 'VAPID_PRIVATE_KEY', 'VAPID_SUBJECT'];
   const missingR2 = r2Keys.filter((k) => !read(k));
   const missingVapid = vapidKeys.filter((k) => !read(k));
+
+  // Artifact storage resolution mirrors lib/v34/artifact-storage.ts:
+  //   supabase → r2 → inline, unless ARTIFACT_STORAGE_PROVIDER forces one.
+  const storagePreference = (read('ARTIFACT_STORAGE_PROVIDER') || 'auto').toLowerCase();
+  const storageUrl =
+    read('SUPABASE_STORAGE_URL') || read('SUPABASE_URL') || url;
+  const storageServiceKey = read('SUPABASE_SERVICE_ROLE_KEY') || read('SUPABASE_SECRET_KEY');
+  const supabaseStorageReady = Boolean(storageUrl && storageServiceKey);
+  const supabaseStorageMissing = [
+    ...(storageUrl ? [] : ['NEXT_PUBLIC_SUPABASE_URL']),
+    ...(storageServiceKey ? [] : ['SUPABASE_SERVICE_ROLE_KEY']),
+  ];
+  let artifactStorage;
+  let missingStorage;
+  if (storagePreference === 'inline') {
+    artifactStorage = 'DISABLED_INLINE';
+    missingStorage = [];
+  } else if (storagePreference === 'supabase') {
+    artifactStorage = supabaseStorageReady ? 'LIVE_SUPABASE' : 'MISCONFIGURED';
+    missingStorage = supabaseStorageReady ? [] : supabaseStorageMissing;
+  } else if (storagePreference === 'r2') {
+    artifactStorage = missingR2.length === 0 ? 'LIVE_R2' : 'MISCONFIGURED';
+    missingStorage = missingR2;
+  } else if (supabaseStorageReady) {
+    artifactStorage = 'LIVE_SUPABASE';
+    missingStorage = [];
+  } else if (missingR2.length === 0) {
+    artifactStorage = 'LIVE_R2';
+    missingStorage = [];
+  } else {
+    // No object storage at all: recommend the no-credit-card Supabase path.
+    artifactStorage = 'FALLBACK_INLINE';
+    missingStorage = ['SUPABASE_SERVICE_ROLE_KEY'];
+  }
+
   const report = {
     coreBuildReady: problems.length === 0,
     coreProblems: problems,
     subsystems: {
       outboxCron: read('CRON_SECRET') ? 'LIVE' : 'DISABLED_FAIL_CLOSED',
+      artifactStorage,
+      storagePreference,
+      storageBucket:
+        artifactStorage === 'LIVE_SUPABASE'
+          ? read('SUPABASE_STORAGE_BUCKET') || 'researchwithme-artifacts'
+          : artifactStorage === 'LIVE_R2'
+            ? read('R2_BUCKET')
+            : null,
       r2SignedStorage: missingR2.length === 0 ? 'LIVE' : 'FALLBACK_INLINE',
       webPushVapid: missingVapid.length === 0 ? 'LIVE' : 'FALLBACK_SKIPPED',
       resendDigests: read('RESEND_API_KEY') ? 'LIVE' : 'FALLBACK_SKIPPED',
@@ -73,7 +116,7 @@ if (v34CutoverMode) {
     },
     missingSecrets: [
       ...(read('CRON_SECRET') ? [] : ['CRON_SECRET']),
-      ...missingR2,
+      ...missingStorage,
       ...missingVapid,
       ...(read('RESEND_API_KEY') ? [] : ['RESEND_API_KEY']),
       ...(read('OTEL_EXPORTER_OTLP_ENDPOINT') ? [] : ['OTEL_EXPORTER_OTLP_ENDPOINT']),

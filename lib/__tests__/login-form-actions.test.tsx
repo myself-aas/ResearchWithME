@@ -46,3 +46,30 @@ it('shows provider denial without claiming sign-in succeeded', async () => {
     expect(element.textContent).not.toContain('You are signed in');
   } finally { await act(async () => root.unmount()); element.remove(); }
 });
+
+
+it('starts Discord sign-in with the same session flow as the other providers', async () => {
+  (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+  startOAuth.mockResolvedValue({ ok: true });
+  const element = document.createElement('div'); document.body.append(element);
+  const root = createRoot(element);
+  try {
+    await act(async () => root.render(<MemoryRouter><LoginForm configured user={null} next="/dashboard" /></MemoryRouter>));
+    await act(async () => { [...element.querySelectorAll('button')].find((b) => b.textContent?.includes('Continue with Discord'))!.click(); });
+    expect(startOAuth).toHaveBeenCalledWith('discord', '/dashboard');
+    expect(element.querySelector('[role=alert]')).toBeNull();
+  } finally { await act(async () => root.unmount()); element.remove(); }
+});
+
+it('starts LinkedIn sign-in as a normal session rather than an identity link', async () => {
+  (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+  startOAuth.mockResolvedValue({ ok: true });
+  const element = document.createElement('div'); document.body.append(element);
+  const root = createRoot(element);
+  try {
+    await act(async () => root.render(<MemoryRouter><LoginForm configured user={null} next="/dashboard" /></MemoryRouter>));
+    await act(async () => { [...element.querySelectorAll('button')].find((b) => b.textContent?.includes('Continue with LinkedIn'))!.click(); });
+    expect(startOAuth).toHaveBeenCalledWith('linkedin', '/dashboard');
+    expect(element.querySelector('[role=alert]')).toBeNull();
+  } finally { await act(async () => root.unmount()); element.remove(); }
+});

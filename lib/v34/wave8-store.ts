@@ -2,7 +2,11 @@ import { createHash, randomUUID } from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { isUuid, runSupabaseMutation } from './supabase-sync';
 import { emitDomainEvent, enqueueBackgroundJob, recordAuditEvent } from './outbox';
-import { createR2PresignedGetUrl, getR2Config, storeArtifactInR2 } from './r2-storage';
+import {
+  createArtifactSignedUrl,
+  storeArtifact,
+  type ArtifactStorageProvider,
+} from './artifact-storage';
 import {
   isProviderPermittedForClassification,
   recordAiProvenance,
@@ -133,7 +137,7 @@ export interface RenderJobRecord {
   inputChecksumSha256: string;
   outputChecksumSha256: string | null;
   outputUrl: string | null;
-  storageProvider: 'inline' | 'r2';
+  storageProvider: ArtifactStorageProvider;
   storageBucket: string | null;
   storageKey: string | null;
   signedUrlExpiresAt: string | null;
@@ -784,7 +788,7 @@ export async function createRenderJob(input: {
     null,
     2,
   );
-  const stored = await storeArtifactInR2({
+  const stored = await storeArtifact({
     key: `renders/${input.engine.toLowerCase()}/${input.ownerId}/${renderId}/manifest.json`,
     body: manifestBody,
     contentType: 'application/json',
@@ -802,7 +806,7 @@ export async function createRenderJob(input: {
     humanApprovedBy: input.humanApproved ? input.ownerId : null,
     humanApprovedAt: input.humanApproved ? now : null,
     inputChecksumSha256: inputHash,
-    outputChecksumSha256: stored.provider === 'r2' ? stored.checksumSha256 : null,
+    outputChecksumSha256: stored.provider === 'inline' ? null : stored.checksumSha256,
     outputUrl: stored.signedUrl,
     storageProvider: stored.provider,
     storageBucket: stored.bucket,
@@ -858,24 +862,34 @@ export async function createRenderJob(input: {
   return rec;
 }
 
-export function getRenderJob(renderId: string, ownerId: string): RenderJobRecord | null {
+/**
+ * Loads a render job and re-mints its artifact URL for object-storage-backed
+ * manifests (Supabase Storage or R2). Async because Supabase signing is an
+ * HTTP call.
+ */
+export async function getRenderJob(
+  renderId: string,
+  ownerId: string,
+): Promise<RenderJobRecord | null> {
   const rec =
     getState().renderJobs.find((r) => r.id === renderId && r.ownerId === ownerId) ?? null;
   if (!rec) return null;
-  if (rec.storageProvider === 'r2' && rec.storageKey) {
-    const r2Cfg = getR2Config();
-    if (r2Cfg) {
-      const refreshed = createR2PresignedGetUrl(r2Cfg, rec.storageKey, {
-        responseContentType: 'application/json',
-      });
-      return {
-        ...rec,
-        outputUrl: refreshed.url,
-        signedUrlExpiresAt: refreshed.expiresAt,
-      };
-    }
+  if (!rec.storageKey || rec.storageProvider === 'inline') return rec;
+
+  try {
+    const refreshed = await createArtifactSignedUrl({
+      provider: rec.storageProvider,
+      key: rec.storageKey,
+    });
+    if (!refreshed) return rec;
+    return {
+      ...rec,
+      outputUrl: refreshed.url,
+      signedUrlExpiresAt: refreshed.expiresAt,
+    };
+  } catch {
+    return rec;
   }
-  return rec;
 }
 
 export async function cancelRenderJob(input: {
@@ -883,7 +897,7 @@ export async function cancelRenderJob(input: {
   ownerId: string;
   supabase?: SupabaseClient | null;
 }): Promise<RenderJobRecord | null> {
-  const rec = getRenderJob(input.renderId, input.ownerId);
+  const rec = await getRenderJob(input.renderId, input.ownerId);
   if (!rec) return null;
   rec.status = 'CANCELLED';
   rec.updatedAt = new Date().toISOString();
