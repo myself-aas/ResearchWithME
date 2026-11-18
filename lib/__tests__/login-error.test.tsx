@@ -30,6 +30,16 @@ describe('sign-in failures reported by the auth callback', () => {
     expect(render('access_denied')).toContain('cancelled on the provider');
     expect(render('Error getting user email from external provider')).toContain('did not share an email address');
     expect(render('redirect_to is not allowed')).toContain('allowed redirect URLs');
+    expect(render('Provider is not enabled')).toContain('not switched on yet');
+  });
+
+  it('offers Google, LinkedIn, and Discord as ways in', () => {
+    const html = render();
+    expect(html).toContain('aria-label="Sign in with a provider"');
+    expect(html).toContain('Continue with Google');
+    expect(html).toContain('Continue with LinkedIn');
+    expect(html).toContain('Continue with Discord');
+    expect(html).toContain('Four ways in');
   });
 });
 

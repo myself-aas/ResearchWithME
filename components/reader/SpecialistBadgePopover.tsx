@@ -84,7 +84,7 @@ export default function SpecialistBadgePopover({ author }: SpecialistBadgePopove
           }}
           onPointerLeave={scheduleClose}
           aria-label={`${author.name} — ${badgeLabel} specialist credentials`}
-          className="inline-flex min-h-8 items-center gap-1.5 rounded-sm border border-brand/30 bg-selection/40 px-2.5 py-1 font-mono text-xs font-medium text-brand transition-colors hover:bg-selection"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-sm border border-brand/30 bg-selection/40 px-2.5 py-1 font-mono text-xs font-medium text-brand transition-colors hover:bg-selection focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
         >
           <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>{badgeLabel}</span>
@@ -122,7 +122,7 @@ export default function SpecialistBadgePopover({ author }: SpecialistBadgePopove
               type="button"
               onClick={handleCopyId}
               aria-label="Copy specialist identifier"
-              className="inline-flex shrink-0 items-center gap-1 text-brand hover:underline"
+              className="inline-flex min-h-11 shrink-0 items-center gap-1 text-brand hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             >
               {copied ? (
                 <Check className="h-3.5 w-3.5" aria-hidden="true" />

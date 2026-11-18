@@ -325,6 +325,15 @@ const csp = [
 - Pro: $25/month for 8GB database
 - Optimize: Connection pooling, read replicas
 
-### R2 Storage (Future)
+### Artifact storage (Supabase Storage — active)
+- Free tier: 1GB storage, 5GB egress, **no credit card required**
+- Used for: checksummed scholarly exports and render manifests
+- Code: `lib/v34/supabase-storage.ts` + `lib/v34/artifact-storage.ts`
+- Setup: `docs/artifact-storage.md`; bucket provisioning via
+  `npm run storage:provision:supabase -- --apply`
+- Fallback order: supabase → r2 → inline (`ARTIFACT_STORAGE_PROVIDER`)
+
+### R2 Storage (optional, not enabled)
 - Free tier: 10GB storage, 1M Class A operations
-- Use for: Images, PDFs, video assets
+- Requires a payment method on the Cloudflare account, even inside the free tier
+- Only used when `ARTIFACT_STORAGE_PROVIDER=r2` and the four `R2_*` values are set

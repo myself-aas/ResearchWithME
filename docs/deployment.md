@@ -84,8 +84,9 @@ Two facts worth knowing before you change anything:
         ┌──────────────────────────────────┐          │
         │ Supabase  bxyjjbclaklzjxeumeat   │──────────┘  (database webhook)
         │  Postgres + RLS                  │
-        │  Auth (email+password, Google;   │
-        │   GitHub/ORCID as identity links)│
+        │  Auth (email+password, Google,   │
+        │   LinkedIn, Discord; GitHub/     │
+        │   ORCID as identity links)       │
         │  Storage: blog-images (5 MB)     │
         │  Realtime: posts, comments       │
         └──────────────────────────────────┘
@@ -373,7 +374,12 @@ on conflict (user_id) do nothing;
 ### 5.4 Authentication
 
 **Authentication → Sign In / Providers**: enable Email (password only — magic links are no longer
-used) and Google. These are the two ways a reader signs in.
+used), Google, LinkedIn (OIDC), and Discord. These are the four ways a reader signs in; the buttons
+and scopes are listed in `docs/sign-in-providers.md`.
+
+LinkedIn uses the **OpenID Connect** connector (`linkedin_oidc`, scopes `openid profile email`), not
+the deprecated legacy `linkedin` provider. Its client ID and secret live only in Supabase; the
+provider consoles must trust `https://bxyjjbclaklzjxeumeat.supabase.co/auth/v1/callback`.
 
 GitHub and the custom ORCID provider (identifier `orcid`, called as `custom:orcid`, issuer
 `https://orcid.org`, scope `openid`) are configured as **identity links**, not sign-in methods: a
@@ -466,6 +472,7 @@ npx wrangler secret put GEMINI_API_KEY
 npx wrangler secret put LEMONSQUEEZY_API_KEY
 npx wrangler secret put LEMONSQUEEZY_WEBHOOK_SECRET
 npx wrangler secret put BILLING_BRIDGE_SECRET
+npx wrangler secret put SUPABASE_SERVICE_ROLE_KEY   # artifact storage, see docs/artifact-storage.md
 # GEMINI_MODEL is a plaintext var — add it as a Worker variable in the dashboard
 # Likewise LEMONSQUEEZY_STORE_ID, the three LEMONSQUEEZY_VARIANT_* ids, and
 # LEMONSQUEEZY_TEST_MODE. After setting BILLING_BRIDGE_SECRET, insert the same
@@ -474,6 +481,12 @@ npx wrangler secret put BILLING_BRIDGE_SECRET
 ```
 
 Secrets survive a deploy; they are per-Worker, not per-version.
+
+`SUPABASE_SERVICE_ROLE_KEY` backs artifact storage (scholarly exports and render
+manifests). It is optional: without it those artifacts fall back to inline
+Postgres storage. Cloudflare R2 is **not** required — R2 asks for a payment
+method even on its free allowance — so the default backend is Supabase Storage,
+which needs no card. Full setup, limits and verification: `docs/artifact-storage.md`.
 
 ### 6.6 Previews
 
@@ -757,7 +770,7 @@ code server-side before middleware sees the request.
 1. **Authentication → URL Configuration**: Site URL `https://researchwith.me`; Redirect URLs
    `https://researchwith.me/auth/callback`, `https://www.researchwith.me/auth/callback`,
    `http://localhost:3000/auth/callback`.
-2. Per provider (Google/GitHub/ORCID), the provider's *own* callback is
+2. Per provider (Google, LinkedIn, Discord, GitHub, ORCID), the provider's *own* callback is
    `https://<ref>.supabase.co/auth/v1/callback` — a very common mismatch.
 3. Magic-link email template keeps `{{ .ConfirmationURL }}`; the app passes `redirect_to` through
    `next`.
@@ -961,7 +974,7 @@ Checklist to finish:
 - [ ] `Workers Builds: researchwithme` green on `main`
 - [ ] `Quality` green on `main`
 - [ ] `/api/revalidate` returns 200 with the header, 401 without
-- [ ] `/login` → provider → `/auth/callback` → `/dashboard` works and is gated
+- [ ] `/login` → Google, LinkedIn, **and** Discord → `/auth/callback` → `/dashboard` works and is gated
 - [ ] publishing a post changes `/` without a redeploy
 - [ ] `npx wrangler deployments list` shows the deployment you just made
 

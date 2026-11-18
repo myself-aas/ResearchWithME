@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { AlertCircle, ArrowRight } from 'lucide-react';
+import { AlertCircle, ArrowRight, Linkedin } from 'lucide-react';
 import type { DashboardUser } from '@/lib/cms/types';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { startOAuthSignIn } from '@/lib/supabase/oauth';
@@ -27,7 +27,7 @@ interface LoginFormProps {
 function mapAuthError(message: string) {
   const normalised = message.toLowerCase();
   if (normalised.includes('invalid login credentials')) {
-    return 'That email and password do not match. Check the address, or use Continue with Google.';
+    return 'That email and password do not match. Check the address, or use Google, LinkedIn, or Discord above.';
   }
   if (normalised.includes('email not confirmed')) {
     return 'Confirm the email address from your invitation, then sign in again.';
@@ -47,7 +47,49 @@ function mapAuthError(message: string) {
   if (normalised.includes('signups not allowed') || normalised.includes('signup is disabled')) {
     return 'New accounts are not being accepted at the moment. Contact the editor.';
   }
+  if (normalised.includes('provider is not enabled') || normalised.includes('unsupported provider')) {
+    return 'That sign-in provider is not switched on yet. Use the other provider, or email and password.';
+  }
   return message;
+}
+
+/**
+ * Google's four-colour "G", drawn inline so the sign-in button carries the mark
+ * people recognise without loading a third-party script or an extra asset.
+ */
+function GoogleMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
+      <path
+        fill="#4285F4"
+        d="M21.6 12.23c0-.68-.06-1.33-.17-1.96H12v3.71h5.38a4.6 4.6 0 0 1-2 3.02v2.51h3.24c1.9-1.75 2.98-4.33 2.98-7.28Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 22c2.7 0 4.96-.9 6.62-2.43l-3.24-2.51c-.9.6-2.05.96-3.38.96-2.6 0-4.8-1.76-5.59-4.12H3.06v2.59A10 10 0 0 0 12 22Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M6.41 13.9a6 6 0 0 1 0-3.8V7.51H3.06a10 10 0 0 0 0 8.98l3.35-2.59Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 5.98c1.47 0 2.79.5 3.83 1.5l2.87-2.87A9.6 9.6 0 0 0 12 2a10 10 0 0 0-8.94 5.51l3.35 2.59C7.2 7.74 9.4 5.98 12 5.98Z"
+      />
+    </svg>
+  );
+}
+
+/** Discord's mark, inline for the same reason as Google's. */
+function DiscordMark() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 shrink-0">
+      <path
+        fill="#5865F2"
+        d="M20.32 4.37a19.8 19.8 0 0 0-4.89-1.52.07.07 0 0 0-.08.04c-.21.37-.44.86-.6 1.24a18.3 18.3 0 0 0-5.49 0c-.16-.39-.4-.87-.62-1.24a.08.08 0 0 0-.08-.04 19.7 19.7 0 0 0-4.88 1.52.07.07 0 0 0-.04.03C.53 9.05-.32 13.58.1 18.06a.08.08 0 0 0 .03.05 19.9 19.9 0 0 0 5.99 3.03.08.08 0 0 0 .08-.03c.46-.63.88-1.29 1.23-1.99a.08.08 0 0 0-.04-.11 13.1 13.1 0 0 1-1.87-.89.08.08 0 0 1 0-.13l.37-.29a.07.07 0 0 1 .08-.01 14.2 14.2 0 0 0 12.06 0 .07.07 0 0 1 .08.01l.37.29a.08.08 0 0 1 0 .13 12.3 12.3 0 0 1-1.88.89.08.08 0 0 0-.04.11c.36.7.77 1.36 1.23 1.99a.08.08 0 0 0 .08.03 19.8 19.8 0 0 0 6-3.03.08.08 0 0 0 .03-.05c.5-5.18-.84-9.68-3.55-13.66a.06.06 0 0 0-.03-.03ZM8.02 15.33c-1.18 0-2.16-1.09-2.16-2.42s.96-2.42 2.16-2.42c1.21 0 2.17 1.1 2.16 2.42 0 1.33-.96 2.42-2.16 2.42Zm7.97 0c-1.18 0-2.15-1.09-2.15-2.42s.95-2.42 2.15-2.42c1.21 0 2.18 1.1 2.16 2.42 0 1.33-.95 2.42-2.16 2.42Z"
+      />
+    </svg>
+  );
 }
 
 export default function LoginForm({ configured, user, next, initialError = '' }: LoginFormProps) {
@@ -58,7 +100,9 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [pending, setPending] = useState<'password' | 'google' | 'signout' | null>(null);
+  const [pending, setPending] = useState<
+    'password' | 'google' | 'linkedin' | 'discord' | 'signout' | null
+  >(null);
   const [error, setError] = useState<string | null>(initialError ? mapAuthError(initialError) : null);
 
   function fail(message: string) {
@@ -98,13 +142,13 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
     }
   }
 
-  async function signInWithGoogle() {
+  async function signInWithProvider(provider: 'google' | 'linkedin' | 'discord') {
     if (pending) return;
-    setPending('google');
+    setPending(provider);
     setError(null);
 
     try {
-      const result = await startOAuthSignIn('google', next);
+      const result = await startOAuthSignIn(provider, next);
       // On success the browser is already navigating to the provider.
       if (result?.error) {
         fail(mapAuthError(result.error));
@@ -208,9 +252,12 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         )}
 
         <div className="mt-5 flex flex-wrap gap-2">
-          <Link href="/dashboard/access" className={primaryButtonClass}>
-            Apply to write
+          <Link href="/dashboard" className={primaryButtonClass}>
+            Go to your dashboard
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+          <Link href="/dashboard/access" className={secondaryButtonClass}>
+            Apply to write
           </Link>
           <Link href="/" className={secondaryButtonClass}>
             Back to the platform
@@ -265,8 +312,8 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         Sign in
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-ink-secondary">
-        Two ways in: your email and password, or your Google account. Publishing access is granted
-        separately, from your dashboard.
+        Four ways in: Google, LinkedIn, Discord, or your email and password. Any of them signs you
+        in as a reader; publishing access is granted separately, from your dashboard.
       </p>
 
       {error && (
@@ -278,14 +325,33 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         </div>
       )}
 
-      <div role="group" aria-label="Sign in with a provider" className="mt-5 grid gap-2 sm:grid-cols-2">
+      <div role="group" aria-label="Sign in with a provider" className="mt-5 grid gap-2">
         <button
           type="button"
-          onClick={signInWithGoogle}
+          onClick={() => signInWithProvider('google')}
           disabled={pending !== null}
           className={cn(secondaryButtonClass, 'w-full')}
         >
-          {pending === 'google' ? 'Opening Google…' : 'Continue with Google'}
+          <GoogleMark />
+          <span>{pending === 'google' ? 'Opening Google…' : 'Continue with Google'}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => signInWithProvider('linkedin')}
+          disabled={pending !== null}
+          className={cn(secondaryButtonClass, 'w-full')}
+        >
+          <Linkedin className="h-4 w-4 shrink-0" aria-hidden="true" />
+          <span>{pending === 'linkedin' ? 'Opening LinkedIn…' : 'Continue with LinkedIn'}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => signInWithProvider('discord')}
+          disabled={pending !== null}
+          className={cn(secondaryButtonClass, 'w-full')}
+        >
+          <DiscordMark />
+          <span>{pending === 'discord' ? 'Opening Discord…' : 'Continue with Discord'}</span>
         </button>
       </div>
 

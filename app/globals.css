@@ -776,3 +776,14 @@ html[data-motion-mode="static"] {
   direction: ltr;
   unicode-bidi: isolate;
 }
+
+/* Horizontal tab strips (dashboard sections, filter rails): scrolling stays
+   available, the platform scrollbar does not eat a row of height. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

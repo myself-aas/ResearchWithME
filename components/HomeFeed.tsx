@@ -109,6 +109,15 @@ export default function HomeFeed({
   const featuredPost = useMemo(() => posts.find((post) => post.featured) ?? posts[0], [posts]);
   const unfiltered = !searchQuery && selectedCategory === 'All' && selectedFormat === 'All';
   const showFeatured = unfiltered && Boolean(featuredPost);
+  // The lead story is rendered once, above the index. Keeping it in the list
+  // as well would show the same article twice on the unfiltered front page.
+  const feedPosts = useMemo(
+    () =>
+      showFeatured && featuredPost
+        ? filteredPosts.filter((post) => post.id !== featuredPost.id)
+        : filteredPosts,
+    [featuredPost, filteredPosts, showFeatured],
+  );
 
   function scrollToFeed() {
     feedRef.current?.scrollIntoView({ behavior: suppressed || prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
@@ -203,7 +212,8 @@ export default function HomeFeed({
 
         <div ref={feedRef}>
           <ArticleFeed
-            posts={filteredPosts}
+            posts={feedPosts}
+            leadExcluded={showFeatured && Boolean(featuredPost)}
             savedPostIds={savedPostIds}
             likedPostIds={likedPostIds}
             onToggleSave={handleToggleSave}

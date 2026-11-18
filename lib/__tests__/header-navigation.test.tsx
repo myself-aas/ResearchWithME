@@ -51,6 +51,50 @@ describe('responsive header navigation', () => {
     expect(button.getAttribute('aria-expanded')).toBe('false');
     expect(document.activeElement).toBe(button);
   });
+  it('opens a right-side drawer that covers about two-thirds of the viewport', () => {
+    toggle();
+    const dialog = container.querySelector<HTMLElement>('[role="dialog"][aria-label="Navigation menu"]');
+    expect(dialog).not.toBeNull();
+    // Anchored to the right edge, full height, capped at ~21rem, and sized in
+    // viewport units so it reads as a drawer rather than a full-screen takeover.
+    expect(dialog!.className).toContain('right-0');
+    expect(dialog!.className).toContain('inset-y-0');
+    expect(dialog!.className).toContain('w-[72vw]');
+    expect(dialog!.className).toContain('max-w-[21rem]');
+    expect(dialog!.className).toContain('lg:hidden');
+    expect(dialog!.getAttribute('aria-modal')).toBe('true');
+    // A dimmed scrim covers the rest of the page and closes the drawer.
+    const scrim = container.querySelector<HTMLButtonElement>('button[aria-hidden="true"]');
+    expect(scrim).not.toBeNull();
+    act(() => scrim!.click());
+    expect(container.querySelector('[role="dialog"][aria-label="Navigation menu"]')).toBeNull();
+  });
+
+  it('leaves account and contribute to the bottom bar on tablet widths', () => {
+    // `MobileBottomNav` covers Profile and Contribute below `lg`; the header's
+    // auth cluster used to start at `md`, showing the same two destinations
+    // twice between 768px and 1023px.
+    const signIn = container.querySelector<HTMLAnchorElement>('a[href="/login"]');
+    const cluster = signIn?.parentElement;
+    expect(cluster?.className).toContain('hidden');
+    expect(cluster?.className).toContain('lg:flex');
+    expect(cluster?.className).not.toContain('md:flex');
+  });
+
+  it('never offers a menu trigger where the drawer is hidden', () => {
+    act(() =>
+      root.render(
+        <BlogHeader variant="reading" backHref="/feed" backLabel="Feed" contextTitle="A reading surface" />,
+      ),
+    );
+    const button = container.querySelector<HTMLButtonElement>('button[aria-controls]');
+    expect(button).not.toBeNull();
+    // Compact reading/editor headers keep the trigger on tablets, but the
+    // drawer itself is `lg:hidden`. Without the same guard the button would be
+    // visible on desktop and open an invisible panel (locking page scroll).
+    expect(button!.className).toContain('lg:hidden');
+  });
+
   it('closes the mobile menu when switching to desktop', () => {
     const button = toggle();
     desktop = true;

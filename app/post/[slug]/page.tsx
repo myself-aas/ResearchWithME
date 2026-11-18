@@ -111,8 +111,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <ArticleSmoothScroll />
       <BlogHeader
         variant="reading"
-        backHref="/articles"
-        backLabel="Articles"
+        backHref="/feed"
+        backLabel="Feed"
         contextTitle={article.title}
       />
 
@@ -135,7 +135,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             <li aria-hidden="true">
               <ChevronRight className="h-3.5 w-3.5 text-ink-secondary" />
             </li>
-            <li aria-current="page" className="max-w-[22rem] truncate font-medium text-ink">
+            <li aria-current="page" className="min-w-0 max-w-[22rem] truncate font-medium text-ink">
               {article.title}
             </li>
           </ol>
@@ -238,19 +238,21 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               </figcaption>
             </figure>
 
-            <section aria-labelledby="takeaways-heading" className="mt-10 reading-column rounded-2xl border border-line bg-surface p-5 sm:p-6">
-              <Text id="takeaways-heading" as="h2" variant="eyebrow" weight="semibold">
-                Key takeaways
-              </Text>
-              <ul className="mt-4 space-y-3">
-                {article.keyTakeaways.map((takeaway) => (
-                  <li key={takeaway} className="flex gap-3 font-serif text-base leading-relaxed text-ink">
-                    <span aria-hidden="true" className="font-mono text-brand">—</span>
-                    <span>{takeaway}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
+            {article.keyTakeaways.length > 0 && (
+              <section aria-labelledby="takeaways-heading" className="mt-10 reading-column rounded-2xl border border-line bg-surface p-5 sm:p-6">
+                <Text id="takeaways-heading" as="h2" variant="eyebrow" weight="semibold">
+                  Key takeaways
+                </Text>
+                <ul className="mt-4 space-y-3">
+                  {article.keyTakeaways.map((takeaway) => (
+                    <li key={takeaway} className="flex gap-3 font-serif text-base leading-relaxed text-ink">
+                      <span aria-hidden="true" className="font-mono text-brand">—</span>
+                      <span className="break-words">{takeaway}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {article.bodyMarkdown ? (
               <div className="mt-10">
@@ -285,6 +287,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   <InlineCitationPopover
                     label="Cite artifact"
                     source={citationMap.artifact}
+                    variant="control"
                   />
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2 font-mono text-xs text-ink-secondary">
@@ -302,27 +305,29 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   href={article.reviewedArtifact.url}
                   target="_blank"
                   rel="noreferrer noopener"
-                  className="mt-3 inline-flex min-h-10 items-center font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
+                  className="mt-3 inline-flex min-h-11 items-center font-sans text-xs font-semibold uppercase tracking-wider text-brand underline underline-offset-4 hover:text-brand-pressed"
                 >
                   Open the reviewed artifact
                 </a>
               </Card>
             )}
 
-            <div className="mt-10 reading-column flex flex-wrap gap-2">
-              {article.tags.map((tag) => (
-                <Link
-                  key={tag}
-                  href={`/?${new URLSearchParams({ search: tag }).toString()}`}
-                  className="rounded-full border border-line bg-surface px-3 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
-                >
-                  #{tag}
-                </Link>
-              ))}
-            </div>
+            {article.tags.length > 0 && (
+              <div className="mt-10 reading-column flex flex-wrap gap-2">
+                {article.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/?${new URLSearchParams({ search: tag }).toString()}`}
+                    className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-3 py-1.5 font-sans text-xs text-ink-secondary transition-colors hover:border-brand hover:text-ink"
+                  >
+                    #{tag}
+                  </Link>
+                ))}
+              </div>
+            )}
 
             <div className="mt-10 reading-column">
-              <AuthorProfileCard author={article.author} compact />
+              <AuthorProfileCard author={article.author} compact showSpecialistBadge={false} />
             </div>
 
             <div className="mt-8 reading-column">
@@ -388,6 +393,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   label="Cite"
                   source={citationMap.rwm}
                   citeHref={citeHref}
+                  variant="control"
                 />
               </div>
               <Link
@@ -428,10 +434,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   <dt className="uppercase tracking-wider text-ink-secondary">Published</dt>
                   <dd className="mt-0.5 font-sans text-ink">{article.publishedAt}</dd>
                 </div>
-                <div>
-                  <dt className="uppercase tracking-wider text-ink-secondary">License</dt>
-                  <dd className="mt-0.5 text-ink">CC BY 4.0</dd>
-                </div>
               </dl>
             </Card>
 
@@ -462,13 +464,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
               <div className="flex flex-wrap gap-2">
                 <Link
                   href="/contribute"
-                  className="inline-flex min-h-10 items-center rounded-lg bg-brand px-3 py-1.5 font-semibold text-on-primary hover:opacity-90"
+                  className="inline-flex min-h-11 items-center rounded-lg bg-brand px-3 py-1.5 font-semibold text-on-primary hover:opacity-90"
                 >
                   Add Evidence / Review →
                 </Link>
                 <Link
                   href="/sources"
-                  className="inline-flex min-h-10 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 font-medium text-ink hover:border-brand"
+                  className="inline-flex min-h-11 items-center rounded-lg border border-line bg-canvas px-3 py-1.5 font-medium text-ink hover:border-brand"
                 >
                   Canonical Sources
                 </Link>

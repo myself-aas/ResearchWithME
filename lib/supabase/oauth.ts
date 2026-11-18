@@ -4,14 +4,26 @@ import type { Provider } from '@supabase/supabase-js';
 import { getSupabaseBrowserClient, hasSupabaseBrowserConfig } from './client';
 import { safeNextPath } from '../safe-redirect';
 
-export type OAuthProviderId = 'google' | 'github' | 'orcid';
+export type OAuthProviderId = 'google' | 'linkedin' | 'discord' | 'github' | 'orcid';
 
 /** Providers a reader may attach to an existing account to apply as a writer. */
 export type LinkableProviderId = 'github' | 'orcid';
 
-// ORCID requires a custom OIDC provider with this identifier in Supabase.
+/** The providers offered on /login, in the order they are rendered. */
+export const SIGN_IN_PROVIDERS = ['google', 'linkedin', 'discord'] as const;
+export type SignInProviderId = (typeof SIGN_IN_PROVIDERS)[number];
+
+/**
+ * Supabase's provider identifiers. LinkedIn sign-in uses the OpenID Connect
+ * connector (`linkedin_oidc`), not the deprecated legacy `linkedin` one: the
+ * legacy provider cannot read an email address and LinkedIn has closed it to
+ * new apps. ORCID is a custom OIDC provider configured under the identifier
+ * `orcid`, so Supabase reports it as `custom:orcid`.
+ */
 const SUPABASE_PROVIDER: Record<OAuthProviderId, Provider> = {
   google: 'google',
+  linkedin: 'linkedin_oidc',
+  discord: 'discord',
   github: 'github',
   orcid: 'custom:orcid',
 };
@@ -20,6 +32,13 @@ const SCOPES: Record<OAuthProviderId, string> = {
   github: 'read:user user:email',
   orcid: 'openid',
   google: 'openid email profile',
+  // LinkedIn's OIDC product grants exactly these three; `w_member_social` is a
+  // posting permission and does not belong on a sign-in request.
+  linkedin: 'openid profile email',
+  // Matches the owner's Discord OAuth URL: OIDC plus the member's identity,
+  // address, and linked connections. Never `bot`, `guilds`, or `permissions` —
+  // those belong to a bot install link, not to signing in.
+  discord: 'openid identify email connections',
 };
 
 export function authCallbackUrl(next: string) {
@@ -32,13 +51,17 @@ function normaliseError(error: unknown, fallback: string) {
 }
 
 /**
- * Sign in. Used for Google only: email and password go straight to Supabase, and
+ * Sign in with Google, LinkedIn, or Discord. Email and password go straight to
+ * Supabase;
  * GitHub and ORCID are identity links on an existing account rather than a way
  * in — see `linkScholarlyIdentity`.
+ *
+ * `navigate` is injectable so the redirect can be asserted without a browser.
  */
 export async function startOAuthSignIn(
-  provider: OAuthProviderId,
+  provider: SignInProviderId,
   next: string,
+  navigate: (url: string) => void = (url) => window.location.assign(url),
 ): Promise<{ ok: boolean; error?: string }> {
   if (!hasSupabaseBrowserConfig()) {
     return { ok: false, error: 'Supabase is not configured. Contact the site administrator.' };
@@ -55,7 +78,7 @@ export async function startOAuthSignIn(
     });
     if (error) return { ok: false, error: error.message };
     if (!data.url) return { ok: false, error: 'The sign-in provider did not return an authorization URL.' };
-    window.location.assign(data.url);
+    navigate(data.url);
     return { ok: true };
   } catch (err: unknown) {
     return { ok: false, error: normaliseError(err, 'Could not initialize the sign-in provider.') };

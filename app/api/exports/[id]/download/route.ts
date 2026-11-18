@@ -13,7 +13,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
   if (!auth.ok) return auth.response;
 
   const { id } = await context.params;
-  const exp = getScholarlyExport(auth.actor.id, id);
+  const exp = await getScholarlyExport(auth.actor.id, id);
   if (!exp) {
     return NextResponse.json({ error: 'Scholarly export not found.' }, { status: 404 });
   }
@@ -26,14 +26,14 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     'Cache-Control': 'private, no-store',
   };
 
-  if (exp.storageProvider === 'r2' && exp.signedDownloadUrl) {
+  if (exp.storageProvider !== 'inline' && exp.signedDownloadUrl) {
     const url = new URL(request.url);
     if (url.searchParams.get('redirect') === '1') {
       return NextResponse.redirect(exp.signedDownloadUrl, {
         status: 302,
         headers: {
           'X-Content-SHA256': exp.checksumSha256,
-          'X-Storage-Provider': 'r2',
+          'X-Storage-Provider': exp.storageProvider,
           'Cache-Control': 'private, no-store',
         },
       });

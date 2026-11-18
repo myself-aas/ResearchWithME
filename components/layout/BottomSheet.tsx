@@ -32,6 +32,10 @@ export default function BottomSheet({
 
   useEffect(() => {
     if (!open) return;
+    // The sheet sits above the page, so the page behind it must not scroll:
+    // a thumb scrolling the filter list would otherwise move the feed.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     previousFocusRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
     closeRef.current?.focus();
@@ -61,6 +65,7 @@ export default function BottomSheet({
     document.addEventListener('keydown', handleKeyDown);
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = previousOverflow;
       previousFocusRef.current?.focus();
     };
   }, [open, onClose]);

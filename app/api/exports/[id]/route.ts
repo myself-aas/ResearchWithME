@@ -23,7 +23,7 @@ export async function GET(
   if (!authz.ok) return authz.response;
 
   const { id } = await context.params;
-  const rec = getScholarlyExport(auth.actor.id, id);
+  const rec = await getScholarlyExport(auth.actor.id, id);
   if (!rec) {
     return NextResponse.json({ error: 'Export not found.' }, { status: 404 });
   }

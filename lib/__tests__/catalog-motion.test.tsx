@@ -37,7 +37,9 @@ describe('ArticleFeed motion catalog & empty/populated states', () => {
     expect(html).toContain('A Test Article for Unit Tests');
     expect(html).toContain('01');
     expect(html).not.toContain('opacity:0');
-    expect(html).toContain('CC BY 4.0');
+    // The licence belongs to the page footer, once; the feed used to repeat it
+    // under every archived list.
+    expect(html).not.toContain('CC BY 4.0');
   });
 
   it('renders diagnostic active filter chips and Reset filters button in empty state', () => {

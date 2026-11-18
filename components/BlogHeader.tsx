@@ -34,6 +34,7 @@ import AttentionPulse from './motion/AttentionPulse';
 import Pressable from './motion/Pressable';
 import BrandLogo from './BrandLogo';
 import MobileBottomNav from './layout/MobileBottomNav';
+import MobileNavDrawer from './layout/MobileNavDrawer';
 import { Header } from '@/components/ui/header-2';
 import { Button } from '@/components/ui/button';
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
@@ -128,6 +129,18 @@ export default function BlogHeader({
     // Make background content inert while mobile navigation drawer is open (Part II)
     mainEl?.setAttribute('inert', '');
 
+    // The drawer is a fixed overlay: stop the page behind it from scrolling.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const focusTimer = window.setTimeout(() => {
+      menuRef.current?.focus();
+    }, 0);
+
+    function restoreScroll() {
+      document.body.style.overflow = previousOverflow;
+      window.clearTimeout(focusTimer);
+    }
+
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
         setMenuOpen(false);
@@ -159,6 +172,7 @@ export default function BlogHeader({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       mainEl?.removeAttribute('inert');
+      restoreScroll();
     };
   }, [menuOpen]);
 
@@ -315,7 +329,7 @@ export default function BlogHeader({
 
             {/* Auth / Contribute CTA — adapts cleanly to three states */}
             {isSignedIn ? (
-              <div className="hidden items-center gap-1 md:flex">
+              <div className="hidden items-center gap-1 lg:flex">
                 {variant === 'default' ? (
                   <Link
                     href="/contribute"
@@ -354,7 +368,7 @@ export default function BlogHeader({
                 </Pressable>
               </div>
             ) : (
-              <div className="hidden items-center gap-1 md:flex">
+              <div className="hidden items-center gap-1 lg:flex">
                 <Link
                   href="/login"
                   aria-label="Sign in"
@@ -383,7 +397,7 @@ export default function BlogHeader({
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              className={`min-h-11 min-w-11 rounded-full ${isCompact ? '' : 'lg:hidden'}`}
+              className="min-h-11 min-w-11 rounded-full lg:hidden"
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">
@@ -402,130 +416,6 @@ export default function BlogHeader({
           </div>
         </div>
 
-        <AnimatePresence initial={false}>
-          {menuOpen ? (
-            <m.div
-              key="reme-mobile-menu"
-              ref={menuRef}
-              id={menuId}
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.22, ease: [...EASING.standard] }}
-              className={`max-h-[calc(100dvh-60px)] overflow-y-auto overscroll-contain ${
-                isCompact ? '' : 'lg:hidden'
-              }`}
-            >
-              <div className="mb-4 border-t border-line bg-canvas py-4">
-                {setSearchQuery && (
-                  <div className="mb-4">
-                    <label htmlFor="mobile-search" className="mb-1.5 block font-sans text-xs font-medium text-ink">
-                      Search articles
-                    </label>
-                    <input
-                      id="mobile-search"
-                      type="search"
-                      value={searchQuery ?? ''}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      placeholder="Title, writer, tag, or org/repo"
-                      className="h-11 w-full rounded-sm border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
-                    />
-                  </div>
-                )}
-
-                <nav aria-label="Mobile primary">
-                  <ul className="grid gap-1">
-                    {primaryNav.map((item) => {
-                      const active = item.match(pathname);
-                      return (
-                        <li key={item.href}>
-                          <Link
-                            href={item.href}
-                            onClick={() => setMenuOpen(false)}
-                            aria-current={active ? 'page' : undefined}
-                            className={`flex min-h-11 items-center gap-2 rounded-sm border px-3 py-2 font-sans text-sm font-medium transition-colors ${
-                              active ? 'border-brand bg-surface-subtle text-ink' : 'border-transparent text-ink-secondary hover:bg-surface-subtle hover:text-ink'
-                            }`}
-                          >
-                            <item.icon className="h-4 w-4" aria-hidden="true" />
-                            <span>{item.label}</span>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </nav>
-
-                <nav aria-label="Secondary" className="mt-4 border-t border-line pt-4">
-                  <p className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-ink">Tools</p>
-                  <ul className="grid gap-1">
-                    {secondaryNav.map((item) => (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          onClick={() => setMenuOpen(false)}
-                          aria-current={pathname.startsWith(item.href) ? 'page' : undefined}
-                          className="flex min-h-11 items-center gap-2 rounded-sm px-3 py-2 font-sans text-sm text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
-                        >
-                          <item.icon className="h-4 w-4" aria-hidden="true" />
-                          <span>{item.label}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-
-                <div className="mt-4 flex items-start gap-2 border-t border-line pt-4 font-sans text-xs text-ink-secondary">
-                  <User className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-                  {isSignedIn ? (
-                    <div className="flex-1">
-                      <p className="text-ink">
-                        Signed in as <span className="font-semibold">{user?.name}</span>.
-                      </p>
-                      <p className="mt-1">
-                        {isEditor
-                          ? 'Publishing permissions are active.'
-                          : 'Reader mode. Apply to write to publish reviews.'}
-                      </p>
-                      <Link href="/dashboard/account" onClick={() => setMenuOpen(false)} className="mt-2 flex min-h-11 items-center text-brand underline-offset-4 hover:underline">
-                        Your account
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => signOut?.()}
-                        className="mt-2 inline-flex items-center gap-1 text-brand underline-offset-4 hover:underline"
-                      >
-                        <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
-                        Sign out
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex-1">
-                      <p>Reader mode. Sign in to publish reviews or save to a synced reading list.</p>
-                      <div className="mt-2 flex gap-2">
-                        <Link
-                          href="/login"
-                          aria-label="Sign in"
-                          className="inline-flex min-h-11 items-center gap-1 rounded-sm border border-line bg-canvas px-3 py-2 text-ink hover:bg-surface-subtle"
-                        >
-                          <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
-                          Sign in
-                        </Link>
-                        <Link
-                          href="/dashboard/access"
-                          className="inline-flex min-h-11 items-center gap-1 rounded-sm bg-ink px-3 py-2 font-semibold text-canvas hover:opacity-90"
-                        >
-                          <PenSquare className="h-3.5 w-3.5" aria-hidden="true" />
-                          Write for us
-                        </Link>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </m.div>
-          ) : null}
-        </AnimatePresence>
       </div>
 
       {paletteEverOpened && (
@@ -536,6 +426,30 @@ export default function BlogHeader({
         />
       )}
     </Header>
+    <MobileNavDrawer
+      open={menuOpen}
+      onClose={() => setMenuOpen(false)}
+      menuId={menuId}
+      panelRef={menuRef}
+      primaryNav={primaryNav.map((item) => ({
+        href: item.href,
+        label: item.label,
+        icon: item.icon,
+        active: item.match(pathname),
+      }))}
+      secondaryNav={secondaryNav.map((item) => ({
+        href: item.href,
+        label: item.label,
+        icon: item.icon,
+        active: pathname.startsWith(item.href),
+      }))}
+      searchQuery={searchQuery}
+      setSearchQuery={setSearchQuery}
+      isSignedIn={isSignedIn}
+      isEditor={isEditor}
+      userName={user?.name}
+      onSignOut={signOut}
+    />
     <MobileBottomNav
       profileHref={isSignedIn ? '/dashboard/account' : '/login?next=%2Fdashboard%2Faccount'}
     />
