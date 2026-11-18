@@ -111,6 +111,19 @@ describe('Next article route', () => {
     expect(html).not.toContain('Key takeaways');
   });
 
+  it('shows the specialist credential once, beside the byline', async () => {
+    const base = makeTestArticle();
+    const article = makeTestArticle({
+      author: { ...base.author, verifiedVia: 'orcid', orcid: '0000-0002-1825-0097' },
+    });
+    catalogue.mockResolvedValue([article]);
+    const page = await ArticlePage({ params: Promise.resolve({ slug: article.slug }) });
+    const html = renderToStaticMarkup(<MemoryRouter>{page}</MemoryRouter>);
+    // The badge sits next to the byline; the author card at the foot of the
+    // article used to repeat the same credential control.
+    expect((html.match(/specialist credentials/g) ?? []).length).toBe(1);
+  });
+
   it('server-renders a fixture title and body', async () => {
     const article = makeTestArticle({ title: 'Fixture title', bodyMarkdown: 'Fixture body' });
     catalogue.mockResolvedValue([article]);

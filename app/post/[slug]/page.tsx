@@ -327,7 +327,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             )}
 
             <div className="mt-10 reading-column">
-              <AuthorProfileCard author={article.author} compact />
+              <AuthorProfileCard author={article.author} compact showSpecialistBadge={false} />
             </div>
 
             <div className="mt-8 reading-column">

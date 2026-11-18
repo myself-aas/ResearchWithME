@@ -24,6 +24,12 @@ interface AuthorProfileCardProps {
   };
   compact?: boolean;
   headingLevel?: 'h1' | 'h2';
+  /**
+   * Show the specialist-credential badge. Callers that already render the badge
+   * beside the byline pass `false`, so the same credential is not a second
+   * control further down the page.
+   */
+  showSpecialistBadge?: boolean;
 }
 
 function verification(author: Author) {
@@ -79,6 +85,7 @@ export default function AuthorProfileCard({
   metrics,
   compact = false,
   headingLevel = 'h2',
+  showSpecialistBadge = true,
 }: AuthorProfileCardProps) {
   const [shareMessage, setShareMessage] = useState<string | null>(null);
   const badge = verification(author);
@@ -119,9 +126,11 @@ export default function AuthorProfileCard({
           {author.bio.length > 180 ? `${author.bio.slice(0, 177)}…` : author.bio}
         </p>
 
-        <div className="mt-3">
-          <SpecialistBadgePopover author={author} />
-        </div>
+        {showSpecialistBadge && (
+          <div className="mt-3">
+            <SpecialistBadgePopover author={author} />
+          </div>
+        )}
 
         <div className="mt-3">
           <ProfileLinks author={author} />
@@ -151,7 +160,7 @@ export default function AuthorProfileCard({
               <Heading id="author-profile-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
                 {author.name}
               </Heading>
-              <SpecialistBadgePopover author={author} />
+              {showSpecialistBadge && <SpecialistBadgePopover author={author} />}
             </div>
             <p className="mt-1 font-mono text-xs font-medium text-brand">{author.role}</p>
             {author.institution && (

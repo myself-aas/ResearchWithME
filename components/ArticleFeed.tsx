@@ -96,6 +96,11 @@ interface ArticleFeedProps {
   searchQuery: string;
   onClearFilters: () => void;
   onSelectCategory?: (category: string) => void;
+  /**
+   * True when the caller is already showing the lead story above this list.
+   * Then an empty list means "no other reviews", not "nothing published".
+   */
+  leadExcluded?: boolean;
 }
 
 export default function ArticleFeed({
@@ -108,11 +113,17 @@ export default function ArticleFeed({
   selectedFormat,
   searchQuery,
   onClearFilters,
+  leadExcluded = false,
 }: ArticleFeedProps) {
   const showCategoryGrid = selectedCategory === 'All' && !searchQuery;
   const activeCategory = selectedCategory !== 'All' ? (selectedCategory as BlogCategory) : null;
   const activeMeta = activeCategory ? CATEGORY_META[activeCategory] : null;
   const hasFilters = selectedCategory !== 'All' || selectedFormat !== 'All' || Boolean(searchQuery);
+
+  // The caller already rendered the lead story above. With nothing else to
+  // list there is no index to show, so skip the whole section rather than
+  // stacking an empty "no reviews" card under the feature.
+  if (leadExcluded && posts.length === 0 && !hasFilters) return null;
 
   return (
     <section id="articles-feed" aria-labelledby="catalogue-title" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -242,9 +253,7 @@ export default function ArticleFeed({
             {hasFilters ? 'No matches' : 'No reviews yet'}
           </Text>
           <Text as="h3" variant="section-title" className="mt-2">
-            {hasFilters
-              ? 'No articles match these filters.'
-              : 'No articles have been published yet.'}
+            {hasFilters ? 'No articles match these filters.' : 'No articles have been published yet.'}
           </Text>
           <p className="mt-2 max-w-xl font-sans text-sm leading-relaxed text-ink-secondary">
             {hasFilters
@@ -431,11 +440,6 @@ export default function ArticleFeed({
         </MotionList>
       )}
 
-      <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
-        <p className="font-mono text-xs text-ink-secondary">
-          Every review is open access under CC BY 4.0.
-        </p>
-      </div>
     </section>
   );
 }

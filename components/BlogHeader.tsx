@@ -329,7 +329,7 @@ export default function BlogHeader({
 
             {/* Auth / Contribute CTA — adapts cleanly to three states */}
             {isSignedIn ? (
-              <div className="hidden items-center gap-1 md:flex">
+              <div className="hidden items-center gap-1 lg:flex">
                 {variant === 'default' ? (
                   <Link
                     href="/contribute"
@@ -368,7 +368,7 @@ export default function BlogHeader({
                 </Pressable>
               </div>
             ) : (
-              <div className="hidden items-center gap-1 md:flex">
+              <div className="hidden items-center gap-1 lg:flex">
                 <Link
                   href="/login"
                   aria-label="Sign in"
@@ -397,7 +397,7 @@ export default function BlogHeader({
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              className={`min-h-11 min-w-11 rounded-full ${isCompact ? '' : 'lg:hidden'}`}
+              className="min-h-11 min-w-11 rounded-full lg:hidden"
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">

@@ -70,6 +70,31 @@ describe('responsive header navigation', () => {
     expect(container.querySelector('[role="dialog"][aria-label="Navigation menu"]')).toBeNull();
   });
 
+  it('leaves account and contribute to the bottom bar on tablet widths', () => {
+    // `MobileBottomNav` covers Profile and Contribute below `lg`; the header's
+    // auth cluster used to start at `md`, showing the same two destinations
+    // twice between 768px and 1023px.
+    const signIn = container.querySelector<HTMLAnchorElement>('a[href="/login"]');
+    const cluster = signIn?.parentElement;
+    expect(cluster?.className).toContain('hidden');
+    expect(cluster?.className).toContain('lg:flex');
+    expect(cluster?.className).not.toContain('md:flex');
+  });
+
+  it('never offers a menu trigger where the drawer is hidden', () => {
+    act(() =>
+      root.render(
+        <BlogHeader variant="reading" backHref="/feed" backLabel="Feed" contextTitle="A reading surface" />,
+      ),
+    );
+    const button = container.querySelector<HTMLButtonElement>('button[aria-controls]');
+    expect(button).not.toBeNull();
+    // Compact reading/editor headers keep the trigger on tablets, but the
+    // drawer itself is `lg:hidden`. Without the same guard the button would be
+    // visible on desktop and open an invisible panel (locking page scroll).
+    expect(button!.className).toContain('lg:hidden');
+  });
+
   it('closes the mobile menu when switching to desktop', () => {
     const button = toggle();
     desktop = true;

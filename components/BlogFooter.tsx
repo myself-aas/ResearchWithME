@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
 import { CATEGORIES, categoryToSlug } from '@/lib/blog-data';
 import BrandLogo from '@/components/BrandLogo';
 import { Text, Link as TextLink } from '@/components/primitives';
@@ -91,10 +90,6 @@ export default function BlogFooter() {
           <p>ResearchWithMe (reme) · Edited by Ashif Ahmed Shuvo</p>
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
             <TextLink href="/settings" variant="quiet">Settings</TextLink>
-            <TextLink href="/assistant" variant="quiet" className="inline-flex items-center gap-1">
-              <span>Assistant</span>
-              <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </TextLink>
             <TextLink href="/motion" variant="quiet">
               Motion system
             </TextLink>
