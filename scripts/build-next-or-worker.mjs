@@ -10,7 +10,14 @@ import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const binSuffix = process.platform === 'win32' ? '.cmd' : '';
+
+// Run each CLI's JS entry with the current Node instead of the
+// node_modules/.bin shim. On Windows the shim is a `.cmd` file, and since the
+// CVE-2024-27980 fix Node refuses to spawn `.cmd` without a shell (EINVAL), so
+// `npm run build` / `opennextjs-cloudflare build` failed on every Windows machine.
+const cliEntry = (...segments) => join(root, 'node_modules', ...segments);
+const runCli = (entry, cliArgs, options) =>
+  execFileSync(process.execPath, [entry, ...cliArgs], options);
 const isWorkersCI =
   process.env.WORKERS_CI === '1' || process.env.WORKERS_CI === 'true';
 const isInnerBuild =
@@ -34,13 +41,7 @@ if (isWorkersCI && !isInnerBuild) {
   console.log(
     '[build] WORKERS_CI detected — running opennextjs-cloudflare build so .open-next/ is ready for preview/deploy.',
   );
-  const openNextBin = join(
-    root,
-    'node_modules',
-    '.bin',
-    `opennextjs-cloudflare${binSuffix}`,
-  );
-  execFileSync(openNextBin, ['build'], {
+  runCli(cliEntry('@opennextjs', 'cloudflare', 'dist', 'cli', 'index.js'), ['build'], {
     cwd: root,
     stdio: 'inherit',
     env: {
@@ -50,8 +51,7 @@ if (isWorkersCI && !isInnerBuild) {
     },
   });
 } else {
-  const nextBin = join(root, 'node_modules', '.bin', `next${binSuffix}`);
-  execFileSync(nextBin, ['build', ...args], {
+  runCli(cliEntry('next', 'dist', 'bin', 'next'), ['build', ...args], {
     cwd: root,
     stdio: 'inherit',
   });
