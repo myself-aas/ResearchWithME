@@ -16,7 +16,9 @@ function sourceFiles(root: string): string[] {
   return readdirSync(root, { recursive: true })
     .map((entry) => String(entry))
     .filter((entry) => entry.endsWith('.tsx') && !entry.includes('.test.'))
-    .map((entry) => join(root, entry));
+    // Normalise to `/` so the path checks below hold on Windows, where `join`
+    // returns `components\BlogHeader.tsx`.
+    .map((entry) => join(root, entry).replaceAll('\\', '/'));
 }
 
 function hrefsIn(html: string): string[] {
