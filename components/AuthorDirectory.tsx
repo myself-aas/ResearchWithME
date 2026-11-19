@@ -7,6 +7,7 @@ import { ArrowRight, Building2, ExternalLink, GitBranch, GraduationCap, Search, 
 import type { Author } from '@/lib/blog-data';
 import { Stagger, StaggerItem } from '@/components/motion/Stagger';
 import { Text } from '@/components/primitives';
+import { githubProfileUrl } from '@/lib/profile/validation';
 
 type IdentifierFilter = 'All' | 'orcid' | 'github';
 
@@ -185,7 +186,7 @@ export default function AuthorDirectory({ authors }: { authors: Author[] }) {
                     {author.github && (
                       <li>
                         <a
-                          href={author.github}
+                          href={githubProfileUrl(author.github)}
                           target="_blank"
                           rel="noreferrer noopener"
                           className="inline-flex min-h-9 items-center gap-1 text-ink-secondary underline-offset-4 hover:text-brand hover:underline"

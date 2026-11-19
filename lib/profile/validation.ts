@@ -122,6 +122,18 @@ export function normalizeGithub(input: string): string | null {
   return /^[a-z\d](?:[a-z\d-]{0,38})$/i.test(stripped) ? stripped : null;
 }
 
+/**
+ * The profile editor stores a bare handle (`octocat`), while seeded authors may
+ * carry a full URL. Rendering a bare handle as `href` makes a relative link to a
+ * page on this site, so every render site goes through this helper.
+ */
+export function githubProfileUrl(value: string | undefined | null): string | undefined {
+  const trimmed = value?.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://github.com/${trimmed.replace(/^@/, '')}`;
+}
+
 function normalizeUrl(input: string): string | null {
   const value = input.trim();
   if (!value) return '';

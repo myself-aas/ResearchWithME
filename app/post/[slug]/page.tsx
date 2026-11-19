@@ -20,6 +20,7 @@ import { AUTHORS, categoryToSlug } from '@/lib/blog-data';
 import { buildArticleCitationMap, renderWithInlineCitations } from '@/lib/citations-inline';
 import { getCachedArticleCatalogue } from '@/lib/cms/catalogue';
 import { pageMetadata } from '@/lib/seo';
+import { githubProfileUrl } from '@/lib/profile/validation';
 import { articleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 import { Card, Text } from '@/components/primitives';
 import { WorkflowDisclosure } from '@/components/workflows';
@@ -78,11 +79,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         ? article.author.orcid
         : `https://orcid.org/${article.author.orcid}`
       : undefined,
-    article.author.github
-      ? article.author.github.startsWith('http')
-        ? article.author.github
-        : `https://github.com/${article.author.github.replace(/^@/, '')}`
-      : undefined,
+    githubProfileUrl(article.author.github),
     article.author.website,
     article.author.scholar,
   ].filter((entry): entry is string => Boolean(entry));
