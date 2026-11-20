@@ -46,3 +46,11 @@ The Statistical Table Generator ($5, one payment) is the second product card. It
 the same "Not on sale yet" note until `LEMONSQUEEZY_VARIANT_STAT_TABLES` is set. Its copy states the requirement
 (Python and a terminal), what it leaves out, and that free programs cover more; it points to the free Research
 Toolkit as the way to try it. The page no longer says there is one thing for sale.
+
+## Added 2026-11-21: product details and Lemon Squeezy context
+
+- Each product card's definition list now runs: Who it is for, What you need, In the download, How you get it, Licence, Worth knowing first. "What you need" uses the free-download cards' label; the honest limit stays last.
+- A file note (format and approximate size) sits under the card's action, in the same position and style as the free downloads' note. Signed out, it joins the existing account note so the action keeps a single note. The account records the purchase; the files stay in the Lemon Squeezy order history, and the page names that history one way everywhere.
+- "How you get it" says the file comes from Lemon Squeezy and stays in its order history. The licence line summarises the LICENSE.txt shipped in every paid zip (`PRODUCT_LICENCE` in the catalogue; change the two together).
+- Under "How buying works", a link to Lemon Squeezy's order history (`LEMON_SQUEEZY_ORDERS_URL`), next to the account-page link.
+- "Questions before you pay" adds currency and tax, finding files later, and sharing within a group. Answers come from `docs/billing.md` and the shipped licence.

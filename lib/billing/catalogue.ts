@@ -50,6 +50,12 @@ export interface BillingProduct {
   bestFor: string;
   /** How and when it reaches the buyer. */
   delivery: string;
+  /** What the buyer must have to use it. Said before the button, not after. */
+  needs: string;
+  /** The files in the zip, as `products/build.py` builds it. */
+  contents: string;
+  /** Format and size, shown under the action like the free downloads' note. */
+  fileNote: string;
   /** The honest limit of the product, said before the buyer finds it. */
   caveat: string;
   /** Verb phrase for the checkout button. */
@@ -69,6 +75,24 @@ export interface BillingProduct {
  * - No invented numbers: no turnaround times, page counts, customer counts, or
  *   discounts. Add them here when they are real.
  */
+/**
+ * How every paid product arrives. Lemon Squeezy delivers the file (it is the
+ * merchant of record; see `docs/billing.md`), and its customer order history
+ * keeps it available, so a lost link is not a lost purchase.
+ */
+const PAID_DELIVERY =
+  'A zip file from Lemon Squeezy, ready to download as soon as the payment clears. It stays in your Lemon Squeezy order history, so you can download it again later.';
+
+/** Lemon Squeezy's customer order history, where bought files can be downloaded again. */
+export const LEMON_SQUEEZY_ORDERS_URL = 'https://app.lemonsqueezy.com/my-orders';
+
+/**
+ * The licence shipped as LICENSE.txt in every paid zip (`products/build.py`),
+ * summarised. Change the two together: the file is the binding text.
+ */
+export const PRODUCT_LICENCE =
+  'For one person: use the files for your own research, study and work, on any number of your own devices, and change them for your own use. What you make with them is yours. Sharing or reselling the files is not allowed, so a group needs one purchase per person.';
+
 export const BILLING_PRODUCTS: readonly BillingProduct[] = [
   {
     key: 'teardown',
@@ -85,7 +109,12 @@ export const BILLING_PRODUCTS: readonly BillingProduct[] = [
       'A download you keep; there is no renewal',
     ],
     bestFor: 'Engineers and graduate researchers who have to judge code they did not write.',
-    delivery: 'A file download from Lemon Squeezy, available once the payment clears.',
+    delivery: PAID_DELIVERY,
+    needs:
+      'A PDF reader and a spreadsheet program. To apply the method you need to read the language the repository is written in and to use a terminal.',
+    contents:
+      'The method guide and a reading checklist (PDF), the claim ledger (CSV and Excel), run-log and teardown-record templates (Markdown), and the licence.',
+    fileNote: 'Zip file, about 25 kB',
     caveat: 'It is a method, not software. It will not run a teardown for you.',
     actionLabel: 'Buy the system',
     mode: 'payment',
@@ -107,9 +136,13 @@ export const BILLING_PRODUCTS: readonly BillingProduct[] = [
       'No limit on data size or runs; there is no renewal',
     ],
     bestFor: 'Students and researchers who know which analysis they need and want the table and figure without a statistics package.',
-    delivery: 'A zip file download from Lemon Squeezy, available once the payment clears.',
+    delivery: PAID_DELIVERY,
+    needs: 'Python 3.8 or later and a terminal. Nothing else is installed, and your data stays on your computer.',
+    contents:
+      'Three Python programs (tables, further analyses, figures) with their shared statistics module, a guide (PDF), a sample data file, and the licence.',
+    fileNote: 'Zip file, about 50 kB',
     caveat:
-      'It needs Python 3.8 or later and a terminal; there are no menus. It does not choose the analysis or interpret the result, figures are greyscale, and it leaves out multilevel models, factor analysis, and other advanced methods that free programs such as JASP and jamovi cover. The free Research Toolkit below has three of the analyses, so you can try it first.',
+      'There are no menus. It does not choose the analysis or interpret the result, figures are greyscale, and it leaves out multilevel models, factor analysis, and other advanced methods that free programs such as JASP and jamovi cover. The free Research Toolkit below has three of the analyses, so you can try it first.',
     actionLabel: 'Buy the program',
     mode: 'payment',
   },
