@@ -114,6 +114,8 @@ not a substitute for not leaking the first.
 -- private.billing_settings is a two-column key/value table; there is no id=1 row.
 -- Generate the digest exactly as the migration does, so the encoding matches:
 printf %s "<new secret>" | shasum -a 256
+-- On Windows (no shasum), the same digest:
+--   node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "<new secret>"
 insert into private.billing_settings (key, value)
 values ('bridge_secret_sha256', '<hex from the command above>')
 on conflict (key) do update set value = excluded.value;
@@ -198,17 +200,25 @@ when reconciling a test purchase.
 Do these in order. Steps 1–3 are database work, 4–6 are Lemon Squeezy dashboard
 work, and the last step is the only one that can take real money.
 
-1. **Apply the migration.** `supabase/migrations/20261113000300_billing.sql`,
-   through `npx supabase db push` or the SQL editor. It creates
+1. **Apply the migration.** *Done in production on 2026-11-19.*
+   `supabase/migrations/20261113000300_billing.sql`, through the SQL editor or
+   one migration at a time. Do not run `npx supabase db push` against
+   production: its migration history uses different version names from the
+   files in this repository, so `db push` would try to re-run every migration
+   until `supabase migration repair` aligns them. It creates
    `billing_customers`, `billing_subscriptions`, `billing_orders`,
    `billing_events`, `private.billing_settings`, the `apply_billing_event`
    function, and the RLS policies that let a customer read only their own rows.
 2. **Insert the bridge digest** into `private.billing_settings`, using the same
    value you set as `BILLING_BRIDGE_SECRET` (§3 has the SQL).
 3. **Set the three Worker secrets**: `npx wrangler secret put LEMONSQUEEZY_API_KEY`,
-   `… LEMONSQUEEZY_WEBHOOK_SECRET`, `… BILLING_BRIDGE_SECRET`. Set the five runtime
-   vars (`LEMONSQUEEZY_STORE_ID`, the three `LEMONSQUEEZY_VARIANT_*`, and
-   `LEMONSQUEEZY_TEST_MODE=1` for previews).
+   `… LEMONSQUEEZY_WEBHOOK_SECRET`, `… BILLING_BRIDGE_SECRET`, each with
+   `--name researchwithme`. Set `LEMONSQUEEZY_STORE_ID`, the two catalogue
+   variants (`LEMONSQUEEZY_VARIANT_TEARDOWN`, `LEMONSQUEEZY_VARIANT_STAT_TABLES`)
+   and `LEMONSQUEEZY_TEST_MODE=1` the same way, as secrets. They are not
+   confidential, but `wrangler.jsonc` has no `vars` block, and variables set only
+   in the dashboard are removed by the next `wrangler deploy`; secrets persist.
+   (`LEMONSQUEEZY_VARIANT_COPILOT` is not needed: the co-pilot is withdrawn.)
 4. **Create the webhook** in the Lemon Squeezy dashboard: URL
    `https://<your-domain>/api/webhooks/lemonsqueezy`, signing secret the same
    value as `LEMONSQUEEZY_WEBHOOK_SECRET`, and at minimum the four events the
@@ -266,6 +276,82 @@ The files for every download are built from `products/` (`python products/build.
   Manuscript Check waits for Lemon Squeezy's written reply.
 - Free, served by the site from `public/downloads` and listed on `/pricing` with no checkout and no account:
   the free edition of Manuscript Check and the Research Toolkit.
+
+## Store product setup
+
+Values for Lemon Squeezy's **Store → Products → New product** form, one product
+per catalogue entry. Create them with the store in **test mode** first; test and
+live variant IDs differ (§7.7). Names and descriptions follow
+`lib/billing/catalogue.ts`, so the store and `/pricing` say the same thing, and
+the same copy rules apply: no invented numbers, nothing promised that the
+download does not contain.
+
+### Fields shared by every product
+
+| Field | Value | Why |
+| --- | --- | --- |
+| Pricing | **Single payment** | Every catalogue product is `mode: 'payment'`. No subscriptions (§1). |
+| Pricing model | **Standard pricing** | The price is fixed by the catalogue, not by the buyer. |
+| Tax category | The **e-book / digital publication** category for the Teardown System; the **downloadable (installed) software, personal use** category for the two programs | The form defaults to *SaaS*, which is wrong for all three: nothing is hosted, the buyer downloads files. The category drives the VAT rate Lemon Squeezy applies as merchant of record, so pick the closest label the dropdown offers. |
+| Media | Optional; leave empty until there is a 1600 × 1200 product image | No product imagery exists in the repository yet. |
+| Files | The product's zip from `products/downloads/` | Built by `python products/build.py`; see *Product files*. |
+| Variants | **None**: keep the single default variant | Its ID is the `LEMONSQUEEZY_VARIANT_*` value. A second variant would need a catalogue change. |
+| Generate license keys | **Off** | There is no licence server or activation check (§8). |
+| Display product on storefront | **Off** | Purchases are linked to an account only through `custom.user_id`, which `lib/billing/checkout.ts` sets. A storefront purchase carries no user id, so `apply_billing_event` records it as `ignored` (`missing_user_id`) and the buyer's account never shows it. Sell only through `/pricing`. |
+| Confirmation modal: title | `Thanks for your order!` | Default is fine. |
+| Confirmation modal: button text / link | `Download your files` → `https://app.lemonsqueezy.com/my-orders` | Applies only outside the site's checkout: `lib/billing/checkout.ts` overrides the link with `redirect_url` (`/dashboard/account`). |
+| Email receipt: button text / link | `Download your files` → `https://app.lemonsqueezy.com/my-orders` | Same: site checkouts override both with `Open your account` → `/dashboard/account`. |
+
+> **Check during the first test purchase (§7.5):** site checkouts send the
+> confirmation modal and the receipt button to `/dashboard/account`, and that page
+> lists purchases but does not link to the files, which live on Lemon Squeezy's
+> order page. Confirm the buyer can still reach the download (for example from
+> the receipt email). If not, either stop overriding `receipt_link_url` in
+> `lib/billing/checkout.ts` so the receipt keeps Lemon Squeezy's order link, or
+> add a "Download your files" link to `https://app.lemonsqueezy.com/my-orders` on
+> the account page.
+
+### 1. The Teardown System → `LEMONSQUEEZY_VARIANT_TEARDOWN`
+
+| Field | Value |
+| --- | --- |
+| Name | `The Teardown System` |
+| Description | `A step-by-step method for auditing research code: pin the commit, read before you run, log each claim, and write a record others can check. PDF + templates.` (156 characters) |
+| Price | `$19` |
+| Files | `teardown-system-1.0.0.zip`: method guide (PDF), reading checklist (PDF), claim ledger (CSV and XLSX), run-log and teardown-record templates, licence |
+| Confirmation modal: message | `Your files are ready: the method guide, the reading checklist, the claim ledger and the record templates. Start with The-Teardown-System.pdf.` |
+| Email receipt: thank-you note | `Thank you for buying The Teardown System. Start with The-Teardown-System.pdf; the templates follow its six stages.` |
+
+### 2. Statistical Table Generator → `LEMONSQUEEZY_VARIANT_STAT_TABLES`
+
+| Field | Value |
+| --- | --- |
+| Name | `Statistical Table Generator` |
+| Description | `Turn a CSV file into APA 7 tables and print-ready figures on your own computer. 21 analyses, a draft sentence per result. Needs Python 3.8+. No data uploaded.` (158 characters) |
+| Price | `$5` |
+| Files | `statistical-table-generator-1.0.0.zip`: full edition (`apa_tables.py`, `apa_more.py`, `figures.py`, `statdist.py`), guide (PDF), sample data, licence |
+| Confirmation modal: message | `Unzip the download and open Statistical-Table-Generator.pdf first. You need Python 3.8 or later and a terminal; try it on sample-data.csv.` |
+| Email receipt: thank-you note | `Thank you for buying the Statistical Table Generator. Your data never leaves your computer; start with the guide PDF.` |
+
+### Held: Manuscript Check (do not publish yet)
+
+Waiting for Lemon Squeezy's written reply (see *Product files*), and not a
+catalogue key, so a store product would sell nothing through the site. Prepared
+values for when it is cleared and added to `lib/billing/catalogue.ts`:
+
+| Field | Value |
+| --- | --- |
+| Name | `Manuscript Check` |
+| Description | `Three programs that check a manuscript, its references, and your reply to reviewers before you submit. Runs on your computer with Python 3.8+. One payment.` (155 characters) |
+| Price | `$5` |
+| Files | `manuscript-check-1.0.0.zip` (full edition) |
+
+### Not store products
+
+Manuscript Editing and the Research Co-Pilot are withdrawn (§1). The free
+Manuscript Check edition and the Research Toolkit are served from
+`public/downloads`; creating them as *Lead magnet* products would add a second,
+unlinked copy.
 
 ## When nothing can be bought
 

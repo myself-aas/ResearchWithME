@@ -5,7 +5,14 @@ import BlogHeader from '@/components/BlogHeader';
 import BlogFooter from '@/components/BlogFooter';
 import CheckoutButton from '@/components/billing/CheckoutButton';
 import LemonSqueezyScript from '@/components/billing/LemonSqueezyScript';
-import { BILLING_PRODUCTS, FREE_DOWNLOADS, FREE_FOR_EVERYONE, isPurchasable } from '@/lib/billing/catalogue';
+import {
+  BILLING_PRODUCTS,
+  FREE_DOWNLOADS,
+  FREE_FOR_EVERYONE,
+  LEMON_SQUEEZY_ORDERS_URL,
+  PRODUCT_LICENCE,
+  isPurchasable,
+} from '@/lib/billing/catalogue';
 import { getDashboardUser } from '@/lib/cms/auth';
 import { absoluteUrl, pageMetadata } from '@/lib/seo';
 import { jsonLdScript } from '@/lib/seo/jsonld';
@@ -36,12 +43,35 @@ const QUESTIONS: readonly { question: string; answer: React.ReactNode }[] = [
   {
     question: 'Why do I need an account to buy?',
     answer:
-      'So the purchase is attached to you and shows on your account page. Reading never needs one; buying does, because otherwise there is nothing to tie a download to.',
+      'So the purchase is attached to you and shows on your account page. Reading never needs one; buying does, because otherwise there is nothing to tie a purchase to. The files themselves come from Lemon Squeezy and stay in your Lemon Squeezy order history.',
   },
   {
     question: 'Is there a subscription?',
     answer:
       'No. Each product is one payment and there is no renewal.',
+  },
+  {
+    question: 'What currency is the price in, and is tax added?',
+    answer:
+      'US dollars. As merchant of record, Lemon Squeezy adds any sales tax or VAT your location requires at checkout, so the total you pay can be higher than the price shown here.',
+  },
+  {
+    question: 'Where do I find my files later?',
+    answer: (
+      <>
+        In{' '}
+        <a href={LEMON_SQUEEZY_ORDERS_URL} className="underline underline-offset-4">
+          your Lemon Squeezy order history
+        </a>
+        , which you open with the email address you paid with. You can download a file again from there later.
+        Your account page here lists what you bought.
+      </>
+    ),
+  },
+  {
+    question: 'Can my research group share one copy?',
+    answer:
+      'No. One purchase covers one person, on any number of their own devices, so a group needs one purchase per person who uses the files. What you make with them is yours.',
   },
   {
     question: 'How do refunds work?',
@@ -182,8 +212,20 @@ export default async function PricingPage() {
                   <dd className="text-ink-secondary">{product.bestFor}</dd>
                 </div>
                 <div>
+                  <dt className="font-semibold text-ink">What you need</dt>
+                  <dd className="text-ink-secondary">{product.needs}</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold text-ink">In the download</dt>
+                  <dd className="text-ink-secondary">{product.contents}</dd>
+                </div>
+                <div>
                   <dt className="font-semibold text-ink">How you get it</dt>
                   <dd className="text-ink-secondary">{product.delivery}</dd>
+                </div>
+                <div>
+                  <dt className="font-semibold text-ink">Licence</dt>
+                  <dd className="text-ink-secondary">{PRODUCT_LICENCE}</dd>
                 </div>
                 <div>
                   <dt className="font-semibold text-ink">Worth knowing first</dt>
@@ -208,10 +250,14 @@ export default async function PricingPage() {
                       Sign in to buy
                     </Link>
                     <p className="mt-2 text-center font-sans text-xs text-ink-secondary">
-                      The account costs nothing. It is where the purchase is kept.
+                      The account costs nothing and records your purchase. {product.fileNote}.
                     </p>
                   </>
                 )}
+                {/* One note under the action, as on the free cards: signed out, the file note joins the account note above. */}
+                {!isPurchasable(product.key) || user ? (
+                  <p className="mt-2 text-center font-sans text-xs text-ink-secondary">{product.fileNote}</p>
+                ) : null}
               </div>
             </section>
           ))}
@@ -305,7 +351,11 @@ export default async function PricingPage() {
             <Link href="/dashboard/account" className="underline underline-offset-4">
               account page
             </Link>{' '}
-            as soon as Lemon Squeezy confirms them.
+            as soon as Lemon Squeezy confirms them. The files themselves stay in{' '}
+            <a href={LEMON_SQUEEZY_ORDERS_URL} className="underline underline-offset-4">
+              your Lemon Squeezy order history
+            </a>
+            , which you open with the email address you paid with.
           </p>
         </section>
 

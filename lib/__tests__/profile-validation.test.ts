@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   PROFILE_LIMITS,
+  githubProfileUrl,
   normalizeGithub,
   normalizeOrcid,
   normalizeProfileSlug,
@@ -106,5 +107,20 @@ describe('profile validation', () => {
     expect(result.ok).toBe(false);
     if (result.ok) return;
     expect(result.errors.displayName).toBeTruthy();
+  });
+});
+
+describe('githubProfileUrl', () => {
+  it('turns the stored handle into an absolute GitHub URL', () => {
+    // The editor saves `normalizeGithub` output (a bare handle); rendered as-is
+    // it became a relative link to a page on this site.
+    expect(githubProfileUrl(normalizeGithub('https://github.com/octocat/'))).toBe('https://github.com/octocat');
+    expect(githubProfileUrl('@octocat')).toBe('https://github.com/octocat');
+  });
+
+  it('keeps a full URL and drops an empty value', () => {
+    expect(githubProfileUrl('https://github.com/org/repo')).toBe('https://github.com/org/repo');
+    expect(githubProfileUrl('')).toBeUndefined();
+    expect(githubProfileUrl(undefined)).toBeUndefined();
   });
 });

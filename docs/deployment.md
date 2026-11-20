@@ -195,6 +195,23 @@ Workers Builds therefore needs the `NEXT_PUBLIC_*` values as **build**
 variables. The deploy guard (`npm run deploy-guard`) fails loudly when they are missing, because a
 Worker built without them runs in unauthenticated local demo mode with a read-only filesystem.
 
+### 3.2 Deploying from a Windows machine
+
+- **Canonical origin.** Next.js ranks `.env.local` above `.env.production` in a
+  production build, so a dev machine's `NEXT_PUBLIC_SITE_URL=http://localhost:3000`
+  would be compiled into canonical links. `.env.production` carries the public
+  origin, and a gitignored `.env.production.local` with
+  `NEXT_PUBLIC_SITE_URL=https://researchwith.me` overrides `.env.local` locally.
+  `npm run deploy-guard` refuses a localhost origin.
+- **Drive-letter case.** Build from an upper-case drive path (`G:\Github\...`).
+  From a lower-case one (`g:\...`, as some editors open the folder), `next build`
+  fails with `Invariant: no direct app page entry found for /_not-found`.
+- **Deploy order.** `researchwithme` binds the `researchwithme-assistant` service,
+  and `researchwithme-outbox` consumes the `researchwithme-outbox` queue. Create
+  the queue and deploy both helper Workers (`npm run worker:assistant:deploy`,
+  `npm run worker:outbox:deploy`) before the first `npm run deploy`. `CRON_SECRET`
+  must hold the same value on `researchwithme` and `researchwithme-outbox`.
+
 ---
 
 ## 4. Complete credential inventory

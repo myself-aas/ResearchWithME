@@ -1,0 +1,6 @@
+# Node scripts start with a `#!` shebang. A CRLF checkout (core.autocrlf=true on
+# Windows) leaves `\r` on that line, and Vitest then fails to import the module
+# with "Invalid or unexpected token". Keep executable scripts LF everywhere.
+*.mjs text eol=lf
+*.cjs text eol=lf
+*.sh  text eol=lf

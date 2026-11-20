@@ -3,31 +3,31 @@ import { CATEGORIES, categoryToSlug } from '@/lib/blog-data';
 import BrandLogo from '@/components/BrandLogo';
 import { Text, Link as TextLink } from '@/components/primitives';
 
-const exploreLinks = [
+const researchLinks = [
   { href: '/feed', label: 'Research feed' },
   { href: '/search', label: 'Unified search' },
   { href: '/topics', label: 'Topic taxonomy' },
   { href: '/sources', label: 'Canonical sources' },
   { href: '/evidence', label: 'Evidence registry' },
   { href: '/claims', label: 'Structured claims' },
+];
+
+const platformLinks = [
   { href: '/reviews', label: 'Formal peer reviews' },
   { href: '/projects', label: 'Research projects' },
   { href: '/tools', label: 'Open-source tools' },
   { href: '/graph', label: 'Provenance graph' },
   { href: '/research-os', label: 'Personal Research OS' },
   { href: '/library', label: 'Research library' },
+];
+
+const communityLinks = [
   { href: '/contribute', label: 'Contribute' },
   { href: '/editor', label: 'Scholarly MDX workspace' },
   { href: '/workspaces', label: 'Workspaces' },
   { href: '/', label: 'Editorial archive' },
   { href: '/authors', label: 'Writers' },
   { href: '/assistant', label: 'Assistant' },
-  { href: '/cite', label: 'Citation builder' },
-  { href: '/pricing', label: 'Products and pricing' },
-  { href: '/editorial-board', label: 'Editor' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/privacy', label: 'Privacy' },
 ];
 
 export default function BlogFooter() {
@@ -35,9 +35,12 @@ export default function BlogFooter() {
     <footer className="mt-16 border-t border-line bg-surface text-ink">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
-          <div className="lg:col-span-2">
+          <nav aria-labelledby="footer-brand">
+            <Text id="footer-brand" as="h2" variant="eyebrow" weight="semibold" className="sr-only">
+              ResearchWithMe
+            </Text>
             <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="reme. ResearchWithMe home">
-                          <BrandLogo size="md" />
+              <BrandLogo size="md" />
             </Link>
 
             <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-secondary">
@@ -47,10 +50,10 @@ export default function BlogFooter() {
             <p className="mt-4 font-sans text-sm text-ink-secondary">
               Articles are published under CC BY 4.0.
             </p>
-          </div>
+          </nav>
 
-          <nav aria-labelledby="footer-domains">
-            <Text id="footer-domains" as="h2" variant="eyebrow" weight="semibold">
+          <nav aria-labelledby="footer-topics">
+            <Text id="footer-topics" as="h2" variant="eyebrow" weight="semibold">
               Topics
             </Text>
             <ul className="mt-3 space-y-2 font-sans text-sm">
@@ -67,12 +70,48 @@ export default function BlogFooter() {
             </ul>
           </nav>
 
-          <nav aria-labelledby="footer-explore">
-            <Text id="footer-explore" as="h2" variant="eyebrow" weight="semibold">
-              Explore
+          <nav aria-labelledby="footer-research">
+            <Text id="footer-research" as="h2" variant="eyebrow" weight="semibold">
+              Research
             </Text>
             <ul className="mt-3 space-y-2 font-sans text-sm">
-              {exploreLinks.map((link) => (
+              {researchLinks.map((link) => (
+                <li key={link.href}>
+                  <TextLink
+                    href={link.href}
+                    variant="muted"
+                  >
+                    {link.label}
+                  </TextLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-labelledby="footer-platform">
+            <Text id="footer-platform" as="h2" variant="eyebrow" weight="semibold">
+              Platform
+            </Text>
+            <ul className="mt-3 space-y-2 font-sans text-sm">
+              {platformLinks.map((link) => (
+                <li key={link.href}>
+                  <TextLink
+                    href={link.href}
+                    variant="muted"
+                  >
+                    {link.label}
+                  </TextLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <nav aria-labelledby="footer-community">
+            <Text id="footer-community" as="h2" variant="eyebrow" weight="semibold">
+              Community
+            </Text>
+            <ul className="mt-3 space-y-2 font-sans text-sm">
+              {communityLinks.map((link) => (
                 <li key={link.href}>
                   <TextLink
                     href={link.href}

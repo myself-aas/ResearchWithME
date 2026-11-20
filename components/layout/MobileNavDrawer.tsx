@@ -74,6 +74,8 @@ export default function MobileNavDrawer({
             key="reme-drawer-panel"
             ref={panelRef}
             id={menuId}
+            // BlogHeader moves focus here on open; a div needs tabIndex -1 to take it.
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
@@ -81,7 +83,7 @@ export default function MobileNavDrawer({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', stiffness: 420, damping: 42, mass: 0.9 }}
-            className="fixed inset-y-0 right-0 z-50 flex w-[72vw] max-w-[21rem] flex-col overflow-hidden border-l border-line bg-canvas shadow-floating sm:w-[58vw] sm:max-w-[22rem] lg:hidden"
+            className="fixed inset-y-0 right-0 z-50 flex outline-none w-[72vw] max-w-[21rem] flex-col overflow-hidden border-l border-line bg-canvas shadow-floating sm:w-[58vw] sm:max-w-[22rem] lg:hidden"
           >
             <div className="flex shrink-0 items-center justify-between gap-2 border-b border-line px-3 py-2">
               <Link

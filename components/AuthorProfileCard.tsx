@@ -13,6 +13,7 @@ import { Author } from '@/lib/blog-data';
 import AuthorAvatar from '@/components/AuthorAvatar';
 import SpecialistBadgePopover from '@/components/reader/SpecialistBadgePopover';
 import { Card, Text } from '@/components/primitives';
+import { githubProfileUrl } from '@/lib/profile/validation';
 
 interface AuthorProfileCardProps {
   author: Author;
@@ -45,7 +46,7 @@ function verification(author: Author) {
       return {
         label: 'GitHub verified maintainer',
         detail: author.verifiedIdentifier,
-        link: author.github,
+        link: githubProfileUrl(author.github),
       };
   }
 }
@@ -53,7 +54,7 @@ function verification(author: Author) {
 function ProfileLinks({ author }: { author: Author }) {
   const links = [
     author.orcid ? { href: `https://orcid.org/${author.orcid.replace(/^https?:\/\/orcid\.org\//, '')}`, label: 'ORCID' } : null,
-    author.github ? { href: author.github, label: 'GitHub' } : null,
+    author.github ? { href: githubProfileUrl(author.github) ?? '', label: 'GitHub' } : null,
     author.scholar ? { href: author.scholar, label: 'Google Scholar' } : null,
     author.twitter ? { href: author.twitter, label: 'X / Twitter' } : null,
     author.website ? { href: author.website, label: 'Lab website' } : null,
