@@ -1,0 +1,342 @@
+{
+  "retrievedAt": "2026-11-20T22:46:21.696157+00:00",
+  "reviewedRepository": "apache/airflow",
+  "reviewedVersion": "3.4.0",
+  "reviewedCommit": "619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+  "method": "Read-only GitHub REST inspection of a released tag. No Airflow package installation, task execution, benchmark, or upstream test run.",
+  "treeScope": {
+    "completeResponseTruncated": false,
+    "retainedScope": "Selected inspected text files and excerpts only; not an exhaustive repository audit."
+  },
+  "release": {
+    "id": 436510240,
+    "tag_name": "3.4.0",
+    "name": "Apache Airflow 3.4.0",
+    "published_at": "2026-11-06T13:08:22Z",
+    "prerelease": false,
+    "html_url": "https://github.com/apache/airflow/releases/tag/3.4.0"
+  },
+  "sources": [
+    {
+      "id": "readme",
+      "path": "README.md",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/README.md?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "e0e77777ab46524798471b224775162d39cd482e",
+      "bytes": 41758,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 45,
+          "endLine": 49,
+          "text": "[Apache Airflow](https://airflow.apache.org/docs/apache-airflow/stable/) (or simply Airflow) is a platform to programmatically author, schedule, and monitor workflows.\n\nWhen workflows are defined as code, they become more maintainable, versionable, testable, and collaborative.\n\nUse Airflow to author workflows (Dags) that orchestrate tasks. The Airflow scheduler executes your tasks on an array of workers while following the specified dependencies. Rich command line utilities make performing complex surgeries on Dags a snap. The rich user interface makes it easy to visualize pipelines running in production, monitor progress, and troubleshoot issues when needed."
+        },
+        {
+          "startLine": 83,
+          "endLine": 118,
+          "text": "## Project Focus\n\nAirflow works best with workflows that are mostly static and slowly changing. When the Dag structure is similar from one run to the next, it clarifies the unit of work and continuity. Other similar projects include [Luigi](https://github.com/spotify/luigi), [Oozie](https://oozie.apache.org/) and [Azkaban](https://azkaban.github.io/).\n\nBeyond traditional data pipelines, Airflow is widely used to orchestrate machine learning workflows — training, retraining, evaluation, and deployment — and increasingly to orchestrate agentic and LLM-based workloads, coordinating the steps of an AI pipeline (data prep, tool calls, model invocation, evaluation) rather than acting as the agent itself. This isn't a new direction: teams have run ML and AI workloads on Airflow for years, and the ecosystem of providers supporting these use cases (see the [AI & ML section of the Airflow registry](https://airflow.apache.org/registry/providers/?category=ai-ml)) continues to grow.\n\nAirflow is commonly used to process data, but has the opinion that tasks should ideally be idempotent (i.e., results of the task will be the same, and will not create duplicated data in a destination system), and should not pass large quantities of data from one task to the next (though tasks can pass metadata using Airflow's [XCom feature](https://airflow.apache.org/docs/apache-airflow/stable/concepts/xcoms.html)). For high-volume, data-intensive tasks, a best practice is to delegate to external services specializing in that type of work.\n\nAirflow is not a streaming solution, but it is often used to process real-time data, pulling data off streams in batches.\n\n## Principles\n\n- **Dynamic**: Pipelines are defined in code, enabling dynamic dag generation and parameterization.\n- **Extensible**: The Airflow framework includes a wide range of built-in operators and can be extended to fit your needs.\n- **Flexible**: Airflow leverages the [**Jinja**](https://jinja.palletsprojects.com) templating engine, allowing rich customizations.\n\n<!-- START Requirements, please keep comment here to allow auto update of PyPI readme.md -->\n## Requirements\n\nApache Airflow is tested with:\n\n|            | Main version (dev)                       | Stable version (3.4.0)             | Deprecate version (2.11.2)   |\n|------------|------------------------------------------|------------------------------------|------------------------------|\n| Python     | 3.11, 3.12, 3.13, 3.14                   | 3.11, 3.12, 3.13, 3.14             | 3.10, 3.11, 3.12             |\n| Platform   | AMD64/ARM64                              | AMD64/ARM64                        | AMD64/ARM64(\\*)              |\n| Kubernetes | 1.31, 1.32, 1.33, 1.34, 1.35, 1.36, 1.37 | 1.30, 1.31, 1.32, 1.33, 1.34, 1.35 | 1.26, 1.27, 1.28, 1.29, 1.30 |\n| PostgreSQL | 14, 15, 16, 17, 18                       | 14, 15, 16, 17, 18                 | 12, 13, 14, 15, 16           |\n| MySQL      | 8.0, 8.4, Innovation                     | 8.0, 8.4, Innovation               | 8.0, Innovation              |\n| SQLite     | 3.15.0+                                  | 3.15.0+                            | 3.15.0+                      |\n\n\\* Experimental\n\n**Note**: MariaDB is not tested/recommended.\n\n**Note**: SQLite is used in Airflow tests. Do not use it in production. We recommend\nusing the latest stable version of SQLite for local development."
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "path": "airflow-core/docs/core-concepts/overview.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/core-concepts/overview.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "d793527e73112463ff788271a605b6200c1a1982",
+      "bytes": 15939,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 20,
+          "endLine": 99,
+          "text": "\nAirflow is a platform that lets you build and run *workflows*. A workflow is represented as a\n:doc:`Dag <dags>` (a Directed Acyclic Graph), and contains individual pieces of work called\n:doc:`tasks`, arranged with dependencies and data flows taken into account.\n\n.. image:: ../img/ui-light/edge_label_example.png\n  :alt: An example Airflow Dag, rendered in Graph\n\nA Dag specifies the dependencies between tasks, which defines the order in which to execute the tasks.\nTasks describe what to do, be it fetching data, running analysis, triggering other systems, or more.\n\nAirflow itself is agnostic to what you're running - it will happily orchestrate and run anything,\neither with high-level support from one of our providers, or directly as a command using the shell\nor Python :doc:`operators`.\n\nAirflow components\n------------------\n\nAirflow's architecture consists of multiple components. The following sections describe each component's\nfunction and whether they're required for a bare-minimum Airflow installation, or an optional component\nto achieve better Airflow extensibility, performance, and scalability.\n\nRequired components\n...................\n\nA minimal Airflow installation consists of the following components:\n\n* A :doc:`scheduler <../administration-and-deployment/scheduler>`, which handles both triggering scheduled\n  workflows, and submitting :doc:`tasks` to the executor to run. The :doc:`executor <executor/index>`, is\n  a configuration property of the *scheduler*, not a separate component and runs within the scheduler\n  process. There are several executors available out of the box, and you can also write your own.\n\n* A *Dag processor*, which parses Dag files from a *Dag bundle* and serializes them into the\n  *metadata database*. More about processing Dag files can be found in\n  :doc:`/administration-and-deployment/dagfile-processing`\n\n* A *Dag bundle*, which is configured for the *Dag processor* to parse Dag files from and allow *workers* to access the correct version of the Dag file. By default, this is a local folder on disk. More about Dag bundles can be found in\n  :doc:`/administration-and-deployment/dag-bundles`\n\n* An *API Server*, which serves the REST API and presents a user interface to inspect, trigger and debug the behaviour of\n  Dags and tasks. The API server is also used by *tasks* using the *task SDK* to communicate state back to Airflow, without requiring direct access\n  to the *metadata database*.\n\n* A *metadata database*, usually PostgreSQL or MySQL, which stores the state of tasks, Dags and variables.\n\n  Setting up a metadata database is described in :doc:`/howto/set-up-database` and is required for\n  Airflow to work.\n\nOptional components\n...................\n\nSome Airflow components are optional and can enable better extensibility, scalability, and\nperformance in your Airflow:\n\n* Optional *worker*, which executes the tasks given to it by the scheduler. In the basic installation\n  worker might be part of the scheduler not a separate component. It can be run as a long running process\n  in the :doc:`CeleryExecutor <apache-airflow-providers-celery:celery_executor>`, or as a POD in the\n  :doc:`KubernetesExecutor <apache-airflow-providers-cncf-kubernetes:kubernetes_executor>`.\n\n* Optional *triggerer*, which executes deferred tasks in an asyncio event loop. In basic installation\n  where deferred tasks are not used, a triggerer is not necessary. More about deferring tasks can be\n  found in :doc:`/authoring-and-scheduling/deferring`. Note that :doc:`Human-in-the-loop </tutorial/hitl>`\n  tasks wait in the scheduler-managed ``awaiting_input`` state and do not use the triggerer.\n\n* Optional folder of *plugins*. Plugins are a way to extend Airflow's functionality (similar to installed\n  packages). Plugins are read by the *scheduler*, *Dag processor*, *triggerer* and *API server*. More about\n  plugins can be found in :doc:`/administration-and-deployment/plugins`.\n\nDeploying Airflow components\n----------------------------\n\nAll the components are Python applications that can be deployed using various deployment mechanisms.\n\nThey can have extra *installed packages* installed in their Python environment. This is useful for example to\ninstall custom operators or sensors or extend Airflow functionality with custom plugins.\n\nWhile Airflow can be run in a single machine and with simple installation where only *scheduler*, *Dag processor* and\n*API server* are deployed, Airflow is designed to be scalable and secure, and is able to run in a distributed\nenvironment - where various components can run on different machines, with different security perimeters\nand can be scaled by running multiple instances of the components above."
+        }
+      ]
+    },
+    {
+      "id": "scheduler",
+      "path": "airflow-core/src/airflow/jobs/scheduler_job_runner.py",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/src/airflow/jobs/scheduler_job_runner.py?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "bd9212973ede9fa144d36bf1773bbd26be551e6e",
+      "bytes": 216374,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 693,
+          "endLine": 737,
+          "text": "        \"\"\"\n        Acquire the scheduler critical-section lock and read current pool utilisation.\n\n        On PostgreSQL a transactional advisory lock is taken first so that only one\n        scheduler at a time enters the critical section; pool rows are then locked via\n        ``SELECT … FOR UPDATE`` (or ``NOWAIT`` where supported).\n\n        Returns a ``(pools, effective_max_tis, starved_pools)`` tuple.  ``effective_max_tis``\n        is zero when all pools are already full; callers should short-circuit in that case.\n        \"\"\"\n        from airflow.models.pool import Pool\n        from airflow.utils.db import DBLocks\n\n        if get_dialect_name(session) == \"postgresql\":\n            # Optimization: to avoid littering the DB errors of \"ERROR: canceling statement due to lock\n            # timeout\", try to take out a transactional advisory lock (unlocks automatically on\n            # COMMIT/ROLLBACK)\n            lock_acquired = session.execute(\n                text(\"SELECT pg_try_advisory_xact_lock(:id)\").bindparams(\n                    id=DBLocks.SCHEDULER_CRITICAL_SECTION.value\n                )\n            ).scalar()\n            if lock_acquired is None:\n                lock_acquired = False\n            if not lock_acquired:\n                # Throw an error like the one that would happen with NOWAIT\n                raise OperationalError(\n                    \"Failed to acquire advisory lock\", params=None, orig=RuntimeError(\"55P03\")\n                )\n\n        # Get the pool settings. We get a lock on the pool rows, treating this as a \"critical section\"\n        # Throws an exception if lock cannot be obtained, rather than blocking\n        pools = Pool.slots_stats(lock_rows=True, session=session)\n\n        # If the pools are full, there is no point doing anything!\n        # If _somehow_ the pool is overfull, don't let the limit go negative - it breaks SQL\n        pool_slots_free = sum(max(0, pool[\"open\"]) for pool in pools.values())\n\n        if pool_slots_free == 0:\n            self.log.debug(\"All pools are full!\")\n            return pools, 0, set()\n\n        effective_max_tis = int(min(max_tis, pool_slots_free))\n        starved_pools = {pool_name for pool_name, stats in pools.items() if stats[\"open\"] <= 0}\n        return pools, effective_max_tis, starved_pools"
+        },
+        {
+          "startLine": 1302,
+          "endLine": 1354,
+          "text": "    def _critical_section_enqueue_task_instances(self, session: Session) -> int:\n        \"\"\"\n        Enqueues TaskInstances for execution.\n\n        There are three steps:\n        1. Pick TIs by priority with the constraint that they are in the expected states\n        and that we do not exceed max_active_runs or pool limits.\n        2. Change the state for the TIs above atomically.\n        3. Enqueue the TIs in the executor.\n\n        HA note: This function is a \"critical section\" meaning that only a single scheduler process can\n        execute this function at the same time. This is achieved by doing\n        ``SELECT ... from pool FOR UPDATE``. For DBs that support NOWAIT, a \"blocked\" scheduler will skip\n        this and continue on with other tasks (creating new DAG runs, progressing TIs from None to SCHEDULED\n        etc.); DBs that don't support this (such as MariaDB or MySQL 5.x) the other schedulers will wait for\n        the lock before continuing.\n\n        :param session:\n        :return: Number of task instance with state changed.\n        \"\"\"\n        # The user can either request a certain number of tis to schedule per main scheduler loop (default\n        # is non-zero). If that value has been set to zero, that means use the value of core.parallelism (or\n        # however many free slots are left). core.parallelism represents the max number of running TIs per\n        # scheduler. Historically this value was stored in the executor, who's job it was to control/enforce\n        # it. However, with multiple executors, any of which can run up to core.parallelism TIs individually,\n        # we need to make sure in the scheduler now that we don't schedule more than core.parallelism totally\n        # across all executors.\n        num_occupied_slots = sum([executor.slots_occupied for executor in self.executors])\n        if self.job.max_tis_per_query == 0:\n            max_tis = self._parallelism - num_occupied_slots\n        else:\n            max_tis = min(self.job.max_tis_per_query, self._parallelism - num_occupied_slots)\n        if max_tis <= 0:\n            self.log.debug(\"max_tis query size is less than or equal to zero. No query will be performed!\")\n            return 0\n\n        pools, max_tis, starved_pools = self._acquire_pool_capacity(max_tis, session=session)\n        if max_tis == 0:\n            return 0\n        queued_tis = self._select_task_instances_to_queue(max_tis, pools, starved_pools, session=session)\n\n        # Sort queued TIs to their respective executor\n        executor_to_queued_tis = self._executor_to_workloads(queued_tis, session)\n        for executor, queued_tis_per_executor in executor_to_queued_tis.items():\n            self.log.info(\n                \"Trying to enqueue tasks: %s for executor: %s\",\n                queued_tis_per_executor,\n                executor,\n            )\n\n            self._enqueue_task_instances_with_queued_state(queued_tis_per_executor, executor, session=session)\n\n        return len(queued_tis)"
+        }
+      ]
+    },
+    {
+      "id": "executors",
+      "path": "airflow-core/docs/core-concepts/executor/index.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/core-concepts/executor/index.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "1b61553c621771156b4918a71ac4f28573334026",
+      "bytes": 24508,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 20,
+          "endLine": 113,
+          "text": "\nExecutors are the mechanism by which :doc:`task instances </core-concepts/tasks>` get run. They have a common API and are \"pluggable\", meaning you can swap executors based on your installation needs.\n\nExecutors are set by the ``executor`` option in the ``[core]`` section of :doc:`the configuration file </howto/set-config>`.\n\n.. _executor-basic-configuration:\n\nBuilt-in executors are referred to by name, for example:\n\n.. code-block:: ini\n\n    [core]\n    executor = KubernetesExecutor\n\nCustom or third-party executors can be configured by providing the module path of the executor python class, for example:\n\n.. code-block:: ini\n\n    [core]\n    executor = my.custom.executor.module.ExecutorClass\n\n.. note::\n    For more information on Airflow's configuration, see :doc:`/howto/set-config`.\n\nIf you want to check which executor is currently set, you can use the ``airflow config get-value core executor`` command:\n\n.. code-block:: bash\n\n    $ airflow config get-value core executor\n    LocalExecutor\n\nExecutor Types\n--------------\n\nThere is only one type of executor that runs tasks *locally* (inside the ``scheduler`` process) in the repo tree, but custom ones\ncan be written to achieve similar results, and there are those that run their tasks *remotely* (usually via a pool of *workers*). Airflow comes configured with the ``LocalExecutor`` by default, which is a local executor, and the simplest option for execution.\nHowever, as the ``LocalExecutor`` runs processes in the scheduler process that can have an impact on the performance of the scheduler. You can use the ``LocalExecutor``\nfor small, single-machine production installations, or one of the remote executors for a multi-machine/cloud installation.\n\n\n.. _executor-types-comparison:\n\nLocal Executors\n^^^^^^^^^^^^^^^\n\nAirflow tasks are run locally within the scheduler process.\n\n**Pros**: Very easy to use, fast, very low latency, and few requirements for setup.\n\n**Cons**: Limited in capabilities and shares resources with the Airflow scheduler.\n\n**Examples**:\n\n.. toctree::\n    :maxdepth: 1\n\n    local\n\nRemote Executors\n^^^^^^^^^^^^^^^^\n\nRemote executors can further be divided into two categories:\n\n*Queued/Batch Executors*\n\nAirflow tasks are sent to a central queue where remote workers pull tasks to execute. Often workers are persistent and run multiple tasks at once.\n\n**Pros**: More robust since you're decoupling workers from the scheduler process. Workers can be large hosts that can churn through many tasks (often in parallel) which is cost effective. Latency can be relatively low since workers can be provisioned to be running at all times to take tasks immediately from the queue.\n\n**Cons**: Shared workers have the noisy neighbor problem with tasks competing for resources on the shared hosts or competing for how the environment/system is configured. They can also be expensive if your workload is not constant, you may have workers idle, overly scaled in resources, or you have to manage scaling them up and down.\n\n**Examples**:\n\n* :doc:`CeleryExecutor <apache-airflow-providers-celery:celery_executor>`\n* :doc:`BatchExecutor <apache-airflow-providers-amazon:executors/batch-executor>`\n* :doc:`EdgeExecutor <apache-airflow-providers-edge3:edge_executor>`\n\n\n*Containerized Executors*\n\nAirflow tasks are executed ad hoc inside containers/pods. Each task is isolated in its own containerized environment that is deployed when the Airflow task is queued.\n\n**Pros**: Each Airflow task is isolated to one container so no noisy neighbor problem. The execution environment can be customized for specific tasks (system libs, binaries, dependencies, amount of resources, etc). Cost effective as the workers are only alive for the duration of the task.\n\n**Cons**: There is latency on startup since the container or pod needs to deploy before the task can begin. Can be expensive if you're running many short/small tasks. No workers to manage however you must manage something like a Kubernetes cluster.\n\n**Examples**:\n\n* :doc:`KubernetesExecutor <apache-airflow-providers-cncf-kubernetes:kubernetes_executor>`\n* :doc:`EcsExecutor <apache-airflow-providers-amazon:executors/ecs-executor>`\n\n.. note::\n\n    New Airflow users may assume they need to run a separate executor process using one of the Local or Remote Executors. This is not correct. The executor logic runs *inside* the scheduler process, and will run the tasks locally or not depending on the executor selected."
+        }
+      ]
+    },
+    {
+      "id": "task-design",
+      "path": "airflow-core/docs/best-practices.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/best-practices.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "c30c13eb5eb8055eab01f3858604d03988ad2178",
+      "bytes": 60270,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 44,
+          "endLine": 66,
+          "text": "Creating a task\n---------------\n\nYou should treat tasks in Airflow equivalent to transactions in a database. This\nimplies that you should never produce incomplete results from your tasks. An\nexample is not to produce incomplete data in ``HDFS`` or ``S3`` at the end of a\ntask.\n\nAirflow can retry a task if it fails. Thus, the tasks should produce the same\noutcome on every re-run. Some of the ways you can avoid producing a different\nresult -\n\n* Do not use INSERT during a task re-run, an INSERT statement might lead to\n  duplicate rows in your database. Replace it with UPSERT.\n* Read and write in a specific partition. Never read the latest available data\n  in a task. Someone may update the input data between re-runs, which results in\n  different outputs. A better way is to read the input data from a specific\n  partition. You can use ``data_interval_start`` as a partition. You should\n  follow this partitioning method while writing data in S3/HDFS as well.\n* The Python datetime ``now()`` function gives the current datetime object. This\n  function should never be used inside a task, especially to do the critical\n  computation, as it leads to different outcomes on each run. It's fine to use\n  it, for example, to generate a temporary log."
+        },
+        {
+          "startLine": 82,
+          "endLine": 116,
+          "text": "Communication\n--------------\n\nAirflow executes tasks of a Dag on different servers in case you are using :doc:`Kubernetes executor <apache-airflow-providers-cncf-kubernetes:kubernetes_executor>` or :doc:`Celery executor <apache-airflow-providers-celery:celery_executor>`.\nTherefore, you should not store any file or config in the local filesystem as the downstream task is likely to run on a different server without access to it — for example, a task that downloads the data file that the downstream task processes.\nIn the case of :class:`Local executor <airflow.executors.local_executor.LocalExecutor>`,\nstoring a file on disk can make retries harder e.g., your task requires a config file that is deleted by another task in Dag.\n\nIf possible, use ``XCom`` to communicate small messages between tasks and a good way of passing larger data between tasks is to use a remote storage such as S3/HDFS.\nFor example, if we have a task that stores processed data in S3 that task can push the S3 path for the output data in ``Xcom``,\nand the downstream tasks can pull the path from XCom and use it to read the data.\n\nThe tasks should also not store any authentication parameters such as passwords or token inside them.\nWhere at all possible, use :doc:`Connections </authoring-and-scheduling/connections>` to store data securely in Airflow backend and retrieve them using a unique connection id.\n\n.. _best_practices/top_level_code:\n\nTop level Python Code\n---------------------\n\nYou should avoid writing the top level code which is not necessary to create Operators\nand build Dag relations between them. This is because of the design decision for the scheduler of Airflow\nand the impact the top-level code parsing speed on both performance and scalability of Airflow.\n\nAirflow Dag processor executes the code outside the Operator's ``execute`` methods with the minimum interval of\n:ref:`min_file_process_interval<config:dag_processor__min_file_process_interval>` seconds. This is done in order\nto allow dynamic scheduling of the Dags - where scheduling and dependencies might change over time and\nimpact the next schedule of the Dag. Airflow scheduler tries to continuously make sure that what you have\nin Dags is correctly reflected in scheduled tasks.\n\nSpecifically you should not run any database access, heavy computations and networking operations.\n\nOne of the important factors impacting Dag loading time, that might be overlooked by Python developers is\nthat top-level imports might take surprisingly a lot of time and they can generate a lot of overhead\nand this can be easily avoided by converting them to local imports inside Python callables for example."
+        }
+      ]
+    },
+    {
+      "id": "deployment",
+      "path": "airflow-core/docs/administration-and-deployment/production-deployment.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/administration-and-deployment/production-deployment.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "56fe3ed3cc54352cc1b2ea342a0e1fcfbe53557d",
+      "bytes": 15581,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 24,
+          "endLine": 83,
+          "text": "Database backend\n================\n\nAirflow comes with an ``SQLite`` backend by default. This allows the user to run Airflow without any external\ndatabase. However, such a setup is meant to be used for testing purposes only; running the default setup\nin production can lead to data loss in multiple scenarios. If you want to run production-grade Airflow,\nmake sure you :doc:`configure the backend <../howto/set-up-database>` to be an external database\nsuch as PostgreSQL or MySQL.\n\nYou can change the backend using the following config\n\n.. code-block:: ini\n\n    [database]\n    sql_alchemy_conn = my_conn_string\n\nOnce you have changed the backend, airflow needs to create all the tables required for operation.\nCreate an empty DB and give Airflow's user permission to ``CREATE/ALTER`` it.\nOnce that is done, you can run -\n\n.. code-block:: bash\n\n    airflow db migrate\n\n``migrate`` keeps track of migrations already applied, so it's safe to run as often as you need.\n\n.. warning::\n\n    Prior to Airflow version 2.7.0, ``airflow db upgrade`` was used to apply migrations,\n    however, it has been deprecated in favor of ``airflow db migrate``.\n\n\nMulti-Node Cluster\n==================\n\nAirflow uses :class:`~airflow.executors.local_executor.LocalExecutor` by default. For a multi-node setup,\nchoose a remote executor, or a multi-executor configuration, that matches where tasks should run.\nCommon choices include the :doc:`Celery executor <apache-airflow-providers-celery:celery_executor>`,\nthe :doc:`Kubernetes executor <apache-airflow-providers-cncf-kubernetes:kubernetes_executor>`,\nAmazon provider executors such as :doc:`Batch <apache-airflow-providers-amazon:executors/batch-executor>`\nor :doc:`ECS <apache-airflow-providers-amazon:executors/ecs-executor>`, and the\n:doc:`Edge executor <apache-airflow-providers-edge3:edge_executor>`. See the\n:ref:`executor comparison <executor-types-comparison>` for the current list and trade-offs.\n\n\nOnce you have configured the executor, it is necessary to make sure that every node in the cluster contains\nthe Dags and configuration appropriate for its role. Airflow sends simple instructions such as\n\"execute task X of Dag Y\", but does not send any Dag files or configuration. For synchronization of Dags\nwe recommend the Dag Bundle mechanism (including ``GitDagBundle``), which allows you to make use of\nDAG versioning. For security-sensitive deployments, restrict sensitive configuration (JWT signing keys,\ndatabase credentials, Fernet keys) to only the components that need them rather than sharing all\nconfiguration across all nodes — see :doc:`/security/security_model` for guidance.\n\n\nLogging\n========\n\nIf you are using disposable nodes in your cluster, configure the log storage to be a distributed file system\n(DFS) such as ``S3`` and ``GCS``, or external services such as Stackdriver Logging, Elasticsearch or\nAmazon CloudWatch. This way, the logs are available even after the node goes down or gets replaced."
+        },
+        {
+          "startLine": 110,
+          "endLine": 118,
+          "text": "Scheduler Uptime\n================\n\nAirflow users occasionally report instances of the scheduler hanging without a trace, for example in these issues:\n\n* `Scheduler gets stuck without a trace <https://github.com/apache/airflow/issues/7935>`_\n* `Scheduler stopping frequently <https://github.com/apache/airflow/issues/13243>`_\n\nTo mitigate these issues, make sure you have a :doc:`health check <logging-monitoring/check-health>` set up that will detect when your scheduler has not heartbeat in a while."
+        }
+      ]
+    },
+    {
+      "id": "installation",
+      "path": "airflow-core/docs/installation/installing-from-pypi.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/installation/installing-from-pypi.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "92f2fa3b761fd43485d39a506c67fd8c467a83c4",
+      "bytes": 20106,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 98,
+          "endLine": 155,
+          "text": "Constraints files\n'''''''''''''''''\n\nWhy we need constraints\n=======================\n\nAirflow® installation can be tricky because Airflow is both a library and an application.\n\nLibraries usually keep their dependencies open and applications usually pin them, but we should do neither\nand both at the same time. We decided to keep our dependencies as open as possible\n(in ``pyproject.toml``) so users can install different versions of libraries if needed. This means that\nfrom time to time plain ``pip install apache-airflow`` will not work or will produce an unusable\nAirflow installation.\n\n.. warning::\n\n    As of Airflow 3.1, constraint files do not contain developer dependencies such as pytest, moto and\n    other development dependencies that are only used in tests.\n\nReproducible Airflow installation\n=================================\n\nIn order to have a reproducible installation, we also keep a set of constraint files in the\n``constraints-main``, ``constraints-2-0``, ``constraints-2-1`` etc. orphan branches and then we create a tag\nfor each released version e.g. :subst-code:`constraints-|version|`.\n\nThis way, we keep a tested set of dependencies at the moment of release. This provides you with the ability\nof having the exact same installation of Airflow + providers + dependencies as was known to be working\nat the moment of release - frozen set of dependencies for that version of Airflow. There is a separate\nconstraints file for each version of Python that Airflow supports.\n\nYou can create the URL to the file substituting the variables in the template below.\n\n.. code-block::\n\n  https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt\n\nwhere:\n\n- ``AIRFLOW_VERSION`` - Airflow version (e.g. :subst-code:`|version|`) or ``main``, ``2-0``, for latest development version\n- ``PYTHON_VERSION`` Python version e.g. ``3.11``, ``3.12``\n\nThe examples below assume that you want to use install Airflow in a reproducible way with the ``celery`` extra,\nbut you can pick your own set of extras and providers to install.\n\n.. code-block:: bash\n\n    pip install \"apache-airflow[celery]==|version|\" --constraint \"https://raw.githubusercontent.com/apache/airflow/constraints-|version|/constraints-3.11.txt\"\n\n\n.. note::\n\n    The reproducible installation guarantees that this initial installation steps will always work for you -\n    providing that you use the right Python version and that you have appropriate Operating System dependencies\n    installed for the providers to be installed. Some of the providers require additional OS dependencies to\n    be installed such as ``build-essential`` in order to compile libraries, or for example database client\n    libraries in case you install a database provider, etc.. You need to figure out which system dependencies\n    you need when your installation fails and install them before retrying the installation."
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "path": "airflow-core/docs/security/security_model.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/security/security_model.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "468f8efd999f8f4bc4d5d5a6947e3d66aaf9676e",
+      "bytes": 76049,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 61,
+          "endLine": 82,
+          "text": "Dag authors\n...........\n\nThey can create, modify, and delete Dag files. The\ncode in Dag files is executed on workers, in the Dag File Processor,\nand in the Triggerer.\nTherefore, Dag authors can create and change code executed on workers,\nthe Dag File Processor, and the Triggerer, and potentially access the credentials that the Dag\ncode uses to access external systems.\n\nIn Airflow 3, the level of database isolation depends on the component:\n\n* **Workers**: Task code on workers communicates with the API server exclusively through the\n  Execution API. Workers do not receive database credentials and genuinely cannot access the\n  metadata database directly.\n* **Dag File Processor and Triggerer**: Airflow implements software guards that prevent\n  accidental direct database access from Dag author code. However, because Dag parsing and\n  trigger execution processes run as the same Unix user as their parent processes (which do\n  have database credentials), a deliberately malicious Dag author can potentially retrieve\n  credentials from the parent process and gain direct database access. See\n  :ref:`jwt-authentication-and-workload-isolation` for details on the specific mechanisms and\n  deployment hardening measures."
+        },
+        {
+          "startLine": 190,
+          "endLine": 208,
+          "text": "Capabilities of Dag authors\n---------------------------\n\nDag authors are able to create or edit code - via Python files placed in a Dag bundle - that will be executed\nin a number of circumstances. The code to execute is neither verified, checked nor sand-boxed by Airflow\n(that would be very difficult if not impossible to do), so effectively Dag authors can execute arbitrary\ncode on the workers (part of Celery Workers for Celery Executor, local processes run by scheduler in case\nof Local Executor, Task Kubernetes POD in case of Kubernetes Executor), in the Dag Processor\nand in the Triggerer.\n\nDag authors are responsible for the code they write and submit to Airflow, and they should be trusted to\nverify that what they implement is safe code that will not cause any harm to the Airflow installation and\nwill not open way for security vulnerabilities. Since Dag Authors are writing Python code, they can easily write\ncode that will access sensitive information stored in Airflow or send it outside - but also to open up new\nsecurity vulnerabilities. Good example is writing a code that will pass non-sanitized UI user input (such as parameter,\nvariables, connection configuration) to any code in Operators and Hooks, or third party libraries without properly\nsanitizing it first. This can open up windows for Remote Code Execution, Denial of Service vulnerabilities or similar.\nDag authors should be trusted not to write such code and to verify that the code they write is safe and does\nnot open new security vulnerabilities."
+        },
+        {
+          "startLine": 210,
+          "endLine": 239,
+          "text": "Limiting Dag Author access to subset of Dags\n--------------------------------------------\n\nAirflow does not yet provide full task-level isolation between different groups of users when\nit comes to task execution. While, in Airflow 3.0 and later, worker task code cannot directly access the\nmetadata database (it communicates through the Execution API), Dag author code that runs in the Dag File\nProcessor and Triggerer potentially still has direct database access. Regardless of execution context, Dag authors\nhave access to all Dags in the Airflow installation and they can\nmodify any of those Dags - no matter which Dag the task code is executed for. This means that Dag authors can\nmodify state of any task instance of any Dag, and there are no finer-grained access controls to limit that access.\n\nThis applies to every interface a Dag author's code can reach — including the Task Execution API\nthat workers use via the Task SDK. The Execution JWT issued to a running task does **not** carry\nper-Dag authorization: a task holding a valid token can call state-mutating Execution API endpoints\n(triggering Dag runs, clearing Dag runs, reading or writing variables, connections and XComs, etc.)\nfor **any** Dag in the installation. The ``ti:self`` token scope restricts cross-task-instance state\nmutation only; it is not a per-Dag access control.\n\nThere is an **experimental** multi-team feature in Airflow (``[core] multi_team``) that provides UI-level and\nREST API-level RBAC isolation between teams. In multi-team mode, the team-scoped resources reachable through\nthe Task Execution API are also isolated by team: a task may only access **Variables** and **Connections**\nbelonging to its own team (falling back to global values), and may only access **XComs** of Dags in its own\nteam (reads may additionally reach global Dags, but writes and deletes may not).\n\nHowever, this feature **does not yet guarantee task-level isolation**.\nAt the task execution level, workloads from different teams still share the same Execution API, signing keys,\nconnections, and variables. A task from one team can access the same shared resources as a task from another team.\nThe multi-team feature is a work in progress — task-level isolation and Execution API enforcement of team\nboundaries will be improved in future versions of Airflow. Until then, you should assume that all Dag authors\nhave access to all Dags and shared resources, and can modify their state regardless of team assignment."
+        }
+      ]
+    },
+    {
+      "id": "packaging",
+      "path": "airflow-core/pyproject.toml",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/pyproject.toml?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "421b9e92bee08bc296d8d87fe95dcd4546378629",
+      "bytes": 13092,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 33,
+          "endLine": 75,
+          "text": "[project]\nname = \"apache-airflow-core\"\ndescription = \"Core packages for Apache Airflow, schedule and API server\"\nreadme = { file = \"README.md\", content-type = \"text/markdown\" }\nlicense = \"Apache-2.0\"\nlicense-files = [\"LICENSE\", \"NOTICE\"]\n# Supporting new Python releases typically takes 4-7 months due to all our dependencies.\n# We proactively exclude the next major version to avoid dependency conflicts, then test it and\n# bump the upper binding once ready. Providers that don't support it yet are marked with\n# != constraint - until they support it - which also excludes resolving uv workspace dependencies.\nrequires-python = \">=3.11,!=3.15\"\nauthors = [\n    { name = \"Apache Software Foundation\", email = \"dev@airflow.apache.org\" },\n]\nmaintainers = [\n    { name = \"Apache Software Foundation\", email=\"dev@airflow.apache.org\" },\n]\nkeywords = [ \"airflow\", \"orchestration\", \"workflow\", \"dag\", \"pipelines\", \"automation\", \"data\" ]\nclassifiers = [\n    \"Development Status :: 5 - Production/Stable\",\n    \"Environment :: Console\",\n    \"Environment :: Web Environment\",\n    \"Framework :: Apache Airflow\",\n    \"Intended Audience :: Developers\",\n    \"Intended Audience :: System Administrators\",\n    \"Programming Language :: Python :: 3.11\",\n    \"Programming Language :: Python :: 3.12\",\n    \"Programming Language :: Python :: 3.13\",\n    \"Programming Language :: Python :: 3.14\",\n    \"Topic :: System :: Monitoring\",\n]\n\n# Version is defined in src/airflow/__init__.py and it is automatically synchronized by prek hook\nversion = \"3.4.0\"\n\ndependencies = [\n    \"a2wsgi>=1.10.8\",\n    \"cachetools>=6.0.0\",\n    # aiosqlite 0.22.0 has a problem with hanging pytest sessions and we excluded it\n    # See https://github.com/omnilib/aiosqlite/issues/369\n    # The thread hanging issue under SQLAlchemy 2 (sqlalchemy#13039) is resolved in\n    # SQLAlchemy 2.0.46+. Since our SQLAlchemy floor is >=2.0.48, we can safely allow 0.22.1+.\n    \"aiosqlite>=0.20.0,!=0.22.0\","
+        }
+      ]
+    },
+    {
+      "id": "tests",
+      "path": "airflow-core/tests/unit/jobs/test_scheduler_job.py",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/tests/unit/jobs/test_scheduler_job.py?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "6ed8be407355cc5ccbf085d4f6309e635aafb786",
+      "bytes": 710669,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 2225,
+          "endLine": 2268,
+          "text": "    def test_find_executable_task_instances_pool(self, dag_maker):\n        dag_id = \"SchedulerJobTest.test_find_executable_task_instances_pool\"\n        task_id_1 = \"dummy\"\n        task_id_2 = \"dummydummy\"\n        session = settings.Session()\n        with dag_maker(dag_id=dag_id, max_active_tasks=16, session=session):\n            EmptyOperator(task_id=task_id_1, pool=\"a\", priority_weight=2)\n            EmptyOperator(task_id=task_id_2, pool=\"b\", priority_weight=1)\n\n        scheduler_job = Job()\n        self.job_runner = SchedulerJobRunner(job=scheduler_job)\n\n        dr1 = dag_maker.create_dagrun(run_type=DagRunType.SCHEDULED)\n        dr2 = dag_maker.create_dagrun_after(dr1, run_type=DagRunType.SCHEDULED)\n\n        tis = [\n            dr1.get_task_instance(task_id_1, session=session),\n            dr1.get_task_instance(task_id_2, session=session),\n            dr2.get_task_instance(task_id_1, session=session),\n            dr2.get_task_instance(task_id_2, session=session),\n        ]\n        tis.sort(key=lambda ti: ti.key)\n        for ti in tis:\n            ti.state = State.SCHEDULED\n            session.merge(ti)\n        pool = Pool(pool=\"a\", slots=1, description=\"haha\", include_deferred=False)\n        pool2 = Pool(pool=\"b\", slots=100, description=\"haha\", include_deferred=False)\n        session.add(pool)\n        session.add(pool2)\n        session.flush()\n\n        pools, max_tis, starved_pools = self.job_runner._acquire_pool_capacity(32, session=session)\n        res = self.job_runner._select_task_instances_to_queue(max_tis, pools, starved_pools, session=session)\n        session.flush()\n        assert len(res) == 3\n        res_keys = []\n        for ti in res:\n            res_keys.append(ti.key)\n        assert tis[0].key in res_keys\n        assert tis[2].key in res_keys\n        assert tis[3].key in res_keys\n        session.rollback()\n\n    @conf_vars({(\"core\", \"multi_team\"): \"true\"})"
+        }
+      ]
+    },
+    {
+      "id": "ci",
+      "path": ".github/workflows/run-unit-tests.yml",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/.github/workflows/run-unit-tests.yml?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "c2564f71462d312af95a6ec1f07e9835b90b4e0a",
+      "bytes": 10353,
+      "license": "Apache-2.0; excerpts remain attributed to the Apache Software Foundation and contributors.",
+      "excerpts": [
+        {
+          "startLine": 142,
+          "endLine": 163,
+          "text": "  tests:\n    # run_unit_tests.sh derives the tests' own timeout from what is left of this budget.\n    timeout-minutes: ${{ fromJSON(inputs.job-timeout-minutes) }}\n    # yamllint disable rule:line-length\n    name: \"\\\n      ${{ case(inputs.test-scope == 'Quarantined', 'Qrnt', inputs.test-scope == 'All', '', inputs.test-scope) }}\\\n      ${{ case(inputs.test-scope == 'All', '', '-') }}\\\n      ${{ inputs.test-group == 'providers' && 'prov' || inputs.test-group}}:\\\n      ${{ inputs.test-name }}${{ inputs.test-name-separator }}${{ matrix.backend-version }}:\\\n      ${{ matrix.python-version}}:${{ matrix.test-types.description }}\"\n    runs-on: ${{ fromJSON(inputs.runners) }}\n    strategy:\n      fail-fast: false\n      # 20 keeps runs on GitHub-hosted runners within the ASF limit of 20 concurrent jobs. The RunsOn\n      # runners are the project's own capacity, so a run there starts the whole matrix at once.\n      max-parallel: ${{ contains(inputs.runners, 'runs-on=') && 256 || 20 }}\n      matrix:\n        python-version: \"${{fromJSON(inputs.python-versions)}}\"\n        backend-version: \"${{fromJSON(inputs.backend-versions)}}\"\n        test-types: ${{ fromJSON(inputs.test-types-as-strings-in-json) }}\n        exclude: \"${{fromJSON(inputs.excludes)}}\"\n    env:"
+        },
+        {
+          "startLine": 225,
+          "endLine": 235,
+          "text": "      - name: >\n          ${{ inputs.test-group }}:${{ inputs.test-scope }} Tests ${{ inputs.test-name }} ${{ matrix.backend-version }}\n          Py${{ matrix.python-version }}:${{ env.PARALLEL_TEST_TYPES }}\n        env:\n          TEST_GROUP: \"${{ inputs.test-group }}\"\n          TEST_SCOPE: \"${{ inputs.test-scope }}\"\n        run: ./scripts/ci/testing/run_unit_tests.sh \"${TEST_GROUP}\" \"${TEST_SCOPE}\"\n      - name: \"Post Tests success\"\n        uses: ./.github/actions/post_tests_success\n        with:\n          codecov-token: ${{ secrets.CODECOV_TOKEN }}"
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "scope",
+      "claim": "Airflow orchestrates workflows and is not itself a streaming solution.",
+      "sourceId": "readme",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md",
+      "locator": "Project Focus, lines 83–91.",
+      "evidenceType": "source report",
+      "limitation": "Describes project positioning, not a measured workload capability."
+    },
+    {
+      "id": "components",
+      "claim": "DAG processing, scheduling, API access and persisted metadata have distinct responsibilities.",
+      "sourceId": "architecture",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst",
+      "locator": "Airflow components, lines 38–99.",
+      "evidenceType": "source report",
+      "limitation": "Selected architectural description; no deployment validation."
+    },
+    {
+      "id": "capacity",
+      "claim": "The enqueue path derives capacity, selects task instances and routes workloads to executors.",
+      "sourceId": "scheduler",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py",
+      "locator": "Lines 1302–1354; pool-capacity helper at 693–737.",
+      "evidenceType": "direct observation",
+      "limitation": "Source inspection, not proof of throughput, fairness, or failure recovery."
+    },
+    {
+      "id": "executors",
+      "claim": "Executor models trade local/shared resources against queued-worker or containerized execution.",
+      "sourceId": "executors",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst",
+      "locator": "Executor Types, lines 51–113.",
+      "evidenceType": "source report",
+      "limitation": "No comparative benchmark was run."
+    },
+    {
+      "id": "task-correctness",
+      "claim": "Best practices call for repeatable task outcomes, partitioned inputs and small-message XCom use.",
+      "sourceId": "task-design",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst",
+      "locator": "Creating a task, Communication, Top level Python Code, lines 44–116.",
+      "evidenceType": "source report",
+      "limitation": "Does not establish end-to-end exactly-once writes."
+    },
+    {
+      "id": "operations",
+      "claim": "The deployment guide recommends an external production database and addresses logs, DAG distribution and scheduler health.",
+      "sourceId": "deployment",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst",
+      "locator": "Database backend, Multi-Node Cluster, Logging, Scheduler Uptime, lines 24–118.",
+      "evidenceType": "source report",
+      "limitation": "Not a validated infrastructure sizing guide."
+    },
+    {
+      "id": "constraints",
+      "claim": "Version/Python-specific constraints capture a dependency set known at release time.",
+      "sourceId": "installation",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst",
+      "locator": "Constraints files, lines 98–155.",
+      "evidenceType": "source report",
+      "limitation": "Provider OS dependencies and target-environment validation still matter."
+    },
+    {
+      "id": "trust",
+      "claim": "DAG authors are trusted code authors; the documented multi-team feature does not guarantee full task-level isolation.",
+      "sourceId": "security",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst",
+      "locator": "Capabilities and isolation sections, lines 190–239; component distinction at 61–82.",
+      "evidenceType": "source report",
+      "limitation": "Version-specific warning, not a new vulnerability or penetration-test result."
+    },
+    {
+      "id": "package",
+      "claim": "The core package declares version 3.4.0 and a Python requirement of >=3.11,!=3.15.",
+      "sourceId": "packaging",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml",
+      "locator": "Project metadata, lines 33–75.",
+      "evidenceType": "direct observation",
+      "limitation": "Distinguish declared constraints from the README tested-version matrix."
+    },
+    {
+      "id": "tests",
+      "claim": "A scheduler test asserts pool-selection outcomes.",
+      "sourceId": "tests",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py",
+      "locator": "test_find_executable_task_instances_pool, lines 2225–2266.",
+      "evidenceType": "direct observation",
+      "limitation": "Test source was read; no test execution or passing status claimed."
+    },
+    {
+      "id": "ci",
+      "claim": "The unit-test workflow defines Python/backend matrix inputs and invokes a test script.",
+      "sourceId": "ci",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml",
+      "locator": "Matrix at 142–163 and invocation at 225–231.",
+      "evidenceType": "direct observation",
+      "limitation": "A workflow definition is not a successful CI run."
+    },
+    {
+      "id": "fit",
+      "claim": "Airflow is a plausible fit for teams that need workflow orchestration and can own task correctness and the control plane.",
+      "sourceId": "readme",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md",
+      "locator": "Review synthesis of scope, scheduler, task-design, deployment and security sources.",
+      "evidenceType": "review inference",
+      "limitation": "Not a competitive ranking, security certification or benchmark-backed adoption guarantee."
+    }
+  ]
+}

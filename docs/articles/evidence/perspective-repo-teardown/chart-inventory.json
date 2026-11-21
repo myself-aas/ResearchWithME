@@ -1,0 +1,2325 @@
+{
+  "schemaVersion": 1,
+  "reviewedRepository": "https://github.com/perspective-dev/perspective",
+  "reviewedCommit": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+  "retrievedOn": "2026-11-20",
+  "title": "Perspective \u2014 selected source-file map",
+  "unit": "Matching tracked files",
+  "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+  "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+  "caption": "Static file counts in selected roots at commit 95535bcbfde4. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.",
+  "interpretation": "The Rust server/client/viewer roots and JavaScript/TypeScript chart/grid plugins are separate code-reading targets. This selection excludes other roots, including the underlying native engine, so the plot must not be read as a whole-project language breakdown.",
+  "adoptionCheck": "Start with the execution mode and table identity semantics, then inspect the relevant viewer/plugin path. More chart-plugin files do not imply better throughput or less memory than a server mode.",
+  "groups": [
+    {
+      "label": "Rust server",
+      "prefix": "rust/perspective-server",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 6,
+      "source": {
+        "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+        "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "rust/perspective-server/build.rs",
+          "gitBlobSha": "8d3e0706fe7a06774bf56613b1fcb34fd2be98cf"
+        },
+        {
+          "path": "rust/perspective-server/src/ffi.rs",
+          "gitBlobSha": "98c390235df745f9f69ce78604d39eed4d73e5d9"
+        },
+        {
+          "path": "rust/perspective-server/src/lib.rs",
+          "gitBlobSha": "104ede64cfcfedb3f5555cf086a77cae869eddbd"
+        },
+        {
+          "path": "rust/perspective-server/src/local_client.rs",
+          "gitBlobSha": "e6215ef81afa94b24d834eb658707efb6faf0b60"
+        },
+        {
+          "path": "rust/perspective-server/src/local_session.rs",
+          "gitBlobSha": "9dd19833b0f9b368a434deb1a8f60433206d0a8a"
+        },
+        {
+          "path": "rust/perspective-server/src/server.rs",
+          "gitBlobSha": "cbae866453ea7c62ec7b055f322a2639de4ca3b6"
+        }
+      ]
+    },
+    {
+      "label": "Rust client",
+      "prefix": "rust/perspective-client",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 42,
+      "source": {
+        "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+        "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "rust/perspective-client/build.rs",
+          "gitBlobSha": "7ce6d57fbfac6b23317aaee519cb2aa17ef308f6"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/client.rs",
+          "gitBlobSha": "06ddba61ab9460f9081ca52cc4292565d87f9675"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/aggregates.rs",
+          "gitBlobSha": "d04188acb7e8ac4b89eaa8a42142596b65e21c24"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/column_type.rs",
+          "gitBlobSha": "8de1c423234ca1ec55220d436930da01b0f73003"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/expressions.rs",
+          "gitBlobSha": "60d33ebe91a68d12cb160cccb7c25fd8ddc3cd37"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/filters.rs",
+          "gitBlobSha": "c95b5ce1395e9f3a127aef51d7a9e202a0158973"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/mod.rs",
+          "gitBlobSha": "c6b7e8451a6706300aa97e296e0b4d78c976bed7"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/plugin.rs",
+          "gitBlobSha": "a3a80f5a2958646e4d44f1ed8212f644363a3b4c"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/sort.rs",
+          "gitBlobSha": "0d75e977156e54f8ece93b84dd7f3e6b80dc953a"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/view_config.rs",
+          "gitBlobSha": "c7d0875a2b7d2ddb0b56c2b378ad6742695b9be4"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/css.rs",
+          "gitBlobSha": "7ba460f50e6875bedcefd97b1969686d0e8c081c"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/layout.rs",
+          "gitBlobSha": "82dff494db0ddaee50328dbea397479f213636b5"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/mod.rs",
+          "gitBlobSha": "fc102f16e0254bb45c784ae432a3a79e0f1b5aef"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/optional_update.rs",
+          "gitBlobSha": "aa9d60fc9d9e376227f7945c76b41ae9b46f695c"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/unknown_keys.rs",
+          "gitBlobSha": "149a595a0c7316c682b6135c388b04134b10eb67"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/viewer_config.rs",
+          "gitBlobSha": "60457188553ef1e8e1239f17674ef183a45496d6"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/viewer/workspace_config.rs",
+          "gitBlobSha": "8a11a803e965072af00fb4e2704efcffb1d84d6d"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/config/windows.rs",
+          "gitBlobSha": "f5c754219c1232be34b2db7f51defbb23a853c9d"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/lib.rs",
+          "gitBlobSha": "922e07c1a1b322150554ca49d42f3373404b7bb8"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/session.rs",
+          "gitBlobSha": "337836101a6ee46208367e42f44f4c1246d6fd6a"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/table.rs",
+          "gitBlobSha": "64501ca1677ad34b51d96266054f56d44741cd43"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/table_data.rs",
+          "gitBlobSha": "3262b7d09b086bd94339e98d806934d4eb58a84d"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/table_ref.rs",
+          "gitBlobSha": "8e03c57209e409182a398466e889a8cb96cb8cd1"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/typed_array.rs",
+          "gitBlobSha": "73ba11ec509a20d81a2f1f86709116c7d9b7ff40"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/clone.rs",
+          "gitBlobSha": "aaaf05df49179e51caa4c945946be1cb8d532f78"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/logging.rs",
+          "gitBlobSha": "6d6ebb53e2edf0881630d0ae528494340ec6b51e"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/mod.rs",
+          "gitBlobSha": "5b73e3d3637ed717c3f7b09efb2c8224431da9e0"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/rand_sequence.rs",
+          "gitBlobSha": "9aa906400839f8124ffb4d5793b3bdafe38ae9bd"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/talc_allocator.rs",
+          "gitBlobSha": "3bcca323e63930bd374c45eadb4a542d6ea49326"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/tests/clone.rs",
+          "gitBlobSha": "3f378697d19bcaac443b0bdc3f31719c9f6ca616"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/utils/tests/mod.rs",
+          "gitBlobSha": "b5da34efe60ebc8aeee457f2a423af3197f51939"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/version.rs",
+          "gitBlobSha": "84ed5ccd06e71c3938e3d39fb55d0b60014dc8d0"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/view.rs",
+          "gitBlobSha": "4a6e89a43a92bd7f143e68321aea760027aaf95f"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/data.rs",
+          "gitBlobSha": "ab2baa4d4449a244b352fa694f4d79fef4c3b646"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/error.rs",
+          "gitBlobSha": "cbec0ee307bd614a6d6d25278b23f386cf9b3777"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/features.rs",
+          "gitBlobSha": "a77126f8ae48a24418faa721fce354f9363419b5"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/generic_sql_model.rs",
+          "gitBlobSha": "efba269ba9ee63b9dc434dc121b577b0d5358d8d"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/generic_sql_model/table_make_view.rs",
+          "gitBlobSha": "3432e01f99647c390ea9c81c8265ce793cff28f0"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/generic_sql_model/tests.rs",
+          "gitBlobSha": "04aa0286e1fb11078104da05bffc9458c6d81fa8"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/handler.rs",
+          "gitBlobSha": "c94f53ddffdcf37663a0a334faa755cb80b7717e"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/mod.rs",
+          "gitBlobSha": "f89ecee42386cf13e5c9cafaab45f18b19af2c5e"
+        },
+        {
+          "path": "rust/perspective-client/src/rust/virtual_server/server.rs",
+          "gitBlobSha": "55f012663def2673f0d9fe9a7a010e7f8610b76e"
+        }
+      ]
+    },
+    {
+      "label": "Rust viewer",
+      "prefix": "rust/perspective-viewer",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 255,
+      "source": {
+        "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+        "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "rust/perspective-viewer/build.rs",
+          "gitBlobSha": "4e303590cea2f5d480cb7c419935151525303a11"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/client/mod.rs",
+          "gitBlobSha": "9b9176e2972f8efc625eb0fb6f5ec8d20212241a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/client/protocol.rs",
+          "gitBlobSha": "d655e67d361dda505575b82b153b071f85463074"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/client/transport.rs",
+          "gitBlobSha": "fb229e0e21fe3b8b8ce49bdb009de7888e1ab112"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/client/turn.rs",
+          "gitBlobSha": "f823ee7f482a9dfb17761da4665a75535a0582cb"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/config.rs",
+          "gitBlobSha": "e2539f8292cb5b3b554672bf294787e47be0420b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/docs.rs",
+          "gitBlobSha": "42050c7674b890374fc93504838722b201e682f8"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/markdown/block.rs",
+          "gitBlobSha": "25c9f4ae167cb6134eee2ac3e2ef2fc63f609b40"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/markdown/entity.rs",
+          "gitBlobSha": "d26af5dc30cdddfd97131b912cc9df50fbc0706f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/markdown/events.rs",
+          "gitBlobSha": "76117f0119fc64df2534848a9e2cb6e2026db6ea"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/markdown/inline.rs",
+          "gitBlobSha": "fe891c7a1bda4418156eba4518c866cf8ea32a01"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/markdown/mod.rs",
+          "gitBlobSha": "6787615755aba702b9729b220f2df4c2aeb6dd63"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/mod.rs",
+          "gitBlobSha": "6b6fa8e64ff88ead5c2d3bde73cef24d78af8f53"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/runtime.rs",
+          "gitBlobSha": "ad1cc9bd2e1d4c8e0754dd0395c7377a96dab404"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/sandbox/mod.rs",
+          "gitBlobSha": "9cde505f58eec4252c8fa0e4cedd593717dc1166"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/slot.rs",
+          "gitBlobSha": "1632f1921dcea972c4572ecddb4adf701a1b6f09"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/agent/tools.rs",
+          "gitBlobSha": "898a3c5f2518d9a64aa0e61f107faf9f609a466d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/chat_panel.rs",
+          "gitBlobSha": "bc3765c92c636b8084be9a1d9ffcd0459dfbf138"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/code_editor.rs",
+          "gitBlobSha": "8f6e7ee3cdbf745076ec90945cabc8116a48e452"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/code_editor/highlight.rs",
+          "gitBlobSha": "6886c2e685b68a7ca5c9bb8c57fc363c3cecb435"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_dropdown.rs",
+          "gitBlobSha": "03ed88d4d639d5c7b71d12080ac3722f21b65c88"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector.rs",
+          "gitBlobSha": "02af45bae114031ca79911acdb7cf9f44549ab54"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/active_column.rs",
+          "gitBlobSha": "b7c1c4d1529b0d454276d5f330cb1ee3b6f78041"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/add_expression_button.rs",
+          "gitBlobSha": "7270a4171fe4d33b2ccad8cb13890e32849208d0"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/aggregate_selector.rs",
+          "gitBlobSha": "b052d60e0f990e6ed9aa4cd7615fa70e94a064a0"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/column_selector_column_row.rs",
+          "gitBlobSha": "152b7a2b603f9162b86b8c370fb7c6f34e3f62a0"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/config_selector.rs",
+          "gitBlobSha": "92aef2d5edf140cc34385ee15299dffdf4257dcd"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/derived_control.rs",
+          "gitBlobSha": "5fe7cefc1e58ad350efa3a41262ac6a1a4404a03"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/empty_column.rs",
+          "gitBlobSha": "eaae32e627e9d6e8461c41c0fd5bd80ff2e20b79"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/expr_edit_button.rs",
+          "gitBlobSha": "6ba7e79fed4a1963687618e953cb1b09d5cebf53"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/filter_column.rs",
+          "gitBlobSha": "07491e6c50b6f7130311ae5ea6814ffd47d549c5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/inactive_column.rs",
+          "gitBlobSha": "445889541ba760124730e981a2c84a1acd9d3647"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/invalid_column.rs",
+          "gitBlobSha": "ba01626cb5327ac5d17590462d88261585e87d49"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/pivot_column.rs",
+          "gitBlobSha": "74b8369372fddae234f96cfb0ee15ddf9fad782f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_selector/sort_column.rs",
+          "gitBlobSha": "883f21d2a8163a174e459977980fbc40a2ff91fc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar.rs",
+          "gitBlobSha": "b10ebf8afbb63759d8a210116973159583096081"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/attributes_tab.rs",
+          "gitBlobSha": "f4f18a71013f23173cfd2fdce1a6afbd8747d9b7"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/save_settings.rs",
+          "gitBlobSha": "185249e94691cea0fea8131824eddf25d26ea80b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab.rs",
+          "gitBlobSha": "f81e46cb011cb27c9c2925c0cc99e997ca061934"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/agg_depth_selector.rs",
+          "gitBlobSha": "4a4951f622126c46970cf73d9e03ba508286db75"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/alignment_field.rs",
+          "gitBlobSha": "da7cd4da5e348d5d6ba94b9f273e5c3590357f40"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/font_field.rs",
+          "gitBlobSha": "1096cdbf11812ee6e231f02b8e12417917cff840"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/primitive_field.rs",
+          "gitBlobSha": "f20584d2cd539c977cbbf53e8e248d931d5e119c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/symbol.rs",
+          "gitBlobSha": "ef403a1dc3736dff08f9b428ca5f4a0162963214"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/symbol/row_selector.rs",
+          "gitBlobSha": "e595bfa67c86141dcd9997e510d20befbdd2af51"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/symbol/symbol_pairs.rs",
+          "gitBlobSha": "b615ae1ad9134019ecc56ded300ab0dc86d44d7e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/symbol/symbol_pairs_item.rs",
+          "gitBlobSha": "4dbb1e0f67a292f56d924aec287205624c2c0520"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/style_tab/symbol/symbol_selector.rs",
+          "gitBlobSha": "c02eb4991a088e26d005e14e134b87f9f47bdea9"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/column_settings_sidebar/window_tab.rs",
+          "gitBlobSha": "0e09569827af3bf08e3cd47c474c58716c9d7e34"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/command_menu.rs",
+          "gitBlobSha": "9d5b4c6b7c5244dec8cb840eca504ddafa477254"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/copy_dropdown.rs",
+          "gitBlobSha": "d3b7ae19292904237908cf35d88fc9233f0fd520"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/datetime_column_style.rs",
+          "gitBlobSha": "1623fb7233c5cdc94d388264975594e5f7ae2bef"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/datetime_column_style/custom.rs",
+          "gitBlobSha": "86f3adfbbe718b1e8226f32deae21602a7d54131"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/datetime_column_style/simple.rs",
+          "gitBlobSha": "691635f6475238c4af751a88c62619a5d74bca90"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/debug_panel.rs",
+          "gitBlobSha": "c890e79653a15c7a44b30619db2be4fc60c79cd3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/dragdrop_list.rs",
+          "gitBlobSha": "183eb906b6c9dbdbda7a8290a911be191b5e7cb8"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/editable_header.rs",
+          "gitBlobSha": "70f4a824972e68b04713b86a3f749a22fe4246cb"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/empty_row.rs",
+          "gitBlobSha": "4e51926537d597ea758f7a56cbc353cd1a0246b0"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/export_dropdown.rs",
+          "gitBlobSha": "f6a5a6e23b9e9658626ee4ef8570171da00834d9"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/expression_editor.rs",
+          "gitBlobSha": "ace49119c1fe64667ec594b171e4812f28efba0a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/filter_dropdown.rs",
+          "gitBlobSha": "f4e01d38d7974ab656490b430a39f6f1feeb7365"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/function_dropdown.rs",
+          "gitBlobSha": "868d3cea21685a2152233633fff160e713254b36"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/global_filter_bar.rs",
+          "gitBlobSha": "5c42c6f3135ec283653597c31570e39a58691b83"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/main_panel.rs",
+          "gitBlobSha": "dabb9f906152a2b8fc77ee2fe4b857b799f02ddc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/main_panel/msg.rs",
+          "gitBlobSha": "a512771e22ba8264df79eb69c365ad152ec8820b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/main_panel/presize.rs",
+          "gitBlobSha": "646ebd3bc548896a011ae66a0d0006cf112d2eff"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/main_panel/reconcile.rs",
+          "gitBlobSha": "71f49e12b72928568459cc497ff404502469ad0d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/main_panel/render.rs",
+          "gitBlobSha": "b7feba25da09a9b8cba4a549ef30216e496d37b1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/main_panel/update.rs",
+          "gitBlobSha": "2df7624c02549d31f622e07fe2ea7fe8c80171e2"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/mod.rs",
+          "gitBlobSha": "657237398b081f3594d764f13a12092caefb6363"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/new_panel_menu.rs",
+          "gitBlobSha": "a61cdd710b30a90a6bc6659285ee7d63e5373bb1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/number_series_style.rs",
+          "gitBlobSha": "f2906ce869d50a73d3e1f37775763ae318872f1e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/panel_menu.rs",
+          "gitBlobSha": "b7324b9a0fecac6a4c25c27f86d2e25c4983946e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/panel_tab.rs",
+          "gitBlobSha": "7a4c5403a1193e43423c9508cdc2fa35947206f0"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/plugin_selector.rs",
+          "gitBlobSha": "c5c84f6472bd1f3eb9e628fd9793de11749d0a45"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/plugin_tab.rs",
+          "gitBlobSha": "0f7ac8eca144e8dfba0da3c2e330ffc27677098d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/render_warning.rs",
+          "gitBlobSha": "b23fbfc02cc3064477e6dc132f2d596947c49a80"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/rows_counter.rs",
+          "gitBlobSha": "7673d52e17bba458e031973d32a99d4dbab0c2cb"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/settings_panel.rs",
+          "gitBlobSha": "c4269535e58ecbf530d62acbb31312243dd63d94"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/status_bar.rs",
+          "gitBlobSha": "6194335d0ccf1811590f5e121928ba6d22cdb7bf"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/status_indicator.rs",
+          "gitBlobSha": "5e48c477ed362b7653561820c8698e7839921a0c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style.rs",
+          "gitBlobSha": "3be9ed0fb2fb4ce2f42b38d80612b8c0f314d84a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style_controls/mod.rs",
+          "gitBlobSha": "f64d3c34543a191edd53864600464e75065a8dac"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style_controls/number_string_format.rs",
+          "gitBlobSha": "a7768a2abb1d22acf328649d19d095d8cb1a93cc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style_controls/number_string_format/digits_section.rs",
+          "gitBlobSha": "fd827941c4c3525a8aa6f5d656ac08bcdbe96a7b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style_controls/number_string_format/misc_section.rs",
+          "gitBlobSha": "88a1994d67083c04f77c3e1ea09dac8e218ccc46"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style_controls/number_string_format/style_section.rs",
+          "gitBlobSha": "bdcdca0892fb809658ba0da5b009b6cce6aa458f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/style_controls/number_string_format/types.rs",
+          "gitBlobSha": "9085a20298dc8e2e9d03736c53639b6ae09f1985"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/type_icon.rs",
+          "gitBlobSha": "1b6fc4fc66586c88137b62e36f131819dcf9f602"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer.rs",
+          "gitBlobSha": "d8ba86a53935cf8edaa4907fee8ff7d4a9c94d31"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/filters.rs",
+          "gitBlobSha": "b577f39be9e8d8602e9cb28964f4d9a4a56a8c44"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/msg.rs",
+          "gitBlobSha": "c0f973b7d19471c8fdcbfc8e77d7bf565649b254"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/panels.rs",
+          "gitBlobSha": "d6a11234d9750836cd24d8d12aaa35b73360a1db"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/render.rs",
+          "gitBlobSha": "6230118abf41bba01c99cd84f00d30eb868553a5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/settings.rs",
+          "gitBlobSha": "13727638b3756c1f1dbe7834876f5626e539a6f9"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/snapshots.rs",
+          "gitBlobSha": "b3a608c66f1dd21ae1629f67e86cebad37df2de1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/viewer/wiring.rs",
+          "gitBlobSha": "ecf5cf9f23c16af2fd6fbdad5ef8ef8ebe828301"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/components/window_editor.rs",
+          "gitBlobSha": "d1ae6e38d5266b09d9b29504e1704f21c7b52482"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/column_config_schema.rs",
+          "gitBlobSha": "8dafb54718c6680c93b573fbc89f2cbd1e9ccdde"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/columns_config.rs",
+          "gitBlobSha": "8345c718c34f5d629d46dec62a9bdbbf5698abfb"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/command_schema.rs",
+          "gitBlobSha": "d6b21a0e425799c6198e9dc3a64d98e0701d2420"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/datetime_column_style.rs",
+          "gitBlobSha": "e3146cd4edaf6868024d1263790a800716019c4a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/datetime_column_style/part_format.rs",
+          "gitBlobSha": "f9ff60c8431861fab54382e14698315df47a1b31"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/datetime_column_style/simple_format.rs",
+          "gitBlobSha": "9419c21f190a434642ec57b5af81fc57d0cdd625"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/export_method.rs",
+          "gitBlobSha": "9ba146defcad8a554dbb17f242800acfc4efecce"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/kvpair.rs",
+          "gitBlobSha": "918a1ae2e75d08faabce5795d87fbe617a0e50a4"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/mod.rs",
+          "gitBlobSha": "7e3a217ffc241ef2310a2b9f047a62599bf3ef1b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/number_series_style.rs",
+          "gitBlobSha": "e31c0c1b70de6399780967c7b727b21fd5efcfe5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/number_string_format.rs",
+          "gitBlobSha": "a56df1839e49b21e7a87b1f9489f566f323017f3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/number_string_format/enums.rs",
+          "gitBlobSha": "db385ede814357c81d58862b02d1ef2a895f7c64"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/options.rs",
+          "gitBlobSha": "52ffebb4108f0990f47614c5b64a0249233caa30"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/plugin_static_config.rs",
+          "gitBlobSha": "06cb8dc33a019071c258e585f30aad9cdfd3486c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/view_config.rs",
+          "gitBlobSha": "f2018781c1333adb27cd7a300c8f50095483d2a1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/config/viewer_config.rs",
+          "gitBlobSha": "716a85fe54a6f9ce485b372f752705caa38ea827"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/custom_elements/debug_plugin.rs",
+          "gitBlobSha": "99c0ee9c690d662f0405806943f9e1ee539324e2"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/custom_elements/mod.rs",
+          "gitBlobSha": "f2eccacc493fbfb89e8a90edb21dbe017b152b9e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/custom_elements/viewer.rs",
+          "gitBlobSha": "341977689e46c81b3868871ef7b370105b44a62b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/custom_events.rs",
+          "gitBlobSha": "ad36ce607a876d13f5b0d568c75ab34f0f4f2a3c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/derived.rs",
+          "gitBlobSha": "e8cb5dec88fa746fd45ba6c057323b9da415e18f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/cursor.rs",
+          "gitBlobSha": "d43adffd611ca1a393097124f389234ad766bcad"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/mod.rs",
+          "gitBlobSha": "580dfbc87dee66a474a667c9bd1c14c7ddcfcfdc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/tokenize.rs",
+          "gitBlobSha": "463b62bcaa45777745dfe17eb6ad4adb42c0a475"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/tokenize/comment.rs",
+          "gitBlobSha": "7966508660dea2d7e4525c82616daeed39cc3ff5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/tokenize/number.rs",
+          "gitBlobSha": "a4b6d2af0efc13fddb320230d96e0b1354968d11"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/tokenize/string.rs",
+          "gitBlobSha": "5889203626b39cba8a059101016631ec7a0c837e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/exprtk/tokenize/symbol.rs",
+          "gitBlobSha": "39afd218ec81a81db9d59cca8028005c9fa3b682"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/clipboard.rs",
+          "gitBlobSha": "d0d54936b1214b341796917d94a1805b3f32489d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/intersection_observer.rs",
+          "gitBlobSha": "05325a3893e4aa227add060d669f791d06e7a411"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/mimetype.rs",
+          "gitBlobSha": "bd1738aee6fed723381ff7a68177df38ed7b6f14"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/mod.rs",
+          "gitBlobSha": "db7bfe9bc6299f1ef3203c9cde298615d9e05cdd"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/plugin.rs",
+          "gitBlobSha": "559b17bf6a302cb0807623589ffe75f8077fda47"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/regular_layout.rs",
+          "gitBlobSha": "d2ed74217407807026e12a37146755e7ba77132b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/js/resize_observer.rs",
+          "gitBlobSha": "1ffe554c729964da213dae92eab84d5861b0b782"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/lib.rs",
+          "gitBlobSha": "9c3499b8ba8d66816022a433f99c26498769ec02"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/presentation.rs",
+          "gitBlobSha": "6e980e1f7fb6e5f2ba9f465967b71c0fa24b08cc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/presentation/column_locator.rs",
+          "gitBlobSha": "ae460c7f8a78a851e17f6cf427c24069e3d3c387"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/presentation/props.rs",
+          "gitBlobSha": "6f4a0318fbf60b33a4ad3014631a4011e99d0cda"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/presentation/sheets.rs",
+          "gitBlobSha": "0fdf988510a0eaa3520627e35d64fa57bf3e537d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/column_locator.rs",
+          "gitBlobSha": "041e330d2b0dc3a02829afa377597395dcb90ca7"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/column_values.rs",
+          "gitBlobSha": "4d0ed33eb20b7f10e3635e10ec60ad48f42c385a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/columns_iter_set.rs",
+          "gitBlobSha": "da933124df9018f21aebd4462e3bf71f33e0e22f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/export_app.rs",
+          "gitBlobSha": "e309e3c55a647139977c8e7901cdb2fc13d1687a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/exports.rs",
+          "gitBlobSha": "da0c2dde91e8ab127b2e72dd3c0522e10487dcb8"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/fetch_column_stats.rs",
+          "gitBlobSha": "ee50bf0ac780518533e490f8ed24444eac483de7"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/get_viewer_config.rs",
+          "gitBlobSha": "8d4e97a9ee6ca75a15066f2a71a04ee1d85452cc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/hosted_tables.rs",
+          "gitBlobSha": "a02b99ce557e870f3d3ef5ca3c2b82676f8ed20f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/is_invalid_drop.rs",
+          "gitBlobSha": "0238c76182065133954fef7291ecf7563fa359fc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/mod.rs",
+          "gitBlobSha": "2d7ae093d410170ca6397fcc16fa01a72d2e94bf"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/palette_set.rs",
+          "gitBlobSha": "981a0495e4e76084b113614f4c7648f5c212d6a7"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/plugin_column_styles.rs",
+          "gitBlobSha": "c7b6ea0c4f920145ab00a2601ffea3163201236c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/resolve_commands.rs",
+          "gitBlobSha": "1cb17b2c067d48925fabebb67e45a7199c969d7a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/resolve_hit.rs",
+          "gitBlobSha": "9bee45b2b92137fd45c0e73b03d08f615da70efa"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/queries/validate_expression.rs",
+          "gitBlobSha": "ef13d238545118b2ca57fce681d9b2939fd59c59"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer.rs",
+          "gitBlobSha": "4e4772b5c03bab186b6ba3a9e53a25f86cdbe38b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/activate.rs",
+          "gitBlobSha": "318af71764d9986c3185eea856ce37e4d1a09ba3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/config_defaults.rs",
+          "gitBlobSha": "7c318b35dc8e73382db0aef16ec18aece9a9f23e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/dispatch.rs",
+          "gitBlobSha": "8391e332a7bcbabbac63eda74bd88eec54b7b606"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/limits.rs",
+          "gitBlobSha": "a0697f4ad751b8f1fc7b7670f4a116f777feba28"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/plugin_config.rs",
+          "gitBlobSha": "74e2eff7caeb9adfa8965d62eb97eb0f77bc9cc9"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/plugin_store.rs",
+          "gitBlobSha": "84979318b9e2bb7d86ceb7e8dd350316bff7d52f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/props.rs",
+          "gitBlobSha": "bba679ba2d32fa29afede2851f32785a27145748"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/registry.rs",
+          "gitBlobSha": "6231a2dc4e18b842977c849d3204f92ee20b30d7"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/render_timer.rs",
+          "gitBlobSha": "20200ab63631146b9c50165943a024e017b40248"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/renderer/state.rs",
+          "gitBlobSha": "209bb31aa4c772124272ca190716ab13c81db07c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/root.rs",
+          "gitBlobSha": "3e817db05625a0fdd7c0acc85a74d4f5de360d5c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session.rs",
+          "gitBlobSha": "64692a515df1068a688ea6c61f19953e41b7e143"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/column_defaults_update.rs",
+          "gitBlobSha": "3d84db82274391ebe159002489466fe83f209d0a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/drag_drop_update.rs",
+          "gitBlobSha": "9a81a50a28cc2a56396a88f3e625930ed72b48f5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/metadata.rs",
+          "gitBlobSha": "074cd9b0741a0c5b99b6e33f421e0d342388fbfe"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/op_queue.rs",
+          "gitBlobSha": "d4808f4fc86c657a919acb382cdd0b9653ad6c23"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/panel_state.rs",
+          "gitBlobSha": "17e23a216cca8e98ead9394ccb984a45ef863edf"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/props.rs",
+          "gitBlobSha": "78a4ddcfcaad71830c8e832e225d7352d282e6f9"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/replace_expression_update.rs",
+          "gitBlobSha": "40a6fbe3d7b44c37a0aa0f62be65ed673d56ae40"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/session/view_subscription.rs",
+          "gitBlobSha": "48f56a2214de156f862c13c8d40173677476c44b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/apply_config_defaults.rs",
+          "gitBlobSha": "a9bdc3b722bc099ec5ba0a0d3036becec992e358"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/apply_global_filters.rs",
+          "gitBlobSha": "6580489ac8e53a559e422019622f0a574907e763"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/auto_pause.rs",
+          "gitBlobSha": "b2a05c4b04cfb92c9bfe6edf8689c5d9e690527f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/copy_export.rs",
+          "gitBlobSha": "39cc0434e4c41297f7836f63d495908ed4d42476"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/create_panel.rs",
+          "gitBlobSha": "c2b4d6348e6a4b19277c4369a25a48f74a98b650"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/derive.rs",
+          "gitBlobSha": "11f657d4846240784639ab0ce7634b7d77f0d8e3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/dismiss_render_warning.rs",
+          "gitBlobSha": "761c560823b139af5f2d6290e21784e113f9c7cd"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/edit_expression.rs",
+          "gitBlobSha": "b89fc5d81d977d5af08f215a24a48ef2b8f6578e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/edit_window.rs",
+          "gitBlobSha": "9f90b76fd3d2e52041b9e50ceb8d28b76ddfa038"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/eject.rs",
+          "gitBlobSha": "b91cc3a71e0d70202c13a3cdd78c7441e49c2364"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/mod.rs",
+          "gitBlobSha": "a07e5c3ca8dbaee126040529ed9a0215128db413"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/pipeline.rs",
+          "gitBlobSha": "bb467dcf10f017f473b8b375f665c8237f5af9db"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/presize_panels.rs",
+          "gitBlobSha": "8e79384b1cf039e7fdfa2b297a0372c4b55f85b7"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/reset_all.rs",
+          "gitBlobSha": "963452998648d39a2f9f5dfb9326bbe56c0834b3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/resize_observer.rs",
+          "gitBlobSha": "7b637ec7786aa5b7b02da039bdeabed9f46a3408"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/restore_derived.rs",
+          "gitBlobSha": "f52096041b3367f06713e89503759e8e19d2a954"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/restore_panel.rs",
+          "gitBlobSha": "0c48f1f4e8d4b2b04c8bba48539e9d87e190e5ab"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/send_column_config.rs",
+          "gitBlobSha": "1b3e8e9d7db0b636eae371684eec0edf1fa7c0b1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/send_plugin_config.rs",
+          "gitBlobSha": "da81be5fc17acf19b88a01891bbaddb691b0cc84"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/set_edit_mode.rs",
+          "gitBlobSha": "171b37e2172e447331ecba304c52fd4efe67cf93"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/sync_update_panels.rs",
+          "gitBlobSha": "21af6efc710a18cc7552a804650c24bd61d346e1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/table_lifecycle.rs",
+          "gitBlobSha": "ceac419125a37a4c44ebd6e5ce1b04f7411d90cd"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/transactional_restore.rs",
+          "gitBlobSha": "434869b528fe82d7edc880b7009e7afb1e106f46"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/update_theme.rs",
+          "gitBlobSha": "580f607685bc5bedeb37d6d046bedf2b6829682f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/tasks/validate_expression.rs",
+          "gitBlobSha": "ee419146f40a69312e0ac680fc0d8ee45695d1c6"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/control_group.rs",
+          "gitBlobSha": "d53c5fccc9772edbeca345fec0bac34acee373ea"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/dropdown_menu.rs",
+          "gitBlobSha": "394ab24809bfa4960de4f69e859415b9fa70134d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/mod.rs",
+          "gitBlobSha": "52d04aa2cc5c34c3e4b74826769836d991db45de"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/scroll_panel.rs",
+          "gitBlobSha": "dde09acc99f1d2d7f15a5688f10ff7700f76e8b2"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/scroll_panel_item.rs",
+          "gitBlobSha": "77845af246f2a03de48cf40a971e3d2b6075f700"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/select.rs",
+          "gitBlobSha": "58b3e0801f7a26f59a871eea3190ea2e5397b6e1"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/sidebar.rs",
+          "gitBlobSha": "eb8ba79b4dd62aaf83dfd5fc6912dcd6c326ffb8"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/sidebar_close_button.rs",
+          "gitBlobSha": "2e57b28be0c2a332b626e39683a685133756d678"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/split_panel.rs",
+          "gitBlobSha": "4ea0285ee69ad3503373da72f03d58c6e1858750"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/containers/tab_list.rs",
+          "gitBlobSha": "c934fb5c74e8817d5fb6a5ad3a7841848c9f4844"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/context_menu.rs",
+          "gitBlobSha": "ae7a0fd4e001af5e653fe8af02e8f829664d1cc2"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/dragdrop.rs",
+          "gitBlobSha": "eb5545deb439b853fb6c55d9927459de1ad8f931"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/font_loader.rs",
+          "gitBlobSha": "82254a5c0b5b38108e0f1b9e45ccd556dbb32c6f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/color_selector.rs",
+          "gitBlobSha": "32a813ff7cc7f8bcd09bb50d404c92d80912f831"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/intl_label.rs",
+          "gitBlobSha": "8d554db59764b3b033d80cc7fc80a6db15335ae4"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/mirrored_textarea.rs",
+          "gitBlobSha": "c01748392a796e9b198344c8d169eb8ddadfbb03"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/mod.rs",
+          "gitBlobSha": "87b425e8a345518ec01c1f7d64d0b9a441c02201"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/multi_stop_gradient_selector.rs",
+          "gitBlobSha": "41bf1f0678838650ca69245c2311d67a3feaa2c5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/named_value_picker.rs",
+          "gitBlobSha": "dcbc4546aa6e743b01b0a148875457bd23fa6500"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/number_field.rs",
+          "gitBlobSha": "cc710e2cfb7ccbb2c6c3db40c05607bb0b2654e9"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/number_input.rs",
+          "gitBlobSha": "dfb73881c65ae1def06730386c521fa26515dfd4"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/number_range_field.rs",
+          "gitBlobSha": "9b5049dd3fb349b1cc356afec27efb2643bdf49d"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/optional_field.rs",
+          "gitBlobSha": "838ba065958d13dcb6d24b2dc1b3f775c95cda96"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/palette_selector.rs",
+          "gitBlobSha": "41c808b953fb792fe4c655e25d3f08a50e0d6474"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/select_enum_field.rs",
+          "gitBlobSha": "c506800785c92ed6968988a9d86c39c086e7525b"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/form/select_value_field.rs",
+          "gitBlobSha": "4ced09b2e9897af28ac5ec9ea59ba82c9af889dd"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/mod.rs",
+          "gitBlobSha": "fc2cd24770c2d669d74c4b615ed12fe08bfc7241"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/modal.rs",
+          "gitBlobSha": "920e95285b41ba3471e0c26ee322dfbda412c66f"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/portal.rs",
+          "gitBlobSha": "c9b9267573e849e6acf4e87407b459130d87ef18"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/ui/style.rs",
+          "gitBlobSha": "6a185efbafd0f4041bc1d82d7dd41145ae935242"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/blob.rs",
+          "gitBlobSha": "6bdd37fd97776f468636dff707063c7483f39303"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/download.rs",
+          "gitBlobSha": "5c4177da91344a6805fb4501ca22aeffb12b94e3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/dragdrop.rs",
+          "gitBlobSha": "9c58ac97e2e8d9fff53a32e8204112626bd5ded8"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/mod.rs",
+          "gitBlobSha": "978167a611c0c0f70f493675bbeee0bc42f4f229"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/mouse.rs",
+          "gitBlobSha": "d707cd7a4b40a4267b5bca15a4d6cafd1aed5559"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/request_animation_frame.rs",
+          "gitBlobSha": "30db330fa8d47c75b302171b340d877bff2a676a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/browser/selection.rs",
+          "gitBlobSha": "4d5c67662d2c10a3fa1a62b0c4e245aff439a140"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/completion.rs",
+          "gitBlobSha": "1412f778b3534fc84b379ba17c71ce7394b498b8"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/css_vars.rs",
+          "gitBlobSha": "dd29962894aebaccc10483c1f781573053c739ba"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/custom_element.rs",
+          "gitBlobSha": "a3e204f82670213f646b866316ab2577e6d02995"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/datetime.rs",
+          "gitBlobSha": "363d6ccde9ad9253ec55fac014d6e31768b1e6bc"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/debounce.rs",
+          "gitBlobSha": "b60cb77b9d8b7b076d607b69aa70dfff358b6d10"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/hooks/mod.rs",
+          "gitBlobSha": "26d7df972a0c3dbf63664e608eab763958a211fb"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/hooks/use_async_callback.rs",
+          "gitBlobSha": "5593af1aed819364be187b2b40de9e47b510ca9a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/in_flight.rs",
+          "gitBlobSha": "d1c3090c292d85f104d56487551b4c05555dd0a3"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/local_fonts.rs",
+          "gitBlobSha": "cf4935051714acdc3088477542e43d2ce7a409ff"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/mod.rs",
+          "gitBlobSha": "b885a0e85a2789fa9d3b8c874b50fc6848f3ec3c"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/modal_position.rs",
+          "gitBlobSha": "639e84dbb82373712759ee5c291c849c5f0d8f8e"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/number_format.rs",
+          "gitBlobSha": "ee58e226127f7f3ee3d4ae87260f4ed546365669"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/pending_effects.rs",
+          "gitBlobSha": "e5682167482c6a54ff9e1d43b73a4999ecb5a948"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/plugin_host_state.rs",
+          "gitBlobSha": "8c81be744449f7cbae7dad507d0e02c3d44ea87a"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/ptr_eq_rc.rs",
+          "gitBlobSha": "727bb68199f3fadd8f91964fc3e2b84b397c0d12"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/pubsub.rs",
+          "gitBlobSha": "93271df2d3bbdff9210574ab8e785b4ebb73f8c5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/spawn.rs",
+          "gitBlobSha": "a9072b06e2407b950e1a7178491598deb515a3f5"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/utils/weak_scope.rs",
+          "gitBlobSha": "1026b075e130b9213781a5eb8070f92d1948fc19"
+        },
+        {
+          "path": "rust/perspective-viewer/src/rust/workspace.rs",
+          "gitBlobSha": "e4f7dbef1e70ce20291951d52daf2851a46ddb8e"
+        }
+      ]
+    },
+    {
+      "label": "Chart plugin",
+      "prefix": "packages/viewer-charts",
+      "includePattern": "\\.(js|ts|tsx)$",
+      "excludePattern": null,
+      "count": 175,
+      "source": {
+        "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+        "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "packages/viewer-charts/src/ts/axis/axis-primitives.ts",
+          "gitBlobSha": "0a0bfbf85847914906f8c1642fc5a5f491166cd7"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/bar-axis.ts",
+          "gitBlobSha": "6a47baa1a40e8781fb2b4fa6dcab259227ba1f61"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/canvas.ts",
+          "gitBlobSha": "dc2569413a1ae37d15637b28d17f6b4af4e11719"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/categorical-axis-core.ts",
+          "gitBlobSha": "94810223121a962cea01687e8fa0bd17b1b970d6"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/categorical-axis.ts",
+          "gitBlobSha": "d2710bd0a5b7d28010b3423c6a3c45c6f8f8c271"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/facet-chrome.ts",
+          "gitBlobSha": "48f9fe15a7b8da481fef57a94a9aee5487762a70"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/label-geometry.ts",
+          "gitBlobSha": "1d0acd097c6264842c723ee3ee77f2ed5af45c66"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/legend.ts",
+          "gitBlobSha": "a6bad57dd923bd982e0554373281d2aede5459f5"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/map-ticks.ts",
+          "gitBlobSha": "5e6aaab19e8aa8f8f74e7aa359e27beec6a628b1"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/axis/numeric-axis.ts",
+          "gitBlobSha": "4f64ed0206e3c072978b0749067e111cf40afed4"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/candlestick/candlestick-build.ts",
+          "gitBlobSha": "17e36630526731db9d29bf07a46371a7cf31135e"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/candlestick/candlestick-interact.ts",
+          "gitBlobSha": "33ea5049dd6e489b9abd92dfaf288ee37b2d67bd"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/candlestick/candlestick-render.ts",
+          "gitBlobSha": "e6376631f77753f944af26873a6add9e995ca0b3"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/candlestick/candlestick.ts",
+          "gitBlobSha": "7db212dae3663f8fe18dce0f995b1cd016296de5"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/candlestick/glyphs/draw-candlesticks.ts",
+          "gitBlobSha": "30fff05bb298932c494e9ae8a27b0d8866415614"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/candlestick/glyphs/draw-ohlc.ts",
+          "gitBlobSha": "1759f3bea86a4f6397adfa45305d55e06c043508"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/canvas-types.ts",
+          "gitBlobSha": "7c4dd4dd0c2d48e76edc07d588a454059691cc0c"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/cartesian-build.ts",
+          "gitBlobSha": "c24b66e1e3439045223f3227e504d5078c6a938f"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/cartesian-interact.ts",
+          "gitBlobSha": "11a3ed2b9b19f207edc7fefc2792e05d5b0c18ac"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/cartesian-render.ts",
+          "gitBlobSha": "fc26495ca006618d009cb4ab8df71420815353e9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/cartesian.ts",
+          "gitBlobSha": "4a28179084a799b7f4c15a701be10b615dd99d2f"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/glyph.ts",
+          "gitBlobSha": "ad562a205624b280acb2d4fe7748be23906131c4"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/glyphs/density.ts",
+          "gitBlobSha": "edefe145b19ab62ca8b4b790cfe03dca95a2a1b5"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/glyphs/lines.ts",
+          "gitBlobSha": "229ed1fc514e509b18037091b97e642677703b8a"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/glyphs/points.ts",
+          "gitBlobSha": "b05d91034a34810bb4edce592790328b0ca10673"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/label-interner.ts",
+          "gitBlobSha": "301374e009e6b9ca1ba6ba9863f7b17c842c1728"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/cartesian/tooltip-lines.ts",
+          "gitBlobSha": "db895b7c22ee9b891244c8d0891a380c79a49391"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/chart-base.ts",
+          "gitBlobSha": "f0b110010074bcca2da931b030f3075f97ba7199"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/chart.ts",
+          "gitBlobSha": "d47821f57c53262bfe12665fc805ec760e049bf2"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/band-layout.ts",
+          "gitBlobSha": "7da55a3858724b6e13d40e98f6ffab51ee24db69"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/categorical-y-chart.ts",
+          "gitBlobSha": "65793cac976fc760a0df4bf811de7100b058a105"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/category-axis-resolver.ts",
+          "gitBlobSha": "197ee1b3ba2fe287a66a95edd9c44b8a4d74e991"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/chrome-cache.ts",
+          "gitBlobSha": "d535fb973e6e75fe302588bb5e807f1ad1cdab72"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/draw-tooltip-box.ts",
+          "gitBlobSha": "7b392e5a2b66c917f082dd05b54c221365d3877e"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/expand-domain.ts",
+          "gitBlobSha": "7aabe8eded6bb930b6459ce435580c651a1678d3"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/leaf-color.ts",
+          "gitBlobSha": "5ae523f298ae507f2d2966323571750ba6598933"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/node-store.ts",
+          "gitBlobSha": "c666f12a9f821e35331fb6276d6781decbb3b517"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/tree-chart.ts",
+          "gitBlobSha": "8f4b2c7989bb297e5938ef6282e1bd952f4c2d41"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/tree-chrome.ts",
+          "gitBlobSha": "d7bae47836704cf3ad10d9dc20f135874896197e"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/tree-data.ts",
+          "gitBlobSha": "1c27af56cff521607e72885451f818cc73292fc7"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/tree-interact.ts",
+          "gitBlobSha": "11db57f969ce0afaf40e7584a1fa8d366857ad3e"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/common/visible-extent.ts",
+          "gitBlobSha": "ddda9a50661f474f36894fd4086ce3c688c4aa08"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/heatmap/heatmap-build.ts",
+          "gitBlobSha": "3bdd8f5edd6546a4a6d3ff26c29b3831de35b839"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/heatmap/heatmap-interact.ts",
+          "gitBlobSha": "051b425ee1a88f41734ffe527afc3fa3ac429039"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/heatmap/heatmap-render.ts",
+          "gitBlobSha": "80d8370864b5c2a820af8c8aab9aefa81a9d10c4"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/heatmap/heatmap-y-axis.ts",
+          "gitBlobSha": "b58f53528a0c981b4eba156489b3027ab308a3c8"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/heatmap/heatmap.ts",
+          "gitBlobSha": "7d6b19f9c0ff8d15018d67f5e18e48098bfbf5f5"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/map/map.ts",
+          "gitBlobSha": "d3f5eb787c5b11ab98ea5636234e5e1db8ee6b01"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/registry.ts",
+          "gitBlobSha": "7d946878c72cb333b177ac15c1b97bcd288e832d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/glyphs/draw-areas.ts",
+          "gitBlobSha": "6d278202bf02c3c9dbeae5f38f793c2fead9ff26"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/glyphs/draw-bars.ts",
+          "gitBlobSha": "f7deecf1455c6245345f1d6776590811166a91a6"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/glyphs/draw-lines.ts",
+          "gitBlobSha": "a299ba776cfd372d66490198ff914cd266976f90"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/glyphs/draw-scatter.ts",
+          "gitBlobSha": "7101dc92bdb5c855185269c61d098c020e612387"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/series-build.ts",
+          "gitBlobSha": "9969ca10e02fd70f7128ba6d3bb844271838d301"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/series-interact.ts",
+          "gitBlobSha": "5e79ef5833067b47db950c951f76f8412f15deb7"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/series-render.ts",
+          "gitBlobSha": "57a29848c364a127ed66d3b773d36eccfaf1a6f4"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/series-type.ts",
+          "gitBlobSha": "1eca8246e143fbe0dd23db34266e462c4a699ca1"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/series/series.ts",
+          "gitBlobSha": "d60d8b1ef05724243b1bdd6f6d3841e08d190e58"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/sunburst/sunburst-interact.ts",
+          "gitBlobSha": "24968f98e5bba678cfe71e246cd4aacd82fb125f"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/sunburst/sunburst-layout.ts",
+          "gitBlobSha": "1310c7e4a357efc79d45d5e454e1d455fecbb377"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/sunburst/sunburst-render.ts",
+          "gitBlobSha": "1f9c6b03eef08d949d78f95ccd0179d3fe2429b4"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/sunburst/sunburst.ts",
+          "gitBlobSha": "9191d6f21e2aaaea2a937719e2854eb2bb57ec9c"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/treemap/treemap-interact.ts",
+          "gitBlobSha": "cea846b76b9bf2a3ee4560ec2e00e0215a0ed84b"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/treemap/treemap-layout.ts",
+          "gitBlobSha": "39eaf4b4f87ebd8940cb1d37c10b5cca2510a2a8"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/treemap/treemap-render.ts",
+          "gitBlobSha": "56815ab7591cc0d6518949c3080853fee7ffeddf"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/charts/treemap/treemap.ts",
+          "gitBlobSha": "23f3142a35aebfdc7532b44598948f9e100b4dfc"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/config.ts",
+          "gitBlobSha": "28474507a848cca673a606bec72acff3f6843b72"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/data/last-group-by-split.ts",
+          "gitBlobSha": "2b8899c5b700a1dab0267d7d491ee98a852d1991"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/data/lazy-row.ts",
+          "gitBlobSha": "78208303cda11899caba121b1d76c5dee0a4b7a9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/data/split-groups.ts",
+          "gitBlobSha": "ef34752338d2db8980d9d1926ee6cdf4a9eccfbc"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/data/view-reader.ts",
+          "gitBlobSha": "b5176c522a1052173a704cc451b4010d926ad336"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/event-detail.ts",
+          "gitBlobSha": "c9767ee17860daea5fff1833ba1b68308a10ebfc"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/index.ts",
+          "gitBlobSha": "e9198a7c459116ebebe59254eeaca8619b79dfab"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/axis-indicators.ts",
+          "gitBlobSha": "9694501f588e04e6f94069fdae3747fdbbd62a51"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/hit-test.ts",
+          "gitBlobSha": "3bb214080890b20428c5f7a4200a7c3d9c914037"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/host-sink-dom.ts",
+          "gitBlobSha": "6d257cbe2e803f725365dfe0f13dc9b425a4a5a9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/host-sink-message.ts",
+          "gitBlobSha": "690e4bb4f59651f25e592223b16b43f89bebdb99"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/lazy-tooltip.ts",
+          "gitBlobSha": "4bc74f4f023fbd75064f9a6ad921f1f6784ed6a3"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/legend-controller.ts",
+          "gitBlobSha": "f8b863ef756b32d3de1ba2ecb028582119d05b15"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/raw-event-forwarder.ts",
+          "gitBlobSha": "3a26a809ad490d395d4915b0a0dc7a5dab3106d9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/spatial-grid.ts",
+          "gitBlobSha": "75848d17f4fa33f578a68e4b688eaf6577256ca9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/tooltip-controller.ts",
+          "gitBlobSha": "ad68e980017d00cce27e1d385b4b8d966b7cc4ad"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/tooltip-grid.ts",
+          "gitBlobSha": "916a81fc10989a3ee6cecde8bae3d55b8a141b78"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/zoom-controller.ts",
+          "gitBlobSha": "7cb30f5a38f8e046e269e8a57eb10f2ca2623292"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/interaction/zoom-router.ts",
+          "gitBlobSha": "6c964bd42b5edc9f4368e50357ee99630dce3d53"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/layout/facet-grid.ts",
+          "gitBlobSha": "2ac6798eebb44062c7e8e4a4b4e19a9d0e2edc49"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/layout/plot-layout.ts",
+          "gitBlobSha": "ee938760b2634e704cb49cccff9084929c5ce088"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/layout/ticks.ts",
+          "gitBlobSha": "2cbf09287bdcdadec433f6021d25120883f49d3d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/map/mercator.ts",
+          "gitBlobSha": "4483fe077e772f8c63e3759ee2c2409ec5194f3d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/map/tile-cache.ts",
+          "gitBlobSha": "439b6a2a74b8452fd130bbeb65963f2465b5dcd2"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/map/tile-layer.ts",
+          "gitBlobSha": "ee038ee2feb6401ab3ca9b4ad04f2226ac3b7fd2"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/map/tile-loader.ts",
+          "gitBlobSha": "2fc5be91347358bbbaf54d835f810b1b72d9c8e9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/map/tile-source.ts",
+          "gitBlobSha": "326e2c5d05b9e54d19541b3beb5a507915191552"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/plugin/charts.ts",
+          "gitBlobSha": "52c9b1c1a059133dd4ea48b0b5c51ab9e09e97f8"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/plugin/format-defaults.ts",
+          "gitBlobSha": "f486ea38b675a4c2f2f73867875d52a3e581c854"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/plugin/plugin.ts",
+          "gitBlobSha": "ceadf759f75b892993ec79b8d1df536ab337472f"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/render/scheduler.ts",
+          "gitBlobSha": "d48bbf7a53038212bf7d2023674d8b730cbd9fc9"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/theme/gradient.ts",
+          "gitBlobSha": "398dab6348f0f834f66509abf1b9ff858526174b"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/theme/overrides.ts",
+          "gitBlobSha": "b5c049cd99a19f15d437c74b6ca66c69c27bd7e7"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/theme/palette.ts",
+          "gitBlobSha": "fc75f6ba065d093d7fbc46b93d2ab102e09dc1b2"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/theme/theme-snapshot.ts",
+          "gitBlobSha": "7ea605a7aaa5a21573bb706d790d9315453596b6"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/theme/theme.ts",
+          "gitBlobSha": "fc07455190ab543c662e6806e8a0a98452fa5410"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/transport/protocol.ts",
+          "gitBlobSha": "efc9324b8c59f6a4b48df5377ebc1f108fab524f"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/transport/renderer-transport.ts",
+          "gitBlobSha": "71e0be46f166f1666c7fbf14ae0ed32f131217d5"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/utils/css.ts",
+          "gitBlobSha": "35a2426b857a880d78733841533787b30dc05a52"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/utils/font-snapshot.ts",
+          "gitBlobSha": "11fa5502e9cc2bf7d4fe199708fe7153c6c1aa5c"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/buffer-pool.ts",
+          "gitBlobSha": "68ebda44058ce3732b278f16745369f84f3c266d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/context-manager.ts",
+          "gitBlobSha": "a8f19e8145d7d2f08b6af4f314104c749684b77d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/context-pool.ts",
+          "gitBlobSha": "a01fc07ec6100ca8621bef15a9540900426e9e94"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/gl-context.ts",
+          "gitBlobSha": "c39b457f16f1b7bc102820b286682e284dcb3fca"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/gradient-texture.ts",
+          "gitBlobSha": "6a044e4c315b502c313ed4bc0684ae17aa4daaaa"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/instanced-attrs.ts",
+          "gitBlobSha": "6e0cea3c50e348ad307c82a97087e02979521f3d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/plot-frame.ts",
+          "gitBlobSha": "4c29cd70b87ec5ed3771b8e8ae3fa422c92715ce"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/program-cache.ts",
+          "gitBlobSha": "75bf1d8e51e2f4f00384eb4b07fa9e8812f21f8d"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/shader-manifest.ts",
+          "gitBlobSha": "ef86cccc16be937e11ad08696eac3c31e4ba0b39"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/webgl/shader-registry.ts",
+          "gitBlobSha": "ab9def499d2b0927614b47eac39af9a3515aae86"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/worker/boot.ts",
+          "gitBlobSha": "8edf86db4fe14e22a531ae132a2b00384e7f65ad"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/worker/dispatch.ts",
+          "gitBlobSha": "e32cdde762b83d1e08cd2a65b171a5514b13c981"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/worker/font-loader.ts",
+          "gitBlobSha": "4c8384abe94ac637781b4dcefe67007310b94363"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/worker/renderer.worker.ts",
+          "gitBlobSha": "eede65a145d36ac83e8e10d29fe982348fe59db7"
+        },
+        {
+          "path": "packages/viewer-charts/src/ts/worker/session-host.ts",
+          "gitBlobSha": "82a41b5b0d93cb25d8a1dcdfd8046b92aeee9a8f"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/alt-axis.spec.ts",
+          "gitBlobSha": "9616ac8e9937690e8fb394b73f9ffea5a1fed2bb"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/chart-type-switch.spec.ts",
+          "gitBlobSha": "3001c27b5ba3c78ba4d2a8ed08d0353833f006fc"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/column-style-colors.spec.ts",
+          "gitBlobSha": "68d0675849b029f70f478c0f09c5ac1a3303efa3"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/command-buttons.spec.ts",
+          "gitBlobSha": "3ad27352f8fe3daf8abe7a4a056b4f4e5069dad6"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/config-defaults.spec.ts",
+          "gitBlobSha": "88ba24e8ea6b27200977eadcb04f2595751c58bb"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/context-leak.spec.ts",
+          "gitBlobSha": "7b69206ae662be53980c0be5393535737aaca589"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/context-pool.spec.ts",
+          "gitBlobSha": "849f50628dc70f9759250e264210395466243e94"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/control-groups.spec.ts",
+          "gitBlobSha": "8a6c052fff91dc14088474045f0fa29b8acd4345"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/duplicate-presize.spec.ts",
+          "gitBlobSha": "63677cd8728d9e51367a7e55b5260f17b5d6585e"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/empty-view.spec.ts",
+          "gitBlobSha": "fc719a7bc27945acbb032c35c6e7bccbe19f61eb"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/events.spec.ts",
+          "gitBlobSha": "6b3ab5a0debf84ca035b2a5f175055c254428c2f"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/facet-mode.spec.ts",
+          "gitBlobSha": "32b86818708e1f710ba4afb51902a83b7df8b74d"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/frame-timing.spec.ts",
+          "gitBlobSha": "d2169532a2664d620614edb6bdc0a24756bda1bf"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/gradient-legend.spec.ts",
+          "gitBlobSha": "51009ac5caadfc3085187fd3fa0ec4c25b68de4d"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/group-pad.spec.ts",
+          "gitBlobSha": "bd238eb576c5ddc8fe696de241b3a112112a1f06"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/helpers.ts",
+          "gitBlobSha": "61c4ec86d9421b6429b623e68bb973863fdb136d"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/hit-test.spec.ts",
+          "gitBlobSha": "f088f3755e9247a26a8fb18018944064de7cf253"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/hover-restore.spec.ts",
+          "gitBlobSha": "bbffe4180cffb05b6bfc56238e2ccb64a6c81c0b"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/last-group-by.spec.ts",
+          "gitBlobSha": "394df30fc33ea477d94fcdd3fe06a257aa6a77db"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/legend-mode.spec.ts",
+          "gitBlobSha": "6bb4a7dd1be7c910b6c1ea1ceb18b8d9048e5dc6"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/map-helpers.ts",
+          "gitBlobSha": "d0824282b60e9d54b14c6235ec3616adc51209fb"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/map-numeric-axes.spec.ts",
+          "gitBlobSha": "a1ee2fc11043ac0b9aa25286370b4f5090c38437"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/map-tile-sources.spec.ts",
+          "gitBlobSha": "555ac16dd2b94fec7c5def0337721145944ab799"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/multi-chart.spec.ts",
+          "gitBlobSha": "3ee7aadba481da5425af7f361b33c49d4f7630b3"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/plugin-config-toggle.spec.ts",
+          "gitBlobSha": "aff33cd10ea10b38eb53baa393ffab6c59ecdd3f"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/rollup-mode-coercion.spec.ts",
+          "gitBlobSha": "cbeb6c9f32dfe010762efe09a36b2ab2586d16c6"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/axis-indicators.spec.ts",
+          "gitBlobSha": "cbc893c2328434d0ccc3fb664d6d4b977680ce09"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/candlestick.spec.ts",
+          "gitBlobSha": "8a8cf730aa52534c63c8b9326b5d867efd0a3c5e"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/categorical-value-axis.spec.ts",
+          "gitBlobSha": "8d5ad302959657dc86fc5705ec668363f7b1bcd0"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/config-defaults.spec.ts",
+          "gitBlobSha": "746ddb6d537579d453294bece4063b75c3f1bfa5"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/datetime-subsecond.spec.ts",
+          "gitBlobSha": "194f45f0a006d701f842f264ce1ac7f58b23ac6c"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/gradient-heatmap.spec.ts",
+          "gitBlobSha": "29291ca06f988b0996f043ab45fa4fac63927fd5"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/group-pad.spec.ts",
+          "gitBlobSha": "c962cd32a83c864149b68aa8a256a9edb428270b"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/heatmap.spec.ts",
+          "gitBlobSha": "c5efe65321e37f75b973f3e3d62522853808d83a"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/line.spec.ts",
+          "gitBlobSha": "81e5208e79f82921be7804b1957c2977de27ef27"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/numeric-axis.spec.ts",
+          "gitBlobSha": "bb1a068a52684ff83870f6d0cd287dd71f3e6fa2"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/pan.spec.ts",
+          "gitBlobSha": "127f4be82d08249ea13994806b6a79f0fe0243f2"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/regressions.spec.ts",
+          "gitBlobSha": "a88c1b03ef396787665b6278aeef7d1daf1a76c0"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/scatter.spec.ts",
+          "gitBlobSha": "fa61c265f763dcd0e2ec417f207767ab79e49de0"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/sunburst.spec.ts",
+          "gitBlobSha": "2d9992faa9611dfa74d7fec2e401de344856c0f3"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/tooltip-grid.spec.ts",
+          "gitBlobSha": "56cd5a5a0726dfb6aa09ba8d6ebcebb17257df48"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/tooltip.spec.ts",
+          "gitBlobSha": "95629893d7f3f20db016166fbdc5c70c040696cd"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/treemap.spec.ts",
+          "gitBlobSha": "7697fbe53d72651af90d8fdad1b1a1ef70b6ccd2"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/x-bar.spec.ts",
+          "gitBlobSha": "5b44616986d22a5cb0d93e943509555f571df0ec"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/y-area.spec.ts",
+          "gitBlobSha": "09d95a3c40228331fbe201107bcacf8f1c530364"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/y-bar.spec.ts",
+          "gitBlobSha": "4fbba7db1c0e24a0bc0274f0e00ac46be70cd332"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/y-line.spec.ts",
+          "gitBlobSha": "4ee988df2e9f3690e45ea9cfa8073f165236bf1d"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/y-ohlc.spec.ts",
+          "gitBlobSha": "1fd24bcd5b2f382012fc45e2d833a5bb7eb76131"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/y-scatter.spec.ts",
+          "gitBlobSha": "67019aa03f663efac7f8831f4d4c12a9ccc0cdbf"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/snapshot/zoom.spec.ts",
+          "gitBlobSha": "7fe1b593ac44cb8ab03ff705fb584cbf5cb87856"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/tab-stack-activation.spec.ts",
+          "gitBlobSha": "27a083720887da1b51418b3efcc720e6ddbfd6ad"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/tooltip-source-values.spec.ts",
+          "gitBlobSha": "471290702878e2e189c8bec47e2bb6e170f1bcac"
+        },
+        {
+          "path": "packages/viewer-charts/test/ts/xy_symbols.spec.ts",
+          "gitBlobSha": "a3f9ab258cbfbd2d7284916a737aab674b320bfb"
+        },
+        {
+          "path": "packages/viewer-charts/types.d.ts",
+          "gitBlobSha": "208ab4991b93ac0841ffd106f4f40787bae143e5"
+        }
+      ]
+    },
+    {
+      "label": "Grid plugin",
+      "prefix": "packages/viewer-datagrid",
+      "includePattern": "\\.(js|ts|tsx)$",
+      "excludePattern": null,
+      "count": 79,
+      "source": {
+        "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+        "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "packages/viewer-datagrid/index.d.ts",
+          "gitBlobSha": "193cf50164f948b8e70970d8cb10e2dcaa7c4dde"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/color_utils.ts",
+          "gitBlobSha": "46ce5bc11befee8568663d318358d7710cf5a289"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/commands.ts",
+          "gitBlobSha": "aa9eb9f394dcc543b699336e8bd92761de2570c3"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/custom_elements/datagrid.ts",
+          "gitBlobSha": "474223d6da279aa9e5bc1b73ef86e0893af7be08"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/custom_elements/toolbar.ts",
+          "gitBlobSha": "fd6a3db5dd06d94b58a24cd2e5aad956b0e58964"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/data_listener/format_cell.ts",
+          "gitBlobSha": "308ee7ac8f0dbb38329c8fcb5cf1067537f60805"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/data_listener/format_column_header.ts",
+          "gitBlobSha": "1ca2a0eb220894a5cee7c502bf2112a189c37a38"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/data_listener/format_tree_header.ts",
+          "gitBlobSha": "1528599f5a398269ad7e6e113d5b1e7abce75a75"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/data_listener/formatter_cache.ts",
+          "gitBlobSha": "98a0e61cd9453dfe8ac5a7b7f002ad84440463a2"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/data_listener/index.ts",
+          "gitBlobSha": "d394ef8720422b1df088271e199005ff58b9dd08"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/click.ts",
+          "gitBlobSha": "429bfb9413569b48c331e0059da1d8ac73a4f181"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/click/edit_click.ts",
+          "gitBlobSha": "d9f755ec50281fb58a9a0cef0e5a96ff5f7c0a82"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/dispatch_click.ts",
+          "gitBlobSha": "d07bba0228999bcf95f192691bb3d1c945223712"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/edit_focus.ts",
+          "gitBlobSha": "e684add6c950b9c34966736ee70f0c3425a31ec4"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/expand_collapse.ts",
+          "gitBlobSha": "bcf594412478f30797029ad7d2314979f9198197"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/focus.ts",
+          "gitBlobSha": "136d5a2376a02a2ee71b46c38d80bf0c04f9008f"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/header_click.ts",
+          "gitBlobSha": "c1221d3601d2d8d884e00096edfa9b9ea3cf40c2"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/keydown/edit_keydown.ts",
+          "gitBlobSha": "785e1bd1de3a61c80166e5c62fe39ee257160b56"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/select_region.ts",
+          "gitBlobSha": "604dce9a89de4598d2199694ee508844c5a2f83a"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/event_handlers/sort.ts",
+          "gitBlobSha": "a0a4c37cfb4ef6cadcfed7402045cea380a02845"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/get_cell_config.ts",
+          "gitBlobSha": "dc4bb13e50fbc619bfc25552386726740e3adafc"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/index.ts",
+          "gitBlobSha": "1ed452760b037d32e562c923a62bb9176ef4037b"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/model/column_overrides.ts",
+          "gitBlobSha": "008c273daa9f958b8f0d177094b8a3adbd95ecce"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/model/column_path_area.ts",
+          "gitBlobSha": "41ec98ef90188a7c777f0f35abe9b4c08d482bcb"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/model/create.ts",
+          "gitBlobSha": "a9beaba3185e72f5bbfa082ee0a6bc0d594577b0"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/model/index.ts",
+          "gitBlobSha": "227430f8fa067dce3b50e3ae038e30367965d537"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/model/meta_columns.ts",
+          "gitBlobSha": "2ce964cedb57d99ff73c16244e39fde31c1090a1"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/model/toolbar.ts",
+          "gitBlobSha": "4c93ea1eb707e3b19102274682efaa59f85ac932"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/activate.ts",
+          "gitBlobSha": "ff53efeb55cae8668b3063a6aed666e8b81dcddd"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/column_config_schema.ts",
+          "gitBlobSha": "a9914048908691dc8f112aa9214ca1326377f291"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/draw.ts",
+          "gitBlobSha": "2ab178b13d2435251da2ef2574fb511c525cdba4"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/hit_test.ts",
+          "gitBlobSha": "bce8ddc215b55f294eca6828b5fc8559e2906748"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/plugin_config_schema.ts",
+          "gitBlobSha": "e7a91941b72b2682de055b2fb05ed5b5318454ee"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/restore.ts",
+          "gitBlobSha": "334ca6942384a82e91dcc54b800ea56bc40a9274"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/plugin/save.ts",
+          "gitBlobSha": "91dcb92a5bde96762efb42442273c90246657fc9"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/body.ts",
+          "gitBlobSha": "fba94d4a86261c1bcd4b79767f9aec60a0630d0e"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/border_model.ts",
+          "gitBlobSha": "dc393338a26879caf44ec15c531034d7cc8d14b1"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/column_alignment.ts",
+          "gitBlobSha": "e4851fa139f83de27966b00439bd865314ee88ff"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/column_header.ts",
+          "gitBlobSha": "f61558626518a6f35c27be7f465a101598b377e3"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/consolidated.ts",
+          "gitBlobSha": "85ea4279f6f732dfc5aec6cc772e66cead32507f"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/editable.ts",
+          "gitBlobSha": "0b981f17f66f891cae287715e2f18649c36dcb89"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/focus.ts",
+          "gitBlobSha": "0a1c56c4d9e0e5453e8c5452a259893094f65a62"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/group_header.ts",
+          "gitBlobSha": "89a77d4a95bd89f459aa2548f2ccf3f78f745759"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/table_cell/boolean.ts",
+          "gitBlobSha": "3cf336469f4b22926c975479943ea5b9e58c232f"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/table_cell/cell_flash.ts",
+          "gitBlobSha": "ae4d5b05ea63fdbc3bbc51dc0035b87d38db6006"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/table_cell/datetime.ts",
+          "gitBlobSha": "616019039fcbcc6e9f62cc6ba46c5084a7bc0f5c"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/table_cell/numeric.ts",
+          "gitBlobSha": "c301a9042ea875e999bf6b8d6adf2fba3ed572a6"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/table_cell/row_header.ts",
+          "gitBlobSha": "e869115d2bcc067bab1f7701ace0c40924812ea5"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/table_cell/string.ts",
+          "gitBlobSha": "c0b4913dab6c4e241e60ad6ee88d8bf187cd5602"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/style_handlers/types.ts",
+          "gitBlobSha": "b9ac4c1b2ae8d192857c674cf220f389cd0ca555"
+        },
+        {
+          "path": "packages/viewer-datagrid/src/ts/types.ts",
+          "gitBlobSha": "0f68c369b2a973622b296de4f3d4dd152f4fba2f"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/activation.spec.ts",
+          "gitBlobSha": "1698a2076d05072603339a383d1e6dcbb558630d"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/border_model.spec.ts",
+          "gitBlobSha": "7c7c8d5c645a6fe3f5ec9296bd6f8e62d72fcf7b"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/column_config_validation.spec.ts",
+          "gitBlobSha": "662dd3892e34f59f79cdd4a02154aea375e4fe54"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/column_settings.spec.ts",
+          "gitBlobSha": "ce184ca90119315a4851adfd9abcee0446ac8842"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/column_size_override.spec.ts",
+          "gitBlobSha": "9808ae7cdbab8eeb1a226fca8d7e065851408f63"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/column_style.spec.ts",
+          "gitBlobSha": "c61247f86c992f48a6013691f51cec0fda3ffd14"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/command_buttons.spec.ts",
+          "gitBlobSha": "558e10fcdbb5826dccacfd3c398100c322a3d1da"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/config_defaults.spec.ts",
+          "gitBlobSha": "02e4076dccf92afa0aef3c405fac58a7b6f8b186"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/control_groups.spec.ts",
+          "gitBlobSha": "e9d9132d8835587cdaa2460e0b33917df6141a87"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/dispatch_gating.spec.ts",
+          "gitBlobSha": "3e3b0c608267c59697a81dfb5fd30767a2de3d07"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/global_filter_deselect.spec.ts",
+          "gitBlobSha": "9322fd9e1470d370bb23ef9db572e23b306e4046"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/header_recycling.spec.ts",
+          "gitBlobSha": "40b704d84b23fd47812a4449784eb72f6378829f"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/hit_test.spec.ts",
+          "gitBlobSha": "593373a91d92ba159ee6ca357df085a3c7a84837"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/null_group_by.spec.ts",
+          "gitBlobSha": "77cc44aa5061e21b7a90bb1cd0bd0e23a3c2f339"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/number_string_format.spec.ts",
+          "gitBlobSha": "e24ee58bce89202299defc5a75a7ee6546550828"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/plugin_config_options.spec.ts",
+          "gitBlobSha": "9f12c3b45f53d6b9f85bfef7e230ae9c66d68fc4"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/presize_stability.spec.ts",
+          "gitBlobSha": "65adc3fa0d0b33e85b2438800c65935c10d07412"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/restyle.spec.ts",
+          "gitBlobSha": "11d8aaa00c1258002717b0f41a45085b09a4d08b"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/row_tree_selection.spec.ts",
+          "gitBlobSha": "8a3019779a0741e7ad6cba5baef41f7ffddb2783"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/scroll.spec.ts",
+          "gitBlobSha": "bb81f12ba50a8fe931ecfcb8a0a4ebf7f793ab52"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/select_row_tree_filters.spec.ts",
+          "gitBlobSha": "edde07aacc841d8a4f67fe8288165f7d4d361434"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/split_by_format.spec.ts",
+          "gitBlobSha": "beb10ac0c18c0343ce7493efde6d224de98ebce7"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/split_rollup_mode.spec.ts",
+          "gitBlobSha": "e25b390891b1b8f71009b48ed1574876d8b388cb"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/superstore.spec.ts",
+          "gitBlobSha": "3b8d63ad4ddd2e0976f4222db7ef19f94b0bb8b9"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/transactional_restore.spec.ts",
+          "gitBlobSha": "72b8d9daa9a9bfd67c8845b82d66b0ac89a7e853"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/tree_expand_state.spec.ts",
+          "gitBlobSha": "4da087f832f0d825588dbd948af3b61614ddd599"
+        },
+        {
+          "path": "packages/viewer-datagrid/test/js/window_group_by.spec.ts",
+          "gitBlobSha": "0ee7568d2e4dd86bb68c7c07fb1e5dea66c52306"
+        },
+        {
+          "path": "packages/viewer-datagrid/types.d.ts",
+          "gitBlobSha": "8d702d12eb620bdea62e41d410a63c52ec11bc66"
+        }
+      ]
+    }
+  ],
+  "claim": {
+    "id": "CHART-1",
+    "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+    "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+    "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+    "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+  }
+}

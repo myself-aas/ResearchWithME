@@ -1,0 +1,188 @@
+{
+  "title": "n8n review: workflow execution and license limits",
+  "reviewedRepository": "https://github.com/n8n-io/n8n",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+  "retrievedAt": "2026-11-20T22:54:22.796590+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+    "truncated": false,
+    "returnedEntries": 43871,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/README.md",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/README.md?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "2d2053d58750e70ca43f946ab75a6ec5d532f87c",
+      "bytes": 3996
+    },
+    {
+      "id": "S2",
+      "path": "packages/cli/src/workflow-runner.ts",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/packages/cli/src/workflow-runner.ts?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "475965c635740374c39f1128d876732bceebf49d",
+      "bytes": 38455
+    },
+    {
+      "id": "S3",
+      "path": "packages/core/src/execution-engine/workflow-execute.ts",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/packages/core/src/execution-engine/workflow-execute.ts?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "a2552d4465cf6e95a0f946f77079299f5e67dee2",
+      "bytes": 108724
+    },
+    {
+      "id": "S4",
+      "path": "LICENSE.md",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE.md",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/LICENSE.md?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "f85f59baa906530c26cee26e0c9ddd6bd5f86dbd",
+      "bytes": 4445
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE_EE.md",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE_EE.md",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/LICENSE_EE.md?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "b47966a6c05809c90723aa4beaf47cbbd34fac1b",
+      "bytes": 1879
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes a fair-code visual workflow platform with custom code.",
+      "sourceId": "S1",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/README.md",
+      "locator": "lines 3–16; lines 49–59",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Integration counts and enterprise readiness were not independently verified."
+    },
+    {
+      "id": "C2",
+      "claim": "The runner branches between enqueueExecution and runMainProcess based on mode and manual offload settings.",
+      "sourceId": "S2",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts",
+      "locator": "lines 551–580",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not a full queue, persistence or failover audit."
+    },
+    {
+      "id": "C3",
+      "claim": "The retry helper has conditional retry eligibility and bounded attempt/wait values.",
+      "sourceId": "S3",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts",
+      "locator": "lines 1872–1902",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Helper inspected, not a proof of all runtime retry paths."
+    },
+    {
+      "id": "C4",
+      "claim": "The Sustainable Use License restricts permitted purposes and distribution.",
+      "sourceId": "S4",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE.md",
+      "locator": "lines 3–14; lines 24–35",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No legal advice or determination for a particular business model."
+    },
+    {
+      "id": "C5",
+      "claim": "Enterprise-marked code has separately conditioned production rights.",
+      "sourceId": "S5",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE_EE.md",
+      "locator": "lines 1–18",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No feature-entitlement map or enterprise contract review."
+    },
+    {
+      "id": "C6",
+      "claim": "Workflow retries require application-side duplicate-effect testing.",
+      "sourceId": "S3",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts",
+      "locator": "lines 1872–1902",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No connector or external API was executed."
+    }
+  ],
+  "chartInventory": {
+    "title": "n8n — selected source-file map",
+    "reviewedCommit": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Workflow model",
+        "prefix": "packages/workflow/src",
+        "includePattern": "\\.ts$",
+        "excludePattern": null,
+        "count": 141,
+        "source": {
+          "url": "https://api.github.com/repos/n8n-io/n8n/git/trees/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce?recursive=1",
+          "treeSha": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Execution core",
+        "prefix": "packages/core/src",
+        "includePattern": "\\.ts$",
+        "excludePattern": null,
+        "count": 264,
+        "source": {
+          "url": "https://api.github.com/repos/n8n-io/n8n/git/trees/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce?recursive=1",
+          "treeSha": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "CLI services",
+        "prefix": "packages/cli/src",
+        "includePattern": "\\.ts$",
+        "excludePattern": null,
+        "count": 4424,
+        "source": {
+          "url": "https://api.github.com/repos/n8n-io/n8n/git/trees/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce?recursive=1",
+          "treeSha": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Base nodes",
+        "prefix": "packages/nodes-base/nodes",
+        "includePattern": "\\.ts$",
+        "excludePattern": null,
+        "count": 5038,
+        "source": {
+          "url": "https://api.github.com/repos/n8n-io/n8n/git/trees/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce?recursive=1",
+          "treeSha": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

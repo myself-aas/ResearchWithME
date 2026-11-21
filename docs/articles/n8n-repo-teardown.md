@@ -1,0 +1,106 @@
+# n8n review: workflow execution and license limits
+
+**By Ashif Ahmed Shuvo** · Repository review · Source inspection: 20 November 2026
+
+**Category:** GitHub Repo Teardowns · **Format:** Repo Teardown · **Publication type:** review · **Status:** local unpublished draft
+
+> Summary: n8n repository review of execution routing, node retries and source-available licensing, with clear limits on reliability and production claims.
+
+### Key findings
+- The workflow runner distinguishes queued and main-process execution.
+- The inspected node retry helper contains eligibility rules and bounded defaults.
+- n8n is source-available under restricted terms, not interchangeable with MIT or Apache licensing.
+
+## Review question and scope
+
+What sits behind the workflow canvas, and which execution and licensing assumptions need checking? This review is for automation engineers and teams considering internal workflow infrastructure. It examines [n8n-io/n8n](https://github.com/n8n-io/n8n) at commit `a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce`, a pinned **default-branch source snapshot, not a release tag**. Findings apply to that snapshot rather than every packaged or hosted edition.
+
+## Bottom line: treat the canvas as executable infrastructure
+
+n8n is worth evaluating for teams that want visual automation while retaining custom code. The README describes a fair-code platform combining a visual canvas, JavaScript or Python and self-hosted or hosted deployment. Its integration counts and production-readiness language are upstream claims; this inspection neither inventories every connector nor validates enterprise controls. [1](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/README.md#L3-L59)
+
+The adoption question is what happens after a workflow looks correct on the canvas. Routing, retries, credentials and licensing remain engineering decisions. This review looks at the runner and one retry helper rather than mistaking a quick-start screenshot for a reliability assessment.
+
+## Execution routing is not one universal path
+
+The runner computes `shouldEnqueue` using the configured queue mode, whether an execution is manual and the manual-offload environment setting. It then calls `enqueueExecution` or `runMainProcess`. This is a concrete reason to test the actual deployed execution mode instead of assuming that a successful manual editor run demonstrates worker execution behavior. [2](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts#L551-L580)
+
+The source also comments that the main process owns the HTTP response in the inspected streaming path. That observation does not establish webhook latency or queue durability. My evaluation recommendation is to trace a request through the intended mode and record which process owns response completion, persistence and cancellation. Those are follow-up questions, not verified guarantees. [2](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts#L551-L580)
+
+## Retry configuration does not make a business action atomic
+
+The node retry helper returns a single attempt with no wait when `retryOnFail` is not true or the execution resumes with the inspected sub-workflow error marker. Otherwise it clamps attempt count and wait values; the source expressions bound attempts between two and five, defaulting to three through their fallback expression. A separate wait helper checks cancellation around its sleep. [3](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts#L1872-L1902)
+
+That is useful implementation detail, but it must not become “all failed workflows retry three times.” Eligibility and execution context matter, and this review did not trace every caller or connector. Nor does repeating a node prove that an external action happens once. A timed-out request may already have created a ticket or sent a notification. My recommended acceptance test records external operation IDs and deliberately retries around ambiguous responses. [3](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts#L1872-L1902)
+
+| Concern | Static evidence | Unresolved adoption question |
+| --- | --- | --- |
+| Manual versus queued run | Explicit routing condition | Does the production path behave like the editor trial? |
+| Node failure | Conditional retry budget | Is the external operation safe to repeat? |
+| Cancellation | Wait helper checks cancellation | What happens to already-issued external requests? |
+| Access and credentials | README positions enterprise features | Which controls exist in the selected edition and configuration? |
+
+## Source available is not unrestricted reuse
+
+The root license explicitly excludes enterprise-marked files and directories from the Sustainable Use License, preserves third-party terms and restricts use to the stated internal business, non-commercial or personal purposes. It also restricts distribution. These are meaningful differences from an unrestricted permissive software license. [4](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE.md#L3-L35)
+
+The enterprise license separately conditions production use on valid corresponding enterprise licensing, while allowing development and testing under its stated terms. This review does not determine whether a particular embedded product, hosted service or redistribution plan is permitted. That requires reviewing the exact use and obtaining legal or licensor clarification where needed. [5](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE_EE.md#L1-L18)
+
+I would shortlist n8n for internal automation when the team can own external side effects, least-privilege credentials and workflow change review. I would pause any plan that assumes repository visibility automatically permits resale, or that visual execution removes the need for failure testing. No self-hosted installation, connector execution, credential handling assessment or queue failover experiment was performed here.
+
+<!-- review-source-map:start -->
+## Source map: where to inspect next
+
+Workflow definitions, the execution engine, CLI services and base-node implementations are different investigation surfaces. The base-node root includes helpers and tests as well as node implementations; its file count is not an integration count.
+
+```chart
+type: bar
+layout: vertical
+title: n8n — selected source-file map
+caption: Static file counts in selected roots at commit a857c50bad7e. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.
+x: Selected root
+y: Files
+y-scale: linear
+series: Matching files
+notes: Counts start at zero. No smoothing or animation. File counts are not benchmarks, test coverage, integrations, product quality or a whole-repository share.
+Workflow model: 141
+Execution core: 264
+CLI services: 4424
+Base nodes: 5038
+```
+
+**Counting method and text equivalent.** Each value counts tracked Git blob paths under the exact root below, filtered by its include/exclude expression. Matching tests, declarations and generated files remain included unless explicitly excluded. No file contents were executed or benchmarked; submodules are not expanded. This is a deliberately selected reading map, not a complete repository breakdown.
+
+| Selected root | Matching files | Include / exclude expression |
+| --- | ---: | --- |
+| `packages/workflow/src` | 141 | `\.ts$` / no additional exclusion |
+| `packages/core/src` | 264 | `\.ts$` / no additional exclusion |
+| `packages/cli/src` | 4424 | `\.ts$` / no additional exclusion |
+| `packages/nodes-base/nodes` | 5038 | `\.ts$` / no additional exclusion |
+
+**Provenance:** commit `a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce`; [Git tree 1](https://api.github.com/repos/n8n-io/n8n/git/trees/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce?recursive=1). Every counted path, blob identifier and selector is retained in the review's `chart-inventory.json` and can be recounted offline. Only complete tree responses are used for these chart groups.
+
+**Decision checkpoint.** Validate the selected connector and execution mode together. A broad nodes directory cannot compensate for an unsafe retry at the business API boundary.
+<!-- review-source-map:end -->
+
+## What can a reader inspect or reproduce?
+
+This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+
+For a next-stage evaluation:
+
+1. Compare manual and production queue paths using a synthetic workflow, including cancellation and worker interruption.
+2. Simulate an ambiguous external response and verify duplicate prevention, retry eligibility and error reporting.
+3. Review the exact license and feature boundary for internal use, embedding, redistribution or a hosted offering before adoption.
+
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/n8n-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+
+Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+
+## References
+
+1. [1](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/README.md#L3-L59) — n8n-io/n8n, `README.md`, commit `a857c50bad7e`; locators: L3–L16, L49–L59. Retrieved 20 November 2026.
+2. [2](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts#L551-L580) — n8n-io/n8n, `packages/cli/src/workflow-runner.ts`, commit `a857c50bad7e`; locators: L551–L580. Retrieved 20 November 2026.
+3. [3](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts#L1872-L1902) — n8n-io/n8n, `packages/core/src/execution-engine/workflow-execute.ts`, commit `a857c50bad7e`; locators: L1872–L1902. Retrieved 20 November 2026.
+4. [4](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE.md#L3-L35) — n8n-io/n8n, `LICENSE.md`, commit `a857c50bad7e`; locators: L3–L14, L24–L35. Retrieved 20 November 2026.
+5. [5](https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE_EE.md#L1-L18) — n8n-io/n8n, `LICENSE_EE.md`, commit `a857c50bad7e`; locators: L1–L18. Retrieved 20 November 2026.

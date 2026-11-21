@@ -1,0 +1,36 @@
+{
+  "scope": "Local draft and actual metadata helper execution; no live crawl or ranking measurements.",
+  "titleCharacters": 51,
+  "summaryCharacters": 152,
+  "metadata": {
+    "title": "Apache Airflow 3.4 review: orchestration trade-offs",
+    "description": "Apache Airflow 3.4 review: inspect DAG scheduling, executor trade-offs, retry-safe tasks, deployment needs, and trust boundaries. No benchmarks claimed.",
+    "alternates": {
+      "canonical": "/post/apache-airflow-repo-teardown"
+    },
+    "openGraph": {
+      "title": "Apache Airflow 3.4 review: orchestration trade-offs | reme",
+      "description": "Apache Airflow 3.4 review: inspect DAG scheduling, executor trade-offs, retry-safe tasks, deployment needs, and trust boundaries. No benchmarks claimed.",
+      "url": "https://researchwith.me/post/apache-airflow-repo-teardown",
+      "siteName": "reme",
+      "type": "article",
+      "images": [
+        {
+          "url": "https://researchwith.me/opengraph-image",
+          "width": 1200,
+          "height": 630,
+          "alt": "Apache Airflow 3.4 review: orchestration trade-offs | reme"
+        }
+      ]
+    },
+    "twitter": {
+      "card": "summary_large_image",
+      "title": "Apache Airflow 3.4 review: orchestration trade-offs | reme",
+      "description": "Apache Airflow 3.4 review: inspect DAG scheduling, executor trade-offs, retry-safe tasks, deployment needs, and trust boundaries. No benchmarks claimed.",
+      "images": [
+        "https://researchwith.me/opengraph-image"
+      ]
+    }
+  },
+  "liveVerified": false
+}

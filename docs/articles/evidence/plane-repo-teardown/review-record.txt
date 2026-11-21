@@ -1,0 +1,32 @@
+Plane review: project model and self-hosting costs
+UNPUBLISHED — human review pending
+
+Audience: engineering teams evaluating issue tracking, cycles and project migration
+Question: How much infrastructure and data-model commitment sits behind a self-hosted project tracker?
+Version: Default-branch source snapshot (preview); not a release review
+Commit: da21a8ff8b4b0a1d7bfcca72eb184a13233bb143
+Evidence: github-snapshot.json; 5 primary files, 6 claim records with retained numbered excerpts.
+
+CITABLE handoff (human decisions, not automated approval)
+C: Check each consequential assertion against the claim ledger; recommendations are analysis.
+I: Verify exact pinned versions and excerpt context.
+T: Keep product, edition, default-branch and runtime distinctions.
+A: Review answer-first conclusions and adoption criteria for fairness.
+B: References resolve to the inspected commit, not moving branch links.
+L: Excerpt ranges and source locators retained locally.
+E: Test reader HTML and Markdown after CMS staging; no invented JSON-LD in body.
+
+Verification questions
+- Migrate a synthetic project containing archived, triage and draft items, parent links, assignees and attachments; reconcile counts and relationships.
+- Exercise concurrent issue creation and any bulk-import path without assuming one inspected lock covers every path.
+- Stage a version upgrade and a database-plus-upload restore; verify workspace and attachment permissions with separate test users.
+
+Scope: Static inspection only. No upstream install, execution, tests, benchmark, security test, CMS write, deployment or publication.
+License: Summaries identify source terms only; no complete dependency/license audit or legal advice.
+SEO/GEO/AEO: Descriptive title and summary, answer-first sections, traceable entities/commit, reference locators and standalone prose. No indexing or AI-citation guarantee. See batch SEO audit.
+
+Chart revision — 20 November 2026
+One Recharts source-file map now accompanies this draft. chart-inventory.json retains every counted blob path, selector, complete-tree provenance, CHART-1 claim and limitations; public inspection record includes only the aggregate chart record, not the member list.
+Interpretation: The API and the main, admin, public-space and live application roots expose distinct source-reading surfaces. API counts use Python; UI/live counts use TypeScript and TSX. They are file counts, not normalized engineering effort or runtime service weights.
+Decision checkpoint: Use this map to assign investigation owners for migration, administration and public access. Approve a trial on restored data and verified permissions, not on the relative size of the frontend.
+Validation: Actual parser, no-JS/loading table and 360px SVG rendering tested in targeted suites. Production/mobile browser, live schema, SEO outcomes and full-app build remain unverified. See repository-review-charts-audit.md.

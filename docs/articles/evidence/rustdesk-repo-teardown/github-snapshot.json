@@ -1,0 +1,192 @@
+{
+  "reviewedRepository": "https://github.com/rustdesk/rustdesk",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+  "retrievedAt": "2026-11-20T22:54:22.055909+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "treeScope": {
+    "sha": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+    "truncated": false,
+    "returnedEntries": 1322,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/README.md?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "6b8fd74f81af89fbae3801878d82e79db5cc15a0",
+      "bytes": 10008,
+      "excerpts": [
+        {
+          "startLine": 11,
+          "endLine": 20,
+          "text": "> [!Caution]\n> **Misuse Disclaimer:** <br>\n> The developers of RustDesk do not condone or support any unethical or illegal use of this software. Misuse, such as unauthorized access, control or invasion of privacy, is strictly against our guidelines. The authors are not responsible for any misuse of the application.\n\n\nChat with us: [Discord](https://discord.gg/nDceKgxnkV) | [Twitter](https://twitter.com/rustdesk) | [Reddit](https://www.reddit.com/r/rustdesk) | [YouTube](https://www.youtube.com/@rustdesk)\n\n[![RustDesk Server Pro](https://img.shields.io/badge/RustDesk%20Server%20Pro-Advanced%20Features-blue)](https://rustdesk.com/pricing.html)\n\nYet another remote desktop solution, written in Rust. Works out of the box with no configuration required. You have full control of your data, with no concerns about security. You can use our rendezvous/relay server, [set up your own](https://rustdesk.com/server), or [write your own rendezvous/relay server](https://github.com/rustdesk/rustdesk-server-demo)."
+        },
+        {
+          "startLine": 39,
+          "endLine": 58,
+          "text": "## Dependencies\n\nDesktop versions use Flutter or Sciter (deprecated) for GUI. This tutorial is for Sciter only, since it is easier and more friendly to start. Check out our [CI](https://github.com/rustdesk/rustdesk/blob/master/.github/workflows/flutter-build.yml) for building the Flutter version.\n\nPlease download Sciter dynamic library yourself.\n\n[Windows](https://raw.githubusercontent.com/c-smile/sciter-sdk/master/bin.win/x64/sciter.dll) |\n[Linux](https://raw.githubusercontent.com/c-smile/sciter-sdk/master/bin.lnx/x64/libsciter-gtk.so) |\n[macOS](https://raw.githubusercontent.com/c-smile/sciter-sdk/master/bin.osx/libsciter.dylib)\n\n## Raw Steps to build\n\n- Prepare your Rust development env and C++ build env\n\n- Install [vcpkg](https://github.com/microsoft/vcpkg), and set `VCPKG_ROOT` env variable correctly\n\n  - Windows: vcpkg install libvpx:x64-windows-static libyuv:x64-windows-static opus:x64-windows-static aom:x64-windows-static\n  - Linux/macOS: vcpkg install libvpx libyuv opus aom\n\n- run `cargo run`"
+        },
+        {
+          "startLine": 159,
+          "endLine": 171,
+          "text": "## File Structure\n\n- **[libs/hbb_common](https://github.com/rustdesk/hbb_common)**: video codec, config, tcp/udp wrapper, and some other utility functions shared with the server\n- **[libs/base](https://github.com/rustdesk/rustdesk/tree/master/libs/base)**: protobuf, fs functions for file transfer, keyboard and platform code used only by this app\n- **[libs/scrap](https://github.com/rustdesk/rustdesk/tree/master/libs/scrap)**: screen capture\n- **[libs/enigo](https://github.com/rustdesk/rustdesk/tree/master/libs/enigo)**: platform specific keyboard/mouse control\n- **[libs/clipboard](https://github.com/rustdesk/rustdesk/tree/master/libs/clipboard)**: file copy and paste implementation for Windows, Linux, macOS.\n- **[src/ui](https://github.com/rustdesk/rustdesk/tree/master/src/ui)**: obsolete Sciter UI (deprecated)\n- **[src/server](https://github.com/rustdesk/rustdesk/tree/master/src/server)**: audio/clipboard/input/video services, and network connections\n- **[src/client.rs](https://github.com/rustdesk/rustdesk/tree/master/src/client.rs)**: start a peer connection\n- **[src/rendezvous_mediator.rs](https://github.com/rustdesk/rustdesk/tree/master/src/rendezvous_mediator.rs)**: Communicate with [rustdesk-server](https://github.com/rustdesk/rustdesk-server), wait for remote direct (TCP hole punching) or relayed connection\n- **[src/platform](https://github.com/rustdesk/rustdesk/tree/master/src/platform)**: platform specific code\n- **[flutter](https://github.com/rustdesk/rustdesk/tree/master/flutter)**: Flutter code for desktop and mobile"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "path": "src/rendezvous_mediator.rs",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/src/rendezvous_mediator.rs?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "7e7ea5f0cccb01220017f66f13566b204ad732a8",
+      "bytes": 84457,
+      "excerpts": [
+        {
+          "startLine": 52,
+          "endLine": 60,
+          "text": "// Relays this peer put in its punch replies, from its `relay-server` option or a rendezvous\n// server. A genuine RequestRelay echoes one back; this bounds where a request can send this peer,\n// it does not authenticate the request.\nstatic REPORTED_RELAYS: std::sync::Mutex<VecDeque<(String, Instant)>> =\n    std::sync::Mutex::new(VecDeque::new());\nconst MAX_REPORTED_RELAYS: usize = 32;\n// Far longer than a controller's direct attempts before it asks for the relay, yet a relay\n// dropped from the configuration stops being accepted.\nconst REPORTED_RELAY_TTL: Duration = Duration::from_secs(600);"
+        },
+        {
+          "startLine": 62,
+          "endLine": 78,
+          "text": "fn remember_reported_relay(relay_server: &str, now: Instant) {\n    let relay_server = check_port(relay_server, config::RELAY_PORT);\n    let mut relays = REPORTED_RELAYS.lock().unwrap();\n    relays.retain(|(r, at)| {\n        *r != relay_server && now.saturating_duration_since(*at) < REPORTED_RELAY_TTL\n    });\n    if relays.len() >= MAX_REPORTED_RELAYS {\n        relays.pop_front();\n    }\n    relays.push_back((relay_server, now));\n}\n\nfn is_reported_relay(relay_server: &str, now: Instant) -> bool {\n    let relay_server = check_port(relay_server, config::RELAY_PORT);\n    REPORTED_RELAYS.lock().unwrap().iter().any(|(r, at)| {\n        *r == relay_server && now.saturating_duration_since(*at) < REPORTED_RELAY_TTL\n    })"
+        },
+        {
+          "startLine": 94,
+          "endLine": 103,
+          "text": "const ICE_DEDUP_WINDOW: usize = 256;\n/// Answerers between an offer and an open data channel. An offer arrives before any password or\n/// accept prompt, and each one builds a peer connection that binds a socket per interface and\n/// runs ICE for up to `CONNECT_TIMEOUT`, where a forged TCP punch costs one connect. Past this\n/// many the offer is declined, and the controller carries on over punch and relay as it does\n/// for a peer without WebRTC. A guard against pathological setup concurrency, above what\n/// legitimate controllers reach at once in the seconds ICE takes; once the channel is open the\n/// connection is one like any other, and the connection layer bounds unauthenticated\n/// connections in number and in time for every transport alike.\nconst MAX_WEBRTC_ANSWERERS: usize = 16;"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "path": "Cargo.toml",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/Cargo.toml",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/Cargo.toml?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "31cfcd446ccb4b9e1d9fab31499fc966977a35e9",
+      "bytes": 12299,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 13,
+          "text": "[package]\nname = \"rustdesk\"\nversion = \"1.5.3\"\nauthors = [\"rustdesk <info@rustdesk.com>\"]\nedition = \"2021\"\nbuild= \"build.rs\"\ndescription = \"RustDesk Remote Desktop\"\ndefault-run = \"rustdesk\"\nrust-version = \"1.75\"\n\n[lib]\nname = \"librustdesk\"\ncrate-type = [\"cdylib\", \"staticlib\", \"rlib\"]"
+        },
+        {
+          "startLine": 52,
+          "endLine": 58,
+          "text": "[dependencies]\nasync-trait = \"0.1\"\nscrap = { path = \"libs/scrap\", features = [\"wayland\"] }\nhbb_common = { path = \"libs/hbb_common\", features = [\"webrtc\"] }\nbase = { path = \"libs/base\" }\nserde_derive = \"1.0\"\nserde = \"1.0\""
+        },
+        {
+          "startLine": 93,
+          "endLine": 103,
+          "text": "[target.'cfg(not(target_os = \"linux\"))'.dependencies]\n# https://github.com/rustdesk/rustdesk/discussions/10197, not use cpal on linux\ncpal = { git = \"https://github.com/rustdesk-org/cpal\", branch = \"osx-screencapturekit\" }\nringbuf = \"0.3\"\n\n[target.'cfg(not(any(target_os = \"android\", target_os = \"ios\")))'.dependencies]\nmac_address = \"1.1\"\nsciter-rs = { git = \"https://github.com/rustdesk-org/rust-sciter\", branch = \"dyn\" }\nsys-locale = \"0.3\"\nenigo = { path = \"libs/enigo\", features = [ \"with_serde\" ] }\nclipboard = { path = \"libs/clipboard\" }"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "path": ".github/workflows/flutter-build.yml",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/.github/workflows/flutter-build.yml",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/.github/workflows/flutter-build.yml?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "081efd377753782a408c5998225599fd2bb15834",
+      "bytes": 135212,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 10,
+          "text": "name: Build the flutter version of the RustDesk\n\non:\n  workflow_call:\n    inputs:\n      upload-artifact:\n        type: boolean\n        default: true\n      upload-tag:\n        type: string"
+        },
+        {
+          "startLine": 131,
+          "endLine": 163,
+          "text": "  generate-bridge:\n    needs: [validate-update-metadata-keys]\n    uses: ./.github/workflows/bridge.yml\n\n  build-RustDeskTempTopMostWindow:\n    needs: [validate-update-metadata-keys]\n    uses: ./.github/workflows/third-party-RustDeskTempTopMostWindow.yml\n    strategy:\n      fail-fast: false\n      matrix:\n        job:\n          - {\n              target: windows-2022,\n              platform: x64,\n            }\n          - {\n              target: windows-11-arm,\n              platform: ARM64,\n            }\n    with:\n      upload-artifact: ${{ inputs.upload-artifact }}\n      target: ${{ matrix.job.target }}\n      configuration: Release\n      platform: ${{ matrix.job.platform }}\n      target_version: Windows10\n\n  build-for-windows-flutter:\n    name: ${{ matrix.job.target }}\n    needs: [build-RustDeskTempTopMostWindow, generate-bridge]\n    runs-on: ${{ matrix.job.os }}\n    strategy:\n      fail-fast: false\n      matrix:"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "path": "LICENCE",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/LICENCE",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/LICENCE?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52",
+      "bytes": 34523,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 12,
+          "text": "                    GNU AFFERO GENERAL PUBLIC LICENSE\n                       Version 3, 19 November 2007\n\n Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>\n Everyone is permitted to copy and distribute verbatim copies\n of this license document, but changing it is not allowed.\n\n                            Preamble\n\n  The GNU Affero General Public License is a free, copyleft license for\nsoftware and other kinds of works, specifically designed to ensure\ncooperation with the community in the case of network server software."
+        },
+        {
+          "startLine": 540,
+          "endLine": 550,
+          "text": "  13. Remote Network Interaction; Use with the GNU General Public License.\n\n  Notwithstanding any other provision of this License, if you modify the\nProgram, your modified version must prominently offer all users\ninteracting with it remotely through a computer network (if your version\nsupports such interaction) an opportunity to receive the Corresponding\nSource of your version by providing access to the Corresponding Source\nfrom a network server at no charge, through some standard or customary\nmeans of facilitating copying of software.  This Corresponding Source\nshall include the Corresponding Source for any work covered by version 3\nof the GNU General Public License that is incorporated pursuant to the"
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes a remote desktop application and a choice of rendezvous/relay infrastructure.",
+      "sourceId": "S1",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md",
+      "locator": "lines 11\u201320; lines 39\u201358; lines 159\u2013171",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Security and data-control marketing is not independently established."
+    },
+    {
+      "id": "C2",
+      "claim": "The mediator tracks relays previously reported by the peer and says that this does not authenticate a request.",
+      "sourceId": "S2",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs",
+      "locator": "lines 52\u201360; lines 62\u201378; lines 94\u2013103",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "A narrow local mechanism, not a vulnerability or security audit."
+    },
+    {
+      "id": "C3",
+      "claim": "Cargo metadata and dependencies show a native application with local libraries and platform-specific dependencies.",
+      "sourceId": "S3",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/Cargo.toml",
+      "locator": "lines 1\u201313; lines 52\u201358; lines 93\u2013103",
+      "evidenceType": "direct configuration observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No build or dependency provenance verification."
+    },
+    {
+      "id": "C4",
+      "claim": "The Flutter workflow includes bridge generation and platform build jobs.",
+      "sourceId": "S4",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/.github/workflows/flutter-build.yml",
+      "locator": "lines 1\u201310; lines 131\u2013163",
+      "evidenceType": "direct configuration observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Workflow definition inspected, no CI run outcome asserted."
+    },
+    {
+      "id": "C5",
+      "claim": "The root license is AGPL v3, including modified network-interaction conditions.",
+      "sourceId": "S5",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/LICENCE",
+      "locator": "lines 1\u201312; lines 540\u2013550",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No legal determination about a specific deployment or derivative work."
+    },
+    {
+      "id": "C6",
+      "claim": "Self-hosting requires separate endpoint authorization and release provenance decisions.",
+      "sourceId": "S1",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md",
+      "locator": "lines 11\u201320; lines 39\u201358; lines 159\u2013171",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No remote session, privilege or cryptographic test performed."
+    }
+  ]
+}

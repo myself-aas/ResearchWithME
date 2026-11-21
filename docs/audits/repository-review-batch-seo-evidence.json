@@ -1,0 +1,357 @@
+{
+  "scope": "Local draft checks and execution of the actual lib/seo.ts pageMetadata helper via Node stripTypeScriptTypes. Proposed route outputs only, not rendered, deployed or indexed pages.",
+  "inspectionDate": "2026-11-20",
+  "liveVerified": false,
+  "reviews": [
+    {
+      "slug": "svelte-repo-teardown",
+      "titleCharacters": 49,
+      "summaryCharacters": 143,
+      "metadata": {
+        "title": "Svelte review: compiler and reactivity trade-offs",
+        "description": "Svelte repository review of compilation, state proxies and browser-only effects, with adoption checks and limits from a pinned source snapshot.",
+        "alternates": {
+          "canonical": "/post/svelte-repo-teardown"
+        },
+        "openGraph": {
+          "title": "Svelte review: compiler and reactivity trade-offs | reme",
+          "description": "Svelte repository review of compilation, state proxies and browser-only effects, with adoption checks and limits from a pinned source snapshot.",
+          "url": "https://researchwith.me/post/svelte-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "Svelte review: compiler and reactivity trade-offs | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "Svelte review: compiler and reactivity trade-offs | reme",
+          "description": "Svelte repository review of compilation, state proxies and browser-only effects, with adoption checks and limits from a pinned source snapshot.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "polars-repo-teardown",
+      "titleCharacters": 46,
+      "summaryCharacters": 137,
+      "metadata": {
+        "title": "Polars review: lazy plans and streaming limits",
+        "description": "Polars repository review of lazy query plans, pushdown and streaming fallbacks, with workload checks rather than unmeasured speed claims.",
+        "alternates": {
+          "canonical": "/post/polars-repo-teardown"
+        },
+        "openGraph": {
+          "title": "Polars review: lazy plans and streaming limits | reme",
+          "description": "Polars repository review of lazy query plans, pushdown and streaming fallbacks, with workload checks rather than unmeasured speed claims.",
+          "url": "https://researchwith.me/post/polars-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "Polars review: lazy plans and streaming limits | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "Polars review: lazy plans and streaming limits | reme",
+          "description": "Polars repository review of lazy query plans, pushdown and streaming fallbacks, with workload checks rather than unmeasured speed claims.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "nats-server-repo-teardown",
+      "titleCharacters": 51,
+      "summaryCharacters": 147,
+      "metadata": {
+        "title": "NATS Server review: retention and delivery controls",
+        "description": "NATS Server repository review of JetStream retention, acknowledgments and resource controls, separating source mechanisms from delivery guarantees.",
+        "alternates": {
+          "canonical": "/post/nats-server-repo-teardown"
+        },
+        "openGraph": {
+          "title": "NATS Server review: retention and delivery controls | reme",
+          "description": "NATS Server repository review of JetStream retention, acknowledgments and resource controls, separating source mechanisms from delivery guarantees.",
+          "url": "https://researchwith.me/post/nats-server-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "NATS Server review: retention and delivery controls | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "NATS Server review: retention and delivery controls | reme",
+          "description": "NATS Server repository review of JetStream retention, acknowledgments and resource controls, separating source mechanisms from delivery guarantees.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "owasp-wstg-repo-teardown",
+      "titleCharacters": 48,
+      "summaryCharacters": 152,
+      "metadata": {
+        "title": "OWASP WSTG review: a method, not a security seal",
+        "description": "OWASP WSTG repository review of testing scope, versioned scenario references and reporting, distinguishing a living guide from a security certification.",
+        "alternates": {
+          "canonical": "/post/owasp-wstg-repo-teardown"
+        },
+        "openGraph": {
+          "title": "OWASP WSTG review: a method, not a security seal | reme",
+          "description": "OWASP WSTG repository review of testing scope, versioned scenario references and reporting, distinguishing a living guide from a security certification.",
+          "url": "https://researchwith.me/post/owasp-wstg-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "OWASP WSTG review: a method, not a security seal | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "OWASP WSTG review: a method, not a security seal | reme",
+          "description": "OWASP WSTG repository review of testing scope, versioned scenario references and reporting, distinguishing a living guide from a security certification.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "posthog-repo-teardown",
+      "titleCharacters": 51,
+      "summaryCharacters": 143,
+      "metadata": {
+        "title": "PostHog review: self-hosting and license boundaries",
+        "description": "PostHog repository review of product architecture, hobby self-hosting and mixed licensing, with deployment and privacy questions left explicit.",
+        "alternates": {
+          "canonical": "/post/posthog-repo-teardown"
+        },
+        "openGraph": {
+          "title": "PostHog review: self-hosting and license boundaries | reme",
+          "description": "PostHog repository review of product architecture, hobby self-hosting and mixed licensing, with deployment and privacy questions left explicit.",
+          "url": "https://researchwith.me/post/posthog-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "PostHog review: self-hosting and license boundaries | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "PostHog review: self-hosting and license boundaries | reme",
+          "description": "PostHog repository review of product architecture, hobby self-hosting and mixed licensing, with deployment and privacy questions left explicit.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "n8n-repo-teardown",
+      "titleCharacters": 49,
+      "summaryCharacters": 144,
+      "metadata": {
+        "title": "n8n review: workflow execution and license limits",
+        "description": "n8n repository review of execution routing, node retries and source-available licensing, with clear limits on reliability and production claims.",
+        "alternates": {
+          "canonical": "/post/n8n-repo-teardown"
+        },
+        "openGraph": {
+          "title": "n8n review: workflow execution and license limits | reme",
+          "description": "n8n repository review of execution routing, node retries and source-available licensing, with clear limits on reliability and production claims.",
+          "url": "https://researchwith.me/post/n8n-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "n8n review: workflow execution and license limits | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "n8n review: workflow execution and license limits | reme",
+          "description": "n8n repository review of execution routing, node retries and source-available licensing, with clear limits on reliability and production claims.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "rustdesk-repo-teardown",
+      "titleCharacters": 48,
+      "summaryCharacters": 151,
+      "metadata": {
+        "title": "RustDesk review: connection and build boundaries",
+        "description": "RustDesk repository review of rendezvous and relay boundaries, native build dependencies and remote-access trust, without untested security assurances.",
+        "alternates": {
+          "canonical": "/post/rustdesk-repo-teardown"
+        },
+        "openGraph": {
+          "title": "RustDesk review: connection and build boundaries | reme",
+          "description": "RustDesk repository review of rendezvous and relay boundaries, native build dependencies and remote-access trust, without untested security assurances.",
+          "url": "https://researchwith.me/post/rustdesk-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "RustDesk review: connection and build boundaries | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "RustDesk review: connection and build boundaries | reme",
+          "description": "RustDesk repository review of rendezvous and relay boundaries, native build dependencies and remote-access trust, without untested security assurances.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "plane-repo-teardown",
+      "titleCharacters": 50,
+      "summaryCharacters": 146,
+      "metadata": {
+        "title": "Plane review: project model and self-hosting costs",
+        "description": "Plane repository review of work-item modeling, service topology and self-hosting duties, with migration and authorization questions kept explicit.",
+        "alternates": {
+          "canonical": "/post/plane-repo-teardown"
+        },
+        "openGraph": {
+          "title": "Plane review: project model and self-hosting costs | reme",
+          "description": "Plane repository review of work-item modeling, service topology and self-hosting duties, with migration and authorization questions kept explicit.",
+          "url": "https://researchwith.me/post/plane-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "Plane review: project model and self-hosting costs | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "Plane review: project model and self-hosting costs | reme",
+          "description": "Plane repository review of work-item modeling, service topology and self-hosting duties, with migration and authorization questions kept explicit.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "perspective-repo-teardown",
+      "titleCharacters": 50,
+      "summaryCharacters": 152,
+      "metadata": {
+        "title": "Perspective review: where analytics should execute",
+        "description": "Perspective repository review of browser and server analytics, replication and indexed updates, with data-boundary trade-offs instead of speed rankings.",
+        "alternates": {
+          "canonical": "/post/perspective-repo-teardown"
+        },
+        "openGraph": {
+          "title": "Perspective review: where analytics should execute | reme",
+          "description": "Perspective repository review of browser and server analytics, replication and indexed updates, with data-boundary trade-offs instead of speed rankings.",
+          "url": "https://researchwith.me/post/perspective-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "Perspective review: where analytics should execute | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "Perspective review: where analytics should execute | reme",
+          "description": "Perspective repository review of browser and server analytics, replication and indexed updates, with data-boundary trade-offs instead of speed rankings.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    },
+    {
+      "slug": "apache-superset-repo-teardown",
+      "titleCharacters": 53,
+      "summaryCharacters": 150,
+      "metadata": {
+        "title": "Apache Superset review: BI and operational boundaries",
+        "description": "Apache Superset repository review of BI architecture, metadata, workers and access controls, separating dashboard features from production guarantees.",
+        "alternates": {
+          "canonical": "/post/apache-superset-repo-teardown"
+        },
+        "openGraph": {
+          "title": "Apache Superset review: BI and operational boundaries | reme",
+          "description": "Apache Superset repository review of BI architecture, metadata, workers and access controls, separating dashboard features from production guarantees.",
+          "url": "https://researchwith.me/post/apache-superset-repo-teardown",
+          "siteName": "reme",
+          "type": "article",
+          "images": [
+            {
+              "url": "https://researchwith.me/opengraph-image",
+              "width": 1200,
+              "height": 630,
+              "alt": "Apache Superset review: BI and operational boundaries | reme"
+            }
+          ]
+        },
+        "twitter": {
+          "card": "summary_large_image",
+          "title": "Apache Superset review: BI and operational boundaries | reme",
+          "description": "Apache Superset repository review of BI architecture, metadata, workers and access controls, separating dashboard features from production guarantees.",
+          "images": [
+            "https://researchwith.me/opengraph-image"
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "title": "GTA6-KytyPS5-GTA-6 review: emulator source missing",
+  "reviewedRepository": "EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6",
+  "reviewedCommit": "e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+  "retrievedAt": "2026-11-20T22:30:46.267159+00:00",
+  "method": "Read-only GitHub REST API via gh; no release assets downloaded or executed.",
+  "scope": "Curated inspection record, not raw API responses or a binary/security audit. No account data, access key, or release archive is included.",
+  "tree": {
+    "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf?recursive=1",
+    "truncated": false,
+    "files": [
+      {
+        "path": "LICENSE",
+        "bytes": 1076,
+        "gitBlobSha": "85f57b74bdf0bafb9b5de482c88d1b434793a1b2",
+        "sourceUrl": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/LICENSE?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf"
+      },
+      {
+        "path": "README.md",
+        "bytes": 8017,
+        "gitBlobSha": "0dfeedc5e6ced1bee9a96f3ed4917852cb981ce2",
+        "sourceUrl": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/README.md?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf"
+      },
+      {
+        "path": "metadata/build_manifest_4670.log",
+        "bytes": 152,
+        "gitBlobSha": "ced25f34e83ae148070b343477d964f4effe07ae",
+        "sourceUrl": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/metadata/build_manifest_4670.log?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf"
+      },
+      {
+        "path": "metadata/cache_blob_4670.tmp",
+        "bytes": 1592,
+        "gitBlobSha": "22013a5031804304e81cdaaa44d4fb313d3dbd2f",
+        "sourceUrl": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/metadata/cache_blob_4670.tmp?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf"
+      }
+    ]
+  },
+  "release": {
+    "sourceUrl": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/releases/tags/v1.0.0",
+    "id": 452558744,
+    "tag": "v1.0.0",
+    "publishedAt": "2026-11-20T10:35:15Z",
+    "updatedAt": "2026-11-20T21:09:00Z",
+    "executionDescription": "The game runs on a real PS5, while KittyPS5 streams the video to your PC and sends your controls back to the console.",
+    "executionDescriptionLocator": "Release body, How it works paragraph; quoted, not runtime-verified.",
+    "assets": [
+      {
+        "id": 773352455,
+        "name": "KytyPS5-GTA-6-vX.Y.Z-win64.zip",
+        "bytes": 1815299,
+        "apiReportedDigest": "sha256:76ad033163f10d11d06f1ca29a653eb2cd04a5bc63e7268319f0e43c6ec640b1"
+      }
+    ],
+    "limitation": "Release text and assets are mutable. Asset digests are API-reported, not independently verified by downloading files."
+  },
+  "workflows": {
+    "sourceUrl": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/actions/workflows",
+    "countAtInspection": 0,
+    "limitation": "Current workflow definitions only, not external or historical CI coverage."
+  },
+  "claimLocators": [
+    {
+      "observation": "The pinned tree contains four files and no emulator implementation or build configuration.",
+      "source": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf?recursive=1",
+      "locator": "Complete recursive tree; truncated is false."
+    },
+    {
+      "observation": "The README describes an emulator and modules absent from that tree.",
+      "source": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/README.md?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "locator": "Introduction, Configuration, Architecture, Roadmap."
+    },
+    {
+      "observation": "The tracked manifest declares build success without source-to-artifact build provenance.",
+      "source": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/metadata/build_manifest_4670.log?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "locator": "Entire file, especially Status line."
+    },
+    {
+      "observation": "The license file contains MIT text; no binary authentication is inferred.",
+      "source": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/LICENSE?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "locator": "LICENSE at the reviewed commit."
+    },
+    {
+      "observation": "The credited upstream describes simple PS4 games and PS5 homebrew, not evidence of this repository running GTA VI.",
+      "source": "https://api.github.com/repos/InoriRus/Kyty/contents/README.md?ref=4733b7e1c91b10554a52007903d74dc76c39a230",
+      "locator": "Pinned introductory compatibility statement; context only."
+    }
+  ]
+}

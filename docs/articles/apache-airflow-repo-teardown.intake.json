@@ -1,0 +1,52 @@
+{
+  "bodyFile": "apache-airflow-repo-teardown.md",
+  "cmsBodyFile": "apache-airflow-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/apache-airflow-repo-teardown/inspection-record.json",
+  "workflowState": "local-draft-awaiting-human-review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerificationScope": "Uses the author profile established earlier in this session; no fresh database-state check or credential verification performed for this draft."
+  },
+  "cmsFields": {
+    "title": "Apache Airflow 3.4 review: orchestration trade-offs",
+    "slug": "apache-airflow-repo-teardown",
+    "status": "draft",
+    "subtitle": "What the scheduler enforces, what task authors must guarantee, and which deployment trade-offs remain yours.",
+    "summary": "Apache Airflow 3.4 review: inspect DAG scheduling, executor trade-offs, retry-safe tasks, deployment needs, and trust boundaries. No benchmarks claimed.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "publicationType": "review",
+    "authorId": "ashif-ahmed-shuvo",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "Apache Airflow",
+      "Workflow Orchestration",
+      "DAGs",
+      "Data Engineering",
+      "Distributed Systems",
+      "Repository Audit"
+    ],
+    "keyTakeaways": [
+      "Airflow coordinates workflow tasks; it is not a continuous stream-processing engine.",
+      "The inspected scheduler accounts for executor parallelism and pool capacity before enqueueing tasks.",
+      "Retries do not make external writes exactly-once; tasks need repeatable inputs and retry-safe effects.",
+      "Production database, executor, logs, DAG distribution, and trust boundaries require deliberate choices."
+    ],
+    "readTime": "10 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "Apache Airflow",
+      "url": "https://github.com/apache/airflow",
+      "identifier": "apache/airflow",
+      "meta": "Apache-2.0 · Version 3.4.0 · Commit 619a787ac81e · Inspected 20 Nov 2026"
+    }
+  },
+  "writeBlockers": [
+    "Human source review and final article approval remain pending.",
+    "Deploy and verify publicEvidencePath before publishing the linked article.",
+    "Load cmsBodyFile as content through the authenticated CMS studio; this intake is not an API write request."
+  ]
+}

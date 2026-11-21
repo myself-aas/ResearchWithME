@@ -1,0 +1,76 @@
+{
+  "status": "local-unpublished-drafts",
+  "inspectionDate": "2026-11-20",
+  "reviews": [
+    {
+      "slug": "svelte-repo-teardown",
+      "repository": "sveltejs/svelte",
+      "name": "Svelte",
+      "reviewedCommit": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+      "focus": "Does compiler-led UI development simplify state without hiding lifecycle responsibilities?"
+    },
+    {
+      "slug": "polars-repo-teardown",
+      "repository": "pola-rs/polars",
+      "name": "Polars",
+      "reviewedCommit": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+      "focus": "When does a lazy query engine help, and where do memory assumptions need verification?"
+    },
+    {
+      "slug": "nats-server-repo-teardown",
+      "repository": "nats-io/nats-server",
+      "name": "NATS Server",
+      "reviewedCommit": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "focus": "Which JetStream controls shape retention and delivery, and what must applications still guarantee?"
+    },
+    {
+      "slug": "owasp-wstg-repo-teardown",
+      "repository": "OWASP/wstg",
+      "name": "OWASP WSTG",
+      "reviewedCommit": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+      "focus": "How should a team turn a living security testing guide into a scoped, auditable assessment?"
+    },
+    {
+      "slug": "posthog-repo-teardown",
+      "repository": "PostHog/posthog",
+      "name": "PostHog",
+      "reviewedCommit": "4e10f441e36bc017f350bb7cb41a009089df0df6",
+      "focus": "Does repository access make self-hosting equivalent to the supported hosted product?"
+    },
+    {
+      "slug": "n8n-repo-teardown",
+      "repository": "n8n-io/n8n",
+      "name": "n8n",
+      "reviewedCommit": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "focus": "What sits behind the workflow canvas, and which execution and licensing assumptions need checking?"
+    },
+    {
+      "slug": "rustdesk-repo-teardown",
+      "repository": "rustdesk/rustdesk",
+      "name": "RustDesk",
+      "reviewedCommit": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "focus": "What does owning remote-desktop infrastructure change, and which endpoint responsibilities remain?"
+    },
+    {
+      "slug": "plane-repo-teardown",
+      "repository": "makeplane/plane",
+      "name": "Plane",
+      "reviewedCommit": "da21a8ff8b4b0a1d7bfcca72eb184a13233bb143",
+      "focus": "How much infrastructure and data-model commitment sits behind a self-hosted project tracker?"
+    },
+    {
+      "slug": "perspective-repo-teardown",
+      "repository": "perspective-dev/perspective",
+      "name": "Perspective",
+      "reviewedCommit": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "focus": "Should an interactive analytics table live in the browser, on a server, or in both?"
+    },
+    {
+      "slug": "apache-superset-repo-teardown",
+      "repository": "apache/superset",
+      "name": "Apache Superset",
+      "reviewedCommit": "b44ea299259b3c71065ae2df940a4185da9e64da",
+      "focus": "What must a team operate and secure beyond the dashboard interface?"
+    }
+  ]
+}

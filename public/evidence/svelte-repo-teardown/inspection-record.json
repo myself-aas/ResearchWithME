@@ -1,0 +1,188 @@
+{
+  "title": "Svelte review: compiler and reactivity trade-offs",
+  "reviewedRepository": "https://github.com/sveltejs/svelte",
+  "reviewedVersion": "Default-branch source snapshot (main); not a release review",
+  "reviewedCommit": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+  "retrievedAt": "2026-11-20T22:54:20.750682+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+    "truncated": false,
+    "returnedEntries": 14335,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/README.md",
+      "apiUrl": "https://api.github.com/repos/sveltejs/svelte/contents/README.md?ref=04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+      "gitBlobSha": "7ea71647521ae850fd0933665f94760806ac5b29",
+      "bytes": 1730
+    },
+    {
+      "id": "S2",
+      "path": "packages/svelte/src/compiler/index.js",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/packages/svelte/src/compiler/index.js",
+      "apiUrl": "https://api.github.com/repos/sveltejs/svelte/contents/packages/svelte/src/compiler/index.js?ref=04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+      "gitBlobSha": "6ae91a267e9a444f98c4b09be5d77a72ee60be38",
+      "bytes": 8161
+    },
+    {
+      "id": "S3",
+      "path": "documentation/docs/02-runes/02-$state.md",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/02-%24state.md",
+      "apiUrl": "https://api.github.com/repos/sveltejs/svelte/contents/documentation/docs/02-runes/02-%24state.md?ref=04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+      "gitBlobSha": "b90c71366a840cc95e8b20d3b595ee40be99e2a5",
+      "bytes": 10036
+    },
+    {
+      "id": "S4",
+      "path": "documentation/docs/02-runes/04-$effect.md",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/04-%24effect.md",
+      "apiUrl": "https://api.github.com/repos/sveltejs/svelte/contents/documentation/docs/02-runes/04-%24effect.md?ref=04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+      "gitBlobSha": "de18add08fafb79ab67ef845d789b4171e72d7cb",
+      "bytes": 13677
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE.md",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/LICENSE.md",
+      "apiUrl": "https://api.github.com/repos/sveltejs/svelte/contents/LICENSE.md?ref=04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+      "gitBlobSha": "f872adf738de278e2345516eb1cea30d5451914e",
+      "bytes": 1126
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Svelte describes itself as a compiler for declarative components.",
+      "sourceId": "S1",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/README.md",
+      "locator": "lines 10–18",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Efficiency language is upstream positioning, not a measured comparison."
+    },
+    {
+      "id": "C2",
+      "claim": "The compile entry point validates, parses, analyzes and transforms source.",
+      "sourceId": "S2",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/packages/svelte/src/compiler/index.js",
+      "locator": "lines 17–30; lines 91–110",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Imported phases were not exhaustively audited or executed."
+    },
+    {
+      "id": "C3",
+      "claim": "Array/simple-object state uses deep proxies; destructuring does not preserve a live reactive reference.",
+      "sourceId": "S3",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/02-%24state.md",
+      "locator": "lines 6–24; lines 54–69",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Documentation examples were not run."
+    },
+    {
+      "id": "C4",
+      "claim": "Effects run only in the browser, track synchronous dependencies and support teardown.",
+      "sourceId": "S4",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/04-%24effect.md",
+      "locator": "lines 6–8; lines 32–44; lines 75–83",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No hydration or lifecycle runtime tests performed."
+    },
+    {
+      "id": "C5",
+      "claim": "The root license grants MIT-style permissions with notice and warranty conditions.",
+      "sourceId": "S5",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/LICENSE.md",
+      "locator": "lines 1–7",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No dependency-wide legal audit."
+    },
+    {
+      "id": "C6",
+      "claim": "Adoption should test object boundaries and effect ownership, not assume compilation removes runtime work.",
+      "sourceId": "S4",
+      "url": "https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/04-%24effect.md",
+      "locator": "lines 6–8; lines 32–44; lines 75–83",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "A recommended evaluation, not a demonstrated defect."
+    }
+  ],
+  "chartInventory": {
+    "title": "Svelte — selected source-file map",
+    "reviewedCommit": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Compiler",
+        "prefix": "packages/svelte/src/compiler",
+        "includePattern": "\\.(js|ts)$",
+        "excludePattern": null,
+        "count": 244,
+        "source": {
+          "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+          "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Client runtime",
+        "prefix": "packages/svelte/src/internal/client",
+        "includePattern": "\\.(js|ts)$",
+        "excludePattern": null,
+        "count": 89,
+        "source": {
+          "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+          "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Server runtime",
+        "prefix": "packages/svelte/src/internal/server",
+        "includePattern": "\\.(js|ts)$",
+        "excludePattern": null,
+        "count": 17,
+        "source": {
+          "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+          "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Reactivity",
+        "prefix": "packages/svelte/src/reactivity",
+        "includePattern": "\\.(js|ts)$",
+        "excludePattern": null,
+        "count": 16,
+        "source": {
+          "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+          "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

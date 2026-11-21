@@ -1,0 +1,217 @@
+{
+  "title": "Apache Airflow 3.4 review: orchestration trade-offs",
+  "reviewedRepository": "apache/airflow",
+  "reviewedVersion": "3.4.0",
+  "reviewedCommit": "619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+  "retrievedAt": "2026-11-20T22:46:21.696157+00:00",
+  "method": "Read-only GitHub REST inspection of a released tag. No Airflow package installation, task execution, benchmark, or upstream test run.",
+  "scope": "Curated source identifiers and claim ledger, not raw responses, a complete repository audit, or an Airflow runtime/security test.",
+  "release": {
+    "id": 436510240,
+    "tag_name": "3.4.0",
+    "name": "Apache Airflow 3.4.0",
+    "published_at": "2026-11-06T13:08:22Z",
+    "prerelease": false,
+    "html_url": "https://github.com/apache/airflow/releases/tag/3.4.0"
+  },
+  "sources": [
+    {
+      "id": "readme",
+      "path": "README.md",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/README.md?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "e0e77777ab46524798471b224775162d39cd482e",
+      "bytes": 41758
+    },
+    {
+      "id": "architecture",
+      "path": "airflow-core/docs/core-concepts/overview.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/core-concepts/overview.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "d793527e73112463ff788271a605b6200c1a1982",
+      "bytes": 15939
+    },
+    {
+      "id": "scheduler",
+      "path": "airflow-core/src/airflow/jobs/scheduler_job_runner.py",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/src/airflow/jobs/scheduler_job_runner.py?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "bd9212973ede9fa144d36bf1773bbd26be551e6e",
+      "bytes": 216374
+    },
+    {
+      "id": "executors",
+      "path": "airflow-core/docs/core-concepts/executor/index.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/core-concepts/executor/index.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "1b61553c621771156b4918a71ac4f28573334026",
+      "bytes": 24508
+    },
+    {
+      "id": "task-design",
+      "path": "airflow-core/docs/best-practices.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/best-practices.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "c30c13eb5eb8055eab01f3858604d03988ad2178",
+      "bytes": 60270
+    },
+    {
+      "id": "deployment",
+      "path": "airflow-core/docs/administration-and-deployment/production-deployment.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/administration-and-deployment/production-deployment.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "56fe3ed3cc54352cc1b2ea342a0e1fcfbe53557d",
+      "bytes": 15581
+    },
+    {
+      "id": "installation",
+      "path": "airflow-core/docs/installation/installing-from-pypi.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/installation/installing-from-pypi.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "92f2fa3b761fd43485d39a506c67fd8c467a83c4",
+      "bytes": 20106
+    },
+    {
+      "id": "security",
+      "path": "airflow-core/docs/security/security_model.rst",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/docs/security/security_model.rst?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "468f8efd999f8f4bc4d5d5a6947e3d66aaf9676e",
+      "bytes": 76049
+    },
+    {
+      "id": "packaging",
+      "path": "airflow-core/pyproject.toml",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/pyproject.toml?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "421b9e92bee08bc296d8d87fe95dcd4546378629",
+      "bytes": 13092
+    },
+    {
+      "id": "tests",
+      "path": "airflow-core/tests/unit/jobs/test_scheduler_job.py",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/airflow-core/tests/unit/jobs/test_scheduler_job.py?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "6ed8be407355cc5ccbf085d4f6309e635aafb786",
+      "bytes": 710669
+    },
+    {
+      "id": "ci",
+      "path": ".github/workflows/run-unit-tests.yml",
+      "url": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml",
+      "apiUrl": "https://api.github.com/repos/apache/airflow/contents/.github/workflows/run-unit-tests.yml?ref=619a787ac81e8b7c8a9102fc78e3f0b00625d04e",
+      "gitBlobSha": "c2564f71462d312af95a6ec1f07e9835b90b4e0a",
+      "bytes": 10353
+    }
+  ],
+  "claims": [
+    {
+      "id": "scope",
+      "claim": "Airflow orchestrates workflows and is not itself a streaming solution.",
+      "sourceId": "readme",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md",
+      "locator": "Project Focus, lines 83–91.",
+      "evidenceType": "source report",
+      "limitation": "Describes project positioning, not a measured workload capability."
+    },
+    {
+      "id": "components",
+      "claim": "DAG processing, scheduling, API access and persisted metadata have distinct responsibilities.",
+      "sourceId": "architecture",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst",
+      "locator": "Airflow components, lines 38–99.",
+      "evidenceType": "source report",
+      "limitation": "Selected architectural description; no deployment validation."
+    },
+    {
+      "id": "capacity",
+      "claim": "The enqueue path derives capacity, selects task instances and routes workloads to executors.",
+      "sourceId": "scheduler",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py",
+      "locator": "Lines 1302–1354; pool-capacity helper at 693–737.",
+      "evidenceType": "direct observation",
+      "limitation": "Source inspection, not proof of throughput, fairness, or failure recovery."
+    },
+    {
+      "id": "executors",
+      "claim": "Executor models trade local/shared resources against queued-worker or containerized execution.",
+      "sourceId": "executors",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst",
+      "locator": "Executor Types, lines 51–113.",
+      "evidenceType": "source report",
+      "limitation": "No comparative benchmark was run."
+    },
+    {
+      "id": "task-correctness",
+      "claim": "Best practices call for repeatable task outcomes, partitioned inputs and small-message XCom use.",
+      "sourceId": "task-design",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst",
+      "locator": "Creating a task, Communication, Top level Python Code, lines 44–116.",
+      "evidenceType": "source report",
+      "limitation": "Does not establish end-to-end exactly-once writes."
+    },
+    {
+      "id": "operations",
+      "claim": "The deployment guide recommends an external production database and addresses logs, DAG distribution and scheduler health.",
+      "sourceId": "deployment",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst",
+      "locator": "Database backend, Multi-Node Cluster, Logging, Scheduler Uptime, lines 24–118.",
+      "evidenceType": "source report",
+      "limitation": "Not a validated infrastructure sizing guide."
+    },
+    {
+      "id": "constraints",
+      "claim": "Version/Python-specific constraints capture a dependency set known at release time.",
+      "sourceId": "installation",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst",
+      "locator": "Constraints files, lines 98–155.",
+      "evidenceType": "source report",
+      "limitation": "Provider OS dependencies and target-environment validation still matter."
+    },
+    {
+      "id": "trust",
+      "claim": "DAG authors are trusted code authors; the documented multi-team feature does not guarantee full task-level isolation.",
+      "sourceId": "security",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst",
+      "locator": "Capabilities and isolation sections, lines 190–239; component distinction at 61–82.",
+      "evidenceType": "source report",
+      "limitation": "Version-specific warning, not a new vulnerability or penetration-test result."
+    },
+    {
+      "id": "package",
+      "claim": "The core package declares version 3.4.0 and a Python requirement of >=3.11,!=3.15.",
+      "sourceId": "packaging",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml",
+      "locator": "Project metadata, lines 33–75.",
+      "evidenceType": "direct observation",
+      "limitation": "Distinguish declared constraints from the README tested-version matrix."
+    },
+    {
+      "id": "tests",
+      "claim": "A scheduler test asserts pool-selection outcomes.",
+      "sourceId": "tests",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py",
+      "locator": "test_find_executable_task_instances_pool, lines 2225–2266.",
+      "evidenceType": "direct observation",
+      "limitation": "Test source was read; no test execution or passing status claimed."
+    },
+    {
+      "id": "ci",
+      "claim": "The unit-test workflow defines Python/backend matrix inputs and invokes a test script.",
+      "sourceId": "ci",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml",
+      "locator": "Matrix at 142–163 and invocation at 225–231.",
+      "evidenceType": "direct observation",
+      "limitation": "A workflow definition is not a successful CI run."
+    },
+    {
+      "id": "fit",
+      "claim": "Airflow is a plausible fit for teams that need workflow orchestration and can own task correctness and the control plane.",
+      "sourceId": "readme",
+      "sourceUrl": "https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md",
+      "locator": "Review synthesis of scope, scheduler, task-design, deployment and security sources.",
+      "evidenceType": "review inference",
+      "limitation": "Not a competitive ranking, security certification or benchmark-backed adoption guarantee."
+    }
+  ]
+}

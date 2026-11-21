@@ -1,0 +1,209 @@
+{
+  "title": "Perspective review: where analytics should execute",
+  "reviewedRepository": "https://github.com/perspective-dev/perspective",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+  "retrievedAt": "2026-11-20T22:54:22.475222+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+    "truncated": false,
+    "returnedEntries": 2392,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/README.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/README.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "aaddd1381592d56c605ee88f7408338cbc4740fc",
+      "bytes": 11936
+    },
+    {
+      "id": "S2",
+      "path": "docs/md/explanation/architecture/client_only.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_only.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/architecture/client_only.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "ca800eb5a1be33099b03c0a2d0576c58fff80f75",
+      "bytes": 1807
+    },
+    {
+      "id": "S3",
+      "path": "docs/md/explanation/architecture/client_server.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_server.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/architecture/client_server.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "a3bea7c3f0943272f03647610bc228473984c441",
+      "bytes": 2545
+    },
+    {
+      "id": "S4",
+      "path": "docs/md/explanation/architecture/server_only.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/server_only.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/architecture/server_only.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "09084c4b707c7cb4df7cfa6b508dd8285d051d1c",
+      "bytes": 1560
+    },
+    {
+      "id": "S5",
+      "path": "docs/md/explanation/table/update_and_remove.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/table/update_and_remove.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/table/update_and_remove.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "87bb1b287959bd74f1d81def34ccf244b654e38e",
+      "bytes": 1789
+    },
+    {
+      "id": "S6",
+      "path": "LICENSE.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/LICENSE.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/LICENSE.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "1ffb266a1a85fcec1a520583683928a242366aaa",
+      "bytes": 10541
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes an embedded grid/pivot/chart component with browser and server execution.",
+      "sourceId": "S1",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/README.md",
+      "locator": "lines 18–23; lines 35–63",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Performance, large-data and virtual-server claims not independently exercised."
+    },
+    {
+      "id": "C2",
+      "claim": "Client-only architecture downloads the entire dataset and keeps edits local unless the application persists them.",
+      "sourceId": "S2",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_only.md",
+      "locator": "lines 5–28",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No browser memory or interaction benchmark."
+    },
+    {
+      "id": "C3",
+      "claim": "Replicated client/server mode mirrors data and subsequent updates to browser tables.",
+      "sourceId": "S3",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_server.md",
+      "locator": "lines 5–20; lines 44–52",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No synchronization or concurrency test."
+    },
+    {
+      "id": "C4",
+      "claim": "Server-only mode trades client dataset replication for server interaction and connectivity dependency.",
+      "sourceId": "S4",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/server_only.md",
+      "locator": "lines 5–24",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Documentation performance characterizations are not measured here."
+    },
+    {
+      "id": "C5",
+      "claim": "Unindexed updates append; indexed updates support partial updates and row removal.",
+      "sourceId": "S5",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/table/update_and_remove.md",
+      "locator": "lines 31–34; lines 51–55; lines 72–79",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Examples not executed; packaged API compatibility must be verified."
+    },
+    {
+      "id": "C6",
+      "claim": "The root license identifies Apache License 2.0.",
+      "sourceId": "S6",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/LICENSE.md",
+      "locator": "lines 1–11",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No audit of every plugin or optional database integration."
+    }
+  ],
+  "chartInventory": {
+    "title": "Perspective — selected source-file map",
+    "reviewedCommit": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Rust server",
+        "prefix": "rust/perspective-server",
+        "includePattern": "\\.rs$",
+        "excludePattern": null,
+        "count": 6,
+        "source": {
+          "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+          "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Rust client",
+        "prefix": "rust/perspective-client",
+        "includePattern": "\\.rs$",
+        "excludePattern": null,
+        "count": 42,
+        "source": {
+          "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+          "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Rust viewer",
+        "prefix": "rust/perspective-viewer",
+        "includePattern": "\\.rs$",
+        "excludePattern": null,
+        "count": 255,
+        "source": {
+          "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+          "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Chart plugin",
+        "prefix": "packages/viewer-charts",
+        "includePattern": "\\.(js|ts|tsx)$",
+        "excludePattern": null,
+        "count": 175,
+        "source": {
+          "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+          "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Grid plugin",
+        "prefix": "packages/viewer-datagrid",
+        "includePattern": "\\.(js|ts|tsx)$",
+        "excludePattern": null,
+        "count": 79,
+        "source": {
+          "url": "https://api.github.com/repos/perspective-dev/perspective/git/trees/95535bcbfde42e8e8994534a96f7fdaa4ae3e371?recursive=1",
+          "treeSha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "title": "NATS Server review: retention and delivery controls",
+  "reviewedRepository": "https://github.com/nats-io/nats-server",
+  "reviewedVersion": "Default-branch source snapshot (main); not a release review",
+  "reviewedCommit": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+  "retrievedAt": "2026-11-20T22:54:20.477988+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+    "truncated": false,
+    "returnedEntries": 672,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/README.md",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/README.md?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "4487552a792652c3e95d504e7b2f55507fdce05b",
+      "bytes": 4576
+    },
+    {
+      "id": "S2",
+      "path": "server/jetstream.go",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/jetstream.go",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/server/jetstream.go?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "dcc571ae737219a1e116c7d1ee7f3c3c517a727e",
+      "bytes": 95016
+    },
+    {
+      "id": "S3",
+      "path": "server/stream.go",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/stream.go",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/server/stream.go?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "3569c5a62f3ad406eb835984d758b1b420452575",
+      "bytes": 316686
+    },
+    {
+      "id": "S4",
+      "path": "server/consumer.go",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/consumer.go",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/server/consumer.go?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "e1700165c5d5a5e47a7fd92142cebab50e200d94",
+      "bytes": 217623
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/LICENSE",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/LICENSE?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "bytes": 11357
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "NATS positions the server as a communications system for services and devices.",
+      "sourceId": "S1",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/README.md",
+      "locator": "lines 5–12; lines 73–76",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No latency or operational-simplicity measurement."
+    },
+    {
+      "id": "C2",
+      "claim": "JetStream configuration exposes memory/store limits, storage location and synchronization controls.",
+      "sourceId": "S2",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/jetstream.go",
+      "locator": "lines 38–55; lines 68–77",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Configuration fields alone do not prove persistence behavior under failure."
+    },
+    {
+      "id": "C3",
+      "claim": "StreamConfig exposes retention, storage, replicas, age/byte limits and duplicate window.",
+      "sourceId": "S3",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/stream.go",
+      "locator": "lines 50–71; lines 875–878",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No complete validation or replication protocol audit."
+    },
+    {
+      "id": "C4",
+      "claim": "ConsumerConfig exposes ack policy/wait, backoff, max delivery and pending limits.",
+      "sourceId": "S4",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/consumer.go",
+      "locator": "lines 89–123; lines 350–363",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No client/server delivery experiment."
+    },
+    {
+      "id": "C5",
+      "claim": "The source license is Apache 2.0.",
+      "sourceId": "S5",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/LICENSE",
+      "locator": "lines 1–9",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not a full dependency or trademark audit."
+    },
+    {
+      "id": "C6",
+      "claim": "Acknowledging a message cannot by itself prove an external business effect is exactly-once.",
+      "sourceId": "S4",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/consumer.go",
+      "locator": "lines 89–123; lines 350–363",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "General application-boundary reasoning; no claim that JetStream lacks its own delivery features."
+    }
+  ],
+  "chartInventory": {
+    "title": "NATS Server — selected source-file map",
+    "reviewedCommit": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Server code",
+        "prefix": "server",
+        "includePattern": "^server/[^/]+\\.go$",
+        "excludePattern": "_test\\.go$",
+        "count": 69,
+        "source": {
+          "url": "https://api.github.com/repos/nats-io/nats-server/git/trees/a0385c9af342ffae6df28999b77a85de5423d3d6?recursive=1",
+          "treeSha": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Server tests",
+        "prefix": "server",
+        "includePattern": "^server/[^/]+_test\\.go$",
+        "excludePattern": null,
+        "count": 75,
+        "source": {
+          "url": "https://api.github.com/repos/nats-io/nats-server/git/trees/a0385c9af342ffae6df28999b77a85de5423d3d6?recursive=1",
+          "treeSha": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Subpackages",
+        "prefix": "server",
+        "includePattern": "^server/[^/]+/.*\\.go$",
+        "excludePattern": null,
+        "count": 60,
+        "source": {
+          "url": "https://api.github.com/repos/nats-io/nats-server/git/trees/a0385c9af342ffae6df28999b77a85de5423d3d6?recursive=1",
+          "treeSha": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

@@ -27,7 +27,12 @@ export interface ChartDataTableProps {
 
 export function ChartDataTable({ spec, srOnly = false }: ChartDataTableProps) {
   return (
-    <div className={srOnly ? 'sr-only' : 'mt-4 overflow-x-auto'}>
+    <div
+      className={srOnly ? 'sr-only' : 'mt-4 overflow-x-auto'}
+      tabIndex={srOnly ? undefined : 0}
+      role="region"
+      aria-label={`${spec.title} — data table`}
+    >
       <table className="w-full border-collapse text-left font-sans text-sm">
         <caption className="sr-only">
           {spec.title} — data table

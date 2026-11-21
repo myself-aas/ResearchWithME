@@ -1,0 +1,104 @@
+# Svelte review: compiler and reactivity trade-offs
+
+**By Ashif Ahmed Shuvo** · Repository review · Source inspection: 20 November 2026
+
+**Category:** GitHub Repo Teardowns · **Format:** Repo Teardown · **Publication type:** review · **Status:** local unpublished draft
+
+> Summary: Svelte repository review of compilation, state proxies and browser-only effects, with adoption checks and limits from a pinned source snapshot.
+
+### Key findings
+- The compiler pipeline is visible in the public compile entry point.
+- State proxies are granular, but destructured values are not automatically live bindings.
+- Effects are browser-only and require dependency and cleanup discipline.
+
+## Review question and scope
+
+Does compiler-led UI development simplify state without hiding lifecycle responsibilities? This review is for frontend engineers evaluating component architecture and migration risk. It examines [sveltejs/svelte](https://github.com/sveltejs/svelte) at commit `04c5d8da6f0be322555e7e5897f7bb318c8a6876`, a pinned **default-branch source snapshot, not a release tag**. Findings apply to that snapshot rather than every packaged or hosted edition.
+
+## Bottom line: less UI ceremony, not zero semantics
+
+Svelte is a credible candidate when a team wants declarative components with an explicit compilation step. The README describes translating components into JavaScript that updates the DOM. The useful review question is not whether that sounds fast, but whether the resulting state model is understandable to the people maintaining the application. No React, Vue, or other framework benchmark was run here. [1](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/README.md#L10-L18)
+
+The source gives the compiler claim a concrete shape. `compile` validates component options and parses source; later it calls `analyze_component` and `transform_component`. `compileModule` separately analyzes and transforms JavaScript containing runes. Those are observable entry-point calls, not proof that all application work happens at build time or that generated output has no runtime dependencies. [2](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/packages/svelte/src/compiler/index.js#L17-L110)
+
+## State feels ordinary until an object boundary matters
+
+The `$state` documentation presents a counter that can be incremented like a normal variable. For arrays and simple objects, however, it describes a deeply reactive proxy, recursively applied until a different object kind is encountered. It specifically excludes automatic proxying of class instances. This is a useful distinction for teams moving domain objects into component state. [3](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/02-%24state.md#L6-L69)
+
+A second boundary is destructuring. The same document warns that destructured references are evaluated at that moment rather than remaining reactive. My adoption recommendation is to review helpers that accept individual object properties: does the helper need a current value, a getter, or a shared reactive object? Treating those as interchangeable would erase a distinction the documentation explicitly makes. [3](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/02-%24state.md#L6-L69)
+
+| Boundary | Source-supported behavior | Review implication |
+| --- | --- | --- |
+| Component source | Parse, analyze, transform pipeline | Compiler diagnostics belong in the development workflow |
+| Simple object state | Deep proxy behavior | Review object identity and library integration |
+| Destructured property | Value captured at destructuring | Check whether a live value was intended |
+| Browser effect | Not executed during SSR | Do not rely on it to establish server-rendered data |
+
+## Effects need ownership, not enthusiasm
+
+The effect guide says effects run in the browser, not during server-side rendering. It describes batched reruns after DOM updates and tracking of reactive values read synchronously. Reads after an `await` are not tracked in the same way. These are meaningful lifecycle rules, not minor syntax details. [4](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/04-%24effect.md#L6-L83)
+
+The guide also discourages updating state inside effects because it can create convoluted logic and update cycles. Effects can return teardown functions that run before reruns and on destruction. For an integration with an imperative chart, timer, or subscription, my review criterion would be explicit ownership: who creates it, which reads cause recreation, and who disposes of it? That is a design recommendation grounded in the documented lifecycle, not evidence that any particular integration is broken. [4](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/04-%24effect.md#L6-L83)
+
+## Adoption and license boundary
+
+The root license provides permissive MIT-style use and modification rights subject to preserving the notice, with an as-is warranty disclaimer. That makes the root terms materially different from a restricted source-available license, but does not establish the terms of every dependency or third-party asset. [5](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/LICENSE.md#L1-L7)
+
+I would shortlist Svelte for a team willing to learn these reactivity boundaries and evaluate compiler-integrated tooling. I would postpone a broad migration if the justification is only “compiled means faster.” This inspection establishes source organization and documented semantics; it does not establish application latency, bundle savings, accessibility quality, or migration cost.
+
+<!-- review-source-map:start -->
+## Source map: where to inspect next
+
+The compiler and client runtime are separate reading targets. Use the compiler entry point to follow lowering, then move to the client runtime when investigating effect scheduling; a larger directory is not evidence of a larger browser bundle.
+
+```chart
+type: bar
+layout: vertical
+title: Svelte — selected source-file map
+caption: Static file counts in selected roots at commit 04c5d8da6f0b. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.
+x: Selected root
+y: Files
+y-scale: linear
+series: Matching files
+notes: Counts start at zero. No smoothing or animation. File counts are not benchmarks, test coverage, integrations, product quality or a whole-repository share.
+Compiler: 244
+Client runtime: 89
+Server runtime: 17
+Reactivity: 16
+```
+
+**Counting method and text equivalent.** Each value counts tracked Git blob paths under the exact root below, filtered by its include/exclude expression. Matching tests, declarations and generated files remain included unless explicitly excluded. No file contents were executed or benchmarked; submodules are not expanded. This is a deliberately selected reading map, not a complete repository breakdown.
+
+| Selected root | Matching files | Include / exclude expression |
+| --- | ---: | --- |
+| `packages/svelte/src/compiler` | 244 | `\.(js\|ts)$` / no additional exclusion |
+| `packages/svelte/src/internal/client` | 89 | `\.(js\|ts)$` / no additional exclusion |
+| `packages/svelte/src/internal/server` | 17 | `\.(js\|ts)$` / no additional exclusion |
+| `packages/svelte/src/reactivity` | 16 | `\.(js\|ts)$` / no additional exclusion |
+
+**Provenance:** commit `04c5d8da6f0be322555e7e5897f7bb318c8a6876`; [Git tree 1](https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1). Every counted path, blob identifier and selector is retained in the review's `chart-inventory.json` and can be recounted offline. Only complete tree responses are used for these chart groups.
+
+**Decision checkpoint.** For a migration spike, choose one object-boundary bug and one effect-cleanup case. If the team cannot explain the resulting behavior, defer the migration even if the compiled demo looks small.
+<!-- review-source-map:end -->
+
+## What can a reader inspect or reproduce?
+
+This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+
+For a next-stage evaluation:
+
+1. Build a small component with nested object state, destructuring and a third-party library; verify intended updates.
+2. Test server rendering and hydration with browser-only effects, asynchronous reads and teardown.
+3. Compare production builds under the same interaction, accessibility and payload budget before claiming a framework advantage.
+
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/svelte-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+
+Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+
+## References
+
+1. [1](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/README.md#L10-L18) — sveltejs/svelte, `README.md`, commit `04c5d8da6f0b`; locators: L10–L18. Retrieved 20 November 2026.
+2. [2](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/packages/svelte/src/compiler/index.js#L17-L110) — sveltejs/svelte, `packages/svelte/src/compiler/index.js`, commit `04c5d8da6f0b`; locators: L17–L30, L91–L110. Retrieved 20 November 2026.
+3. [3](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/02-%24state.md#L6-L69) — sveltejs/svelte, `documentation/docs/02-runes/02-$state.md`, commit `04c5d8da6f0b`; locators: L6–L24, L54–L69. Retrieved 20 November 2026.
+4. [4](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/documentation/docs/02-runes/04-%24effect.md#L6-L83) — sveltejs/svelte, `documentation/docs/02-runes/04-$effect.md`, commit `04c5d8da6f0b`; locators: L6–L8, L32–L44, L75–L83. Retrieved 20 November 2026.
+5. [5](https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/LICENSE.md#L1-L7) — sveltejs/svelte, `LICENSE.md`, commit `04c5d8da6f0b`; locators: L1–L7. Retrieved 20 November 2026.

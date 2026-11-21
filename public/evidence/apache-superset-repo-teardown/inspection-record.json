@@ -1,0 +1,188 @@
+{
+  "title": "Apache Superset review: BI and operational boundaries",
+  "reviewedRepository": "https://github.com/apache/superset",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "b44ea299259b3c71065ae2df940a4185da9e64da",
+  "retrievedAt": "2026-11-20T22:54:23.969693+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "b44ea299259b3c71065ae2df940a4185da9e64da",
+    "truncated": false,
+    "returnedEntries": 13467,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/README.md",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/README.md?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "baf97be8097391dca066f649b833733c80496e75",
+      "bytes": 24052
+    },
+    {
+      "id": "S2",
+      "path": "docs/admin_docs/installation/architecture.mdx",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/installation/architecture.mdx",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/docs/admin_docs/installation/architecture.mdx?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "4560f21b5b037129f71b2230e0614a53814307c9",
+      "bytes": 3887
+    },
+    {
+      "id": "S3",
+      "path": "docs/admin_docs/security/security.mdx",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/security/security.mdx",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/docs/admin_docs/security/security.mdx?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "91c54fc3b6b95dee9105ad769dfe30c746cda989",
+      "bytes": 53692
+    },
+    {
+      "id": "S4",
+      "path": "docs/admin_docs/configuration/configuring-superset.mdx",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/configuration/configuring-superset.mdx",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/docs/admin_docs/configuration/configuring-superset.mdx?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "f502a80bfaed79503f1c88eec8b5ae5c13abf20a",
+      "bytes": 45220
+    },
+    {
+      "id": "S5",
+      "path": "superset/security/manager.py",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/superset/security/manager.py",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/superset/security/manager.py?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "dbb9d12bd7dd7e36637b96e171795fdb3c640a86",
+      "bytes": 309330
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README positions Superset as BI with charting, SQL editing and a semantic layer.",
+      "sourceId": "S1",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/README.md",
+      "locator": "lines 51–80",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No database coverage, visualization quality or scale benchmark."
+    },
+    {
+      "id": "C2",
+      "claim": "Architecture docs separate application, metadata database, cache and worker/beat roles.",
+      "sourceId": "S2",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/installation/architecture.mdx",
+      "locator": "lines 14–34; lines 38–66",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No deployed topology or feature execution test."
+    },
+    {
+      "id": "C3",
+      "claim": "The metadata database is distinct from analytical data sources and requires backup planning.",
+      "sourceId": "S2",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/installation/architecture.mdx",
+      "locator": "lines 14–34; lines 38–66",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No restore or schema migration was attempted."
+    },
+    {
+      "id": "C4",
+      "claim": "Security docs define trusted Admin behavior, role synchronization and generated-SQL RLS clauses.",
+      "sourceId": "S3",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/security/security.mdx",
+      "locator": "lines 6–18; lines 22–44; lines 627–644",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not proof of all query paths, embedding policies or adversarial isolation."
+    },
+    {
+      "id": "C5",
+      "claim": "Configuration guidance requires a strong deployment secret and separates metadata connections from data sources.",
+      "sourceId": "S4",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/configuration/configuring-superset.mdx",
+      "locator": "lines 46–68",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No secret rotation or cryptographic behavior was tested."
+    },
+    {
+      "id": "C6",
+      "claim": "The inspected source file carries the Apache 2.0 license header.",
+      "sourceId": "S5",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/superset/security/manager.py",
+      "locator": "lines 1–18",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not a complete dependency or plugin license review."
+    }
+  ],
+  "chartInventory": {
+    "title": "Apache Superset — selected source-file map",
+    "reviewedCommit": "b44ea299259b3c71065ae2df940a4185da9e64da",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "SQL Lab",
+        "prefix": "superset/sqllab",
+        "includePattern": "\\.py$",
+        "excludePattern": null,
+        "count": 17,
+        "source": {
+          "url": "https://api.github.com/repos/apache/superset/git/trees/b44ea299259b3c71065ae2df940a4185da9e64da?recursive=1",
+          "treeSha": "b44ea299259b3c71065ae2df940a4185da9e64da",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Security",
+        "prefix": "superset/security",
+        "includePattern": "\\.py$",
+        "excludePattern": null,
+        "count": 10,
+        "source": {
+          "url": "https://api.github.com/repos/apache/superset/git/trees/b44ea299259b3c71065ae2df940a4185da9e64da?recursive=1",
+          "treeSha": "b44ea299259b3c71065ae2df940a4185da9e64da",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Async tasks",
+        "prefix": "superset/tasks",
+        "includePattern": "\\.py$",
+        "excludePattern": null,
+        "count": 31,
+        "source": {
+          "url": "https://api.github.com/repos/apache/superset/git/trees/b44ea299259b3c71065ae2df940a4185da9e64da?recursive=1",
+          "treeSha": "b44ea299259b3c71065ae2df940a4185da9e64da",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Web UI",
+        "prefix": "superset-frontend/src",
+        "includePattern": "\\.(js|jsx|ts|tsx)$",
+        "excludePattern": null,
+        "count": 2219,
+        "source": {
+          "url": "https://api.github.com/repos/apache/superset/git/trees/b44ea299259b3c71065ae2df940a4185da9e64da?recursive=1",
+          "treeSha": "b44ea299259b3c71065ae2df940a4185da9e64da",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

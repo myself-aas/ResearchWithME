@@ -52,6 +52,8 @@ export interface ChartSeries {
 
 export interface ChartSpec {
   type: ChartType;
+  /** Recharts layout: vertical places bar categories on the y axis. Bar-only. */
+  layout?: 'horizontal' | 'vertical';
   title: string;
   /** Plain-language description of what the reader should see. Required. */
   caption: string;
@@ -77,7 +79,7 @@ const SCALES: ChartScale[] = ['linear', 'log'];
 const MISSING = new Set(['nil', 'null', 'na', 'n/a', '-', '—', '…', '']);
 
 const CONFIG_KEYS = new Set([
-  'type', 'title', 'caption', 'x', 'y', 'y-scale', 'series', 'notes', 'uncertainty',
+  'type', 'layout', 'title', 'caption', 'x', 'y', 'y-scale', 'series', 'notes', 'uncertainty',
 ]);
 
 /** Split on commas that are not inside quotes, so a label may contain a comma. */
@@ -155,6 +157,13 @@ export function parseChartSpec(source: string): ChartParseResult {
   if (!TYPES.includes(type)) {
     return { ok: false, error: `type: must be one of ${TYPES.join(', ')} — saw "${type}".` };
   }
+  const layout = config.get('layout')?.toLowerCase();
+  if (layout !== undefined && layout !== 'horizontal' && layout !== 'vertical') {
+    return { ok: false, error: 'layout: must be horizontal or vertical.' };
+  }
+  if (layout === 'vertical' && type !== 'bar') {
+    return { ok: false, error: 'layout: vertical is supported only for bar charts.' };
+  }
   const yScale = (config.get('y-scale') ?? 'linear').toLowerCase() as ChartScale;
   if (!SCALES.includes(yScale)) {
     return { ok: false, error: `y-scale: must be linear or log — saw "${yScale}".` };
@@ -223,6 +232,7 @@ export function parseChartSpec(source: string): ChartParseResult {
     ok: true,
     spec: {
       type,
+      ...(layout ? { layout } : {}),
       title,
       caption,
       xLabel: config.get('x')?.trim() || '',

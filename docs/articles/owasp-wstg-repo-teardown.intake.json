@@ -1,0 +1,51 @@
+{
+  "bodyFile": "owasp-wstg-repo-teardown.md",
+  "cmsBodyFile": "owasp-wstg-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/owasp-wstg-repo-teardown/inspection-record.json",
+  "workflowState": "local-draft-awaiting-human-review",
+  "publicationType": "review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerificationScope": "Uses the author profile established earlier in this session; no fresh database or credential check."
+  },
+  "cmsFields": {
+    "title": "OWASP WSTG review: a method, not a security seal",
+    "slug": "owasp-wstg-repo-teardown",
+    "status": "draft",
+    "subtitle": "How should a team turn a living security testing guide into a scoped, auditable assessment?",
+    "summary": "OWASP WSTG repository review of testing scope, versioned scenario references and reporting, distinguishing a living guide from a security certification.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "authorId": "ashif-ahmed-shuvo",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "OWASP WSTG",
+      "Repository Review",
+      "Architecture",
+      "Adoption Trade-offs"
+    ],
+    "keyTakeaways": [
+      "This default-branch snapshot is not the stable 4.2 release.",
+      "Versioned scenario identifiers make reports more auditable than moving latest links.",
+      "The guide is a testing method, not a scanner result or security certification."
+    ],
+    "readTime": "6 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "OWASP WSTG",
+      "url": "https://github.com/OWASP/wstg",
+      "identifier": "OWASP/wstg",
+      "meta": "Default-branch snapshot · Commit 31c5bb21658d · Inspected 20 Nov 2026"
+    },
+    "publicationType": "review"
+  },
+  "writeBlockers": [
+    "Human evidence review and final approval required.",
+    "Deploy and verify linked public evidence before publication.",
+    "Load the separate CMS body as content via the authorized studio. Intake is not an API write request.",
+    "License summaries are not legal advice; review terms for the intended use."
+  ]
+}

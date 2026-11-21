@@ -67,7 +67,12 @@
     "capture:next-contract": "tsx scripts/capture-next-contract.ts",
     "docs:workflows": "tsx scripts/build-workflow-docs.ts",
     "reme:check": "node scripts/reme-check.mjs --all",
-    "reme:test": "node --test test/reme-check.test.mjs test/reme-name.test.mjs",
+    "reme:test": "node --test test/reme-check.test.mjs test/reme-name.test.mjs test/teardown-preparation.test.mjs test/airflow-review.test.mjs test/repository-reviews.test.mjs",
+    "article:prepare:gta6": "node scripts/prepare-gta6-teardown.mjs",
+    "article:prepare:airflow": "node scripts/prepare-airflow-teardown.mjs",
+    "article:prepare:repositories": "node scripts/prepare-repository-reviews.mjs",
+    "article:preview:repositories": "vite --config tools/review-preview/vite.config.mjs",
+    "article:test:charts": "vitest run lib/__tests__/chart-spec.test.ts lib/__tests__/chart-render.test.tsx lib/__tests__/chart-colors.test.ts lib/__tests__/review-charts.test.tsx",
     "dns:test": "node --test test/dns-aid.test.mjs test/verify-dns-aid.test.mjs",
     "webmcp:test": "node --test test/webmcp.test.mjs",
     "preinstall": "node scripts/ensure-npm.mjs"
