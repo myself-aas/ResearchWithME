@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useId, useRef, useState, useEffect, type KeyboardEvent, type ReactNode } from 'react';
 import type { PlateEditor } from 'platejs/react';
 import { useEditorVersion, useSelectionVersion } from 'platejs/react';
 import {
@@ -108,6 +108,92 @@ function blockLabel(type: string) {
   return 'Style';
 }
 
+/**
+ * Dropdown menu component for mobile toolbar groups
+ */
+function DropdownMenu({
+  label,
+  triggerRef,
+  open,
+  onClose,
+  children,
+}: {
+  label: string;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  const menuId = useId();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        ref={triggerRef}
+        type="button"
+        data-toolbar-item
+        aria-label={label}
+        aria-haspopup="menu"
+        aria-expanded={menuOpen}
+        aria-controls={menuOpen ? menuId : undefined}
+        onClick={() => setMenuOpen((open) => !open)}
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-40 lg:hidden ${
+          menuOpen ? 'bg-surface-subtle text-ink' : 'text-ink-secondary hover:bg-surface-subtle hover:text-ink'
+        }`}>
+        <ChevronDown
+          className={`h-4 w-4 transition-transform motion-reduce:transition-none ${menuOpen ? 'rotate-180' : ''}`}
+          aria-hidden="true"
+        />
+      </button>
+      <EditorMenu
+        id={menuId}
+        label={label}
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        triggerRef={triggerRef}
+        anchorRef={triggerRef}
+        placement="bottom-start"
+        className="w-52">
+        {children}
+      </EditorMenu>
+    </div>
+  );
+}
+
+/**
+ * Responsive toolbar group that shows dropdown on mobile and regular buttons on desktop
+ */
+function ResponsiveToolbarGroup({
+  label,
+  mobileItems,
+  desktopItems,
+  triggerRef,
+}: {
+  label: string;
+  mobileItems: React.ReactNode;
+  desktopItems: React.ReactNode;
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+}) {
+  return (
+    <>
+      {/* Mobile: Dropdown menu */}
+      <DropdownMenu
+        label={label}
+        triggerRef={triggerRef}
+        open={false}
+        onClose={() => {}}
+      >
+        {mobileItems}
+      </DropdownMenu>
+      {/* Desktop: Regular buttons */}
+      <div className="hidden lg:flex lg:flex-col">
+        {desktopItems}
+      </div>
+    </>
+  );
+}
+
 interface EditorToolbarProps {
   editor: PlateEditor;
   onOpenLink: () => void;
@@ -131,6 +217,17 @@ export default function EditorToolbar({ editor, onOpenLink, disabled = false }: 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 1023px)');
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
 
   const headingLevel = /^h[1-6]$/.test(state.blockType) ? (Number(state.blockType.slice(1)) as HeadingLevel) : null;
 
@@ -174,92 +271,185 @@ export default function EditorToolbar({ editor, onOpenLink, disabled = false }: 
       onKeyDown={onKeyDown}
       className="flex shrink-0 items-center gap-1 overflow-x-auto border-b border-line bg-surface px-2 py-1.5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-7rem)] lg:flex-col lg:items-stretch lg:self-start lg:overflow-y-auto lg:overflow-x-visible lg:border-b-0 lg:border-r lg:px-1.5 lg:py-2"
     >
-      <ToolbarGroup label="History">
-        <ToolbarButton
-          label="Undo"
-          icon={<Undo2 className="h-4 w-4" aria-hidden="true" />}
-          disabled={disabled || !state.canUndo}
-          shortcut="Control+Z"
-          onClick={() => {
-            editor.tf.undo();
-            editor.tf.focus();
-          }}
-        />
-        <ToolbarButton
-          label="Redo"
-          icon={<Redo2 className="h-4 w-4" aria-hidden="true" />}
-          disabled={disabled || !state.canRedo}
-          shortcut="Control+Shift+Z"
-          onClick={() => {
-            editor.tf.redo();
-            editor.tf.focus();
-          }}
-        />
-      </ToolbarGroup>
+      <ResponsiveToolbarGroup
+        label="History"
+        triggerRef={useRef<HTMLButtonElement | null>(null)}
+        mobileItems={(
+          <>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.undo();
+                editor.tf.focus();
+              }}
+              disabled={disabled || !state.canUndo}
+            >
+              Undo
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.redo();
+                editor.tf.focus();
+              }}
+              disabled={disabled || !state.canRedo}
+            >
+              Redo
+            </EditorMenuItem>
+          </>
+        )}
+        desktopItems={(
+          <>
+            <ToolbarButton
+              label="Undo"
+              icon={<Undo2 className="h-4 w-4" aria-hidden="true" />}
+              disabled={disabled || !state.canUndo}
+              shortcut="Control+Z"
+              onClick={() => {
+                editor.tf.undo();
+                editor.tf.focus();
+              }}
+            />
+            <ToolbarButton
+              label="Redo"
+              icon={<Redo2 className="h-4 w-4" aria-hidden="true" />}
+              disabled={disabled || !state.canRedo}
+              shortcut="Control+Shift+Z"
+              onClick={() => {
+                editor.tf.redo();
+                editor.tf.focus();
+              }}
+            />
+          </>
+        )}
+      />
 
       <Separator />
 
-      <ToolbarGroup label="Text formatting">
-        <ToolbarButton
-          label="Bold"
-          icon={<Bold className="h-4 w-4" aria-hidden="true" />}
-          active={state.bold}
-          disabled={disabled}
-          shortcut="Control+B"
-          onClick={() => {
-            editor.tf.toggleMark('bold');
-            editor.tf.focus();
-          }}
-        />
-        <ToolbarButton
-          label="Italic"
-          icon={<Italic className="h-4 w-4" aria-hidden="true" />}
-          active={state.italic}
-          disabled={disabled}
-          shortcut="Control+I"
-          onClick={() => {
-            editor.tf.toggleMark('italic');
-            editor.tf.focus();
-          }}
-        />
-        <ToolbarButton
-          label="Strikethrough"
-          icon={<Strikethrough className="h-4 w-4" aria-hidden="true" />}
-          active={state.strikethrough}
-          disabled={disabled}
-          onClick={() => {
-            editor.tf.toggleMark('strikethrough');
-            editor.tf.focus();
-          }}
-        />
-        <ToolbarButton
-          label="Inline code"
-          icon={<Code2 className="h-4 w-4" aria-hidden="true" />}
-          active={state.code}
-          disabled={disabled}
-          shortcut="Control+E"
-          onClick={() => {
-            editor.tf.toggleMark('code');
-            editor.tf.focus();
-          }}
-        />
-        <ToolbarButton
-          label="Link"
-          icon={<Link2 className="h-4 w-4" aria-hidden="true" />}
-          disabled={disabled}
-          shortcut="Control+K"
-          onClick={onOpenLink}
-        />
-        <ToolbarButton
-          label="Clear formatting"
-          icon={<Eraser className="h-4 w-4" aria-hidden="true" />}
-          disabled={disabled}
-          onClick={() => {
-            editor.tf.removeMarks();
-            editor.tf.focus();
-          }}
-        />
-      </ToolbarGroup>
+      <ResponsiveToolbarGroup
+        label="Text formatting"
+        triggerRef={useRef<HTMLButtonElement | null>(null)}
+        mobileItems={(
+          <>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.toggleMark('bold');
+                editor.tf.focus();
+              }}
+              disabled={disabled}
+              checked={state.bold}
+            >
+              Bold
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.toggleMark('italic');
+                editor.tf.focus();
+              }}
+              disabled={disabled}
+              checked={state.italic}
+            >
+              Italic
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.toggleMark('strikethrough');
+                editor.tf.focus();
+              }}
+              disabled={disabled}
+              checked={state.strikethrough}
+            >
+              Strikethrough
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.toggleMark('code');
+                editor.tf.focus();
+              }}
+              disabled={disabled}
+              checked={state.code}
+            >
+              Inline code
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={onOpenLink}
+              disabled={disabled}
+            >
+              Link
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => {
+                editor.tf.removeMarks();
+                editor.tf.focus();
+              }}
+              disabled={disabled}
+            >
+              Clear formatting
+            </EditorMenuItem>
+          </>
+        )}
+        desktopItems={(
+          <>
+            <ToolbarButton
+              label="Bold"
+              icon={<Bold className="h-4 w-4" aria-hidden="true" />}
+              active={state.bold}
+              disabled={disabled}
+              shortcut="Control+B"
+              onClick={() => {
+                editor.tf.toggleMark('bold');
+                editor.tf.focus();
+              }}
+            />
+            <ToolbarButton
+              label="Italic"
+              icon={<Italic className="h-4 w-4" aria-hidden="true" />}
+              active={state.italic}
+              disabled={disabled}
+              shortcut="Control+I"
+              onClick={() => {
+                editor.tf.toggleMark('italic');
+                editor.tf.focus();
+              }}
+            />
+            <ToolbarButton
+              label="Strikethrough"
+              icon={<Strikethrough className="h-4 w-4" aria-hidden="true" />}
+              active={state.strikethrough}
+              disabled={disabled}
+              onClick={() => {
+                editor.tf.toggleMark('strikethrough');
+                editor.tf.focus();
+              }}
+            />
+            <ToolbarButton
+              label="Inline code"
+              icon={<Code2 className="h-4 w-4" aria-hidden="true" />}
+              active={state.code}
+              disabled={disabled}
+              shortcut="Control+E"
+              onClick={() => {
+                editor.tf.toggleMark('code');
+                editor.tf.focus();
+              }}
+            />
+            <ToolbarButton
+              label="Link"
+              icon={<Link2 className="h-4 w-4" aria-hidden="true" />}
+              disabled={disabled}
+              shortcut="Control+K"
+              onClick={onOpenLink}
+            />
+            <ToolbarButton
+              label="Clear formatting"
+              icon={<Eraser className="h-4 w-4" aria-hidden="true" />}
+              disabled={disabled}
+              onClick={() => {
+                editor.tf.removeMarks();
+                editor.tf.focus();
+              }}
+            />
+          </>
+        )}
+      />
 
       <Separator />
 
@@ -334,42 +524,86 @@ export default function EditorToolbar({ editor, onOpenLink, disabled = false }: 
 
       <Separator />
 
-      <ToolbarGroup label="Lists and blocks">
-        <ToolbarButton
-          label="Bulleted list"
-          icon={<List className="h-4 w-4" aria-hidden="true" />}
-          active={state.listStyleType === 'disc'}
-          disabled={disabled}
-          onClick={() => toggleEditorList(editor, 'disc')}
-        />
-        <ToolbarButton
-          label="Numbered list"
-          icon={<ListOrdered className="h-4 w-4" aria-hidden="true" />}
-          active={state.listStyleType === 'decimal'}
-          disabled={disabled}
-          onClick={() => toggleEditorList(editor, 'decimal')}
-        />
-        <ToolbarButton
-          label="Block quote"
-          icon={<Quote className="h-4 w-4" aria-hidden="true" />}
-          active={state.blockType === 'blockquote'}
-          disabled={disabled}
-          onClick={() => toggleBlockType('blockquote', state.blockType === 'blockquote')}
-        />
-        <ToolbarButton
-          label="Code block"
-          icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
-          active={state.blockType === 'code_block' || state.blockType === 'code_line'}
-          disabled={disabled}
-          onClick={() => toggleBlockType('code_block', state.blockType === 'code_block' || state.blockType === 'code_line')}
-        />
-        <ToolbarButton
-          label="Divider"
-          icon={<Minus className="h-4 w-4" aria-hidden="true" />}
-          disabled={disabled}
-          onClick={() => insertEditorDivider(editor)}
-        />
-      </ToolbarGroup>
+      <ResponsiveToolbarGroup
+        label="Lists and blocks"
+        triggerRef={useRef<HTMLButtonElement | null>(null)}
+        mobileItems={
+          <>
+            <EditorMenuItem
+              onSelect={() => toggleEditorList(editor, 'disc')}
+              disabled={disabled}
+              checked={state.listStyleType === 'disc'}
+            >
+              Bulleted list
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => toggleEditorList(editor, 'decimal')}
+              disabled={disabled}
+              checked={state.listStyleType === 'decimal'}
+            >
+              Numbered list
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => toggleBlockType('blockquote', state.blockType === 'blockquote')}
+              disabled={disabled}
+              checked={state.blockType === 'blockquote'}
+            >
+              Block quote
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => toggleBlockType('code_block', state.blockType === 'code_block' || state.blockType === 'code_line')}
+              disabled={disabled}
+              checked={state.blockType === 'code_block' || state.blockType === 'code_line'}
+            >
+              Code block
+            </EditorMenuItem>
+            <EditorMenuItem
+              onSelect={() => insertEditorDivider(editor)}
+              disabled={disabled}
+            >
+              Divider
+            </EditorMenuItem>
+          </>
+        }
+        desktopItems={
+          <>
+            <ToolbarButton
+              label="Bulleted list"
+              icon={<List className="h-4 w-4" aria-hidden="true" />}
+              active={state.listStyleType === 'disc'}
+              disabled={disabled}
+              onClick={() => toggleEditorList(editor, 'disc')}
+            />
+            <ToolbarButton
+              label="Numbered list"
+              icon={<ListOrdered className="h-4 w-4" aria-hidden="true" />}
+              active={state.listStyleType === 'decimal'}
+              disabled={disabled}
+              onClick={() => toggleEditorList(editor, 'decimal')}
+            />
+            <ToolbarButton
+              label="Block quote"
+              icon={<Quote className="h-4 w-4" aria-hidden="true" />}
+              active={state.blockType === 'blockquote'}
+              disabled={disabled}
+              onClick={() => toggleBlockType('blockquote', state.blockType === 'blockquote')}
+            />
+            <ToolbarButton
+              label="Code block"
+              icon={<Code2 className="h-5 w-5" aria-hidden="true" />}
+              active={state.blockType === 'code_block' || state.blockType === 'code_line'}
+              disabled={disabled}
+              onClick={() => toggleBlockType('code_block', state.blockType === 'code_block' || state.blockType === 'code_line')}
+            />
+            <ToolbarButton
+              label="Divider"
+              icon={<Minus className="h-4 w-4" aria-hidden="true" />}
+              disabled={disabled}
+              onClick={() => insertEditorDivider(editor)}
+            />
+          </>
+        }
+      />
     </div>
   );
 }

@@ -413,7 +413,7 @@ export default function PlateBodyEditor(props: Props) {
                 renderElement={renderElement}
                 renderLeaf={renderLeaf}
                 onKeyDown={handleEditorKeyDown}
-                className="min-h-[420px] p-4 font-serif text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand sm:p-6 sm:text-lg"
+                className="min-h-[320px] sm:min-h-[420px] p-4 font-serif text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand sm:p-6 sm:text-lg"
               />
             </div>
           </Plate>
@@ -445,7 +445,7 @@ export default function PlateBodyEditor(props: Props) {
                 end: event.currentTarget.selectionEnd,
               };
             }}
-            className="min-h-[420px] w-full resize-y rounded-2xl bg-surface-raised p-4 font-mono text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
+            className="min-h-[320px] sm:min-h-[420px] w-full resize-y rounded-2xl bg-surface-raised p-4 font-mono text-base leading-relaxed text-ink focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand"
           />
         )}
       </div>
