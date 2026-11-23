@@ -1,7 +1,7 @@
 {
   "gate": "reme v3.4 §44/§46 + Part VIII stable release gate",
-  "generatedAt": "2026-11-19T16:54:01.267Z",
-  "tokenChecksum": "sha256:843f5911b2ee4631",
+  "generatedAt": "2026-11-23T17:41:55.247Z",
+  "tokenChecksum": "sha256:855b4a4135542876",
   "results": [
     {
       "id": "DS-1",
@@ -13,7 +13,7 @@
       "id": "DS-2",
       "description": "token checksum (conformance manifest §46.1)",
       "status": "pass",
-      "evidence": "sha256:843f5911b2ee4631"
+      "evidence": "sha256:855b4a4135542876"
     },
     {
       "id": "DS-3",
@@ -143,9 +143,9 @@
     },
     {
       "id": "V34-12",
-      "description": "v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present",
+      "description": "v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, accessible navigation drawer, logout wipe & Part VIII evidence present",
       "status": "pass",
-      "evidence": "6 Wave 10 canonical completion artifacts verified"
+      "evidence": "7 Wave 10 canonical completion artifacts verified"
     },
     {
       "id": "V34-13",

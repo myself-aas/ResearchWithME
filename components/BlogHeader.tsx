@@ -32,7 +32,6 @@ import { EASING, TRANSITION } from '@/lib/motion/tokens';
 import AttentionPulse from './motion/AttentionPulse';
 import Pressable from './motion/Pressable';
 import BrandLogo from './BrandLogo';
-import MobileBottomNav from './layout/MobileBottomNav';
 import MobileNavDrawer from './layout/MobileNavDrawer';
 import { Header } from '@/components/ui/header-2';
 import { Button } from '@/components/primitives';
@@ -447,12 +446,6 @@ export default function BlogHeader({
       isEditor={isEditor}
       userName={user?.name}
       onSignOut={signOut}
-    />
-    {/* `newInLibrary` is deliberately NOT wired: no server-side "added since
-        your last visit" count exists yet. Passing null keeps the badge hidden
-        — never a fabricated count. It lights up when a real source ships. */}
-    <MobileBottomNav
-      profileHref={isSignedIn ? '/dashboard/account' : '/login?next=%2Fdashboard%2Faccount'}
     />
     </>
   );

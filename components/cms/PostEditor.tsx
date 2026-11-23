@@ -22,13 +22,13 @@ import type { CmsArtifact, CmsPost, FieldErrors } from '@/lib/cms/types';
 import { useDashboardUser } from './DashboardShell';
 import { formatDate } from '@/lib/format';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
-import { uploadBlogImage, uploadCover } from '@/lib/supabase/storage';
+import { uploadCover } from '@/lib/supabase/storage';
 import type { EncodedImage } from '@/lib/images/process';
 import LazyImageCropDialog from '@/components/media/LazyImageCropDialog';
 import { slugify } from '@/lib/validation';
 import { cn } from '@/lib/utils';
 import ConfirmDelete from './ConfirmDelete';
-import MdxEditor from '@/components/editor/MdxEditor';
+import BodyTextEditor from './BodyTextEditor';
 import PublishSplitButton from './PublishSplitButton';
 import StatusBadge from './StatusBadge';
 import {
@@ -789,17 +789,12 @@ export default function PostEditor({
           <Text id="post-content-label" as="h2" variant="card-title">
             Body
           </Text>
-          <MdxEditor
+          <BodyTextEditor
             id="post-content"
             value={form.content}
             onChange={(value) => update('content', value)}
             error={fieldErrors.content}
             disabled={Boolean(saving)}
-            onUploadImage={
-              isSupabaseConfigured
-                ? (file) => uploadBlogImage(file)
-                : undefined
-            }
           />
         </section>
 

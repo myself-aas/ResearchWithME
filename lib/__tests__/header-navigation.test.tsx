@@ -70,10 +70,9 @@ describe('responsive header navigation', () => {
     expect(container.querySelector('[role="dialog"][aria-label="Navigation menu"]')).toBeNull();
   });
 
-  it('leaves account and contribute to the bottom bar on tablet widths', () => {
-    // `MobileBottomNav` covers Profile and Contribute below `lg`; the header's
-    // auth cluster used to start at `md`, showing the same two destinations
-    // twice between 768px and 1023px.
+  it('reserves header account actions for desktop widths', () => {
+    // The mobile drawer provides account actions below `lg`; the desktop
+    // auth cluster stays hidden on phones and tablets to avoid duplication.
     const signIn = container.querySelector<HTMLAnchorElement>('a[href="/login"]');
     const cluster = signIn?.parentElement;
     expect(cluster?.className).toContain('hidden');

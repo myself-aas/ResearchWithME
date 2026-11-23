@@ -269,20 +269,21 @@ check('V34-11', 'v3.4 Wave 9 first-class knowledge routes, MDX security, PWA off
   for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
   return `${files.length} Wave 9 canonical UI, PWA, security & backfill artifacts verified`;
 });
-check('V34-12', 'v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, ADR-032-11 nav, logout wipe & Part VIII evidence present', () => {
+check('V34-12', 'v3.4 Wave 10 multi-pane Scholarly MDX Workspace, 14-scheme identifier normalizer, accessible navigation drawer, logout wipe & Part VIII evidence present', () => {
   const files = [
     'app/editor/page.tsx',
     'app/editor/[id]/page.tsx',
     'components/v34/ScholarlyEditorWorkspace.tsx',
+    'components/layout/MobileNavDrawer.tsx',
     'lib/v34/identifiers.ts',
     'docs/v34-acceptance-evidence.md',
     'test/next/v34-wave10-completion.test.ts',
   ];
   for (const f of files) assert(existsSync(join(root, f)), `missing ${f}`);
-  const bottomNav = readFileSync(join(root, 'components/layout/MobileBottomNav.tsx'), 'utf8');
-  for (const label of ['Explore', 'Library', 'Contribute', 'AI', 'Profile']) {
-    assert(bottomNav.includes(label), `ADR-032-11 bottom nav missing destination: ${label}`);
-  }
+  const drawer = readFileSync(join(root, 'components/layout/MobileNavDrawer.tsx'), 'utf8');
+  assert(drawer.includes('role="dialog"') && drawer.includes('aria-modal="true"'), 'mobile navigation drawer must be modal');
+  const header = readFileSync(join(root, 'components/BlogHeader.tsx'), 'utf8');
+  assert(header.includes('<MobileNavDrawer'), 'header must render mobile navigation drawer');
   const useSession = readFileSync(join(root, 'lib/supabase/use-session.ts'), 'utf8');
   assert(useSession.includes('performLogoutLocalWipe'), 'use-session signOut missing Part V §15.3 local wipe');
   return `${files.length} Wave 10 canonical completion artifacts verified`;
