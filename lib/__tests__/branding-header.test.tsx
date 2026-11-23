@@ -12,7 +12,7 @@ import manifest from '@/app/manifest';
 describe('brand assets', () => {
   it('renders the wordmark as the identity', () => {
     const logo = renderToStaticMarkup(createElement(BrandLogo));
-    expect(logo).toContain('reme');
+    expect(logo).toContain('reme.');
     expect(logo).not.toContain('text-brand-mark');
   });
 
