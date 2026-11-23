@@ -1,0 +1,95 @@
+# GTA6-KytyPS5-GTA-6 — source ledger and publication handoff
+
+## Current state — 20 November 2026
+
+The user requested a non-editorial repository review under Ashif Ahmed Shuvo, shuvo.1807016@bau.edu.bd. The matching existing account now has the published profile slug `ashif-ahmed-shuvo`. No affiliation, credential, professional verification badge, biography, or editor permission was added. Account/profile matching is not professional credential verification.
+
+The article remains a local draft. Human source review, final article approval, the authenticated CMS save/publish flow, deployment, and live verification remain outstanding. No CMS post write was performed during the draft-improvement work.
+
+Historical note: initial inspection found no author profile or posts. The missing-profile blocker was resolved after the user expressly requested author-profile publication. Earlier references to an unresolved author slug are superseded by this record and the current intake.
+
+## Package and preparation
+
+- Standalone draft: `docs/articles/gta6-kytyps5-repo-teardown.md`.
+- CMS metadata and resolved author slug: `docs/articles/gta6-kytyps5-repo-teardown.intake.json`.
+- Generated CMS Markdown body: `docs/articles/gta6-kytyps5-repo-teardown.cms.txt`. Its `.txt` extension prevents the recursive standalone-draft checker from requiring an extra H1; the content is still Markdown.
+- Retained API responses: `github-snapshot.json` beside this record, retrieved 20 November 2026. The release's promotional access-key line was explicitly omitted. No release archive was downloaded or executed.
+- Deployable, curated public evidence: `public/evidence/gta6-kytyps5-repo-teardown/inspection-record.json`, mapped to `/evidence/gta6-kytyps5-repo-teardown/inspection-record.json` after deployment. It includes source URLs, original inspection time, file inventory, reported release metadata, and claim locators. It excludes account details, promotional access keys, full third-party READMEs, and binary downloads. This is not a claim that the URL is already live.
+- SEO audit and before/after metadata evidence: `docs/audits/gta6-kytyps5-draft-seo-audit.md` and its companion JSON.
+
+Regenerate locally with:
+
+```bash
+npm run article:prepare:gta6
+npm run article:prepare:gta6 -- --check
+npm run reme:check
+npm run reme:test
+```
+
+The preparation command performs no CMS, account, network, indexing, or deployment operations. The standalone draft is the content source; its H1, repeated byline/category, and Key findings section are omitted from the CMS body because the reader already supplies those from CMS metadata. Contact details and the inspection date remain in the body. Reading time is derived from the generated body using the CMS's 220-words-per-minute calculation.
+
+## Intake and evidence scope
+
+- **Question:** does this repository supply reproducible evidence for its GTA VI-on-PC emulator claim?
+- **Audience:** developers and technically curious readers evaluating emulator claims and source-to-release provenance.
+- **Reviewed source:** `EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6@e522fdcdd2fae2941d6b142b2578c3d8052ea7cf`.
+- **Upstream context:** `InoriRus/Kyty@4733b7e1c91b10554a52007903d74dc76c39a230`.
+- **Method:** read-only GitHub inspection of the pinned tree, four tracked text files, release metadata, current workflows, and one pinned upstream README. No benchmark, gameplay replication, or binary safety assessment.
+
+## Claim-to-source ledger
+
+Reference numbers correspond to the article. “Observed” refers to this inspection; “reported” means the source's assertion; “inference” is the review's explicitly bounded interpretation.
+
+| Claim | Primary evidence and locator | Evidence type | Confidence and boundary |
+| --- | --- | --- | --- |
+| The reviewed tree contains four tracked files and no implementation/build configuration. | [1], complete recursive tree, `truncated: false`, all `blob` entries. | Observed | High for this commit only; not all private or historical work. |
+| README advertises an emulator aimed at GTA VI on PC. | [2], opening description, Configuration, Architecture, and Roadmap. | Reported | High confidence about what the README says; capability not reproduced. |
+| Claimed module directories and GTA VI configuration are absent from the pinned tree. | [1] paths compared with [2] Architecture and Configuration sections. | Observed comparison | High for the pinned tree; not an archive-content audit. |
+| The architecture layout is marked as a sample. | [2], raw Markdown comment immediately preceding the Architecture diagram. | Observed | High; not a claim that every other README passage is a template. |
+| Build manifest declares success without a command, commit, or output checksum. | [5], entire 152-byte file, particularly Status line. | Observed/report | High for text contents; successful compilation is not independently established. |
+| Cache-labelled metadata consists of text labels, not inspected shader implementation. | [6], entire file. | Observed | High for text contents; no claim about the release archive's cache format. |
+| v1.0.0 describes real-console streaming rather than local emulation. | [3], How to use and How it works; release ID `452558744`. | Reported | High for inspected wording; release text is mutable and functionality was not tested. |
+| GitHub reports one ZIP asset, 1,815,299 bytes. | [3], `assets[0].name`, `.size`, and asset ID `773352455`. | Observed API metadata | High at retrieval; not independently downloaded, hashed, or unpacked. |
+| Current workflow API reports zero definitions. | [8], `total_count: 0`, `workflows: []`; [1] has no `.github/workflows`. | Observed | High at inspection; external or historical CI is not ruled out. |
+| Upstream Kyty README describes simple PS4 games and PS5 homebrew. | [7], pinned introductory compatibility paragraph and unimplemented-feature list. | Reported | High for that source; not an exhaustive audit of upstream emulation capability. |
+| Reviewed repository carries MIT license text. | [4], LICENSE file. | Observed | High for repository text; not binary authenticity or rights clearance for any games. |
+| Working GTA VI emulation is not established by inspected material. | Synthesis of [1], [2], [3], [5]. | Inference | Strong within inspected scope; not proof of impossibility or malicious intent. |
+| Playability, performance, and binary safety remain unverified here. | Review method: no runtime or binary analysis undertaken. | Method disclosure | No security or performance conclusion should be substituted for this limitation. |
+
+## SEO implementation
+
+- Replaced the 59-character title that lost its finding during metadata clamping with `GTA6-KytyPS5-GTA-6 review: emulator source missing` (50 characters; 57 with branding). Executing the real metadata helper confirms that the full title survives.
+- Kept the existing 157-character description, unchanged by the metadata helper. The canonical slug is unchanged.
+- Reordered the opening to state the evidence gap before the full commit hash while preserving exact source versioning.
+- Replaced visible tool/source/locator/relation authoring syntax with plain-language assessment, evidence, qualification, limitation, and maintainer-question callouts.
+- Added contextual links to the published author's route, the Repo Teardowns category, and the bundled public inspection record. Dynamic routes exist in source; the evidence asset exists locally. Live responses are not yet verified.
+- Preserved all eight references, all unique numeric inline citation/URL pairs, the inspection date, AI-assistance disclosure, and the no-runtime/no-malware-verdict limits.
+- Did not add fabricated visuals, credentials, ratings, FAQ schema, location targeting, traffic estimates, or keyword repetitions.
+- Did not modify the reader's generic image behavior, fallback author-role mapping, schema implementation, or site-wide layout. Those template/production concerns remain separately scoped and must be previewed before publication.
+
+## Human CITABLE gate — pending
+
+- **Claims / Integrity:** independently check source wording and the release discrepancy; distinguish lack of evidence from proof of wrongdoing.
+- **Terminology / Answers:** verify the emulation-versus-streaming explanation and bounded conclusions.
+- **Bibliography / Locators:** check pinned links and recheck mutable release/workflow endpoints without silently replacing the original inspection date.
+- **Extraction:** preview the generated CMS body, evidence link, tables, and callouts in actual HTML and negotiated Markdown.
+- **Authorship / Privacy:** obtain author approval of the AI-assisted article and public contact line. Profile publication alone does not approve the article.
+- **Rights / Disclosures:** source text is quoted sparingly in the article/public extract. Confirm any funding/conflicts with the author; do not invent a declaration of none.
+
+## Authorized editor handoff
+
+1. Review the standalone draft and this ledger with the author. Resolve approvals and disclosures.
+2. Regenerate and check the CMS body and deployable evidence asset using the commands above.
+3. Deploy the evidence asset and verify its real HTTP response before publishing an article that links to it. A bundled file is not proof of a live URL.
+4. Use the intake's `cmsFields` with the generated `cmsBodyFile` loaded as `content`. The intake itself is not a complete API request. Resolve/confirm `authorId: ashif-ahmed-shuvo` through the normal studio. Keep category `GitHub Repo Teardowns`, format `Repo Teardown`, and `publicationType: review`.
+5. Save as `draft` through `/api/cms/posts`. Preview title, byline/card, generic cover behavior, citations, links, wide tables/code, and mobile reading. Do not copy the standalone H1/byline/key-findings scaffolding into the CMS body.
+6. After explicit human publication approval, publish through the studio. Verify actual status, canonical, sitemap, Article JSON-LD, public catalogue, incoming discovery links, and HTML/Markdown agreement. No indexing, ranking, or AI-citation guarantee follows from valid markup.
+
+## Validation — 20 November 2026
+
+- Standalone reme structure check: passed.
+- `npm run reme:test`: all 10 tests passed, including citation preservation, title budget, body de-duplication, file/metadata consistency, source blob hashes, and deployable-evidence privacy checks.
+- `npm run article:prepare:gta6 -- --check`: passed deterministic output checks.
+- Actual `pageMetadata()` execution: full improved title preserved; description unchanged. Before/after results are retained in the SEO evidence JSON.
+- JavaScript syntax checks and `git diff --check`: passed.
+- No full application quality/build, browser/mobile, schema-validator, Search Console, performance, or live-publication pass is claimed. Dependencies are not installed in this checkout. No application runtime or UI route was changed.

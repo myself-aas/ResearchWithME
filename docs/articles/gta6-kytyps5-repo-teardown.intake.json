@@ -1,0 +1,53 @@
+{
+  "bodyFile": "gta6-kytyps5-repo-teardown.md",
+  "workflowState": "local-draft-author-profile-published-awaiting-human-review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerified": true,
+    "profileVerificationScope": "Published profile belongs to the existing account with the supplied email; no professional credential verification is implied."
+  },
+  "cmsFields": {
+    "title": "GTA6-KytyPS5-GTA-6 review: emulator source missing",
+    "slug": "gta6-kytyps5-repo-teardown",
+    "status": "draft",
+    "subtitle": "A four-file source tree, an unverified emulator claim, and release notes that describe console streaming.",
+    "summary": "A pinned-source teardown finds no emulator implementation in GTA6-KytyPS5-GTA-6; release notes describe PS5 streaming. Playability and safety are unverified.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "publicationType": "review",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "GitHub Repo Teardowns",
+      "GTA VI",
+      "PS5 Emulation",
+      "Remote Streaming",
+      "Software Reproducibility",
+      "Repository Audit"
+    ],
+    "keyTakeaways": [
+      "The pinned tree contains four files and no emulator source, build system, or tracked GitHub Actions workflow.",
+      "The README describes local emulation; the inspected v1.0.0 release notes describe streaming from a real PS5.",
+      "A committed build-success statement and an available ZIP do not establish a reproducible emulator.",
+      "No binary or gameplay test was performed; compatibility and download safety remain unverified."
+    ],
+    "readTime": "8 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "GTA6-KytyPS5-GTA-6",
+      "url": "https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6",
+      "identifier": "EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6",
+      "meta": "MIT · Inspected 20 Nov 2026 · Commit e522fdcdd2fa"
+    },
+    "authorId": "ashif-ahmed-shuvo"
+  },
+  "writeBlockers": [
+    "Human source review and final article approval remain pending.",
+    "Deploy and verify publicEvidencePath before publishing the article; bundled files are not proof of a live URL.",
+    "Load cmsBodyFile into content through the authenticated studio; this preparation package is not itself an API write request."
+  ],
+  "cmsBodyFile": "gta6-kytyps5-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/gta6-kytyps5-repo-teardown/inspection-record.json"
+}

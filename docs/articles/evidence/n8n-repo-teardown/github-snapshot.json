@@ -1,0 +1,162 @@
+{
+  "reviewedRepository": "https://github.com/n8n-io/n8n",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+  "retrievedAt": "2026-11-20T22:54:22.796590+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "treeScope": {
+    "sha": "a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+    "truncated": false,
+    "returnedEntries": 43871,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/README.md",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/README.md?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "2d2053d58750e70ca43f946ab75a6ec5d532f87c",
+      "bytes": 3996,
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 16,
+          "text": "# n8n \u2013 The Platform for AI Agents and Workflow Automation\n\nFair-code platform to build and deploy AI agents and workflows. Combine a visual canvas with custom code, run it self-hosted or in the [cloud](https://app.n8n.cloud/login), and connect to 1500+ integrations. AI automation you can trust with real work, from prototype to production.\n\n![n8n.io - Screenshot](https://raw.githubusercontent.com/n8n-io/n8n/master/assets/n8n-screenshot-readme.png)\n\n## Key Capabilities\n\n- **AI-Native Automation Platform**: Build and operationalize AI workflows and multi-step agents using your own data, models, and tools\n- **Model Flexibility, No Lock-In**: Connect to OpenAI, Anthropic, Google, or open-source models and switch providers without changing your architecture\n- **From Prototype to Production**: Design multi-step AI workflows with logic, tool use, human approvals, and full observability\n- **Code When You Need It**: Combine visual building with JavaScript, Python, and npm packages for advanced AI workflows\n- **Enterprise-Ready AI**: Self-host or deploy securely with role-based access, audit trails, and support for sensitive data\n- **Leverage What Already Exists**: 1500+ integrations and 9,000+ workflow [templates](https://n8n.io/workflows) to connect AI with your existing systems"
+        },
+        {
+          "startLine": 49,
+          "endLine": 59,
+          "text": "## License\n\nn8n is [fair-code](https://faircode.io) distributed under the [Sustainable Use License](https://github.com/n8n-io/n8n/blob/master/LICENSE.md) and [n8n Enterprise License](https://github.com/n8n-io/n8n/blob/master/LICENSE_EE.md).\n\n- **Source Available**: Always visible source code\n- **Self-Hostable**: Deploy anywhere\n- **Extensible**: Add your own nodes and functionality\n\n[Enterprise Licenses](mailto:license@n8n.io) available for additional features and support.\n\nAdditional information about the license model can be found in the [docs](https://docs.n8n.io/n8n-community-license/)."
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "path": "packages/cli/src/workflow-runner.ts",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/packages/cli/src/workflow-runner.ts?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "475965c635740374c39f1128d876732bceebf49d",
+      "bytes": 38455,
+      "excerpts": [
+        {
+          "startLine": 551,
+          "endLine": 580,
+          "text": "\t\t// The v1 main process owns the HTTP response. Start this before the\n\t\t// queue/local decision because a worker cannot write to it.\n\t\tconst heartbeat = this.setupV1StreamingHeartbeat(data);\n\n\t\t// @TODO: Reduce to true branch once feature is stable\n\t\tconst shouldEnqueue =\n\t\t\tprocess.env.OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS === 'true'\n\t\t\t\t? this.executionsConfig.mode === 'queue'\n\t\t\t\t: this.executionsConfig.mode === 'queue' && data.executionMode !== 'manual';\n\n\t\tconst shouldReloadStaticData = Boolean(existingExecution && loadStaticData);\n\n\t\ttry {\n\t\t\tif (shouldEnqueue) {\n\t\t\t\tawait this.enqueueExecution(\n\t\t\t\t\texecutionId,\n\t\t\t\t\tworkflowId,\n\t\t\t\t\tdata,\n\t\t\t\t\tloadStaticData,\n\t\t\t\t\trealtime,\n\t\t\t\t\texistingExecution?.executionId,\n\t\t\t\t);\n\t\t\t} else {\n\t\t\t\tawait this.runMainProcess(\n\t\t\t\t\texecutionId,\n\t\t\t\t\tdata,\n\t\t\t\t\tshouldReloadStaticData,\n\t\t\t\t\texistingExecution,\n\t\t\t\t\texecutionWorkflow,\n\t\t\t\t);"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "path": "packages/core/src/execution-engine/workflow-execute.ts",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/packages/core/src/execution-engine/workflow-execute.ts?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "a2552d4465cf6e95a0f946f77079299f5e67dee2",
+      "bytes": 108724,
+      "excerpts": [
+        {
+          "startLine": 1872,
+          "endLine": 1902,
+          "text": "\t/**\n\t * The retry budget for a node, as `[maxTries, waitBetweenTries]`.\n\t *\n\t * A node resuming with a sub-workflow error has already failed in the sub-workflow;\n\t * there is nothing to re-run, so don't apply retryOnFail (it would just re-throw the\n\t * same error after pointless waits without re-executing anything).\n\t */\n\tprivate getRetryParams(executionData: IExecuteData): [number, number] {\n\t\tconst isResumedError = executionData.metadata?.resumeError !== undefined;\n\t\tif (executionData.node.retryOnFail !== true || isResumedError) {\n\t\t\treturn [1, 0];\n\t\t}\n\n\t\t// TODO: Remove the hardcoded default-values here and also in NodeSettings.vue\n\t\treturn [\n\t\t\tMath.min(5, Math.max(2, executionData.node.maxTries || 3)),\n\t\t\tMath.min(5000, Math.max(0, executionData.node.waitBetweenTries || 1000)),\n\t\t];\n\t}\n\n\t/**\n\t * Wait before the next retry of a node, unless cancelled.\n\t * Returns whether the retry may run, so the caller stops retrying after a cancel.\n\t */\n\tprivate async waitForRetry(waitBetweenTries: number): Promise<boolean> {\n\t\tif (this.isCancelled) return false;\n\n\t\t// TODO(legacy): Improve that in the future and check if other nodes can be executed in the meantime\n\t\tawait sleep(waitBetweenTries, this.abortController.signal).catch(() => {});\n\n\t\treturn !this.isCancelled;"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "path": "LICENSE.md",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE.md",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/LICENSE.md?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "f85f59baa906530c26cee26e0c9ddd6bd5f86dbd",
+      "bytes": 4445,
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 14,
+          "text": "Portions of this software are licensed as follows:\n\n- Content of branches other than the main branch (i.e. \"master\") are not licensed.\n- Source code files that contain \".ee.\" in their filename or \".ee\" in their dirname are NOT licensed under\n  the Sustainable Use License.\n  To use source code files that contain \".ee.\" in their filename or \".ee\" in their dirname you must hold a\n\tvalid n8n Enterprise License specifically allowing you access to such source code files and as defined\n\tin \"LICENSE_EE.md\".\n- All third party components incorporated into the n8n Software are licensed under the original license\n  provided by the owner of the applicable component.\n- Content outside of the above mentioned files or restrictions is available under the \"Sustainable Use\n  License\" as defined below."
+        },
+        {
+          "startLine": 24,
+          "endLine": 35,
+          "text": "### Copyright License\n\nThe licensor grants you a non-exclusive, royalty-free, worldwide, non-sublicensable, non-transferable license\nto use, copy, distribute, make available, and prepare derivative works of the software, in each case subject\nto the limitations below.\n\n### Limitations\n\nYou may use or modify the software only for your own internal business purposes or for non-commercial or\npersonal use. You may distribute the software or provide it to others only if you do so free of charge for\nnon-commercial purposes. You may not alter, remove, or obscure any licensing, copyright, or other notices of\nthe licensor in the software. Any use of the licensor\u2019s trademarks is subject to applicable law."
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE_EE.md",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE_EE.md",
+      "apiUrl": "https://api.github.com/repos/n8n-io/n8n/contents/LICENSE_EE.md?ref=a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce",
+      "gitBlobSha": "b47966a6c05809c90723aa4beaf47cbbd34fac1b",
+      "bytes": 1879,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 18,
+          "text": "# The n8n Enterprise License (the \u201cEnterprise License\u201d)\n\nCopyright (c) 2022-present n8n GmbH.\n\nWith regard to the n8n Software:\n\nThis software and associated documentation files (the \"Software\") may only be used in production, if\nyou (and any entity that you represent) hold a valid n8n Enterprise license corresponding to your\nusage. Subject to the foregoing sentence, you are free to modify this Software and publish patches\nto the Software. You agree that n8n and/or its licensors (as applicable) retain all right, title and\ninterest in and to all such modifications and/or patches, and all such modifications and/or patches\nmay only be used, copied, modified, displayed, distributed, or otherwise exploited with a valid n8n\nEnterprise license for the corresponding usage. Notwithstanding the foregoing, you may copy and\nmodify the Software for development and testing purposes, without requiring a subscription. You\nagree that n8n and/or its licensors (as applicable) retain all right, title and interest in and to\nall such modifications. You are not granted any other rights beyond what is expressly stated herein.\nSubject to the foregoing, it is forbidden to copy, merge, publish, distribute, sublicense, and/or\nsell the Software."
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes a fair-code visual workflow platform with custom code.",
+      "sourceId": "S1",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/README.md",
+      "locator": "lines 3\u201316; lines 49\u201359",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Integration counts and enterprise readiness were not independently verified."
+    },
+    {
+      "id": "C2",
+      "claim": "The runner branches between enqueueExecution and runMainProcess based on mode and manual offload settings.",
+      "sourceId": "S2",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/cli/src/workflow-runner.ts",
+      "locator": "lines 551\u2013580",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not a full queue, persistence or failover audit."
+    },
+    {
+      "id": "C3",
+      "claim": "The retry helper has conditional retry eligibility and bounded attempt/wait values.",
+      "sourceId": "S3",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts",
+      "locator": "lines 1872\u20131902",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Helper inspected, not a proof of all runtime retry paths."
+    },
+    {
+      "id": "C4",
+      "claim": "The Sustainable Use License restricts permitted purposes and distribution.",
+      "sourceId": "S4",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE.md",
+      "locator": "lines 3\u201314; lines 24\u201335",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No legal advice or determination for a particular business model."
+    },
+    {
+      "id": "C5",
+      "claim": "Enterprise-marked code has separately conditioned production rights.",
+      "sourceId": "S5",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/LICENSE_EE.md",
+      "locator": "lines 1\u201318",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No feature-entitlement map or enterprise contract review."
+    },
+    {
+      "id": "C6",
+      "claim": "Workflow retries require application-side duplicate-effect testing.",
+      "sourceId": "S3",
+      "url": "https://github.com/n8n-io/n8n/blob/a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce/packages/core/src/execution-engine/workflow-execute.ts",
+      "locator": "lines 1872\u20131902",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No connector or external API was executed."
+    }
+  ]
+}

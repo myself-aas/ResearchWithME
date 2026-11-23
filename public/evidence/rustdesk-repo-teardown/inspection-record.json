@@ -1,0 +1,188 @@
+{
+  "title": "RustDesk review: connection and build boundaries",
+  "reviewedRepository": "https://github.com/rustdesk/rustdesk",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+  "retrievedAt": "2026-11-20T22:54:22.055909+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+    "truncated": false,
+    "returnedEntries": 1322,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/README.md?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "6b8fd74f81af89fbae3801878d82e79db5cc15a0",
+      "bytes": 10008
+    },
+    {
+      "id": "S2",
+      "path": "src/rendezvous_mediator.rs",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/src/rendezvous_mediator.rs?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "7e7ea5f0cccb01220017f66f13566b204ad732a8",
+      "bytes": 84457
+    },
+    {
+      "id": "S3",
+      "path": "Cargo.toml",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/Cargo.toml",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/Cargo.toml?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "31cfcd446ccb4b9e1d9fab31499fc966977a35e9",
+      "bytes": 12299
+    },
+    {
+      "id": "S4",
+      "path": ".github/workflows/flutter-build.yml",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/.github/workflows/flutter-build.yml",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/.github/workflows/flutter-build.yml?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "081efd377753782a408c5998225599fd2bb15834",
+      "bytes": 135212
+    },
+    {
+      "id": "S5",
+      "path": "LICENCE",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/LICENCE",
+      "apiUrl": "https://api.github.com/repos/rustdesk/rustdesk/contents/LICENCE?ref=eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+      "gitBlobSha": "0ad25db4bd1d86c452db3f9602ccdbe172438f52",
+      "bytes": 34523
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes a remote desktop application and a choice of rendezvous/relay infrastructure.",
+      "sourceId": "S1",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md",
+      "locator": "lines 11–20; lines 39–58; lines 159–171",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Security and data-control marketing is not independently established."
+    },
+    {
+      "id": "C2",
+      "claim": "The mediator tracks relays previously reported by the peer and says that this does not authenticate a request.",
+      "sourceId": "S2",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs",
+      "locator": "lines 52–60; lines 62–78; lines 94–103",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "A narrow local mechanism, not a vulnerability or security audit."
+    },
+    {
+      "id": "C3",
+      "claim": "Cargo metadata and dependencies show a native application with local libraries and platform-specific dependencies.",
+      "sourceId": "S3",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/Cargo.toml",
+      "locator": "lines 1–13; lines 52–58; lines 93–103",
+      "evidenceType": "direct configuration observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No build or dependency provenance verification."
+    },
+    {
+      "id": "C4",
+      "claim": "The Flutter workflow includes bridge generation and platform build jobs.",
+      "sourceId": "S4",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/.github/workflows/flutter-build.yml",
+      "locator": "lines 1–10; lines 131–163",
+      "evidenceType": "direct configuration observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Workflow definition inspected, no CI run outcome asserted."
+    },
+    {
+      "id": "C5",
+      "claim": "The root license is AGPL v3, including modified network-interaction conditions.",
+      "sourceId": "S5",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/LICENCE",
+      "locator": "lines 1–12; lines 540–550",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No legal determination about a specific deployment or derivative work."
+    },
+    {
+      "id": "C6",
+      "claim": "Self-hosting requires separate endpoint authorization and release provenance decisions.",
+      "sourceId": "S1",
+      "url": "https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md",
+      "locator": "lines 11–20; lines 39–58; lines 159–171",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No remote session, privilege or cryptographic test performed."
+    }
+  ],
+  "chartInventory": {
+    "title": "RustDesk — selected source-file map",
+    "reviewedCommit": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Client modules",
+        "prefix": "src/client",
+        "includePattern": "\\.rs$",
+        "excludePattern": null,
+        "count": 12,
+        "source": {
+          "url": "https://api.github.com/repos/rustdesk/rustdesk/git/trees/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7?recursive=1",
+          "treeSha": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Server modules",
+        "prefix": "src/server",
+        "includePattern": "\\.rs$",
+        "excludePattern": null,
+        "count": 42,
+        "source": {
+          "url": "https://api.github.com/repos/rustdesk/rustdesk/git/trees/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7?recursive=1",
+          "treeSha": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Platform code",
+        "prefix": "src/platform",
+        "includePattern": "\\.rs$",
+        "excludePattern": null,
+        "count": 22,
+        "source": {
+          "url": "https://api.github.com/repos/rustdesk/rustdesk/git/trees/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7?recursive=1",
+          "treeSha": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Flutter UI",
+        "prefix": "flutter/lib",
+        "includePattern": "\\.dart$",
+        "excludePattern": null,
+        "count": 142,
+        "source": {
+          "url": "https://api.github.com/repos/rustdesk/rustdesk/git/trees/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7?recursive=1",
+          "treeSha": "eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

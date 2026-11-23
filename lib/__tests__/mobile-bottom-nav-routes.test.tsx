@@ -1,0 +1,49 @@
+// @vitest-environment jsdom
+import { act } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { MemoryRouter } from 'react-router-dom';
+import { afterEach, beforeEach, expect, it, vi } from 'vitest';
+import MobileBottomNav from '@/components/layout/MobileBottomNav';
+
+const route = vi.hoisted(() => ({ pathname: '/feed' }));
+vi.mock('next/navigation', () => ({ usePathname: () => route.pathname }));
+
+let root: Root;
+let container: HTMLDivElement;
+
+beforeEach(() => {
+  route.pathname = '/feed';
+  vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true);
+  vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+  container = document.createElement('div');
+  document.body.append(container);
+  root = createRoot(container);
+});
+afterEach(() => {
+  act(() => root.unmount());
+  container.remove();
+  vi.unstubAllGlobals();
+});
+
+function renderRoute(pathname: string) {
+  route.pathname = pathname;
+  act(() => root.render(<MemoryRouter><MobileBottomNav profileHref="/profile/reader" /></MemoryRouter>));
+}
+
+it('can move between immersive and public routes without changing hook order', () => {
+  renderRoute('/feed');
+  expect(container.querySelector('a[aria-current="page"]')?.getAttribute('href')).toBe('/feed');
+  for (const pathname of ['/editor/draft', '/contribute', '/write', '/dashboard/account']) {
+    renderRoute(pathname);
+    expect(container.querySelector('nav')).toBeNull();
+    renderRoute('/library');
+    expect(container.querySelector('a[aria-current="page"]')?.getAttribute('href')).toBe('/library');
+  }
+});
+
+it('derives the selected destination on the first render and retains the profile link', () => {
+  renderRoute('/assistant');
+  expect(container.querySelector('a[aria-current="page"]')?.getAttribute('href')).toBe('/assistant');
+  renderRoute('/profile/reader');
+  expect(container.querySelector('a[aria-current="page"]')?.getAttribute('href')).toBe('/profile/reader');
+});

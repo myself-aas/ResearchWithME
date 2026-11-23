@@ -1,0 +1,51 @@
+{
+  "bodyFile": "posthog-repo-teardown.md",
+  "cmsBodyFile": "posthog-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/posthog-repo-teardown/inspection-record.json",
+  "workflowState": "local-draft-awaiting-human-review",
+  "publicationType": "review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerificationScope": "Uses the author profile established earlier in this session; no fresh database or credential check."
+  },
+  "cmsFields": {
+    "title": "PostHog review: self-hosting and license boundaries",
+    "slug": "posthog-repo-teardown",
+    "status": "draft",
+    "subtitle": "Does repository access make self-hosting equivalent to the supported hosted product?",
+    "summary": "PostHog repository review of product architecture, hobby self-hosting and mixed licensing, with deployment and privacy questions left explicit.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "authorId": "ashif-ahmed-shuvo",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "PostHog",
+      "Repository Review",
+      "Architecture",
+      "Adoption Trade-offs"
+    ],
+    "keyTakeaways": [
+      "The pinned README distinguishes Cloud from unsupported hobby self-hosting.",
+      "The hobby configuration names multiple stateful dependencies, not one standalone analytics process.",
+      "MIT Expat root terms explicitly exclude the enterprise directory."
+    ],
+    "readTime": "6 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "PostHog",
+      "url": "https://github.com/PostHog/posthog",
+      "identifier": "PostHog/posthog",
+      "meta": "Default-branch snapshot · Commit 4e10f441e36b · Inspected 20 Nov 2026"
+    },
+    "publicationType": "review"
+  },
+  "writeBlockers": [
+    "Human evidence review and final approval required.",
+    "Deploy and verify linked public evidence before publication.",
+    "Load the separate CMS body as content via the authorized studio. Intake is not an API write request.",
+    "License summaries are not legal advice; review terms for the intended use."
+  ]
+}

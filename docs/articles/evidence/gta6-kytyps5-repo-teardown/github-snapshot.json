@@ -1,0 +1,151 @@
+{
+  "retrievedAt": "2026-11-20T22:30:46.267159+00:00",
+  "method": "Read-only GitHub REST API via gh; no release assets downloaded or executed.",
+  "reviewedCommit": "e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+  "sources": {
+    "repository": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6",
+      "data": {
+        "full_name": "EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6",
+        "html_url": "https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6",
+        "description": "GTA6 PS5 emulator based on KytyPS5 with a focus on playable GTA VI: performance work, per-game profiles, shader cache and compatibility fixes. Windows. Bring GTA 6 on your PC now.",
+        "fork": false,
+        "default_branch": "main",
+        "license": {
+          "key": "mit",
+          "name": "MIT License",
+          "spdx_id": "MIT",
+          "url": "https://api.github.com/licenses/mit",
+          "node_id": "MDc6TGljZW5zZTEz"
+        },
+        "created_at": "2026-10-14T13:42:53Z",
+        "pushed_at": "2026-11-20T17:21:00Z"
+      }
+    },
+    "commit": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/commits/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "data": {
+        "sha": "e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+        "html_url": "https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/commit/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+        "tree": {
+          "sha": "f1456fc1da12c35282d6deaf2df171428e2757fb",
+          "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/f1456fc1da12c35282d6deaf2df171428e2757fb"
+        },
+        "message": "Update README.md",
+        "date": "2026-11-20T17:20:59Z"
+      }
+    },
+    "tree": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf?recursive=1",
+      "data": {
+        "sha": "e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+        "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+        "tree": [
+          {
+            "path": "LICENSE",
+            "mode": "100644",
+            "type": "blob",
+            "sha": "85f57b74bdf0bafb9b5de482c88d1b434793a1b2",
+            "size": 1076,
+            "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/blobs/85f57b74bdf0bafb9b5de482c88d1b434793a1b2"
+          },
+          {
+            "path": "README.md",
+            "mode": "100644",
+            "type": "blob",
+            "sha": "0dfeedc5e6ced1bee9a96f3ed4917852cb981ce2",
+            "size": 8017,
+            "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/blobs/0dfeedc5e6ced1bee9a96f3ed4917852cb981ce2"
+          },
+          {
+            "path": "metadata",
+            "mode": "040000",
+            "type": "tree",
+            "sha": "08213a2d0ff073ac496822eeec096a9f7786c513",
+            "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/08213a2d0ff073ac496822eeec096a9f7786c513"
+          },
+          {
+            "path": "metadata/build_manifest_4670.log",
+            "mode": "100644",
+            "type": "blob",
+            "sha": "ced25f34e83ae148070b343477d964f4effe07ae",
+            "size": 152,
+            "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/blobs/ced25f34e83ae148070b343477d964f4effe07ae"
+          },
+          {
+            "path": "metadata/cache_blob_4670.tmp",
+            "mode": "100644",
+            "type": "blob",
+            "sha": "22013a5031804304e81cdaaa44d4fb313d3dbd2f",
+            "size": 1592,
+            "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/blobs/22013a5031804304e81cdaaa44d4fb313d3dbd2f"
+          }
+        ],
+        "truncated": false
+      }
+    },
+    "release": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/releases/tags/v1.0.0",
+      "data": {
+        "id": 452558744,
+        "html_url": "https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/releases/tag/v1.0.0",
+        "tag_name": "v1.0.0",
+        "name": "Kity Release",
+        "body": "# How to use\r\n1. Download and launch kitty.\r\n2. Find an available PS5 console.\r\n3. Connect to the console.\r\n4. Launch GTA 6.\r\n5. Stream the gameplay directly to your PC.\r\n\r\n# Requirements:\r\n\r\n* Windows PC\r\n* Stable internet connection\r\n* Controller (recommended)\r\n\r\n**How it works:** The game runs on a real PS5, while KittyPS5 streams the video to your PC and sends your controls back to the console.\r\n",
+        "target_commitish": "549211260cc5826bba65d662a40368719d501a99",
+        "created_at": "2026-11-20T10:32:01Z",
+        "published_at": "2026-11-20T10:35:15Z",
+        "updated_at": "2026-11-20T21:09:00Z",
+        "assets": [
+          {
+            "id": 773352455,
+            "name": "KytyPS5-GTA-6-vX.Y.Z-win64.zip",
+            "size": 1815299,
+            "digest": "sha256:76ad033163f10d11d06f1ca29a653eb2cd04a5bc63e7268319f0e43c6ec640b1",
+            "created_at": "2026-11-20T21:08:56Z",
+            "updated_at": "2026-11-20T21:09:00Z"
+          }
+        ],
+        "redaction": "Opening promotional access-key line omitted; remaining release body preserved."
+      }
+    },
+    "workflows": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/actions/workflows",
+      "data": {
+        "total_count": 0,
+        "workflows": []
+      }
+    },
+    "upstream_readme": {
+      "url": "https://api.github.com/repos/InoriRus/Kyty/contents/README.md?ref=4733b7e1c91b10554a52007903d74dc76c39a230",
+      "data": {
+        "sha": "46accf227cd56566d4ac03d31ea9f8e870fa3518",
+        "text": "[![Build status](https://ci.appveyor.com/api/projects/status/0du32fg9flol63to?svg=true)](https://ci.appveyor.com/project/InoriRus/kyty) [![CI](https://github.com/InoriRus/Kyty/actions/workflows/ci.yml/badge.svg)](https://github.com/InoriRus/Kyty/actions/workflows/ci.yml)\n\n# Kyty\n## PS4 & PS5 emulator\n\n---\nThe project is in its early stage.\n\n[Vladimir M](mailto:inorirus@gmail.com)\n\nLicensed under the MIT license.\n\n---\nIt is possible to run some simple games for PS4 and homebrews for PS5\n\nThere maybe graphics glitches, crashes, freezes and low FPS. It's OK for now.\n\nFeatures that are not implemented:\n- Audio input/output\n- MP4 video\n- Network\n- Multi-user\n\nPath to Savedata folder is hardcoded and can't be configured.\nSystem parameters (language, date format, etc.) are also hardcoded.\n\n---\n### Screenshots\n#### PS4\n<img src=\"https://user-images.githubusercontent.com/7149418/169674296-4185e2da-99f9-4073-8ca9-19dc124c7459.png\" width=\"400\"> <img src=\"https://user-images.githubusercontent.com/7149418/169674298-df817d95-7288-46fe-a040-3c0a40c29a6b.png\" width=\"400\"> <img src=\"https://user-images.githubusercontent.com/7149418/169674301-37a3f947-76cd-4a9b-8c81-adec3d5d9c59.png\" width=\"400\"> <img src=\"https://user-images.githubusercontent.com/7149418/169674303-13edae7d-24d3-4ec6-ba94-586e13c69df5.png\" width=\"400\">\n#### PS5\n<img src=\"https://user-images.githubusercontent.com/7149418/185373811-3c12178d-d924-4da1-be7a-06ff6cb733b7.png\" width=\"800\">\n\n---\n### Building\nSupported platforms:\n- Windows 10 x64\n\nToolchains:\n- Visual Studio + clang-cl + ninja\n- Eclipse CDT + mingw-w64 + gcc/clang + ninja/mingw32-make\n\nSupported versions:\nTool                            | Version\n:------------                   | :------------\ncmake                           |3.12\nVisual Studio 2019              |16.10.3\nclang                           |12.0.1\nclang-cl                        |11.0.0\ngcc (MinGW-W64 x86_64-posix-seh)|10.2.0\nninja                           |1.10.1\nMinGW-w64                       |8.0.0\nEclipse CDT                     |10.3.0\nQt                              |5.15.0\n\nDefine environment variable named Qt5_DIR pointing to the proper version of Qt\n\nMSVC compiler (cl.exe) is not supported!\n\nExternal dependencies:\n* Vulkan SDK 1.2.198.1\n* Qt 5.15.0\n\n## Donate\n\nIf you would like to support the project:\n\n- Bitcoin: bc1qd66pjk3xj3hzvm379uxy470n533nnt2deenpea\n\n<img src=\"https://user-images.githubusercontent.com/7149418/181066559-7f35befb-ad23-480c-9a75-3b663b1b9957.png\" width=\"200\">\n\n## Hire me\n\n**I'm available for hiring.** If you need C++ developer, please take a look at my [profile](https://github.com/InoriRus) and contact me by email\n\n**\u042f \u0432 \u043f\u043e\u0438\u0441\u043a\u0430\u0445 \u0440\u0430\u0431\u043e\u0442\u044b.** \u0415\u0441\u043b\u0438 \u0432\u0430\u043c \u043d\u0443\u0436\u0435\u043d \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u0447\u0438\u043a C++, \u043f\u0438\u0448\u0438\u0442\u0435 \u043c\u043d\u0435 \u043d\u0430 \u043f\u043e\u0447\u0442\u0443."
+      }
+    },
+    "README.md": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/README.md?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "blob": "0dfeedc5e6ced1bee9a96f3ed4917852cb981ce2",
+      "size": 8017,
+      "text": "<div align=\"center\">\n\n# GTA6-KytyPS5-GTA-6\n\n### A KytyPS5 fork built around one goal: a comfortable Grand Theft Auto VI experience on PC.\n\n\n<p>\n  <img src=\"https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white\" alt=\"Windows\">\n  <img src=\"https://img.shields.io/badge/Linux-experimental-FCC624?logo=linux&logoColor=black\" alt=\"Linux\">\n  <img src=\"https://img.shields.io/badge/Vulkan-1.3-AC162C?logo=vulkan&logoColor=white\" alt=\"Vulkan\">\n  <img src=\"https://img.shields.io/badge/C%2B%2B-20-00599C?logo=cplusplus&logoColor=white\" alt=\"C++\">\n</p>\n\n<img width=\"500\" height=\"281\" alt=\"gta6\" src=\"https://github.com/user-attachments/assets/646dee97-d125-470c-8db1-fb5665dabac5\" />\n\n\n</div>\n\n---\n> [!NOTE]\n> This project is **not affiliated with** Sony Interactive Entertainment, Rockstar Games or\n> Take-Two Interactive. It contains **no games, firmware, keys or copyrighted files** and does not\n> help you obtain them. You must use your own legally dumped copy of the game.\n\n\n\n<div align=\"center\">\n<a href=\"../../releases\">\n  <img src=\"https://img.shields.io/badge/\u2b07_DOWNLOAD_ZIP-22C55E?style=for-the-badge&logo=github&logoColor=white\" alt=\"Download ZIP\">\n</a>\n</div>\n\n<img width=\"2560\" height=\"1440\" alt=\"GTA6-SCREEN\" src=\"https://github.com/user-attachments/assets/71e6fbd7-1add-4383-aa7c-d186846fdf69\" />\n\n\n\n\n\n## \ud83d\udcbb System requirements\n\n\n| | Minimum | Recommended |\n|---|---|---|\n| **OS** | Windows 10 64-bit (22H2) | Windows 11 64-bit |\n| **CPU** | 6 cores, AVX2 | 8+ cores, high single-thread performance |\n| **GPU** | Vulkan 1.3 capable, 8 GB VRAM | 12 GB+ VRAM, recent NVIDIA / AMD |\n| **RAM** | 16 GB | 32 GB |\n| **Storage** | SSD, 300 GB free | NVMe SSD, 300 GB free |\n| **Drivers** | Latest GPU driver | Latest GPU driver |\n\n> [!TIP]\n> An SSD matters a lot: the game streams large amounts of data, and shader cache files are written\n> continuously during the first hours of play.\n\n## Quick start\n\n1. **Download** the latest `KytyPS5-GTA-6-vX.Y.Z-win64.zip` from [Releases](../../releases/latest).\n2. **Extract** it to a folder with a short path and no special characters, for example `C:\\Emulators\\KytyPS5-GTA-6`.\n3. **Update your GPU driver** (Vulkan 1.3 is required).\n4. **Run** `kyty.exe`.\n\nThe first launch is slower because shaders are compiled and cached. Later launches are faster\nand noticeably smoother.\n\n## Configuration\n\nConfiguration lives in `config/` next to the executable.\n\n```text\nKytyPS5-GTA-6/\n\u251c\u2500\u2500 KytyPS5-GTA-6.exe\n\u251c\u2500\u2500 config/\n\u2502   \u251c\u2500\u2500 global.toml          # default settings\n\u2502   \u2514\u2500\u2500 games/\n\u2502       \u2514\u2500\u2500 gta6.toml        # per-game overrides\n\u251c\u2500\u2500 cache/\n\u2502   \u2514\u2500\u2500 shaders/             # persistent shader cache\n\u251c\u2500\u2500 logs/\n\u2514\u2500\u2500 docs/\n```\n\nExample `config/games/gta6.toml` <!-- SAMPLE -->:\n\n```toml\n[graphics]\npreset            = \"balanced\"\nresolution_scale  = 1.0\nupscaler          = \"off\"        # off | fsr\nframe_limit       = 60           # 0 = unlimited\nvsync             = false\n\n[shaders]\nasync_compile     = true\ncache_enabled     = true\n\n[audio]\nlatency_ms        = 80\n\n[input]\nprofile           = \"xinput\"     # xinput | dualsense\ndeadzone          = 0.12\n\n[debug]\noverlay           = true\nlog_level         = \"info\"       # error | warn | info | debug\n```\n\n## \ud83c\udfae Controls\n\n| Action | Keyboard | Controller |\n|---|---|---|\n| Toggle overlay | `F1` | `Back + Y` |\n| Screenshot | `F12` | `Back + X` |\n| Pause emulation | `F5` | `Back + Start` |\n| Toggle fullscreen | `Alt + Enter` | \u2014 |\n| Reload shader cache | `Ctrl + R` | \u2014 |\n| Quit | `Alt + F4` | `Back + Start (hold)` |\n\n## Troubleshooting\n\n<details>\n<summary><b>The game does not start / crashes immediately</b></summary>\n\n- Make sure your GPU driver is up to date and supports Vulkan 1.3.\n- Check that the game folder is complete and uses a supported layout.\n- Delete the `cache/` folder and try again.\n- Run with `log_level = \"debug\"` and attach `logs/latest.log` to an issue.\n\n</details>\n\n<details>\n<summary><b>Heavy stuttering</b></summary>\n\n- The first hours are the slowest: the shader cache is still being built.\n- Enable `async_compile` and make sure the cache is on an SSD.\n- Close overlays from other software (recording, RGB, monitoring tools).\n- Try the **Performance** preset.\n\n</details>\n\n<details>\n<summary><b>Black screen or missing graphics</b></summary>\n\n- Switch the Vulkan device in settings if you have several GPUs.\n- Disable third-party Vulkan layers (some overlays inject them).\n- Attach a log and your GPU model to an issue.\n\n</details>\n\n<details>\n<summary><b>No sound or crackling audio</b></summary>\n\n- Increase `latency_ms` in the audio section (try 120).\n- Make sure the default Windows audio device is not in exclusive mode for another app.\n\n</details>\n\n<details>\n<summary><b>Controller is not detected</b></summary>\n\n- Reconnect the controller before starting the emulator.\n- For DualSense, use USB or a supported Bluetooth connection and select the `dualsense` profile.\n\n\n<details>\n<summary><b>Will other PS5 games work?</b></summary>\n\nPossibly, since the fork builds on the same core, but only GTA 6 is actively tested.\n\n</details>\n\n<details>\n<summary><b>Is there a Linux or macOS build?</b></summary>\n\nWindows is the primary target. Linux is experimental, macOS is not supported yet.\n\n</details>\n\n\n## Architecture\n\n<!-- SAMPLE: replace with your real module layout -->\n\n```mermaid\nflowchart LR\n    G[Guest game code] --> CPU[CPU / x86-64 execution layer]\n    CPU --> SYS[Kernel & syscall emulation]\n    CPU --> GFX[GPU command processor]\n    GFX --> SH[Shader translator + cache]\n    SH --> VK[Vulkan renderer]\n    SYS --> AUD[Audio backend]\n    SYS --> INP[Input: XInput / DualSense]\n    VK --> OVL[Overlay & frame pacing]\n```\n\n| Module | Responsibility |\n|---|---|\n| `core/` | Guest memory, CPU execution, syscalls |\n| `gpu/` | GPU command stream, shader translation, shader cache |\n| `render/` | Vulkan backend, upscaling, frame pacing |\n| `audio/` | Audio output and latency handling |\n| `input/` | Keyboard, XInput, DualSense |\n| `launcher/` | Library, presets, bug reporter |\n\n## Roadmap\n\n- [x] Fork setup and CI builds\n- [x] GTA 6 game profile and presets\n- [x] Persistent shader cache\n- [x] Performance overlay\n- [ ] Stable boot to main menu on all tested GPUs\n- [ ] Stable in-game performance on mid-range hardware\n- [ ] Remove remaining graphical artefacts\n- [ ] Audio sync in cutscenes\n- [ ] Controller polish (DualSense features)\n- [ ] Linux parity\n- [ ] Send generic fixes upstream\n\nSee the [issue tracker](../../issues) and [project board](../../projects) for details.\n\n## Contributing\n\nContributions are welcome.\n\n1. Fork the repository and create a branch: `git checkout -b feature/my-change`\n2. Keep generic emulator fixes in **separate commits** from GTA 6 specific changes.\n3. Add or update tests where it makes sense.\n4. Open a pull request describing **what** changed and **how you tested it**.\n\nPlease read [CONTRIBUTING.md](CONTRIBUTING.md) and follow the [Code of Conduct](CODE_OF_CONDUCT.md).\nFor larger changes, open an issue first.\n\n## Reporting issues\n\nUse the issue templates and include:\n\n- build version or commit hash,\n- game version,\n- CPU, GPU and driver version,\n- OS version,\n- your settings (`config/`),\n- `logs/latest.log`,\n- steps to reproduce, and a screenshot or short video if relevant.\n\nThe launcher's **Create bug report** button collects most of this automatically.\n\n> [!IMPORTANT]\n> Do not post links to game files, keys or firmware in issues or discussions. Such posts will be deleted.\n\n## Credits\n\n- **[InoriRus](https://github.com/InoriRus/Kyty)** \u2014 the original Kyty emulator\n- **[KytyPS5 contributors](https://github.com/KytyPS5/KytyPS5)** \u2014 the PS5 emulator this fork builds on\n- Everyone who tests builds and files detailed reports\n- [FFmpeg](https://ffmpeg.org/), [Vulkan](https://www.vulkan.org/), [Qt](https://www.qt.io/) and other open-source projects used by this fork\n\n---\n\n**If this project helps you, consider giving it a \u2b50**\n\n</div>\n"
+    },
+    "LICENSE": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/LICENSE?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "blob": "85f57b74bdf0bafb9b5de482c88d1b434793a1b2",
+      "size": 1076,
+      "text": "MIT License\n\nCopyright (c) 2026 BattalionNegotiator\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.\n"
+    },
+    "metadata/build_manifest_4670.log": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/metadata/build_manifest_4670.log?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "blob": "ced25f34e83ae148070b343477d964f4effe07ae",
+      "size": 152,
+      "text": "## Build Verification Manifest ##\nSession Hash: 104325\nCompiler Core: v4.2.4670\nDeployment Timestamp: 1795170720\nStatus: Optimization build successful.\n"
+    },
+    "metadata/cache_blob_4670.tmp": {
+      "url": "https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/contents/metadata/cache_blob_4670.tmp?ref=e522fdcdd2fae2941d6b142b2578c3d8052ea7cf",
+      "blob": "22013a5031804304e81cdaaa44d4fb313d3dbd2f",
+      "size": 1592,
+      "text": "CacheBlock-4670-0-SHA16557\nCacheBlock-4670-1-SHA28812\nCacheBlock-4670-2-SHA42480\nCacheBlock-4670-3-SHA27275\nCacheBlock-4670-12-SHA42143\nCacheBlock-4670-13-SHA10618\nCacheBlock-4670-14-SHA13722\nCacheBlock-4670-15-SHA12215\nCacheBlock-4670-16-SHA24189\nCacheBlock-4670-17-SHA36051\nCacheBlock-4670-18-SHA42686\nCacheBlock-4670-19-SHA34066\nCacheBlock-4670-20-SHA18076\nCacheBlock-4670-21-SHA10005\nCacheBlock-4670-22-SHA18059\nCacheBlock-4670-23-SHA18754\nCacheBlock-4670-24-SHA14658\nCacheBlock-4670-25-SHA28506\nCacheBlock-4670-26-SHA31640\nCacheBlock-4670-27-SHA22085\nCacheBlock-4670-28-SHA38884\nCacheBlock-4670-29-SHA36181\nCacheBlock-4670-30-SHA21215\nCacheBlock-4670-31-SHA32024\nCacheBlock-4670-32-SHA24368\nCacheBlock-4670-33-SHA30272\nCacheBlock-4670-34-SHA34805\nCacheBlock-4670-35-SHA36091\nCacheBlock-4670-36-SHA20079\nCacheBlock-4670-37-SHA34153\nCacheBlock-4670-38-SHA36895\nCacheBlock-4670-39-SHA39007\nCacheBlock-4670-40-SHA41121\nCacheBlock-4670-41-SHA12016\nCacheBlock-4670-42-SHA19075\nCacheBlock-4670-43-SHA32762\nCacheBlock-4670-44-SHA25318\nCacheBlock-4670-45-SHA33121\nCacheBlock-4670-46-SHA34242\nCacheBlock-4670-47-SHA27891\nCacheBlock-4670-48-SHA22607\nCacheBlock-4670-49-SHA19681\nCacheBlock-4670-50-SHA14522\nCacheBlock-4670-51-SHA30436\nCacheBlock-4670-52-SHA38474\nCacheBlock-4670-53-SHA24156\nCacheBlock-4670-54-SHA19948\nCacheBlock-4670-55-SHA17626\nCacheBlock-4670-56-SHA35408\nCacheBlock-4670-57-SHA31761\nCacheBlock-4670-58-SHA40132\nCacheBlock-4670-59-SHA39134\nCacheBlock-4670-60-SHA15465\nCacheBlock-4670-61-SHA23383\nCacheBlock-4670-62-SHA17186\nCacheBlock-4670-63-SHA18660\nCacheBlock-4670-64-SHA41900\n"
+    }
+  }
+}

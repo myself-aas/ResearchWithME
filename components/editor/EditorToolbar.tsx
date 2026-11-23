@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useRef, useState, useEffect, type KeyboardEvent, type ReactNode } from 'react';
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import type { PlateEditor } from 'platejs/react';
 import { useEditorVersion, useSelectionVersion } from 'platejs/react';
 import {
@@ -88,14 +88,6 @@ function ToolbarButton({
   );
 }
 
-function ToolbarGroup({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div role="group" aria-label={label} className="flex shrink-0 items-center gap-0.5 lg:flex-col">
-      {children}
-    </div>
-  );
-}
-
 function Separator() {
   return <span aria-hidden="true" className="mx-1 h-7 w-px shrink-0 bg-line lg:mx-0 lg:my-1 lg:h-px lg:w-7" />;
 }
@@ -114,14 +106,10 @@ function blockLabel(type: string) {
 function DropdownMenu({
   label,
   triggerRef,
-  open,
-  onClose,
   children,
 }: {
   label: string;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
-  open: boolean;
-  onClose: () => void;
   children: React.ReactNode;
 }) {
   const menuId = useId();
@@ -176,13 +164,11 @@ function ResponsiveToolbarGroup({
   triggerRef: React.RefObject<HTMLButtonElement | null>;
 }) {
   return (
-    <>
+    <div role="group" aria-label={label} className="contents">
       {/* Mobile: Dropdown menu */}
       <DropdownMenu
         label={label}
         triggerRef={triggerRef}
-        open={false}
-        onClose={() => {}}
       >
         {mobileItems}
       </DropdownMenu>
@@ -190,7 +176,7 @@ function ResponsiveToolbarGroup({
       <div className="hidden lg:flex lg:flex-col">
         {desktopItems}
       </div>
-    </>
+    </div>
   );
 }
 
@@ -217,18 +203,6 @@ export default function EditorToolbar({ editor, onOpenLink, disabled = false }: 
   const [menuOpen, setMenuOpen] = useState(false);
   const menuId = useId();
   const menuButtonRef = useRef<HTMLButtonElement | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-
-  // Detect mobile viewport
-  useEffect(() => {
-    const mql = window.matchMedia('(max-width: 1023px)');
-    setIsMobile(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, []);
-
   const headingLevel = /^h[1-6]$/.test(state.blockType) ? (Number(state.blockType.slice(1)) as HeadingLevel) : null;
 
   function applyBlock(type: BlockType) {

@@ -1,0 +1,821 @@
+{
+  "schemaVersion": 1,
+  "reviewedRepository": "https://github.com/OWASP/wstg",
+  "reviewedCommit": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+  "retrievedOn": "2026-11-20",
+  "title": "OWASP WSTG \u2014 guide chapter map",
+  "unit": "Matching tracked files",
+  "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+  "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+  "caption": "Static file counts in selected roots at commit 31c5bb21658d. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.",
+  "interpretation": "The source tree contains a numbered WebAssembly chapter alongside the twelve active-testing categories listed in the retained introduction. That mismatch is a concrete development-snapshot caveat: do not silently treat the introduction as an exhaustive index of this commit. Counts include chapter Markdown pages other than README files, not necessarily distinct executable tests or scenario IDs.",
+  "adoptionCheck": "Use chapter size to budget reading, never to allocate security effort mechanically. A small business-logic chapter may be more important to a particular threat model than a larger configuration chapter.",
+  "groups": [
+    {
+      "label": "Info gathering",
+      "prefix": "document/4-Web_Application_Security_Testing/01-Information_Gathering",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 11,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/00-Information_Gathering_Overview.md",
+          "gitBlobSha": "1a1ad8d74d697034e0e8521ad67a570271e87972"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/01-Conduct_Search_Engine_Reconnaissance_for_Information_Leakage.md",
+          "gitBlobSha": "125aad4ed7deb55a5b8b10a74d849ac2b6dd5c2a"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/02-Fingerprint_Web_Server.md",
+          "gitBlobSha": "c00499b112ae55fcc087bc7359fd533207f3f41b"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/03-Review_Webserver_Metafiles_for_Information_Leakage.md",
+          "gitBlobSha": "281db8ce0247616ff8b613b4a4dc42e019b301f4"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/04-Attack_Surface_Identification.md",
+          "gitBlobSha": "c2c9ebc36bc7a575f684964e64e49f419997067b"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/05-Review_Web_Page_Content_for_Information_Leakage.md",
+          "gitBlobSha": "bf3d46b61d878701fcc338f7a8ed697d47a9c731"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/06-Identify_Application_Entry_Points.md",
+          "gitBlobSha": "dcd6d5cb65fb24157d15ed12ec77bcf48eb05d46"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/07-Map_Execution_Paths_Through_Application.md",
+          "gitBlobSha": "ab5d3bdf24c978e99a38c76d5be793ef1b534c18"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/08-Fingerprint_Web_Application_Framework.md",
+          "gitBlobSha": "a116c9da53d2446c6f9f3de8332f3c53f3d1ac8d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/09-Fingerprint_Web_Application.md",
+          "gitBlobSha": "a1ed0b4659642bfa4bb3181f9f099696f001ce97"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/01-Information_Gathering/10-Map_Application_Architecture.md",
+          "gitBlobSha": "1f81e92d2a966b23352c7ed2c5d70c254c16b108"
+        }
+      ]
+    },
+    {
+      "label": "Configuration",
+      "prefix": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 16,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/01-Network_Infrastructure_Configuration.md",
+          "gitBlobSha": "0b08855fa742c2f1e51c267b301d03019a887070"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/02-Application_Platform_Configuration.md",
+          "gitBlobSha": "4eeea5fdbac4dbec30e2a2174b278059ac459a92"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/03-File_Extensions_Handling_for_Sensitive_Information.md",
+          "gitBlobSha": "a1755800bb89ccd64dc1c796895a7076b8f71496"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/04-Review_Old_Backup_and_Unreferenced_Files_for_Sensitive_Information.md",
+          "gitBlobSha": "b34bb6a21ca62d8b286d516e41da2f7da600543a"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/05-Enumerate_Infrastructure_and_Application_Admin_Interfaces.md",
+          "gitBlobSha": "a8815d13d37b5ded51a10514d11a761c465a24dd"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/06-HTTP_Methods.md",
+          "gitBlobSha": "89e918a5d39c28779da9257a4dd24a851341f2cd"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/07-HTTP_Strict_Transport_Security.md",
+          "gitBlobSha": "a5c778fd00fc0a15458c61426b284fdc4c936b0b"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/08-RIA_Cross_Domain_Policy.md",
+          "gitBlobSha": "11fabbaa9494d41685e885bfdcf26114c10f91cb"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/09-File_Permissions.md",
+          "gitBlobSha": "bb69950de7ffd2d4083c6e1b594dd6cd6dd2798f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/10-Subdomain_Takeover.md",
+          "gitBlobSha": "0708db09c5e0a731b4f1730e7914059012fca19d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/11-Cloud_Storage.md",
+          "gitBlobSha": "2753dcfe9c7106f2230a5401185efc37bb84dc0c"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/12-Content_Security_Policy.md",
+          "gitBlobSha": "63377e4f5430e0e6b8b725771d1a4b7b03366cc5"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/13-Path_Confusion.md",
+          "gitBlobSha": "4562477d856d7ccdd72dc1cc6e112a25d0aa7c6b"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/14-Additional_Browser_Security_Controls.md",
+          "gitBlobSha": "c7d8cd365dbd84d29cf2aaf63920654f07afd755"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/15-Feature_Flag_Security_Bypass.md",
+          "gitBlobSha": "1dd12e2d2140d014b64734c2d15c2759f04b4e61"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management/16-Web_Cache_Poisoning.md",
+          "gitBlobSha": "a83c7fc3a0847ef9009542e733bc281011a1bf4e"
+        }
+      ]
+    },
+    {
+      "label": "Identity",
+      "prefix": "document/4-Web_Application_Security_Testing/03-Identity_Management",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 5,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/03-Identity_Management/01-Role_Definitions.md",
+          "gitBlobSha": "971e7a2c30dc8fff1e63572b17fc724dddaa67e6"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/03-Identity_Management/02-User_Registration_Process.md",
+          "gitBlobSha": "7855e1e1d70b24354047e43a40bff85a2e11bb10"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/03-Identity_Management/03-Account_Provisioning_Process.md",
+          "gitBlobSha": "0607f4c9f472fdc194069f2f6f5f996b32a45d6d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/03-Identity_Management/04-Account_Enumeration_and_Guessable_User_Account.md",
+          "gitBlobSha": "a937f13b2e1b4de34f7ecb1a85b8b6cd92a14221"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/03-Identity_Management/05-Weak_or_Unenforced_Username_Policy.md",
+          "gitBlobSha": "2d6d31c89fd997d7d8f71d1491cca9b4ff5ec621"
+        }
+      ]
+    },
+    {
+      "label": "Authentication",
+      "prefix": "document/4-Web_Application_Security_Testing/04-Authentication",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 14,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/01-Credentials_Transported_over_an_Encrypted_Channel.md",
+          "gitBlobSha": "9943e70cf7754fdc097d45f71d3d46deac9026af"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/02-Default_Credentials.md",
+          "gitBlobSha": "0e4b7719c9f0eca6bbd6cee5119b3068c1e624b5"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/03-Weak_Lock_Out_Mechanism.md",
+          "gitBlobSha": "473ba13e583c4337ad461878434102595285f749"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/04-Bypassing_Authentication_Schema.md",
+          "gitBlobSha": "9b212aa4b7052ba3f772f046aba2b9c4835f7585"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/05-Vulnerable_Remember_Password.md",
+          "gitBlobSha": "8e1b0929616a900e9e2f786208d178c948d9fead"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/06-Browser_Cache_Weaknesses.md",
+          "gitBlobSha": "1b141b0383d2178d84d9ea03f418206bcf5a2878"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/07-Weak_Authentication_Methods.md",
+          "gitBlobSha": "bcaea9377e22fc128063189a6ddb37185dc688e5"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/08-Weak_Security_Question_Answer.md",
+          "gitBlobSha": "66dd7f6e2f0c8ec290d5cc4e9279d1f06d2c03e4"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/09-Weak_Password_Change_or_Reset_Functionalities.md",
+          "gitBlobSha": "fbe111ca7e23abce268d31a71205c4eef108af2e"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/10-Weaker_Authentication_in_Alternative_Channel.md",
+          "gitBlobSha": "75fed358887d09c1717afe5126487e3d4032ef28"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/11-Multi-Factor_Authentication.md",
+          "gitBlobSha": "59a88d3cd7a8d82e3e12d5c8e78e2ae90945514f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/12-SAML_Authentication.md",
+          "gitBlobSha": "2ac2e10ecb39517370b9e963d77047912f6b6030"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/13-Passkeys_and_WebAuthn.md",
+          "gitBlobSha": "b738baf1b83ba1cd990645fa300e08b2a8f7c09d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/04-Authentication/14-OpenID_Connect_Relying_Party.md",
+          "gitBlobSha": "d330632eca240173251da7971c666e910e6f069d"
+        }
+      ]
+    },
+    {
+      "label": "Authorization",
+      "prefix": "document/4-Web_Application_Security_Testing/05-Authorization",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 7,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/01-Directory_Traversal_File_Include.md",
+          "gitBlobSha": "416a569141fa6f64a89b8bbedd9fa401dda1ec9d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/02-Bypassing_Authorization_Schema.md",
+          "gitBlobSha": "9c1bb15274a75d1637597e44d41a42a7313d676e"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/03-Privilege_Escalation.md",
+          "gitBlobSha": "1ef05bd1eb1c567389abff8120e76f9f404a3aa8"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/04-Insecure_Direct_Object_References.md",
+          "gitBlobSha": "bc00895d182eb6884cdab18cc9d235b1d06480da"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/05-OAuth_Weaknesses.md",
+          "gitBlobSha": "f55e5c2dac742275881681c47912c7ff3d49d85f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/05.1-OAuth_Authorization_Server_Weaknesses.md",
+          "gitBlobSha": "cedbc05a6b1dc2046750d0141c61449a7c9f30ba"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/05-Authorization/05.2-OAuth_Client_Weaknesses.md",
+          "gitBlobSha": "9354bc80fb3ca62c7510c9fa2744bc916eaec5a7"
+        }
+      ]
+    },
+    {
+      "label": "Sessions",
+      "prefix": "document/4-Web_Application_Security_Testing/06-Session_Management",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 11,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/01-Session_Management_Schema.md",
+          "gitBlobSha": "b5c44dc09367c0a0abdab66460020ac30a14af56"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/02-Cookies_Attributes.md",
+          "gitBlobSha": "1d435e1a4147c3db7c2bf5d90563f19498a0cba6"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/03-Session_Fixation.md",
+          "gitBlobSha": "445f44e2856786e0899984d00edc74e443e0a275"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/04-Exposed_Session_Variables.md",
+          "gitBlobSha": "43dee1dab21517ed46338449fe91ca7f14ca636d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/05-Cross_Site_Request_Forgery.md",
+          "gitBlobSha": "312583643fd7ac68d50bec00452867698b003a7c"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/06-Logout_Functionality.md",
+          "gitBlobSha": "a01770553403714d2627f13fa89095de027a3d85"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/07-Session_Timeout.md",
+          "gitBlobSha": "e8e322080b56768a3adc4d486fbf8e41c18ea802"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/08-Session_Puzzling.md",
+          "gitBlobSha": "55b7b4ad888f910df23a434233f877c338cd5cc6"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/09-Session_Hijacking.md",
+          "gitBlobSha": "e817a841027a0fb9be451746ff5bb50399c20bd9"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/10-JSON_Web_Tokens.md",
+          "gitBlobSha": "02c9c253bac5ff3917330d743ffdf72a98bf96e1"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/06-Session_Management/11-Concurrent_Sessions.md",
+          "gitBlobSha": "742d55c94cf0c65eb27d998367b548454749c69a"
+        }
+      ]
+    },
+    {
+      "label": "Injection",
+      "prefix": "document/4-Web_Application_Security_Testing/07-Injection",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 38,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/01-Reflected_Cross_Site_Scripting.md",
+          "gitBlobSha": "565dd8f4d7e947484725fc32adc3b7989b7ac950"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/02-Stored_Cross_Site_Scripting.md",
+          "gitBlobSha": "c5e3c547f1d88a15dfd7b7689ab9e06bb740cebb"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/03-HTTP_Verb_Tampering.md",
+          "gitBlobSha": "0d62b4a4aff413844e72a1fc40e6124ec0b4daf8"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/04-HTTP_Parameter_Pollution.md",
+          "gitBlobSha": "2aed5e51de1dd761e6a4ff625a205f591021baf0"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05-SQL_Injection.md",
+          "gitBlobSha": "ff56c0c8cd10d9659409074da0fec7523d62da8b"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.1-Oracle.md",
+          "gitBlobSha": "13b9850520425f1189f29c1f012c42e930280413"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.2-MySQL.md",
+          "gitBlobSha": "1ae5934d5101e78be3486213e1e075d1839e7957"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.3-SQL_Server.md",
+          "gitBlobSha": "5d5fe1eccd2b7140c59571cc3ef18381187c03a2"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.4-PostgreSQL.md",
+          "gitBlobSha": "9ba8b3cd62fc85c96c07274f012a86e422a21723"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.5-MS_Access.md",
+          "gitBlobSha": "b7a3e763a65e4555e225dae94f17206eba01b891"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.6-NoSQL_Injection.md",
+          "gitBlobSha": "e550449f1f422751dac8caf07e6a915282adfceb"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.7-ORM_Injection.md",
+          "gitBlobSha": "23423d17a817362fdff61a55ee1a800e5be16295"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/05.8-Client-side.md",
+          "gitBlobSha": "941ae09ae58f0bd0d23c6bf3e2ba1c2e5275645e"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/06-LDAP_Injection.md",
+          "gitBlobSha": "c2526ba0d8a1e0a92f9bb6eecb158ede9579b428"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/07-XML_Injection.md",
+          "gitBlobSha": "0a150442716238863faf2d16edbacc0e9165752a"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/08-SSI_Injection.md",
+          "gitBlobSha": "94af3bb491a7eb2fb034dfd0c5d0addb573863c9"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/09-XPath_Injection.md",
+          "gitBlobSha": "1c037d3ddb81e2ce3a9cd50544a6a2611df017ba"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/10-IMAP_SMTP_Injection.md",
+          "gitBlobSha": "2091fd4912e950c5c6c61fe0c357854a28f8a0c5"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/11-Code_Injection.md",
+          "gitBlobSha": "536e0943572438698efab3883e36cbb9cde87d8a"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/11.1-File_Inclusion.md",
+          "gitBlobSha": "01a9f8ec1ec80e2fe743d26c6b065ba3e832ef94"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/12-Command_Injection.md",
+          "gitBlobSha": "429eb3f0f206c63cb56ade12281503968410f0e2"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/13-Buffer_Overflow.md",
+          "gitBlobSha": "ce650b8856021b9fa9900008d8c633c744efc90d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/13-Format_String_Injection.md",
+          "gitBlobSha": "22bf3840e267accb05808136483f875a0a1f0411"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/14-Incubated_Vulnerability.md",
+          "gitBlobSha": "6ef458085f454d716fe591b1c02a0edcf4d48779"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/15-HTTP_Response_Splitting.md",
+          "gitBlobSha": "00101bb239fda2c61776bf4b9649d85891b74cd0"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/16-HTTP_Request_Smuggling.md",
+          "gitBlobSha": "cefeecb1f70174706a927e19c4db8491b7cfd632"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/17-Host_Header_Injection.md",
+          "gitBlobSha": "63d435a120d2ea818aa8b159520b697201cd726f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/18-Server-side_Template_Injection.md",
+          "gitBlobSha": "a7863679408567455dd0b241b0212d6d8f6e5fec"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/19-Server-Side_Request_Forgery.md",
+          "gitBlobSha": "4e4716e09e9b82361f17b16fd8006dc7ef359382"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/20-Mass_Assignment.md",
+          "gitBlobSha": "ae29e8bfc4148d9d288a6efae49dbb7ce9f5d447"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/21-CSV_Injection.md",
+          "gitBlobSha": "00031318acde65b1af938f45fd9f836f0eb376bc"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/22-Prototype_Pollution.md",
+          "gitBlobSha": "57991e50d08c148c71fa0e7263c8e288cd198f9f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/23-Insecure_Deserialization.md",
+          "gitBlobSha": "cb530c993b5536dc76863c4b3933c6c2737c3c5f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/24-Server-side_URL_Redirect.md",
+          "gitBlobSha": "343ce953211d57392a57306ee6ecfce5851cfe53"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/25-Unicode_Normalization_and_Case_Mapping.md",
+          "gitBlobSha": "e859b95a4b74e0f31b873310766fbdfc35cc3e28"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/26-JSON_Parser_Differentials.md",
+          "gitBlobSha": "a1b01a63fb0b48008a581f355bde99e3404c71a4"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/27-Server-side_Document_Rendering_Injection.md",
+          "gitBlobSha": "771aeb0989533c7a702b023117d39b00669387a3"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/07-Injection/28-Regular_Expression_Denial_of_Service.md",
+          "gitBlobSha": "45a1c1faa409ad1cebf72936d0781fc98adbd1d0"
+        }
+      ]
+    },
+    {
+      "label": "Errors",
+      "prefix": "document/4-Web_Application_Security_Testing/08-Error_Handling",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 2,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/08-Error_Handling/01-Improper_Error_Handling.md",
+          "gitBlobSha": "b31a9d506cdd6cfdd013d5ab969232ee7f648057"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/08-Error_Handling/02-Stack_Traces.md",
+          "gitBlobSha": "dd73412c9455b60fcdf6b7454a21538ab6fd84ec"
+        }
+      ]
+    },
+    {
+      "label": "Cryptography",
+      "prefix": "document/4-Web_Application_Security_Testing/09-Weak_Cryptography",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 4,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/09-Weak_Cryptography/01-Weak_Transport_Layer_Security.md",
+          "gitBlobSha": "42aacfcb7dbd159616ffdc5b86a582a460897891"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/09-Weak_Cryptography/02-Padding_Oracle.md",
+          "gitBlobSha": "fb642c35dc114e7a6991b4ed2777c63bc0f22d7b"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/09-Weak_Cryptography/03-Sensitive_Information_Sent_via_Unencrypted_Channels.md",
+          "gitBlobSha": "f04da0a6e02dbba92d5b16bab19865e6ab4615c2"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/09-Weak_Cryptography/04-Weak_Cryptographic_Primitives.md",
+          "gitBlobSha": "7ec98511f57fd5cf5142e796b40cc00de172fa18"
+        }
+      ]
+    },
+    {
+      "label": "Business logic",
+      "prefix": "document/4-Web_Application_Security_Testing/10-Business_Logic",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 12,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/00-Introduction_to_Business_Logic.md",
+          "gitBlobSha": "ff0afbbe186db56a07428a7660f6cc9088fac4ac"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/01-Business_Logic_Data_Validation.md",
+          "gitBlobSha": "9f268eb899d75e8387ea01cea962eca53a757dc3"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/02-Ability_to_Forge_Requests.md",
+          "gitBlobSha": "615e7fc219f492dc815fa1e576036d9ca133f1e3"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/03-Integrity_Checks.md",
+          "gitBlobSha": "e3c966d6bb5a9556cea3ab51671fa7b184acbad9"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/04-Process_Timing.md",
+          "gitBlobSha": "d350c71b3f666c57c11a2befe9a20b56a1a45f83"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/05-Number_of_Times_a_Function_Can_Be_Used_Limits.md",
+          "gitBlobSha": "f57bb2faf3d966bae2c22ef708d71c8007a5db5a"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/06-Circumvention_of_Work_Flows.md",
+          "gitBlobSha": "e5f718a8bf2299a3b712a872147e3c3770f3b423"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/07-Defenses_Against_Application_Misuse.md",
+          "gitBlobSha": "f8f02dfbe6b3de91cf5d6403f056a4697f8082ab"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/08-Upload_of_Unexpected_File_Types.md",
+          "gitBlobSha": "2749f46c652ca969c0630a85f376ec54518de9e9"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/09-Upload_of_Malicious_Files.md",
+          "gitBlobSha": "4a4af4bac23ba942eb1eecf49fcfe39c45d7a903"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/10-Payment_Functionality.md",
+          "gitBlobSha": "246c21bcf46c0557e08d67bb38c000f05961874e"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/10-Business_Logic/11-Denial_of_Inventory.md",
+          "gitBlobSha": "a673b26c8a40dca13e81800fb66f6a6e55a2647f"
+        }
+      ]
+    },
+    {
+      "label": "Client-side",
+      "prefix": "document/4-Web_Application_Security_Testing/11-Client-side",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 21,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/01-DOM-based_Cross_Site_Scripting.md",
+          "gitBlobSha": "d1438da950ccf8b0e92723975d95b08cc49602f8"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/01.1-Self_DOM_Based_Cross_Site_Scripting.md",
+          "gitBlobSha": "abcea670a0050fc5bc236ffcc9005019fdc4d99d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/02-JavaScript_Execution.md",
+          "gitBlobSha": "24b1e1faa3cc4c44dfc4a83e8ec8ebef4b6e5b03"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/03-HTML_Injection.md",
+          "gitBlobSha": "0e41a614a1fa35fe2ff9a125a13bd0fa59bad044"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/04-Client-side_URL_Redirect.md",
+          "gitBlobSha": "613181f4a1fe6d29235418b7ccf8f3ed189e17f5"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/05-CSS_Injection.md",
+          "gitBlobSha": "467820edceae4d454daf626a30aac86b296fcbd2"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/06-Client-side_Resource_Manipulation.md",
+          "gitBlobSha": "6bc9d00ba590bd5e20ca60f1b11a11f0a5e0b100"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/07-Cross_Origin_Resource_Sharing.md",
+          "gitBlobSha": "9c7a364070cbc511df1220ea6d445d00041903cd"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/08-Cross_Site_Flashing.md",
+          "gitBlobSha": "95c35e2369fe68d55f945c1b58a8dfa71eac99c7"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/09-Clickjacking.md",
+          "gitBlobSha": "dba2be737656c5ba0033b297b96250d2be1bf55d"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/10-WebSockets.md",
+          "gitBlobSha": "0459cc26a3b2807f5db5139ba5048fdc6e7d1278"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/11-Web_Messaging.md",
+          "gitBlobSha": "0b40882760ee997a499ac869b36099879a721094"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/12-Browser_Storage.md",
+          "gitBlobSha": "c3edef9932245ea7d8bc85d45e22cec100a434e7"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/13-Cross_Site_Script_Inclusion.md",
+          "gitBlobSha": "55610d81ee92b0e212eb1e9c7f4ace5417d3ebc8"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/14-Reverse_Tabnabbing.md",
+          "gitBlobSha": "db1301bb7fd0673539bed4976c5d619bf172d9e8"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/15-Client-Side_Template_Injection.md",
+          "gitBlobSha": "6a1333d615ab33edb2bca37c452c98720de226f2"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/16-DOM_Clobbering.md",
+          "gitBlobSha": "0a78ed4bde0314bd7f8cda94e2b4c70cf89f2ba9"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/18-Cross_Site_Leaks.md",
+          "gitBlobSha": "59b1f48e290da473f84337afe0e70ffa12d8f2ec"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/19-Client-side_Path_Traversal.md",
+          "gitBlobSha": "23f9034601bd7a5d16498b988bcd17329b96ac92"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/20-Service_Workers.md",
+          "gitBlobSha": "8852143001505ec9db808893b67182b589356bc3"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/11-Client-side/21-DNS_Rebinding.md",
+          "gitBlobSha": "61f3684b206fe50d70780df9358ec7df0e68340c"
+        }
+      ]
+    },
+    {
+      "label": "API",
+      "prefix": "document/4-Web_Application_Security_Testing/12-API_Testing",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 8,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/00-API_Testing_Overview.md",
+          "gitBlobSha": "63055a88a578286edac338603a04a9ae872cb701"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/01-API_Reconnaissance.md",
+          "gitBlobSha": "0b25a2fdfd01a392fd8ea023eb7d4891c9f2d255"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/02-API_Broken_Object_Level_Authorization.md",
+          "gitBlobSha": "52930121789a14d3968fc0a7063c2bb099b46c2a"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/03-Excessive_Data_Exposure.md",
+          "gitBlobSha": "9cb9d49aef475240cb5f2ba2115486491abed418"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/04-API_Broken_Function_Level_Authorization.md",
+          "gitBlobSha": "b0bdcbac96534f9eeb5b64b805d839b9e169025f"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/09-Inbound_Webhooks.md",
+          "gitBlobSha": "44822a30d3bfdabfd30a5b60cc9471a8dabaa586"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/10-gRPC.md",
+          "gitBlobSha": "83c56d4839c15eccd83af25571b9d139ea0381a3"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/12-API_Testing/99-GraphQL.md",
+          "gitBlobSha": "e6c97254fbc630f8df8d83f9af693372525cf586"
+        }
+      ]
+    },
+    {
+      "label": "WebAssembly",
+      "prefix": "document/4-Web_Application_Security_Testing/13-WebAssembly_Testing",
+      "includePattern": "\\.md$",
+      "excludePattern": "/README\\.md$",
+      "count": 2,
+      "source": {
+        "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+        "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "document/4-Web_Application_Security_Testing/13-WebAssembly_Testing/00-WebAssembly_Testing_Overview.md",
+          "gitBlobSha": "4d406c13cc68019689fdf58460faeab901d5f1d7"
+        },
+        {
+          "path": "document/4-Web_Application_Security_Testing/13-WebAssembly_Testing/01-WebAssembly_Reconnaissance.md",
+          "gitBlobSha": "0812d4e7f64cdd3c9007d971d7f4712e3ad16ded"
+        }
+      ]
+    }
+  ],
+  "claim": {
+    "id": "CHART-1",
+    "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+    "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+    "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+    "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+  }
+}

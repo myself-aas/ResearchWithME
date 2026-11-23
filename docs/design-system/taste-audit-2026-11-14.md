@@ -1,5 +1,7 @@
 GATE: OFF (no build active)
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 # Design-taste audit — ResearchWithMe / reme
 
 **Kind:** scholarly publishing and research software; `software` is the nearest skill classification, not a recommendation to turn the archive into a SaaS sales page.  

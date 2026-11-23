@@ -46,7 +46,7 @@ describe('responsive header navigation', () => {
     expect(container.querySelector('a[href="/login"]')).not.toBeNull();
     const button = toggle();
     expect(button.getAttribute('aria-expanded')).toBe('true');
-    expect(container.querySelector('nav[aria-label="Mobile primary"] a[href="/pricing"]')).not.toBeNull();
+    expect(container.querySelector('nav[aria-label="Mobile primary"] a[href="/pricing"]')).toBeNull();
     act(() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
     expect(button.getAttribute('aria-expanded')).toBe('false');
     expect(document.activeElement).toBe(button);

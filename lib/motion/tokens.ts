@@ -177,27 +177,27 @@ export function cubicBezierToGsapEase([x1, y1, x2, y2]: BezierEasing): (t: numbe
   return (t: number): number => {
     // Clamp t to [0, 1]
     const clampedT = Math.max(0, Math.min(1, t));
-    
+
     // If t is 0 or 1, return directly
     if (clampedT === 0) return 0;
     if (clampedT === 1) return 1;
-    
+
     // Use Newton-Raphson method to find the parameter value for the given x
     // The cubic bezier x(t) = 3(1-t)^2*t*x1 + 3(1-t)*t^2*x2 + t^3
     // We need to find t such that x(t) = clampedT
-    
+
     let paramT = clampedT; // Initial guess
     for (let i = 0; i < 8; i++) {
       const oneMinusT = 1 - paramT;
       const x = 3 * oneMinusT * oneMinusT * paramT * x1 + 3 * oneMinusT * paramT * paramT * x2 + paramT * paramT * paramT;
       const dx = 3 * oneMinusT * oneMinusT * x1 + 6 * oneMinusT * paramT * (x2 - x1) + 3 * paramT * paramT * (1 - x2);
-      
+
       if (dx === 0) break;
       const diff = x - clampedT;
       paramT = paramT - diff / dx;
       paramT = Math.max(0, Math.min(1, paramT));
     }
-    
+
     // Now calculate y for the found parameter
     const oneMinusT = 1 - paramT;
     const y = 3 * oneMinusT * oneMinusT * paramT * y1 + 3 * oneMinusT * paramT * paramT * y2 + paramT * paramT * paramT;

@@ -1,5 +1,7 @@
 # Impeccable frontend audit — 2026-11-15
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 ## Scope and limits
 
 Code-level review of the shared frontend, Next routes, Pages routes and styles, plus sampled rendered scans. `npx impeccable detect --json app components cloudflare-pages/src styles` scanned source by regex and returned one primary warning and four advisories; this does not inspect computed layouts. Next development pages `/`, `/authors`, `/assistant`, `/bookmarks`, `/cite`, `/settings`, `/pricing`, and `/login` were scanned at 390×844 and 1440×900, except settings mobile was scanned separately. These are public pages with local test configuration, not authenticated account/studio states, all possible content, deployed Worker, or physical-device testing. A Pages/Wrangler axe suite ran 13 public routes at 390px and 1440px. Existing isolated article browser tests cover five widths and theme/save behavior but are not deployed-workerd checks.

@@ -1,0 +1,51 @@
+{
+  "bodyFile": "perspective-repo-teardown.md",
+  "cmsBodyFile": "perspective-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/perspective-repo-teardown/inspection-record.json",
+  "workflowState": "local-draft-awaiting-human-review",
+  "publicationType": "review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerificationScope": "Uses the author profile established earlier in this session; no fresh database or credential check."
+  },
+  "cmsFields": {
+    "title": "Perspective review: where analytics should execute",
+    "slug": "perspective-repo-teardown",
+    "status": "draft",
+    "subtitle": "Should an interactive analytics table live in the browser, on a server, or in both?",
+    "summary": "Perspective repository review of browser and server analytics, replication and indexed updates, with data-boundary trade-offs instead of speed rankings.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "authorId": "ashif-ahmed-shuvo",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "Perspective",
+      "Repository Review",
+      "Architecture",
+      "Adoption Trade-offs"
+    ],
+    "keyTakeaways": [
+      "Execution placement is an architecture and data-access decision, not just a UI choice.",
+      "Browser-only and replicated modes send datasets to the client.",
+      "Indexed update semantics matter when modeling changing entities rather than append-only events."
+    ],
+    "readTime": "6 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "Perspective",
+      "url": "https://github.com/perspective-dev/perspective",
+      "identifier": "perspective-dev/perspective",
+      "meta": "Default-branch snapshot · Commit 95535bcbfde4 · Inspected 20 Nov 2026"
+    },
+    "publicationType": "review"
+  },
+  "writeBlockers": [
+    "Human evidence review and final approval required.",
+    "Deploy and verify linked public evidence before publication.",
+    "Load the separate CMS body as content via the authorized studio. Intake is not an API write request.",
+    "License summaries are not legal advice; review terms for the intended use."
+  ]
+}

@@ -1,0 +1,1546 @@
+{
+  "schemaVersion": 1,
+  "reviewedRepository": "https://github.com/sveltejs/svelte",
+  "reviewedCommit": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+  "retrievedOn": "2026-11-20",
+  "title": "Svelte \u2014 selected source-file map",
+  "unit": "Matching tracked files",
+  "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+  "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+  "caption": "Static file counts in selected roots at commit 04c5d8da6f0b. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.",
+  "interpretation": "The compiler and client runtime are separate reading targets. Use the compiler entry point to follow lowering, then move to the client runtime when investigating effect scheduling; a larger directory is not evidence of a larger browser bundle.",
+  "adoptionCheck": "For a migration spike, choose one object-boundary bug and one effect-cleanup case. If the team cannot explain the resulting behavior, defer the migration even if the compiled demo looks small.",
+  "groups": [
+    {
+      "label": "Compiler",
+      "prefix": "packages/svelte/src/compiler",
+      "includePattern": "\\.(js|ts)$",
+      "excludePattern": null,
+      "count": 244,
+      "source": {
+        "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+        "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "packages/svelte/src/compiler/errors.js",
+          "gitBlobSha": "98f1e7927972ef12831f57b3de048d34bcbe623c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/index.js",
+          "gitBlobSha": "6ae91a267e9a444f98c4b09be5d77a72ee60be38"
+        },
+        {
+          "path": "packages/svelte/src/compiler/legacy.js",
+          "gitBlobSha": "c51cd8434b3dd37261cc5f5464bd847740e37c5a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/migrate/index.js",
+          "gitBlobSha": "ac667bf26ba28fd51319e4d65b8dca598430cb38"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/acorn.js",
+          "gitBlobSha": "f2846dbd0d484ba5f49483df50c782c9400378d2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/index.js",
+          "gitBlobSha": "22569b1b5295ec49911f1fd10b15dcc7007a9e65"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/read/context.js",
+          "gitBlobSha": "615cbef61c35f1dfa4ef10c07811fc5472dbe290"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/read/expression.js",
+          "gitBlobSha": "6c8a8eb6d121dbddfc9f398a4e74f1829ca3e615"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/read/options.js",
+          "gitBlobSha": "e75ce8d8eb9ce41550d2e27141c1f6e58f7033db"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/read/script.js",
+          "gitBlobSha": "48fb540f9cbdf3330608c7718b7aeaeff08f4dd2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/read/style.js",
+          "gitBlobSha": "574c353adb897ef761040e7117634f3cddf59668"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/remove_typescript_nodes.js",
+          "gitBlobSha": "f5731473675c667c8ec7c457dbaae0f99eceb757"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/state/element.js",
+          "gitBlobSha": "d6871bc01ede07392fab4bdc27f434968308c95e"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/state/fragment.js",
+          "gitBlobSha": "8c8ecc6ea53bbd83ad1b7e7cab304d2bc882b304"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/state/tag.js",
+          "gitBlobSha": "24b74699f61fe1c499189aa3b2dbc22b4969cd35"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/state/text.js",
+          "gitBlobSha": "1eab43081d33dbc2ba35a97153b79eef1e9c9e1a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/utils/bracket.js",
+          "gitBlobSha": "d7da4eef3f94691303b0bbf94059ab4af094e83f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/utils/entities.js",
+          "gitBlobSha": "df496cda4dad7794d63eb86d886d234e9922d6e3"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/utils/html.js",
+          "gitBlobSha": "dd0b0224a6d7f74ed5e57d443cfcf54db4cf6fdd"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/1-parse/utils/whitespace.js",
+          "gitBlobSha": "b9a7efc9a31b5b9707caf8be430f2b391cadd97d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/css/css-analyze.js",
+          "gitBlobSha": "023d4e768eee857cb9317258582051761d228212"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/css/css-prune.js",
+          "gitBlobSha": "2c99ca11ab41e8153f101f8c59fabf627afaeeda"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/css/css-warn.js",
+          "gitBlobSha": "0964be1615076579ed80af2896d3bcf866620c8c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/css/utils.js",
+          "gitBlobSha": "d7544b55c06302e5af086696467affc6cbf52248"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/index.js",
+          "gitBlobSha": "4f958d37e8de8ec46ba9d67200a8fb7115a1872a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/types.d.ts",
+          "gitBlobSha": "bd486a12ca4ebaaeeb57f02434b81a136648cbae"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/AnimateDirective.js",
+          "gitBlobSha": "8c5b1a6953fa7ade69710984442d2b5d60c5e55a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ArrowFunctionExpression.js",
+          "gitBlobSha": "adafebaee8349716d97c8f9865876698d0fb0ff8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/AssignmentExpression.js",
+          "gitBlobSha": "39358f72fc1bfb7caa03bd54c084f2bc524c5bb3"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/AttachTag.js",
+          "gitBlobSha": "f9a8c1b69d46f8c12f228fd8e6947f2dafc8c84d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/Attribute.js",
+          "gitBlobSha": "2563eb6dcd79686e636dd8e80ca7b30b194f4f8b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/AwaitBlock.js",
+          "gitBlobSha": "5aa04ba3b9a8b66d19f579722bb914e4ef6c5efc"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/AwaitExpression.js",
+          "gitBlobSha": "0a47fc29350659c9ff07dbc217be736f88efeeee"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/BindDirective.js",
+          "gitBlobSha": "a5cc56841bbb1648913fce11fda74c853c412014"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/CallExpression.js",
+          "gitBlobSha": "312a93e5fdf968749492272c9d92f43668c5ced5"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ClassBody.js",
+          "gitBlobSha": "dd216371740c2fe816ba05e8d6e3287a8c1dd2ff"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ClassDeclaration.js",
+          "gitBlobSha": "b67dec561d5aa9d8325bc53cbefbf4df69038c31"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ClassDirective.js",
+          "gitBlobSha": "6cea541ea61aab7bab84e2e21ff0355177ca38eb"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/Component.js",
+          "gitBlobSha": "5a4d3fce3f0c2f80ffde5512b82880e59d2c174c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ConstTag.js",
+          "gitBlobSha": "64e93d3efe2e1bbb7829ccdb89cbbea9ffd24719"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/DebugTag.js",
+          "gitBlobSha": "f185a58c809bcdd4a525c88263d5cffcd4830e19"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/DeclarationTag.js",
+          "gitBlobSha": "2f72b16c727009d76c5789448de876a9f768b5df"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/EachBlock.js",
+          "gitBlobSha": "56819664759f7051615e0935d05174f8d1e4955f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ExportDefaultDeclaration.js",
+          "gitBlobSha": "768f1c6305a442aa62ff4dd42b9434bbcfe84046"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ExportNamedDeclaration.js",
+          "gitBlobSha": "dec6ebe2b4d3f80e1c4a4d3ac75907a018edcb46"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ExportSpecifier.js",
+          "gitBlobSha": "2a05ffb92605df9e774675504f80372881dd02cc"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ExpressionStatement.js",
+          "gitBlobSha": "afb4913bfb2bd19d3da3e5034f9765c4ec4dfd4f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ExpressionTag.js",
+          "gitBlobSha": "adc0d2d91d7eb48a6f4be2e1869be8e0141dbcdb"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/Fragment.js",
+          "gitBlobSha": "def38601758ff44fcd4577cb65f38ea342be9d9f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/FunctionDeclaration.js",
+          "gitBlobSha": "e59f9447075c2c78261841ae87692266b0c30ba6"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/FunctionExpression.js",
+          "gitBlobSha": "2c6db9c5b010184f47bd12421627dd52f5e51e39"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/HtmlTag.js",
+          "gitBlobSha": "55b0384105307e7b36166012780b43bd1442ad00"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/Identifier.js",
+          "gitBlobSha": "15cc7ed343477296e59f6d1ed9231fbfed271379"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/IfBlock.js",
+          "gitBlobSha": "64855abdafc41ec168a788c0f5f758c4a3153a90"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/ImportDeclaration.js",
+          "gitBlobSha": "d46218ac64c156157a7529f77a05dfe4c9d3de2d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/KeyBlock.js",
+          "gitBlobSha": "09e604ea66be5b29b13192fc872e0c5cfe3e981a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/LabeledStatement.js",
+          "gitBlobSha": "514cfae53ce40873c7818d46ea8f7935b3aad510"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/LetDirective.js",
+          "gitBlobSha": "2eccac9d8a7008806ffd42b1c811c0a13f7e1708"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/Literal.js",
+          "gitBlobSha": "58684ba71ca08fb33e23e7543222be08d007398c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/MemberExpression.js",
+          "gitBlobSha": "0a3b3861986c025dfe3d2c602bfec4dd66f88072"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/NewExpression.js",
+          "gitBlobSha": "bcb2400932c2e3c2d96b4d48f8d9df54afd1f08d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/OnDirective.js",
+          "gitBlobSha": "f3f9c105b471dd9a8a92f8bc340b253bde181b66"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/PropertyDefinition.js",
+          "gitBlobSha": "99d05cb47c0d449cd448e876819907e0a2dae8f0"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/RegularElement.js",
+          "gitBlobSha": "03850eb3b76393700b85a56bacd86f1ec03ef167"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/RenderTag.js",
+          "gitBlobSha": "d0c994b7a4734d1e0bcc808792b9dd092bc47f07"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SlotElement.js",
+          "gitBlobSha": "7726fea8074c1584cc8115521c99964d952797b2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SnippetBlock.js",
+          "gitBlobSha": "7618716ae5d079c954d30b6ab6d492207ed4db69"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SpreadAttribute.js",
+          "gitBlobSha": "1b611292261bcf17c695bb49680f4f57e0322d79"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SpreadElement.js",
+          "gitBlobSha": "c31f86e1a8139481afe45d3f2f99c4bdbd49b950"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/StyleDirective.js",
+          "gitBlobSha": "8f4036cf89cf5c5017b78878964335ec1a9796b2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteBody.js",
+          "gitBlobSha": "495f88eeb70494d9c7a080ec718d587f22d7d2e8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteBoundary.js",
+          "gitBlobSha": "e0014aa7b25a3ed13d1af62b727fb2201b358b23"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteComponent.js",
+          "gitBlobSha": "18500f61543f5cf1edddb39b7d2c314cb324a13d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteDocument.js",
+          "gitBlobSha": "8a44d3516c5adab1cba8460c10d95303e283db15"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteElement.js",
+          "gitBlobSha": "c3f01cf6ab3213fbfbece4b0459a0a94c7dacdb5"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteFragment.js",
+          "gitBlobSha": "20383abadcac8902d67469382ca24f6e2f9fb837"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteHead.js",
+          "gitBlobSha": "4a70ea078dec8b955c8c0ee92a8a121015665b32"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteSelf.js",
+          "gitBlobSha": "652a447165c8a37309f812f45858aa84080ce7d7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/SvelteWindow.js",
+          "gitBlobSha": "3e8945219b8b90f4fa1b8b4b4212d9093c35ddcc"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/TaggedTemplateExpression.js",
+          "gitBlobSha": "881ee5a85edde321f08fd47c9c5662951dfc2c0a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/TemplateElement.js",
+          "gitBlobSha": "978042bbc5890bcd932adc05b60a617fd10e82c7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/Text.js",
+          "gitBlobSha": "575fee781617919cd58015bac40619e29df9ddc8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/TitleElement.js",
+          "gitBlobSha": "caa3206b0d3091f3fc29cc3f715122f1ee62bb98"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/TransitionDirective.js",
+          "gitBlobSha": "3b78997d2f05502dca3345d488b0a41b89505a2a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/UpdateExpression.js",
+          "gitBlobSha": "ed48e026ac65508ff2073fdadf2696f655ec12f8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/UseDirective.js",
+          "gitBlobSha": "eb340382daec629a562660e178514ae8607c7e8b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/VariableDeclarator.js",
+          "gitBlobSha": "7aef063f52c0ad06de07b2d38329dbaa0e99f7b4"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/a11y/constants.js",
+          "gitBlobSha": "a2cd91333b252aa3f1dfb64be63c6bedc3c512fe"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/a11y/index.js",
+          "gitBlobSha": "4405afcdd9660eae2a9248c7e9ac794cf4a88244"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/attribute.js",
+          "gitBlobSha": "19bd7b6e545edbb679ae64b072d18e7377cde290"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/component.js",
+          "gitBlobSha": "6d09398fb7ebb4da1c8981dc1c95b4ebf2b5e8de"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/element.js",
+          "gitBlobSha": "ef4fd8ba9baec94bf2713bcec6ca7b7c9e0bd093"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/fragment.js",
+          "gitBlobSha": "f04b0e46686e5c6dd42f005528665952609541b9"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/function.js",
+          "gitBlobSha": "6b3d227eca4f8106bfd98916d5b814bd72c128ab"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/snippets.js",
+          "gitBlobSha": "124ae0b3158eac9789423155dce65e5dc2ebad85"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/2-analyze/visitors/shared/utils.js",
+          "gitBlobSha": "63866a6041c831b8b74b43ad9f3e44eaaf0d662e"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/transform-client.js",
+          "gitBlobSha": "2b7d660e9e7e78288a96bfa6f0854c157787c828"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/transform-template/fix-attribute-casing.js",
+          "gitBlobSha": "ce56c43d7c501428b5145c6ed165e8b9f29d0929"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/transform-template/index.js",
+          "gitBlobSha": "439f61703c4de65c5da876040e40db517fd5c861"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/transform-template/template.js",
+          "gitBlobSha": "e181419a9e0d588507dcd998f825a8b1aa13cb47"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/transform-template/types.d.ts",
+          "gitBlobSha": "2ccb4dc5c77ff95ba5d3ddd862182928d31f2d5a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/types.d.ts",
+          "gitBlobSha": "7a95a2d43c609ff33ee2f52e9f0d0a0fd608e607"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/utils.js",
+          "gitBlobSha": "a1d55ed7efb14c9bc9ececffccd6fde23b3dfc27"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/AnimateDirective.js",
+          "gitBlobSha": "c1f1991fa0313ce59c8718823b952e53e8176c37"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/ArrowFunctionExpression.js",
+          "gitBlobSha": "d06f2cdf678c4f0b14b94be4da0dd907f7157335"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/AssignmentExpression.js",
+          "gitBlobSha": "630c89da0093f5049f1f8290d82dedebfc8b011d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/AttachTag.js",
+          "gitBlobSha": "c594a1a1bd039cf559f4657aa522cfba03273f77"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/Attribute.js",
+          "gitBlobSha": "9579794bb5179f132cef08667d161762bf016593"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/AwaitBlock.js",
+          "gitBlobSha": "986cd789d95acd21c8a17993d941e121e96fa6bb"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/AwaitExpression.js",
+          "gitBlobSha": "a3602bbce5f09529408bdbb90903f18fa2cc4bd8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/BinaryExpression.js",
+          "gitBlobSha": "18028fa071583bf92f7d996ea017e591ebb1cce8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/BindDirective.js",
+          "gitBlobSha": "c7bf24b3f9b3c12848d7955d87b702886325a6a9"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/BlockStatement.js",
+          "gitBlobSha": "d1c0978a8171c8c33f0f4dc1c1808ddca21acb12"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/BreakStatement.js",
+          "gitBlobSha": "daa54018c0658ed100a1b74288574bc37682039b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/CallExpression.js",
+          "gitBlobSha": "cd1235d0894e9da5e2a66077f1d67846d1c4f930"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/ClassBody.js",
+          "gitBlobSha": "5bd9add2a59e222b2d1d1d13cd449e66eff8967a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/Comment.js",
+          "gitBlobSha": "21d1619f8ad0b7df1c79e3821c223b1d3de3b14b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/Component.js",
+          "gitBlobSha": "12c7b2142b7399cb616a03a2d2861a5bf57278c1"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/ConstTag.js",
+          "gitBlobSha": "b3b2358e4c4e2d25c1c82f899f76eac0caaa499a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/DebugTag.js",
+          "gitBlobSha": "01a7e0e87230f2120ce6c610a32896161575f93a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/DeclarationTag.js",
+          "gitBlobSha": "ceb81a468d19a5722259230c96a22d3118f601ad"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/EachBlock.js",
+          "gitBlobSha": "89392c82d82130265ad60b5100440e673585880d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/ExportNamedDeclaration.js",
+          "gitBlobSha": "16e400d50cebf3244f872a2e9e0020e493a63ea6"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/ExpressionStatement.js",
+          "gitBlobSha": "edffcb585cd507acf750cdfd59a5893398bff2a7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/ForOfStatement.js",
+          "gitBlobSha": "8ae67f49d1e21cee30bb752dccb77a9a3bd5cae8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/Fragment.js",
+          "gitBlobSha": "d1568b81ced54da563e158c4df8b3f22ef267db1"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/FunctionDeclaration.js",
+          "gitBlobSha": "17327c21d65209d8fc2585ed0750641f7bfa4c23"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/FunctionExpression.js",
+          "gitBlobSha": "884dfc8a3392a118d9d180fe50586f4593e57be1"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/HtmlTag.js",
+          "gitBlobSha": "5947257198a924ae9446bcb2be6d32c1d8cd926e"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/Identifier.js",
+          "gitBlobSha": "b43ec7891ea7835fb0c14196ab2b1c903bd3e4ed"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/IfBlock.js",
+          "gitBlobSha": "5dcb3991c259a58e5cb530f984c8cecab754ef83"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/KeyBlock.js",
+          "gitBlobSha": "1831e7ababeab5b023088037a2692aa6f6b6ae5a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/LabeledStatement.js",
+          "gitBlobSha": "8d24d260c5ae495e98894a300a7e1af4182ff4c0"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/LetDirective.js",
+          "gitBlobSha": "c134b4e1e7263049704d86dd65b597d83e7d1bb2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/MemberExpression.js",
+          "gitBlobSha": "7e89b0e705d1e7eb06ae463ab56d172d821d6e7d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/OnDirective.js",
+          "gitBlobSha": "011d8510232653406d67c58c7cd02e753ed27f2e"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/Program.js",
+          "gitBlobSha": "f6352e986cdbf3a1d977e689b758abb6e18ac722"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/RegularElement.js",
+          "gitBlobSha": "c8757921acf010b58867e79f709e9baa01914590"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/RenderTag.js",
+          "gitBlobSha": "5e7eff09c45f6bf4fc636c4bc0461e4c71680ff3"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SlotElement.js",
+          "gitBlobSha": "687410914be6e5494422db9d7dfd1af27a72db8c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SnippetBlock.js",
+          "gitBlobSha": "7ff51dea2dd67f87ef06874fa61051892646ad3d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SpreadAttribute.js",
+          "gitBlobSha": "f4931cd89b3b5baef5093389d57274264f10ece5"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteBody.js",
+          "gitBlobSha": "34fc90fc3264b53ab358f7273f664aa7d8951e72"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteBoundary.js",
+          "gitBlobSha": "310c400f1af43f37f9bf96d1a88dcc7334e73cd2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteComponent.js",
+          "gitBlobSha": "e60a8a9db8aea3f210d07c45d129a5e2cbf36ecd"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteDocument.js",
+          "gitBlobSha": "8fd05172c5ebd1a7e1e34a86b81ba9e47d9668b4"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteElement.js",
+          "gitBlobSha": "909b4e0b71409ac0ba6da55fc067aaf0d2eb508b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteFragment.js",
+          "gitBlobSha": "e3b46a4eef73f69b3da78fa0bfbe877ff9f12d9e"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteHead.js",
+          "gitBlobSha": "f57e333a3571e067edd9ba144df8260cbe00533c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteSelf.js",
+          "gitBlobSha": "3d076177acc058c84ece57627b396bc365217f3e"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/SvelteWindow.js",
+          "gitBlobSha": "dcf7be9bd4f6b47cc26b442a9b2fd2e8626c5125"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/TitleElement.js",
+          "gitBlobSha": "d91c3874966cddf93932579daa78208cd071529d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/TransitionDirective.js",
+          "gitBlobSha": "bab843de0242d7615aa4cb2f74bf5dbff1a8be34"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/UpdateExpression.js",
+          "gitBlobSha": "bc483daaed886c01acd81ec1001c5f85902cc20c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/UseDirective.js",
+          "gitBlobSha": "13d3057651bcf8eb4d91be415fc638e724475ceb"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/VariableDeclaration.js",
+          "gitBlobSha": "5ebbb552691f8efe923247f1a9e63ba2c136f225"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/component.js",
+          "gitBlobSha": "7140b92563d810970eaf328ee4cb92f6851979a7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/declarations.js",
+          "gitBlobSha": "f6bb26daac0305274aa22b748db6d89480235bc8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/element.js",
+          "gitBlobSha": "66b46ee4c2091b644f2be688acf4761c3141a68a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/events.js",
+          "gitBlobSha": "5866cb596a7c4c2a9190af420f81f25bef2b19f9"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/fragment.js",
+          "gitBlobSha": "6d921453c601801924a7bade3fb81b9179a2e13a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/function.js",
+          "gitBlobSha": "3677b308146eda7786d1d775da1e1a7c51f07509"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/special_element.js",
+          "gitBlobSha": "c878f2fc072ce2f1b78f295fc5da1392d139b958"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/client/visitors/shared/utils.js",
+          "gitBlobSha": "a9f57151615931cb7fc40f794abff877fd86c648"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/css/index.js",
+          "gitBlobSha": "bfeb426493936eaf31a26d42258e709cce1f179a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/index.js",
+          "gitBlobSha": "33665097ab6c6e6a45b21ee6853b6d598e5af854"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/transform-server.js",
+          "gitBlobSha": "f32ceb6bb59a401529edf9da6c54d5d716cf504b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/types.d.ts",
+          "gitBlobSha": "2863955786c5c3eab7336bfeeac367878335468c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/AssignmentExpression.js",
+          "gitBlobSha": "d555b6bb1db1436a6b1e48c32c72d95969fde63c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/AwaitBlock.js",
+          "gitBlobSha": "ba05ca135794245cba11e00f8ad9f062c160100d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/AwaitExpression.js",
+          "gitBlobSha": "820658d950e35b4a47dae54c02f316153eb661ae"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/CallExpression.js",
+          "gitBlobSha": "ac78f55da9f3452077e53a1263f52a38e153df2a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/ClassBody.js",
+          "gitBlobSha": "432d0142cdbf5d11dbffa290dcc35c859092649f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/Component.js",
+          "gitBlobSha": "ed202edd3b1dce803cc3fabc5058857fc2b8aa16"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/ConstTag.js",
+          "gitBlobSha": "cf56ef69104e2eda166ab79fa279eba387772e15"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/DebugTag.js",
+          "gitBlobSha": "3c4af2fe041e35b6a891c006f5a52cb623d5e565"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/DeclarationTag.js",
+          "gitBlobSha": "3fbff7167b43f59e564e9033b5d561bf1d20915b"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/EachBlock.js",
+          "gitBlobSha": "923c4dd39410ee2aa4949fa7c91a93c871af5b53"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/ExpressionStatement.js",
+          "gitBlobSha": "afd4684b8a0e44b32534a36091f932cffa0a4b31"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/Fragment.js",
+          "gitBlobSha": "2155fd838117830a4065405ca51ccf79367002c2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/HtmlTag.js",
+          "gitBlobSha": "ee790c3e7cfe1d7c8b85dece28a3e0ac2203f92d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/Identifier.js",
+          "gitBlobSha": "460a3411c212e28baee7579172f8bda60d9a5c37"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/IfBlock.js",
+          "gitBlobSha": "ea636e2064d01e526a1ae158e0efbe6d98e00d9d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/KeyBlock.js",
+          "gitBlobSha": "1396aa8fada3c5ccbc469a9983af646765bd35e2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/LabeledStatement.js",
+          "gitBlobSha": "e71e7473cdc61b0ca5ec43710892bcc9bebf7808"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/MemberExpression.js",
+          "gitBlobSha": "6326e9efe2fbe90405f4206f793f03f6aa284ffe"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/Program.js",
+          "gitBlobSha": "6b5227d598c1e164559c0903f31681065a1e4f31"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/PropertyDefinition.js",
+          "gitBlobSha": "498f90703c7b7922e3feb4af40f1578078375d6c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/RegularElement.js",
+          "gitBlobSha": "f36a6aecb03a68a34271889c8072b1b38202ba9a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/RenderTag.js",
+          "gitBlobSha": "ac671c0188a86940c793ffb28d783b5c82c006cc"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SlotElement.js",
+          "gitBlobSha": "3cebdf4541dd454b4362a8dfcba81fac03ca7600"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SnippetBlock.js",
+          "gitBlobSha": "7ae2a8e03793c74ef364b84d1c8441132bf1345a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SpreadAttribute.js",
+          "gitBlobSha": "f4931cd89b3b5baef5093389d57274264f10ece5"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SvelteBoundary.js",
+          "gitBlobSha": "feef4bd1a90ed5355e5c640c4514ab807743d2b7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SvelteComponent.js",
+          "gitBlobSha": "786446bdb276709ba1141e90a42b4295c9f9212c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SvelteElement.js",
+          "gitBlobSha": "398ecc68a22df5c74adea9f7e0db035aa8b7b747"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SvelteFragment.js",
+          "gitBlobSha": "49fb59d0e5e3ce596e81da1b11bfb194766f788c"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SvelteHead.js",
+          "gitBlobSha": "177ec62416dd83d2a197a3f325eb64df4d4454f2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/SvelteSelf.js",
+          "gitBlobSha": "bb0ecb21b205cf1c3812ad33f750688864dc1038"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/TitleElement.js",
+          "gitBlobSha": "3e240b756190a7c4bb32f48b50b111cac92480d3"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/UpdateExpression.js",
+          "gitBlobSha": "7438ffddce225ff152730cc7f4b747b985485531"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/VariableDeclaration.js",
+          "gitBlobSha": "108f65a884f95767c7145c8bfda24da51ac689b7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/shared/component.js",
+          "gitBlobSha": "b0e086b7ad0a22a37348b5f520de22427d27606f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/shared/element.js",
+          "gitBlobSha": "ad2731af80bcbb796f7a91aa761e92fdb8afb6e1"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/server/visitors/shared/utils.js",
+          "gitBlobSha": "2429da3c14cb823c759dd69869c813b19e35ce8f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/shared/assignments.js",
+          "gitBlobSha": "4678d88ec5503965c2367a894a932b5ef9c5afe3"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/shared/transform-async.js",
+          "gitBlobSha": "ac90f1db4bbee8899cc14afabe131d34a34ecbb4"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/types.d.ts",
+          "gitBlobSha": "8fc03d2d9a6d6dd615cde143016db4c2f059fcac"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/3-transform/utils.js",
+          "gitBlobSha": "a57fa85ec2257e94e0f79c1fcc0fe5b3ca43dfd9"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/bindings.js",
+          "gitBlobSha": "dfe78da98c56c95319eb504335ab7930a3301061"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/css.js",
+          "gitBlobSha": "71a6aa3a5efa31b0168ca68d7162f36832d3fcd9"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/nodes.js",
+          "gitBlobSha": "eda31b3e508dd1c2c1f9041ea6bbf8ec4eaa96d7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/patterns.js",
+          "gitBlobSha": "379eea6da59625ad1137313172e5d4cae6fd08cf"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/scope.js",
+          "gitBlobSha": "0d8e570772cc910e551fd3f4a9eb2d67723fab82"
+        },
+        {
+          "path": "packages/svelte/src/compiler/phases/types.d.ts",
+          "gitBlobSha": "38fa80ac4b1f1e7901848ca705cbea31bb131cb7"
+        },
+        {
+          "path": "packages/svelte/src/compiler/preprocess/decode_sourcemap.js",
+          "gitBlobSha": "6ee3a81c4412d66a7aff1b60573563919e75c0d2"
+        },
+        {
+          "path": "packages/svelte/src/compiler/preprocess/index.js",
+          "gitBlobSha": "429c2dcff150629c2148f8191070ab29086405ff"
+        },
+        {
+          "path": "packages/svelte/src/compiler/preprocess/legacy-public.d.ts",
+          "gitBlobSha": "00db239bfa67845663d3f05f7b815083de47f4d4"
+        },
+        {
+          "path": "packages/svelte/src/compiler/preprocess/private.d.ts",
+          "gitBlobSha": "2c331cee12678b669906e8cb3108672fbbcabb3f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/preprocess/public.d.ts",
+          "gitBlobSha": "b5a91cdaddd927c0a300d801a6f6dfa28fea2db8"
+        },
+        {
+          "path": "packages/svelte/src/compiler/preprocess/replace_in_code.js",
+          "gitBlobSha": "e517b5de506e0e669d5e87557eb7fe1d27be70fb"
+        },
+        {
+          "path": "packages/svelte/src/compiler/print/index.js",
+          "gitBlobSha": "103ffde78e4a70cd57553ce83287d87a912fee04"
+        },
+        {
+          "path": "packages/svelte/src/compiler/print/types.d.ts",
+          "gitBlobSha": "9eccebb6f32383092d2961d2d3cdcca4851bda05"
+        },
+        {
+          "path": "packages/svelte/src/compiler/private.d.ts",
+          "gitBlobSha": "7ac1089373d740809326050e38b4e58ce6ddebea"
+        },
+        {
+          "path": "packages/svelte/src/compiler/public.d.ts",
+          "gitBlobSha": "6cda8c692594793666c0725f89d0c1ba53ec8992"
+        },
+        {
+          "path": "packages/svelte/src/compiler/state.js",
+          "gitBlobSha": "852b85cf622cf5ee2eb9a34e25cf71d7c9b5f139"
+        },
+        {
+          "path": "packages/svelte/src/compiler/types/css.d.ts",
+          "gitBlobSha": "96b2bc3a7d2d488c50ff55f4e9bf06734ba3afb9"
+        },
+        {
+          "path": "packages/svelte/src/compiler/types/index.d.ts",
+          "gitBlobSha": "6288a18ff8b278728e5d579d3c0798c98ff3bd77"
+        },
+        {
+          "path": "packages/svelte/src/compiler/types/legacy-interfaces.d.ts",
+          "gitBlobSha": "e37e1d7159c4eddd195a9b2228afc28f01895e2f"
+        },
+        {
+          "path": "packages/svelte/src/compiler/types/legacy-nodes.d.ts",
+          "gitBlobSha": "389fc923327aa54f6d0cc132b3c89d7df4143bac"
+        },
+        {
+          "path": "packages/svelte/src/compiler/types/template.d.ts",
+          "gitBlobSha": "65cb8b3966d87dba726c49ffd091e18220ea57f3"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/assert.js",
+          "gitBlobSha": "6434e4d3e61484b2bc12e8fda4314f7464ad735a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/ast.js",
+          "gitBlobSha": "927674bd18192be54d060e0803a88c1a986ed338"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/builders.js",
+          "gitBlobSha": "047bfd13366ea6a539830f3ea6f5be8e1be3f1dd"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/check_graph_for_cycles.js",
+          "gitBlobSha": "83959248fec2558c79ae0b96b3643a68506823fb"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/compile_diagnostic.js",
+          "gitBlobSha": "ab0732c958f2c1aa500681c0249707d222bbc517"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/extract_svelte_ignore.js",
+          "gitBlobSha": "587f919f9185484b9e16996cb7186c83b467f669"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/fuzzymatch.js",
+          "gitBlobSha": "c8cf7f14fffa885b9334449af5739ffff2b37a68"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/mapped_code.js",
+          "gitBlobSha": "da069d71bac414c768fe3a27ef29329e05333431"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/sanitize_template_string.js",
+          "gitBlobSha": "80357d908d9a73fc5a81d69e19cb1b3d8528c50a"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/slot.js",
+          "gitBlobSha": "078bf589e6b4c8935b2a279de57ede8f0d5bbc04"
+        },
+        {
+          "path": "packages/svelte/src/compiler/utils/string.js",
+          "gitBlobSha": "42eefa993b36f8017acba211c4cdda1d37dca021"
+        },
+        {
+          "path": "packages/svelte/src/compiler/validate-options.js",
+          "gitBlobSha": "4115bd51fd5e375799689c407db5cd717aa19b8d"
+        },
+        {
+          "path": "packages/svelte/src/compiler/warnings.js",
+          "gitBlobSha": "98f407671d7d71c42039b739d8eb27adb6a9df7a"
+        }
+      ]
+    },
+    {
+      "label": "Client runtime",
+      "prefix": "packages/svelte/src/internal/client",
+      "includePattern": "\\.(js|ts)$",
+      "excludePattern": null,
+      "count": 89,
+      "source": {
+        "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+        "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "packages/svelte/src/internal/client/constants.js",
+          "gitBlobSha": "2aee75d658c0b3065912bc90c6a48ecc4e88718b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/context.js",
+          "gitBlobSha": "c3bb660e8ccd189b7a1fb7f7e7d0611d8a2f054f"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/custom-renderer/containers.js",
+          "gitBlobSha": "16d8b756a17f11a25255b1eac5d502e52aa38fe1"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/custom-renderer/cross.js",
+          "gitBlobSha": "45106678341533c0edd6dc55c586be1510916456"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/custom-renderer/index.js",
+          "gitBlobSha": "a5d6aa08f441ea03296938bddeb19484d4c985f0"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/custom-renderer/state.js",
+          "gitBlobSha": "d49a90f1ace3ac404a7006fa06661f215f4ca572"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/custom-renderer/types.d.ts",
+          "gitBlobSha": "c685f7e0a83b133c770ca1c7c48ab0d42dba5cc8"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/assign.js",
+          "gitBlobSha": "e328543b32cb5b4075239ff58dbb555a86fa0215"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/console-log.js",
+          "gitBlobSha": "38860eb767ea5bb62535fd96115e71138665732b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/css.js",
+          "gitBlobSha": "0875cf2ba2207d6180211b37a12cf1e9cc860129"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/debug.js",
+          "gitBlobSha": "7efe6e75e9ae3a64095c7e4140f33f37cb488e89"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/elements.js",
+          "gitBlobSha": "9db1a6395d49b00918166006ef672967c9cbff87"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/equality.js",
+          "gitBlobSha": "bbc28dc638cdc5f23720d7dbecbe74c713824ecc"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/hmr.js",
+          "gitBlobSha": "0e988fe66dae644079d95525944165d32b8146e7"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/inspect.js",
+          "gitBlobSha": "7a8fa0e963f4e35b5ea9e67e9e1db9a4deca826b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/legacy.js",
+          "gitBlobSha": "02428dc82457f2444468007f905c96e298646916"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/ownership.js",
+          "gitBlobSha": "19d2cdb343484b135216aabb3f05d72b18ab75ef"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/tracing.js",
+          "gitBlobSha": "b81e780c3e17d78f6d1006e9653f4c26b5425715"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dev/validation.js",
+          "gitBlobSha": "f7a9a4ec2f21fdcc308000028158dc34e1461653"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/async.js",
+          "gitBlobSha": "4f44f056073c8f2381b712471cdb1bc155b2ae02"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/await.js",
+          "gitBlobSha": "e86863187ed8c906694980f396250302297866d1"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/boundary.js",
+          "gitBlobSha": "4e8b533105e7e4e52bea9b5e4e32b943dfcc88ef"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/branches.js",
+          "gitBlobSha": "937017a5beaf533600b324e35a7e91c5fe27277d"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/css-props.js",
+          "gitBlobSha": "500ba7f0ddf65404b91ce9f0a6bd4f301f92818d"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/each.js",
+          "gitBlobSha": "81d6f062156633edc97b9bb16f9f2ed6c4dd95b4"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/html.js",
+          "gitBlobSha": "91dbe2e805a41b1a36caaf9659b1c83d8b4a2f9a"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/if.js",
+          "gitBlobSha": "7d3f9f7fbd537e03211d3337727f38ff5f8e6e2b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/key.js",
+          "gitBlobSha": "dd40d8a1b8152c10fa4abf2fd2507ef94b03144b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/slot.js",
+          "gitBlobSha": "8c634e0be29b554181792db503ac194135de4caa"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/snippet.js",
+          "gitBlobSha": "b5dae96493cc2e25bd9d4229a750320da4edc73a"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/svelte-component.js",
+          "gitBlobSha": "460cdf68ef53919075b0fd09a7e82913ca44a493"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/svelte-element.js",
+          "gitBlobSha": "86a6a3f83db20b0d1a4111d633c7e001819c0521"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/blocks/svelte-head.js",
+          "gitBlobSha": "9b3671d032787e32fc5427997e14917a900eeb55"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/css.js",
+          "gitBlobSha": "0d0eb5d867b765f3e6a923db1648870fb29b8880"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/actions.js",
+          "gitBlobSha": "dad3ce6fef5ded22b991dfb17c0d59e4d8ee356c"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/attachments.js",
+          "gitBlobSha": "8a3c313ae72310535864fb2dcad71dfa2fc0aba4"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/attributes.js",
+          "gitBlobSha": "7616097150566e24f1ed3cb59539e61b74fdb920"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/document.js",
+          "gitBlobSha": "8b238fc3cbeb3cd4c5bf45b1ecce6b86df828599"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/input.js",
+          "gitBlobSha": "ffffb0a44adbfde9f65f9f331911984f6f024339"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/media.js",
+          "gitBlobSha": "87da9503754bb924f4d3a5ab104697921da2e6f5"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/navigator.js",
+          "gitBlobSha": "a5d505400c9062dd7c0b96a0247a9e1a46f179d6"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/props.js",
+          "gitBlobSha": "083833289b9caf022bdf485b4d3009076a67acc0"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/select.js",
+          "gitBlobSha": "44af93ed283cf3a71fd6cb43bc45a4994e2fc41b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/shared.js",
+          "gitBlobSha": "303890adec390dd1eaad83e41217aa5358fb6b3f"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/size.js",
+          "gitBlobSha": "016ee5a5478dc4c9e13c8ba5c168107d766e2512"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/this.js",
+          "gitBlobSha": "705adc99ecd5dc1730fcc37892141636a7b54889"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/universal.js",
+          "gitBlobSha": "5b10abdc4c70dcc4554e092dc613d9eca452c4f7"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/bindings/window.js",
+          "gitBlobSha": "2f7e44c5d98838427550a80864bd784a7bd49e3d"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/class.js",
+          "gitBlobSha": "5772b8568b4bc8a9c8f89eedfbff9baddb762097"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/custom-element.js",
+          "gitBlobSha": "8316fa7656c7fb67858338d380b9750bfa75b97a"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/customizable-select.js",
+          "gitBlobSha": "04a3cdd1910a1f1e90354a48bb477d1735c0d4d1"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/events.js",
+          "gitBlobSha": "e8d5dba8298249dccedc31aa9f126d4cf88ff874"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/misc.js",
+          "gitBlobSha": "cd8ba42fd7012bd3e8f61bf85e445429e14ebef4"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/style.js",
+          "gitBlobSha": "e4aa06bc091b7b271c9ca145d405ac26426296d0"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/elements/transitions.js",
+          "gitBlobSha": "f6d36d86de06838a5ed5404492b7ff1a9f33c0b8"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/hydration.js",
+          "gitBlobSha": "76071f19476e06683db27f07cb151b084df87c43"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/legacy/event-modifiers.js",
+          "gitBlobSha": "2e5312f1b0543c09269b21d4f327351da7a5fcf7"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/legacy/lifecycle.js",
+          "gitBlobSha": "a564712f046c1d2216a61b10cacee17e888845fa"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/legacy/misc.js",
+          "gitBlobSha": "f09a01e364ecea85fb29ac8e940aebfc9adbf866"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/operations.js",
+          "gitBlobSha": "ea0087b6535211c0781692713088574f16fb5cb4"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/reconciler.js",
+          "gitBlobSha": "d0001e1ed2824b25819da39c5186a423ca0c360b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/task.js",
+          "gitBlobSha": "8c513614672b07a41e4626dc041f8d216345e014"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/template.js",
+          "gitBlobSha": "8f7a62f35d0348aa0b6d40fc87ae5735865de7d8"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/dom/types.d.ts",
+          "gitBlobSha": "bc3525919b97b05359ec8b0f22ab1776eccb7020"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/error-handling.js",
+          "gitBlobSha": "39b7d391503de044d8f491bf79334040a3051bbe"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/error-handling.test.ts",
+          "gitBlobSha": "2eb6093a2c5a1f3007d957db76ed644436fadc31"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/errors.js",
+          "gitBlobSha": "559c9b35175d14f6f55aafe404b71d6767adf0a1"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/hydratable.js",
+          "gitBlobSha": "601b860a4880c8704a05ac87162bad520787b08d"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/index.js",
+          "gitBlobSha": "ee2959d2f778e6cb6fe558f93a57745ce2372bef"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/legacy.js",
+          "gitBlobSha": "97ad7244c043ccaf9f155f30b3bab65e33f6a28d"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/loop.js",
+          "gitBlobSha": "9c1e972800fdb2c5cce510a03df7c3373dc86541"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/proxy.js",
+          "gitBlobSha": "08233472ddd9df471e56402fea1fc72d0d9fc51e"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/proxy.test.ts",
+          "gitBlobSha": "d00a590687440971a8506b2ecf85c965a014c628"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/async.js",
+          "gitBlobSha": "aa4fd86b3f39f7c68b14d18794ace831442dfd84"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/batch.js",
+          "gitBlobSha": "769b98214133f9f16e7c9c65c700780c6c8fda7b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/deriveds.js",
+          "gitBlobSha": "09102f94807ff64de2b963a07fa9558b1efbeddf"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/effects.js",
+          "gitBlobSha": "58a399a8a142b6fad01be3c06cfdda1bb0a19567"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/equality.js",
+          "gitBlobSha": "c7eb7adfe1b69304b2513adcbf2473e5742b1860"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/props.js",
+          "gitBlobSha": "c87ad82547396fa43db9304794b7b14a73939c38"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/sources.js",
+          "gitBlobSha": "bc0fe38045d1115ccb314ead12b323a262ba1fce"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/status.js",
+          "gitBlobSha": "172590951869b8205c69a9d3129472e945b9e73b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/store.js",
+          "gitBlobSha": "726765b619ab89b3b2114d5c76d63de76a5ca267"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/reactivity/types.d.ts",
+          "gitBlobSha": "8468b5a7239912779095b065e23d504e1ca294ec"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/render.js",
+          "gitBlobSha": "fda6cbc7eeb50664a2f6a5a4d37fa4b238a45818"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/runtime.js",
+          "gitBlobSha": "317589196a18b27587006d754e0c8d66b013cd2f"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/timing.js",
+          "gitBlobSha": "1702798952a1b8186648d248c850e2ba3fb091ac"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/types.d.ts",
+          "gitBlobSha": "29aa85ae80bb831af9a4482d3703c4573885ec2b"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/validate.js",
+          "gitBlobSha": "01fe6f5844fbe09ace3c8f6b5243a6a2bff2c44a"
+        },
+        {
+          "path": "packages/svelte/src/internal/client/warnings.js",
+          "gitBlobSha": "ced1a8b2c306d20008c280c1f8ca3cfcdf001851"
+        }
+      ]
+    },
+    {
+      "label": "Server runtime",
+      "prefix": "packages/svelte/src/internal/server",
+      "includePattern": "\\.(js|ts)$",
+      "excludePattern": null,
+      "count": 17,
+      "source": {
+        "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+        "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "packages/svelte/src/internal/server/abort-signal.js",
+          "gitBlobSha": "16047bdbb1992b52e9009a9c1f89e535622c7361"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/blocks/html.js",
+          "gitBlobSha": "c8ef5d81b490e9a45e426dcccdb556c34655c840"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/blocks/snippet.js",
+          "gitBlobSha": "80a5f7f467eeed5bb55c9af4040eefc434f1f304"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/context.js",
+          "gitBlobSha": "80d437907e833b97bcecfecb9ecda534ecfb64ad"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/crypto.js",
+          "gitBlobSha": "38b5f658921f979b69cf8c7a398b43dbd0798f25"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/crypto.test.ts",
+          "gitBlobSha": "2bde86676d8aa28cc10c7d04aa7a19d6366493b9"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/dev.js",
+          "gitBlobSha": "e953bac6ce9e35521c865c0827d0d735436045aa"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/errors.js",
+          "gitBlobSha": "ad9eb4604302acae76153dd31733947b80686136"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/hydratable.js",
+          "gitBlobSha": "be752886043a21e04a940b13242e3e018463833a"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/hydratable.test.ts",
+          "gitBlobSha": "8dd54c8f1d562c234aa7bfbdb22120147892cfb3"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/hydration.js",
+          "gitBlobSha": "94fc61b89ca16bff847eb9614c70305bf2e64248"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/index.js",
+          "gitBlobSha": "6a63bd9fd60f6fb81c65e73217a02aa4de45848b"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/render-context.js",
+          "gitBlobSha": "7a014a1b1507653b5e288c3dd614220e238a027d"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/renderer.js",
+          "gitBlobSha": "7bcdde44ba68a43be696e84222f2a3d8b35c223b"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/renderer.test.ts",
+          "gitBlobSha": "bee0b9403b1aab4842413e2c86ed5040081359df"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/types.d.ts",
+          "gitBlobSha": "0e8a4cb67838f554e049394025cdf2e5be0fa0fe"
+        },
+        {
+          "path": "packages/svelte/src/internal/server/warnings.js",
+          "gitBlobSha": "fc44a086afd54d2bd4953c5c101abe9a84ba99a4"
+        }
+      ]
+    },
+    {
+      "label": "Reactivity",
+      "prefix": "packages/svelte/src/reactivity",
+      "includePattern": "\\.(js|ts)$",
+      "excludePattern": null,
+      "count": 16,
+      "source": {
+        "url": "https://api.github.com/repos/sveltejs/svelte/git/trees/04c5d8da6f0be322555e7e5897f7bb318c8a6876?recursive=1",
+        "treeSha": "04c5d8da6f0be322555e7e5897f7bb318c8a6876",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "packages/svelte/src/reactivity/create-subscriber.js",
+          "gitBlobSha": "8ba7869f2d847813917ffcbd93a095ec0b09b3aa"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/date.js",
+          "gitBlobSha": "b70ba7969a5a0dd5601e040f5daed82940bbaf70"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/date.test.ts",
+          "gitBlobSha": "f90c5a102c52110ac0defff3e345043d78544846"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/index-client.js",
+          "gitBlobSha": "3eb9b95333abbc38966d2927b10ade8c291e266c"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/index-server.js",
+          "gitBlobSha": "6a6c9dcf136027b69891a54d99a047e8069ae5e2"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/map.js",
+          "gitBlobSha": "935db8fcb1500da6203c9735f148c6b78908eee3"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/map.test.ts",
+          "gitBlobSha": "f5cbb2192388a63cb6c1b1c82803668b70efb964"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/media-query.js",
+          "gitBlobSha": "6d1d084298376c7e545b8d8da6648559ab67b830"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/reactive-value.js",
+          "gitBlobSha": "c7c14ad7cd7ae8b487c868b35d7591e41f3fd6d5"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/set.js",
+          "gitBlobSha": "d7c2deeaae861e0de92b0034b71fa8b1ee57b6b2"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/set.test.ts",
+          "gitBlobSha": "a56e43ff8d53bdb922b565b4f728b6403242035c"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/url-search-params.js",
+          "gitBlobSha": "0b87820bfcaccc71b12c670317f27200c2504f06"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/url-search-params.test.ts",
+          "gitBlobSha": "765b4020f3a065879400163c2ba60137506e3fb3"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/url.js",
+          "gitBlobSha": "1e24e774eecfaf5c3e1e3201126ad1f30ffe7d88"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/url.test.ts",
+          "gitBlobSha": "4f597526be2a463773d7db5f65f837d11065489c"
+        },
+        {
+          "path": "packages/svelte/src/reactivity/window/index.js",
+          "gitBlobSha": "d4fcf29e4e121af5481a306f3c80bf611ed1737f"
+        }
+      ]
+    }
+  ],
+  "claim": {
+    "id": "CHART-1",
+    "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+    "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+    "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+    "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+  }
+}

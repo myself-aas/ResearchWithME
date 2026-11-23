@@ -1,5 +1,7 @@
 # Frontend design-system audit
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 Date: 2026-11-15
 Scope: Next.js (`app/`), the Cloudflare Pages frontend (`cloudflare-pages/src/`), shared `components/`, design tokens, shared styles, and relevant tests. This audit describes the current working tree, including the earlier uncommitted branding, dock, and palette changes.
 

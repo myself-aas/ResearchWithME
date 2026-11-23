@@ -1,5 +1,7 @@
 # Editorial foundation verification
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 ## Baseline — 2026-11-15
 
 Work on `arena/e6ad9348-researchwithme`; existing modified and untracked files were retained. Overlapping public routes include home, articles, category, post, authors, assistant, bookmarks, cite, settings and API docs. Next additionally has studio/account, pricing, login and other routes; no assumption of full route parity.

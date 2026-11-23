@@ -1,0 +1,187 @@
+{
+  "reviewedRepository": "https://github.com/perspective-dev/perspective",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+  "retrievedAt": "2026-11-20T22:54:22.475222+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "treeScope": {
+    "sha": "95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+    "truncated": false,
+    "returnedEntries": 2392,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/README.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/README.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "aaddd1381592d56c605ee88f7408338cbc4740fc",
+      "bytes": 11936,
+      "excerpts": [
+        {
+          "startLine": 18,
+          "endLine": 23,
+          "text": "Perspective is an open-source data grid, pivot table and charting component for \nlarge, real-time and streaming datasets. Build user-configurable reports, \ndashboards, notebooks and embedded analytics applications, backed by a \nhigh-performance streaming query engine that runs in-browser via WebAssembly or \nserver-side in Python, Node.js and Rust \u2014 or delegates to a database you \nalready have."
+        },
+        {
+          "startLine": 35,
+          "endLine": 63,
+          "text": "## Features\n\n- A data-reactive UI packaged as a\n  [Custom Element](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements),\n  with drag-and-drop query and layout configuration. Includes a virtual-scrolling,\n  editable data grid, WebGL charting engine with 15+ chart types, tile-based\n  geographic maps, full theme support, and [React](https://react.dev/) bindings.\n\n- A fast, memory-efficient streaming query engine written in C++ and compiled\n  for [WebAssembly](https://webassembly.org/) (including a 64-bit `memory64`\n  build for in-browser datasets larger than 4GB, and support for paging\n  columns to disk via OPFS in the browser or memory-mapped files natively),\n  [Python](https://www.python.org/) and [Rust](https://www.rust-lang.org/).\n  Tables update incrementally and views tick in real time, with reactive\n  joins across tables, a columnar expression language based on\n  [ExprTK](https://github.com/ArashPartow/exprtk), and read/write/streaming\n  support for [Apache Arrow](https://arrow.apache.org/), CSV and JSON.\n\n- A symmetric client/server architecture \u2014 the same Client API connects to an\n  engine in-process, in a Web Worker, or remotely over WebSocket, with server\n  bindings for Python (aiohttp, Starlette, Tornado), Node.js and Rust.\n  Datasets can be mirrored to the browser for fluid interaction or virtualized\n  server-side, streaming only what's visible.\n\n- Virtual servers that run Perspective's UI directly on external engines like\n  [DuckDB](https://duckdb.org/), [ClickHouse](https://clickhouse.com/),\n  [PostgreSQL](https://www.postgresql.org/) and\n  [Polars](https://pola.rs/), translating view configurations into native\n  queries \u2014 no ETL or data copy required."
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "path": "docs/md/explanation/architecture/client_only.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_only.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/architecture/client_only.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "ca800eb5a1be33099b03c0a2d0576c58fff80f75",
+      "bytes": 1807,
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 28,
+          "text": "_For static datasets, datasets provided by the user, and simple server-less and\nread-only web applications._\n\nIn this design, Perspective is run as a client Browser WebAssembly library, the\ndataset is downloaded entirely to the client and all calculations and UI\ninteractions are performed locally. Interactive performance is very good, using\nWebAssembly engine for near-native runtime plus WebWorker isolation for parallel\nrendering within the browser. Operations like scrolling and creating new views\nare responsive. However, the entire dataset must be downloaded to the client.\nPerspective is not a typical browser component, and datset sizes of 1gb+ in\nApache Arrow format will load fine with good interactive performance!\n\nHorizontal scaling is a non-issue, since here is no concurrent state to scale,\nand only uses client-side computation via WebAssembly client. Client-only\nperspective can support as many concurrent users as can download the web\napplication itself. Once the data is loaded, no server connection is needed and\nall operations occur in the client browser, imparting no additional runtime cost\non the server beyond initial load. This also means updates and edits are local\nto the browser client and will be lost when the page is refreshed, unless\notherwise persisted by your application.\n\nAs the client-only design starts with creating a client-side Perspective\n`Table`, data can be provided by any standard web service in any Perspective\ncompatible format (JSON, CSV or Apache Arrow)."
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "path": "docs/md/explanation/architecture/client_server.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_server.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/architecture/client_server.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "a3bea7c3f0943272f03647610bc228473984c441",
+      "bytes": 2545,
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 20,
+          "text": "_For medium-sized, real-time, synchronized and/or editable data sets with many\nconcurrent users._\n\nThe dataset is instantiated in-memory with a Python or Node.js Perspective\nserver, and web applications create duplicates of these tables in a local\nWebAssembly client in the browser, synchonized efficiently to the server via\nApache Arrow. This design scales well with additional concurrent users, as\nbrowsers only need to download the initial data set and subsequent update\ndeltas, while operations like scrolling, pivots, sorting, etc. are performed on\nthe client.\n\nPython servers can make especially good use of additional threads, as\nPerspective will release the GIL for almost all operations. Interactive\nperformance on the client is very good and identical to client-only\narchitecture. Updates and edits are seamlessly synchonized across clients via\ntheir virtual server counterparts using websockets and Apache Arrow."
+        },
+        {
+          "startLine": 44,
+          "endLine": 52,
+          "text": "Perspective's websocket client interfaces with the Python server, then\n_replicates_ the server-side Table. When the server-side `Table` has an `index`,\nthe replica inherits it, and both `update()` and `remove()` on the server are\nmirrored in the browser, including rows which an `update()` moves outside the\n`View`'s `filter`. A replica of a `View` with `group_by` and\n`group_rollup_mode: \"flat\"` is indexed on the `group_by` columns instead, so\ngroups which gain, change or lose all of their rows on the server are mirrored\ntoo; under the other rollup modes a subtotal row and a descendant with `null`\nkeys would share a key, so the replica is left unindexed and only grows."
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "path": "docs/md/explanation/architecture/server_only.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/server_only.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/architecture/server_only.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "09084c4b707c7cb4df7cfa6b508dd8285d051d1c",
+      "bytes": 1560,
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 24,
+          "text": "_For extremely large datasets with a small number of concurrent users._\n\nThe dataset is instantiated in-memory with a Python or Node.js server, and web\napplications connect virtually. Has very good initial load performance, since no\ndata is downloaded. Group-by and other operations will run column-parallel if\nconfigured.\n\nBut interactive performance is poor, as every user interaction must page the\nserver to render. Operations like scrolling are not as responsive and can be\nimpacted by network latency. Web applications must be \"always connected\" to the\nserver via WebSocket. Disconnecting will prevent any interaction, scrolling,\netc. of the UI. Does not use WebAssembly.\n\nEach connected browser will impact server performance as long as the connection\nis open, which in turn impacts interactive performance of every client. This\nultimately limits the horizontal scalabity of this architecture. Since each\nclient reads the perspective `Table` virtually, changes like edits and updates\nare automatically reflected to all clients and persist across browser refresh.\nUsing the same Python server as the previous design, we can simply skip the\nintermediate WebAssembly `Table` and pass the virtual table directly to `load()`"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "path": "docs/md/explanation/table/update_and_remove.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/table/update_and_remove.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/docs/md/explanation/table/update_and_remove.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "87bb1b287959bd74f1d81def34ccf244b654e38e",
+      "bytes": 1789,
+      "excerpts": [
+        {
+          "startLine": 31,
+          "endLine": 34,
+          "text": "Without an `index` set, calls to `update()` _append_ new data to the end of the\n`Table`. Otherwise, Perspective allows\n[_partial updates_ (in-place)](#index-and-limit) using the `index` to determine\nwhich rows to update:"
+        },
+        {
+          "startLine": 51,
+          "endLine": 55,
+          "text": "Any value on a `Client::table` can be unset using the value `null` in JSON or\nArrow input formats. Values may be unset on construction, as any `null` in the\ndataset will be treated as an unset value. `Table::update` calls do not need to\nprovide _all columns_ in the `Table`'s schema; missing columns will be omitted\nfrom the `Table`'s updated rows."
+        },
+        {
+          "startLine": 72,
+          "endLine": 79,
+          "text": "Rows can also be removed from an indexed `Table`, by calling `Table::remove`\nwith an array of index values:\n\n<div class=\"javascript\">\n\n```javascript\nindexed_table.remove([1, 4]);\n```"
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "path": "LICENSE.md",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/LICENSE.md",
+      "apiUrl": "https://api.github.com/repos/perspective-dev/perspective/contents/LICENSE.md?ref=95535bcbfde42e8e8994534a96f7fdaa4ae3e371",
+      "gitBlobSha": "1ffb266a1a85fcec1a520583683928a242366aaa",
+      "bytes": 10541,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 11,
+          "text": "# Apache License\n\n_Version 2.0, January 2004_  \n_&lt;<http://www.apache.org/licenses/>&gt;_\n\n### Terms and Conditions for use, reproduction, and distribution\n\n#### 1. Definitions\n\n\u201cLicense\u201d shall mean the terms and conditions for use, reproduction, and\ndistribution as defined by Sections 1 through 9 of this document."
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes an embedded grid/pivot/chart component with browser and server execution.",
+      "sourceId": "S1",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/README.md",
+      "locator": "lines 18\u201323; lines 35\u201363",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Performance, large-data and virtual-server claims not independently exercised."
+    },
+    {
+      "id": "C2",
+      "claim": "Client-only architecture downloads the entire dataset and keeps edits local unless the application persists them.",
+      "sourceId": "S2",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_only.md",
+      "locator": "lines 5\u201328",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No browser memory or interaction benchmark."
+    },
+    {
+      "id": "C3",
+      "claim": "Replicated client/server mode mirrors data and subsequent updates to browser tables.",
+      "sourceId": "S3",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_server.md",
+      "locator": "lines 5\u201320; lines 44\u201352",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No synchronization or concurrency test."
+    },
+    {
+      "id": "C4",
+      "claim": "Server-only mode trades client dataset replication for server interaction and connectivity dependency.",
+      "sourceId": "S4",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/server_only.md",
+      "locator": "lines 5\u201324",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Documentation performance characterizations are not measured here."
+    },
+    {
+      "id": "C5",
+      "claim": "Unindexed updates append; indexed updates support partial updates and row removal.",
+      "sourceId": "S5",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/table/update_and_remove.md",
+      "locator": "lines 31\u201334; lines 51\u201355; lines 72\u201379",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Examples not executed; packaged API compatibility must be verified."
+    },
+    {
+      "id": "C6",
+      "claim": "The root license identifies Apache License 2.0.",
+      "sourceId": "S6",
+      "url": "https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/LICENSE.md",
+      "locator": "lines 1\u201311",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No audit of every plugin or optional database integration."
+    }
+  ]
+}

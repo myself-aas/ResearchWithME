@@ -1,0 +1,51 @@
+{
+  "bodyFile": "polars-repo-teardown.md",
+  "cmsBodyFile": "polars-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/polars-repo-teardown/inspection-record.json",
+  "workflowState": "local-draft-awaiting-human-review",
+  "publicationType": "review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerificationScope": "Uses the author profile established earlier in this session; no fresh database or credential check."
+  },
+  "cmsFields": {
+    "title": "Polars review: lazy plans and streaming limits",
+    "slug": "polars-repo-teardown",
+    "status": "draft",
+    "subtitle": "When does a lazy query engine help, and where do memory assumptions need verification?",
+    "summary": "Polars repository review of lazy query plans, pushdown and streaming fallbacks, with workload checks rather than unmeasured speed claims.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "authorId": "ashif-ahmed-shuvo",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "Polars",
+      "Repository Review",
+      "Architecture",
+      "Adoption Trade-offs"
+    ],
+    "keyTakeaways": [
+      "LazyFrame records a logical plan rather than immediately materializing each step.",
+      "Predicate and projection pushdown are documented reasons to defer execution.",
+      "Streaming is not proof that every operator stays within a fixed memory budget."
+    ],
+    "readTime": "6 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "Polars",
+      "url": "https://github.com/pola-rs/polars",
+      "identifier": "pola-rs/polars",
+      "meta": "Default-branch snapshot · Commit 34f406152c7f · Inspected 20 Nov 2026"
+    },
+    "publicationType": "review"
+  },
+  "writeBlockers": [
+    "Human evidence review and final approval required.",
+    "Deploy and verify linked public evidence before publication.",
+    "Load the separate CMS body as content via the authorized studio. Intake is not an API write request.",
+    "License summaries are not legal advice; review terms for the intended use."
+  ]
+}

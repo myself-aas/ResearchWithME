@@ -1,0 +1,156 @@
+# Apache Airflow 3.4 review: orchestration trade-offs
+
+> Summary: Apache Airflow coordinates workflow tasks; it is not the engine that must process all of their data. This source-based review of version 3.4.0 examines its scheduler, executor choices, retry-safe task design, and deployment and trust boundaries. No Airflow installation, workload benchmark, or upstream test suite was run for this review. [1](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md#L45-L118) [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99)
+
+**By [Ashif Ahmed Shuvo](/author/ashif-ahmed-shuvo)** · [shuvo.1807016@bau.edu.bd](mailto:shuvo.1807016@bau.edu.bd)
+
+**Category:** [GitHub Repo Teardowns](/category/github-repo-teardowns) · **Format:** Repo Teardown · **Classification:** Review, not editorial
+
+**Inspected:** 20 November 2026 (UTC) · **Version:** 3.4.0 · **Commit:** `619a787ac81e8b7c8a9102fc78e3f0b00625d04e`
+
+## What is Apache Airflow good at?
+
+**Airflow is a workflow orchestrator: it coordinates tasks and their dependencies, rather than replacing every system those tasks call.** The reviewed README describes authoring, scheduling, and monitoring workflows, recommends delegating high-volume processing to specialized services, and explicitly says Airflow is not a streaming solution. It can orchestrate batch work that reads from streams without becoming a continuous stream-processing engine. [1](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md#L45-L118)
+
+A **DAG**, or directed acyclic graph, expresses task dependencies. The graph describes which work depends on other work; a task instance is a particular execution of a task. This review follows the Python DAG and scheduler path, not every authoring interface or integration in the repository. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354)
+
+> **Repository assessment**
+> The inspected project contains scheduler implementation, packaging metadata, deployment and security guidance, tests, and CI definitions. That is inspectable implementation evidence, not a measured reliability score or a guarantee that a particular deployment will meet its service objectives. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354) [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239) [9](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml#L33-L75) [10](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py#L2225-L2266) [11](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml#L142-L163)
+
+### Key findings
+
+- **Scheduling and execution are distinct responsibilities.** The scheduler selects work; an executor determines how tasks are run. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
+- **The metadata database participates in coordination.** The reviewed enqueue path accounts for parallelism and pool capacity before routing work to executors. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354)
+- **Retries require retry-safe work.** The best-practices guide recommends repeatable outputs, partitioned inputs, and avoiding duplicate writes. [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116)
+- **A local demonstration is not a production design.** Database choice, executor topology, logs, DAG distribution, health checks, and trust boundaries require explicit decisions. [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
+
+## Which Airflow version does this review cover?
+
+**The review is pinned to the 3.4.0 release tag, resolved to commit `619a787ac81e8b7c8a9102fc78e3f0b00625d04e`.** GitHub's release metadata reports publication on 6 November 2026; the inspected core package declares version `3.4.0`. Citations point to that commit instead of the moving `main` branch. This is not a claim that the release has no vulnerabilities or that later changes are covered. [9](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml#L33-L75) [12](https://github.com/apache/airflow/releases/tag/3.4.0)
+
+The core package declares `requires-python = ">=3.11,!=3.15"`; the README's stable-version matrix lists Python 3.11–3.14 as tested. The package expression and tested-version matrix answer different questions. Use the version-specific installation guidance rather than treating an open-ended package constraint as a promise about future Python releases. [1](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md#L45-L118) [9](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml#L33-L75)
+
+## How do Airflow's components fit together?
+
+**Airflow separates DAG processing, scheduling, task execution, and user/API access around persisted workflow state.** Its architecture guide identifies the DAG processor, DAG bundles, scheduler, API server, and metadata database; workers and the triggerer depend on the selected execution model and features. The executor logic runs inside the scheduler, not as a standalone service that every deployment must launch separately. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
+
+| Component | Responsibility in the reviewed architecture | Practical implication |
+| --- | --- | --- |
+| DAG processor and bundles | Parse DAG definitions and serialize them into the metadata database; make the appropriate DAG version available. | DAG distribution and parse-time behavior are operational concerns. |
+| Scheduler | Decide when runs/tasks progress and submit work through executors. | Worker capacity is not the only possible source of delay. |
+| Executor | Provide the execution mechanism selected by configuration. | Local, queued-worker, and container-based models have different costs. |
+| API server | Serve UI/API access and let task SDK code report state through the Execution API. | Airflow 3 architecture should not be described using only an older webserver-plus-workers diagram. |
+| Metadata database | Persist task, DAG, and other orchestration state. | Database configuration and maintenance matter to the control plane. |
+| Triggerer, when needed | Run asynchronous trigger work for deferred tasks. | Deferred workloads can introduce another component to operate. |
+
+Sources: the pinned architecture overview and executor guide. These are architectural responsibilities, not measurements of resource use. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
+
+## What does the scheduler code actually do?
+
+**The inspected enqueue path checks capacity before sending selected task instances to executors.** In `_critical_section_enqueue_task_instances()`, the code counts occupied executor slots, derives a scheduling limit, calls `_acquire_pool_capacity()`, selects task instances, groups their workloads by executor, and enqueues them. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354)
+
+The associated pool-capacity helper acquires a PostgreSQL transactional advisory lock when using that dialect, then requests locked pool statistics. It stops early when no pool slots are available. These are concrete coordination mechanisms visible in source, not evidence of a particular tasks-per-second rate. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L693-L737)
+
+```text
+Simplified reading of the inspected enqueue path, not runnable code:
+remaining parallelism
+  -> pool capacity and coordination
+  -> task-instance selection
+  -> group workloads by executor
+  -> enqueue selected work
+```
+
+> **What the code establishes**
+> Airflow does more than dispatch every ready-looking task to an unlimited worker pool. Scheduling is constrained by state and capacity. A waiting task therefore calls for investigation of pools and scheduler limits as well as worker health. This is a troubleshooting implication of the inspected path, not a diagnosis of a deployment tested here. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354) [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L693-L737)
+
+## Which executor should a team choose?
+
+**Choose an executor for the workload and operating environment, not because “distributed” automatically means faster.** The reviewed guide describes trade-offs among local execution, persistent queued workers, and per-task containerized execution. No executor was benchmarked in this review. [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
+
+| Model | What the documentation describes | Question to settle before adoption |
+| --- | --- | --- |
+| LocalExecutor | Simple local execution that shares resources with the scheduler environment. | Can one machine accommodate both orchestration and task resource demand? |
+| Queued workers, such as CeleryExecutor | Workers take queued tasks; persistent capacity can reduce startup delay but introduces shared-worker and idle-capacity considerations. | Who operates worker capacity, dependencies, queues, and isolation? |
+| Containerized execution, such as KubernetesExecutor | Tasks receive container/pod execution environments, with startup and infrastructure-management trade-offs. | Do task duration and environment requirements justify pod startup and cluster operations? |
+
+These are decision prompts, not a performance ranking. A task pod also does not, by itself, prove that an entire multi-user Airflow installation is a secure tenant boundary. [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
+
+## Why do retries still need carefully designed tasks?
+
+**Retrying execution is not the same as making an external side effect happen exactly once.** Airflow's best-practices guide asks authors to treat tasks like database transactions and produce the same outcome on reruns. It recommends measures such as UPSERT instead of duplicate-producing INSERT operations and reading/writing a specific partition rather than whichever input happens to be latest. [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116)
+
+For a daily warehouse load, the review's design recommendation is to identify the intended input partition and make the destination write safe to repeat. If an attempt writes output and then fails before its completion is recorded, a later attempt must not blindly append the same output again. This is an illustrative failure scenario, not a fault-injection result obtained here.
+
+The same guide recommends XCom for small messages and passing a path to larger data stored remotely. It warns that downstream tasks may execute on another server, so an upstream task's local file is not a dependable cross-worker handoff. It also cautions against unnecessary top-level database calls, networking, heavy computation, and expensive imports because DAG parsing repeatedly executes top-level code. [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116)
+
+> **Task-design boundary**
+> Orchestration supplies state transitions and retries; task authors still own the correctness of external writes, input selection, and data handoffs. This review does not claim an end-to-end exactly-once guarantee. [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116)
+
+## What does a production deployment need beyond a quick start?
+
+**A production plan must cover the database, task placement, DAG availability, durable logs, and component health.** The reviewed deployment guide says the default SQLite setup is for testing and recommends an external database such as PostgreSQL or MySQL for production. It also discusses remote executors, DAG bundles, log storage for disposable nodes, and scheduler health checks. [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118)
+
+Installation reproducibility deserves a separate check. The installation guide explains why open dependency ranges can make an unconstrained install unreliable and provides version- and Python-specific constraints for a tested dependency set. Those constraints do not substitute for the operating-system dependencies a provider may need or for testing the installation in the target environment. [7](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst#L98-L155)
+
+Before a pilot, record the exact Airflow version, Python version, provider set, constraints reference, executor, database, and task/log storage arrangements. That is a proposed evaluation checklist, not a deployment configuration validated by this teardown.
+
+## Is an Airflow deployment a sandbox for untrusted DAG authors?
+
+**Do not assume so. The reviewed security model treats DAG authors as code authors with substantial trust.** It says their code is not sandboxed by Airflow and can execute in workers, the DAG processor, and the triggerer. It also warns that the experimental multi-team feature does not yet guarantee full task-level isolation. [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
+
+The Airflow 3 guidance makes a narrower distinction worth retaining: worker task code uses the Execution API rather than receiving metadata-database credentials, while the DAG processor and triggerer have different trust characteristics. Worker/database separation should not be flattened into a claim that every component or team is isolated. These are documented boundaries at the reviewed version, not a penetration test or a newly discovered vulnerability. [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L61-L82)
+
+For mutually untrusted code authors, a deployment owner should obtain a threat-model and isolation review before assuming that UI permissions or per-task pods satisfy the requirement. This is an operational recommendation based on the stated security model, not a certification of any particular configuration.
+
+## What can readers reproduce from this inspection?
+
+**Readers can inspect the same release commit and the cited source paths without installing Airflow.** A curated [inspection record](/evidence/apache-airflow-repo-teardown/inspection-record.json) preserves source identifiers, locators, release metadata, and the review's claim ledger. It records the original inspection time and separates documented behavior from source observations and review inferences.
+
+The following commands are read-only source-inspection examples. Equivalent commit-resolution and file-content queries were run while preparing this review; these commands do not install Airflow or run its tests.
+
+```bash
+repo=apache/airflow
+commit=619a787ac81e8b7c8a9102fc78e3f0b00625d04e
+
+gh api "repos/$repo/commits/3.4.0" --jq .sha
+
+gh api "repos/$repo/contents/airflow-core/src/airflow/jobs/scheduler_job_runner.py?ref=$commit" \
+  --jq .content | base64 --decode
+
+gh api "repos/$repo/contents/airflow-core/docs/security/security_model.rst?ref=$commit" \
+  --jq .content | base64 --decode
+```
+
+The repository also contains a scheduler pool-selection test and a unit-test workflow with Python/backend matrix inputs. Inspecting their assertions and invocation establishes that the test artifacts exist; it does **not** establish their current pass status, exhaustive coverage, or successful reproduction in this environment. [10](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py#L2225-L2266) [11](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml#L142-L163)
+
+## What remains unverified?
+
+> **Review limits**
+> This is a selected source-and-documentation inspection of Airflow 3.4.0. No Airflow package was installed, no DAG was executed, no scheduler failover was induced, and no upstream tests or security probes were run. Throughput, latency, operating cost, recovery time, compatibility with a particular provider set, and production isolation remain unmeasured.
+
+A useful next evaluation would run a representative DAG in a disposable environment, repeat a task after a partial external write, test remote data/log handoffs, observe queue and scheduler delays, and exercise a database-backed recovery procedure. Record the workload, executor, versions, configuration, and failure conditions before comparing results. Do not infer these results from the repository's popularity or the presence of CI files.
+
+## Bottom line
+
+**Airflow is a plausible fit when a team needs inspectable workflow orchestration and accepts responsibility for task correctness and operating the control plane.** The reviewed code and guides support a concrete account of scheduling, executor selection, retry-safe task design, and deployment responsibilities. They do not make Airflow a streaming engine, an automatic exactly-once data-processing system, or a default sandbox for mutually untrusted authors. The adoption recommendation is a bounded interpretation of the inspected sources, not a benchmark-based ranking. [1](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md#L45-L118) [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354) [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116) [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
+
+---
+
+**Preparation disclosure:** Prepared with AI assistance from primary-source inspection. Human source review and final article approval remain pending. No funding or conflict-of-interest declaration has been supplied. No professional credentials or Apache affiliation are inferred from the byline.
+
+**Author and contact:** [Ashif Ahmed Shuvo](/author/ashif-ahmed-shuvo) · [shuvo.1807016@bau.edu.bd](mailto:shuvo.1807016@bau.edu.bd). Browse the [GitHub Repo Teardowns category](/category/github-repo-teardowns) for published reviews. This review is not affiliated with or endorsed by the Apache Software Foundation.
+
+## References
+
+1. [README and project scope](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md#L45-L118) — Apache Airflow README at the reviewed commit; project description, Project Focus, and Requirements.
+2. [Airflow component overview](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) — architecture overview; components and responsibilities.
+3. [SchedulerJobRunner implementation](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354) — scheduler implementation; enqueue path and capacity coordination.
+4. [Executor types and trade-offs](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113) — executor guide; local, queued-worker, and containerized models.
+5. [DAG-authoring best practices](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116) — task reruns, cross-task communication, and top-level code.
+6. [Production deployment guide](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) — production database, task distribution, logs, and health checks.
+7. [Installing from PyPI](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst#L98-L155) — version/Python-specific constraints and dependency limitations.
+8. [Airflow security model](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239) — DAG-author capabilities and isolation limits; see also the component-specific section at lines 61–82.
+9. [Core package metadata](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml#L33-L75) — core package name, Python constraint, license, and version.
+10. [Scheduler pool-selection test](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py#L2225-L2266) — scheduler pool-selection test source; inspected, not executed.
+11. [Unit-test workflow](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml#L142-L163) — unit-test workflow matrix and invocation at lines 225–231; inspected, not executed.
+12. [Apache Airflow 3.4.0 release](https://github.com/apache/airflow/releases/tag/3.4.0) — GitHub release metadata; publication date and tag, not an independent signature or security verification.

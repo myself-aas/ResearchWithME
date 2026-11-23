@@ -1,0 +1,32 @@
+RustDesk review: connection and build boundaries
+UNPUBLISHED — human review pending
+
+Audience: IT teams and developers evaluating authorized remote support
+Question: What does owning remote-desktop infrastructure change, and which endpoint responsibilities remain?
+Version: Default-branch source snapshot (master); not a release review
+Commit: eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7
+Evidence: github-snapshot.json; 5 primary files, 6 claim records with retained numbered excerpts.
+
+CITABLE handoff (human decisions, not automated approval)
+C: Check each consequential assertion against the claim ledger; recommendations are analysis.
+I: Verify exact pinned versions and excerpt context.
+T: Keep product, edition, default-branch and runtime distinctions.
+A: Review answer-first conclusions and adoption criteria for fairness.
+B: References resolve to the inspected commit, not moving branch links.
+L: Excerpt ranges and source locators retained locally.
+E: Test reader HTML and Markdown after CMS staging; no invented JSON-LD in body.
+
+Verification questions
+- In an authorized lab, verify direct and relayed sessions, explicit consent, unattended policies and revocation on each intended OS.
+- Resolve the separate server artifact and configuration; document which infrastructure and endpoints are trusted.
+- Follow the intended Flutter release build path and verify binary provenance, update policy and applicable AGPL obligations.
+
+Scope: Static inspection only. No upstream install, execution, tests, benchmark, security test, CMS write, deployment or publication.
+License: Summaries identify source terms only; no complete dependency/license audit or legal advice.
+SEO/GEO/AEO: Descriptive title and summary, answer-first sections, traceable entities/commit, reference locators and standalone prose. No indexing or AI-citation guarantee. See batch SEO audit.
+
+Chart revision — 20 November 2026
+One Recharts source-file map now accompanies this draft. chart-inventory.json retains every counted blob path, selector, complete-tree provenance, CHART-1 claim and limitations; public inspection record includes only the aggregate chart record, not the member list.
+Interpretation: Client modules, server-side application modules, platform code and Flutter UI are separate maintenance surfaces. This directory-only inventory excludes top-level files such as src/client.rs and src/server.rs, and does not inspect the separate rendezvous/relay server repository.
+Decision checkpoint: An authorized support trial should cover both native endpoint behavior and UI consent flows on the target OS. Neither the amount of Rust nor the amount of Dart establishes remote-access security.
+Validation: Actual parser, no-JS/loading table and 360px SVG rendering tested in targeted suites. Production/mobile browser, live schema, SEO outcomes and full-app build remain unverified. See repository-review-charts-audit.md.

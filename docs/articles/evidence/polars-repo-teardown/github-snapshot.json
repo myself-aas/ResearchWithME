@@ -1,0 +1,167 @@
+{
+  "reviewedRepository": "https://github.com/pola-rs/polars",
+  "reviewedVersion": "Default-branch source snapshot (main); not a release review",
+  "reviewedCommit": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+  "retrievedAt": "2026-11-20T22:54:20.639626+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "treeScope": {
+    "sha": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+    "truncated": false,
+    "returnedEntries": 4386,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/README.md",
+      "apiUrl": "https://api.github.com/repos/pola-rs/polars/contents/README.md?ref=34f406152c7f4d0b6af8c9fc258571590822c32a",
+      "gitBlobSha": "b868bcab455d882692515ea01d67726a73e84568",
+      "bytes": 7095,
+      "excerpts": [
+        {
+          "startLine": 47,
+          "endLine": 61,
+          "text": "## Polars: Extremely fast Query Engine for DataFrames and SQL\n\nPolars is an analytical query engine written in Rust. Write your queries with the DataFrame API, in\nSQL, or mix both: they run through the same optimizer and the same engine. It is designed to be\nfast, easy to use and expressive. Key features are:\n\n- **Fast**: written from the ground up in Rust with multi-threaded, vectorized (SIMD) execution\n- **Spill to disk**: Operations that exceed available RAM can spill to disk\n- **Expressive API**: compose complex queries with powerful expressions\n- **Extensible**: extend Polars natively with custom code through\n  [I/O and Expression plugins](https://docs.pola.rs/user-guide/plugins/)\n- **GPU support**: optionally accelerate queries on NVIDIA GPUs\n- **Interoperable**: uses the\n  [Apache Arrow Columnar Format](https://arrow.apache.org/docs/format/Columnar.html) for zero-copy\n  data sharing"
+        },
+        {
+          "startLine": 69,
+          "endLine": 85,
+          "text": "Queries are composed from expressions or SQL. This lazy query gets optimized out of the box and runs\nin parallel across all available cores:\n\n```python\nimport polars as pl\n\ndf = (\n    pl.scan_parquet(\"orders.parquet\")\n    .filter(pl.col(\"status\") == \"shipped\")\n    .group_by(\"customer_id\")\n    .agg(\n        pl.col(\"amount\").sum().alias(\"total\"),\n        pl.len().alias(\"n_orders\"),\n    )\n    .sort(\"total\", descending=True)\n    .collect()\n)"
+        },
+        {
+          "startLine": 187,
+          "endLine": 194,
+          "text": "## Distributed Polars\n\nRunning into hardware limitations executing your queries? Read how you can\n[horizontally scale your Polars query on a cluster](https://docs.nanook.pola.rs/).\n\n## License\n\nPolars is licensed under the [MIT License](LICENSE) (SPDX: `MIT`)."
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "path": "docs/source/user-guide/concepts/lazy-api.md",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/docs/source/user-guide/concepts/lazy-api.md",
+      "apiUrl": "https://api.github.com/repos/pola-rs/polars/contents/docs/source/user-guide/concepts/lazy-api.md?ref=34f406152c7f4d0b6af8c9fc258571590822c32a",
+      "gitBlobSha": "f4477bd5b0d7a1cbc234500e868fc31f00f49442",
+      "bytes": 4010,
+      "excerpts": [
+        {
+          "startLine": 3,
+          "endLine": 6,
+          "text": "Polars supports two modes of operation: lazy and eager. The examples so far have used the eager API,\nin which the query is executed immediately. In the lazy API, the query is only evaluated once it is\n_collected_. Deferring the execution to the last minute can have significant performance advantages\nand is why the lazy API is preferred in most cases. Let us demonstrate this with an example:"
+        },
+        {
+          "startLine": 20,
+          "endLine": 49,
+          "text": "Every step is executed immediately returning the intermediate results. This can be very wasteful as\nwe might do work or load extra data that is not being used. If we instead used the lazy API and\nwaited on execution until all the steps are defined then the query planner could perform various\noptimizations. In this case:\n\n- Predicate pushdown: Apply filters as early as possible while reading the dataset, thus only\n  reading rows with sepal length greater than 5.\n- Projection pushdown: Select only the columns that are needed while reading the dataset, thus\n  removing the need to load additional columns (e.g., petal length and petal width).\n\n{{code_block('user-guide/concepts/lazy-vs-eager','lazy',['scan_csv'])}}\n\nThese will significantly lower the load on memory & CPU thus allowing you to fit bigger datasets in\nmemory and process them faster. Once the query is defined you call `collect` to inform Polars that\nyou want to execute it. You can\n[learn more about the lazy API in its dedicated chapter](../lazy/index.md).\n\n!!! info \"Eager API\"\n\n    In many cases the eager API is actually calling the lazy API under the hood and immediately collecting the result. This has the benefit that within the query itself optimization(s) made by the query planner can still take place.\n\n## When to use which\n\nIn general, the lazy API should be preferred unless you are either interested in the intermediate\nresults or are doing exploratory work and don't know yet what your query is going to look like.\n\n## Previewing the query plan\n\nWhen using the lazy API you can use the function `explain` to ask Polars to create a description of\nthe query plan that will be executed once you collect the results. This can be useful if you want to"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "path": "crates/polars-lazy/src/lib.rs",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/crates/polars-lazy/src/lib.rs",
+      "apiUrl": "https://api.github.com/repos/pola-rs/polars/contents/crates/polars-lazy/src/lib.rs?ref=34f406152c7f4d0b6af8c9fc258571590822c32a",
+      "gitBlobSha": "e0b281fb396ef1f50b8a5a4462cb91ab1172d985",
+      "bytes": 7481,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 29,
+          "text": "//! Lazy API of Polars\n//!\n//! The lazy API of Polars supports a subset of the eager API. Apart from the distributed compute,\n//! it is very similar to [Apache Spark](https://spark.apache.org/). You write queries in a\n//! domain specific language. These queries translate to a logical plan, which represent your query steps.\n//! Before execution this logical plan is optimized and may change the order of operations if this will increase performance.\n//! Or implicit type casts may be added such that execution of the query won't lead to a type error (if it can be resolved).\n//!\n//! # Lazy DSL\n//!\n//! The lazy API of polars replaces the eager [`DataFrame`] with the [`LazyFrame`], through which\n//! the lazy API is exposed.\n//! The [`LazyFrame`] represents a logical execution plan: a sequence of operations to perform on a concrete data source.\n//! These operations are not executed until we call [`collect`].\n//! This allows polars to optimize/reorder the query which may lead to faster queries or fewer type errors.\n//!\n//! [`DataFrame`]: polars_core::frame::DataFrame\n//! [`LazyFrame`]: crate::frame::LazyFrame\n//! [`collect`]: crate::frame::LazyFrame::collect\n//!\n//! In general, a [`LazyFrame`] requires a concrete data source \u2014 a [`DataFrame`], a file on disk, etc. \u2014 which polars-lazy\n//! then applies the user-specified sequence of operations to.\n//! To obtain a [`LazyFrame`] from an existing [`DataFrame`], we call the [`lazy`](crate::frame::IntoLazy::lazy) method on\n//! the [`DataFrame`].\n//! A [`LazyFrame`] can also be obtained through the lazy versions of file readers, such as [`LazyCsvReader`](crate::frame::LazyCsvReader).\n//!\n//! The other major component of the polars lazy API is [`Expr`](crate::dsl::Expr), which represents an operation to be\n//! performed on a [`LazyFrame`], such as mapping over a column, filtering, or groupby-aggregation.\n//! [`Expr`] and the functions that produce them can be found in the [dsl module](crate::dsl)."
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "path": "docs/source/user-guide/concepts/streaming.md",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/docs/source/user-guide/concepts/streaming.md",
+      "apiUrl": "https://api.github.com/repos/pola-rs/polars/contents/docs/source/user-guide/concepts/streaming.md?ref=34f406152c7f4d0b6af8c9fc258571590822c32a",
+      "gitBlobSha": "82199fe121256f5550d8155455b67095ce8c6ada",
+      "bytes": 1761,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 23,
+          "text": "# Streaming\n\n<!-- Not included in the docs \u201cuntil we have something we are proud of\u201d. https://github.com/pola-rs/polars/pull/19087/files/92bffabe48c6c33a9ec5bc003d8683e59c97158c#r1788988580 -->\n\nOne additional benefit of the lazy API is that it allows queries to be executed in a streaming\nmanner. Instead of processing all the data at once, Polars can execute the query in batches allowing\nyou to process datasets that do not fit in memory. Besides memory pressure, the streaming engine\nalso is more performant than Polars' in-memory engine.\n\nTo tell Polars we want to execute a query in streaming mode we pass the `engine=\"streaming\"`\nargument to `collect`:\n\n{{code_block('user-guide/concepts/streaming','streaming',['collect'])}}\n\n## Inspecting a streaming query\n\nPolars can run many operations in a streaming manner. Some operations are inherently non-streaming,\nor are not implemented in a streaming manner (yet). In the latter case, Polars will fall back to the\nin-memory engine for those operations. A user doesn't have to know about this, but it can be\ninteresting for debugging memory or performance issues.\n\nTo inspect the physical plan of streaming query, you can plot the physical graph. The legend shows\nhow memory intensive the operation can be."
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/LICENSE",
+      "apiUrl": "https://api.github.com/repos/pola-rs/polars/contents/LICENSE?ref=34f406152c7f4d0b6af8c9fc258571590822c32a",
+      "gitBlobSha": "33b09bbb6c5bd43c5e985e2affed64c5ed093616",
+      "bytes": 1145,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 19,
+          "text": "Copyright (c) 2025 Ritchie Vink\nCopyright (c) 2024 (Some portions) NVIDIA CORPORATION & AFFILIATES. All rights reserved.\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE"
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README describes a Rust analytical query engine with DataFrame and SQL interfaces.",
+      "sourceId": "S1",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/README.md",
+      "locator": "lines 47\u201361; lines 69\u201385; lines 187\u2013194",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No measured throughput or cross-engine parity check."
+    },
+    {
+      "id": "C2",
+      "claim": "The lazy guide documents deferred execution, predicate/projection pushdown and explain.",
+      "sourceId": "S2",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/docs/source/user-guide/concepts/lazy-api.md",
+      "locator": "lines 3\u20136; lines 20\u201349",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Optimization effectiveness depends on the actual plan and workload."
+    },
+    {
+      "id": "C3",
+      "claim": "The lazy crate describes LazyFrame as a logical execution plan collected later.",
+      "sourceId": "S3",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/crates/polars-lazy/src/lib.rs",
+      "locator": "lines 1\u201329",
+      "evidenceType": "source documentation observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Crate documentation and entry concepts, not a full optimizer audit."
+    },
+    {
+      "id": "C4",
+      "claim": "The retained streaming document describes batching and fallback to an in-memory engine.",
+      "sourceId": "S4",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/docs/source/user-guide/concepts/streaming.md",
+      "locator": "lines 1\u201323",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "File includes a publication-exclusion comment; not treated as a stable public contract."
+    },
+    {
+      "id": "C5",
+      "claim": "Root licensing is MIT-style with notices and disclaimer.",
+      "sourceId": "S5",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/LICENSE",
+      "locator": "lines 1\u201319",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No complete optional-component license audit."
+    },
+    {
+      "id": "C6",
+      "claim": "Memory and speed claims require workload-specific measurements.",
+      "sourceId": "S4",
+      "url": "https://github.com/pola-rs/polars/blob/34f406152c7f4d0b6af8c9fc258571590822c32a/docs/source/user-guide/concepts/streaming.md",
+      "locator": "lines 1\u201323",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No benchmark or memory profile was collected."
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+# Apache Airflow review — source ledger and editor handoff
+
+## Intake
+
+- Requested repository: https://github.com/apache/airflow.git.
+- Intended article: `Apache Airflow 3.4 review: orchestration trade-offs`.
+- Category/format/classification: GitHub Repo Teardowns / Repo Teardown / review, not editorial.
+- Requested author carried forward from the preceding review: Ashif Ahmed Shuvo, shuvo.1807016@bau.edu.bd, author slug `ashif-ahmed-shuvo`. That published profile was established earlier in this session; no new account lookup, account change, or professional-credential verification was performed for this draft.
+- Audience: engineers evaluating workflow orchestration, operational responsibility, and DAG-author trust.
+- Main question: what does the released code coordinate, and what correctness/operations/security responsibilities remain with the adopting team?
+- Reviewed version: 3.4.0, commit `619a787ac81e8b7c8a9102fc78e3f0b00625d04e`.
+- Version selection: the latest GitHub release endpoint returned Apache Airflow 3.4.0 at inspection; GitHub reports publication on 6 November 2026. This is not an assertion of vulnerability-free status, signature verification, or ongoing latest-version status.
+- Inspection date: 20 November 2026 (UTC); exact retrieval time is in the snapshot. No Airflow package installation, workflow execution, benchmark, upstream test run, or penetration test.
+
+## Files
+
+- Standalone article: `docs/articles/apache-airflow-repo-teardown.md`.
+- CMS intake: `docs/articles/apache-airflow-repo-teardown.intake.json`.
+- Generated CMS Markdown: `docs/articles/apache-airflow-repo-teardown.cms.txt`. The reader supplies the title, byline, category and takeaways, so these are not duplicated in the body. The `.txt` extension keeps the body out of the standalone-draft H1 checker.
+- Source snapshot: `github-snapshot.json` beside this record. It retains 11 source identifiers and selected line-numbered excerpts, plus release metadata and the structured claim ledger. Excerpts are not complete files and must not be hashed as if they were the original Git blobs. The recorded Git blob hashes identify the full upstream files.
+- Tree record: `tree.json` retains selected source paths from a non-truncated recursive tree response. The complete 18,757-entry response was retrieved, checked for truncation, and searched for relevant paths, but not retained as a large generated artifact. This is not a claim that all those files were reviewed.
+- Public evidence: `public/evidence/apache-airflow-repo-teardown/inspection-record.json`. It exposes only curated identifiers, locators, release metadata and claims; full excerpts and internal author/account workflow details are excluded. The linked public path becomes available after deployment; it has not been live-verified.
+- SEO check: `docs/audits/apache-airflow-draft-seo-audit.md` and companion evidence JSON.
+
+Full selected documents were read through a non-persisted `.cache/airflow-review` directory, with retained excerpts for the consequential claims. Large source/test files were not copied into the working tree. Only read-only GitHub API queries were used against the external repository. Apache source excerpts retain their original Apache-2.0 attribution; the public evidence file does not redistribute full source files.
+
+## Claim-to-source ledger
+
+“Direct observation” means inspected source/metadata. “Source report” means a documented claim or recommendation, not an independently reproduced result. “Review inference” means the bounded interpretation in the draft.
+
+| Claim | Primary source and locator | Evidence type | Boundary |
+| --- | --- | --- | --- |
+| Airflow orchestrates workflows and is not itself a streaming solution. | [readme](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md) — Project Focus, lines 83–91. | source report | Describes project positioning, not a measured workload capability. |
+| DAG processing, scheduling, API access and persisted metadata have distinct responsibilities. | [architecture](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst) — Airflow components, lines 38–99. | source report | Selected architectural description; no deployment validation. |
+| The enqueue path derives capacity, selects task instances and routes workloads to executors. | [scheduler](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py) — Lines 1302–1354; pool-capacity helper at 693–737. | direct observation | Source inspection, not proof of throughput, fairness, or failure recovery. |
+| Executor models trade local/shared resources against queued-worker or containerized execution. | [executors](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst) — Executor Types, lines 51–113. | source report | No comparative benchmark was run. |
+| Best practices call for repeatable task outcomes, partitioned inputs and small-message XCom use. | [task-design](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst) — Creating a task, Communication, Top level Python Code, lines 44–116. | source report | Does not establish end-to-end exactly-once writes. |
+| The deployment guide recommends an external production database and addresses logs, DAG distribution and scheduler health. | [deployment](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst) — Database backend, Multi-Node Cluster, Logging, Scheduler Uptime, lines 24–118. | source report | Not a validated infrastructure sizing guide. |
+| Version/Python-specific constraints capture a dependency set known at release time. | [installation](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/installation/installing-from-pypi.rst) — Constraints files, lines 98–155. | source report | Provider OS dependencies and target-environment validation still matter. |
+| DAG authors are trusted code authors; the documented multi-team feature does not guarantee full task-level isolation. | [security](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst) — Capabilities and isolation sections, lines 190–239; component distinction at 61–82. | source report | Version-specific warning, not a new vulnerability or penetration-test result. |
+| The core package declares version 3.4.0 and a Python requirement of >=3.11,!=3.15. | [packaging](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml) — Project metadata, lines 33–75. | direct observation | Distinguish declared constraints from the README tested-version matrix. |
+| A scheduler test asserts pool-selection outcomes. | [tests](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py) — test_find_executable_task_instances_pool, lines 2225–2266. | direct observation | Test source was read; no test execution or passing status claimed. |
+| The unit-test workflow defines Python/backend matrix inputs and invokes a test script. | [ci](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml) — Matrix at 142–163 and invocation at 225–231. | direct observation | A workflow definition is not a successful CI run. |
+| Airflow is a plausible fit for teams that need workflow orchestration and can own task correctness and the control plane. | [readme](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md) — Review synthesis of scope, scheduler, task-design, deployment and security sources. | review inference | Not a competitive ranking, security certification or benchmark-backed adoption guarantee. |
+
+## Mechanical and SEO validation
+
+- Standalone structure check passes for both reviews.
+- All 14 reme tests pass, including four new Airflow checks for classification/versioning, citation retention, source/claim consistency, public-evidence privacy and deterministic preparation.
+- Both Airflow and the prior GTA6 preparation outputs pass `--check`. Shared CMS-body formatting was extracted without changing the prior review's generated body.
+- Actual `pageMetadata()` execution preserves the 51-character Airflow title and 152-character summary. The branded title has 58 characters. No site-wide title formatter change is needed.
+- CMS reading time is derived from the generated body; currently 10 min read.
+- JavaScript syntax checks and `git diff --check` pass.
+- No full app quality/build, mobile/browser, live schema, Search Console, performance, or production publication check was performed. These local tests do not run Airflow's own suite or certify its behavior.
+
+## Reproduction
+
+```bash
+npm run article:prepare:airflow
+npm run article:prepare:airflow -- --check
+npm run article:prepare:gta6 -- --check
+npm run reme:check
+npm run reme:test
+```
+
+Preparation is offline/local only. It does not publish, create accounts, mutate the CMS, request indexing, or deploy assets.
+
+## Human CITABLE gate and unresolved checks
+
+1. Verify the source passages, especially the distinction between documented behavior, observed scheduler code, and the review's adoption recommendation.
+2. Verify version-specific component descriptions. In particular, do not replace Airflow 3's API-server/Execution-API description with an older architecture summary.
+3. Preserve the subtle security distinction: worker/database separation is not full DAG-author or multi-team isolation. This review did not discover or exploit a vulnerability.
+4. Confirm author approval, public contact line, AI-assistance disclosure, and any funding/conflict statement. No affiliation with Apache is claimed.
+5. Recheck release metadata and any mutable endpoints at publication time. Retain the original inspection date; date a substantive update separately if needed.
+6. Any future performance or adoption comparison needs a declared workload, dependency/provider set, executor, database and resource configuration. No such benchmark exists in this review.
+7. If runtime validation is desired, use a disposable environment and record input partitioning, duplicate-write/retry behavior, logs/data handoffs, scheduler delays and recovery procedures. These are proposed tests, not completed ones.
+
+## Authorized publication handoff
+
+1. Obtain human source review and final article approval. The current request creates the next review draft; it does not publish it.
+2. Regenerate and verify local preparation outputs.
+3. Deploy and verify `/evidence/apache-airflow-repo-teardown/inspection-record.json` before publishing an article that links to it.
+4. Load the intake's `cmsFields` with the generated `cmsBodyFile` as `content` through the authenticated studio. Confirm the real author profile resolves. The intake itself is not a complete CMS API request.
+5. Save as draft; preview byline, generic cover behavior, citations, tables/code, links, mobile reading and HTML/Markdown extraction. Preserve `publicationType: review`.
+6. After human approval, publish through the normal CMS route and verify the actual status, canonical, sitemap, Article JSON-LD and incoming archive/feed links. Do not infer indexing, rich results, rankings or AI citation outcomes from passing local checks.

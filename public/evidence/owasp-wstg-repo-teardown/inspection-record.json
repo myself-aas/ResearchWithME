@@ -1,0 +1,305 @@
+{
+  "title": "OWASP WSTG review: a method, not a security seal",
+  "reviewedRepository": "https://github.com/OWASP/wstg",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+  "retrievedAt": "2026-11-20T22:54:20.558802+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+    "truncated": false,
+    "returnedEntries": 441,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/README.md",
+      "apiUrl": "https://api.github.com/repos/OWASP/wstg/contents/README.md?ref=31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+      "gitBlobSha": "460b5a30d14e16ef056c36a06b208decebfc07b7",
+      "bytes": 5294
+    },
+    {
+      "id": "S2",
+      "path": "document/4-Web_Application_Security_Testing/00-Introduction_and_Objectives/README.md",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/document/4-Web_Application_Security_Testing/00-Introduction_and_Objectives/README.md",
+      "apiUrl": "https://api.github.com/repos/OWASP/wstg/contents/document/4-Web_Application_Security_Testing/00-Introduction_and_Objectives/README.md?ref=31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+      "gitBlobSha": "3c324ef15dea40abb53f05d18a799905493baeb2",
+      "bytes": 4715
+    },
+    {
+      "id": "S3",
+      "path": "document/3-The_OWASP_Testing_Framework/0-The_Web_Security_Testing_Framework.md",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/document/3-The_OWASP_Testing_Framework/0-The_Web_Security_Testing_Framework.md",
+      "apiUrl": "https://api.github.com/repos/OWASP/wstg/contents/document/3-The_OWASP_Testing_Framework/0-The_Web_Security_Testing_Framework.md?ref=31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+      "gitBlobSha": "3314e5ec0591f299e7048ea04513d741061fd32d",
+      "bytes": 10186
+    },
+    {
+      "id": "S4",
+      "path": "document/5-Reporting/01-Reporting_Structure.md",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/document/5-Reporting/01-Reporting_Structure.md",
+      "apiUrl": "https://api.github.com/repos/OWASP/wstg/contents/document/5-Reporting/01-Reporting_Structure.md?ref=31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+      "gitBlobSha": "827cdac3f8f1c0705d0ae8dc842c12dae6975cbc",
+      "bytes": 10259
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/LICENSE",
+      "apiUrl": "https://api.github.com/repos/OWASP/wstg/contents/LICENSE?ref=31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+      "gitBlobSha": "42802b3c1dc2a64f5a5e8bb5e9ef97eb1eaaa17d",
+      "bytes": 20561
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The pinned README describes work toward 5.0 and identifies 4.2 as the last stable release.",
+      "sourceId": "S1",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/README.md",
+      "locator": "lines 9–33",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Release state is only what this pinned README reports; no latest-release claim."
+    },
+    {
+      "id": "C2",
+      "claim": "The README recommends versioned scenario IDs and links.",
+      "sourceId": "S1",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/README.md",
+      "locator": "lines 9–33",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "A development commit must not be relabeled as a stable release."
+    },
+    {
+      "id": "C3",
+      "claim": "The testing methodology distinguishes passive and active work and disclaims a complete list of issues.",
+      "sourceId": "S2",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/document/4-Web_Application_Security_Testing/00-Introduction_and_Objectives/README.md",
+      "locator": "lines 3–19; lines 35–51; lines 61–78",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No target application was assessed."
+    },
+    {
+      "id": "C4",
+      "claim": "The framework describes adaptable recurring testing activities rather than a fixed gated sequence.",
+      "sourceId": "S3",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/document/3-The_OWASP_Testing_Framework/0-The_Web_Security_Testing_Framework.md",
+      "locator": "lines 3–15; lines 31–40",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Guidance is not proof of organizational implementation."
+    },
+    {
+      "id": "C5",
+      "claim": "Reporting guidance includes scope, limitations, impact and reproducibility.",
+      "sourceId": "S4",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/document/5-Reporting/01-Reporting_Structure.md",
+      "locator": "lines 3–13; lines 33–57; lines 71–100",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "A report template does not verify a finding."
+    },
+    {
+      "id": "C6",
+      "claim": "The license identifies Attribution-ShareAlike 4.0 International.",
+      "sourceId": "S5",
+      "url": "https://github.com/OWASP/wstg/blob/31c5bb21658ddabca0ce662e3bf14d1b84f79b04/LICENSE",
+      "locator": "lines 1–13",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "This independent review is not a republication or legal analysis of the full guide."
+    }
+  ],
+  "chartInventory": {
+    "title": "OWASP WSTG — guide chapter map",
+    "reviewedCommit": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Info gathering",
+        "prefix": "document/4-Web_Application_Security_Testing/01-Information_Gathering",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 11,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Configuration",
+        "prefix": "document/4-Web_Application_Security_Testing/02-Configuration_and_Deployment_Management",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 16,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Identity",
+        "prefix": "document/4-Web_Application_Security_Testing/03-Identity_Management",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 5,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Authentication",
+        "prefix": "document/4-Web_Application_Security_Testing/04-Authentication",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 14,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Authorization",
+        "prefix": "document/4-Web_Application_Security_Testing/05-Authorization",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 7,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Sessions",
+        "prefix": "document/4-Web_Application_Security_Testing/06-Session_Management",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 11,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Injection",
+        "prefix": "document/4-Web_Application_Security_Testing/07-Injection",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 38,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Errors",
+        "prefix": "document/4-Web_Application_Security_Testing/08-Error_Handling",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 2,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Cryptography",
+        "prefix": "document/4-Web_Application_Security_Testing/09-Weak_Cryptography",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 4,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Business logic",
+        "prefix": "document/4-Web_Application_Security_Testing/10-Business_Logic",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 12,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Client-side",
+        "prefix": "document/4-Web_Application_Security_Testing/11-Client-side",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 21,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "API",
+        "prefix": "document/4-Web_Application_Security_Testing/12-API_Testing",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 8,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      },
+      {
+        "label": "WebAssembly",
+        "prefix": "document/4-Web_Application_Security_Testing/13-WebAssembly_Testing",
+        "includePattern": "\\.md$",
+        "excludePattern": "/README\\.md$",
+        "count": 2,
+        "source": {
+          "url": "https://api.github.com/repos/OWASP/wstg/git/trees/31c5bb21658ddabca0ce662e3bf14d1b84f79b04?recursive=1",
+          "treeSha": "31c5bb21658ddabca0ce662e3bf14d1b84f79b04",
+          "scope": "repository root",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

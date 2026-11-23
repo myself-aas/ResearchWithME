@@ -1,169 +1,98 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import AccountPage, { metadata } from '@/app/dashboard/account/page';
-import { subscriptionStatusLabel } from '@/lib/billing/status';
 
-const getEntitlement = vi.fn();
-
-vi.mock('@/components/BlogHeader', () => ({ default: () => null }));
-vi.mock('@/components/BlogFooter', () => ({ default: () => null }));
-vi.mock('@/components/billing/LemonSqueezyScript', () => ({ default: () => null }));
-vi.mock('@/components/billing/CheckoutButton', () => ({
-  default: ({ product }: { product: string }) => <button type="button">{`buy-${product}`}</button>,
-}));
-vi.mock('@/lib/cms/auth', () => ({
-  getDashboardUser: async () => ({ id: 'user-1', email: 'r@example.org', name: 'Reader', isEditor: false }),
-}));
-vi.mock('@/lib/billing/store', async () => {
-  const actual = await vi.importActual<typeof import('@/lib/billing/store')>('@/lib/billing/store');
-  return { ...actual, getBillingStore: async () => ({ getEntitlement }) };
-});
+const { list, usage, getUser } = vi.hoisted(() => ({ list: vi.fn(), usage: vi.fn(), getUser: vi.fn() }));
+vi.mock('@/lib/cms/auth', () => ({ getDashboardUser: getUser }));
+vi.mock('@/lib/api/key-store', () => ({ getApiKeyStore: () => ({ list }) }));
+vi.mock('@/lib/api/ledger', () => ({ getLedger: () => ({ usage }), monthlyIncluded: () => 100 }));
 
 async function render() {
   return renderToStaticMarkup(createElement(MemoryRouter, null, await AccountPage()));
 }
 
 beforeEach(() => {
-  getEntitlement.mockReset();
-  vi.unstubAllEnvs();
-  vi.stubEnv('LEMONSQUEEZY_API_KEY', 'test-key');
-  vi.stubEnv('LEMONSQUEEZY_STORE_ID', '1');
-  vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '2');
+  vi.resetAllMocks();
+  getUser.mockResolvedValue({ id: 'user-1', email: 'reader@example.org', name: 'Reader', isEditor: false });
+  list.mockResolvedValue([]);
+  usage.mockResolvedValue({ requestsUsed: 0 });
 });
+afterEach(() => vi.restoreAllMocks());
 
-describe('/dashboard/account', () => {
-  it('does not repeat the site header or footer inside the dashboard shell', () => {
-    const source = readFileSync(join(process.cwd(), 'app/dashboard/account/page.tsx'), 'utf8');
-    // The shell already renders BlogHeader/BlogFooter; duplicating them is what
-    // produced two primary menus and two footers on this page.
-    expect(source).not.toContain("from '@/components/BlogHeader'");
-    expect(source).not.toContain("from '@/components/BlogFooter'");
-  });
-
-  it('has an API keys section that states the allowance and links to the reference', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+describe('/dashboard/account without commerce', () => {
+  it('keeps free API keys, monthly usage and the reference link', async () => {
     const html = await render();
+    expect(list).toHaveBeenCalledWith('user-1');
+    expect(usage).toHaveBeenCalledWith('user-1', 100);
     expect(html).toContain('id="api-keys-heading"');
     expect(html).toContain('0 of 100 answers used this month');
     expect(html).toContain('No keys yet. Create one to call the Assistant API.');
     expect(html).toContain('href="/api-docs#assistant-api"');
   });
 
-  it('is a single scrolling column on a phone, with stacked cards and 44px targets', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+  it('shows existing API keys and usage', async () => {
+    list.mockResolvedValue([{ id: 'key-1', name: 'Notebook', prefix: 'rwm_example', createdAt: '2026-11-20T00:00:00Z', lastUsedAt: null, revokedAt: null }]);
+    usage.mockResolvedValue({ requestsUsed: 7 });
     const html = await render();
-    // One column until lg, facts stack until sm, and the product grid is one-up
-    // until sm: nothing forces a horizontal scroll at 320px.
+    expect(html).toContain('Notebook');
+    expect(html).toContain('7 of 100 answers used this month');
+  });
+
+  it('retains profile and settings links with accessible touch targets', async () => {
+    const html = await render();
     expect(html).toContain('mx-auto w-full max-w-4xl');
-    expect(html).toContain('mt-6 grid gap-4 lg:grid-cols-2');
-    expect(html).toContain('mt-4 grid gap-4 sm:grid-cols-3');
-    expect(html).toContain('mt-4 grid gap-3 sm:grid-cols-2');
-    expect(html).not.toMatch(/w-\[\d+px\]/);
-    expect(html).not.toMatch(/text-\[\d+(?:\.\d+)?px\]/);
-    // Every profile chip is a 44px target with the shared focus ring.
-    const chips = [...html.matchAll(/<a [^>]*>/g)]
-      .map((match) => match[0])
+    const chips = [...html.matchAll(/<a [^>]*>/g)].map((match) => match[0])
       .filter((tag) => /href="\/(?:dashboard\/profile|dashboard\/access#profile|settings)"/.test(tag));
-    expect(chips).toHaveLength(3);
+    expect(chips).toHaveLength(4);
     for (const tag of chips) {
       expect(tag).toContain('min-h-11');
       expect(tag).toContain('focus-visible:outline-2');
-      expect(tag).not.toContain('whitespace-nowrap');
     }
+    expect(html).not.toMatch(/w-\[\d+px\]/);
   });
 
-  it('offers nothing to buy while the store has no product', async () => {
-    vi.stubEnv('LEMONSQUEEZY_VARIANT_TEARDOWN', '');
-    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+  it('explains a key loading failure without hiding profile settings', async () => {
+    list.mockRejectedValue(new Error('offline'));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const html = await render();
-    expect(html).toContain('Nothing is on sale yet');
-    expect(html).not.toContain('buy-teardown');
+    expect(html).toContain('role="alert"');
+    expect(html).toContain('API keys could not be loaded');
+    expect(html).not.toContain('No keys yet');
+    expect(html).toContain('href="/dashboard/profile"');
+    expect(usage).toHaveBeenCalled();
   });
 
-  it('tells an account with no purchases what to do next', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'none', status: 'none', aiCredits: 0, currentPeriodEnd: null });
+  it('does not invent zero usage when the ledger is unavailable', async () => {
+    usage.mockRejectedValue(new Error('offline'));
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const html = await render();
-    expect(html).toContain('No purchases yet');
-    expect(html).toContain('href="/pricing"');
+    expect(html).not.toContain('0 of 100 answers used');
+    expect(html).toContain('No keys yet');
+    expect(html).toContain('href="/dashboard/profile"');
   });
 
-  it('does not claim there are no purchases or offer checkout when the entitlement lookup fails', async () => {
-    getEntitlement.mockRejectedValue(new Error('billing service offline'));
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-    try {
-      const html = await render();
-      expect(html).toContain('role="alert"');
-      expect(html).toContain('could not load your plan or purchases');
-      expect(html).not.toContain('No purchases yet');
-      expect(html).not.toContain('buy-teardown');
-      expect(html).not.toContain('Co-pilot credits');
-      expect(html).toContain('href="/pricing"');
-    } finally { consoleError.mockRestore(); }
-  });
-
-  it('shows an active subscription plainly', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'active', aiCredits: 120, currentPeriodEnd: '2026-12-13T00:00:00.000Z' });
+  it('does not load keys or usage without an account', async () => {
+    getUser.mockResolvedValue(null);
     const html = await render();
-    expect(html).toContain('Active');
-    expect(html).toContain('120');
-    // An active subscriber must never be sold the thing they already pay for.
-    expect(html).not.toContain('buy-copilot');
+    expect(list).not.toHaveBeenCalled();
+    expect(usage).not.toHaveBeenCalled();
+    expect(html).toContain('no sign-in configured');
   });
 
-  it('shows an ended subscription without the word Active', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'expired', aiCredits: 0, currentPeriodEnd: '2026-11-01T00:00:00.000Z' });
+  it('has no storefront, payment scripts, plans or purchase sections', async () => {
     const html = await render();
-    expect(html).not.toContain('Active');
-    expect(html.toLowerCase()).toContain('ended');
-    expect(html).toContain('href="/pricing"');
-  });
-
-  it('keeps access while a payment is past due, and says why (D2)', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'past_due', aiCredits: 40, currentPeriodEnd: '2026-12-13T00:00:00.000Z' });
-    const html = await render();
-    // The state word comes from the shared label; the reassurance is the page's.
-    expect(html).toContain(subscriptionStatusLabel('past_due'));
-    expect(html.toLowerCase()).toContain('still on');
-  });
-
-  it('shows a one-time purchase as bought, not as a lapsed plan', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'purchases', status: 'none', aiCredits: 0, currentPeriodEnd: null });
-    const html = await render();
-    expect(html).toContain('Purchased');
-    expect(html).not.toContain('No purchases yet');
-    // It must not claim a subscription that was never bought. Scope this to the
-    // fact list, which is where a plan would be named.
-    const facts = html.slice(0, html.indexOf('Purchases'));
-    expect(facts).not.toContain('Research Co-Pilot');
-  });
-
-  it('uses the shared status wording rather than a second copy of it', async () => {
-    // lib/billing/status.ts owns this vocabulary; a page-local table drifted
-    // from it (the page said "Ended" where the shared label says the same thing
-    // differently, and neither was the other's source of truth).
-    for (const status of ['on_trial', 'active', 'paused', 'past_due', 'cancelled', 'unpaid', 'expired'] as const) {
-      getEntitlement.mockResolvedValue({
-        plan: 'copilot',
-        status,
-        aiCredits: 0,
-        currentPeriodEnd: '2026-12-13T00:00:00.000Z',
-      });
-      const html = await render();
-      expect(html).toContain(subscriptionStatusLabel(status));
-    }
+    expect(html).not.toMatch(/\/pricing|lemonsqueezy|buy-heading|plan-heading|purchases-heading|Co-pilot credits/i);
+    const source = readFileSync('app/dashboard/account/page.tsx', 'utf8');
+    expect(source).not.toContain('@/components/billing');
+    expect(source).not.toContain('@/lib/billing');
+    expect(source).not.toContain("from '@/components/BlogHeader'");
+    expect(source).not.toContain("from '@/components/BlogFooter'");
   });
 
   it('stays out of search results', () => {
     expect(metadata.robots).toEqual({ index: false, follow: false, nocache: true });
-  });
-
-  it('does not invent a billing portal link', async () => {
-    getEntitlement.mockResolvedValue({ plan: 'copilot', status: 'active', aiCredits: 10, currentPeriodEnd: '2026-12-13T00:00:00.000Z' });
-    const html = await render();
-    expect(html).not.toContain('Manage billing');
   });
 });

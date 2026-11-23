@@ -1,5 +1,7 @@
 # Frontend Recipes and Release Evidence Implementation Plan
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Consolidate visual recipes and documentation, then verify actual runtime behaviour without overstating structural gates.

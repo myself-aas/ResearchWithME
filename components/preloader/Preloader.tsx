@@ -163,7 +163,7 @@ export default function Preloader({
     };
   }, [assetsLoaded, minDisplayTime, onComplete, reducedMotion]);
 
-  if (!isVisible) return null;
+  if (!isVisible || reducedMotion) return null;
 
   return (
     <div
@@ -234,7 +234,7 @@ export default function Preloader({
         </span>
 
         {/* Progress bar — tracks asset loading */}
-        <div className="w-64 h-1 bg-surface-subtle rounded-full overflow-hidden" role="progressbar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
+        <div className="w-64 h-1 bg-surface-subtle rounded-full overflow-hidden" role="progressbar" aria-label="Loading assets" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100}>
           <div
             ref={progressBarRef}
             className="h-full bg-brand rounded-full transform origin-left"

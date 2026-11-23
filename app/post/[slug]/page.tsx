@@ -1,4 +1,3 @@
-import ArticleServiceNote from '@/components/billing/ArticleServiceNote';
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -328,7 +327,6 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="mt-8 reading-column">
-              <ArticleServiceNote format={article.format} />
             </div>
 
             <ReadingProgressDock

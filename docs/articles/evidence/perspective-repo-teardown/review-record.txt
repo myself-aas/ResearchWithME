@@ -1,0 +1,32 @@
+Perspective review: where analytics should execute
+UNPUBLISHED — human review pending
+
+Audience: developers embedding interactive data exploration in applications
+Question: Should an interactive analytics table live in the browser, on a server, or in both?
+Version: Default-branch source snapshot (master); not a release review
+Commit: 95535bcbfde42e8e8994534a96f7fdaa4ae3e371
+Evidence: github-snapshot.json; 6 primary files, 6 claim records with retained numbered excerpts.
+
+CITABLE handoff (human decisions, not automated approval)
+C: Check each consequential assertion against the claim ledger; recommendations are analysis.
+I: Verify exact pinned versions and excerpt context.
+T: Keep product, edition, default-branch and runtime distinctions.
+A: Review answer-first conclusions and adoption criteria for fairness.
+B: References resolve to the inspected commit, not moving branch links.
+L: Excerpt ranges and source locators retained locally.
+E: Test reader HTML and Markdown after CMS staging; no invented JSON-LD in body.
+
+Verification questions
+- Choose an execution mode using explicit data-access, concurrency, network and persistence requirements.
+- Test indexed partial updates, deletions, nulls and grouped/filtered replication with synthetic changing entities.
+- Measure initial transfer, browser memory, interaction latency and disconnect recovery on the actual client devices and packaged version.
+
+Scope: Static inspection only. No upstream install, execution, tests, benchmark, security test, CMS write, deployment or publication.
+License: Summaries identify source terms only; no complete dependency/license audit or legal advice.
+SEO/GEO/AEO: Descriptive title and summary, answer-first sections, traceable entities/commit, reference locators and standalone prose. No indexing or AI-citation guarantee. See batch SEO audit.
+
+Chart revision — 20 November 2026
+One Recharts source-file map now accompanies this draft. chart-inventory.json retains every counted blob path, selector, complete-tree provenance, CHART-1 claim and limitations; public inspection record includes only the aggregate chart record, not the member list.
+Interpretation: The Rust server/client/viewer roots and JavaScript/TypeScript chart/grid plugins are separate code-reading targets. This selection excludes other roots, including the underlying native engine, so the plot must not be read as a whole-project language breakdown.
+Decision checkpoint: Start with the execution mode and table identity semantics, then inspect the relevant viewer/plugin path. More chart-plugin files do not imply better throughput or less memory than a server mode.
+Validation: Actual parser, no-JS/loading table and 360px SVG rendering tested in targeted suites. Production/mobile browser, live schema, SEO outcomes and full-app build remain unverified. See repository-review-charts-audit.md.

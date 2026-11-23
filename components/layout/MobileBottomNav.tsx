@@ -3,7 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
+import * as m from 'motion/react-m';
 import { Compass, Library, PlusCircle, Sparkles, User } from 'lucide-react';
 import { SPRING, EASING } from '@/lib/motion/tokens';
 
@@ -16,7 +17,7 @@ interface MobileBottomNavProps {
  *   Explore, Library, Contribute, AI, Profile.
  * Projects, Reviews, Sources, Evidence, Claims, Dashboard sections, and
  * Settings live in the mobile navigation drawer.
- * 
+ *
  * Premium enhancements:
  * - Spring-based tab switching animations
  * - Expressive icon micro-interactions (scale, rotation, color)
@@ -62,6 +63,7 @@ const ITEMS = [
 function useReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReduced(mql.matches);
     const handler = (e: MediaQueryListEvent) => setReduced(e.matches);
@@ -76,7 +78,8 @@ export default function MobileBottomNav({
 }: MobileBottomNavProps) {
   const pathname = usePathname() || '/';
   const reducedMotion = useReducedMotion();
-  const [activeIndex, setActiveIndex] = useState(0);
+  const matchedIndex = ITEMS.findIndex((item) => item.match(pathname));
+  const activeIndex = matchedIndex === -1 ? 4 : matchedIndex;
   const [pressedIndex, setPressedIndex] = useState<number | null>(null);
 
   // Hide inside immersive writing flows so it never competes with editor toolbars (v3.4 Part III §6.1).
@@ -91,29 +94,12 @@ export default function MobileBottomNav({
 
   const profileActive = pathname.startsWith('/profile/') || pathname.startsWith('/author');
 
-  // Determine active index from pathname
-  useEffect(() => {
-    let found = false;
-    ITEMS.forEach((item, index) => {
-      if (item.match(pathname)) {
-        setActiveIndex(index);
-        found = true;
-      }
-    });
-    if (!found) setActiveIndex(4); // Profile
-  }, [pathname]);
-
   const handlePressStart = (index: number) => {
     if (!reducedMotion) setPressedIndex(index);
   };
 
   const handlePressEnd = () => {
     if (!reducedMotion) setPressedIndex(null);
-  };
-
-  const isItemActive = (index: number) => {
-    if (index < 4) return activeIndex === index;
-    return profileActive;
   };
 
   return (
@@ -124,7 +110,7 @@ export default function MobileBottomNav({
     >
       {/* Active indicator bar */}
       <AnimatePresence mode="wait">
-        <motion.div
+        <m.div
           key={activeIndex}
           className="absolute top-0 left-0 h-0.5 w-1/5 bg-brand origin-left"
           style={{
@@ -146,7 +132,7 @@ export default function MobileBottomNav({
 
       <ul className="mx-auto grid max-w-lg grid-cols-5 items-center px-1 py-1.5" role="tablist">
         {ITEMS.map((item, index) => {
-          const active = isItemActive(index);
+          const active = activeIndex === index;
           const Icon = item.icon;
           const isPressed = pressedIndex === index;
 
@@ -154,9 +140,9 @@ export default function MobileBottomNav({
             <li key={item.href} className="min-w-0" role="presentation">
               <Link
                 href={item.href}
-                aria-current={isItemActive(index) ? 'page' : undefined}
+                aria-current={active ? 'page' : undefined}
                 role="tab"
-                aria-selected={isItemActive(index)}
+                aria-selected={active}
                 aria-label={item.label}
                 onMouseDown={() => handlePressStart(index)}
                 onMouseUp={() => handlePressEnd()}
@@ -166,19 +152,19 @@ export default function MobileBottomNav({
                 className={`relative flex min-h-[56px] flex-col items-center justify-center gap-1 rounded-lg px-2 py-2 font-sans text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand ${
                   item.accent
                     ? 'text-brand font-semibold'
-                    : isItemActive(index)
+                    : active
                       ? 'text-ink'
                       : 'text-ink-secondary'
                 }`}
               >
                 {/* Icon wrapper with spring animations */}
                 <AnimatePresence mode="wait">
-                  <motion.span
-                    key={isItemActive(index).toString()}
+                  <m.span
+                    key={active.toString()}
                     initial={false}
                     animate={{
-                      scale: isItemActive(index) ? 1.15 : isPressed ? 0.85 : 1,
-                      rotate: isItemActive(index) ? (item.accent ? 90 : 0) : 0,
+                      scale: active ? 1.15 : isPressed ? 0.85 : 1,
+                      rotate: active ? (item.accent ? 90 : 0) : 0,
                     }}
                     transition={{
                       type: 'spring',
@@ -195,14 +181,13 @@ export default function MobileBottomNav({
                       className={`h-6 w-6 transition-colors ${item.accent ? 'text-brand' : ''}`}
                       aria-hidden="true"
                     />
-                  </motion.span>
+                  </m.span>
                 </AnimatePresence>
 
-                <motion.span
+                <m.span
                   initial={false}
                   animate={{
-                    opacity: isItemActive(index) ? 1 : 0.7,
-                    y: isItemActive(index) ? -1 : 0,
+                    y: active ? -1 : 0,
                   }}
                   transition={{
                     duration: reducedMotion ? 0 : 0.15,
@@ -211,12 +196,12 @@ export default function MobileBottomNav({
                   className="truncate"
                 >
                   {item.label}
-                </motion.span>
+                </m.span>
 
                 {/* Active indicator dot */}
                 <AnimatePresence mode="wait">
-                  {isItemActive(index) && (
-                    <motion.div
+                  {active && (
+                    <m.div
                       initial={{ scale: 0, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0, opacity: 0 }}
@@ -253,7 +238,7 @@ export default function MobileBottomNav({
             }`}
           >
             <AnimatePresence mode="wait">
-              <motion.span
+              <m.span
                 key={profileActive.toString()}
                 initial={false}
                 animate={{
@@ -270,13 +255,12 @@ export default function MobileBottomNav({
                 className="flex items-center justify-center"
               >
                 <User className="h-6 w-6" aria-hidden="true" />
-              </motion.span>
+              </m.span>
             </AnimatePresence>
 
-            <motion.span
+            <m.span
               initial={false}
               animate={{
-                opacity: profileActive ? 1 : 0.7,
                 y: profileActive ? -1 : 0,
               }}
               transition={{
@@ -286,11 +270,11 @@ export default function MobileBottomNav({
               className="truncate"
             >
               Profile
-            </motion.span>
+            </m.span>
 
             <AnimatePresence mode="wait">
               {profileActive && (
-                <motion.div
+                <m.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0, opacity: 0 }}

@@ -430,7 +430,7 @@ without a client key get a generated one, so every request is in the ledger.
 | `ASSISTANT` | site Worker service binding, commented out until the Assistant Worker is deployed | RPC to `researchwithme-assistant` |
 | `API_BURST_LIMITER` | site Worker `ratelimits` binding | Burst limit |
 | `API_FREE_MONTHLY_REQUESTS` | site Worker variable | Allowance, default 100 |
-| `API_BRIDGE_SECRET` | site Worker secret; its SHA-256 digest in `private.api_settings` | Gate for the key lookup and ledger SQL functions. Separate from the billing secret |
+| `API_BRIDGE_SECRET` | site Worker secret; its SHA-256 digest in `private.api_settings` | Gate for the key lookup and ledger SQL functions |
 | `GEMINI_API_KEY`, `GEMINI_MODEL` | Assistant Worker secret and variable; also read by the site Worker for its in-process fallback | Model call |
 | `AI_GATEWAY_BASE_URL` | Assistant Worker variable, optional | Route the model call through AI Gateway |
 

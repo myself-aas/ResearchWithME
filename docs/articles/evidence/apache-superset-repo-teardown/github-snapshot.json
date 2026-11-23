@@ -1,0 +1,167 @@
+{
+  "reviewedRepository": "https://github.com/apache/superset",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "b44ea299259b3c71065ae2df940a4185da9e64da",
+  "retrievedAt": "2026-11-20T22:54:23.969693+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "treeScope": {
+    "sha": "b44ea299259b3c71065ae2df940a4185da9e64da",
+    "truncated": false,
+    "returnedEntries": 13467,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/README.md",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/README.md?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "baf97be8097391dca066f649b833733c80496e75",
+      "bytes": 24052,
+      "excerpts": [
+        {
+          "startLine": 51,
+          "endLine": 80,
+          "text": "A modern, enterprise-ready business intelligence web application.\n\n### Documentation\n\n- **[User Guide](https://superset.apache.org/user-docs/)** \u2014 For analysts and business users. Explore data, build charts, create dashboards, and connect databases.\n- **[Administrator Guide](https://superset.apache.org/admin-docs/)** \u2014 Install, configure, and operate Superset. Covers security, scaling, and database drivers.\n- **[Developer Guide](https://superset.apache.org/developer-docs/)** \u2014 Contribute to Superset or build on its REST API and extension framework.\n\n[**Why Superset?**](#why-superset) |\n[**Supported Databases**](#supported-databases) |\n[**Release Notes**](https://github.com/apache/superset/releases) |\n[**Get Involved**](#get-involved) |\n[**Resources**](#resources) |\n[**Organizations Using Superset**](https://superset.apache.org/inTheWild)\n\n## Why Superset?\n\nSuperset is a modern data exploration and data visualization platform. Superset can replace or augment proprietary business intelligence tools for many teams. Superset integrates well with a variety of data sources.\n\nSuperset provides:\n\n- A **no-code interface** for building charts quickly\n- A powerful, web-based **SQL Editor** for advanced querying\n- A **lightweight semantic layer** for quickly defining custom dimensions and metrics\n- Out of the box support for **nearly any SQL** database or data engine\n- A wide array of **beautiful visualizations** to showcase your data, ranging from simple bar charts to geospatial visualizations\n- Lightweight, configurable **caching layer** to help ease database load\n- Highly extensible **security roles and authentication** options\n- An **API** for programmatic customization\n- A **cloud-native architecture** designed from the ground up for scale"
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "path": "docs/admin_docs/installation/architecture.mdx",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/installation/architecture.mdx",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/docs/admin_docs/installation/architecture.mdx?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "4560f21b5b037129f71b2230e0614a53814307c9",
+      "bytes": 3887,
+      "excerpts": [
+        {
+          "startLine": 14,
+          "endLine": 34,
+          "text": "## Components\n\nA Superset installation is made up of these components:\n\n1. The Superset application itself\n2. A metadata database\n3. A caching layer (optional, but necessary for some features)\n4. A worker & beat (optional, but necessary for some features)\n\n### Optional components and associated features\n\nThe optional components above are necessary to enable these features:\n\n- [Alerts and Reports](/admin-docs/configuration/alerts-reports)\n- [Caching](/admin-docs/configuration/cache)\n- [Async Queries](/admin-docs/configuration/async-queries-celery/)\n- [Dashboard Thumbnails](/admin-docs/configuration/cache/#caching-thumbnails)\n\nIf you install with Kubernetes or Docker Compose, all of these components will be created.\n\nHowever, installing from PyPI only creates the application itself. Users installing from PyPI will need to configure a caching layer, worker, and beat on their own if they wish to enable the above features. Configuration of those components for a PyPI install is not currently covered in this documentation."
+        },
+        {
+          "startLine": 38,
+          "endLine": 66,
+          "text": "### The Superset Application\n\nThis is the core application. Superset operates like this:\n\n- A user visits a chart or dashboard\n- That triggers a SQL query to the data warehouse holding the underlying dataset\n- The resulting data is served up in a data visualization\n- The Superset application is comprised of the Python (Flask) backend application (server), API layer, and the React frontend, built via Webpack, and static assets needed for the application to work\n\n### Metadata Database\n\nThis is where chart and dashboard definitions, user information, logs, etc. are stored. Superset is tested to work with PostgreSQL and MySQL databases as the metadata database (not be confused with a data source like your data warehouse, which could be a much greater variety of options like Snowflake, Redshift, etc.).\n\nSome installation methods like our Quickstart and PyPI come configured by default to use a SQLite on-disk database. And in a Docker Compose installation, the data would be stored in a PostgreSQL container volume. Neither of these cases are recommended for production instances of Superset.\n\nFor production, a properly-configured, managed, standalone database is recommended. No matter what database you use, you should plan to back it up regularly.\n\n### Caching Layer\n\nThe caching layer serves two main functions:\n\n- Store the results of queries to your data warehouse so that when a chart is loaded twice, it pulls from the cache the second time, speeding up the application and reducing load on your data warehouse.\n- Act as a message broker for the worker, enabling the Alerts & Reports, async queries, and thumbnail caching features.\n\nMost people use Redis for their cache, but Superset supports other options too. See the [cache docs](/admin-docs/configuration/cache/) for more.\n\n### Worker and Beat\n\nThis is one or more workers who execute tasks like run async queries or take snapshots of reports and send emails, and a \"beat\" that acts as the scheduler and tells workers when to perform their tasks. Most installations use Celery for these components."
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "path": "docs/admin_docs/security/security.mdx",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/security/security.mdx",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/docs/admin_docs/security/security.mdx?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "91c54fc3b6b95dee9105ad769dfe30c746cda989",
+      "bytes": 53692,
+      "excerpts": [
+        {
+          "startLine": 6,
+          "endLine": 18,
+          "text": "Authentication and authorization in Superset is handled by Flask AppBuilder (FAB), an application development framework\nbuilt on top of Flask. FAB provides authentication, user management, permissions and roles.\nPlease read its [Security documentation](https://flask-appbuilder.readthedocs.io/en/latest/security.html).\n\n### Provided Roles\n\nSuperset ships with a set of roles that are handled by Superset itself. You can assume\nthat these roles will stay up-to-date as Superset evolves (and as you update Superset versions).\n\nEven though **Admin** users have the ability, we don't recommend altering the\npermissions associated with each role (e.g. by removing or adding permissions to them). The permissions\nassociated with each role will be re-synchronized to their original values when you run\nthe **superset init** command (often done between Superset versions)."
+        },
+        {
+          "startLine": 22,
+          "endLine": 44,
+          "text": "### Admin\n\nAdmins have all possible rights, including granting or revoking rights from other\nusers and altering other people\u2019s slices and dashboards.\n\n> #### Threat Model and Privilege Boundaries: The Admin Role\n>\n> Apache Superset is built with a granular permission model where users assigned the Admin role are considered fully trusted. Admins possess complete control over the application's configuration, UI rendering, and access controls.\n>\n> Consequently, actions performed by an Admin that alter the application's behavior or presentation\u2014such as injecting custom CSS, modifying Jinja templates, or altering security flags\u2014are intended administrative capabilities by design.\n>\n> In accordance with MITRE CNA Rule 4.1, a vulnerability must represent a violation of an explicit security policy. Because the Admin role is defined as a trusted operational boundary, actions executed with Admin privileges do not cross a security perimeter. Therefore, exploit vectors that strictly require Admin access are not classified as security vulnerabilities and are ineligible for CVE assignment.\n\n### Alpha\n\nAlpha users have access to all data sources, but they cannot grant or revoke access\nfrom other users. They are also limited to altering the objects that they own. Alpha users can add and alter data sources.\n\n### Gamma\n\nGamma users have limited access. They can only consume data coming from data sources\nthey have been given access to through another complementary role. They only have access to\nview the slices and dashboards made from data sources that they have access to. Currently Gamma"
+        },
+        {
+          "startLine": 627,
+          "endLine": 644,
+          "text": "### Row Level Security\n\nUsing Row Level Security filters (under the **Security** menu) you can create filters\nthat are assigned to a particular dataset, as well as a set of subjects.\nIf you want members of the Finance team to only have access to\nrows where `department = \"finance\"`, you could:\n\n- Create a Row Level Security filter with that clause (`department = \"finance\"`)\n- Then assign the clause to the **Finance** role subject and the dataset it applies to\n\nThe **clause** field, which can contain arbitrary text, is then added to the generated\nSQL statement's WHERE clause. So you could even do something like create a filter\nfor the last 30 days and apply it to a specific subject, with a clause\nlike `date_field > DATE_SUB(NOW(), INTERVAL 30 DAY)`. It can also support\nmultiple conditions: `client_id = 6` AND `advertiser=\"foo\"`, etc.\n\nRLS clauses also support **Jinja templating** when `ENABLE_TEMPLATE_PROCESSING` is enabled, so you can write dynamic filters such as\n`user_id = '{{ current_username() }}'` to restrict rows based on the logged-in user."
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "path": "docs/admin_docs/configuration/configuring-superset.mdx",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/configuration/configuring-superset.mdx",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/docs/admin_docs/configuration/configuring-superset.mdx?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "f502a80bfaed79503f1c88eec8b5ae5c13abf20a",
+      "bytes": 45220,
+      "excerpts": [
+        {
+          "startLine": 46,
+          "endLine": 68,
+          "text": "# Superset specific config\nROW_LIMIT = 5000\n\n# Flask App Builder configuration\n# Your App secret key will be used for securely signing the session cookie\n# and encrypting sensitive information on the database\n# Make sure you are changing this key for your deployment with a strong key.\n# Alternatively you can set it with `SUPERSET_SECRET_KEY` environment variable.\n# You MUST set this for production environments or the server will refuse\n# to start and you will see an error in the logs accordingly.\nSECRET_KEY = 'YOUR_OWN_RANDOM_GENERATED_SECRET_KEY'\n\n# The SQLAlchemy connection string to your database backend\n# This connection defines the path to the database that stores your\n# superset metadata (slices, connections, tables, dashboards, ...).\n# Note that the connection information to connect to the datasources\n# you want to explore are managed directly in the web UI\n# The check_same_thread=false property ensures the sqlite client does not attempt\n# to enforce single-threaded access, which may be problematic in some edge cases\nSQLALCHEMY_DATABASE_URI = 'sqlite:////path/to/superset.db?check_same_thread=false'\n\n# Flask-WTF flag for CSRF\nWTF_CSRF_ENABLED = True"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "path": "superset/security/manager.py",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/superset/security/manager.py",
+      "apiUrl": "https://api.github.com/repos/apache/superset/contents/superset/security/manager.py?ref=b44ea299259b3c71065ae2df940a4185da9e64da",
+      "gitBlobSha": "dbb9d12bd7dd7e36637b96e171795fdb3c640a86",
+      "bytes": 309330,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 18,
+          "text": "# Licensed to the Apache Software Foundation (ASF) under one\n# or more contributor license agreements.  See the NOTICE file\n# distributed with this work for additional information\n# regarding copyright ownership.  The ASF licenses this file\n# to you under the Apache License, Version 2.0 (the\n# \"License\"); you may not use this file except in compliance\n# with the License.  You may obtain a copy of the License at\n#\n#   http://www.apache.org/licenses/LICENSE-2.0\n#\n# Unless required by applicable law or agreed to in writing,\n# software distributed under the License is distributed on an\n# \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY\n# KIND, either express or implied.  See the License for the\n# specific language governing permissions and limitations\n# under the License.\n# pylint: disable=too-many-lines\n\"\"\"A set of constants and methods to manage permissions and security\"\"\""
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README positions Superset as BI with charting, SQL editing and a semantic layer.",
+      "sourceId": "S1",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/README.md",
+      "locator": "lines 51\u201380",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No database coverage, visualization quality or scale benchmark."
+    },
+    {
+      "id": "C2",
+      "claim": "Architecture docs separate application, metadata database, cache and worker/beat roles.",
+      "sourceId": "S2",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/installation/architecture.mdx",
+      "locator": "lines 14\u201334; lines 38\u201366",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No deployed topology or feature execution test."
+    },
+    {
+      "id": "C3",
+      "claim": "The metadata database is distinct from analytical data sources and requires backup planning.",
+      "sourceId": "S2",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/installation/architecture.mdx",
+      "locator": "lines 14\u201334; lines 38\u201366",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No restore or schema migration was attempted."
+    },
+    {
+      "id": "C4",
+      "claim": "Security docs define trusted Admin behavior, role synchronization and generated-SQL RLS clauses.",
+      "sourceId": "S3",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/security/security.mdx",
+      "locator": "lines 6\u201318; lines 22\u201344; lines 627\u2013644",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not proof of all query paths, embedding policies or adversarial isolation."
+    },
+    {
+      "id": "C5",
+      "claim": "Configuration guidance requires a strong deployment secret and separates metadata connections from data sources.",
+      "sourceId": "S4",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/configuration/configuring-superset.mdx",
+      "locator": "lines 46\u201368",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No secret rotation or cryptographic behavior was tested."
+    },
+    {
+      "id": "C6",
+      "claim": "The inspected source file carries the Apache 2.0 license header.",
+      "sourceId": "S5",
+      "url": "https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/superset/security/manager.py",
+      "locator": "lines 1\u201318",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not a complete dependency or plugin license review."
+    }
+  ]
+}

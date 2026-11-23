@@ -1,0 +1,51 @@
+{
+  "bodyFile": "apache-superset-repo-teardown.md",
+  "cmsBodyFile": "apache-superset-repo-teardown.cms.txt",
+  "publicEvidencePath": "/evidence/apache-superset-repo-teardown/inspection-record.json",
+  "workflowState": "local-draft-awaiting-human-review",
+  "publicationType": "review",
+  "requestedAuthor": {
+    "name": "Ashif Ahmed Shuvo",
+    "email": "shuvo.1807016@bau.edu.bd",
+    "profileVerificationScope": "Uses the author profile established earlier in this session; no fresh database or credential check."
+  },
+  "cmsFields": {
+    "title": "Apache Superset review: BI and operational boundaries",
+    "slug": "apache-superset-repo-teardown",
+    "status": "draft",
+    "subtitle": "What must a team operate and secure beyond the dashboard interface?",
+    "summary": "Apache Superset repository review of BI architecture, metadata, workers and access controls, separating dashboard features from production guarantees.",
+    "category": "GitHub Repo Teardowns",
+    "format": "Repo Teardown",
+    "authorId": "ashif-ahmed-shuvo",
+    "authorName": "Ashif Ahmed Shuvo",
+    "coverImage": null,
+    "tags": [
+      "Apache Superset",
+      "Repository Review",
+      "Architecture",
+      "Adoption Trade-offs"
+    ],
+    "keyTakeaways": [
+      "Superset queries analytical data sources while storing its own metadata separately.",
+      "Caches and workers are optional only relative to the features a deployment enables.",
+      "Role and row-filter features require explicit access testing; a dashboard is not an isolation proof."
+    ],
+    "readTime": "6 min read",
+    "featured": false,
+    "artifact": {
+      "type": "github",
+      "title": "Apache Superset",
+      "url": "https://github.com/apache/superset",
+      "identifier": "apache/superset",
+      "meta": "Default-branch snapshot · Commit b44ea299259b · Inspected 20 Nov 2026"
+    },
+    "publicationType": "review"
+  },
+  "writeBlockers": [
+    "Human evidence review and final approval required.",
+    "Deploy and verify linked public evidence before publication.",
+    "Load the separate CMS body as content via the authorized studio. Intake is not an API write request.",
+    "License summaries are not legal advice; review terms for the intended use."
+  ]
+}

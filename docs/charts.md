@@ -25,7 +25,8 @@ series: Peer-reviewed, Preprints
 | `title` | yes | Shown above the plot. |
 | `caption` | yes | The text alternative. Without it the chart does not render. |
 | `type` | no | `line` (default), `bar`, `area`, `scatter`. |
-| `x`, `y` | no | Axis labels. |
+| `layout` | no | For `bar`, `horizontal` (default columns) or `vertical` (horizontal bars with categories on the y axis). |
+| `x`, `y` | no | Category and numeric labels. For `layout: vertical`, `y` labels the horizontal numeric axis. |
 | `y-scale` | no | `linear` (default) or `log`. A log axis is stated in text under the figure. |
 | `series` | when a row has more than one value | Comma-separated names, in value order. |
 | `notes` | no | Sample size, units, method — shown under the figure. |
@@ -33,6 +34,29 @@ series: Peer-reviewed, Preprints
 | `2019: 120, 40` | yes (at least one) | The label before the colon is the x category. |
 
 Wrap a name containing a comma in double quotes: `series: "A, Inc", B`.
+
+## Source maps and long category labels
+
+For categorical counts, prefer horizontal bars rather than rotated or hidden
+labels. Add `type: bar` and `layout: vertical`. The renderer reserves category
+label space, grows the plot height with the number of rows, labels the values,
+uses a zero-based linear numeric axis, and disables animation. Existing charts
+without `layout` keep their original orientation. All charts still carry a data
+table; the lazy-loading boundary now server-renders the real caption and table
+rather than a generic loading message.
+
+The ten repository reviews use this form to map **matching tracked files in
+selected source roots**. Their `chart-inventory.json` files retain the pinned
+commit, exact selectors, complete tree identifiers, every counted path and blob
+ID, and interpretation limits. These figures are not benchmarks, coverage,
+integration counts, product ratings, or whole-repository language shares.
+
+Run `npm run article:prepare:repositories -- --check` to verify the generated
+chart sections, CMS bodies, public summaries and read times. With project
+dependencies installed, `npm run article:test:charts` checks grammar, static
+fallbacks and actual SVG rendering. `npm run article:preview:repositories`
+starts a local-only editorial preview on port 4173; it does not publish drafts
+or replace production reader verification.
 
 ## Missing data
 

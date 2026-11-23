@@ -32,6 +32,7 @@ import {
   Cell,
   ErrorBar,
   Legend,
+  LabelList,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -147,6 +148,9 @@ export function ResearchChart({ spec, showTable = true }: { spec: ChartSpec; sho
 
   const grid = <CartesianGrid stroke={theme.grid} strokeDasharray="3 3" vertical={false} />;
 
+  const horizontalBars = spec.type === 'bar' && spec.layout === 'vertical';
+  const countData = spec.points.every((point) => point.values.every((value) => value === null || Number.isInteger(value)));
+
   const seriesElements = visibleSeries.map((series) => {
     const index = spec.series.indexOf(series);
     const colour = seriesColor(theme, index);
@@ -159,8 +163,9 @@ export function ResearchChart({ spec, showTable = true }: { spec: ChartSpec; sho
 
     if (spec.type === 'bar') {
       return (
-        <Bar key={label} dataKey={dataKey} name={label} fill={colour} radius={[2, 2, 0, 0]} isAnimationActive={false}>
+        <Bar key={label} dataKey={dataKey} name={label} fill={colour} radius={horizontalBars ? [0, 2, 2, 0] : [2, 2, 0, 0]} isAnimationActive={false}>
           {errorBar}
+          {horizontalBars ? <LabelList dataKey={dataKey} position="right" fill={theme.label} fontSize={12} /> : null}
         </Bar>
       );
     }
@@ -218,7 +223,7 @@ export function ResearchChart({ spec, showTable = true }: { spec: ChartSpec; sho
     }
   }
 
-  const plotHeight = 320;
+  const plotHeight = horizontalBars ? Math.max(280, spec.points.length * 34 + 60) : 320;
 
   return (
     <figure className="mt-8 mb-8 rounded-sm border border-line bg-surface p-4" data-chart={spec.type}>
@@ -239,10 +244,18 @@ export function ResearchChart({ spec, showTable = true }: { spec: ChartSpec; sho
         {mounted ? (
           <ResponsiveContainer width="100%" height={plotHeight}>
             {spec.type === 'bar' ? (
-              <BarChart data={rows} margin={{ top: 8, right: 8, bottom: 4, left: 0 }}>
+              <BarChart data={rows} layout={spec.layout ?? 'horizontal'} accessibilityLayer margin={{ top: 8, right: horizontalBars ? 48 : 8, bottom: horizontalBars ? 24 : 4, left: 0 }}>
                 {grid}
-                <XAxis dataKey="x" {...axisProps} label={spec.xLabel ? { value: spec.xLabel, position: 'insideBottom', offset: -2, fill: theme.label, fontSize: 12 } : undefined} />
-                <YAxis scale={spec.yScale} {...axisProps} tickFormatter={(v) => numberFormat.format(Number(v))} width={56} label={spec.yLabel ? { value: spec.yLabel, angle: -90, position: 'insideLeft', fill: theme.label, fontSize: 12 } : undefined} />
+                {horizontalBars ? (
+                  <XAxis type="number" scale={spec.yScale} domain={spec.yScale === 'linear' ? [0, 'auto'] : ['auto', 'auto']} allowDecimals={!countData} {...axisProps} label={spec.yLabel ? { value: spec.yLabel, position: 'insideBottom', offset: -14, fill: theme.label, fontSize: 12 } : undefined} />
+                ) : (
+                  <XAxis dataKey="x" {...axisProps} label={spec.xLabel ? { value: spec.xLabel, position: 'insideBottom', offset: -2, fill: theme.label, fontSize: 12 } : undefined} />
+                )}
+                {horizontalBars ? (
+                  <YAxis type="category" dataKey="x" width={122} interval={0} {...axisProps} />
+                ) : (
+                  <YAxis scale={spec.yScale} {...axisProps} tickFormatter={(v) => numberFormat.format(Number(v))} width={56} label={spec.yLabel ? { value: spec.yLabel, angle: -90, position: 'insideLeft', fill: theme.label, fontSize: 12 } : undefined} />
+                )}
                 <Tooltip content={<ChartTooltip spec={spec} />} cursor={{ fill: theme.grid, fillOpacity: 0.3 }} />
                 {visibleSeries.length > 1 ? <Legend onClick={onLegendClick} /> : null}
                 {seriesElements}
@@ -298,7 +311,7 @@ export function ResearchChart({ spec, showTable = true }: { spec: ChartSpec; sho
 
       {/* Scale disclosure: DESIGN §32 requires a log axis to say so. */}
       {spec.yScale === 'log' ? (
-        <p className="mt-1 font-sans text-xs text-ink-secondary">Vertical axis is logarithmic.</p>
+        <p className="mt-1 font-sans text-xs text-ink-secondary">{horizontalBars ? 'Horizontal' : 'Vertical'} axis is logarithmic.</p>
       ) : null}
 
       {showTable ? <ChartDataTable spec={spec} /> : null}

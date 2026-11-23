@@ -8,7 +8,6 @@ import FeaturedArticle from '@/components/FeaturedArticle';
 import ArticleFeed from '@/components/ArticleFeed';
 import AuthorSpotlight from '@/components/AuthorSpotlight';
 import BlogFooter from '@/components/BlogFooter';
-import ServicesShowcase from '@/components/billing/ServicesShowcase';
 import { ResearchNetworkBridge } from '@/components/v34/ResearchNetworkBridge';
 import { Author, BlogPost, INITIAL_BLOG_POSTS, categoryToSlug } from '@/lib/blog-data';
 import { useHydratePreferences, usePreferencesStore } from '@/lib/stores/preferences-store';
@@ -204,11 +203,6 @@ export default function HomeFeed({
 
         {/* Bridge public visitors into the v3.4 Research Contribution Network (Part I §6.1 / §23) */}
         {unfiltered && <ResearchNetworkBridge />}
-
-        {/* Services sit between the lead story and the index, and only on the
-            unfiltered front page: a reader who searched or filtered asked for
-            articles, and gets articles. */}
-        {unfiltered && <ServicesShowcase />}
 
         <div ref={feedRef}>
           <ArticleFeed

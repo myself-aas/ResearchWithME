@@ -1,0 +1,188 @@
+{
+  "title": "PostHog review: self-hosting and license boundaries",
+  "reviewedRepository": "https://github.com/PostHog/posthog",
+  "reviewedVersion": "Default-branch source snapshot (master); not a release review",
+  "reviewedCommit": "4e10f441e36bc017f350bb7cb41a009089df0df6",
+  "retrievedAt": "2026-11-20T22:54:22.015584+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "scope": "Curated source identifiers and claim ledger only; no raw API responses, full source excerpts, runtime results or exhaustive security audit.",
+  "treeScope": {
+    "sha": "4e10f441e36bc017f350bb7cb41a009089df0df6",
+    "truncated": true,
+    "returnedEntries": 60048,
+    "limitation": "PostHog recursive response was truncated. Selected files were retrieved directly at the pin; no exhaustive tree or absence claim."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/README.md",
+      "apiUrl": "https://api.github.com/repos/PostHog/posthog/contents/README.md?ref=4e10f441e36bc017f350bb7cb41a009089df0df6",
+      "gitBlobSha": "bd1feadbfe3824e089c8651589f147c0d38aedea",
+      "bytes": 13735
+    },
+    {
+      "id": "S2",
+      "path": "docs/internal/monorepo-layout.md",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docs/internal/monorepo-layout.md",
+      "apiUrl": "https://api.github.com/repos/PostHog/posthog/contents/docs/internal/monorepo-layout.md?ref=4e10f441e36bc017f350bb7cb41a009089df0df6",
+      "gitBlobSha": "da11ebd55a9a9da0b6600f30c068358185e89ffe",
+      "bytes": 12003
+    },
+    {
+      "id": "S3",
+      "path": "docker-compose.hobby.yml",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docker-compose.hobby.yml",
+      "apiUrl": "https://api.github.com/repos/PostHog/posthog/contents/docker-compose.hobby.yml?ref=4e10f441e36bc017f350bb7cb41a009089df0df6",
+      "gitBlobSha": "335b083729b4f29538e40406a159a2d6f92d02d3",
+      "bytes": 47668
+    },
+    {
+      "id": "S4",
+      "path": "LICENSE",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/LICENSE",
+      "apiUrl": "https://api.github.com/repos/PostHog/posthog/contents/LICENSE?ref=4e10f441e36bc017f350bb7cb41a009089df0df6",
+      "gitBlobSha": "847d9d3def03458035447bdae131e1981e2a63da",
+      "bytes": 1563
+    },
+    {
+      "id": "S5",
+      "path": "ee/LICENSE",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/ee/LICENSE",
+      "apiUrl": "https://api.github.com/repos/PostHog/posthog/contents/ee/LICENSE?ref=4e10f441e36bc017f350bb7cb41a009089df0df6",
+      "gitBlobSha": "a4148bf5f9f4eefe993f7e610de580b19f8def96",
+      "bytes": 2176
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "The README lists analytics, replay, flags and experiments among product capabilities.",
+      "sourceId": "S1",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/README.md",
+      "locator": "lines 25–50; lines 103–119; lines 158–166",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not an edition-by-edition entitlement or behavior verification."
+    },
+    {
+      "id": "C2",
+      "claim": "The monorepo layout describes Django/React product slices and independent services.",
+      "sourceId": "S2",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docs/internal/monorepo-layout.md",
+      "locator": "lines 5–35; lines 63–71",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Architecture documentation was not a full import-boundary audit."
+    },
+    {
+      "id": "C3",
+      "claim": "The README recommends Cloud and labels self-hosting hobby/advanced without support guarantees.",
+      "sourceId": "S1",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/README.md",
+      "locator": "lines 25–50; lines 103–119; lines 158–166",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No live pricing, capacity or support-contract verification."
+    },
+    {
+      "id": "C4",
+      "claim": "The hobby Compose file references several stateful services and is labeled hobby-only.",
+      "sourceId": "S3",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docker-compose.hobby.yml",
+      "locator": "lines 1–13; lines 51–90",
+      "evidenceType": "direct configuration observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Referenced base definitions were not exhaustively inspected; stack not deployed."
+    },
+    {
+      "id": "C5",
+      "claim": "The root license excludes ee from its MIT Expat grant.",
+      "sourceId": "S4",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/LICENSE",
+      "locator": "lines 1–25",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No complete per-file license audit, including migrated features."
+    },
+    {
+      "id": "C6",
+      "claim": "Enterprise production use is separately conditioned on terms and a valid license.",
+      "sourceId": "S5",
+      "url": "https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/ee/LICENSE",
+      "locator": "lines 1–24",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Legal/contract suitability must be assessed separately."
+    }
+  ],
+  "chartInventory": {
+    "title": "PostHog — selected source-file map",
+    "reviewedCommit": "4e10f441e36bc017f350bb7cb41a009089df0df6",
+    "retrievedOn": "2026-11-20",
+    "unit": "Matching tracked files",
+    "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+    "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+    "groups": [
+      {
+        "label": "Legacy API",
+        "prefix": "posthog/api",
+        "includePattern": "\\.(py|ts|tsx)$",
+        "excludePattern": null,
+        "count": 397,
+        "source": {
+          "url": "https://api.github.com/repos/PostHog/posthog/git/trees/d6c6d94ef95e13ab429e34898c6f8b9f3f2def63?recursive=1",
+          "treeSha": "d6c6d94ef95e13ab429e34898c6f8b9f3f2def63",
+          "scope": "posthog/api",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Legacy models",
+        "prefix": "posthog/models",
+        "includePattern": "\\.(py|ts|tsx)$",
+        "excludePattern": null,
+        "count": 428,
+        "source": {
+          "url": "https://api.github.com/repos/PostHog/posthog/git/trees/83ad656a219a2cc3d201bea6a44d9973139bb51b?recursive=1",
+          "treeSha": "83ad656a219a2cc3d201bea6a44d9973139bb51b",
+          "scope": "posthog/models",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Replay backend",
+        "prefix": "posthog/session_recordings",
+        "includePattern": "\\.(py|ts|tsx)$",
+        "excludePattern": null,
+        "count": 84,
+        "source": {
+          "url": "https://api.github.com/repos/PostHog/posthog/git/trees/b5ebf3d478ff12edac1f90c6225d0b2fb5473d52?recursive=1",
+          "treeSha": "b5ebf3d478ff12edac1f90c6225d0b2fb5473d52",
+          "scope": "posthog/session_recordings",
+          "truncated": false
+        }
+      },
+      {
+        "label": "Flags product",
+        "prefix": "products/feature_flags",
+        "includePattern": "\\.(py|ts|tsx)$",
+        "excludePattern": null,
+        "count": 326,
+        "source": {
+          "url": "https://api.github.com/repos/PostHog/posthog/git/trees/3fa1bcff926021e68813ad0d456f1bc4a4c65a53?recursive=1",
+          "treeSha": "3fa1bcff926021e68813ad0d456f1bc4a4c65a53",
+          "scope": "products/feature_flags",
+          "truncated": false
+        }
+      }
+    ],
+    "claim": {
+      "id": "CHART-1",
+      "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+      "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+      "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+      "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+    }
+  }
+}

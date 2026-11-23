@@ -16,11 +16,15 @@ test('draft structure check rejects missing sections and example links', () => {
   assert.equal(issues.length, 4);
 });
 
-test('changed-drafts and whole-repository checks are read-only and succeed without drafts', () => {
+test('changed-drafts and whole-repository checks are read-only with or without valid drafts', () => {
+  const status = () => execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' });
+  const before = status();
   const changed = execFileSync(process.execPath, ['scripts/reme-check.mjs', '--changed'], { encoding: 'utf8' });
   const all = execFileSync(process.execPath, ['scripts/reme-check.mjs', '--all'], { encoding: 'utf8' });
-  assert.match(changed, /no changed article drafts/);
+  // Creating the first real article must not break the no-drafts smoke test.
+  assert.match(changed, /(?:no changed article drafts|structure OK)/);
   assert.match(all, /(?:no article drafts|structure OK)/);
+  assert.equal(status(), before);
 });
 
 test('--all checks untracked article drafts; --file reports mechanical failures', () => {

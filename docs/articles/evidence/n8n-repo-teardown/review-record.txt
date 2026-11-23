@@ -1,0 +1,32 @@
+n8n review: workflow execution and license limits
+UNPUBLISHED — human review pending
+
+Audience: automation engineers and teams considering internal workflow infrastructure
+Question: What sits behind the workflow canvas, and which execution and licensing assumptions need checking?
+Version: Default-branch source snapshot (master); not a release review
+Commit: a857c50bad7ef0aba39b8f6ccbdc5f521399d9ce
+Evidence: github-snapshot.json; 5 primary files, 6 claim records with retained numbered excerpts.
+
+CITABLE handoff (human decisions, not automated approval)
+C: Check each consequential assertion against the claim ledger; recommendations are analysis.
+I: Verify exact pinned versions and excerpt context.
+T: Keep product, edition, default-branch and runtime distinctions.
+A: Review answer-first conclusions and adoption criteria for fairness.
+B: References resolve to the inspected commit, not moving branch links.
+L: Excerpt ranges and source locators retained locally.
+E: Test reader HTML and Markdown after CMS staging; no invented JSON-LD in body.
+
+Verification questions
+- Compare manual and production queue paths using a synthetic workflow, including cancellation and worker interruption.
+- Simulate an ambiguous external response and verify duplicate prevention, retry eligibility and error reporting.
+- Review the exact license and feature boundary for internal use, embedding, redistribution or a hosted offering before adoption.
+
+Scope: Static inspection only. No upstream install, execution, tests, benchmark, security test, CMS write, deployment or publication.
+License: Summaries identify source terms only; no complete dependency/license audit or legal advice.
+SEO/GEO/AEO: Descriptive title and summary, answer-first sections, traceable entities/commit, reference locators and standalone prose. No indexing or AI-citation guarantee. See batch SEO audit.
+
+Chart revision — 20 November 2026
+One Recharts source-file map now accompanies this draft. chart-inventory.json retains every counted blob path, selector, complete-tree provenance, CHART-1 claim and limitations; public inspection record includes only the aggregate chart record, not the member list.
+Interpretation: Workflow definitions, the execution engine, CLI services and base-node implementations are different investigation surfaces. The base-node root includes helpers and tests as well as node implementations; its file count is not an integration count.
+Decision checkpoint: Validate the selected connector and execution mode together. A broad nodes directory cannot compensate for an unsafe retry at the business API boundary.
+Validation: Actual parser, no-JS/loading table and 360px SVG rendering tested in targeted suites. Production/mobile browser, live schema, SEO outcomes and full-app build remain unverified. See repository-review-charts-audit.md.

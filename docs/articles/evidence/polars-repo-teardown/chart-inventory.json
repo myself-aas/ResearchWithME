@@ -1,0 +1,2314 @@
+{
+  "schemaVersion": 1,
+  "reviewedRepository": "https://github.com/pola-rs/polars",
+  "reviewedCommit": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+  "retrievedOn": "2026-11-20",
+  "title": "Polars \u2014 selected source-file map",
+  "unit": "Matching tracked files",
+  "method": "Count Git tree blob entries under each exact directory prefix matching its include regex and not its exclude regex. Count paths, not lines, test cases, integrations, installed services, coverage, runtime size or performance. Matching tests, declarations and generated files are included unless excluded explicitly. Git submodules are not expanded. Only listed roots are counted; the selection is not a repository-wide denominator.",
+  "limitation": "Static inventory only; the contents of every counted file were not reviewed. Counts must not be compared as product quality, security, speed or maintenance-effort scores.",
+  "caption": "Static file counts in selected roots at commit 34f406152c7f. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.",
+  "interpretation": "The lazy API, logical planner and execution engines occupy distinct source roots. Follow a query across those boundaries rather than assuming that the API layer alone explains streaming fallback. File counts do not measure optimizer effectiveness.",
+  "adoptionCheck": "Advance a trial only when a representative lazy plan produces correct results within a measured memory budget. A large planner directory cannot substitute for examining that plan.",
+  "groups": [
+    {
+      "label": "Lazy API",
+      "prefix": "crates/polars-lazy/src",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 32,
+      "source": {
+        "url": "https://api.github.com/repos/pola-rs/polars/git/trees/34f406152c7f4d0b6af8c9fc258571590822c32a?recursive=1",
+        "treeSha": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "crates/polars-lazy/src/dot.rs",
+          "gitBlobSha": "cc9eeffa9065a5f730f7f24280b2c339246232fb"
+        },
+        {
+          "path": "crates/polars-lazy/src/dsl/functions.rs",
+          "gitBlobSha": "c0d672e3b538083ab23a2e4ea009f236b9acbde1"
+        },
+        {
+          "path": "crates/polars-lazy/src/dsl/mod.rs",
+          "gitBlobSha": "698d1133c12f81883c8a544852b1b84eee2545ba"
+        },
+        {
+          "path": "crates/polars-lazy/src/frame/cached_arenas.rs",
+          "gitBlobSha": "10580094b579f99db0fd372b2488a940611bad81"
+        },
+        {
+          "path": "crates/polars-lazy/src/frame/err.rs",
+          "gitBlobSha": "af6d4a5cc86a528d469303e1d64eec880b46a4c2"
+        },
+        {
+          "path": "crates/polars-lazy/src/frame/exitable.rs",
+          "gitBlobSha": "f6a89bcd684203b257c65c118229b388bb4d79ba"
+        },
+        {
+          "path": "crates/polars-lazy/src/frame/mod.rs",
+          "gitBlobSha": "3a837629b28e179f08f8d791168f1fc857925f47"
+        },
+        {
+          "path": "crates/polars-lazy/src/frame/python.rs",
+          "gitBlobSha": "3abac0872e8fcf8bc3b3eb975668b976aab6a4db"
+        },
+        {
+          "path": "crates/polars-lazy/src/lib.rs",
+          "gitBlobSha": "e0b281fb396ef1f50b8a5a4462cb91ab1172d985"
+        },
+        {
+          "path": "crates/polars-lazy/src/prelude.rs",
+          "gitBlobSha": "94f8780aa7877d0dedb9150b93dab3cc0623adeb"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/anonymous_scan.rs",
+          "gitBlobSha": "7b74cdc97022241070fd7f52d6c08bdac1b007b4"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/catalog.rs",
+          "gitBlobSha": "f0dcc0b246f901d25f6f29e56f801ffd81a5452f"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/csv.rs",
+          "gitBlobSha": "049417583fe1b1c09cfd7063c029a9982888414c"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/file_list_reader.rs",
+          "gitBlobSha": "0a6b1fb499957eb0cffd5d444dd2c80145263d9f"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/ipc.rs",
+          "gitBlobSha": "a5ecdb5f882e368e6b1ae3b3708a720156eabbd6"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/mod.rs",
+          "gitBlobSha": "86792bd8b5c9ff50a8f26eadccdcd0ad76a9c060"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/ndjson.rs",
+          "gitBlobSha": "3251c9782965186617ef814263c71bc6b071a19c"
+        },
+        {
+          "path": "crates/polars-lazy/src/scan/parquet.rs",
+          "gitBlobSha": "16a782ef66fff0efdfa7704e12218189a3fed2af"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/aggregations.rs",
+          "gitBlobSha": "a864dcd78208b8d84fe5c0ba73c8bd3e83524af4"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/arity.rs",
+          "gitBlobSha": "73450259c6679494730d432f0831998fbfec81f4"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/cse.rs",
+          "gitBlobSha": "10aa5b270dfb4319c0b13f875f08b204cb5f7e15"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/dynamic_group_by_placement.rs",
+          "gitBlobSha": "172e473a882fed7e487082d267e8d78dd3d3f5a7"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/io.rs",
+          "gitBlobSha": "3c4c9c70d62af5dbeb111140a0f25eabe3df26f0"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/logical.rs",
+          "gitBlobSha": "e3ce390b4d8b45bfb2c42b6da94ef98839e6989d"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/mod.rs",
+          "gitBlobSha": "6094650a7d9757147e23c990d884ec900eeb410c"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/observer.rs",
+          "gitBlobSha": "b8f5ab49eda077b7708190290a846f97dc9114a8"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/optimization_checks.rs",
+          "gitBlobSha": "39b43b5cd28a3f092f713920b182751ff8db71c9"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/pdsh.rs",
+          "gitBlobSha": "a57c9975b15d9b69bf24469a9c761774abd80653"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/predicate_queries.rs",
+          "gitBlobSha": "dd0dbbc7cdbf19a647dabcb39258779ea88e6380"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/projection_queries.rs",
+          "gitBlobSha": "fdb658b36d8b073444d00a202acdc03e3e4ce307"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/queries.rs",
+          "gitBlobSha": "fd278b24d929805beba87f0586f3f1d209504fc5"
+        },
+        {
+          "path": "crates/polars-lazy/src/tests/schema.rs",
+          "gitBlobSha": "ee4765037720e46bb0b9a296a614782fe3bde4f6"
+        }
+      ]
+    },
+    {
+      "label": "Planner",
+      "prefix": "crates/polars-plan/src",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 275,
+      "source": {
+        "url": "https://api.github.com/repos/pola-rs/polars/git/trees/34f406152c7f4d0b6af8c9fc258571590822c32a?recursive=1",
+        "treeSha": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "crates/polars-plan/src/bin/dsl-schema.rs",
+          "gitBlobSha": "0b67f7ffcf1f99b4a82e194379888b34e4a6b0a9"
+        },
+        {
+          "path": "crates/polars-plan/src/callback.rs",
+          "gitBlobSha": "42ab41cdad994adb89636d6f366b591bed0da9de"
+        },
+        {
+          "path": "crates/polars-plan/src/client/check.rs",
+          "gitBlobSha": "8b8c402f005be7179057e188da30f058739f5828"
+        },
+        {
+          "path": "crates/polars-plan/src/client/mod.rs",
+          "gitBlobSha": "6de04171be89333009a7f3a0c7f22e343cc3ffdc"
+        },
+        {
+          "path": "crates/polars-plan/src/constants.rs",
+          "gitBlobSha": "7e786d616022983031ef37084efb18373c90e65d"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/arithmetic.rs",
+          "gitBlobSha": "6fbc4cb2fada1270d04212329cdb02e9801a2ba1"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/arity.rs",
+          "gitBlobSha": "9d7db1e1a32837046cbd4931337e01d953c5130b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/array.rs",
+          "gitBlobSha": "13097c7fa08a9d082d9fac33f444a05d06e7879d"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/binary.rs",
+          "gitBlobSha": "224794212d743513eed5efed409c9cb7376ff674"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/bitwise.rs",
+          "gitBlobSha": "6dd512d9bcaf6ae45d334f40f7169bfd01b13ea4"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/builder_dsl.rs",
+          "gitBlobSha": "caebafb97cee54e955bdd9c9663666d4f8ef84e6"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/cat.rs",
+          "gitBlobSha": "0adefe3be4d2a3490cfd1d19eb60d2c9b17f3df0"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/datatype_expr.rs",
+          "gitBlobSha": "745345dbe59746e5dca746c4b07a3da42f823506"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/dsl_resolver/ffi.rs",
+          "gitBlobSha": "277405295f04abaf2347dc423c3a60b1af27e18b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/dsl_resolver/filter_expr.rs",
+          "gitBlobSha": "f9784838f607a358c492751a4229eff6cef14e31"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/dsl_resolver/mod.rs",
+          "gitBlobSha": "ef128984a083559c5e61588e62568bc4369a08a7"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/dsl_resolver/python.rs",
+          "gitBlobSha": "9b48b45b20eaf72adb7fd5c2ecda21eb2b87c490"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/dt.rs",
+          "gitBlobSha": "f434324a25da78e126412b2396e84b338dd54d3b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/anonymous/agg.rs",
+          "gitBlobSha": "42fcfd2ea2393d16b76396cc674b8c06ddc0770b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/anonymous/expr.rs",
+          "gitBlobSha": "542f33bc2acf5566e8b50d7c362ea339d9e2095d"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/anonymous/json_schema.rs",
+          "gitBlobSha": "ed67e8941f7c2bef1b2ba580a8576caa4add2940"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/anonymous/mod.rs",
+          "gitBlobSha": "04b1775637a5bb96e19eb9990403b0dc1f10410b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/anonymous/named_serde.rs",
+          "gitBlobSha": "103a30fa60eb9edec8935e76d21d9f0ef0a40f0f"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/anonymous/serde_expr.rs",
+          "gitBlobSha": "a364cffe8f5a64d44fd3e0d41e2ae0daa3334e7f"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/datatype_fn.rs",
+          "gitBlobSha": "74f6cd1804e88adfba4a5f5c6c88fcf2127e32c7"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/expr/mod.rs",
+          "gitBlobSha": "d81767d81a8a612c4e2a9ea735c21e28d4f4f754"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/extension.rs",
+          "gitBlobSha": "f28fa8b360def05359de065fd2f87ccd747bde2f"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/file_scan/default_values.rs",
+          "gitBlobSha": "d5061928a499109d19005e21b772365b634db3ce"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/file_scan/deletion.rs",
+          "gitBlobSha": "6dd961278216b2511bf3983c9ffd9182d4375eed"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/file_scan/field_selection.rs",
+          "gitBlobSha": "1ee3ca2c75020516306844802bac42292224ec52"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/file_scan/mod.rs",
+          "gitBlobSha": "d9a8ac2bd7e66296d382cf53b323bb849c496526"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/file_scan/python_dataset.rs",
+          "gitBlobSha": "a49b32fd3c408e5723d498a491f556efb2591213"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/file_scan/python_delta_dv_provider.rs",
+          "gitBlobSha": "af3a83b687dba0735dc66374199b57bb3ca4b389"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/format.rs",
+          "gitBlobSha": "5be49a4bf6e90dd5be23b554b622e81527161456"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/from.rs",
+          "gitBlobSha": "447e4575153565b7c66e10acf7e4ed5a86bf8d46"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/array.rs",
+          "gitBlobSha": "341788a16e41d58b47c691cf351a11e257d16eb3"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/binary.rs",
+          "gitBlobSha": "c1ba3a89ea63ad48dc3f8c2af44e9ea12a6a8596"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/binning.rs",
+          "gitBlobSha": "d71ddda2081bf1f2d1e9c4d2de1d62409bea3974"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/bitwise.rs",
+          "gitBlobSha": "9d248b433b9c1bce989355a1ae4df8c299477b36"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/boolean.rs",
+          "gitBlobSha": "7e19e2ede8ad345e40f7a03756e955b5794846b3"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/business.rs",
+          "gitBlobSha": "4bc7ad3bdc704c4ee789724da7db339026841867"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/cat.rs",
+          "gitBlobSha": "76db414ffdf393b79bfdd58090c60b36ddc08f9e"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/correlation.rs",
+          "gitBlobSha": "4cecfeb107a2e10c84adca4ef1399b31ce856cc1"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/datetime.rs",
+          "gitBlobSha": "02bf3c9d10c961ba0e9d4bbd6c3c70a71946c382"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/extension.rs",
+          "gitBlobSha": "731ef0955a618cb1b977966108557b0262a35901"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/list.rs",
+          "gitBlobSha": "628e9f8dabe115727e71bcd2b1af94598de7d5e2"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/map.rs",
+          "gitBlobSha": "e3a38806df1a5b3fb2ccbac33b22c41b3a3963b3"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/mod.rs",
+          "gitBlobSha": "c822b498b22d0e486a323a62a218f8cd996b3d75"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/pow.rs",
+          "gitBlobSha": "31ac0cf97ca08c3cbbdfc2f2e9e0130dfd1dafb4"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/random.rs",
+          "gitBlobSha": "623c7ea8a03696b52fca0c4783b4e2c9d2262849"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/range.rs",
+          "gitBlobSha": "18ad60ed88749c71255039c4d29a9549bef9f76e"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/rolling.rs",
+          "gitBlobSha": "44379ca63ad283d84e6132f92af7c6e8f0d19d40"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/rolling_by.rs",
+          "gitBlobSha": "acf6b3c5848ce9896b029ce199b75365c4ec4ecc"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/sql.rs",
+          "gitBlobSha": "7e46eb5738eb5708f07462a1013d983eeb8d4980"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/strings.rs",
+          "gitBlobSha": "f482e3e157b80394e9fce5eb2e49c84a50599795"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/struct_.rs",
+          "gitBlobSha": "b3aa25352b10e90bc49e5cb48c032ccc7d06a7f8"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/function_expr/trigonometry.rs",
+          "gitBlobSha": "3191a953698aac74763ed863b994f6dc70cf20ea"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/business.rs",
+          "gitBlobSha": "e46b32ec72300eb6b484a5e2e60e3f8a5e131b49"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/coerce.rs",
+          "gitBlobSha": "80adc959f2e1a0e92794eb95ab18f100bfa7c6f7"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/concat.rs",
+          "gitBlobSha": "3d038fd141bfab4babaf079db47603abc7c465d2"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/correlation.rs",
+          "gitBlobSha": "61e5daff2c3c259a945daa6a648ea6da41a9de55"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/horizontal.rs",
+          "gitBlobSha": "4250f77e650e4d1c9b5e8feefa04116373985d34"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/index.rs",
+          "gitBlobSha": "ff9ca2599fdbe071c8a75db6e0ba624109ce3ab2"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/mod.rs",
+          "gitBlobSha": "5bd898bf679cbd0feaa129cee5689ea1ef14a0c8"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/range.rs",
+          "gitBlobSha": "02ae609cc2a1bccede1f4a439cbc4c8595c0116b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/repeat.rs",
+          "gitBlobSha": "e016d5f99998ebf1be5d37247fda243530e1eac0"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/selectors.rs",
+          "gitBlobSha": "2402737f4d062dbf05f0a3eb972ee5bc2ec9bc54"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/syntactic_sugar.rs",
+          "gitBlobSha": "493c7a3070f4a0ba533ee7c35f02680074a4a0ef"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/functions/temporal.rs",
+          "gitBlobSha": "e8404f79c118e746581572246a49cdeb222dde48"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/iter.rs",
+          "gitBlobSha": "4290ec90bef940c9663f3ed5a4f10ccf2e1e15f4"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/join.rs",
+          "gitBlobSha": "070906427c0b117d0b9f505746edc50a3820f3ed"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/list.rs",
+          "gitBlobSha": "f650417c2d50d26e67e04a5f4f797a3eba6a0d3c"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/map.rs",
+          "gitBlobSha": "ef56646da847d0c5fe49e358b5445bd9893a60d7"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/match_to_schema.rs",
+          "gitBlobSha": "79ef934f1d9281264b96225a30a236f3fdd9f4c7"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/meta.rs",
+          "gitBlobSha": "7a35f99515e1259a92bcac4d9fea13aa340506ca"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/mod.rs",
+          "gitBlobSha": "d8d3b1f7a2a105678d922536abcb03ff97bad68a"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/name.rs",
+          "gitBlobSha": "c016b1f03c464eb648a840d11a8b93723b57b59b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/options/delta_sink_state.rs",
+          "gitBlobSha": "1ce550a68cbdc3028db3ef2b7b1bacd9bcbb7e30"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/options/file_provider.rs",
+          "gitBlobSha": "52041045aeb32b65de29476818c2d010fc38d711"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/options/iceberg_properties.rs",
+          "gitBlobSha": "027cb9390f82e1b5a961819ec4c3c6a666c52857"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/options/iceberg_sink_state.rs",
+          "gitBlobSha": "0a7dbecd5f7669f03f6af1d43643c4c28a9994d4"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/options/mod.rs",
+          "gitBlobSha": "85c51623e352302402858624b2996ce9f21b8157"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/options/sink.rs",
+          "gitBlobSha": "ef31ce1a9b2dae7fba783be1624704fc1bdcfebd"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/plan.rs",
+          "gitBlobSha": "9fbf471c5d354edde35125230597d7c1ffada679"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/python_dsl/mod.rs",
+          "gitBlobSha": "a6d84eb1a7bdca9a87b4170e881d6e43970a25e4"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/python_dsl/python_udf.rs",
+          "gitBlobSha": "14fb7a6d466e2a302ff66e716dfd7a07dd3f592e"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/python_dsl/source.rs",
+          "gitBlobSha": "835771d6894e8531a073829a08a0a32909b5ff42"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/random.rs",
+          "gitBlobSha": "3f7f493077186529422ae5552eb63c15eaf543ea"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/scan_sources.rs",
+          "gitBlobSha": "e3345a661a3bcef1e4a4592737e8c9f42dfcd81d"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/selector.rs",
+          "gitBlobSha": "d05045a5c2bcb36f2486e7877429ba0cf61eb58e"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/serializable_plan.rs",
+          "gitBlobSha": "0530e282d2ac39bac5099a148016978fee665108"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/sql.rs",
+          "gitBlobSha": "ce7f3043df74a26c60165e394bfc8ac94d356e13"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/statistics.rs",
+          "gitBlobSha": "ac7b7846e8b04dc017cdef3e84ccc948acd987bf"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/string.rs",
+          "gitBlobSha": "adc1152eb19d9a4b89e9dc1976757784cbff53d3"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/struct_.rs",
+          "gitBlobSha": "82c79e4a45759a5e2147fa9e7d241353f6bf725b"
+        },
+        {
+          "path": "crates/polars-plan/src/dsl/udf.rs",
+          "gitBlobSha": "fd99332e2a5075b3794925960e4540a9b832a40c"
+        },
+        {
+          "path": "crates/polars-plan/src/frame/mod.rs",
+          "gitBlobSha": "df505965eb7d74ee0fa735e791c54275add1e312"
+        },
+        {
+          "path": "crates/polars-plan/src/frame/opt_state.rs",
+          "gitBlobSha": "f1ee88c3d485c9e76da6b3a6ac7e5fec444a7439"
+        },
+        {
+          "path": "crates/polars-plan/src/lib.rs",
+          "gitBlobSha": "5888ccb6879be7d1997bce4f40b8c2822a7455e7"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/builder.rs",
+          "gitBlobSha": "80124b3c2d6f6742bdf003429c567d0dd3c84b51"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/canonical.rs",
+          "gitBlobSha": "c3078a60b021e7b9460b31838b5843e62278e970"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/determinism.rs",
+          "gitBlobSha": "b9dc4d75acf22b1ce591c7600b5859a93dc1a65b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/equality.rs",
+          "gitBlobSha": "b2dbea4a5177274bcd1d7f745e1263e84e4a2e74"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/evaluate.rs",
+          "gitBlobSha": "2078aeaf94ac96fb2f541992212c08bac0782825"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/filter_constraint.rs",
+          "gitBlobSha": "3ecd9e01c223592bd94d899de966657fe60bb1eb"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/array.rs",
+          "gitBlobSha": "5468834972a6d9d64441e8ad300028a0ad558413"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/binary.rs",
+          "gitBlobSha": "34be66693f58791027e585189e6fea2e1f4bc8b2"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/binning.rs",
+          "gitBlobSha": "f1ea28eb99e17781a72bbf11fb228c2c34345829"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/bitwise.rs",
+          "gitBlobSha": "124996e549df7c9a1d1ff45d6940b782713041c3"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/boolean.rs",
+          "gitBlobSha": "d5c48c97de466e172c02e8aa2d4a1aece4b02753"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/business.rs",
+          "gitBlobSha": "7f66bf687db55fc30dfc6fbbf77956d7302740e7"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/cat.rs",
+          "gitBlobSha": "13902fc092934f708d28f7cd964e4d4a7d49ef24"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/correlation.rs",
+          "gitBlobSha": "290b3846d79fde005924f0704ffe6b262d166965"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/cum.rs",
+          "gitBlobSha": "3bddce12842bcefba47159aca4227c251127308f"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/datetime.rs",
+          "gitBlobSha": "56632d924452fd1697c1d0166ce9a95c44162c9b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/extension.rs",
+          "gitBlobSha": "010907c8d94eeffe64a7aa4539254b879a837eb0"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/fused.rs",
+          "gitBlobSha": "92e0ae361b04d8a32556dbe2b12d91e50ffd98f5"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/list.rs",
+          "gitBlobSha": "a3945a35ffc67fee1ebdc28ebf6099bfb57d57fe"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/map.rs",
+          "gitBlobSha": "183ea537e7fc7de20f4ddae888659913b8897049"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/mod.rs",
+          "gitBlobSha": "479e3450b5f01c2f3fc02ea21f43e0d530db9080"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/plugin.rs",
+          "gitBlobSha": "6cdebb918d7b2ab336be71bec100475a335f5036"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/pow.rs",
+          "gitBlobSha": "365c6ceedb71505b77d92e3ba5f1c54722ee155e"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/random.rs",
+          "gitBlobSha": "6280aec5a7a9b5fb699f34c1d8a3c414c6065df0"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/range.rs",
+          "gitBlobSha": "a4418a1772253e2de590ab4597f16af71784494b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/rolling.rs",
+          "gitBlobSha": "943d010bc61af1574ab44e7aa62be63fc1133916"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/rolling_by.rs",
+          "gitBlobSha": "ba8d89a9012b63e079713b1a765d49b6b7e37ed9"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/row_encode.rs",
+          "gitBlobSha": "9ecac05e2998ef870bb79882830d51bb497c54cf"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/schema.rs",
+          "gitBlobSha": "ceb9d144143fcfba21e282b942bded590ed6fd36"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/strings.rs",
+          "gitBlobSha": "9ef21a734870455a636a3b9c5303e064e9498cd2"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/struct_.rs",
+          "gitBlobSha": "61cf8a48c8bb3a05f25b3dcbb3b14ee8bd8bf376"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/function_expr/trigonometry.rs",
+          "gitBlobSha": "ff27ba4bbb2df7a4a8e9a9af0159ee4ae99ac2e2"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/hash.rs",
+          "gitBlobSha": "a67861a1b1a384e6f848751859d69695ce55b59a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/minterm_iter.rs",
+          "gitBlobSha": "18a12c1773e3c6d48aabc249b6cda4348737b723"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/mod.rs",
+          "gitBlobSha": "1d677e886615b018aa6c7c941d755ef8b340edd9"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/or_factoring.rs",
+          "gitBlobSha": "02a264a2fcf52ae418adfc2ebb2251be5695fa8e"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/order_keeping.rs",
+          "gitBlobSha": "9aaacc675bf59cb5828f4c13a8245475c4ffeaaa"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/predicates/column_expr.rs",
+          "gitBlobSha": "47901c6305a01b3e92d0364d6b6fd158454626dd"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/predicates/mod.rs",
+          "gitBlobSha": "74db0a79e28242188d0b8965c4c4145c13fbcdec"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/predicates/skip_batches.rs",
+          "gitBlobSha": "c683cdfb112d5c6f3b144daec9f3c4b619c4bf0c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/projection_height.rs",
+          "gitBlobSha": "759644c06bdf9b49e6944163ac1f35d831debf1d"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/properties/general.rs",
+          "gitBlobSha": "f9dadd0a03e4bcab58dfb380a70d5a683f70f83a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/properties/mod.rs",
+          "gitBlobSha": "875d38e0df08f779a622e84a0e6112804e499884"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/scalar.rs",
+          "gitBlobSha": "47ab342ba3b0b3c5a9dca082b4eef275d177b427"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/schema.rs",
+          "gitBlobSha": "2f2fb3d68b8bd881e2c2d7f361bec945f242d947"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/aexpr/traverse.rs",
+          "gitBlobSha": "edc95c7ade0536f385b13f0318a5d7df027c1013"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/anonymous_scan.rs",
+          "gitBlobSha": "875a054cba3c39b6e610f6dc9a52d0ef288c17df"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/apply.rs",
+          "gitBlobSha": "ac95497f29025a4f792227d565807e9f44f93f2b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/builder_ir.rs",
+          "gitBlobSha": "791243fa556b2aa141384937dbed3c666cc8429a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/convert_utils.rs",
+          "gitBlobSha": "a380cb47949ef28bba302291477793408cdbe1b8"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/concat.rs",
+          "gitBlobSha": "0444d6d1a47b40cd14cf47faa9005d7e5f5f6971"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/datatype_fn_to_ir.rs",
+          "gitBlobSha": "223aa4d64152d63751bb14f7555666b020300a0a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/expr_expansion.rs",
+          "gitBlobSha": "0bb5219f407cdfb2406af9a09fff4ff13768d0d2"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/expr_to_ir.rs",
+          "gitBlobSha": "99ec4c83bd24ddeaeda9da68f8939b91d4121d19"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/functions.rs",
+          "gitBlobSha": "898c83c9cf7aa6024a91a7237ccb98ff3cabaaeb"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/join.rs",
+          "gitBlobSha": "6d2384cdc99a02bf05a740b052c609ff71d55f02"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/mod.rs",
+          "gitBlobSha": "1808e57d68cd99dfd3568b22cad31d421673ecfe"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/scans.rs",
+          "gitBlobSha": "2eab0092c093a23589f7b9c0b743d4cc5a04c25c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/sinks.rs",
+          "gitBlobSha": "01e1191fc1dc4a47debf8a0c717dcf623a8492ca"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/sql.rs",
+          "gitBlobSha": "34acbf25ee33a56e5c99fe3e97c806dedeba3ff8"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/dsl_to_ir/utils.rs",
+          "gitBlobSha": "3e64dd2ecb88ab62df9accbca857b62b9e26304e"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/ir_to_dsl.rs",
+          "gitBlobSha": "9175c2b85c11ac78b1a2973a7c678652fba36977"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/mod.rs",
+          "gitBlobSha": "e56209d4346f91f63d6dd4101073b293a2bd4cbd"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/stack_opt.rs",
+          "gitBlobSha": "19e1a26b54888be40d4f1722ac2e29071807c321"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/type_check/mod.rs",
+          "gitBlobSha": "2f26c846e50b32180242f9207afa0011b01c0554"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/type_coercion/binary.rs",
+          "gitBlobSha": "b44f3eb5bd63d07aa4bf62c0e014f246e11db68f"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/type_coercion/datetime.rs",
+          "gitBlobSha": "b27bd511ad562df6e04f1af542dfdc0e2e803b7b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/type_coercion/functions.rs",
+          "gitBlobSha": "742259190d3777d0c45de6a56631fd7eb12c4500"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/type_coercion/membership.rs",
+          "gitBlobSha": "b2a7b53645c0f5023afb4804165826cf1794e560"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/conversion/type_coercion/mod.rs",
+          "gitBlobSha": "7c036a1aa76fe5cac2363661f91b2fef3a65724e"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/debug.rs",
+          "gitBlobSha": "1c0a5ce1ad077baa534d8048a7efc293c84c018a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/encryption_sharing.rs",
+          "gitBlobSha": "bcf1270caa04062b8a8d91c0e46b708b30004d1c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/expr_ir.rs",
+          "gitBlobSha": "a3b96b0399a0d2e1311a69fe941f4496b4e99540"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/functions/dsl.rs",
+          "gitBlobSha": "c6b0d1da2d4b0f66139e7e2c3690164c3496f97f"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/functions/equality.rs",
+          "gitBlobSha": "b769b1f03b2de6086b6df6da589d56c5a782a054"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/functions/hint.rs",
+          "gitBlobSha": "a9bf5830fd5a8c2e84bea741f5f7e0e5dad12b22"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/functions/mod.rs",
+          "gitBlobSha": "7a6604fd3186e77607fa95851d52dfa843bf63e7"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/functions/schema.rs",
+          "gitBlobSha": "c4ff7ac050de00ecbfc590337bdbfbcc5666c479"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/hive.rs",
+          "gitBlobSha": "df555e059cb3692109189f92f21ad8dc7bc1a4b1"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/canonical.rs",
+          "gitBlobSha": "bbe84ba6cccc309aba6d2abdb2316d9db16cc2f6"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/dot.rs",
+          "gitBlobSha": "932657d550f44feb13a36813522c3e81690b637c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/equality.rs",
+          "gitBlobSha": "06398184288dd8481b0195ca906892807a1a9898"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/format.rs",
+          "gitBlobSha": "8076189afc50bad519d1b7b10f9c54d693a60406"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/hash.rs",
+          "gitBlobSha": "a85f4b92df2acabe10e0437836049af54c9364d7"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/inputs.rs",
+          "gitBlobSha": "e5207a372d0a40dec5c926b5915eed01668d31f5"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/mod.rs",
+          "gitBlobSha": "0de3bb03517b610d08a0fe6a6bd90567f59728a5"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/schema.rs",
+          "gitBlobSha": "39ae9b44ea952cb0b22ec1aa3bdadcf0c60a3979"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/tree_format.rs",
+          "gitBlobSha": "64c584f8a611e4c068a2b030ce0a4008e8d71012"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/ir/unoptimized.rs",
+          "gitBlobSha": "02bc65e55ea376e4a3504947f8834aad8afc7aeb"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/iterator.rs",
+          "gitBlobSha": "1f7908131418b3b653441b7986d26a40f9345f27"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/lit.rs",
+          "gitBlobSha": "d9c273e9bd1f7809e0ab94a5587333e100e0e547"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/mod.rs",
+          "gitBlobSha": "edc75dc1edf8da1401e9dc1c80983e00438d2a23"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/aggregate_from_statistics.rs",
+          "gitBlobSha": "4155c25cb021795e9ee6a39e305e5b13a2cce6ea"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/call_dsl_resolvers.rs",
+          "gitBlobSha": "9e24ca8627a7c7666d9adae2bebe0c07389dff9b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/cluster_with_columns.rs",
+          "gitBlobSha": "3a1447f7fab4a61cf7a8131b2e52cb7eca56f06b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/collapse_and_project.rs",
+          "gitBlobSha": "beb8ab2f1fbb20025fd3da38b6a9d20b0d4a8456"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/collapse_sort.rs",
+          "gitBlobSha": "529f433db286e7132fb93ceeeb5c2aff4b4a0e18"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/collect_members.rs",
+          "gitBlobSha": "88a4731a5513821903a4cf2bc407399e3e90f3f3"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/cse/cache_states.rs",
+          "gitBlobSha": "bb384622afb931af029b0b24f7c45efe794a88c3"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/cse/csee.rs",
+          "gitBlobSha": "3bd96c82035ea09d1814d817a9af43d53d42315c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/cse/cspe.rs",
+          "gitBlobSha": "c5b1c2f063f43697d6a168556d62032a076dc4d4"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/cse/mod.rs",
+          "gitBlobSha": "7200945727009868e689c4f782eec2d2a900507d"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/deep_copy.rs",
+          "gitBlobSha": "99cb1fdc25d82633e462c5c021f06557d0f4d8e6"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/delay_rechunk.rs",
+          "gitBlobSha": "188eae3ee1098e0f2b8170104bcfcd50c8f94a8f"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/expand_datasets.rs",
+          "gitBlobSha": "919120f2235f8bf2151ec0cf80d74040bc976fd8"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/extract_window.rs",
+          "gitBlobSha": "bc9bcbde393b209b7c925082b601ec34a043a6fe"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/filter_constraint.rs",
+          "gitBlobSha": "cf43fa29f0ac051bdbef5dbb77befdb7ce5a8847"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/flatten_merge_sorted.rs",
+          "gitBlobSha": "7049e8051da8196dac5b924f42df2c21881a9ed3"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/flatten_union.rs",
+          "gitBlobSha": "5eed76685e6def703e22f1c7a37797434f9422c0"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/fused.rs",
+          "gitBlobSha": "40c7a5ab474188ce5396f9c8ee30d8db8afb4f28"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/ir_traversal/mod.rs",
+          "gitBlobSha": "59d30aa7df7e8142ad2ee08afda2a19e40f6d750"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_build_side.rs",
+          "gitBlobSha": "94203f744fe0b306f2247e281904a1bd47aa3a9e"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_order/cluster.rs",
+          "gitBlobSha": "585e2caec85c4981bef91c9a4537fbfdee8059a5"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_order/enumerate.rs",
+          "gitBlobSha": "aa7fc4a8dcacb920364479a2e5111d62c7e09e62"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_order/mod.rs",
+          "gitBlobSha": "60f539673516c6dcccaf4bc07e98dbeb8e48f998"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_order/rebuild.rs",
+          "gitBlobSha": "b9e5f85827a5a5eaba3c3feeb8db7fe14049bf22"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_predicate_fusion.rs",
+          "gitBlobSha": "6b88111270708cb916c42afc4c63df5b07002dba"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_pushthrough.rs",
+          "gitBlobSha": "881ef5784bcea1385c8a841e41b12aa1932818e1"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_runtime_filter.rs",
+          "gitBlobSha": "a909fd0b096b66a37680dd5bdc7e0e9e51d31153"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/join_utils.rs",
+          "gitBlobSha": "760886e4a1d478eda56658b93f550debcac59e78"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/mod.rs",
+          "gitBlobSha": "e9c25ef0bbe6fe35157056e8d75f24a374d5c1f1"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/parquet_metadata_prune.rs",
+          "gitBlobSha": "79d1d1f95332d97101f537b257e049304afb32a9"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/dynamic.rs",
+          "gitBlobSha": "aa1d97442ec51a7bd46586f8838c5ed215d726a4"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/group_by.rs",
+          "gitBlobSha": "dfeb02430c768acbade7df8cac4e6a22df9908e2"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/hive.rs",
+          "gitBlobSha": "5228c9138b1ac1346161135e1467b33625c37bdc"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/join/asof.rs",
+          "gitBlobSha": "4e9b22a9ab9948bf4693b38ae9d9de7c2f9782dc"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/join/mod.rs",
+          "gitBlobSha": "dc805e3fe0548a9d6e8a072a832b66baf099abd9"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/join/predicate_pruning.rs",
+          "gitBlobSha": "fdab225f04375595c9e16c3cb36eda147a516536"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/keys.rs",
+          "gitBlobSha": "3daed1ac879fa253e3a168b7a99d54856f6cc9e7"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/mod.rs",
+          "gitBlobSha": "acc847afeaca7d0920712b87edf867f587179beb"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/rename.rs",
+          "gitBlobSha": "95fd22687b31c4c165f141bc6d2b4fcac4469fdf"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/predicate_pushdown/utils.rs",
+          "gitBlobSha": "2c85f84788e01f703556a38415078be2361b1e87"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/projection_pushdown/edge.rs",
+          "gitBlobSha": "004bb8947dcf29616a38d0cd224215e0208a30f5"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/projection_pushdown/field_pruning.rs",
+          "gitBlobSha": "53b676fe801f82997c1f437595bbd974324b5cfd"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/projection_pushdown/mod.rs",
+          "gitBlobSha": "b9386f0378976ea830b8152ea5455441c0f92150"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/recursive_caches.rs",
+          "gitBlobSha": "c400ee75ee20d34757e0e4bbc1edcc9dd18fb42b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/repeated_keys.rs",
+          "gitBlobSha": "587b9dfbbb82366cccaa6dc806100dcd8baf1ebe"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_expr/arity.rs",
+          "gitBlobSha": "20e2fbcdff5ecd728cbf7a837cb8024f06442700"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_expr/mod.rs",
+          "gitBlobSha": "d5ac5ba6c778aba44c1a241187c9bd5797f74bd8"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_expr/simplify_functions.rs",
+          "gitBlobSha": "7eb4aa88882285439458f8e9406958bab9bfdc3c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_expr/sort_lowering.rs",
+          "gitBlobSha": "20f3c4da85264da106ba152c1d5621147891cb8b"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_ordering/expr.rs",
+          "gitBlobSha": "59e93c2440cb4867a25fc1ca40f67d2373b3d335"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_ordering/ir_graph.rs",
+          "gitBlobSha": "62ee3182d7acf3f0b9d5b5f859f2dbd1d5f5ec2a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_ordering/ir_node_key.rs",
+          "gitBlobSha": "1d8027fcae8e1d1caf2707f8758fb3470035ac87"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/simplify_ordering/mod.rs",
+          "gitBlobSha": "5fc523051d87a7ed695bfa3e68086e2dab07d252"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/slice_pushdown_expr.rs",
+          "gitBlobSha": "d45abfd8c56fa04f16c0ecf0fe66be8807b98852"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/slice_pushdown_lp.rs",
+          "gitBlobSha": "9f3c4323e4a50c80d48bc9a56db61025d40e3dff"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/sortedness.rs",
+          "gitBlobSha": "19c4f6ec371c7ab77744286f8139d2cda4b6a3fd"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/stack_opt.rs",
+          "gitBlobSha": "4ed240b4653ea4e7184bd2b92200214ee4a7aa6c"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/optimizer/window_top_one.rs",
+          "gitBlobSha": "e0bd002ace22755be7e368732183aca84d81bdc6"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/options.rs",
+          "gitBlobSha": "be120087baddf6ae8acbeb1584a5134bf756b065"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/parquet_footers.rs",
+          "gitBlobSha": "1d5e75f8ba2b8461756ef0bee85652df8452b1d3"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/prune.rs",
+          "gitBlobSha": "10463e959b6175070fb9f1974f599429633e5744"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/python/arrow_predicate.rs",
+          "gitBlobSha": "a5387b9c5611620b309910e31b2c45798569cd80"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/python/mod.rs",
+          "gitBlobSha": "f2e1bd858f245901ec56ad36bc3c385221eaa8db"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/python/predicate.rs",
+          "gitBlobSha": "1dbfa0b4749a937488c8931b38a01ff68fc827ba"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/python/pyarrow.rs",
+          "gitBlobSha": "80170270fc9b5c00e31b39cb381c61a629dbfb1d"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/python/source.rs",
+          "gitBlobSha": "d3a4590a0ebe4236606c5ad3319b120cc54bac08"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/python/utils.rs",
+          "gitBlobSha": "a001e3a6c0d647fc01b973ab52ed4d3852649807"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/schema.rs",
+          "gitBlobSha": "7429ae86ec62432b73c41c1b19c6e0e8467fd517"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/stats/cost.rs",
+          "gitBlobSha": "c264e034bcaeaab35a83145420ec49bc5266b6e5"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/stats/dataset.rs",
+          "gitBlobSha": "7eb08c7cf5b4962d05f34c59daff84ea6ca1eec9"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/stats/mod.rs",
+          "gitBlobSha": "5bfdbcd20b29e96c8c615da6818a780cfa71472d"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/stats/node.rs",
+          "gitBlobSha": "1339132d0b2f063323af1948d0a57381fdc12cba"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/stats/value_range.rs",
+          "gitBlobSha": "0cf0425985dba92f1d76826bb4229b94b8ab1880"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/to_description.rs",
+          "gitBlobSha": "b3024626d6078ae01a35a3e7907f6b7be216c936"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/visitor/expr.rs",
+          "gitBlobSha": "ffc2036fb044c9ad78d482e9f468e887c426258a"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/visitor/lp.rs",
+          "gitBlobSha": "1651c0e7873c4b2d19b3cdf7509460d86142ddad"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/visitor/mod.rs",
+          "gitBlobSha": "5c975ed3be94203c2d99da6f4675b1da01ef349e"
+        },
+        {
+          "path": "crates/polars-plan/src/plans/visitor/visitors.rs",
+          "gitBlobSha": "1e23fa5cac8f355993c36f407ac25a311cb36764"
+        },
+        {
+          "path": "crates/polars-plan/src/prelude.rs",
+          "gitBlobSha": "77069408ed5117f2dc1557ccc5569dc1f6ad95a7"
+        },
+        {
+          "path": "crates/polars-plan/src/traversal/edge_provider.rs",
+          "gitBlobSha": "690e03bef2c8ea950429148e346317041bcc8d4b"
+        },
+        {
+          "path": "crates/polars-plan/src/traversal/mod.rs",
+          "gitBlobSha": "b910df134b15d0371abbf97e16b8e3814c3edabe"
+        },
+        {
+          "path": "crates/polars-plan/src/traversal/tree_traversal.rs",
+          "gitBlobSha": "1cd2cfa49376683a84a5a4313be119c82e93e267"
+        },
+        {
+          "path": "crates/polars-plan/src/traversal/visitor.rs",
+          "gitBlobSha": "0d7dee19190a455018c9fedde46166a593d09e6a"
+        },
+        {
+          "path": "crates/polars-plan/src/utils.rs",
+          "gitBlobSha": "cf6ed7dc145fd238a24806d3b41f7e7b392cdd21"
+        }
+      ]
+    },
+    {
+      "label": "Streaming",
+      "prefix": "crates/polars-stream/src",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 217,
+      "source": {
+        "url": "https://api.github.com/repos/pola-rs/polars/git/trees/34f406152c7f4d0b6af8c9fc258571590822c32a?recursive=1",
+        "treeSha": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "crates/polars-stream/src/dispatch.rs",
+          "gitBlobSha": "ca3794681e84230dba56bfbe08f22f0c733d2b38"
+        },
+        {
+          "path": "crates/polars-stream/src/execute.rs",
+          "gitBlobSha": "8b0ab42480ae8833977be86c209e64e9c4f97deb"
+        },
+        {
+          "path": "crates/polars-stream/src/execution_order.rs",
+          "gitBlobSha": "2f134a2331904935f8e7c7bc2f11549a81901d80"
+        },
+        {
+          "path": "crates/polars-stream/src/expression.rs",
+          "gitBlobSha": "138da088c72fd125ae40ef895db4d44e327d847b"
+        },
+        {
+          "path": "crates/polars-stream/src/graph.rs",
+          "gitBlobSha": "4f2deb6234f135d36a06f7888d506f9aa791c9ad"
+        },
+        {
+          "path": "crates/polars-stream/src/hash_shuffle/batches.rs",
+          "gitBlobSha": "664534ae14f34f3a2be17d114c5d0b94cc7318bc"
+        },
+        {
+          "path": "crates/polars-stream/src/hash_shuffle/frame_with_keys.rs",
+          "gitBlobSha": "7692f0bd6aaeb597e14bc5e4883c4a82d9a76516"
+        },
+        {
+          "path": "crates/polars-stream/src/hash_shuffle/mod.rs",
+          "gitBlobSha": "2bbdb83c72cf0bdc622388798a0f5b86a4b89729"
+        },
+        {
+          "path": "crates/polars-stream/src/hash_shuffle/split.rs",
+          "gitBlobSha": "8fc57a589dfd3ad8950e6f59e739e3f6962eb17b"
+        },
+        {
+          "path": "crates/polars-stream/src/hash_shuffle/store.rs",
+          "gitBlobSha": "335208ec4c6ab1e089eda725d712bf8c6715327b"
+        },
+        {
+          "path": "crates/polars-stream/src/hash_shuffle/writer.rs",
+          "gitBlobSha": "93d7331638785a41e44425c084f5286fff8284e5"
+        },
+        {
+          "path": "crates/polars-stream/src/lib.rs",
+          "gitBlobSha": "165f5cc913a7208a1ace3d6f45391145d9760220"
+        },
+        {
+          "path": "crates/polars-stream/src/metrics.rs",
+          "gitBlobSha": "ba6ad51521b3ae076b11071087841f9b14193048"
+        },
+        {
+          "path": "crates/polars-stream/src/morsel.rs",
+          "gitBlobSha": "71467e9abc6f92e0027eae68d14fac96506eae3d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/backward_fill.rs",
+          "gitBlobSha": "ebb7a9ef2ec0ba0a376d9f4e5511e3483d46c908"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/callback_sink.rs",
+          "gitBlobSha": "75b8b3ef0813c4d2c700b0c55a8df372908e551b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/columnar_function.rs",
+          "gitBlobSha": "6a3eadaa81113dab42377a39833addbe833d1cdc"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/cum_agg.rs",
+          "gitBlobSha": "3245821c958d864f7076e95faf8d591935000136"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/dynamic_group_by.rs",
+          "gitBlobSha": "f2b4380b6040f1359ddc3a563fa6c31f875364e9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/dynamic_slice.rs",
+          "gitBlobSha": "7bffa49ca90bf49d944992a93b1bd77a24aacd78"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/ewm.rs",
+          "gitBlobSha": "43e983ea337410dd4dc8a412df7b852b1e6290b3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/filter.rs",
+          "gitBlobSha": "1bf715496b5e8ca18da77220860df8c87edaa16a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/forward_fill.rs",
+          "gitBlobSha": "6a52f108f28305473f7048579a38fa3fdb101e0c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/gather.rs",
+          "gitBlobSha": "399a4f3937899a54c1522d93a197dc9e1dc6fe72"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/gather_every.rs",
+          "gitBlobSha": "fbe32478d64b5c0e893203bc7460bfd4eb920e12"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/group_by/flush.rs",
+          "gitBlobSha": "7d805c1a76a120f574053cb05a7781e1c64677d4"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/group_by/mod.rs",
+          "gitBlobSha": "5a43d4174a0a01ecbf1aa927ed79e45e366ae6f1"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/group_by/pre_agg.rs",
+          "gitBlobSha": "da09eb8999cb8b45aaf86f4f875e39f606dcb08b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/group_by/sink.rs",
+          "gitBlobSha": "86f0bf7fc5340e7e6edbfbb23a2534349e049c16"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/group_by/table.rs",
+          "gitBlobSha": "2ddd20c1cdedb83a359cb6e92936bf27a60243c3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/group_by/tuning.rs",
+          "gitBlobSha": "9b80fad4cd62ca2d8e91a44861b41efd472a7654"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/in_memory_map.rs",
+          "gitBlobSha": "a6b560cb4df048915561fcf54803e382a46293da"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/in_memory_sink.rs",
+          "gitBlobSha": "e844110b71fcadd02062fa5ed59fdfb94a9a07e2"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/in_memory_source.rs",
+          "gitBlobSha": "ed0d27d0924ae2802c70111c96adfd383047ac2c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/input_independent_select.rs",
+          "gitBlobSha": "5ebcc2761a8f5e7666f2c15b95cde79db24448e7"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/interpolate.rs",
+          "gitBlobSha": "bae7c259791e95d14d8143b42863075c60984bd3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/df_with_offset.rs",
+          "gitBlobSha": "6522afc37f6ec7629076e7d3c5eba59e272740c5"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/error_capture.rs",
+          "gitBlobSha": "0693523500110fe932ee20bd9e2bf89900e5b0f4"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/exclude_keys_projection.rs",
+          "gitBlobSha": "f9e2c9d6b187bbe88d4f21ce7ef709f4eaa51112"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/file_provider.rs",
+          "gitBlobSha": "b853aff81813120e5823cd06f7dd83d2d6787603"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/file_sink.rs",
+          "gitBlobSha": "4f21cb403c70777954a31a9106994e840de497fe"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/hstack_columns.rs",
+          "gitBlobSha": "dc3f5f7fe738b6f9cf3bffbfa28d876dfb1c956f"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/mod.rs",
+          "gitBlobSha": "8099dcc91951b3e7ce921b694c89616ed84054ef"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/morsel_resize_pipeline.rs",
+          "gitBlobSha": "3e197df71c48d59bb2a510ad44a97be3bc6b9bce"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/par_utils.rs",
+          "gitBlobSha": "c0719d9193784fee317b5fc4093efa14ce44e34d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partition_distributor.rs",
+          "gitBlobSha": "993dc30bcbe5017d507ab9097b4cadbd77924cc0"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partition_key.rs",
+          "gitBlobSha": "38c9ce718ba472aa5cfefdd94602ede0d7ba6301"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partition_morsel_sender.rs",
+          "gitBlobSha": "135452e6f8fe7ff1e5a9e069b93c17a55624e125"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partition_sink_starter.rs",
+          "gitBlobSha": "f86f81685cd958f45491cbce40083a469738da84"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partition_state.rs",
+          "gitBlobSha": "7e28b5dd28c11c8f5036c083aee64d5d89e9d8b9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partitioner.rs",
+          "gitBlobSha": "642809d1ca90cc69f11768145aaeb3f905564166"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/partitioner_pipeline.rs",
+          "gitBlobSha": "4c7031437aeb02f39e2db1cdee26a9da4bcd7ac6"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/sink_morsel.rs",
+          "gitBlobSha": "115a21c7fa4b925bf95e5faa131ca361e0637922"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/sinked_path_info_list.rs",
+          "gitBlobSha": "e484f93f0507add995e948e054b8bb4e11602d24"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/size.rs",
+          "gitBlobSha": "f701bbc39fc2455fcc3edbc15604144bae75c07f"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/components/writable.rs",
+          "gitBlobSha": "eb162f17fc66d0ab05a11939003c79203b895a66"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/config.rs",
+          "gitBlobSha": "d0dabf4570bd597bf9bade54a27823acd726f293"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/mod.rs",
+          "gitBlobSha": "d4384489513b040e636419ed93a2eabad86520ee"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/pipeline_initialization/mod.rs",
+          "gitBlobSha": "2f939748e48ae1e1e2660910dcee16ef22387c91"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/pipeline_initialization/partition_by.rs",
+          "gitBlobSha": "a03af9f2063b58080f8a9deb699298e10488e215"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/pipeline_initialization/single_file.rs",
+          "gitBlobSha": "9ecf001d7820d0696fc52ba50545aafdcff1ff7a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/csv/io_writer.rs",
+          "gitBlobSha": "d4982fa3b7807a3514092ab545ee49beeff59d2a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/csv/mod.rs",
+          "gitBlobSha": "101a930f456ddb2b60682bf1bf410c34f717d81d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/csv/morsel_serializer.rs",
+          "gitBlobSha": "1af06fb9c922396757d95c6700489eec6c79628b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/interface.rs",
+          "gitBlobSha": "0c3a5916deb57d1a829172a4bd07fadd82fb2c1c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ipc/initialization.rs",
+          "gitBlobSha": "4928dd60391181282777c9458688050252efa197"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ipc/io_writer.rs",
+          "gitBlobSha": "cc318f385ac2a62c75d89c3d5ac04503b6a4b02b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ipc/mod.rs",
+          "gitBlobSha": "e02df8882a8f0f5ff9cca1c091d96162a49f6fa1"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ipc/record_batch_encoder.rs",
+          "gitBlobSha": "cc169af31f9c65b9b7aa73a7ca2d823e4625f563"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/mod.rs",
+          "gitBlobSha": "801a1f88bef0d6fef87432f6ef84e82fc7543a6e"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ndjson/io_writer.rs",
+          "gitBlobSha": "b9b820a6f4c3929300a92f9fb8ee87b0c3c226d9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ndjson/mod.rs",
+          "gitBlobSha": "f1f61c9fe7446da66399d3cc2ceca2272bcf32f6"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/ndjson/morsel_serializer.rs",
+          "gitBlobSha": "acd31b318293fc24005e35e3f537f37286f74a42"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/parquet/io_writer.rs",
+          "gitBlobSha": "c511aa8cea2e27cf060bd67abe7c46154eb17bb8"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/parquet/mod.rs",
+          "gitBlobSha": "0590958fae93a4f9c1587f57bf4d723eb5b92cc6"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sinks/writers/parquet/row_group_encoder.rs",
+          "gitBlobSha": "384c27c559ac39296301342793811de4261a35fe"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/batch.rs",
+          "gitBlobSha": "bab019f675d9ff535c117bd0e92f991545d9b934"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/csv/builder.rs",
+          "gitBlobSha": "6e0ad39be52a6af8e539ed8a9f664c5ab1641743"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/csv/chunk_reader.rs",
+          "gitBlobSha": "a280b41c076e4e1f5a3b921dccb946f05e4175d0"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/csv/line_batch_source.rs",
+          "gitBlobSha": "314a411df4e9ee0418356432e041897703d42f13"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/csv/mod.rs",
+          "gitBlobSha": "86b5d6e94d90ed259f3cf3353c99c939010de83d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/external_ffi.rs",
+          "gitBlobSha": "f5fb33cbad7875f400350b902af26fe4901fab8e"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/external_python/mod.rs",
+          "gitBlobSha": "94e9336f73ea7d11fe8922db5d537a846a0bd686"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ipc/builder.rs",
+          "gitBlobSha": "b93a8dcf3035d4e2b09314adf80f43a155a93d12"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ipc/metadata.rs",
+          "gitBlobSha": "8c8166299a5173171a1a38b159abc9ac15f1a369"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ipc/mod.rs",
+          "gitBlobSha": "e600782cafd0cb8838c3cc6ce16fbb8580f268b5"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ipc/record_batch_data_fetch.rs",
+          "gitBlobSha": "b8122bc6229852480911a64f1977fb7c5deeb06c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ipc/record_batch_decode.rs",
+          "gitBlobSha": "8a7b162c76f06b5d87bab4626ed8ff33d1f87c80"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/lines.rs",
+          "gitBlobSha": "825678e29b49b062172b66f9ce14bf2f68b86afc"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/mod.rs",
+          "gitBlobSha": "672888ad03122aa8fcc93576a693de732099eb92"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/apply_extra_ops.rs",
+          "gitBlobSha": "1bf165b3db8c272da310456bdba4a8c53456327b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/bridge.rs",
+          "gitBlobSha": "31d1cd835091409714a7739875aca92b4ff77c17"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/column_selector/builder.rs",
+          "gitBlobSha": "56a64b80ff0323f239e516ae30b58080f6187aa0"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/column_selector/mod.rs",
+          "gitBlobSha": "9545bcc57e43e94c0e5daa3be07227e8022b33c6"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/column_selector/transform.rs",
+          "gitBlobSha": "ea419da2c7d0693d872b637e7680a63dcb7ce2bc"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/default_field_values.rs",
+          "gitBlobSha": "6ab08b29be5df2d9b4e5fb7d99c784df766cbffb"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/errors.rs",
+          "gitBlobSha": "89734d8794fb1adca1c2a46a5bac32ada5a6526e"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/forbid_extra_columns.rs",
+          "gitBlobSha": "43fda740887523b22498a7129c4d3fb5c6dfc595"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/mod.rs",
+          "gitBlobSha": "0c7c2245d22843f12cd717ae194bc73789a08ff2"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/physical_slice.rs",
+          "gitBlobSha": "0d30f1a097de761b6cb8e4e5e139ce069bf8e0b9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/predicate.rs",
+          "gitBlobSha": "cd88678df717eddf07927a7bae99afa0f74dc376"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/projection/builder.rs",
+          "gitBlobSha": "362332107046c67cc25dfcf6813828d729febaca"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/projection/mod.rs",
+          "gitBlobSha": "c494f40241477f649361e6c78eca1feed27637d3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/reader_operation_pushdown.rs",
+          "gitBlobSha": "5bf5cd205773b8a6bf8819b703a2eede4db488a3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/components/row_deletions.rs",
+          "gitBlobSha": "dcafdd9422d5edfb1d24af6bce2858cc93e5aabe"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/config.rs",
+          "gitBlobSha": "20d0edff7fb410676d28d8f226258e5cb209fdf0"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/functions/mod.rs",
+          "gitBlobSha": "a166d7be219b2a1a6dcfc086a4ab46ad1172e63f"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/functions/resolve_projections.rs",
+          "gitBlobSha": "f50fcc1e9f3d66683534428096a8b43babccdc4d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/functions/resolve_slice.rs",
+          "gitBlobSha": "f6caf9e6e09f4227f70a7f0c1e7b852a8458aa20"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/mod.rs",
+          "gitBlobSha": "908393260f55594ea9f38d7e27c5d31cf9d45b5a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/initialization.rs",
+          "gitBlobSha": "e5b608b61862628d54df61412d7ebecafd3efb91"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/mod.rs",
+          "gitBlobSha": "c62d6970b40e9e6633bb56f5bbdd06cdc13357c1"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/models.rs",
+          "gitBlobSha": "977bf5b437925cb91dd3240f7b8c452c2efd3c3e"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/tasks/attach_reader_to_bridge.rs",
+          "gitBlobSha": "ae3c79956e86f3287f791be3d4c7891456a68c32"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/tasks/bridge.rs",
+          "gitBlobSha": "dd0402c16bd5acc36ab02df4497cc73f86bf0bb7"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/tasks/mod.rs",
+          "gitBlobSha": "4982e542879570bfeea2741307d67aec29bcc756"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/tasks/post_apply_extra_ops.rs",
+          "gitBlobSha": "95b148de73892dc5d0ae42e626d2d5af73446810"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/pipeline/tasks/reader_starter.rs",
+          "gitBlobSha": "a921e395fc13e5d67d06a4abe5f8676130d09fce"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/reader_interface/builder.rs",
+          "gitBlobSha": "e83fdc5f8409f1c679e18f0e71a7c78532db9e7a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/reader_interface/capabilities.rs",
+          "gitBlobSha": "07d21b80d538b67711e5b96be1a8e82840674825"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/reader_interface/mod.rs",
+          "gitBlobSha": "1dbcba52d444e8e8587c680b394c87a72cf8f4ab"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/multi_scan/reader_interface/output.rs",
+          "gitBlobSha": "f761d49067d244c2d29b7febe175bcfe6fad24e8"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/builder.rs",
+          "gitBlobSha": "fdeb39579679b5de03c1619497988a30376b9830"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/chunk_reader.rs",
+          "gitBlobSha": "96680442c1e388a2c07795691be19adf38a7da95"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/line_batch_distributor.rs",
+          "gitBlobSha": "0dc25faab264ee1a83034a610df6212e927542aa"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/line_batch_processor.rs",
+          "gitBlobSha": "b6274398f6c00173f5ff954c2a5900affebf1a92"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/mod.rs",
+          "gitBlobSha": "fb116c1e96a63e68b916fb22c349d118ca979e61"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/negative_slice_pass.rs",
+          "gitBlobSha": "8bf19a940d67375c5afd6a91ca89c189a0a45ed4"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/ndjson/row_index_limit_pass.rs",
+          "gitBlobSha": "411255c1d5abbf9638c3d921535401e785265400"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/builder.rs",
+          "gitBlobSha": "813f110dfe7f510712fa06319893b411dbb85230"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/init.rs",
+          "gitBlobSha": "a77984a38efba579443e4ee42e23fba50ad0c451"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/metadata_utils.rs",
+          "gitBlobSha": "cd349e4929b0a047ddb89c5a0113d6b0d400ad33"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/mod.rs",
+          "gitBlobSha": "f35a4e23583bd4656063bb59b25b490d8fe6165b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/passes.rs",
+          "gitBlobSha": "eaf65d3702d46a4c80625ecb765f8a1f6c5a5489"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/projection.rs",
+          "gitBlobSha": "371e33cf7be44d729fc1b5a18eec354fe5dd9dbb"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/row_group_data_fetch.rs",
+          "gitBlobSha": "fa36ec64fc4ce790d4df089fd69dbbd0a742e8b8"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/row_group_decode.rs",
+          "gitBlobSha": "7536463119d3de9381f7af2cccf8ba6490ed12e4"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/parquet/statistics.rs",
+          "gitBlobSha": "1264e45005525dfab0d838f4e4c044077f49b9c7"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/shared/chunk_data_fetch.rs",
+          "gitBlobSha": "e4dcabe466db4e33fca6ef3e1d28132641ffab09"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/shared/file_init.rs",
+          "gitBlobSha": "e0dc6bf18d8b481c7f80f19c15bb4da08f895ced"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/shared/mod.rs",
+          "gitBlobSha": "3bc53a694caaec35add0236c545eab114504baeb"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/shared/morsels.rs",
+          "gitBlobSha": "f56713c02beb7436051f870041970b5c392b6094"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/shared/pipeline_budget.rs",
+          "gitBlobSha": "d6405c64d7af66ddbe4a3027a3b974f717564827"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/io_sources/shared/pipeline_permit.rs",
+          "gitBlobSha": "151fb7475d712cfb86959576b39d07c5d0be1cdc"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/is_first_distinct.rs",
+          "gitBlobSha": "12c96e5b74de4fb993ee1f6dc645ceca8a23fecc"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/is_sorted.rs",
+          "gitBlobSha": "1d77dfa813f621c37a1d80f94499647e46f9d189"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/asof_join.rs",
+          "gitBlobSha": "4215b0f22e8bcd916eaba65ae23ee9c16448b5b5"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/cross_join.rs",
+          "gitBlobSha": "ea21609af554cfeb2dd7772b183fc9148de59606"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/equi_join/build.rs",
+          "gitBlobSha": "8fae10aa649ab35757a051dc7511d4b59714ad70"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/equi_join/flush.rs",
+          "gitBlobSha": "fe606901611004da1ea11e4791e0dd910568fe44"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/equi_join/mod.rs",
+          "gitBlobSha": "34adb8e73d9d0a3c377dab7242633a1ebd8aa2e9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/equi_join/probe.rs",
+          "gitBlobSha": "f56e5b058e2b43c93dd100e9548e9da53f10c9a6"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/in_memory.rs",
+          "gitBlobSha": "86f8edea0b79704999a82fa459f2476d4d9a7854"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/merge_join.rs",
+          "gitBlobSha": "47ef64bd979c1c9dc3450a1c3a6f8ed62d6c8d66"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/mod.rs",
+          "gitBlobSha": "0fa2b9f4dbdbffe298cd65c38e90e7d933b8df1b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/range_join.rs",
+          "gitBlobSha": "83bdf172889427e26992471644800391aeab643f"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/runtime_filter.rs",
+          "gitBlobSha": "aad388118cb1bee2459c7c23eada6506ff7f5de3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/semi_anti_join.rs",
+          "gitBlobSha": "b3ee2588aa46899a13027e582affc162086f5bc5"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/tuning.rs",
+          "gitBlobSha": "540cffe8fce6ed077eb02f13e86ba546d4931c30"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/joins/utils.rs",
+          "gitBlobSha": "29a983bd81c712e13599d03e172a1211f9a45d7b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/map.rs",
+          "gitBlobSha": "6d850a3cf23e6321cf5bc853993d302dfbdc5f4b"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/merge_sorted.rs",
+          "gitBlobSha": "368c2803724f3e40854c46fe885074e1ebc70bd3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/mod.rs",
+          "gitBlobSha": "e64e8f07ac99245a37dfaf947070b82bb518b9e2"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/multiplexer.rs",
+          "gitBlobSha": "4e64c70567683de3cabe7178994c3444c0b5d1e9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/negative_slice.rs",
+          "gitBlobSha": "60ee783221a7035783f26fff87bda0dd26b4a09a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/ordered_union.rs",
+          "gitBlobSha": "ca047ca04ee67c67d94750e57dc69e1c961fe602"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/peak_minmax.rs",
+          "gitBlobSha": "21304d5d3ddaf341d28a6d5075e12f4460037e1c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/recursive.rs",
+          "gitBlobSha": "d07ba9425744eb07917223733ddf51528cc94d08"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/reduce.rs",
+          "gitBlobSha": "ecaafa5ee93eb591fafc2d0f46d0dafc5684dac3"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/repeat.rs",
+          "gitBlobSha": "51effd1c3bd3f4b102059d60ceff5a5978cd49c0"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/reverse.rs",
+          "gitBlobSha": "c8f20df72747f2725ca2b7cc6c6ed8c9ef4941cc"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/rle.rs",
+          "gitBlobSha": "e6715bf1cb290ebce396e712b584f03f4aa9f34c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/rle_id.rs",
+          "gitBlobSha": "0c1abb0d6a263456f4f23683204490573ada23bd"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/rolling_fixed_window.rs",
+          "gitBlobSha": "aa469d9312faaf1af0f924e6c2a00f659e4ad89f"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/rolling_group_by.rs",
+          "gitBlobSha": "5ac85027e5aebbfc922b61cae911ec2f081da86f"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/scalar_window.rs",
+          "gitBlobSha": "2c2a29f473a68d847d87ea87886c95b7ba1e3a92"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/select.rs",
+          "gitBlobSha": "163dde09b15cef133ddd1918a56f56506e111dc2"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/shift.rs",
+          "gitBlobSha": "d34eac5b4ff539c72399f4d48b652bf4f0354f9d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/simple_projection.rs",
+          "gitBlobSha": "4a7a074a242ea4cea8eb6258981f0b498583129d"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sort/flush.rs",
+          "gitBlobSha": "d71865026fa324ec7236a1ab4bd61e636ff5d97a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sort/mod.rs",
+          "gitBlobSha": "0eac6555ff2fc47b99c1e732ff2c65c9c95fa3bf"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sort/sample.rs",
+          "gitBlobSha": "1f84748fd169539767015251129172e6c9941afd"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sort/split_tree.rs",
+          "gitBlobSha": "a0aa6e9982e6f61411f80d93adc7f75488c29aec"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sort/tuning.rs",
+          "gitBlobSha": "0e505bd0a8cb61ea1e9b0211c4500b20ef14ce02"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sorted_group_by.rs",
+          "gitBlobSha": "725b38b4b3774c69e1919da624a550664fbc88de"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/sorted_unique.rs",
+          "gitBlobSha": "c3f92991843ce74fcd94002a661e9be25288cd24"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/spill_frame_source.rs",
+          "gitBlobSha": "1bb672a4355aa36b55e8651654c293192f33bb4a"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/streaming_slice.rs",
+          "gitBlobSha": "9a58dde6cf65981bf3a7e1d5112f8ea8255e52ae"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/strptime_infer.rs",
+          "gitBlobSha": "1b8dcdf2abee34054da32ae88ea23b6a897c57db"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/top_k.rs",
+          "gitBlobSha": "b848fac56a6c74b3b5d850e9f6a9e3566cbca0d9"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/unordered_union.rs",
+          "gitBlobSha": "b4ac7c9e557f68ddc542ebd7ada8bf412d84aa34"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/window/evaluate.rs",
+          "gitBlobSha": "1afc01a0d0de4c85e2d9cab0ae32192cb01b39a5"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/window/flush.rs",
+          "gitBlobSha": "5b00247a0e9e2f90fb59dff383ab6301c1397f69"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/window/mod.rs",
+          "gitBlobSha": "ba12cb1ea11151c8ad18eba0387a76cee226f7c5"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/window/sink_partitions.rs",
+          "gitBlobSha": "95aff344bdc1f2fe5a083ec91b1dbe0f2c781a51"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/window/tuning.rs",
+          "gitBlobSha": "3a182f1c0e897c1abac73d1ce1d997f46dee974c"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/with_row_index.rs",
+          "gitBlobSha": "b5b8198f8f8156abf1edbdf3242f675d282940a2"
+        },
+        {
+          "path": "crates/polars-stream/src/nodes/zip.rs",
+          "gitBlobSha": "d33b25b3de4346b27cc93ce0b63fdfd8fd5be01a"
+        },
+        {
+          "path": "crates/polars-stream/src/observer_metrics.rs",
+          "gitBlobSha": "1c287c0891626d994ffa4be99bddc1a5c799124c"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/fmt.rs",
+          "gitBlobSha": "1183421c4f1c91242fe41549fe90af583ab5a15b"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/io/mod.rs",
+          "gitBlobSha": "e7661250943afd9b5cc65fd9186e39d7a0d11be4"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/io/python_dataset.rs",
+          "gitBlobSha": "3fe475dd6e2a59e55717f6fa1a115123e11b75a3"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/lower_expr.rs",
+          "gitBlobSha": "d37e6e9e67846dea6354987b4810a565217abde8"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/lower_group_by.rs",
+          "gitBlobSha": "57a8a18b7e2d5a3bf78ceb6dcc23765eb3bae75a"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/lower_ir.rs",
+          "gitBlobSha": "18c173b9b48caf904754eb650bc29970202ded4e"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/mod.rs",
+          "gitBlobSha": "be4e68595a7042a941fab105aa04f92c8cf27d47"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/scalar_window.rs",
+          "gitBlobSha": "bddb1c37c7520f0f00440625a3b1bdd33c6ea29d"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/split_select.rs",
+          "gitBlobSha": "a00100ebdb53b41cdcbd37f8d8c8e9dc46961180"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/to_description.rs",
+          "gitBlobSha": "9ff76751d8cfdde89bd8c7d877a932d5394d68f7"
+        },
+        {
+          "path": "crates/polars-stream/src/physical_plan/to_graph.rs",
+          "gitBlobSha": "30f0fcce57cde455d59ff9c4088b298bd4360c2b"
+        },
+        {
+          "path": "crates/polars-stream/src/pipe.rs",
+          "gitBlobSha": "c4f34da0327c59d71be07db7302c16b0ee67f897"
+        },
+        {
+          "path": "crates/polars-stream/src/skeleton.rs",
+          "gitBlobSha": "5a76c4c243a18a30e78366641fb1266ed0151b69"
+        },
+        {
+          "path": "crates/polars-stream/src/utils/in_memory_linearize.rs",
+          "gitBlobSha": "fd90caee5c04597b81832d9189ef874c75d1356e"
+        },
+        {
+          "path": "crates/polars-stream/src/utils/late_materialized_df.rs",
+          "gitBlobSha": "0b62412f4a474fd5fe415e0bae606aa73fe6b0e6"
+        },
+        {
+          "path": "crates/polars-stream/src/utils/mod.rs",
+          "gitBlobSha": "e3be1a8a9cadffe56b23e273ac55b89bf92b797d"
+        },
+        {
+          "path": "crates/polars-stream/src/utils/morsel_distributor.rs",
+          "gitBlobSha": "1f919bf45e5ce34a2533b4c0e4945f218cc8c6e7"
+        },
+        {
+          "path": "crates/polars-stream/src/utils/tokio_handle_ext.rs",
+          "gitBlobSha": "a823baa867e79eec7748c5a4e1791e283e1aba63"
+        }
+      ]
+    },
+    {
+      "label": "Memory engine",
+      "prefix": "crates/polars-mem-engine/src",
+      "includePattern": "\\.rs$",
+      "excludePattern": null,
+      "count": 34,
+      "source": {
+        "url": "https://api.github.com/repos/pola-rs/polars/git/trees/34f406152c7f4d0b6af8c9fc258571590822c32a?recursive=1",
+        "treeSha": "34f406152c7f4d0b6af8c9fc258571590822c32a",
+        "scope": "repository root",
+        "truncated": false
+      },
+      "files": [
+        {
+          "path": "crates/polars-mem-engine/src/executors/cache.rs",
+          "gitBlobSha": "336cd546982388925d162adb58ec14bcdc3bc953"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/executor.rs",
+          "gitBlobSha": "2346a4aba701c68145daf91ea4704ee46d8ba396"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/filter.rs",
+          "gitBlobSha": "48e51776f5eee218133649fe0016dd086952afc2"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/gather.rs",
+          "gitBlobSha": "8a0662a73235f751d92cb07f40d539fe7e5f4bb1"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/group_by.rs",
+          "gitBlobSha": "d5cf0a32f8f5a42d6ae786f5b75c74494c75a186"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/group_by_dynamic.rs",
+          "gitBlobSha": "5dbc4484eef5ba1731834b45c74bae84e4fdb821"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/group_by_rolling.rs",
+          "gitBlobSha": "a6466fba82fd93a29d9caaf8663c453a518d11ae"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/group_by_streaming.rs",
+          "gitBlobSha": "28066acc10d0e433352bbdb3ff3e391a1d3c3c30"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/hconcat.rs",
+          "gitBlobSha": "5d14b8f792d94b7140386137b18c935bad1cdbc2"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/join.rs",
+          "gitBlobSha": "75f9ec2adc615eb354cc29b52323ee17e15d28b3"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/merge_sorted.rs",
+          "gitBlobSha": "3d4d170e8eb3cf1fdabe64385d44d652199233ab"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/mod.rs",
+          "gitBlobSha": "4740369a15d81dbb5a314978e202fdbdabc96b83"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/projection.rs",
+          "gitBlobSha": "8e606757b4e78e1dfa82a5e2911586cd9582708b"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/projection_simple.rs",
+          "gitBlobSha": "4a9568f6af418da4b1b697fb21871e3348cce658"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/projection_utils.rs",
+          "gitBlobSha": "493a0b6234c85999ed0446e916296c7b7b9f834b"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/scan/mod.rs",
+          "gitBlobSha": "31be313f5bf6ac8efd73b88e7d80c7deca5fafe3"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/scan/python_scan.rs",
+          "gitBlobSha": "c0b15594078e8c5abd0c5c70d3fb1a768af0475a"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/slice.rs",
+          "gitBlobSha": "7d04f8c6e9ffec7e0022292ee452f57bab23ed9d"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/sort.rs",
+          "gitBlobSha": "b25a1c5b0cdf00fb7b449f1f6eaa8d8d7fa1e8fd"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/stack.rs",
+          "gitBlobSha": "f0d0e75fc70dd7646c48426d1e50d735558bfb88"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/udf.rs",
+          "gitBlobSha": "c1bf98ac35e84ea5dbf18c661591e7fd6b5c7c01"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/union.rs",
+          "gitBlobSha": "f1b182ce11339d3bee000cff0109c2e57635e7b4"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/executors/unique.rs",
+          "gitBlobSha": "75938b2dc0beaf4481aa5599b17d300e997a25bb"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/function_ir/count.rs",
+          "gitBlobSha": "8e6499d2dc5cc82adaf4b77447181a4be06d8ca3"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/function_ir/mod.rs",
+          "gitBlobSha": "3401c4712e1dbf5fe23d92e41fd325668012631a"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/function_ir/python_udf.rs",
+          "gitBlobSha": "29aace1414e95ed5e0f750abd5d562f174fc76a5"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/lib.rs",
+          "gitBlobSha": "0f3ea0ebeeaa0d4b8b971c64635cc9eb1fb7c989"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/planner/lp.rs",
+          "gitBlobSha": "b659ff2e0ed7e97f032c7d0d8aacaea9acd24495"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/planner/mod.rs",
+          "gitBlobSha": "90364b90f8528b00c17f91d4ebe9a5a5e9d36780"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/prelude.rs",
+          "gitBlobSha": "b344f7c642fc7260020210db384a7a216070d296"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/scan_predicate/functions.rs",
+          "gitBlobSha": "d897a35e68c59fe000e19cb8a5accb37886fe9ce"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/scan_predicate/mod.rs",
+          "gitBlobSha": "c9ac2016f166b7d055953e9e50bf064c8a98328d"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/scan_predicate/skip_files_mask.rs",
+          "gitBlobSha": "7e2f03b820e5205bf4fa63e411d5cc635f5f0441"
+        },
+        {
+          "path": "crates/polars-mem-engine/src/scan_predicate/table_statistics.rs",
+          "gitBlobSha": "099490256e873fb7609e5b54573b13b6fa0c3243"
+        }
+      ]
+    }
+  ],
+  "claim": {
+    "id": "CHART-1",
+    "claim": "The source-map values count the retained matching Git blob paths for the selected roots at this commit.",
+    "evidenceType": "direct Git tree inventory; reviewer-selected grouping",
+    "locator": "groups[].source identifies the tree; groups[].prefix/includePattern/excludePattern define selection; groups[].files lists every counted path and blob ID.",
+    "limitation": "Tree entry counts do not verify behavior or quality. Content review remains limited to the original cited excerpts."
+  }
+}

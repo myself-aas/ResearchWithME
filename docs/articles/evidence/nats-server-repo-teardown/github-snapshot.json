@@ -1,0 +1,172 @@
+{
+  "reviewedRepository": "https://github.com/nats-io/nats-server",
+  "reviewedVersion": "Default-branch source snapshot (main); not a release review",
+  "reviewedCommit": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+  "retrievedAt": "2026-11-20T22:54:20.477988+00:00",
+  "method": "Read-only GitHub API metadata, pinned tree and selected source inspection. Full selected-file Git blob SHA-1 verified before excerpt retention. No upstream code executed.",
+  "treeScope": {
+    "sha": "a0385c9af342ffae6df28999b77a85de5423d3d6",
+    "truncated": false,
+    "returnedEntries": 672,
+    "limitation": "Tree retrieval complete; only listed sources substantively reviewed, not an exhaustive code audit."
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "path": "README.md",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/README.md",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/README.md?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "4487552a792652c3e95d504e7b2f55507fdce05b",
+      "bytes": 4576,
+      "excerpts": [
+        {
+          "startLine": 5,
+          "endLine": 12,
+          "text": "[NATS](https://nats.io) is a simple, secure and performant communications system for digital systems, services and devices. NATS is part of the Cloud Native Computing Foundation ([CNCF](https://cncf.io)). NATS has over [40 client language implementations](https://nats.io/download/), and its server can run on-premise, in the cloud, at the edge, and even on a Raspberry Pi. NATS can secure and simplify design and operation of modern distributed systems.\n\n[![License][License-Image]][License-Url] [![Build][Build-Status-Image]][Build-Status-Url] [![Release][Release-Image]][Release-Url] [![Slack][Slack-Image]][Slack-Url] [![Coverage][Coverage-Image]][Coverage-Url] [![Docker Downloads][Docker-Image]][Docker-Url] [![GitHub Downloads][GitHub-Image]][Somsubhra-URL] [![CII Best Practices][CIIBestPractices-Image]][CIIBestPractices-Url] [![Artifact Hub][ArtifactHub-Image]][ArtifactHub-Url]\n\n## Documentation\n\n- [Official Website](https://nats.io)\n- [Official Documentation](https://docs.nats.io)"
+        },
+        {
+          "startLine": 73,
+          "endLine": 76,
+          "text": "## License\n\nUnless otherwise noted, the NATS source files are distributed\nunder the Apache Version 2.0 license found in the LICENSE file."
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "path": "server/jetstream.go",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/jetstream.go",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/server/jetstream.go?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "dcc571ae737219a1e116c7d1ee7f3c3c517a727e",
+      "bytes": 95016,
+      "excerpts": [
+        {
+          "startLine": 38,
+          "endLine": 55,
+          "text": "// JetStreamConfig determines this server's configuration.\n// MaxMemory and MaxStore are in bytes.\ntype JetStreamConfig struct {\n\tMaxMemory    int64         `json:\"max_memory\"`              // MaxMemory is the maximum size of memory type streams\n\tMaxStore     int64         `json:\"max_storage\"`             // MaxStore is the maximum size of file store type streams\n\tStoreDir     string        `json:\"store_dir,omitempty\"`     // StoreDir is where storage files are stored\n\tSyncInterval time.Duration `json:\"sync_interval,omitempty\"` // SyncInterval is how frequently we sync to disk in the background by calling fsync\n\tSyncAlways   bool          `json:\"sync_always,omitempty\"`   // SyncAlways indicates flushes are done after every write\n\tDomain       string        `json:\"domain,omitempty\"`        // Domain is the JetStream domain\n\tCompressOK   bool          `json:\"compress_ok,omitempty\"`   // CompressOK indicates if compression is supported\n\tUniqueTag    string        `json:\"unique_tag,omitempty\"`    // UniqueTag is the unique tag assigned to this instance\n\tStrict       bool          `json:\"strict,omitempty\"`        // Strict indicates if strict JSON parsing is performed\n\n\t// maxStorePending is set when MaxStore was derived from the available disk\n\t// space rather than configured, and has not been adjusted yet for the space\n\t// that recovered streams already occupy. See finalizeDynamicMaxStore.\n\tmaxStorePending bool\n}"
+        },
+        {
+          "startLine": 68,
+          "endLine": 77,
+          "text": "type JetStreamAccountLimits struct {\n\tMaxMemory            int64 `json:\"max_memory\"`\n\tMaxStore             int64 `json:\"max_storage\"`\n\tMaxStreams           int   `json:\"max_streams\"`\n\tMaxConsumers         int   `json:\"max_consumers\"`\n\tMaxAckPending        int   `json:\"max_ack_pending\"`\n\tMemoryMaxStreamBytes int64 `json:\"memory_max_stream_bytes\"`\n\tStoreMaxStreamBytes  int64 `json:\"storage_max_stream_bytes\"`\n\tMaxBytesRequired     bool  `json:\"max_bytes_required\"`\n}"
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "path": "server/stream.go",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/stream.go",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/server/stream.go?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "3569c5a62f3ad406eb835984d758b1b420452575",
+      "bytes": 316686,
+      "excerpts": [
+        {
+          "startLine": 50,
+          "endLine": 71,
+          "text": "// StreamConfig will determine the name, subjects and retention policy\n// for a given stream. If subjects is empty the name will be used.\ntype StreamConfig struct {\n\tName         string           `json:\"name\"`\n\tDescription  string           `json:\"description,omitempty\"`\n\tSubjects     []string         `json:\"subjects,omitempty\"`\n\tRetention    RetentionPolicy  `json:\"retention\"`\n\tMaxConsumers int              `json:\"max_consumers\"`\n\tMaxMsgs      int64            `json:\"max_msgs\"`\n\tMaxBytes     int64            `json:\"max_bytes\"`\n\tMaxAge       time.Duration    `json:\"max_age\"`\n\tMaxMsgsPer   int64            `json:\"max_msgs_per_subject\"`\n\tMaxMsgSize   int32            `json:\"max_msg_size,omitempty\"`\n\tDiscard      DiscardPolicy    `json:\"discard\"`\n\tStorage      StorageType      `json:\"storage\"`\n\tReplicas     int              `json:\"num_replicas\"`\n\tNoAck        bool             `json:\"no_ack,omitempty\"`\n\tDuplicates   time.Duration    `json:\"duplicate_window,omitempty\"`\n\tPlacement    *Placement       `json:\"placement,omitempty\"`\n\tMirror       *StreamSource    `json:\"mirror,omitempty\"`\n\tSources      []*StreamSource  `json:\"sources,omitempty\"`\n\tCompression  StoreCompression `json:\"compression\"`"
+        },
+        {
+          "startLine": 875,
+          "endLine": 878,
+          "text": "\tsingleServerMode := !s.JetStreamIsClustered() && s.standAloneMode()\n\tif singleServerMode && cfg.Replicas > 1 {\n\t\treturn nil, ApiErrors[JSStreamReplicasNotSupportedErr]\n\t}"
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "path": "server/consumer.go",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/consumer.go",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/server/consumer.go?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "e1700165c5d5a5e47a7fd92142cebab50e200d94",
+      "bytes": 217623,
+      "excerpts": [
+        {
+          "startLine": 89,
+          "endLine": 123,
+          "text": "type ConsumerConfig struct {\n\tDurable         string          `json:\"durable_name,omitempty\"`\n\tName            string          `json:\"name,omitempty\"`\n\tDescription     string          `json:\"description,omitempty\"`\n\tDeliverPolicy   DeliverPolicy   `json:\"deliver_policy\"`\n\tOptStartSeq     uint64          `json:\"opt_start_seq,omitempty\"`\n\tOptStartTime    *time.Time      `json:\"opt_start_time,omitempty\"`\n\tAckPolicy       AckPolicy       `json:\"ack_policy\"`\n\tAckWait         time.Duration   `json:\"ack_wait,omitempty\"`\n\tMaxDeliver      int             `json:\"max_deliver,omitempty\"`\n\tBackOff         []time.Duration `json:\"backoff,omitempty\"`\n\tFilterSubject   string          `json:\"filter_subject,omitempty\"`\n\tFilterSubjects  []string        `json:\"filter_subjects,omitempty\"`\n\tReplayPolicy    ReplayPolicy    `json:\"replay_policy\"`\n\tRateLimit       uint64          `json:\"rate_limit_bps,omitempty\"` // Bits per sec\n\tSampleFrequency string          `json:\"sample_freq,omitempty\"`\n\tMaxWaiting      int             `json:\"max_waiting,omitempty\"`\n\tMaxAckPending   int             `json:\"max_ack_pending,omitempty\"`\n\tFlowControl     bool            `json:\"flow_control,omitempty\"`\n\tHeadersOnly     bool            `json:\"headers_only,omitempty\"`\n\n\t// Pull based options.\n\tMaxRequestBatch    int           `json:\"max_batch,omitempty\"`\n\tMaxRequestExpires  time.Duration `json:\"max_expires,omitempty\"`\n\tMaxRequestMaxBytes int           `json:\"max_bytes,omitempty\"`\n\n\t// Push based consumers.\n\tDeliverSubject string        `json:\"deliver_subject,omitempty\"`\n\tDeliverGroup   string        `json:\"deliver_group,omitempty\"`\n\tHeartbeat      time.Duration `json:\"idle_heartbeat,omitempty\"`\n\n\t// Inactivity threshold duration for both ephemeral and durable consumers.\n\t// Tracks continuous server runtime; reinitializes upon server start or\n\t// leadership acquisition to allow disconnected clients time to reconnect.\n\tInactiveThreshold time.Duration `json:\"inactive_threshold,omitempty\"`"
+        },
+        {
+          "startLine": 350,
+          "endLine": 363,
+          "text": "}\n\n// AckPolicy determines how the consumer should acknowledge delivered messages.\ntype AckPolicy int\n\nconst (\n\t// AckNone requires no acks for delivered messages.\n\tAckNone AckPolicy = iota\n\t// AckAll when acking a sequence number, this implicitly acks all sequences below this one as well.\n\tAckAll\n\t// AckExplicit requires ack or nack for all messages.\n\tAckExplicit\n\t// AckFlowControl functions like AckAll, but acks based on responses to flow control.\n\tAckFlowControl"
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "path": "LICENSE",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/LICENSE",
+      "apiUrl": "https://api.github.com/repos/nats-io/nats-server/contents/LICENSE?ref=a0385c9af342ffae6df28999b77a85de5423d3d6",
+      "gitBlobSha": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64",
+      "bytes": 11357,
+      "excerpts": [
+        {
+          "startLine": 1,
+          "endLine": 9,
+          "text": "                                 Apache License\n                           Version 2.0, January 2004\n                        http://www.apache.org/licenses/\n\n   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION\n\n   1. Definitions.\n\n      \"License\" shall mean the terms and conditions for use, reproduction,"
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "NATS positions the server as a communications system for services and devices.",
+      "sourceId": "S1",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/README.md",
+      "locator": "lines 5\u201312; lines 73\u201376",
+      "evidenceType": "source report",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No latency or operational-simplicity measurement."
+    },
+    {
+      "id": "C2",
+      "claim": "JetStream configuration exposes memory/store limits, storage location and synchronization controls.",
+      "sourceId": "S2",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/jetstream.go",
+      "locator": "lines 38\u201355; lines 68\u201377",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Configuration fields alone do not prove persistence behavior under failure."
+    },
+    {
+      "id": "C3",
+      "claim": "StreamConfig exposes retention, storage, replicas, age/byte limits and duplicate window.",
+      "sourceId": "S3",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/stream.go",
+      "locator": "lines 50\u201371; lines 875\u2013878",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No complete validation or replication protocol audit."
+    },
+    {
+      "id": "C4",
+      "claim": "ConsumerConfig exposes ack policy/wait, backoff, max delivery and pending limits.",
+      "sourceId": "S4",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/consumer.go",
+      "locator": "lines 89\u2013123; lines 350\u2013363",
+      "evidenceType": "direct code observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "No client/server delivery experiment."
+    },
+    {
+      "id": "C5",
+      "claim": "The source license is Apache 2.0.",
+      "sourceId": "S5",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/LICENSE",
+      "locator": "lines 1\u20139",
+      "evidenceType": "direct license observation",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "Not a full dependency or trademark audit."
+    },
+    {
+      "id": "C6",
+      "claim": "Acknowledging a message cannot by itself prove an external business effect is exactly-once.",
+      "sourceId": "S4",
+      "url": "https://github.com/nats-io/nats-server/blob/a0385c9af342ffae6df28999b77a85de5423d3d6/server/consumer.go",
+      "locator": "lines 89\u2013123; lines 350\u2013363",
+      "evidenceType": "reviewer analysis",
+      "confidence": "High for the retained passage; adoption implications are qualified analysis.",
+      "limitation": "General application-boundary reasoning; no claim that JetStream lacks its own delivery features."
+    }
+  ]
+}

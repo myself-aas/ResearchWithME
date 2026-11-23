@@ -1,0 +1,62 @@
+{
+  "scope": "Local source inventory derivation, targeted chart rendering, offline review preparation, focused TypeScript and preview HTTP. No upstream product execution or publication.",
+  "skillCommand": "npx skills use \"https://github.com/andy-spike/skills\" --skill \"recharts\"",
+  "skillExitCode": 0,
+  "skillOutputReadCompletely": true,
+  "supportingFilesDirectory": "/tmp/skills-use-oaTG1x/recharts",
+  "chartCount": 10,
+  "groups": 50,
+  "countedPaths": 18392,
+  "offlineReviewTests": {
+    "command": "npm run reme:test",
+    "passed": 58,
+    "failed": 0
+  },
+  "chartTests": {
+    "command": "npm run article:test:charts",
+    "passed": 51,
+    "failed": 0,
+    "environment": "Vitest/jsdom. Actual Recharts SVGs tested at simulated 360px width; no real browser or visual inspection."
+  },
+  "focusedTypecheck": {
+    "passed": true,
+    "scope": [
+      "components/charts/ChartBlock.tsx",
+      "components/charts/ChartDataTable.tsx",
+      "components/charts/ResearchChart.tsx",
+      "lib/charts/spec.ts",
+      "tools/review-preview/main.tsx",
+      "tools/review-preview/dynamic.tsx"
+    ],
+    "fullApplication": false
+  },
+  "preparationCheck": "passed for batch, Airflow and GTA6",
+  "articleStructureCheck": "passed for all 12 drafts",
+  "syntaxAndDiffChecks": "passed",
+  "preview": {
+    "port": 4173,
+    "httpStatus": 200,
+    "productionReader": false,
+    "published": false
+  },
+  "dependencyScope": {
+    "method": "Isolated selective npm install under /tmp/reme-chart-deps; ignored local node_modules links only. No project dependency declarations or lockfile changed.",
+    "versions": {
+      "react": "19.3.1",
+      "react-dom": "19.3.1",
+      "recharts": "3.11.0",
+      "vitest": "3.2.4",
+      "jsdom": "26.1.0",
+      "typescript": "5.9.3",
+      "vite": "7.3.8"
+    }
+  },
+  "unverified": [
+    "Full-app lint/typecheck/test/build with locked dependencies",
+    "Real mobile/desktop browser behavior and visual/accessibility audit",
+    "Production HTML/Markdown parity, JSON-LD, canonical/sitemap, deployment and indexing",
+    "Product benchmarks, upstream test results, legal suitability and security assurance"
+  ],
+  "cmsWrites": false,
+  "published": false
+}
