@@ -4,7 +4,7 @@ import { cx as cn } from './cx';
 import Pressable, { type PressableProps } from '@/components/motion/Pressable';
 
 type ButtonVariant = 'primary' | 'secondary' | 'destructive' | 'ghost' | 'link';
-type ButtonSize = 'sm' | 'md' | 'lg';
+type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary: 'bg-action-primary text-on-primary hover:bg-action-primary-hover active:bg-action-primary-pressed border-action-primary',
@@ -18,9 +18,12 @@ const SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: 'min-h-9 px-3 text-xs',
   md: 'min-h-11 px-6 text-sm',
   lg: 'min-h-12 px-6 text-base',
+  icon: 'min-h-11 min-w-11 px-0',
 };
 
 export interface ButtonProps extends Omit<PressableProps, 'feedback'> {
+  /** React 19 ref-as-prop — points at the underlying <button>. */
+  ref?: React.Ref<HTMLButtonElement>;
   variant?: ButtonVariant;
   size?: ButtonSize;
   feedback?: 'squash' | 'lift' | 'none';
@@ -41,12 +44,14 @@ export function Button({
   disabled,
   className,
   children,
+  ref,
   ...props
 }: ButtonProps) {
   const isDisabled = disabled || loading;
   
   return (
     <Pressable
+      ref={ref}
       type="button"
       feedback={feedback}
       disabled={isDisabled}

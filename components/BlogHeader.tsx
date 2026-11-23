@@ -35,7 +35,7 @@ import BrandLogo from './BrandLogo';
 import MobileBottomNav from './layout/MobileBottomNav';
 import MobileNavDrawer from './layout/MobileNavDrawer';
 import { Header } from '@/components/ui/header-2';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/primitives';
 import { MenuToggleIcon } from '@/components/ui/menu-toggle-icon';
 
 const CommandPalette = dynamic(() => import('./search/CommandPalette'), { ssr: false });
@@ -395,7 +395,7 @@ export default function BlogHeader({
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
               aria-controls={menuId}
-              className="min-h-11 min-w-11 rounded-full lg:hidden"
+              className="lg:hidden"
               aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
             >
               <AnimatePresence initial={false} mode="wait">
