@@ -5,6 +5,37 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Honest engagement layer for writers. A profile-strength meter (`components/engagement/
+  ProfileStrength.tsx`) shows on `/dashboard/access` and on the empty-draft state of
+  `/dashboard/(studio)/writing`, computed from real signals (email confirmed, identity linked,
+  application approved, first draft saved, first submission, first article published) with
+  unit-tested weights; at 100 it says "You're publishable" instead of asking for more.
+  `ReadingStreak` and `GoalRing` are built and tested but deliberately unmounted — no
+  reading-events source or goal exists to feed them.
+- Mobile bottom navigation gains an optional `newInLibrary` badge on the Library tab. It renders
+  only when handed a real count of 1 or more (99+ cap, `aria-label` "Library: N new since your
+  last visit"); `0`, `null` and an absent prop render no badge at all. No count source is wired
+  yet — the badge lights up when one ships.
+- `Field` (`components/primitives/Field.tsx`): accessible label + hint + error composite
+  (ReactNode slots, textual "(required)" marker). `Button` now supports `loading`
+  (`aria-busy`, spinner, disabled while busy).
+- One `components/ui` barrel re-exporting the seven composites (Alert, DataTable, Dialog,
+  EmptyState, RouteSkeleton, Skeleton, Toast).
+- CI guards: `lib/__tests__/forbidden-copy.test.ts` (confirmshame, fake scarcity, win-back copy
+  and `!!` in buttons), `lib/__tests__/notification-copy.test.ts` (scenario-registry emails
+  scanned for banned phrases; non-transactional mail must name a concrete value; subjects ≤ 78
+  chars; preheader ≠ subject), and `.github/PULL_REQUEST_TEMPLATE.md` carrying the unit-mismatch
+  anchoring check regex cannot see. `lib/engagement/copy.ts` holds the reviewed strings.
+
+### Changed
+- Design-system refactor execution (2026-11-23). The raw-palette migration was verified complete:
+  the only raw family left in `app/`/`components/` is the allowlisted modal scrim. Sign-in and
+  session chrome now provably render nothing for signed-out visitors and nothing pre-hydration;
+  humanizer copy was removed from the value-first framing of signup and the access page;
+  ContributeWizard defaults are honest (no pre-filled topics/tags/AI provider, `aiHumanReviewed`
+  starts false). See `docs/design-system/migration-plan.md` §Execution 2026-11-23.
+
 ### Removed
 - Product storefront, checkout/payment webhooks, entitlement code, sales navigation,
   downloadable product bundles and their build/test pipeline. Account API keys,

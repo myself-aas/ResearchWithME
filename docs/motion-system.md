@@ -341,6 +341,21 @@ Manual review lives at `/motion` (`noindex`), linked from the footer.
 
 ---
 
+## 11a. Engagement components (2026-11-23)
+
+The honest engagement layer follows the same motion rules; nothing here fires from a
+fabricated signal:
+
+- `components/engagement/ProfileStrength.tsx` — server-rendered meter; value comes from
+  `lib/engagement/signals.ts` (unit-tested weights). No animation: the width is set once from
+  the signal, and `data-complete` (100) swaps the CTA for the publishable state.
+- `components/engagement/ReadingStreak.tsx` / `GoalRing.tsx` — built, tested, and **deliberately
+  not mounted**: no reading-events or goal source exists. Streak copy lives in
+  `lib/engagement/copy.ts` and states the real rule for an empty streak.
+- `components/layout/MobileBottomNav.tsx` — `newInLibrary` badge renders only when passed a real
+  count ≥ 1; `null`/`0`/absent renders no badge. Count-change motion, when a source ships, must
+  stay ≤ the attention budget above.
+
 ## 12. Lottie micro-interactions
 
 Four decorative state glyphs, each bound to one §9 pattern. They supplement

@@ -48,6 +48,8 @@ Retired routes (`/papers`, `/paper/[slug]`, `/editions`) return 404; their surfa
 
 Unknown routes and render failures have dedicated surfaces (`app/not-found.tsx`, `app/error.tsx`, `app/global-error.tsx`). Data-loading states live inside the studio pages: a global `loading.tsx` boundary would start streaming before a missing article could return a real 404.
 
+Sign-in surfaces — the mobile bottom navigation in particular — are signed-in chrome: signed-out visitors and the pre-hydration paint render nothing, and engagement badges appear only with a real count.
+
 ## API discovery
 
 Agent authentication is published, not implied: [`/auth.md`](https://researchwith.me/auth.md) is the walkthrough, [`/.well-known/oauth-protected-resource`](https://researchwith.me/.well-known/oauth-protected-resource) is the RFC 9728 protected-resource document, and [`/.well-known/oauth-authorization-server`](https://researchwith.me/.well-known/oauth-authorization-server) (also served at [`/.well-known/openid-configuration`](https://researchwith.me/.well-known/openid-configuration)) relays Supabase's authorization-server metadata plus an Auth.md `agent_auth` block. The relay falls back to a captured copy of that document when the round-trip fails, and labels which it served. No ResearchWithMe API validates a bearer token, so the documents say so and advertise no scopes. See [`docs/oauth-discovery.md`](./docs/oauth-discovery.md).

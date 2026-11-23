@@ -242,6 +242,11 @@ Gradient text, decorative glass or blur, nested cards, a coloured
 "technical" costume, unicode glyphs standing in for an icon system, or a kicker
 above a heading.
 
+Engagement chrome never fabricates a number. A badge, meter, streak or ring renders
+only when fed a real count from a source that exists; `null`, `0` and "source absent"
+are the same UI: nothing. Sign-in and session chrome render nothing for signed-out
+visitors and nothing before hydration.
+
 Three copy categories are banned outright (the enforced guard is
 `lib/__tests__/forbidden-copy.test.ts`; the reviewed strings live in
 `lib/engagement/copy.ts`):
