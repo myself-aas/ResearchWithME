@@ -16,6 +16,22 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+const session = vi.hoisted(() => {
+  const signedIn = {
+    id: 'reader-1',
+    email: 'reader@example.com',
+    name: 'Reader',
+    isEditor: false,
+    providers: ['email'],
+    identities: [],
+  };
+  return { user: signedIn as typeof signedIn | null, hydrated: true, signedIn };
+});
+
+vi.mock('@/lib/supabase/use-session', () => ({
+  useSession: () => ({ user: session.user, hydrated: session.hydrated, signOut: vi.fn() }),
+}));
+
 vi.mock('next/navigation', () => ({
   usePathname: () => currentPath,
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
@@ -28,6 +44,8 @@ describe('v3.4 mobile-first shell & contribution wizard', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
     currentPath = '/feed';
+    session.user = session.signedIn;
+    session.hydrated = true;
     container = document.createElement('div');
     document.body.append(container);
     root = createRoot(container);
@@ -52,6 +70,17 @@ describe('v3.4 mobile-first shell & contribution wizard', () => {
     expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
 
     currentPath = '/editor/draft-1';
+    act(() => root.render(<MobileBottomNav />));
+    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
+  });
+
+  it('never renders the bottom nav for signed-out visitors or before hydration', () => {
+    session.user = null;
+    act(() => root.render(<MobileBottomNav />));
+    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
+
+    session.user = session.signedIn;
+    session.hydrated = false;
     act(() => root.render(<MobileBottomNav />));
     expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
   });
