@@ -37,7 +37,7 @@ const ACCESS_LABEL: Record<string, string> = {
 export default function SourceCard({ source, sourceVersion, permissions, loading, error, onInspect, onAddEvidence, onRequestReview }: SourceCardProps) {
   if (loading) {
     return (
-      <div className={`rounded-md border ${sourceCardTokens.border} ${sourceCardTokens.background} p-4`} aria-label="Loading source">
+      <div role="status" aria-busy="true" className={`rounded-md border ${sourceCardTokens.border} ${sourceCardTokens.background} p-4`} aria-label="Loading source">
         <Skeleton lines={3} />
       </div>
     );
