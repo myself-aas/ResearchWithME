@@ -51,3 +51,12 @@ Classification legend (per brief): **Retain** · **Retokenize** · **Refactor** 
 ## Target components with no current equivalent (new, staged per migration plan)
 
 `SourceCard`, `EvidenceCard` (first reference component), `ClaimCard`, `Citation` (component form of `/cite`), `TrustAssessmentSummary`, `ReviewThread`, `IntegrityNotice`, `AIProvenanceDisclosure`, `ResearchWorkspace`, `ProvenanceGraph` (+ list alternative), `DataTable`, `SearchResult`, `FilterPanel`, accessible primitives (Dialog, Sheet, Toast, Alert, Skeleton, EmptyState), command palette.
+
+## UI composites (`components/ui/`), decided 2026-11-23
+
+| Component | Disposition | Notes |
+|---|---|---|
+| `components/ui/Alert.tsx` · `DataTable.tsx` · `Dialog.tsx` · `EmptyState.tsx` · `RouteSkeleton.tsx` · `Skeleton.tsx` · `Toast.tsx` | Retain — the seven composites | Re-exported from `components/ui/index.ts` (stable names). Token-driven; remedi-native; five-state contract documented in DESIGN.md. |
+| `components/ui/header-2.tsx` (`Header`) | Retain — BlogHeader shell | Live consumer: `components/BlogHeader.tsx` (plus `lib/__tests__/branding-header.test.tsx`). Already semantic-token driven (`border-line`, `bg-canvas/95`, `shadow-floating`, lucide icons); kept rather than deleted. Not part of the composite barrel. |
+| `components/ui/menu-toggle-icon.tsx` | Retain — BlogHeader shell | Lucide `Menu`/`X` swap; paired with `header-2.tsx`. |
+| `components/ui/use-scroll.ts` | Retain — BlogHeader shell | Threshold-scroll hook consumed by `header-2.tsx`. |
