@@ -12,6 +12,7 @@ export { Button, type ButtonProps } from './Button';
 export { Divider, type DividerProps } from './Divider';
 export { Badge, type BadgeProps } from './Badge';
 export { Input, type InputProps } from './Input';
+export { Field, type FieldProps } from './Field';
 export { Select, type SelectProps, type SelectOption } from './Select';
 export { Textarea, type TextareaProps } from './Textarea';
 export { Link, type LinkProps, type LinkVariant } from './Link';
