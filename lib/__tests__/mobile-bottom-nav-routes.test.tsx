@@ -75,3 +75,31 @@ it('derives the selected destination on the first render and retains the profile
   renderRoute('/profile/reader');
   expect(container.querySelector('a[aria-current="page"]')?.getAttribute('href')).toBe('/profile/reader');
 });
+
+const renderWithLibraryCount = (count: number | null | undefined) =>
+  act(() =>
+    root.render(
+      <MemoryRouter>
+        <MobileBottomNav profileHref="/profile/reader" newInLibrary={count} />
+      </MemoryRouter>,
+    ),
+  );
+
+it('signed-in with newInLibrary={3} renders a labelled library badge', () => {
+  renderWithLibraryCount(3);
+  const badge = container.querySelector('[role="img"][aria-label^="Library"]');
+  expect(badge?.getAttribute('aria-label')).toBe('Library: 3 new since your last visit');
+  expect(badge?.textContent).toBe('3');
+});
+
+it('newInLibrary caps the display at 99+', () => {
+  renderWithLibraryCount(150);
+  expect(container.querySelector('[role="img"][aria-label^="Library"]')?.textContent).toBe('99+');
+});
+
+it('0, null and undefined render no badge node at all', () => {
+  for (const count of [0, null, undefined] as const) {
+    renderWithLibraryCount(count);
+    expect(container.querySelector('[role="img"][aria-label^="Library"]')).toBeNull();
+  }
+});

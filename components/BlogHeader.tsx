@@ -448,6 +448,9 @@ export default function BlogHeader({
       userName={user?.name}
       onSignOut={signOut}
     />
+    {/* `newInLibrary` is deliberately NOT wired: no server-side "added since
+        your last visit" count exists yet. Passing null keeps the badge hidden
+        — never a fabricated count. It lights up when a real source ships. */}
     <MobileBottomNav
       profileHref={isSignedIn ? '/dashboard/account' : '/login?next=%2Fdashboard%2Faccount'}
     />

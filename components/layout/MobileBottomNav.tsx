@@ -12,6 +12,12 @@ import { useSession } from '@/lib/supabase/use-session';
 
 interface MobileBottomNavProps {
   profileHref?: string;
+  /**
+   * Honest count of library items added since the reader's last acknowledgement.
+   * `null`/`undefined`/`0` renders no badge at all — the Library tab shows a
+   * badge only when a real count exists (see the signed-in Library surface).
+   */
+  newInLibrary?: number | null;
 }
 
 /**
@@ -95,6 +101,8 @@ interface BottomNavTabProps {
   pressed: boolean;
   accent?: boolean;
   reducedMotion: boolean;
+  /** Real unread count for the tab; `null`/undefined renders nothing. */
+  badge?: number | null;
   onPressStart: (index: number) => void;
   onPressEnd: () => void;
 }
@@ -108,9 +116,13 @@ function BottomNavTab({
   pressed,
   accent = false,
   reducedMotion,
+  badge,
   onPressStart,
   onPressEnd,
 }: BottomNavTabProps) {
+  const badgeCount = typeof badge === 'number' && Number.isFinite(badge) ? Math.floor(badge) : 0;
+  const showBadge = badgeCount >= 1;
+  const badgeText = badgeCount > 99 ? '99+' : String(badgeCount);
   return (
     <li className="min-w-0" role="presentation">
       <Link
@@ -129,6 +141,16 @@ function BottomNavTab({
           accent ? 'text-brand font-semibold' : active ? 'text-ink' : 'text-ink-secondary',
         )}
       >
+        {showBadge ? (
+          <span
+            role="img"
+            aria-label={`${label}: ${badgeCount} new since your last visit`}
+            className="absolute right-1.5 top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1 font-sans text-xs font-bold leading-none text-on-primary"
+          >
+            {badgeText}
+          </span>
+        ) : null}
+
         {/* Icon wrapper with spring animations */}
         <AnimatePresence mode="wait">
           <m.span
@@ -194,6 +216,7 @@ function BottomNavTab({
 
 export default function MobileBottomNav({
   profileHref = '/login?next=%2Fdashboard%2Faccount',
+  newInLibrary = null,
 }: MobileBottomNavProps) {
   const pathname = usePathname() || '/';
   const reducedMotion = useReducedMotion();
@@ -272,6 +295,7 @@ export default function MobileBottomNav({
             pressed={pressedIndex === index}
             accent={'accent' in item && item.accent}
             reducedMotion={reducedMotion}
+            badge={item.href === '/library' ? newInLibrary : null}
             onPressStart={handlePressStart}
             onPressEnd={handlePressEnd}
           />
