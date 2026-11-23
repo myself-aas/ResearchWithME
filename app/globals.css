@@ -489,9 +489,9 @@ html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :wh
   color: var(--color-stone-300) !important;
 }
 
-/* Dark surfaces use the dark focus token (indigo-300). */
+/* Dark surfaces use the shared focus token (switches with the theme). */
 html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(a, button, input, select, textarea, summary):focus-visible {
-  outline-color: var(--color-indigo-300);
+  outline-color: var(--color-focus);
 }
 
 html .shadow-xs,
