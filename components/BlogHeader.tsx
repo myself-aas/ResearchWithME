@@ -22,7 +22,6 @@ import {
   Search,
   Settings,
   Sparkles,
-  Tag,
   User,
   Users,
 } from 'lucide-react';
@@ -59,7 +58,6 @@ const primaryNav = [
   { href: '/library', label: 'Library', icon: Library, match: (path: string) => path.startsWith('/library') },
   { href: '/authors', label: 'Writers', icon: Users, match: (path: string) => path.startsWith('/author') || path.startsWith('/profile/') },
   { href: '/assistant', label: 'Assistant', icon: Sparkles, match: (path: string) => path.startsWith('/assistant') },
-  { href: '/pricing', label: 'Products', icon: Tag, match: (path: string) => path.startsWith('/pricing') },
 ];
 
 export default function BlogHeader({

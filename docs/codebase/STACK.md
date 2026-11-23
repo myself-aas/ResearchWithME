@@ -1,5 +1,7 @@
 # Technology Stack
 
+> 2026-11-20 update: storefront, payment integration, and product CLI bundles removed. File counts and earlier validation results below remain historical snapshot measurements; see `docs/commerce-retirement.md`.
+
 > Snapshot updated post-remediation on branch `arena/d0437759-researchwithme` (`2026-11-17`, 973 tracked files).
 
 ## Core Sections (Required)
@@ -8,7 +10,7 @@
 
 | Area | Value | Evidence |
 |------|-------|----------|
-| Primary language | TypeScript `5.9.3` (strict mode; ES2022 target); Python `3.11+` stdlib CLI for `products/` | `package.json`, `tsconfig.json`, `products/build.py` |
+| Primary language | TypeScript `5.9.3` (strict mode; ES2022 target) | `package.json`, `tsconfig.json` |
 | Runtime + version | Node.js `>=20.9.0` (CI pins `22`; sandbox `v22.22.3`); Cloudflare Workers (`compatibility_date: 2026-10-23`, flags `nodejs_compat`, `global_fetch_strictly_public`) | `package.json`, `.github/workflows/quality.yml`, `wrangler.jsonc`, `workers/assistant/wrangler.jsonc` |
 | Package manager | `npm` (`packageManager: npm@10.9.8`); `preinstall` enforces npm-only via `scripts/ensure-npm.mjs` | `package.json`, `package-lock.json`, `scripts/ensure-npm.mjs` |
 | Module/build system | Root package `"type": "commonjs"` with TypeScript `moduleResolution: "bundler"`; Next.js `15.5.28` + `@opennextjs/cloudflare` `1.20.14` (sole production web runtime) + `workers/assistant/` RPC Worker; pure Node `.mjs` token pipeline (`tokens/`) | `package.json`, `tsconfig.json`, `next.config.ts`, `open-next.config.ts`, `wrangler.jsonc`, `tokens/scripts/build.mjs` |
@@ -22,7 +24,7 @@ High-impact runtime dependencies declared in `package.json` (plus `cloudflare-pa
 | `next` | `^15.5.28` | Full-stack React App Router framework, RSC, Route Handlers, middleware, `next/font/local`, ISR/tags | `package.json`, `next.config.ts`, `app/` |
 | `react` / `react-dom` | `19.2.1` | UI runtime (Server + Client Components, React SSR in `cloudflare-pages/`) | `package.json`, `app/layout.tsx`, `cloudflare-pages/src/entry-server.tsx` |
 | `@opennextjs/cloudflare` | `^1.20.14` | Adapts Next.js App Router build to Cloudflare Workers + KV incremental/tag caches + static asset binding | `package.json`, `open-next.config.ts`, `wrangler.jsonc` |
-| `@supabase/supabase-js` / `@supabase/ssr` | `^2.118.0` / `^0.12.7` | PostgreSQL CMS/profiles/applications/billing/API-keys/LinkedIn data access, SSR cookie sessions, OAuth & Storage | `package.json`, `lib/supabase/`, `lib/cms/supabase-store.ts` |
+| `@supabase/supabase-js` / `@supabase/ssr` | `^2.118.0` / `^0.12.7` | PostgreSQL CMS/profiles/applications/API-keys/LinkedIn data access, SSR cookie sessions, OAuth & Storage | `package.json`, `lib/supabase/`, `lib/cms/supabase-store.ts` |
 | `@google/genai` | `^2.4.0` | Gemini LLM client (`gemini-2.5-flash` default) for `/api/research-assistant`, `/api/v1/assistant/answers`, MCP `ask_archive`, and `workers/assistant` | `package.json`, `lib/assistant/service.ts`, `workers/assistant/src/index.ts` |
 | `resend` | `^6.37.0` | Transactional email API (`send`, template sync, retry wrapper) | `package.json`, `lib/email/send.ts`, `scripts/sync-templates.ts` |
 | `@react-email/components` / `@react-email/render` | `^1.0.12` / `^2.2.0` | React JSX transactional email templates (`emails/*.tsx`) rendered to HTML/plain text | `package.json`, `emails/`, `lib/email/scenarios.ts` |
@@ -54,7 +56,6 @@ High-impact runtime dependencies declared in `package.json` (plus `cloudflare-pa
 | `react-email` (`^6.11.8`) | Local email preview server (`npm run email:dev`) | `package.json`, `emails/` |
 | `tsx` (`^4.21.0`) | TypeScript script execution (`scripts/*.ts`) | `package.json`, `scripts/` |
 | `tokens/scripts/*.mjs` | Zero-dependency design-token compiler, validator, WCAG AA contrast gate, and consumer checker | `tokens/scripts/`, `package.json` |
-| `products/build.py` (Python 3 stdlib) | Packages free and paid Python CLI research toolkits into `.zip` archives | `products/build.py`, `products/tests/` |
 | `supabase` CLI + `squirrel` (`squirrel.toml`) | Local DB/migration workflow and site SEO audit config (not installed in `package.json`) | `supabase/config.toml`, `squirrel.toml` |
 
 ### 4) Key Commands
@@ -109,7 +110,6 @@ npm run worker:assistant:deploy  # wrangler deploy -c workers/assistant/wrangler
 - **Environment variables referenced in production code (39 distinct `process.env.*` keys across `app/`, `lib/`, `scripts/`, `cloudflare-pages/`):**
   - *Public / Site:* `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_ALLOW_LOCAL_CMS` (dev-only).
   - *AI & Assistant API:* `GEMINI_API_KEY`, `GEMINI_MODEL`, `AI_GATEWAY_BASE_URL` *(undocumented in `.env.example`)*, `API_BRIDGE_SECRET` *(undocumented in `.env.example`)*, `API_FREE_MONTHLY_REQUESTS` *(undocumented in `.env.example`)*.
-  - *Billing (Lemon Squeezy):* `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_STORE_ID`, `LEMONSQUEEZY_WEBHOOK_SECRET`, `LEMONSQUEEZY_VARIANT_TEARDOWN`, `LEMONSQUEEZY_VARIANT_STAT_TABLES`, `LEMONSQUEEZY_VARIANT_COPILOT` *(retained in code for dormant subscription tier)*, `BILLING_BRIDGE_SECRET`.
   - *Email (Resend):* `RESEND_API_KEY`, `RESEND_FROM`, `RESEND_REPLY_TO`, `RESEND_WEBHOOK_SECRET`, `RESEND_SUPPORT_INBOX`, `EMAIL_ALLOW_LOCAL_TEST`.
   - *CMS / Revalidation / Local FS:* `REVALIDATE_SECRET`, `RWM_DATA_DIR`, `ALLOW_LOCAL_CMS`.
   - *Agent Identity & DNS:* `WEB_BOT_AUTH_PRIVATE_JWK`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`.
@@ -143,7 +143,6 @@ npm run worker:assistant:deploy  # wrangler deploy -c workers/assistant/wrangler
 - `scripts/check-production-env.mjs`
 - `scripts/check-budgets.mjs`
 - `tokens/scripts/build.mjs`
-- `products/build.py`
 
 ## Extended Sections (Optional)
 
@@ -165,4 +164,3 @@ npm run worker:assistant:deploy  # wrangler deploy -c workers/assistant/wrangler
 | Production Worker (primary) | `wrangler.jsonc` (`researchwithme`) | Hosted Supabase Postgres (`bxyjjbclaklzjxeumeat`) + Storage | Shared `RATE_LIMIT_KV` + `API_BURST_LIMITER` (API v1) | `WORKERS_CI=1 npm run build` / `npm run deploy` |
 | Parallel Pages Mirror (secondary) | `cloudflare-pages/wrangler.jsonc` (`researchwithme-pages`) | Hosted Supabase Postgres via REST/SDK | Shared `RATE_LIMIT_KV` (`8d2dc8f0b1bb4839962ae63df8296b31`) | `npm run build:pages` + `wrangler pages deploy` |
 | Isolated Assistant Worker (unwired) | `workers/assistant/wrangler.jsonc` (`researchwithme-assistant`) | Stateless RPC (receives article corpus from caller) | Delegated to caller | `npm run worker:assistant:check` |
-| Static Token & Product Pipelines | `tokens/scripts/*.mjs`, `products/build.py` | Local filesystem (`tokens/generated/`, `products/downloads/`) | N/A | `npm run tokens:build && npm run tokens:check`, `python3 products/build.py` |

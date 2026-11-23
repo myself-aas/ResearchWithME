@@ -67,7 +67,6 @@ const errors = (...codes: number[]): Record<string, ApiResponse> =>
 const session: Security = [{ SessionCookie: [] }];
 const apiKey: Security = [{ ApiKeyBearer: [] }];
 const webhookSecret: Security = [{ RevalidateSecret: [] }];
-const billingWebhook: Security = [{ BillingWebhookSignature: [] }];
 const articleId = path('id', 'Published article ID or slug.');
 const authorId = path('id', 'Published author profile ID.');
 const cmsId = path('id', 'Editorial record ID.');
@@ -264,17 +263,6 @@ export const API_OPERATIONS: ApiOperation[] = [
     responses: { 200: json('Revalidation result.', object({ revalidated: boolean, table: { type: ['string', 'null'] }, paths: strings, now: integer }, ['revalidated', 'table', 'paths', 'now'])), ...errors(401, 429, 500, 503) },
   },
   {
-    group: 'billing', method: 'post', path: '/api/billing/checkout', operationId: 'createBillingCheckout',
-    summary: 'Start a checkout',
-    description: 'Creates a Lemon Squeezy checkout for one of this site’s products and returns its URL for the on-site overlay. The variant is resolved server-side from configuration: the request names a product, never a variant or a price. Rate limited to ten attempts a minute.',
-    security: session,
-    requestBody: jsonBody(object({ product: { type: 'string', enum: ['teardown', 'stat-tables'] } }, ['product']), 'The product to buy.'),
-    responses: {
-      201: json('The checkout to open.', object({ url: text }, ['url'])),
-      ...errors(400, 401, 403, 415, 429, 502, 503),
-    },
-  },
-  {
     group: 'assistant-api', method: 'post', path: '/api/v1/assistant/answers', operationId: 'createAssistantAnswer',
     summary: 'Ask the Assistant with an API key',
     description: 'Answers a question from published reviews only and cites them. Each answer uses one unit of the account’s monthly allowance; a failed request uses none. Send an Idempotency-Key header (8 to 128 characters from A-Z, a-z, 0-9, underscore, hyphen) to make a retry safe: the same key and body return the stored answer for 24 hours and are counted once. The burst limit is approximate; the monthly allowance is exact.',
@@ -311,29 +299,6 @@ export const API_OPERATIONS: ApiOperation[] = [
     security: session,
     parameters: [path('keyId', 'API key ID.')],
     responses: { 204: { description: 'Revoked.' }, ...apiErrors(400, 401, 404, 503) },
-  },
-  {
-    group: 'entitlement', method: 'get', path: '/api/billing/entitlement', operationId: 'getBillingEntitlement',
-    summary: 'Read the signed-in account plan',
-    description: 'Returns the caller’s plan, subscription state, purchase credits, and the current period end. Uncacheable: a purchase is visible on the next request. Test-mode purchases are excluded.',
-    security: session,
-    responses: {
-      200: json('The caller’s entitlement.', object({ entitlement: ref('Entitlement') }, ['entitlement'])),
-      ...errors(401, 500, 503),
-    },
-  },
-  {
-    group: 'webhooks', method: 'post', path: '/api/webhooks/lemonsqueezy', operationId: 'receiveLemonSqueezyWebhook',
-    summary: 'Receive a Lemon Squeezy billing event',
-    description: 'Lemon Squeezy posts orders and subscription changes here. The X-Signature header is an HMAC-SHA256 of the raw request body and is the only credential; there is no session. Unhandled event names and unattributable purchases are acknowledged with 200 and recorded as ignored, so the sender stops retrying. Replayed event ids are acknowledged without being applied twice.',
-    security: billingWebhook,
-    responses: {
-      200: json('The event was applied, was a duplicate, or was ignored.', object({
-        received: boolean,
-        outcome: { type: 'string', enum: ['applied', 'duplicate', 'ignored'] },
-      }, ['received', 'outcome'])),
-      ...errors(400, 401, 413, 500, 503),
-    },
   },
   // ── v3.4 Research Network APIs ──────────────────────────────────────────
   {
@@ -2114,12 +2079,6 @@ const schemas: Record<string, Schema> = {
     key: { type: 'string', pattern: '^rwm_[A-Za-z0-9_-]{43}$' },
   }, ['id', 'name', 'prefix', 'createdAt', 'lastUsedAt', 'revokedAt', 'key']),
   AssistantCitation: object({ id: text, title: text, author: text, category: text }, ['id', 'title', 'author', 'category']),
-  Entitlement: object({
-    plan: { type: 'string', enum: ['none', 'copilot', 'purchases'] },
-    status: { type: 'string', enum: ['none', 'on_trial', 'active', 'paused', 'past_due', 'unpaid', 'cancelled', 'expired'] },
-    aiCredits: integer,
-    currentPeriodEnd: { type: ['string', 'null'] },
-  }, ['plan', 'status', 'aiCredits']),
   CmsPostInput: object(cmsPostProperties, ['title', 'authorId']),
   CmsPostPatch: object(cmsPostProperties),
   CmsPost: object({ ...cmsPostProperties, id: text, authorId: { type: ['string', 'null'] }, likes: integer, readTime: text, publishedAt: { type: ['string', 'null'] }, insertedAt: text, updatedAt: text }, ['id', 'title', 'slug', 'status']),
@@ -2165,10 +2124,6 @@ export const OPENAPI_DOCUMENT = {
       },
       CronSecret: {
         type: 'http', scheme: 'bearer', description: 'The configured CRON_SECRET sent as a bearer token.',
-      },
-      BillingWebhookSignature: {
-        type: 'apiKey', in: 'header', name: 'x-signature',
-        description: 'Hex HMAC-SHA256 of the raw request body, signed with the Lemon Squeezy webhook signing secret.',
       },
     },
     schemas,

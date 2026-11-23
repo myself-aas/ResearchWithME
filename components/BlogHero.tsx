@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { ArrowRight, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { LayoutGroup } from 'motion/react';
 import * as m from 'motion/react-m';
 import { ArticleFormat, CATEGORIES } from '@/lib/blog-data';
@@ -224,19 +223,6 @@ export default function BlogHero({
                 <p className="mt-6 max-w-xs font-sans text-xs leading-relaxed text-ink-secondary">
                   Zero paywalls, behavioural ad trackers, or reading-flow pop-ups. Primary artifacts first.
                 </p>
-                <div className="mt-6 max-w-xs border-t border-line pt-5">
-                  <Text as="p" variant="eyebrow" color="secondary">Products</Text>
-                  <p className="mt-1 font-sans text-sm leading-relaxed text-ink">
-                    The teardown method, written up to use on your own code.
-                  </p>
-                  <Link
-                    href="/pricing"
-                    className="mt-2 inline-flex min-h-11 items-center gap-1.5 font-sans text-sm font-semibold text-brand underline-offset-4 hover:underline"
-                  >
-                    See products and pricing
-                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                  </Link>
-                </div>
               </aside>
             </div>
           </div>

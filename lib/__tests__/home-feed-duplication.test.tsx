@@ -38,7 +38,6 @@ vi.mock('@/components/BlogFooter', () => ({ default: () => <div data-testid="foo
 vi.mock('@/components/BlogHero', () => ({ default: () => <div data-testid="hero" /> }));
 vi.mock('@/components/FeaturedArticle', () => ({ default: () => <div data-testid="featured" /> }));
 vi.mock('@/components/AuthorSpotlight', () => ({ default: () => <div data-testid="spotlight" /> }));
-vi.mock('@/components/billing/ServicesShowcase', () => ({ default: () => <div data-testid="services" /> }));
 vi.mock('@/components/v34/ResearchNetworkBridge', () => ({
   ResearchNetworkBridge: () => <div data-testid="bridge" />,
 }));

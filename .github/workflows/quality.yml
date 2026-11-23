@@ -23,8 +23,6 @@ jobs:
         run: npm run lint && npm run typecheck && npm run test && npm run impeccable:source
       - name: Protocol, DNS-AID, WebMCP, and Assistant Worker checks
         run: npm run dns:test && npm run webmcp:test && npm run worker:assistant:check
-      - name: Python CLI product tests
-        run: python3 -m unittest discover -s products/tests -p 'test_*.py'
       - name: reme offline draft & v3.4 backfill dry-run checks
         run: npm run reme:check && npm run reme:test && node scripts/v34-backfill-reconcile.mjs --dry-run
       - name: Production build

@@ -54,4 +54,3 @@ workers/assistant/worker-configuration.d.ts
 *.whl
 __pycache__/
 *.py[cod]
-products/downloads/*.zip

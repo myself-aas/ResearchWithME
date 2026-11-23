@@ -1,5 +1,7 @@
 # Frontend refactoring plan
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 **Implementation-ready first slice:** [Editorial foundation and reader](superpowers/plans/2026-11-15-editorial-foundation-and-reader.md). This document remains the broader roadmap; later subsystems need separate implementation plans.
 
 ## Goal and boundaries

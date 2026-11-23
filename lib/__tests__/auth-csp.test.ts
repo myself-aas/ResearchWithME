@@ -50,10 +50,10 @@ describe('CSP for the Supabase auth SDK', () => {
     expect(directives(await policy()).get('connect-src')).toContain('https:');
   });
 
-  it('keeps the Lemon Squeezy overlay working and the default closed', async () => {
+  it('keeps retired payment hosts blocked and the default closed', async () => {
     const map = directives(await policy());
-    expect(map.get('script-src')).toContain('https://app.lemonsqueezy.com');
-    expect(map.get('frame-src')).toContain('https://*.lemonsqueezy.com');
+    expect(map.get('script-src')).not.toContain('https://app.lemonsqueezy.com');
+    expect(map.get('frame-src')).toEqual(["'self'"]);
     expect(map.get('default-src')).toEqual(["'self'"]);
     expect(map.get('frame-ancestors')).toEqual(["'none'"]);
     expect(map.get('form-action')).toEqual(["'self'"]);

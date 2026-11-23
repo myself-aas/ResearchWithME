@@ -1,5 +1,7 @@
 # Codebase Concerns (Post-Remediation Status)
 
+> 2026-11-20 update: storefront, payment integration, and product CLI bundles removed. File counts and earlier validation results below remain historical snapshot measurements; see `docs/commerce-retirement.md`.
+
 > Post-remediation snapshot on branch `arena/d0437759-researchwithme` (built on commit `027c746bbbdf3f7a3871c0a7e2b4ecaadec066c9`, verified `2026-11-17`).
 > All critical/high findings and all 9 owner-confirmed architectural decisions from the initial `027c746` audit have been remediated and verified across lint, typecheck, unit/route tests, production build, performance budgets, and release gates.
 
@@ -25,10 +27,9 @@
 |----------|---------|-------|--------------------|
 | **Medium** | **Live Postgres migration replay not yet wired into GitHub Actions** | `supabase/migrations/` (`17` migrations), `supabase/tests/` | SQL syntax/ordering/RLS policies are audited and fixed in source, but CI does not yet spin up Docker/PGlite to execute all 17 migrations + `pgTAP` tests automatically. Wire `npx supabase test db --local` or PGlite runner in CI. |
 | **Medium** | **Operational secret provisioning before deploying LinkedIn + Assistant Worker** | `wrangler.jsonc`, `.env.example`, `supabase/migrations/20261116000200_linkedin_editorial_bridge.sql` | Before deploying the updated main Worker to production: (1) deploy `npm run worker:assistant:deploy` and set its `GEMINI_API_KEY` secret so the `ASSISTANT` binding resolves; (2) apply migrations `20261115000100`–`20261116000200` and seed `private.linkedin_settings` (`bridge_secret`), `LINKEDIN_BRIDGE_SECRET`, `LINKEDIN_WEBHOOK_SECRET`, `ENCRYPTION_SECRET`, `CRON_SECRET`, and LinkedIn OAuth secrets; (3) configure the Supabase Database Webhook on `public.posts` to sign requests with `LINKEDIN_WEBHOOK_SECRET`. |
-| **Low** | **Pre-launch "Co-pilot" subscription scaffolding** | `lib/billing/store.ts`, `supabase/migrations/20261113000300_billing.sql`, `.env.example` | Intentionally retained for upcoming launch (`billing_subscriptions`, `LEMONSQUEEZY_VARIANT_COPILOT`); expose in `lib/billing/catalogue.ts` when ready to sell. |
 | **Low** | **In-memory catalogue load on assistant/search queries** | `lib/cms/catalogue.ts`, `lib/assistant/service.ts` | Works cleanly for current editorial archive size (30s ISR cache), but should move to Postgres full-text search or `pgvector` as the archive scales to hundreds of long-form articles. |
-| **Low** | **Large monolithic form/UI modules (>700 LOC)** | `components/cms/PostEditor.tsx`, `components/motion/MotionLab.tsx`, `app/write/page.tsx`, `products/build.py`, `app/globals.css`, `lib/dashboard/metrics.ts` | Candidate for incremental decomposition during future feature work. |
-| **Low** | **Direct route-handler test gaps on remaining legacy CRUD routes** | `app/api/cms/posts/[id]`, `app/api/cms/comments*`, `app/api/comments`, `app/api/dashboard/applications*` | Core public/billing/API v1/LinkedIn/protocol routes now have direct tests in `test/next/`; expanding `test/next/` to remaining CRUD endpoints will close the final coverage gap. |
+| **Low** | **Large monolithic form/UI modules (>700 LOC)** | `components/cms/PostEditor.tsx`, `components/motion/MotionLab.tsx`, `app/write/page.tsx`, `app/globals.css`, `lib/dashboard/metrics.ts` | Candidate for incremental decomposition during future feature work. |
+| **Low** | **Direct route-handler test gaps on remaining legacy CRUD routes** | `app/api/cms/posts/[id]`, `app/api/cms/comments*`, `app/api/comments`, `app/api/dashboard/applications*` | Core public/API v1/LinkedIn/protocol routes now have direct tests in `test/next/`; expanding `test/next/` to remaining CRUD endpoints will close the final coverage gap. |
 
 ### 3) Resolved Owner Decisions (`[ASK USER]` — 0 Open)
 
@@ -36,7 +37,7 @@
 2. **`[RESOLVED]` LinkedIn Automation:** Hardened as a first-class feature strictly for **editorial posts** (`publication_type = 'editorial'`, `status = 'published'`).
 3. **`[RESOLVED]` Cloudflare Architecture:** Standardized on root OpenNext Worker (`wrangler.jsonc`); `cloudflare-pages/` retired.
 4. **`[RESOLVED]` Brand Typography & Palette:** Standardized on `Plus Jakarta Sans` (WOFF2) + `#F8F9FA` canvas / `#005BBF` cobalt; docs and comments reconciled.
-5. **`[RESOLVED]` Subscriptions ("Co-pilot"):** Retained `billing_subscriptions` scaffolding for upcoming launch.
+5. **`[RETIRED 2026-11-20]` Product sales:** Storefront, payment integration, and subscription runtime removed; archived financial records are owner-only after the retirement migration.
 6. **`[RESOLVED]` Editor Unification:** Standardized exclusively on `platejs` (`PlateBodyEditor.tsx`); `@mdxeditor/editor` and `MarkdownEditor.tsx` removed.
 7. **`[RESOLVED]` Budget-Friendly Rate Limiting:** Moved off `RATE_LIMIT_KV` onto native Cloudflare Workers Rate Limiting binding (`APP_RATE_LIMITER`, zero KV writes).
 8. **`[RESOLVED]` Assistant Worker (`workers/assistant/`):** Enabled `ASSISTANT` service binding in `wrangler.jsonc` and gated `worker:assistant:check` in CI.

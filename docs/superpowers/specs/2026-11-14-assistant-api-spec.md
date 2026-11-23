@@ -1,5 +1,7 @@
 # Spec: Assistant API (V1)
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 Status: **Accepted on 2026-11-14 and implemented; the migration is applied, the bridge secret is not yet set.** The owner delegated the open questions to best practice; see "Decisions on the open questions".
 Date: 2026-11-14
 Plan: `docs/superpowers/plans/2026-11-14-assistant-api.md`

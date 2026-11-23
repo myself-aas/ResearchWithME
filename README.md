@@ -29,7 +29,6 @@ Node 20.9 or newer. `package-lock.json` is the only lockfile, and CI installs wi
 | `/assistant` | Operate | Catalog-grounded research assistant with inline citations |
 | `/cite` | Operate | APA, MLA, Chicago, IEEE, BibTeX, RIS citation builder |
 | `/bookmarks` | Operate | Reading list with Markdown export and clear confirmation |
-| `/pricing` | Persuade | The two paid products and what stays free; checkout through the Lemon Squeezy overlay |
 | `/dashboard/account` | Operate | Your plan, status, purchases, and anything still on sale |
 | `/about` / `/contact` / `/privacy` | Read | Mission, contact channels, reader privacy policy |
 | `/login` | Operate | Email / OAuth sign-in; demo-mode setup guide when Supabase is not configured |
@@ -166,7 +165,7 @@ Full setup, the blueprint-to-code map, the data model, and the security notes ar
 - There is no open manuscript intake: the platform publishes explanations written by approved writers. A reader applies at `/dashboard/access` (GitHub or ORCID identity), an editor approves, and the writer publishes through `/write` and the studio.
 - Writer access is a real, server-enforced decision: an applicant connects GitHub or ORCID with Supabase `linkIdentity`, an editor approves the row in `public.author_applications`, and approval writes the `public.editors` entry. There is no browser-side role and nothing is stored in `localStorage`.
 - The research assistant answers from the local catalog. With `GEMINI_API_KEY` set it asks Gemini to summarize the same records; without a key it returns a deterministic cited answer.
-- The Assistant API (`/api/v1/assistant/answers`, API keys, burst limit, monthly allowance, MCP tool `ask_archive`) is shipped but not switched on. It needs `supabase/migrations/20261114000200_api_keys.sql` (applied to production on 2026-11-14), its own `API_BRIDGE_SECRET` (Worker secret plus a digest row in `private.api_settings`; not the billing secret), and, optionally, the `researchwithme-assistant` Worker (`npm run worker:assistant:deploy`, then uncomment the `ASSISTANT` binding in `wrangler.jsonc`). Without the bridge secret or the migration the API answers `503`. See [`docs/assistant-api.md`](./docs/assistant-api.md).
+- The Assistant API (`/api/v1/assistant/answers`, API keys, burst limit, monthly allowance, MCP tool `ask_archive`) is shipped but not switched on. It needs `supabase/migrations/20261114000200_api_keys.sql` (applied to production on 2026-11-14), its own `API_BRIDGE_SECRET` (Worker secret plus a digest row in `private.api_settings`), and, optionally, the `researchwithme-assistant` Worker (`npm run worker:assistant:deploy`, then uncomment the `ASSISTANT` binding in `wrangler.jsonc`). Without the bridge secret or the migration the API answers `503`. See [`docs/assistant-api.md`](./docs/assistant-api.md).
 
 Environment variables:
 
@@ -180,13 +179,6 @@ Environment variables:
 | `API_BRIDGE_SECRET` | Optional. Secret. Required for the Assistant API; its SHA-256 digest is stored in `private.api_settings`. See `docs/assistant-api.md`, "Owner: deploy". |
 | `API_FREE_MONTHLY_REQUESTS` | Optional. Assistant API answers included per account per UTC month. Defaults to `100`. |
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata, sitemap, robots, and origin checks. Defaults to `https://researchwith.me`. |
-| `LEMONSQUEEZY_API_KEY` | Optional. Secret. Creates checkouts. Without it `/api/billing/checkout` answers `503`. |
-| `LEMONSQUEEZY_WEBHOOK_SECRET` | Optional. Secret. Verifies webhook signatures; without it every delivery is refused. |
-| `BILLING_BRIDGE_SECRET` | Optional. Secret. Also stored (as a SHA-256 digest) in `private.billing_settings`; see `docs/billing.md` §3. |
-| `LEMONSQUEEZY_STORE_ID` | Optional. Store the checkouts belong to. |
-| `LEMONSQUEEZY_VARIANT_TEARDOWN` | Optional. Variant for the $19 teardown product. |
-| `LEMONSQUEEZY_VARIANT_STAT_TABLES` | Optional. Variant for the $5 Statistical Table Generator. |
-| `LEMONSQUEEZY_TEST_MODE` | Optional. `1` marks checkouts and stored rows as test data; leave unset in production. |
 
 ## Project layout
 

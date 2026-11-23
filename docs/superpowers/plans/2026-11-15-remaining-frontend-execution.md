@@ -1,5 +1,7 @@
 # Remaining Frontend Execution Implementation Plan
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. The user previously approved inline execution because this environment has no subagent tool; do not claim independent review unless a real independent reviewer is available.
 
 **Goal:** Finish the remaining editorial frontend work without changing factual content, authentication, storage, billing, publishing or routing contracts, and record exactly what was and was not verified.

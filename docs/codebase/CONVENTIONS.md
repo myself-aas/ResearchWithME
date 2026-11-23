@@ -1,5 +1,7 @@
 # Coding Conventions
 
+> 2026-11-20 update: storefront, payment integration, and product CLI bundles removed. File counts and earlier validation results below remain historical snapshot measurements; see `docs/commerce-retirement.md`.
+
 > Snapshot verified against commit `027c746bbbdf3f7a3871c0a7e2b4ecaadec066c9` across 399 production TS/TSX files (`app/`, `components/`, `lib/`, `cloudflare-pages/src/`, `workers/`).
 
 ## Core Sections (Required)
@@ -11,7 +13,6 @@
 | Files (React components) | `PascalCase.tsx` inside `components/` (`96/120` default-exported) | `PostEditor.tsx`, `ResearchAssistant.tsx`, `PlateBodyEditor.tsx` | `components/cms/PostEditor.tsx`, `components/editor/PlateBodyEditor.tsx` |
 | Files (App Router) | Next.js reserved lowercase names inside `kebab-case` segments | `page.tsx`, `layout.tsx`, `route.ts`, `[slug]`, `(studio)` | `app/post/[slug]/page.tsx`, `app/dashboard/(studio)/layout.tsx` |
 | Files (Domain/utils/scripts) | `kebab-case.ts` / `kebab-case.mjs` | `rate-limit-core.ts`, `oauth-discovery.ts`, `check-budgets.mjs` | `lib/rate-limit-core.ts`, `scripts/check-budgets.mjs` |
-| Files (Python CLI) | `kebab-case/` package dirs with `snake_case.py` modules | `products/src/statistical-table-generator/apa_tables.py` | `products/src/`, `products/tests/` |
 | Files (SQL migrations) | 14-digit UTC timestamp `YYYYMMDDHHMMSS_snake_case.sql` (2 violations: 8-digit `20261115_linkedin_*.sql`) | `20261116000100_editorial_publication_type.sql` | `supabase/migrations/` |
 | Functions / methods | `camelCase`; React hooks prefixed `use*`; boolean predicates prefixed `is*`/`can*`/`has*` | `getCachedArticleCatalogue`, `useSession`, `isSameOrigin`, `canEditVisually` | `lib/cms/catalogue.ts`, `lib/supabase/use-session.ts`, `lib/cms/http.ts` |
 | Types / interfaces | `PascalCase`; `export interface` preferred for object shapes (`249` interfaces vs `134` type aliases) | `export interface CmsPost`, `export type BlogCategory` | `lib/cms/types.ts`, `lib/blog-data.ts` |
@@ -44,7 +45,7 @@
 - **Alias vs relative import policy:** `@/*` (mapped to repository root `./*` in `tsconfig.json` and `vitest.config.ts`) dominates across boundaries (`823` `@/` imports vs `303` relative imports). Relative `./` imports are standard within the same domain directory (e.g., `lib/cms/http.ts` importing `./errors` and `./types`).
 - **Server/client boundary directives:**
   - `85` files begin with `'use client';` across `app/`, `components/`, `lib/`, and `cloudflare-pages/src/`.
-  - `14` server-only modules begin with `import 'server-only';` (`lib/api/{answers,authenticate,key-store,ledger,session}.ts`, `lib/author-directory.ts`, `lib/billing/store.ts`, `lib/cms/{auth,authors,catalogue,read,store}.ts`, `lib/dashboard/data.ts`, `lib/supabase/server.ts`).
+  - `14` server-only modules begin with `import 'server-only';` (`lib/api/{answers,authenticate,key-store,ledger,session}.ts`, `lib/author-directory.ts`, `lib/cms/{auth,authors,catalogue,read,store}.ts`, `lib/dashboard/data.ts`, `lib/supabase/server.ts`).
 - **Public exports / barrel policy:** Selective barrels exist for UI primitive families (`components/primitives/index.ts` — 34 imports; `components/workflows/index.ts` — 7 imports; `components/lottie/index.ts` — 3 imports). Most components (`96/120` `.tsx`) use `export default`; `lib/` domain modules use named exports almost exclusively.
 - **Class-name helper split (minor inconsistency):** Both `@/lib/utils` (`cn`, 18 importers) and `components/primitives/cx.ts` (`cx`, 13 importers) coexist; `lib/format.ts` also exports `cn` (0 importers).
 
@@ -54,7 +55,7 @@
   - *CMS Domain (`lib/cms/errors.ts`, `lib/cms/http.ts`):* Typed error class hierarchy (`CmsError` base with `status` + `code` -> `CmsValidationError` 400 + `fieldErrors`, `CmsAuthorError` 422 + `fieldErrors`, `CmsConflictError` 409, `CmsNotFoundError` 404, `CmsUnavailableError` 503), translated uniformly via `errorResponse(error)`.
   - *Metered API v1 (`lib/api/errors.ts`):* Structured JSON envelope `{ error: { code, message, details? } }` with machine-readable codes (`UNAUTHORIZED`, `RATE_LIMITED`, `QUOTA_EXCEEDED`, `INVALID_REQUEST`, `IDEMPOTENCY_CONFLICT`, `UPSTREAM_ERROR`, etc.) and `X-Request-Id`.
   - *Route Handlers (`app/api/**`):* Return `NextResponse.json({ error: '...' }, { status })` with `Cache-Control: no-store, max-age=0` (`noStoreHeaders()`), never leaking stack traces to clients (exceptions: `app/api/webhooks/article-published/route.ts` and `app/api/cron/linkedin-batch/route.ts` expose `error.message` directly in 500 JSON responses).
-  - *Pure validators/parsers:* Return discriminated union `{ ok: true, value } | { ok: false, ... }` (`readJsonBody`, `normalizeCommentInput`, `authenticateApiKey`, `verifyLemonSqueezySignature`).
+  - *Pure validators/parsers:* Return discriminated union `{ ok: true, value } | { ok: false, ... }` (`readJsonBody`, `normalizeCommentInput`, `authenticateApiKey`).
 - **Logging style:** Standard `console.error` / `console.warn` / `console.log` (`53` production TS/TSX files call `console.*`); no structured JSON logger (Pino/Winston) or external telemetry SDK is installed.
 - **Sensitive-data redaction rules:**
   - API keys (`rwm_` + 43 base64url chars) are shown once on creation (`app/api/account/api-keys/route.ts`), stored only as SHA-256 hashes + first 12-character prefix (`lib/api/keys.ts`).
@@ -71,7 +72,6 @@
   - Zero-dependency Node built-in runner tests: `test/*.test.mjs` (`5` files using `node:test` + `node:assert/strict`).
   - Playwright E2E specs: `test/e2e/*.spec.ts` (`12` files) + `test/browser/visual-parity.spec.ts`.
   - Database tests: `supabase/tests/*.test.sql` (pgTAP, `2` files) + `supabase/tests/*.check.mjs` (PGlite, `3` files).
-  - Python CLI tests: `products/tests/test_*.py` (`6` `unittest` files).
 - **Environment opt-in:** Default Vitest environment is `node` (`vitest.config.ts`); DOM/React tests opt in per file via `// @vitest-environment jsdom` (`29` files).
 - **Mocking strategy norm:** `vi.mock(...)` for server/network modules (`33` files), `vi.stubEnv(...)` + `vi.resetModules()` + temp `RWM_DATA_DIR` for route-handler isolation (`test/next/support.ts`), and dependency injection (`fetcher`, `store`, `now`) in pure modules (`lib/dashboard/metrics.ts`, `scripts/dns-aid-cloudflare.mjs`).
 - **Coverage expectation:** No coverage provider or minimum threshold is configured in `vitest.config.ts` or `.github/workflows/quality.yml` (`[TODO]`: establish formal coverage thresholds if desired).

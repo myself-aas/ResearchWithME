@@ -5,7 +5,7 @@ tools: ['*']
 model: ['gemini/Google/models/gemini-2.5-pro', 'gemini/Google/models/gemini-2.5-flash']
 model-policy: preferred
 reasoning-effort: high
-skills: ['impeccable', 'SVG-Logo-Designer', 'agent-customization', 'supabase', 'supabase-postgres-best-practices', 'hyperframes', 'hyperframes-cli', 'hyperframes-registry', 'media-use', 'figma', 'remotion-to-hyperframes', 'slideshow']
+skills: ['impeccable', 'agent-customization', 'supabase', 'supabase-postgres-best-practices', 'hyperframes', 'hyperframes-cli', 'hyperframes-registry', 'media-use', 'figma', 'remotion-to-hyperframes', 'slideshow']
 deferred-tool-loading: true
 strict-tools-list: false
 include-custom-instructions: true
@@ -286,9 +286,6 @@ npx hyperframes catalog       # Browse registry blocks
 
 ## 🛠️ AVAILABLE SKILLS
 
-### Project Skills (`.agents/skills/`)
-- **SVG-Logo-Designer** — Create professional SVG logos from descriptions
-
 ### Plugin Skills
 - **impeccable** — UI/UX design, review, polish for frontend surfaces
 - **agent-customization** — Create/update VS Code agent customization files
@@ -319,7 +316,6 @@ npx hyperframes catalog       # Browse registry blocks
 ### When to Use Each Skill
 | Task | Skill |
 |------|-------|
-| Create logo/brand identity | SVG-Logo-Designer |
 | UI/UX design, review, polish | impeccable |
 | Python type annotations | python-add-type-annotations |
 | Python stubs for third-party | python-write-stubs |

@@ -1,5 +1,7 @@
 # Editorial refresh — initial shared layer
 
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
+
 The user-supplied Google Editorial Clean brief is the design direction, not a claim that these values reproduce blog.google. This first batch updates shared light semantic colors and Daisy aliases, the interface and reading font stacks, shared button primitives, Pages fallback colors, and the social image palette. Plus Jakarta Sans is self-hosted from the Google Fonts repository under its accompanying OFL license. The later user-supplied Gemini Hydrogen Editorial brief informs the dark semantic palette.
 
 The brief specifies both `primary: #005bbf` and `#1a73e8` for primary actions. This batch uses `#005bbf` for action text and fills to maintain stronger contrast across neutral surfaces. Its named radii and descriptions also disagree (for example, `md` is 0.75rem in the tokens but described as 8px); buttons use the unambiguous full-pill treatment. Default controls keep a 44px minimum target rather than the 40px suggested in the brief.

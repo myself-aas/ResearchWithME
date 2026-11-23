@@ -1,4 +1,6 @@
 ---
+
+> Historical record: product sales and billing were retired on 2026-11-20. Commerce references below describe the former implementation, not current requirements. See `docs/commerce-retirement.md`.
 name: ResearchWithME Master Refactor and Development Plan
 version: 3.4.0
 status: finalized-implementation-plan

@@ -126,33 +126,6 @@ Generated from `app/**/page.tsx` and `app/**/layout.tsx` files.
 1. `CitationTool` with initial articles
 **Metadata:** Dynamic based on `?article=` param
 
-### `/pricing` — Products & Pricing (`app/pricing/page.tsx`)
-**Layout:** Root layout
-**Grid/Columns:** 
-- Header: Single column, max-width `max-w-3xl`
-- Free section: `grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8` (icon + text)
-- Products: `grid max-w-3xl gap-6` (single column stack)
-- Free downloads: `grid max-w-3xl gap-6` (single column stack)
-- How it works: `ol grid gap-8 md:grid-cols-3` (3 columns on md+)
-- FAQ: `divide-y divide-line border-y border-line` (single column accordion)
-- Why we sell: Single column card
-
-**Sections:**
-1. JSON-LD OfferCatalog schema
-2. `BlogHeader`
-3. Hero: "The archive is free. Explore our products." (max-w-3xl)
-4. Free section (checklist) — `grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8`
-5. Product cards (BILLING_PRODUCTS) — `grid max-w-3xl gap-6`:
-   - Name, outcome, price, summary, includes, bestFor, delivery, caveat
-   - CheckoutButton or Sign in to buy
-6. Free downloads section (FREE_DOWNLOADS) — `grid max-w-3xl gap-6`
-7. How buying works (3 steps) — `ol grid gap-8 md:grid-cols-3`
-8. FAQ (details/summary) — `divide-y divide-line border-y border-line`
-9. Why we sell section — Single column card
-10. `LemonSqueezyScript`
-11. `BlogFooter`
-**Metadata:** "Products and pricing"
-
 ### `/bookmarks` — Reading List (`app/bookmarks/page.tsx`)
 **Layout:** Root layout
 **Grid/Columns:** Single column, full-width (`BookmarksPanel` handles internal layout)
@@ -254,27 +227,9 @@ Generated from `app/**/page.tsx` and `app/**/layout.tsx` files.
 **Metadata:** Robots noindex/nofollow/nocache
 
 ### `/dashboard/account` — Your Account (`app/dashboard/account/page.tsx`)
-**Layout:** Root layout (outside studio group)
-**Grid/Columns:** Single column, max-width `max-w-4xl` (`mx-auto w-full max-w-4xl flex-1 px-4 pb-20 pt-10 sm:px-6 lg:px-8`)
-- Plan section: `grid gap-4 sm:grid-cols-3` (3 columns for Status/Plan/Credits)
-- Purchases: Single column
-- API Keys: Single column (`ApiKeys` component)
-- Buy section: `grid gap-4 sm:grid-cols-2` (2 columns for products)
-
-**Sections:**
-1. `BlogHeader`
-2. Header with "Customize settings" link
-3. Plan section (if entitlement available):
-   - `grid gap-4 sm:grid-cols-3` (Status, Plan, Co-pilot credits)
-   - Status note (alert if past_due/unpaid)
-   - Period end date
-4. Purchases section (single column)
-5. API Keys section (single column):
-   - `ApiKeys` component (if available)
-4. Buy section (if entitlement available):
-   - `grid gap-4 sm:grid-cols-2` (2 columns for products)
-5. `LemonSqueezyScript`
-6. `BlogFooter`
+**Layout:** Shared dashboard shell
+**Sections:** Free API keys and monthly usage; profile, writer identity, and settings links.
+**Failure states:** Key loading and usage fail independently; profile links remain available.
 **Metadata:** Robots noindex/nofollow/nocache
 
 ### `/dashboard/access` — Apply to Write (`app/dashboard/access/page.tsx`)
@@ -490,7 +445,6 @@ app/layout.tsx (Root) — Single column, full-width
 ├── app/author/[id]/page.tsx (Author) — Single column, max-w-5xl
 ├── app/assistant/page.tsx (Assistant) — Single column
 ├── app/cite/page.tsx (Citation) — Single column
-├── app/pricing/page.tsx (Pricing) — Mixed: hero 1col, free 2col, products 1col, downloads 1col, steps 3col md+
 ├── app/bookmarks/page.tsx (Bookmarks) — Single column
 ├── app/contact/page.tsx (Contact) — Single column
 ├── app/about/page.tsx (About) — Single column
@@ -530,12 +484,11 @@ app/layout.tsx (Root) — Single column, full-width
 | Author | `AuthorProfileCard`, `AuthorArchiveLayout`, `BlogHeader`, `BlogFooter` | Single column max-w-5xl |
 | Assistant | `AssistantPanel` | Single column |
 | Cite | `CitationTool` | Single column |
-| Pricing | `CheckoutButton`, `LemonSqueezyScript`, `BILLING_PRODUCTS`, `FREE_DOWNLOADS` | Mixed: hero 1col, free 2col, products 1col, downloads 1col, steps 3col md+ |
 | Bookmarks | `BookmarksPanel` | Single column |
 | Login | `LoginForm`, `BlogHeader`, `BlogFooter` | 2-col lg (hero + form), 1col mobile |
 | Write | `PostEditor` (via `PlateBodyEditor`), `LazyImageCropDialog`, `BlogHeader`, `BlogFooter` | Single column max-w-5xl, form fields sm:grid-cols-2 |
 | Dashboard Reading | `DashboardHeader`, `KpiGrid`, `ReadingListKpi`, `ReadNextPanel`, `DashboardFooter` | KpiGrid 3col, content 5col lg (3+2) |
-| Dashboard Account | `ApiKeys`, `CheckoutButton`, `LemonSqueezyScript`, `BlogHeader`, `BlogFooter` | Single column max-w-4xl, plan 3col, buy 2col |
+| Dashboard Account | `ApiKeys` | Single column max-w-4xl, free API access and profile |
 | Dashboard Access | `AuthorApplication`, `ProfilePhotoCard`, `PageState` | Single column max-w-3xl |
 | Studio New | `PostEditor` | Single column |
 | Studio Writing | `DashboardHeader`, `KpiGrid`, `Alerts`, `DetailTable`, `RankedBars`, `TrendChart`, `DashboardFooter` | KpiGrid 5col, content 5col lg (3+2) |
@@ -558,7 +511,6 @@ app/layout.tsx (Root) — Single column, full-width
 | Author | `{author.name} — Specialist Reviews` | `%s | reme` | Single column max-w-5xl |
 | Assistant | (no metadata export) | — | Single column |
 | Cite | "Citation Builder — BibTeX, RIS & APA" or `Cite: {label}` | `%s | reme` | Single column |
-| Pricing | "Products and pricing" | `%s | reme` | Mixed: hero 1col, free 2col, products 1col, downloads 1col, steps 3col md+ |
 | Dashboard | Various | `%s | reme` | Various (see Dashboard section) |
 | Studio | Various | `%s | reme` | Various (see Studio section) |
 
@@ -573,7 +525,6 @@ Header (BlogHeader) — Full width, sticky top
 │   ├── Home (/)
 │   ├── Writers (/authors)
 │   ├── Assistant (/assistant)
-│   └── Products (/pricing)
 ├── Search (⌘K) — Right
 ├── Bookmarks (/bookmarks) — Right
 ├── Auth/Write CTA — Right
@@ -608,9 +559,6 @@ Footer (BlogFooter) — Full width, grid: 1col mobile, 2col md, 4col lg
 /api/cms/posts/[id] (GET, PATCH, DELETE)
 /api/cms/comments (GET, POST)
 /api/cms/comments/[id] (DELETE)
-/api/billing/checkout (POST)
-/api/billing/entitlement (GET)
-/api/webhooks/lemonsqueezy (POST)
 /api/webhooks/article-published (POST)
 /api/v1/assistant/answers (POST)
 /api/v1/usage (GET)
@@ -645,7 +593,6 @@ Footer (BlogFooter) — Full width, grid: 1col mobile, 2col md, 4col lg
 | `/author/[id]` | `app/author/[id]/page.tsx` | Root | Single column max-w-5xl |
 | `/assistant` | `app/assistant/page.tsx` | Root | Single column |
 | `/cite` | `app/cite/page.tsx` | Root | Single column |
-| `/pricing` | `app/pricing/page.tsx` | Root | Mixed: hero 1col, free 2col, products 1col, downloads 1col, steps 3col md+ |
 | `/bookmarks` | `app/bookmarks/page.tsx` | Root | Single column |
 | `/contact` | `app/contact/page.tsx` | Root | Single column |
 | `/about` | `app/about/page.tsx` | Root | Single column |

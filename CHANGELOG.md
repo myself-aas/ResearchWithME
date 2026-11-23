@@ -5,6 +5,14 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Removed
+- Product storefront, checkout/payment webhooks, entitlement code, sales navigation,
+  downloadable product bundles and their build/test pipeline. Account API keys,
+  free usage allowance, profiles, and research publishing remain available.
+- Payment-provider CSP allowances and deployment configuration. A forward database
+  migration disables legacy billing access while preserving historical records;
+  see `docs/commerce-retirement.md` for the deployment handoff.
+
 ### Changed
 - Sign-in offers Google, LinkedIn, Discord, and email/password. LinkedIn uses
   Supabase's OpenID Connect provider (`linkedin_oidc`, scopes `openid profile

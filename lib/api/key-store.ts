@@ -44,9 +44,7 @@ export class ApiStoreUnavailableError extends Error {
 }
 
 /**
- * The API's own bridge secret. Deliberately not `BILLING_BRIDGE_SECRET`: the two
- * guard different data, and sharing one would make a leak or a rotation of
- * either affect both. Empty means the database refuses every call.
+ * The API's bridge secret. Empty means the database refuses every call.
  */
 export function bridgeSecret(): string {
   return (process.env.API_BRIDGE_SECRET ?? '').trim();
