@@ -1,6 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { renderToString } from 'react-dom/server';
-import { createElement } from 'react';
 
 /**
  * SSR contract: the mobile bottom nav is signed-in chrome. Until the browser
