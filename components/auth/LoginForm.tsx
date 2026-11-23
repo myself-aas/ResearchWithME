@@ -355,6 +355,10 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         </button>
       </div>
 
+      <p className="mt-4 font-sans text-sm leading-relaxed text-ink-secondary">
+        Read open, citation-first reviews — sign in to request writer access or save drafts.
+      </p>
+
       <form onSubmit={signIn} className="mt-3 space-y-4" noValidate>
         <Field id={emailId} label="Email address" required>
           <input

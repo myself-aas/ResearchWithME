@@ -118,8 +118,9 @@ export default async function ApplyToWritePage({
           Apply to write
         </h1>
         <p className="mt-3 max-w-prose text-base leading-relaxed text-ink">
-          Signing in gives you a reader account. Publishing access is granted by the editor after a
-          short review, so every article carries a byline someone stands behind.
+          Read open, citation-first reviews — then apply to request writer access. Publishing
+          access is granted by the editor after a short review, so every article carries a byline
+          someone stands behind.
         </p>
         {signals ? <ProfileStrength signals={signals} className="mt-5 max-w-md rounded-lg border border-line bg-surface px-4 py-4" /> : null}
         {params.error === 'not-editor' && (

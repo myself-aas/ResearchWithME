@@ -78,8 +78,8 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
   const [contributionType, setContributionType] = useState<ContributionType>('paper-review');
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
-  const [topicsInput, setTopicsInput] = useState('Machine Learning, Reproducibility');
-  const [tagsInput, setTagsInput] = useState('open-science, review');
+  const [topicsInput, setTopicsInput] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
   const [blocks, setBlocks] = useState<ResearchBlock[]>([
     {
       id: 'blk-intro',
@@ -106,9 +106,9 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
 
   // AI Provenance & Retraction acknowledgement
   const [usedAi, setUsedAi] = useState(false);
-  const [aiProvider, setAiProvider] = useState('Google');
+  const [aiProvider, setAiProvider] = useState('');
   const [aiModel, setAiModel] = useState('');
-  const [aiHumanReviewed, setAiHumanReviewed] = useState(true);
+  const [aiHumanReviewed, setAiHumanReviewed] = useState(false);
   const [retractionAddressed, setRetractionAddressed] = useState(false);
 
   // Persistence & Sync state (v3.4 §11)
@@ -886,6 +886,7 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
                     <input
                     id="ai-provider"
                     type="text"
+                    placeholder="e.g. Google, Anthropic, OpenAI"
                     value={aiProvider}
                     onChange={(e) => setAiProvider(e.target.value)}
                     className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
