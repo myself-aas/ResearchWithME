@@ -14,12 +14,6 @@ import type { CmsPost, DashboardUser } from '@/lib/cms/types';
 
 vi.mock('@/components/BlogHeader', () => ({ default: () => <header /> }));
 vi.mock('@/components/BlogFooter', () => ({ default: () => <footer /> }));
-vi.mock('@/components/editor/PlateBodyEditor', () => ({
-  default: ({ value, onChange }: { value: string; onChange: (next: string) => void }) => (
-    <textarea id="post-content" value={value} onChange={(event) => onChange(event.target.value)} />
-  ),
-}));
-
 const sampleEditorialPost: CmsPost = {
   id: '42',
   title: 'Why reproducibility checklists matter now',
@@ -122,6 +116,9 @@ describe('PostEditor publication type dropdown visibility and submission', () =>
         );
       });
       expect(container.querySelector('#cms-publication-type')).toBeNull();
+      expect(container.querySelector('#post-content')?.tagName).toBe('TEXTAREA');
+      expect(container.querySelector('[contenteditable]')).toBeNull();
+      expect(container.textContent).not.toContain('Saved as Markdown');
       const publishButton = [...container.querySelectorAll('button')].find((button) =>
         button.textContent?.includes('Publish article'),
       );
@@ -173,6 +170,15 @@ describe('PostEditor publication type dropdown visibility and submission', () =>
       expect(trigger).not.toBeNull();
       expect(trigger?.getAttribute('aria-expanded')).toBe('false');
 
+      // Dashboard editing keeps source text intact without loading the MDX/Plate UI.
+      const body = `# Editorial\n\n${sampleEditorialPost.content}\n\n- Keep citations intact.`;
+      const bodyInput = container.querySelector<HTMLTextAreaElement>('#post-content')!;
+      await act(async () => {
+        Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value')!.set!.call(bodyInput, body);
+        bodyInput.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      expect(bodyInput.value).toBe(body);
+
       // Default primary button label reflects "review".
       const initialPublishButton = [...container.querySelectorAll('button')].find((button) =>
         button.textContent?.includes('Publish review'),
@@ -213,6 +219,7 @@ describe('PostEditor publication type dropdown visibility and submission', () =>
       expect(patchCall).toBeTruthy();
       const submitted = JSON.parse(String(patchCall![1]!.body));
       expect(submitted.publicationType).toBe('editorial');
+      expect(submitted.content).toBe(body);
       expect(submitted.status).toBe('published');
 
       // After publishing an editorial, the button updates to "Save editorial changes".
