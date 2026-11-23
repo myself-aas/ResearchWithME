@@ -242,6 +242,26 @@ Gradient text, decorative glass or blur, nested cards, a coloured
 "technical" costume, unicode glyphs standing in for an icon system, or a kicker
 above a heading.
 
+Engagement chrome never fabricates a number. A badge, meter, streak or ring renders
+only when fed a real count from a source that exists; `null`, `0` and "source absent"
+are the same UI: nothing. Sign-in and session chrome render nothing for signed-out
+visitors and nothing before hydration.
+
+Three copy categories are banned outright (the enforced guard is
+`lib/__tests__/forbidden-copy.test.ts`; the reviewed strings live in
+`lib/engagement/copy.ts`):
+
+- **Confirmshame** — never implies the reader is foolish for declining.
+  Accepted alternative: “Not now” / a plain decline with no adjectives.
+- **Fake scarcity** — never invents capacity or deadlines. Accepted
+  alternative: state the real reason (“we open review seats quarterly; this
+  batch is full”) or state nothing.
+- **Unit-mismatched anchoring** — “just 40% of…” where the 40% measures a
+  different unit than the thing named. Accepted alternative: quote the number
+  against the unit it actually measures, or drop the number. Regex cannot see
+  unit mismatch; this one is the PR checklist’s job (see
+  `.github/PULL_REQUEST_TEMPLATE.md`).
+
 ## Literals that are allowed (2026-11-16)
 
 Two files cannot resolve CSS variables and therefore write palette values

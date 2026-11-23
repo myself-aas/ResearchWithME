@@ -33,6 +33,7 @@ import {
 import { editorDb, type SaveState } from '@/lib/persistence/editor-db';
 import { DraftSyncCoordinator, type ConflictDetail } from '@/lib/persistence/sync-coordinator';
 import BottomSheet from '@/components/layout/BottomSheet';
+import { Field } from '@/components/primitives';
 
 interface ResolvedSourceState {
   id: string;
@@ -77,8 +78,8 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
   const [contributionType, setContributionType] = useState<ContributionType>('paper-review');
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
-  const [topicsInput, setTopicsInput] = useState('Machine Learning, Reproducibility');
-  const [tagsInput, setTagsInput] = useState('open-science, review');
+  const [topicsInput, setTopicsInput] = useState('');
+  const [tagsInput, setTagsInput] = useState('');
   const [blocks, setBlocks] = useState<ResearchBlock[]>([
     {
       id: 'blk-intro',
@@ -105,9 +106,9 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
 
   // AI Provenance & Retraction acknowledgement
   const [usedAi, setUsedAi] = useState(false);
-  const [aiProvider, setAiProvider] = useState('Google');
+  const [aiProvider, setAiProvider] = useState('');
   const [aiModel, setAiModel] = useState('');
-  const [aiHumanReviewed, setAiHumanReviewed] = useState(true);
+  const [aiHumanReviewed, setAiHumanReviewed] = useState(false);
   const [retractionAddressed, setRetractionAddressed] = useState(false);
 
   // Persistence & Sync state (v3.4 §11)
@@ -523,30 +524,28 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
           <div className="rounded-lg border border-line bg-surface p-4 sm:p-5">
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label htmlFor="source-identifier" className="block font-sans text-xs font-semibold text-ink">
-                  Source DOI / arXiv / GitHub / URL
-                </label>
-                <input
+                <Field id="source-identifier" label="Source DOI / arXiv / GitHub / URL">
+                  <input
                   id="source-identifier"
                   type="text"
                   value={sourceQuery}
                   onChange={(e) => setSourceQuery(e.target.value)}
                   placeholder="e.g. 10.48550/arXiv.2501.12948 or vllm-project/vllm"
-                  className="mt-1.5 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
-                />
+                  className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
+                  />
+                </Field>
               </div>
               <div>
-                <label htmlFor="source-title-override" className="block font-sans text-xs font-semibold text-ink">
-                  Source title (optional override)
-                </label>
-                <input
+                <Field id="source-title-override" label="Source title (optional override)">
+                  <input
                   id="source-title-override"
                   type="text"
                   value={sourceTitleOverride}
                   onChange={(e) => setSourceTitleOverride(e.target.value)}
                   placeholder="Exact paper, repository, or dataset title"
-                  className="mt-1.5 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
-                />
+                  className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink placeholder:text-ink-secondary"
+                  />
+                </Field>
               </div>
             </div>
             {sourceError ? (
@@ -588,14 +587,12 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
               <h3 className="font-sans text-sm font-semibold text-ink">Add structured evidence from this source</h3>
               <div className="mt-3 grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
                 <div>
-                  <label htmlFor="ev-locator-kind" className="block font-sans text-xs font-semibold text-ink">
-                    Locator type
-                  </label>
-                  <select
+                  <Field id="ev-locator-kind" label="Locator type">
+                    <select
                     id="ev-locator-kind"
                     value={evidenceLocatorKind}
                     onChange={(e) => setEvidenceLocatorKind(e.target.value as typeof evidenceLocatorKind)}
-                    className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                    className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
                   >
                     <option value="page">Page</option>
                     <option value="section">Section</option>
@@ -605,48 +602,46 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
                     <option value="repository">Repository</option>
                     <option value="commit">Commit</option>
                     <option value="line">Line reference</option>
-                  </select>
+                    </select>
+                  </Field>
                 </div>
                 <div>
-                  <label htmlFor="ev-locator-value" className="block font-sans text-xs font-semibold text-ink">
-                    Exact locator
-                  </label>
-                  <input
+                  <Field id="ev-locator-value" label="Exact locator">
+                    <input
                     id="ev-locator-value"
                     type="text"
                     dir="ltr"
                     value={evidenceLocatorValue}
                     onChange={(e) => setEvidenceLocatorValue(e.target.value)}
                     placeholder="e.g. p. 14, Section 4.2, Table 3, commit a1b2c3d, or L42-L58"
-                    className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                    className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
                   />
+                  </Field>
                 </div>
               </div>
               <div className="mt-3">
-                <label htmlFor="ev-statement" className="block font-sans text-xs font-semibold text-ink">
-                  Evidence finding
-                </label>
-                <textarea
+                <Field id="ev-statement" label="Evidence finding">
+                  <textarea
                   id="ev-statement"
                   rows={3}
                   value={evidenceStatement}
                   onChange={(e) => setEvidenceStatement(e.target.value)}
                   placeholder="Summarize the concrete empirical finding, measurement, or quotation…"
-                  className="mt-1 w-full rounded-md border border-line bg-canvas p-3 font-sans text-sm text-ink"
-                />
+                  className="w-full rounded-md border border-line bg-canvas p-3 font-sans text-sm text-ink"
+                  />
+                </Field>
               </div>
               <div className="mt-3">
-                <label htmlFor="ev-limitation" className="block font-sans text-xs font-semibold text-ink">
-                  Scope / limitation (optional)
-                </label>
-                <input
+                <Field id="ev-limitation" label="Scope / limitation (optional)">
+                  <input
                   id="ev-limitation"
                   type="text"
                   value={evidenceLimitation}
                   onChange={(e) => setEvidenceLimitation(e.target.value)}
                   placeholder="e.g. Tested only on English medical abstracts (n=412)"
-                  className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
-                />
+                  className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                  />
+                </Field>
               </div>
               <button
                 type="button"
@@ -676,57 +671,53 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
 
           <div className="space-y-4 rounded-lg border border-line bg-surface p-4 sm:p-5">
             <div>
-              <label htmlFor="contrib-title" className="block font-sans text-xs font-semibold text-ink">
-                Title
-              </label>
-              <input
+              <Field id="contrib-title" label="Title" required>
+                <input
                 id="contrib-title"
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Clear, specific scholarly title…"
-                className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-serif text-base text-ink"
-              />
+                className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-serif text-base text-ink"
+                />
+              </Field>
             </div>
 
             <div>
-              <label htmlFor="contrib-summary" className="block font-sans text-xs font-semibold text-ink">
-                Executive summary (min. 20 characters)
-              </label>
-              <textarea
+              <Field id="contrib-summary" label="Executive summary (min. 20 characters)" required>
+                <textarea
                 id="contrib-summary"
                 rows={3}
                 value={summary}
                 onChange={(e) => setSummary(e.target.value)}
                 placeholder="State the main question, what the evidence shows, and key boundaries…"
-                className="mt-1 w-full rounded-md border border-line bg-canvas p-3 font-sans text-sm text-ink"
-              />
+                className="w-full rounded-md border border-line bg-canvas p-3 font-sans text-sm text-ink"
+                />
+              </Field>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label htmlFor="contrib-topics" className="block font-sans text-xs font-semibold text-ink">
-                  Topics (comma separated)
-                </label>
-                <input
+                <Field id="contrib-topics" label="Topics (comma separated)">
+                  <input
                   id="contrib-topics"
                   type="text"
                   value={topicsInput}
                   onChange={(e) => setTopicsInput(e.target.value)}
-                  className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
-                />
+                  className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                  />
+                </Field>
               </div>
               <div>
-                <label htmlFor="contrib-tags" className="block font-sans text-xs font-semibold text-ink">
-                  Tags (comma separated)
-                </label>
-                <input
+                <Field id="contrib-tags" label="Tags (comma separated)">
+                  <input
                   id="contrib-tags"
                   type="text"
                   value={tagsInput}
                   onChange={(e) => setTagsInput(e.target.value)}
-                  className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
-                />
+                  className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                  />
+                </Field>
               </div>
             </div>
 
@@ -891,29 +882,28 @@ export default function ContributeWizard({ initialSource = null }: ContributeWiz
             {usedAi ? (
               <div className="grid gap-3 border-t border-line pt-3 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="ai-provider" className="block font-sans text-xs font-semibold text-ink">
-                    AI provider
-                  </label>
-                  <input
+                  <Field id="ai-provider" label="AI provider">
+                    <input
                     id="ai-provider"
                     type="text"
+                    placeholder="e.g. Google, Anthropic, OpenAI"
                     value={aiProvider}
                     onChange={(e) => setAiProvider(e.target.value)}
-                    className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                    className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
                   />
+                  </Field>
                 </div>
                 <div>
-                  <label htmlFor="ai-model" className="block font-sans text-xs font-semibold text-ink">
-                    Model name
-                  </label>
-                  <input
+                  <Field id="ai-model" label="Model name">
+                    <input
                     id="ai-model"
                     type="text"
                     value={aiModel}
                     onChange={(e) => setAiModel(e.target.value)}
                     placeholder="e.g. gemini-2.5-flash"
-                    className="mt-1 h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
+                    className="h-11 w-full rounded-md border border-line bg-canvas px-3 font-sans text-sm text-ink"
                   />
+                  </Field>
                 </div>
                 <label className="flex min-h-11 items-center gap-3 font-sans text-sm text-ink sm:col-span-2">
                   <input

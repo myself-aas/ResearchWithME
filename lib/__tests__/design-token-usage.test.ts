@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 /**
@@ -52,7 +52,16 @@ const KEYWORD_COLOURS = new Set(['transparent', 'current', 'inherit', 'none']);
 const RAW_FAMILY = /^(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|white|black)(?:-\d+)?$/;
 
 function definedColours(): Set<string> {
-  const css = readFileSync(join(root, 'app/globals.css'), 'utf8');
+  // Corpus = globals.css @theme blocks + the generated shadcn-compatible alias
+  // file. The aliases (bg-card, text-muted-foreground, …) are emitted by
+  // `npm run tokens:build` from tokens/src/component.json#shadcnAlias; they
+  // are NOT hand-maintained in globals.css. If the generated file is missing,
+  // fail with the exact remedy rather than a misleading phantom-class report.
+  const aliasesPath = join(root, 'tokens/generated/shadcn-aliases.css');
+  if (!existsSync(aliasesPath)) {
+    throw new Error('tokens/generated/shadcn-aliases.css is missing — run `npm run tokens:build` before the test suite.');
+  }
+  const css = readFileSync(join(root, 'app/globals.css'), 'utf8') + '\n' + readFileSync(aliasesPath, 'utf8');
   // daisyUI registers these semantic theme roles through its Tailwind plugin.
   const daisy = ['base-100', 'base-200', 'base-300', 'base-content', 'primary', 'primary-content'];
   return new Set([...daisy, ...[...css.matchAll(/--color-([a-z0-9-]+)\s*:/g)].map((m) => m[1])]);

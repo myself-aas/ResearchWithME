@@ -109,6 +109,24 @@ runtime, such as `` `items-${align}` ``.
 Client components with built-in label, error, and `aria-describedby` wiring. The label style is
 the product's field label (`mb-1.5 block text-sm font-medium`).
 
+`Button` accepts `loading` in addition to `disabled`: while loading the button is disabled,
+carries `aria-busy="true"`, and renders a spinner before its label. `Field` is the composite for
+any label + hint + error wiring: render the control inside and pass matching `id`; the control is
+never cloned — wire `id` / `aria-invalid` / `aria-describedby` yourself (Input/Select/Textarea
+accept them). Hint renders at `<id>-hint`, error at `<id>-error` (`role="alert"`); the required
+marker is the textual "(required)", never colour alone. `Field`'s `label`, `hint` and `error`
+accept ReactNode for composed hints (counters, inline asides).
+
+## The 2026-11-23 refactor (execution 2026-11-23)
+
+See `docs/design-system/migration-plan.md` §Execution 2026-11-23 for waves and gates. In short:
+one Button (the extra was consolidated), `Field` added to the primitive set, a five-state
+loading/empty/error/disabled/success contract for composites (route loading shells included),
+an honest engagement layer (profile-strength meter wired to real signals; reading streak and
+goal ring built but deliberately unmounted — no reading-events source exists), CI guards for
+confirmshame/fake-scarcity copy and notification copy, and the final seven-composite
+`components/ui` barrel. No raw palette classes remain outside one allowlisted modal scrim.
+
 ## How the 2026-11-12 migration was done
 
 The work was done in two codemod passes, each checked against full-page screenshots of 9 routes

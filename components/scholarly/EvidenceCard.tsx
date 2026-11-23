@@ -78,7 +78,7 @@ export default function EvidenceCard({
 }: EvidenceCardProps) {
   if (loading) {
     return (
-      <div className={`rounded-md border ${evidenceCardTokens.border} ${evidenceCardTokens.background} ${DENSITY[density]}`} aria-label="Loading evidence">
+      <div role="status" aria-busy="true" className={`rounded-md border ${evidenceCardTokens.border} ${evidenceCardTokens.background} ${DENSITY[density]}`} aria-label="Loading evidence">
         <Skeleton lines={3} />
       </div>
     );

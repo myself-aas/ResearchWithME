@@ -78,6 +78,25 @@ if (existsSync(publishedPath)) {
   for (const p of published) if (!current.has(p)) errors.push(`published semantic token removed without migration notes: ${p}`);
 }
 
+// 4. shadcnAlias contract: every alias is a {semantic.light.*} reference with a
+//    kebab-safe name. The generated tokens/generated/shadcn-aliases.css maps
+//    --color-<name> to var(--reme-<dotted-path>); this guard keeps the source
+//    honest so the generated file stays a pure projection.
+const shadcn = root.component?.shadcnAlias;
+if (shadcn !== undefined) {
+  if (shadcn === null || typeof shadcn !== 'object' || Array.isArray(shadcn)) {
+    errors.push('shadcnAlias must be an object mapping alias-name to a semantic.light.* reference');
+  } else {
+    const aliasRe = /^[a-z][a-z0-9-]*$/;
+    for (const [name, target] of Object.entries(shadcn)) {
+      if (!aliasRe.test(name)) errors.push(`shadcnAlias "${name}": alias names must match ${aliasRe}`);
+      if (typeof target !== 'string' || !/^\{semantic\.light\.[A-Za-z0-9.\-]+\}$/.test(target)) {
+        errors.push(`shadcnAlias "${name}": must be a {semantic.light.…} reference (got ${JSON.stringify(target)})`);
+      }
+    }
+  }
+}
+
 if (errors.length) {
   console.error('tokens: validate FAILED');
   for (const e of errors) console.error('  - ' + e);

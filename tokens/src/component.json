@@ -39,5 +39,21 @@
     "color": "{semantic.light.focus}",
     "width": "{primitive.focus.width}",
     "offset": "{primitive.focus.offset}"
+  },
+  "shadcnAlias": {
+    "card": "{semantic.light.surface}",
+    "card-foreground": "{semantic.light.text-primary}",
+    "border": "{semantic.light.border-subtle}",
+    "sidebar-border": "{semantic.light.border-strong}",
+    "input": "{semantic.light.border-subtle}",
+    "primary": "{semantic.light.action.primary}",
+    "primary-foreground": "{semantic.light.action.on-primary}",
+    "muted": "{semantic.light.surface-subtle}",
+    "muted-foreground": "{semantic.light.text-secondary}",
+    "accent": "{semantic.light.surface-subtle}",
+    "accent-foreground": "{semantic.light.text-primary}",
+    "background": "{semantic.light.canvas}",
+    "foreground": "{semantic.light.text-primary}",
+    "ring": "{semantic.light.focus}"
   }
 }

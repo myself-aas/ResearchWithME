@@ -33,15 +33,13 @@ import PublishSplitButton from './PublishSplitButton';
 import StatusBadge from './StatusBadge';
 import {
   fieldClass,
-  hintClass,
   inlineErrorClass,
-  labelClass,
   primaryButtonClass,
   secondaryButtonClass,
   subtleButtonClass,
   textareaClass,
 } from './styles';
-import { Text } from '@/components/primitives';
+import { Field, Text } from '@/components/primitives';
 
 const COVER_PRESETS = [
   '/images/folio-hero.jpeg',
@@ -106,16 +104,6 @@ function stateFromPost(post?: CmsPost | null): PostFormState {
     featured: post?.featured ?? false,
     artifact: post?.artifact ?? null,
   };
-}
-
-function FieldError({ id, message }: { id: string; message?: string }) {
-  if (!message) return null;
-  return (
-    <p id={id} role="alert" className={inlineErrorClass}>
-      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-      <span>{message}</span>
-    </p>
-  );
 }
 
 export default function PostEditor({
@@ -470,10 +458,13 @@ export default function PostEditor({
             The record
           </Text>
 
-          <div>
-            <label htmlFor="post-title" className={labelClass}>
-              Title
-            </label>
+          <Field
+            id="post-title"
+            label="Title"
+            required
+            hint="At least 8 characters. The title becomes the URL unless you change the slug."
+            error={fieldErrors.title}
+          >
             <input
               id="post-title"
               type="text"
@@ -486,16 +477,16 @@ export default function PostEditor({
               placeholder="What did you find, and why does it matter?"
               className={cn(fieldClass, 'h-12 font-serif text-lg', fieldErrors.title && 'border-destructive')}
             />
-            <p id="post-title-hint" className={hintClass}>
-              At least 8 characters. The title becomes the URL unless you change the slug.
-            </p>
-            <FieldError id="post-title-error" message={fieldErrors.title} />
-          </div>
+          </Field>
 
-          <div>
-            <label htmlFor="post-slug" className={labelClass}>
-              Article slug
-            </label>
+          <Field
+            id="post-slug"
+            label="Article slug"
+            hint={status === 'published'
+              ? 'Changing the URL of a published article breaks existing links.'
+              : 'Letters, numbers, and hyphens only.'}
+            error={fieldErrors.slug}
+          >
             <div className="flex">
               <span
                 aria-hidden="true"
@@ -518,18 +509,12 @@ export default function PostEditor({
                 spellCheck={false}
               />
             </div>
-            <p id="post-slug-hint" className={hintClass}>
-              {status === 'published'
-                ? 'Changing the URL of a published article breaks existing links.'
-                : 'Letters, numbers, and hyphens only.'}
-            </p>
-            <FieldError id="post-slug-error" message={fieldErrors.slug} />
-          </div>
+          </Field>
 
-          <div>
-            <label htmlFor="post-subtitle" className={labelClass}>
-              Standfirst <span className="font-normal text-ink-secondary">(optional)</span>
-            </label>
+          <Field
+            id="post-subtitle"
+            label={<>Standfirst <span className="font-normal text-ink-secondary">(optional)</span></>}
+          >
             <input
               id="post-subtitle"
               type="text"
@@ -539,12 +524,15 @@ export default function PostEditor({
               placeholder="One sentence that sets up the analysis"
               className={fieldClass}
             />
-          </div>
+          </Field>
 
-          <div>
-            <label htmlFor="post-summary" className={labelClass}>
-              Summary
-            </label>
+          <Field
+            id="post-summary"
+            label="Summary"
+            required
+            hint={<span className="flex flex-wrap justify-between gap-2"><span>Shown in the platform feed. At least 40 characters to publish.</span><span>{form.summary.length} of 1200</span></span>}
+            error={fieldErrors.summary}
+          >
             <textarea
               id="post-summary"
               rows={3}
@@ -556,12 +544,7 @@ export default function PostEditor({
               placeholder="What the review covers, what was tested, and what a reader should take away."
               className={cn(textareaClass, fieldErrors.summary && 'border-destructive')}
             />
-            <p id="post-summary-hint" className={cn(hintClass, 'flex flex-wrap justify-between gap-2')}>
-              <span>Shown in the platform feed. At least 40 characters to publish.</span>
-              <span>{form.summary.length} of 1200</span>
-            </p>
-            <FieldError id="post-summary-error" message={fieldErrors.summary} />
-          </div>
+          </Field>
         </section>
 
         <section aria-labelledby="byline-heading" className="space-y-5 p-5 sm:p-6">
@@ -574,16 +557,21 @@ export default function PostEditor({
           </p>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label htmlFor="post-author" className={labelClass}>
-                Author profile
-              </label>
+            <Field
+              id="post-author"
+              label="Author profile"
+              required
+              hint={!authorsError && authorOptions.length === 0
+                ? 'No published author profiles yet. An author has to publish their profile before they can be credited here.'
+                : undefined}
+              error={fieldErrors.authorId ?? authorsError ?? undefined}
+            >
               <select
                 id="post-author"
                 value={form.authorId}
                 onChange={(event) => update('authorId', event.target.value)}
                 aria-invalid={fieldErrors.authorId ? true : undefined}
-                aria-describedby={fieldErrors.authorId ? 'post-author-error' : undefined}
+                aria-describedby={fieldErrors.authorId || authorsError ? 'post-author-error' : undefined}
                 className={cn(fieldClass, fieldErrors.authorId && 'border-destructive')}
               >
                 {selectableAuthors.map((author) => (
@@ -592,21 +580,9 @@ export default function PostEditor({
                   </option>
                 ))}
               </select>
-              {authorsError ? (
-                <FieldError id="post-author-load-error" message={authorsError} />
-              ) : authorOptions.length === 0 ? (
-                <p className={hintClass}>
-                  No published author profiles yet. An author has to publish their profile before
-                  they can be credited here.
-                </p>
-              ) : null}
-              <FieldError id="post-author-error" message={fieldErrors.authorId} />
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="post-category" className={labelClass}>
-                Category
-              </label>
+            <Field id="post-category" label="Category">
               <select
                 id="post-category"
                 value={form.category}
@@ -619,12 +595,9 @@ export default function PostEditor({
                   </option>
                 ))}
               </select>
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="post-format" className={labelClass}>
-                Format
-              </label>
+            <Field id="post-format" label="Format">
               <select
                 id="post-format"
                 value={form.format}
@@ -637,12 +610,12 @@ export default function PostEditor({
                   </option>
                 ))}
               </select>
-            </div>
+            </Field>
 
-            <div>
-              <label htmlFor="post-tags" className={labelClass}>
-                Tags <span className="font-normal text-ink-secondary">(comma separated, up to eight)</span>
-              </label>
+            <Field
+              id="post-tags"
+              label={<>Tags <span className="font-normal text-ink-secondary">(comma separated, up to eight)</span></>}
+            >
               <input
                 id="post-tags"
                 type="text"
@@ -652,7 +625,7 @@ export default function PostEditor({
                 placeholder="GPU inference, paged attention"
                 className={fieldClass}
               />
-            </div>
+            </Field>
           </div>
         </section>
 
@@ -748,7 +721,12 @@ export default function PostEditor({
               </button>
             ))}
           </div>
-          <FieldError id="post-cover-error" message={fieldErrors.coverImage} />
+          {fieldErrors.coverImage ? (
+            <p id="post-cover-error" role="alert" className={inlineErrorClass}>
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{fieldErrors.coverImage}</span>
+            </p>
+          ) : null}
         </section>
 
         <section aria-labelledby="takeaways-heading" className="space-y-4 p-5 sm:p-6">
@@ -799,7 +777,12 @@ export default function PostEditor({
             <Plus className="h-4 w-4" aria-hidden="true" />
             <span>Add a takeaway</span>
           </button>
-          <FieldError id="post-takeaways-error" message={fieldErrors.keyTakeaways} />
+          {fieldErrors.keyTakeaways ? (
+            <p id="post-takeaways-error" role="alert" className={inlineErrorClass}>
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>{fieldErrors.keyTakeaways}</span>
+            </p>
+          ) : null}
         </section>
 
         <section aria-labelledby="post-content-label" className="space-y-4 p-5 sm:p-6">
@@ -914,7 +897,7 @@ export default function PostEditor({
         </p>
       )}
 
-      <p className={cn(hintClass, 'mt-4 flex items-center gap-2')}>
+      <p className="mt-4 flex items-center gap-2 text-sm leading-relaxed text-ink-secondary">
         <Info className="h-4 w-4 shrink-0 text-ink-secondary" aria-hidden="true" />
         <span>Markdown source is stored as-is. The reader ignores raw HTML.</span>
       </p>

@@ -44,3 +44,37 @@ axe 2.2 AA suite, visual regression, i18n (English + Bangla + RTL Arabic verific
 ## Rollback
 
 Each stage is additive and committed separately on the arena branch; rollback = revert the stage commit. Tokens stay backward-compatible via aliases (`brand`, `stone-*`) until stage 6.
+
+
+## Execution 2026-11-23
+
+Tasks 0–17 of `docs/superpowers/plans/2026-11-23-frontend-design-system-refactor.md`, executed inline on
+`arena/8d2f962d-researchwithme` (inline substitution for subagent-driven execution, explicitly
+consented by the reviewer on 2026-11-23 and recorded in the ledger).
+
+Waves (traffic order) and what they found: **all six waves were verification sweeps, not rewrite
+sweeps** — `grep -rEn "(stone|red|orange|amber|emerald|teal|cyan|sky|blue|indigo|violet|purple|pink|rose|gray|zinc|neutral)-[0-9]{2,3}" app components --include="*.tsx"`
+returns exactly one hit in the tree, `components/ui/Dialog.tsx bg-stone-950/50`, already allowlisted in
+`lib/__tests__/design-token-usage.test.ts` (`modal scrim is dark in both themes`). No `white`/`black`
+utility classes; the only raw hex values in user-facing source are Google/Discord brand-mark SVG fills
+in `LoginForm.tsx` (brand identity, stays literal). Token-usage guard 3/3 PASS; `tokens:check` clean.
+
+- W1 public read, W2 library/search/cite, W3 assistant/tools, W4 dashboard, W5 studio/v34, W6 marketing/docs/error — zero file changes required each; recorded as rulings rather than churned into noise commits.
+- W6 end gate: `npm run quality` PASS end-to-end (tokens:build+check, lint, typecheck, npm test 182 files/1202 tests, dns:test, webmcp:test, impeccable:source 0 findings, worker assistant/outbox dry-runs).
+- Caveat: plan Step 3's per-route `impeccable detect --viewport 390x844 <url>` could not run — this sandbox has no Chrome/Chromium and `cdn.playwright.dev` is unreachable. Compensated by the regex source scan (0 findings) and curl 200 on `/feed`, `/authors`, `/library`, `/search`, `/cite`, `/assistant`, `/write`, `/contribute`, `/about` (dashboard routes 307 when signed out, as expected). G6/G7 (rendered findings, axe WCAG) still need a browser-equipped runner; they are recorded as not-run, not as passed.
+
+Landed in code on this branch: token alias generation unchanged in shape (Tasks 1–2), bottom-nav
+signed-out gating (0), Button consolidation (0cbc4d1), Field composite + Button.loading (f233444),
+five-state composite contract + route loading shells (f385868), engagement signal math (6770044),
+ReadingStreak/GoalRing built but unmounted — no reading-events source (5ccdd44), ProfileStrength
+meter wired to real signals on `/dashboard/access` + empty-draft `/dashboard/(studio)/writing`
+(e307825), honest wizard defaults + value-first framing (b9b855e), mobile-nav `newInLibrary` badge,
+dark-rendered only with a real count ≥ 1 (7057a27), forbidden-copy CI guard + reviewed
+`lib/engagement/copy.ts` (e53116c), notification-copy CI guard over the scenario registry (e42594c),
+seven-composite `components/ui` barrel + header-2 disposition (a6ce1eb).
+
+Not done / explicitly deferred, with reasons: reading streak + goal ring remain unmounted (no events
+or goal source — mounting would fabricate data); the mobile-nav badge has no count source wired
+(BlogHeader passes none; badge renders only when a real source ships); `firstSubmission` in the
+signals mirrors `firstArticlePublished` (CmsStatus is draft|published — documented implication, not a
+milestone); PlateBodyEditor was not converted; per-route rendered axe/visual gates need a browser.

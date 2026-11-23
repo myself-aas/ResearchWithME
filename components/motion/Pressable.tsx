@@ -27,6 +27,8 @@ export type PressableFeedback = 'squash' | 'lift' | 'none';
 export interface PressableProps extends HTMLMotionProps<'button'> {
   /** `lift` for cards and primary actions, `squash` for icon buttons. */
   feedback?: PressableFeedback;
+  /** React 19 ref-as-prop — points at the underlying <button>. */
+  ref?: React.Ref<HTMLButtonElement>;
   children?: React.ReactNode;
 }
 
@@ -35,6 +37,7 @@ export default function Pressable({
   type = 'button',
   className,
   children,
+  ref,
   ...rest
 }: PressableProps) {
   const hover = feedback === 'lift' ? pressablePoses.hover : undefined;
@@ -43,6 +46,7 @@ export default function Pressable({
   return (
     <MotionBoundary>
       <m.button
+        ref={ref}
         type={type}
         whileHover={hover}
         whileTap={tap}

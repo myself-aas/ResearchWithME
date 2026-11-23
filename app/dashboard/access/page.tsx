@@ -9,6 +9,8 @@ import { getDashboardUser } from '@/lib/cms/auth';
 import type { AuthorApplication as Application } from '@/lib/applications';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import ProfileStrength from '@/components/engagement/ProfileStrength';
+import { loadEngagementSignals } from '@/lib/dashboard/data';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata: Metadata = {
@@ -67,6 +69,7 @@ export default async function ApplyToWritePage({
 
   const params = await searchParams;
   const linkError = typeof params.link_error === 'string' ? params.link_error.trim().slice(0, 300) : '';
+  const signals = await loadEngagementSignals();
   let applications: Application[] = [];
   let profile: ProfileRow | null = null;
   let recordsAvailable = true;
@@ -115,9 +118,11 @@ export default async function ApplyToWritePage({
           Apply to write
         </h1>
         <p className="mt-3 max-w-prose text-base leading-relaxed text-ink">
-          Signing in gives you a reader account. Publishing access is granted by the editor after a
-          short review, so every article carries a byline someone stands behind.
+          Read open, citation-first reviews — then apply to request writer access. Publishing
+          access is granted by the editor after a short review, so every article carries a byline
+          someone stands behind.
         </p>
+        {signals ? <ProfileStrength signals={signals} className="mt-5 max-w-md rounded-lg border border-line bg-surface px-4 py-4" /> : null}
         {params.error === 'not-editor' && (
           <p className="mt-4 border-l-2 border-brand/40 bg-brand/5 px-3 py-2 text-sm leading-relaxed text-brand">
             This account does not have publishing access yet. Apply below and an editor will review

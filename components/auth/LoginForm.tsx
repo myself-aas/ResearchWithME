@@ -10,10 +10,10 @@ import { startOAuthSignIn } from '@/lib/supabase/oauth';
 import {
   fieldClass,
   inlineErrorClass,
-  labelClass,
   primaryButtonClass,
   secondaryButtonClass,
 } from '@/components/cms/styles';
+import { Field } from '@/components/primitives';
 import { cn } from '@/lib/utils';
 
 interface LoginFormProps {
@@ -355,11 +355,12 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
         </button>
       </div>
 
+      <p className="mt-4 font-sans text-sm leading-relaxed text-ink-secondary">
+        Read open, citation-first reviews — sign in to request writer access or save drafts.
+      </p>
+
       <form onSubmit={signIn} className="mt-3 space-y-4" noValidate>
-        <div>
-          <label htmlFor={emailId} className={labelClass}>
-            Email address
-          </label>
+        <Field id={emailId} label="Email address" required>
           <input
             id={emailId}
             type="email"
@@ -371,12 +372,9 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
             className={fieldClass}
             placeholder="editor@researchwith.me"
           />
-        </div>
+        </Field>
 
-        <div>
-          <label htmlFor={passwordId} className={labelClass}>
-            Password
-          </label>
+        <Field id={passwordId} label="Password" required>
           <input
             id={passwordId}
             type="password"
@@ -386,7 +384,7 @@ export default function LoginForm({ configured, user, next, initialError = '' }:
             required
             className={fieldClass}
           />
-        </div>
+        </Field>
 
         <button type="submit" disabled={pending !== null} className={cn(primaryButtonClass, 'w-full')}>
           <span>{pending === 'password' ? 'Signing in…' : 'Sign in'}</span>
