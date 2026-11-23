@@ -125,7 +125,7 @@ export default function BlogFooter() {
           </nav>
         </div>
 
-        <div className="mt-6 flex flex-col gap-2 border-t border-line pt-4 font-sans text-[10px] text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-6 flex flex-col gap-2 border-t border-line pt-4 font-sans text-xs text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
           <p>reme. · Edited by Ashif Ahmed Shuvo</p>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <TextLink href="/settings" variant="quiet">Settings</TextLink>

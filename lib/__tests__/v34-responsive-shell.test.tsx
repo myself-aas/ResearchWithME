@@ -55,8 +55,6 @@ describe('v3.4 mobile-first shell & contribution wizard', () => {
     container.remove();
   });
 
-  // MobileBottomNav component removed per request — tests for it have been deleted.
-
   it('opens BottomSheet with dialog semantics and closes on Escape', () => {
     const onClose = vi.fn();
     act(() =>
