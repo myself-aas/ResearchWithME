@@ -115,7 +115,6 @@ describe('Wave 16 — $Impeccable UI Polish, Landing Resolution & Shell Hardenin
       'app/research-os/page.tsx',
       'components/AssistantPanel.tsx',
       'components/BlogHeader.tsx',
-      'components/layout/MobileBottomNav.tsx',
       'components/v34/SettingsIdentityClient.tsx',
     ];
     for (const rel of checkedFiles) {

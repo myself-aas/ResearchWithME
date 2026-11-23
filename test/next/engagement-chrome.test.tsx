@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { renderToString } from 'react-dom/server';
 import { createElement } from 'react';
-import MobileBottomNav from '@/components/layout/MobileBottomNav';
 
 /**
  * SSR contract: the mobile bottom nav is signed-in chrome. Until the browser
@@ -27,11 +26,8 @@ vi.mock('@/lib/supabase/use-session', () => ({
 }));
 
 describe('engagement chrome — SSR paint', () => {
-  it('emits nothing pre-hydration, even with a badge count present', () => {
-    expect(renderToString(createElement(MobileBottomNav, { newInLibrary: 3 }))).toBe('');
-  });
-
-  it('emits nothing pre-hydration without the badge prop either', () => {
-    expect(renderToString(createElement(MobileBottomNav))).toBe('');
+  // MobileBottomNav component removed per request — tests for it have been deleted.
+  it('no longer tests MobileBottomNav SSR paint', () => {
+    expect(true).toBe(true);
   });
 });

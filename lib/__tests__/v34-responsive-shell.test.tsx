@@ -2,7 +2,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import MobileBottomNav from '@/components/layout/MobileBottomNav';
 import BottomSheet from '@/components/layout/BottomSheet';
 import ContributeWizard from '@/components/v34/ContributeWizard';
 
@@ -56,34 +55,7 @@ describe('v3.4 mobile-first shell & contribution wizard', () => {
     container.remove();
   });
 
-  it('renders 5 ADR-032-11 primary links in MobileBottomNav and hides inside /contribute and /editor', () => {
-    act(() => root.render(<MobileBottomNav />));
-    const nav = container.querySelector('nav[aria-label="Mobile bottom navigation"]');
-    expect(nav).not.toBeNull();
-    expect(nav?.querySelectorAll('a')).toHaveLength(5);
-    for (const label of ['Explore', 'Library', 'Contribute', 'AI', 'Profile']) {
-      expect(container.textContent).toContain(label);
-    }
-
-    currentPath = '/contribute';
-    act(() => root.render(<MobileBottomNav />));
-    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
-
-    currentPath = '/editor/draft-1';
-    act(() => root.render(<MobileBottomNav />));
-    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
-  });
-
-  it('never renders the bottom nav for signed-out visitors or before hydration', () => {
-    session.user = null;
-    act(() => root.render(<MobileBottomNav />));
-    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
-
-    session.user = session.signedIn;
-    session.hydrated = false;
-    act(() => root.render(<MobileBottomNav />));
-    expect(container.querySelector('nav[aria-label="Mobile bottom navigation"]')).toBeNull();
-  });
+  // MobileBottomNav component removed per request — tests for it have been deleted.
 
   it('opens BottomSheet with dialog semantics and closes on Escape', () => {
     const onClose = vi.fn();

@@ -22,10 +22,12 @@ export default function BrandLogo({ size = 'md', label, className = '' }: BrandL
 
   return (
     <span
-      className={`inline-flex shrink-0 items-center gap-2 ${className}`}
+      className={`inline-flex shrink-0 items-center gap-0.5 ${className}`}
       {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': true })}
     >
-      <span className={`${sizes[size].text} font-serif font-semibold leading-none tracking-tight text-ink`}>reme<span className="text-brand">.</span></span>
+      <span className={`${sizes[size].text} font-serif font-extrabold tracking-tighter text-ink`}>
+        <span className="text-brand">r</span>e<span className="text-brand">m</span>e<span className="text-brand">.</span>
+      </span>
     </span>
   );
 }

@@ -54,12 +54,12 @@ describe('chrome duplication', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('keeps the hamburger drawer and the bottom bar owned by one header component', () => {
+  it('keeps the hamburger drawer owned by one header component', () => {
     const files = [...sourceFiles('app'), ...sourceFiles('components')];
     const offenders = files.filter(
       (file) =>
         !file.endsWith('components/BlogHeader.tsx') &&
-        /<MobileNavDrawer\b|<MobileBottomNav\b/.test(readFileSync(file, 'utf8')),
+        /<MobileNavDrawer\b/.test(readFileSync(file, 'utf8')),
     );
     expect(offenders).toEqual([]);
   });

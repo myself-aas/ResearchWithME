@@ -32,31 +32,31 @@ const communityLinks = [
 
 export default function BlogFooter() {
   return (
-    <footer className="mt-16 border-t border-line bg-surface text-ink">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid gap-10 pt-12 md:grid-cols-2 lg:grid-cols-4">
+    <footer className="mt-8 border-t border-line bg-surface text-ink">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="grid gap-6 pt-6 md:grid-cols-2 lg:grid-cols-4">
           <nav aria-labelledby="footer-brand">
             <Text id="footer-brand" as="h2" variant="eyebrow" weight="semibold" className="sr-only">
               ResearchWithMe
             </Text>
-            <Link href="/" className="inline-flex items-center gap-2 rounded-sm" aria-label="reme. ResearchWithMe home">
+            <Link href="/" className="inline-flex items-center gap-1 rounded-sm" aria-label="reme. ResearchWithMe home">
               <BrandLogo size="md" />
             </Link>
 
-            <p className="mt-4 max-w-md font-sans text-sm leading-relaxed text-ink-secondary">
+            <p className="mt-2 max-w-md font-sans text-xs leading-tight text-ink-secondary">
               An open platform for long-form explanations of published research and open-source code. Articles are written by writers approved by the editor.
             </p>
 
-            <p className="mt-4 font-sans text-sm text-ink-secondary">
+            <p className="mt-2 font-sans text-xs text-ink-secondary">
               Articles are published under CC BY 4.0.
             </p>
           </nav>
 
           <nav aria-labelledby="footer-topics">
-            <Text id="footer-topics" as="h2" variant="eyebrow" weight="semibold">
+            <Text id="footer-topics" as="h2" variant="eyebrow" weight="semibold" className="text-xs">
               Topics
             </Text>
-            <ul className="mt-3 space-y-2 font-sans text-sm">
+            <ul className="mt-2 space-y-1 font-sans text-xs">
               {CATEGORIES.map((category) => (
                 <li key={category}>
                   <TextLink
@@ -71,10 +71,10 @@ export default function BlogFooter() {
           </nav>
 
           <nav aria-labelledby="footer-research">
-            <Text id="footer-research" as="h2" variant="eyebrow" weight="semibold">
+            <Text id="footer-research" as="h2" variant="eyebrow" weight="semibold" className="text-xs">
               Research
             </Text>
-            <ul className="mt-3 space-y-2 font-sans text-sm">
+            <ul className="mt-2 space-y-1 font-sans text-xs">
               {researchLinks.map((link) => (
                 <li key={link.href}>
                   <TextLink
@@ -89,10 +89,10 @@ export default function BlogFooter() {
           </nav>
 
           <nav aria-labelledby="footer-platform">
-            <Text id="footer-platform" as="h2" variant="eyebrow" weight="semibold">
+            <Text id="footer-platform" as="h2" variant="eyebrow" weight="semibold" className="text-xs">
               Platform
             </Text>
-            <ul className="mt-3 space-y-2 font-sans text-sm">
+            <ul className="mt-2 space-y-1 font-sans text-xs">
               {platformLinks.map((link) => (
                 <li key={link.href}>
                   <TextLink
@@ -107,10 +107,10 @@ export default function BlogFooter() {
           </nav>
 
           <nav aria-labelledby="footer-community">
-            <Text id="footer-community" as="h2" variant="eyebrow" weight="semibold">
+            <Text id="footer-community" as="h2" variant="eyebrow" weight="semibold" className="text-xs">
               Community
             </Text>
-            <ul className="mt-3 space-y-2 font-sans text-sm">
+            <ul className="mt-2 space-y-1 font-sans text-xs">
               {communityLinks.map((link) => (
                 <li key={link.href}>
                   <TextLink
@@ -125,9 +125,9 @@ export default function BlogFooter() {
           </nav>
         </div>
 
-        <div className="mt-12 flex flex-col gap-4 border-t border-line pt-6 font-sans text-xs text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
-          <p>ResearchWithMe (reme) · Edited by Ashif Ahmed Shuvo</p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+        <div className="mt-6 flex flex-col gap-2 border-t border-line pt-4 font-sans text-[10px] text-ink-secondary sm:flex-row sm:items-center sm:justify-between">
+          <p>reme. · Edited by Ashif Ahmed Shuvo</p>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <TextLink href="/settings" variant="quiet">Settings</TextLink>
             <TextLink href="/motion" variant="quiet">
               Motion system
