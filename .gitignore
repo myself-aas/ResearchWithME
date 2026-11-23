@@ -54,3 +54,6 @@ workers/assistant/worker-configuration.d.ts
 *.whl
 __pycache__/
 *.py[cod]
+
+# Superpowers SDD workspace (scratch, per subagent-driven-development skill)
+.superpowers/
