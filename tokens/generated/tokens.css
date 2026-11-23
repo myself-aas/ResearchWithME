@@ -254,6 +254,20 @@
   --reme-component-focus-ring-color: var(--reme-focus);
   --reme-component-focus-ring-width: var(--reme-focus-width);
   --reme-component-focus-ring-offset: var(--reme-focus-offset);
+  --reme-component-shadcn-alias-card: var(--reme-surface);
+  --reme-component-shadcn-alias-card-foreground: var(--reme-text-primary);
+  --reme-component-shadcn-alias-border: var(--reme-border-subtle);
+  --reme-component-shadcn-alias-sidebar-border: var(--reme-border-strong);
+  --reme-component-shadcn-alias-input: var(--reme-border-subtle);
+  --reme-component-shadcn-alias-primary: var(--reme-action-primary);
+  --reme-component-shadcn-alias-primary-foreground: var(--reme-action-on-primary);
+  --reme-component-shadcn-alias-muted: var(--reme-surface-subtle);
+  --reme-component-shadcn-alias-muted-foreground: var(--reme-text-secondary);
+  --reme-component-shadcn-alias-accent: var(--reme-surface-subtle);
+  --reme-component-shadcn-alias-accent-foreground: var(--reme-text-primary);
+  --reme-component-shadcn-alias-background: var(--reme-canvas);
+  --reme-component-shadcn-alias-foreground: var(--reme-text-primary);
+  --reme-component-shadcn-alias-ring: var(--reme-focus);
 }
 
 /* System dark theme */

@@ -465,6 +465,22 @@ export const component = {
     "color": "#005BBF",
     "width": "2px",
     "offset": "2px"
+  },
+  "shadcnAlias": {
+    "card": "#FFFFFF",
+    "card-foreground": "#202124",
+    "border": "#DADCE0",
+    "sidebar-border": "#80868B",
+    "input": "#DADCE0",
+    "primary": "#005BBF",
+    "primary-foreground": "#FFFFFF",
+    "muted": "#F1F3F4",
+    "muted-foreground": "#5F6368",
+    "accent": "#F1F3F4",
+    "accent-foreground": "#202124",
+    "background": "#F8F9FA",
+    "foreground": "#202124",
+    "ring": "#005BBF"
   }
 } as const;
 export const tokens = { primitive, semanticLight, semanticDark, motion, component } as const;
