@@ -16,7 +16,8 @@ import {
 } from '@/components/dashboard/overview/primitives';
 import { primaryButtonClass, secondaryButtonClass } from '@/components/cms/styles';
 import { getDashboardUser } from '@/lib/cms/auth';
-import { loadStudioData, loadWriterIdentity } from '@/lib/dashboard/data';
+import ProfileStrength from '@/components/engagement/ProfileStrength';
+import { loadEngagementSignals, loadStudioData, loadWriterIdentity } from '@/lib/dashboard/data';
 import {
   DEFINITIONS,
   STALLED_DRAFT_DAYS,
@@ -105,6 +106,8 @@ export default async function MyWritingPage({
   const mine = metrics.likesPerArticle;
   const desk = metrics.deskLikesPerArticle;
   const topArticles = metrics.articles.slice(0, 5);
+  // Only the empty-draft state mounts the meter — compute it only there.
+  const signals = studio.ok && metrics.totals.drafts === 0 ? await loadEngagementSignals(studio) : null;
 
   return (
     <div>
@@ -210,6 +213,12 @@ export default async function MyWritingPage({
       </KpiGrid>
 
       <Alerts alerts={writerAlerts(metrics, identity.published)} clear="Nothing is waiting on you" />
+
+      {signals && metrics.totals.drafts === 0 ? (
+        <div className="mt-6 max-w-md">
+          <ProfileStrength signals={signals} />
+        </div>
+      ) : null}
 
       <div id="drafts" className="mt-10 scroll-mt-6">
         <Panel

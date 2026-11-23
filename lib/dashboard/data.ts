@@ -7,6 +7,9 @@ import { getEditorCmsStore } from '@/lib/cms/store';
 import type { CmsComment, CmsPost, DashboardUser } from '@/lib/cms/types';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { linkedIdentities } from '@/lib/supabase/identities';
+import { getDashboardUser } from '@/lib/cms/auth';
+import type { EngagementSignals } from '@/lib/engagement/signals';
 import { parseReadMinutes, type ReadingArticle } from './metrics';
 
 /**
@@ -128,6 +131,61 @@ export async function loadApplicationState(user: DashboardUser | null): Promise<
   } catch (error) {
     console.error('Could not read your writer application for the dashboard:', error);
     return { kind: 'unavailable' };
+  }
+}
+
+/**
+ * The caller's onboarding signals, computed from real server-side state.
+ *
+ * Returns `null` when anything we cannot read honestly — demo mode, signed-out,
+ * or a failed studio/applications read — so the meter hides instead of showing
+ * a dishonest score. Undercounting (unknown treated as not-done) is the only
+ * error allowed in either direction.
+ *
+ * `firstSubmission` has no distinct server source (a CmsPost is either a draft
+ * or published); a published article has by definition been submitted, so it
+ * mirrors firstArticlePublished rather than inventing a separate milestone.
+ * `studio` may be passed by pages that already loaded it to avoid a second
+ * archive read.
+ */
+export async function loadEngagementSignals(
+  studio?: StudioData,
+): Promise<EngagementSignals | null> {
+  if (!isSupabaseConfigured) return null;
+  const user = await getDashboardUser();
+  if (!user) return null;
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) throw new Error(error.message);
+    const account = data.user;
+    const emailVerified = Boolean(account?.email_confirmed_at);
+    const identityLinked = linkedIdentities(account?.identities ?? []).length > 0;
+
+    const studioData = studio ?? (await loadStudioData());
+    if (!studioData.ok) return null;
+
+    const [application, identity] = await Promise.all([
+      loadApplicationState(user),
+      loadWriterIdentity(user, studioData.posts),
+    ]);
+    const applicationApproved = application.kind === 'approved' || application.kind === 'editor';
+
+    const mine = identity ? studioData.posts.filter((post) => post.authorId === identity.authorId) : [];
+    const firstDraftSaved = mine.length > 0;
+    const published = mine.some((post) => post.status === 'published');
+
+    return {
+      emailVerified,
+      identityLinked,
+      applicationApproved,
+      firstDraftSaved,
+      firstSubmission: published,
+      firstArticlePublished: published,
+    };
+  } catch (error) {
+    console.error('Could not load engagement signals:', error);
+    return null;
   }
 }
 
