@@ -450,7 +450,7 @@ export default function WritePage() {
           </article>
         ) : (
           <form onSubmit={publish} className="mt-8 space-y-10">
-            <fieldset className="space-y-4">
+            <fieldset className="space-y-4 sm:space-y-5">
               <Text as="legend" variant="card-title">Article</Text>
 
               <div>
@@ -573,7 +573,7 @@ export default function WritePage() {
               </div>
             </fieldset>
 
-            <fieldset className="space-y-4 border-t border-line pt-8">
+            <fieldset className="space-y-4 sm:space-y-5 border-t border-line pt-8">
               <Text as="legend" variant="card-title">Reviewed artifact</Text>
 
               <label className="flex items-start gap-3 text-base text-ink">
@@ -669,7 +669,7 @@ export default function WritePage() {
               )}
             </fieldset>
 
-            <fieldset className="space-y-4 border-t border-line pt-8">
+            <fieldset className="space-y-4 sm:space-y-5 border-t border-line pt-8">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <Text as="legend" variant="card-title">Cover image</Text>
@@ -733,7 +733,7 @@ export default function WritePage() {
               )}
             </fieldset>
 
-            <fieldset className="space-y-4 border-t border-line pt-8">
+            <fieldset className="space-y-4 sm:space-y-5 border-t border-line pt-8">
               <Text as="legend" variant="card-title">Body</Text>
 
               <div>
@@ -761,7 +761,7 @@ export default function WritePage() {
                 <p id="takeaway-label" className="mb-1.5 text-sm font-medium text-ink">
                   Key takeaways <span className="text-ink-secondary">(at least one)</span>
                 </p>
-                <ul aria-labelledby="takeaway-label" className="space-y-3">
+                <ul aria-labelledby="takeaway-label" className="space-y-3 sm:space-y-4">
                   {draft.takeaways.map((takeaway, index) => (
                     <li key={index} className="flex items-start gap-2">
                       <span className="mt-3 font-mono text-sm text-ink-secondary">{String(index + 1).padStart(2, '0')}</span>
@@ -794,7 +794,7 @@ export default function WritePage() {
                 <button
                   type="button"
                   onClick={addTakeaway}
-                  className="mt-3 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border-strong bg-surface-raised px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-border-strong"
+                  className="mt-3 sm:mt-4 inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border-strong bg-surface-raised px-4 py-2 text-sm font-medium text-ink transition-colors hover:border-border-strong"
                 >
                   <Plus className="h-4 w-4" aria-hidden="true" />
                   <span>Add a takeaway</span>

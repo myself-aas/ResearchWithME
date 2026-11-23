@@ -4,8 +4,8 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import { SITE_DESCRIPTION, SITE_URL, absoluteUrl } from '@/lib/seo';
-import MotionModeProvider from '@/components/motion/MotionModeProvider';
-import MotionScope from '@/components/motion/MotionScope';
+import PremiumMotionProvider from '@/components/motion/PremiumMotionProvider';
+import { Preloader } from '@/components/preloader';
 import RouteTransition from '@/components/motion/RouteTransition';
 import PwaLifecycleBridge from '@/components/v34/PwaLifecycleBridge';
 
@@ -113,16 +113,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        {/* reme motion runtime: one lazy feature bundle and one reduced-motion
-            policy for the whole app (see components/motion/MotionScope). */}
-        <MotionModeProvider>
-          <MotionScope>
-            <div className="min-h-screen">
-              <PwaLifecycleBridge />
-              <RouteTransition>{children}</RouteTransition>
-            </div>
-          </MotionScope>
-        </MotionModeProvider>
+        {/* Entry sequence: brand mark draw → wordmark → progress → split-door exit */}
+        <Preloader minDisplayTime={800} />
+        {/* Premium motion runtime: GSAP + ScrollTrigger + Lenis smooth scroll
+            with reduced-motion guards (see components/motion/PremiumMotionProvider). */}
+        <PremiumMotionProvider>
+          <div className="min-h-screen">
+            <PwaLifecycleBridge />
+            <RouteTransition>{children}</RouteTransition>
+          </div>
+        </PremiumMotionProvider>
       </body>
     </html>
   );

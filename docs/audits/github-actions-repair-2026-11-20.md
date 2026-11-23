@@ -50,3 +50,19 @@ The generated release-manifest timestamp was not retained as a source change. Ea
 The PR-title correction is verified remotely. New code-check runs require the follow-up commit to be pushed; their eventual result must be inspected, not inferred from local success. Browser/E2E acceptance and Cloudflare deployment status are separate from the local unit/build gates.
 
 No article publication, hosted database migration, payment-provider mutation, or manual production deployment was performed as part of this repair.
+
+## Merged-base regressions and follow-up
+
+The first pushed repair (`d7cd784`) fixed the original head-only failures. New PR runs `45089915010` (Quality) and `45089914988` (LinkedIn) test the merge with a newer `main` commit, `d3720216db2a83d769949a71e5f38e014027f17c`, which was absent from the original checkout. Their annotations exposed additional lint errors in `MobileBottomNav` and `EditorToolbar`.
+
+Integrated that main commit into the existing session branch without switching branches, preserving its frontend refactor and newly added skills. Follow-up fixes:
+
+- Derive the mobile active destination directly from the route, removing the effect after an early return. A regression test first reproduced “Rendered fewer hooks than expected” when entering the editor, then passed after the fix.
+- Remove unused toolbar state/props and restore the named responsive toolbar groups required by the existing accessibility regression.
+- The merged frontend initially raised shell JS to **266.6 KiB**, failing the unchanged 200 KiB budget. Load optional GSAP/ScrollTrigger/Lenis engines and the decorative preloader asynchronously; use the existing lightweight Motion component entry point. The rebuilt shell is **196.3 KiB**. Keep the reading content SSR-visible without a JavaScript-dependent loading overlay.
+- Clean up the exact registered animation ticker on unmount rather than attempting to remove a different anonymous function; regression tests verify identity and cleanup.
+- Browser axe checks reproduced insufficient contrast from the mobile labels' 0.7 opacity. Keep semantic text colors at full opacity rather than weakening the accessibility gate.
+
+The two skills introduced upstream (`acquire-codebase-knowledge` and `premium-frontend-ui`) are preserved. The earlier six-skill cleanup inventory describes the pre-merge state, not an instruction to remove these incoming skills.
+
+The merged code passes lint, typecheck, **173 Vitest files / 1,119 tests**, production build and the unchanged bundle gate. The isolated production server passes `scripts/verify-v34-live.mjs`, including SSR landmarks, API latency samples, privacy redaction, and authentication redirects. Browser verification uses an externally installed Chromium binary and libraries (no app dependency changes); the first run intentionally stopped after exposing the contrast regression. Final remote/browser results must be checked after the follow-up push.
