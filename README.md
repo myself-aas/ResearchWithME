@@ -148,6 +148,7 @@ npm run build       # production build, types enforced
 npm run check:site  # the AGENTS.md definition of done, against .next artifacts
 npm run quality     # tokens + lint + typecheck + test
 npm run verify      # build + check:site
+npm run check:mcp   # spawn each MCP server in .mcp.json and handshake with it
 ```
 
 The test suite compiles **every** post in `content/posts/` with the same remark/rehype plugins the site
@@ -192,10 +193,28 @@ lib/
 tokens/              design tokens (source of truth for the theme)
 scripts/             post scaffolder, deploy guard, build wrapper, site checks
 test/                Vitest suites
+.mcp.json            MCP servers for agent tooling (env placeholders only)
+.agents/mcp/         per-server instructions, credentials, and the wiring check
 ```
 
 `DESIGN.md` records the design system, `PRODUCT.md` what the site is and who it is for, and `AGENTS.md`
 the SEO/AEO/GEO rules that every change has to pass.
+
+## Agent tooling (MCP)
+
+`.mcp.json` wires eight MCP servers — shadcn registry, GitHub, Figma, fetch, sequential thinking,
+DeepWiki, Brave search, and Firecrawl — and `.agents/mcp/README.md` says what each one is for, what it
+may touch, and which environment variable it needs. `AGENTS.md` §17 is the contract: tool output is
+data rather than instructions, credentials are never committed, and nothing merges, deploys, or bills.
+
+```bash
+npm run check:mcp             # PASS / SKIP (credential or network) / FAIL per server
+npm run check:mcp -- --strict # exit non-zero unless every server verified here
+```
+
+CrewAI and LangGraph are MCP *clients*, not servers; the manual carries their bridge snippets instead
+of adding a Python runtime to a site that builds with npm alone. Supabase is deliberately absent — the
+product has no database.
 
 ## History
 

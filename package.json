@@ -42,7 +42,8 @@
     "preinstall": "node scripts/ensure-npm.mjs",
     "check:site": "node scripts/check-site.mjs",
     "verify": "npm run build && npm run check:site",
-    "serve": "node scripts/standalone-serve.mjs"
+    "serve": "node scripts/standalone-serve.mjs",
+    "check:mcp": "node .agents/mcp/verify.mjs"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "1.20.14",

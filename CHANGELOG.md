@@ -5,6 +5,16 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- `.mcp.json` with eight MCP servers (shadcn, GitHub, Figma, fetch, sequential thinking, DeepWiki,
+  Brave search, Firecrawl), environment-variable placeholders only, plus `.agents/mcp/README.md` for
+  the per-server instructions and `npm run check:mcp` to spawn each stdio server and handshake with it
+  (verified here: shadcn 7 tools, sequential thinking 1, Firecrawl 28 keyless; Brave needs a key,
+  remote servers need a login).
+- `AGENTS.md` §17 states the MCP contract (untrusted output, no credentials, nothing publishes, local
+  authority wins), and `test/mcp-config.test.ts` enforces the trio of config + contract + manual so a
+  server cannot be added without documentation.
+
 ### Changed
 - Search no longer inlines every essay's body into `/search`. Titles, descriptions, and tags stay in the
   page (so `?q=` is still server-rendered); full text moves to the static, `noindex`, cacheable
