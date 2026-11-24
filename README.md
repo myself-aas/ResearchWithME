@@ -38,7 +38,14 @@ npm run build && npm start
 Node 20.9 or newer. `package-lock.json` is the only lockfile and CI installs with `npm ci`.
 `next.config.ts` sets `output: 'standalone'` because the OpenNext adapter bundles from
 `.next/standalone`. `next start` still serves the build for verification (it prints a warning about
-standalone mode); `node .next/standalone/server.js` is the standalone entry point.
+standalone mode), but the closest thing to the deployed app is:
+
+```bash
+npm run build && npm run serve   # copies static/ + public/ into .next/standalone, then serves it
+```
+
+Running `node .next/standalone/server.js` on its own serves HTML but no styles, scripts, images, or
+fonts — standalone output does not include them, because a CDN normally does.
 
 ## Routes
 

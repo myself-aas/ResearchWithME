@@ -41,7 +41,8 @@
     "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
     "preinstall": "node scripts/ensure-npm.mjs",
     "check:site": "node scripts/check-site.mjs",
-    "verify": "npm run build && npm run check:site"
+    "verify": "npm run build && npm run check:site",
+    "serve": "node scripts/standalone-serve.mjs"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "1.20.14",
