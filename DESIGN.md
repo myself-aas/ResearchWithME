@@ -49,61 +49,61 @@ colors:
   dark-brand-mark: "#ADC7FF"
 typography:
   editorial:
-    fontFamily: "'Plus Jakarta Sans', 'Newsreader', Georgia, serif"
+    fontFamily: "'Plus Jakarta Sans', Georgia, serif"
   interface:
-    fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   metadata:
     fontFamily: "'Aptos Mono', 'JetBrains Mono', monospace"
   display:
-    fontFamily: "'Plus Jakarta Sans', Newsreader, Georgia, serif"
+    fontFamily: "'Plus Jakarta Sans', Georgia, serif"
     fontSize: "clamp(2.5rem, 5vw, 4.5rem)"
     fontWeight: 450
     lineHeight: 1.05
     letterSpacing: "-0.025em"
   title-1:
-    fontFamily: "'Plus Jakarta Sans', Newsreader, Georgia, serif"
+    fontFamily: "'Plus Jakarta Sans', Georgia, serif"
     fontSize: "clamp(2rem, 3.5vw, 3rem)"
     fontWeight: 500
     lineHeight: 1.12
     letterSpacing: "-0.02em"
   title-2:
-    fontFamily: "'Plus Jakarta Sans', Newsreader, Georgia, serif"
+    fontFamily: "'Plus Jakarta Sans', Georgia, serif"
     fontSize: "clamp(1.5rem, 2.5vw, 2.25rem)"
     fontWeight: 500
     lineHeight: 1.2
     letterSpacing: "-0.015em"
   heading-1:
-    fontFamily: "'Plus Jakarta Sans', Inter, system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
     fontSize: "1.75rem"
     fontWeight: 650
     lineHeight: 1.25
   heading-2:
-    fontFamily: "'Plus Jakarta Sans', Inter, system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
     fontSize: "1.375rem"
     fontWeight: 650
     lineHeight: 1.3
   heading-3:
-    fontFamily: "'Plus Jakarta Sans', Inter, system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
     fontSize: "1.125rem"
     fontWeight: 650
     lineHeight: 1.35
   body-reading:
-    fontFamily: "'Plus Jakarta Sans', Newsreader, Georgia, serif"
+    fontFamily: "'Plus Jakarta Sans', Georgia, serif"
     fontSize: "1.125rem"
     fontWeight: 400
     lineHeight: 1.7
   body:
-    fontFamily: "'Plus Jakarta Sans', Inter, system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
     fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.625
   body-small:
-    fontFamily: "'Plus Jakarta Sans', Inter, system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.55
   label:
-    fontFamily: "'Plus Jakarta Sans', Inter, system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
     fontSize: "0.8125rem"
     fontWeight: 600
     lineHeight: 1.4
@@ -143,16 +143,19 @@ spacing:
 
 # Design System — reme v3.1
 
-The frontend is transitioning from **reme v3.1** to the user-approved editorial refresh (2026-11-15). The full normative specification — token architecture, accessibility baseline, components, motion, scholarly domain model, conformance profiles, and the release gate — lives in **[`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md)**, which remains a reference for domain and accessibility contracts; the current editorial palette and typography are documented here and in the refresh notes. The front-matter above is the machine-readable schema consumed by the Impeccable detector; the token layer implementing it is `app/globals.css`.
+The frontend uses the user-approved editorial refresh (2026-11-15). The token layer that implements it is
+`app/globals.css` plus `tokens/` (built with `npm run tokens:build`, validated by
+`npm run tokens:check`). The front matter above documents the palette, the type scale, and the spacing
+ramp; **Plus Jakarta Sans is the only downloaded typeface**, and metadata text uses the system monospace
+stack, so no page requests a second font family.
 
 ## Summary
 
 - **Principles:** Provenance, Trust, Scholarship, Collaboration, Preservation. Every claim keeps a visible path to its source; trust states are explicit, never implied by polish.
 - **Color:** cool light neutrals with a blue action palette (primary `#005BBF`), emerald verification, and domain palettes for knowledge, trust, provenance, workflow, collaboration, and citation. The current light/dark semantic maps are in `tokens/src/`; generated token styles define both themes. Color never carries meaning alone.
-- **Typography:** self-hosted Plus Jakarta Sans is the editorial and interface face, with Newsreader, Inter and system fallbacks. Metadata uses Aptos Mono, JetBrains Mono or system monospace fallbacks. See `docs/editorial-refresh-2026-11-15.md` for the refresh and its limitations.
+- **Typography:** self-hosted Plus Jakarta Sans is the editorial *and* interface face, with Georgia (serif) and system sans fallbacks. Metadata uses the system monospace stack (`ui-monospace`, Aptos Mono, JetBrains Mono). One downloaded family per page, per `AGENTS.md` §9.
 - **Shape and elevation:** reme radius scale (4px–24px, pill for tags), raised/floating/dialog shadows based on neutral-950.
-- **Motion:** reveal 200ms, verify/archive 320ms, connect 480ms, synthesize up to 700ms, with the standard/enter/exit/emphasize easings; `prefers-reduced-motion: reduce` collapses all animation and transitions per the spec's §9 contract.
-- **Motion system (v1):** implemented with `motion` (`m` + one `LazyMotion` scope) and Disney's twelve animation principles. The token layer is `lib/motion/tokens.ts`, the primitives are in `components/motion/`, and every demo lives at `/motion`. Full guide: [`docs/motion-system.md`](./docs/motion-system.md). Content is never hidden by an animation server-side, reveals arm only below the fold, and nothing loops except a real progress indicator.
+- **Motion:** CSS transitions only — reveals 200ms, larger settles 320–480ms, `prefers-reduced-motion: reduce` collapses all animation and transition duration. There is no animation library, no preloader, and no route-transition wrapper: the article path ships one `requestAnimationFrame` reading-progress bar and nothing else.
 - **Accessibility:** WCAG 2.2 AA baseline; 2px/2px focus ring in the focus token (`#005BBF` light, `#ADC7FF` dark); 44px minimum touch targets; status always paired with a text label.
 - **Do not** use gradient text, decorative glass, AI purple/cyan palettes, terminal motifs, or color alone for status.
 
@@ -190,8 +193,7 @@ post is.
 | Layer | Location | Rule |
 |---|---|---|
 | Tokens | `tokens/src/*.json` → `tokens/generated/` | The only source of colour, type, and motion values. Regenerate with `npm run tokens:build`; never hand-edit generated files. |
-| Motion primitives | `components/motion/` | `Reveal`, `Stagger`, `Pressable`, `RouteTransition`, `LoadingState`, `LazyMount`, `MotionModeProvider`. Durations and easings come from `lib/motion/tokens.ts`. |
-| Product components | `components/layout`, `components/post`, `components/mdx`, `components/search`, `components/preloader`, plus `BrandLogo` and `ReadingProgress` | Site chrome, post cards, the cover frame, table of contents, citation box, the MDX component map, search, and the entry animation. |
+| Product components | `components/layout`, `components/post`, `components/mdx`, `components/search`, `components/seo`, plus `BrandLogo` and `ReadingProgress` | Site chrome, post cards, the cover frame, table of contents, citation box, the MDX component map, search, and breadcrumbs. |
 
 ### The MDX surface
 
@@ -225,8 +227,8 @@ Every surface that can be empty says why it is empty and offers one relevant
 next step. The feed with no posts explains how posts are added; a tag with no
 matches links back to the topic index; a search with no results suggests a
 shorter query or the archive. Status is never carried by colour alone — it is
-always paired with a text label. Loading and error states are announced; the
-skeletons in `components/motion/LoadingState.tsx` mirror the final layout.
+always paired with a text label. Loading and error states are announced;
+there are no skeleton screens, because every page is server-rendered before it paints.
 
 ### Do not
 

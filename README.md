@@ -45,16 +45,20 @@ standalone mode); `node .next/standalone/server.js` is the standalone entry poin
 | Route | What it does |
 | --- | --- |
 | `/` | Lead essay, latest writing, and topic links |
-| `/posts` | Archive, grouped by year, with every tag |
-| `/posts/[slug]` | The essay: MDX body, table of contents, citation box, related posts, social card |
+| `/blog` | Archive, grouped by year, with every tag |
+| `/blog/[slug]` | The essay: MDX body, table of contents, citation box, related posts, social card |
 | `/tags`, `/tags/[tag]` | Topic index and per-topic archives |
-| `/search` | Instant client-side search over a build-time index |
+| `/search` | Search, server-rendered for `?q=` and refined in the browser |
 | `/about` | Who writes this, what gets published, how the site is built |
 | `/rss.xml` | RSS 2.0 feed (also served at `/feed.xml`) |
+| `/feed.json` | JSON Feed 1.1 |
+| `/llms.txt` | Machine index of every essay, with links to the markdown form |
+| `/blog/[slug]/markdown` | The same essay as markdown, advertised from the page head |
 | `/sitemap.xml`, `/robots.txt` | Generated from the same content |
+| `/errors/[status]`, `/.well-known/security.txt` | Machine-readable errors and the security contact |
 
-Old multi-author URLs redirect: `/post/:slug` → `/posts/:slug`, `/feed` → `/posts`,
-`/category/:slug` → `/tags`, `/authors` and `/author/:id` → `/about`.
+Old URLs redirect in one hop: `/posts` and `/posts/:slug` → `/blog`, `/post/:slug` → `/blog/:slug`,
+`/feed` → `/blog`, `/category/:slug` → `/tags`, `/authors` and `/author/:id` → `/about`.
 
 ## How content becomes pages
 
@@ -65,7 +69,7 @@ content/posts/*.mdx
 lib/content/posts.ts ── fs read + gray-matter + Zod validation
         │               reading time, slug, tags, related posts, archive
         ▼
-app/posts/[slug]/page.tsx ── generateStaticParams + MdxContent
+app/blog/[slug]/page.tsx ── generateStaticParams + MdxContent
         │                     remark-gfm → rehype-slug → autolink → highlight
         ▼
 static HTML + RSC payload, RSS, sitemap, search index, OG image
@@ -93,18 +97,36 @@ Components are available in every post without an import:
   Tones: note, tip, warning, danger.
 </Callout>
 
-<Figure src="/images/folio-process.jpeg" alt="A whiteboard sketch." caption="Caption text." />
+<Figure
+  src="/images/folio-process.jpeg"
+  alt="A whiteboard sketch of a module graph."
+  width={800}
+  height={533}
+  caption="Caption text."
+/>
 ```
 
 Markdown also gives GFM tables, footnotes, fenced code blocks with syntax highlighting and a copy
 button, blockquotes, and heading anchors. Headings feed the sticky table of contents automatically.
 
-## SEO and distribution
+## SEO, AEO, and AI readiness
 
-- Per-post metadata, canonical URLs, Open Graph and Twitter cards, and `BlogPosting` JSON-LD.
-- Dynamic 1200×630 social cards rendered from each post's title, date, author, and tags.
-- RSS 2.0 with categories, plus a sitemap covering every post and tag page.
-- Optional `canonical` frontmatter when a piece was first published elsewhere.
+[`AGENTS.md`](./AGENTS.md) is the contract: crawlable → parseable → citable → operable. In practice that
+means one `<h1>` and one canonical per page, unique titles and descriptions, an answer-first opening
+paragraph, real citations, a JSON-LD graph resolved by `@id`, explicit `robots.txt` groups for search
+and AI crawlers, a sitemap generated from the content collection, RSS plus JSON Feed, `llms.txt`,
+`security.txt`, markdown representations of every essay, and RFC 9457 errors that honor `Accept`.
+
+Two things are deliberately outside the repository:
+
+- **Markdown for Agents** is a Cloudflare zone setting (Speed → Optimization → Content optimization).
+  It serves `text/markdown` on the canonical URL; the site's own `/blog/<slug>/markdown` route keeps the
+  advertised alternate honest either way.
+- **`Content-Signal`** is sent by the origin (`next.config.ts`) and mirrored by `robots.txt`, so the
+  policy is stated once and obeyed in both places.
+
+`npm run check:site` asserts the contract against the built output — headings, canonicals, unique
+titles, JSON-LD, image dimensions, sitemap ↔ page parity, orphans, feeds, artifacts, and budgets.
 
 ## Quality checks
 
@@ -113,7 +135,9 @@ npm run lint        # ESLint (Next core-web-vitals + TypeScript + jsx-a11y)
 npm run typecheck   # tsc --noEmit
 npm test            # Vitest: schema, loader, TOC, and MDX compilation of every post
 npm run build       # production build, types enforced
+npm run check:site  # the AGENTS.md definition of done, against .next artifacts
 npm run quality     # tokens + lint + typecheck + test
+npm run verify      # build + check:site
 ```
 
 The test suite compiles **every** post in `content/posts/` with the same remark/rehype plugins the site
@@ -146,21 +170,22 @@ components/
   layout/            site header, footer, theme control
   post/              post cards, cover, table of contents, citation box
   mdx/               MDX component map, code block, renderer
-  search/            client-side search
-  motion/            motion primitives (design system)
+  search/            search input and result list (hydrated)
+  seo/               visible breadcrumbs
 content/
   posts/*.mdx        the blog
   README.md          authoring guide
 lib/
   content/           schema, loader, TOC, slugs, types, formatting
-  seo/               JSON-LD
+  seo/               metadata builders and the JSON-LD graph
   site.ts            site + author identity
 tokens/              design tokens (source of truth for the theme)
-scripts/             post scaffolder, deploy guard, build wrapper
+scripts/             post scaffolder, deploy guard, build wrapper, site checks
 test/                Vitest suites
 ```
 
-`DESIGN.md` records the design system; `PRODUCT.md` records what the site is and who it is for.
+`DESIGN.md` records the design system, `PRODUCT.md` what the site is and who it is for, and `AGENTS.md`
+the SEO/AEO/GEO rules that every change has to pass.
 
 ## History
 

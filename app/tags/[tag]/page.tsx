@@ -7,6 +7,7 @@ import SiteFooter from '@/components/layout/SiteFooter';
 import { PostRow } from '@/components/post/PostCard';
 import { getAllTags, getPostsByTag, getTagBySlug } from '@/lib/content/posts';
 import { pageMetadata } from '@/lib/seo';
+import { collectionPageJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 
 interface TagPageProps {
   params: Promise<{ tag: string }>;
@@ -26,6 +27,8 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
     title: `#${tag.tag}`,
     description: `Every essay on ResearchWithMe filed under ${tag.tag} — ${tag.count} published.`,
     path: `/tags/${tag.slug}`,
+    // Thin archives are duplicates of `/blog` until they carry enough posts.
+    noIndex: tag.count < 3,
   });
 }
 
@@ -38,6 +41,19 @@ export default async function TagPage({ params }: TagPageProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScript(
+            collectionPageJsonLd({
+              name: `#${tag.tag}`,
+              description: `Every essay on ResearchWithMe filed under ${tag.tag}.`,
+              path: `/tags/${tag.slug}`,
+              posts,
+            }),
+          ),
+        }}
+      />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-8 sm:px-6 lg:px-8">
         <nav aria-label="Breadcrumb" className="font-mono text-xs text-ink-secondary">

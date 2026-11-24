@@ -3,6 +3,47 @@
 All notable post-launch changes to ResearchWithMe are recorded here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.1.0] — 2026-11-24
+
+The site adopts [`AGENTS.md`](./AGENTS.md) as an engineering contract: crawlable, parseable, citable,
+operable. The rules are asserted against the built output by `npm run check:site`.
+
+### Added
+- `/blog` as the article tree, with one-hop permanent redirects from `/posts` and `/posts/:slug`.
+- Machine-readable surface: `/feed.json` (JSON Feed 1.1), `/llms.txt`, `/.well-known/security.txt`,
+  `/blog/<slug>/markdown`, and `/errors/<status>` (RFC 9457 `application/problem+json` or markdown,
+  honoring `Accept`, with `retryable` and `Retry-After` only on 429/503).
+- JSON-LD `@id` graph: one `Person` (`/about#person`), one `WebSite`, `BlogPosting` per article with
+  `wordCount` and a real `dateModified`, `BreadcrumbList`, `ProfilePage`, `CollectionPage` + `ItemList`,
+  and `FAQPage` only where a FAQ is visible.
+- `faq:` frontmatter, rendered on the page and mirrored into structured data.
+- Visible breadcrumbs (`components/seo/Breadcrumbs.tsx`) built from the same array as their JSON-LD.
+- `/search` renders results server-side for `?q=` and is hydrated afterwards, so search works without
+  JavaScript.
+- Per-crawler `robots.txt` groups (Googlebot, Bingbot, DuckDuckBot, Applebot, OAI-SearchBot, GPTBot,
+  ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended) and a `Content-Signal` header that matches
+  them.
+- `npm run check:site` and `npm run verify`, wired into CI after the production build: headings,
+  canonicals, unique metadata, JSON-LD, image dimensions, sitemap/page parity, orphans, feeds,
+  artifacts, JS/CSS/font budgets.
+
+### Changed
+- Sitemap excludes tag archives with fewer than three posts and every `noindex` route; `lastmod` is the
+  post's real revision date instead of the build date.
+- Articles advertise `<link rel="alternate" type="text/markdown">`, and the shared metadata builder gives
+  every page a 1200×630 card.
+- Removed `meta keywords` and the `%s | reme` title template; titles now end in the full site name.
+- Search is a `<form method="get" action="/search">`, so it submits without JavaScript.
+- Typography is a single downloaded family (Plus Jakarta Sans); Inter and Newsreader are gone, and mono
+  text uses the system stack.
+- Article HTML ships with no animation runtime: the preloader, GSAP/Lenis smooth scroll, `motion`, and
+  the route-transition wrapper were removed. `ReadingProgress` is a dependency-free scroll listener.
+
+### Removed
+- Dependencies `motion`, `gsap`, and `lenis`, along with `components/motion`, `components/preloader`, and
+  `lib/motion`.
+- `public/.well-known/security.txt` as a static file (now generated from `SITE.url`).
+
 ## [1.0.0] — 2026-11-24
 
 The multi-author publishing platform becomes a single-author MDX blog. Git is the CMS.

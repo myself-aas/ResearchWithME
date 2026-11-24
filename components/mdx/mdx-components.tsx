@@ -81,12 +81,13 @@ export function Figure({
   alt: string;
   caption?: ReactNode;
   href?: string;
-  width?: number;
-  height?: number;
+  /** Intrinsic pixel dimensions, required: they reserve space and prevent CLS. */
+  width: number;
+  height: number;
   priority?: boolean;
 }) {
   const image = (
-    // eslint-disable-next-line @next/next/no-img-element -- MDX figures carry no build-time dimensions
+    // eslint-disable-next-line @next/next/no-img-element -- MDX figures may point at any https host
     <img
       src={src}
       alt={alt}
@@ -94,7 +95,7 @@ export function Figure({
       height={height}
       loading={priority ? 'eager' : 'lazy'}
       decoding="async"
-      className="w-full rounded-xl border border-line bg-surface object-cover"
+      className="h-auto w-full rounded-xl border border-line bg-surface"
     />
   );
 

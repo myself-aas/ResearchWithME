@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <link rel="alternate" type="application/problem+json" href="/errors/404" title="404 as problem+json" />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-5 py-20 sm:px-6">
         <p className="font-mono text-xs uppercase tracking-wider text-ink-secondary">404</p>
@@ -20,11 +21,18 @@ export default function NotFound() {
         </h1>
         <p className="mt-4 max-w-xl font-sans text-base leading-relaxed text-ink-secondary">
           The link may be old, or the essay may have moved. The archive and the search page both know where
-          everything lives.
+          everything lives. Programs can read this response as{' '}
+          <Link
+            href="/errors/404"
+            className="text-brand underline underline-offset-4 hover:text-brand-pressed"
+          >
+            problem+json
+          </Link>
+          .
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
-            href="/posts"
+            href="/blog"
             className="inline-flex min-h-11 items-center gap-2 rounded-full bg-action-primary px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90"
           >
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />

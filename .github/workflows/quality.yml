@@ -34,6 +34,13 @@ jobs:
       - name: Production build
         run: npm run build
 
+      # §14 of AGENTS.md, executed against the artifacts that ship: one h1 per
+      # page, unique titles and descriptions, canonical == final URL, JSON-LD
+      # resolved by @id, no orphans, sitemap ↔ page parity, feeds and
+      # machine-readable artifacts present, JS/CSS budgets.
+      - name: Definition of done (SEO / AEO / GEO contract)
+        run: npm run check:site
+
       - name: Smoke test the built site
         run: |
           npx next start -H 127.0.0.1 -p 3100 &
@@ -43,7 +50,7 @@ jobs:
             curl -sf http://127.0.0.1:3100/ > /dev/null && break
             sleep 1
           done
-          for route in / /posts /tags /about /search /rss.xml /sitemap.xml; do
+          for route in / /blog /tags /about /search /rss.xml /feed.json /llms.txt /robots.txt /sitemap.xml /blog/welcome-to-the-new-researchwithme /blog/welcome-to-the-new-researchwithme/markdown /.well-known/security.txt; do
             code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3100$route")
             echo "$route $code"
             test "$code" = "200"

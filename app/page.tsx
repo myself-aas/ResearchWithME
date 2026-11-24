@@ -50,7 +50,7 @@ export default function HomePage() {
                 </Link>
               )}
               <Link
-                href="/posts"
+                href="/blog"
                 className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
               >
                 Browse the archive
@@ -111,7 +111,7 @@ export default function HomePage() {
               </h2>
               {latest.length > 0 && (
                 <Link
-                  href="/posts"
+                  href="/blog"
                   className="inline-flex items-center gap-1 font-sans text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
                 >
                   All essays

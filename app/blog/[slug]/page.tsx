@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import MdxContent from '@/components/mdx/MdxContent';
@@ -9,12 +9,13 @@ import ReadingProgress from '@/components/ReadingProgress';
 import TocNav from '@/components/post/TocNav';
 import PostCover from '@/components/post/PostCover';
 import CiteBox from '@/components/post/CiteBox';
+import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import { getAdjacentPosts, getPostBySlug, getPostSlugs, getRelatedPosts } from '@/lib/content/posts';
 import { extractToc } from '@/lib/content/toc';
 import { tagToSlug } from '@/lib/content/slug';
 import { formatDate, formatDateShort, readingTimeLabel, toDateTime } from '@/lib/content/format';
 import { absoluteUrl, pageMetadata } from '@/lib/seo';
-import { articleJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
+import { articleJsonLd, jsonLdScript, type Crumb } from '@/lib/seo/jsonld';
 import { AUTHOR, SITE } from '@/lib/site';
 
 interface PostPageProps {
@@ -39,11 +40,12 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     description: post.description,
     path: post.href,
     type: 'article',
-    imagePath: `/posts/${post.slug}/opengraph-image`,
+    imagePath: `/blog/${post.slug}/opengraph-image`,
     publishedTime: toDateTime(post.date),
     modifiedTime: toDateTime(post.updated ?? post.date),
     tags: post.tags,
     noIndex: post.draft,
+    markdownPath: `${post.href}/markdown`,
   });
 }
 
@@ -57,6 +59,12 @@ export default async function PostPage({ params }: PostPageProps) {
   const { newer, older } = getAdjacentPosts(post.slug);
   const citation = `${AUTHOR.name}. “${post.title}.” ${SITE.name}, ${formatDate(post.date)}. ${absoluteUrl(post.href)}.`;
 
+  const crumbs: Crumb[] = [
+    { name: 'Home', href: '/' },
+    { name: 'Writing', href: '/blog' },
+    { name: post.title },
+  ];
+
   const jsonLd = articleJsonLd({
     title: post.title,
     description: post.description,
@@ -64,8 +72,11 @@ export default async function PostPage({ params }: PostPageProps) {
     datePublished: toDateTime(post.date),
     dateModified: toDateTime(post.updated ?? post.date),
     tags: post.tags,
-    imagePath: post.cover,
+    imagePath: `/blog/${post.slug}/opengraph-image`,
     canonical: post.canonical,
+    wordCount: post.wordCount,
+    crumbs,
+    faq: post.faq,
   });
 
   return (
@@ -75,29 +86,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <SiteHeader />
 
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-16 pt-8 sm:px-6 sm:pt-10 lg:px-8">
-        <nav aria-label="Breadcrumb" className="mb-8 font-mono text-xs text-ink-secondary">
-          <ol className="flex flex-wrap items-center gap-1.5">
-            <li>
-              <Link href="/" className="hover:text-ink hover:underline">
-                Home
-              </Link>
-            </li>
-            <li aria-hidden="true">
-              <ChevronRight className="h-3.5 w-3.5" />
-            </li>
-            <li>
-              <Link href="/posts" className="hover:text-ink hover:underline">
-                Writing
-              </Link>
-            </li>
-            <li aria-hidden="true">
-              <ChevronRight className="h-3.5 w-3.5" />
-            </li>
-            <li aria-current="page" className="min-w-0 max-w-[22rem] truncate text-ink">
-              {post.title}
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs crumbs={crumbs} className="mb-8" />
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_15rem] lg:gap-14">
           <article aria-labelledby="post-title" className="min-w-0">
@@ -166,6 +155,26 @@ export default async function PostPage({ params }: PostPageProps) {
             <div className="mt-9">
               <MdxContent source={post.body} />
             </div>
+
+            {post.faq.length > 0 && (
+              <section aria-labelledby="faq-heading" className="mt-12 border-t border-line pt-8">
+                <h2 id="faq-heading" className="font-serif text-2xl font-bold tracking-tight text-ink">
+                  Questions
+                </h2>
+                <dl className="mt-5 space-y-6">
+                  {post.faq.map((item) => (
+                    <div key={item.question}>
+                      <dt className="font-sans text-base font-semibold text-ink">
+                        {item.question}
+                      </dt>
+                      <dd className="mt-1.5 font-sans text-[0.9375rem] leading-relaxed text-ink-secondary">
+                        {item.answer}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            )}
 
             {post.tags.length > 0 && (
               <ul className="mt-12 flex flex-wrap gap-2 border-t border-line pt-6">

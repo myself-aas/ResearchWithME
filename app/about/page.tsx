@@ -6,6 +6,7 @@ import SiteFooter from '@/components/layout/SiteFooter';
 import { AUTHOR, SITE } from '@/lib/site';
 import { getSiteStats } from '@/lib/content/posts';
 import { pageMetadata } from '@/lib/seo';
+import { jsonLdScript, profilePageJsonLd } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
   title: 'About',
@@ -18,6 +19,10 @@ export default function AboutPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(profilePageJsonLd()) }}
+      />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-5 pb-8 pt-12 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-10">
@@ -132,7 +137,7 @@ export default function AboutPage() {
           </div>
           <p className="mt-6">
             <Link
-              href="/posts"
+              href="/blog"
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-action-primary px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             >
               <BookOpen className="h-4 w-4" aria-hidden="true" />

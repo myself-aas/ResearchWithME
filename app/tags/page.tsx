@@ -5,6 +5,7 @@ import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { getAllTags } from '@/lib/content/posts';
 import { pageMetadata } from '@/lib/seo';
+import { jsonLdScript, tagIndexJsonLd } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Topics',
@@ -17,6 +18,10 @@ export default function TagsPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(tagIndexJsonLd(tags)) }}
+      />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-12 sm:px-6 lg:px-8">
         <header className="max-w-2xl border-b border-line pb-8">

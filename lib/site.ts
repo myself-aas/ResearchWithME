@@ -35,7 +35,7 @@ export const AUTHOR = {
 } as const;
 
 export const NAV = [
-  { href: '/posts', label: 'Writing' },
+  { href: '/blog', label: 'Writing' },
   { href: '/tags', label: 'Topics' },
   { href: '/about', label: 'About' },
   { href: '/search', label: 'Search' },

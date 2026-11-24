@@ -19,6 +19,7 @@ export function pageMetadata({
   modifiedTime,
   tags,
   noIndex = false,
+  markdownPath,
 }: {
   title: string;
   description: string;
@@ -29,18 +30,35 @@ export function pageMetadata({
   modifiedTime?: string;
   tags?: string[];
   noIndex?: boolean;
+  /** Same content, machine-readable representation. Emits `<link rel="alternate">`. */
+  markdownPath?: string;
 }): Metadata {
   const url = absoluteUrl(path);
-  const images = imagePath
-    ? [{ url: imagePath.startsWith('http') ? imagePath : absoluteUrl(imagePath), width: 1200, height: 630, alt: title }]
-    : undefined;
+  // Every page ships a 1200×630 share card. Posts override with their own
+  // generated card; everything else falls back to the site card.
+  const images = [
+    {
+      url: imagePath
+        ? imagePath.startsWith('http')
+          ? imagePath
+          : absoluteUrl(imagePath)
+        : absoluteUrl('/opengraph-image'),
+      width: 1200,
+      height: 630,
+      alt: title,
+    },
+  ];
 
   return {
     title,
     description,
     alternates: {
       canonical: path,
-      types: { 'application/rss+xml': SITE.feedPath },
+      types: {
+        'application/rss+xml': SITE.feedPath,
+        'application/feed+json': '/feed.json',
+        ...(markdownPath ? { 'text/markdown': markdownPath } : {}),
+      },
     },
     openGraph: {
       title,
@@ -49,7 +67,7 @@ export function pageMetadata({
       siteName: SITE.name,
       type,
       locale: SITE.locale,
-      ...(images ? { images } : {}),
+      images,
       ...(publishedTime ? { publishedTime } : {}),
       ...(modifiedTime ? { modifiedTime } : {}),
       ...(tags ? { tags } : {}),
@@ -58,9 +76,11 @@ export function pageMetadata({
       card: 'summary_large_image',
       title,
       description,
-      ...(images ? { images: images.map((image) => image.url) } : {}),
+      images: images.map((image) => image.url),
     },
     authors: [{ name: AUTHOR.name, url: absoluteUrl('/about') }],
-    ...(noIndex ? { robots: { index: false, follow: true } } : {}),
+    ...(noIndex
+      ? { robots: { index: false, follow: true, 'max-image-preview': 'large' as const } }
+      : {}),
   };
 }

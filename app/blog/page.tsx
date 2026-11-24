@@ -5,21 +5,37 @@ import SiteFooter from '@/components/layout/SiteFooter';
 import { PostRow } from '@/components/post/PostCard';
 import { getAllPostMeta, getAllTags, getArchive } from '@/lib/content/posts';
 import { pageMetadata } from '@/lib/seo';
+import { collectionPageJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Archive',
   description:
     'Every essay on ResearchWithMe, grouped by year — paper reviews, repository teardowns, and notes on reproducible work.',
-  path: '/posts',
+  path: '/blog',
 });
 
 export default function ArchivePage() {
   const archive = getArchive();
   const tags = getAllTags();
-  const total = getAllPostMeta().length;
+  const posts = getAllPostMeta();
+  const total = posts.length;
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: jsonLdScript(
+            collectionPageJsonLd({
+              name: 'Archive',
+              description:
+                'Every essay on ResearchWithMe, grouped by year — paper reviews, repository teardowns, and notes on reproducible work.',
+              path: '/blog',
+              posts,
+            }),
+          ),
+        }}
+      />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-12 sm:px-6 lg:px-8">
         <header className="border-b border-line pb-8">

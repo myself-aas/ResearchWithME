@@ -1,51 +1,25 @@
 import type { Metadata, Viewport } from 'next';
-import localFont from 'next/font/local';
 import './globals.css';
 import { semanticDark, semanticLight } from '@/tokens/generated/tokens';
 import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import { absoluteUrl, SITE_DESCRIPTION, SITE_URL } from '@/lib/seo';
 import { AUTHOR, SITE } from '@/lib/site';
-import PremiumMotionProvider from '@/components/motion/PremiumMotionProvider';
-import { Preloader } from '@/components/preloader';
-import RouteTransition from '@/components/motion/RouteTransition';
 
-// Self-hosted OFL faces: Inter and Newsreader back the Plus Jakarta Sans
-// editorial stacks declared in globals.css.
-const inter = localFont({
-  src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
-  variable: '--font-inter',
-  display: 'swap',
-  fallback: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
-  preload: true,
-});
-
-const newsreader = localFont({
-  src: [{ path: './fonts/newsreader-latin-variable.woff2', weight: '200 800', style: 'normal' }],
-  variable: '--font-newsreader',
-  display: 'swap',
-  fallback: ['Georgia', 'Cambria', 'Times New Roman', 'serif'],
-  preload: true,
-});
-
+// One downloaded typeface (Plus Jakarta Sans, declared in globals.css). Mono
+// text uses the system stack, so there is no third font request on any page.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: `${SITE.name} — essays on research and open code`,
-    template: `%s | ${SITE.shortName}`,
+    template: `%s | ${SITE.name}`,
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE.name,
   authors: [{ name: AUTHOR.name, url: absoluteUrl('/about') }],
   creator: AUTHOR.name,
   publisher: AUTHOR.name,
-  keywords: [
-    'research essays',
-    'paper reviews',
-    'reproducible research',
-    'open source teardowns',
-    'open science',
-    'MDX blog',
-  ],
+  // No `keywords` meta tag: it is ignored by search engines and every real
+  // signal already comes from the visible text and structured data.
   alternates: {
     canonical: '/',
     types: { 'application/rss+xml': SITE.feedPath },
@@ -65,7 +39,12 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [absoluteUrl('/opengraph-image')],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    'max-image-preview': 'large',
+    'max-snippet': -1,
+  },
   formatDetection: { telephone: false, email: false, address: false },
   icons: {
     icon: [
@@ -92,9 +71,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+        <link rel="describedby" type="text/plain" title="llms.txt" href="/llms.txt" />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased selection:bg-selection selection:text-ink" suppressHydrationWarning>
         <a
@@ -103,12 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        <Preloader minDisplayTime={700} />
-        <PremiumMotionProvider>
-          <div className="flex min-h-screen flex-col">
-            <RouteTransition>{children}</RouteTransition>
-          </div>
-        </PremiumMotionProvider>
+        <div className="flex min-h-screen flex-col">{children}</div>
       </body>
     </html>
   );

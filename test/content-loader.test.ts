@@ -44,7 +44,7 @@ describe('loadPosts', () => {
     const [post] = loadPosts({ dir });
 
     expect(post.slug).toBe('hello-world');
-    expect(post.href).toBe('/posts/hello-world');
+    expect(post.href).toBe('/blog/hello-world');
     expect(post.title).toBe('A post');
     expect(post.date).toBe('2026-11-01');
     expect(post.tags).toEqual(['mdx', 'writing']);

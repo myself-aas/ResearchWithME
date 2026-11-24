@@ -40,7 +40,7 @@ export default function SiteFooter() {
             ))}
             <li>
               <Link
-                href="/posts"
+                href="/blog"
                 className="font-sans text-sm text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
               >
                 Archive

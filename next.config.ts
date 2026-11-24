@@ -32,6 +32,11 @@ const securityHeaders = [
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'Content-Security-Policy', value: cspDirectives },
+  // Usage preference, expressed at the origin so it is authoritative and
+  // survives Cloudflare's Markdown conversion. Deliberately permissive and
+  // consistent with robots.txt: crawl yes, answer yes, train yes. Changing
+  // `ai-train` is a content-policy decision, not a build detail.
+  { key: 'Content-Signal', value: 'search=yes, ai-input=yes, ai-train=yes' },
 ];
 
 const nextConfig: NextConfig = {
@@ -62,11 +67,15 @@ const nextConfig: NextConfig = {
     '/**': ['./content/**/*'],
   },
   async redirects() {
-    // The multi-author platform had a different URL map. Keep the two that
-    // readers and inbound links are most likely to hold on to.
+    // One hop, permanent. `/blog` is the canonical article tree; the 1.0
+    // refactor briefly used `/posts`, and the multi-author platform used
+    // `/post`, so both collapse here. A slug change must add its own entry in
+    // the same commit that renames the file.
     return [
-      { source: '/post/:slug', destination: '/posts/:slug', permanent: true },
-      { source: '/feed', destination: '/posts', permanent: true },
+      { source: '/posts', destination: '/blog', permanent: true },
+      { source: '/posts/:slug', destination: '/blog/:slug', permanent: true },
+      { source: '/post/:slug', destination: '/blog/:slug', permanent: true },
+      { source: '/feed', destination: '/blog', permanent: true },
       { source: '/category/:slug', destination: '/tags', permanent: true },
       { source: '/authors', destination: '/about', permanent: true },
       { source: '/author/:id', destination: '/about', permanent: true },

@@ -66,6 +66,19 @@ export const frontmatterSchema = z
     canonical: z.string().url('Canonical must be an absolute URL').optional(),
     /** Render the table of contents on the post page. */
     toc: z.boolean().default(true),
+    /**
+     * Questions answered on the page. Rendered as a visible FAQ section and
+     * mirrored into FAQPage structured data — never emitted on its own.
+     */
+    faq: z
+      .array(
+        z.object({
+          question: z.string().trim().min(8, 'Ask a real question').max(160),
+          answer: z.string().trim().min(20, 'Answer in a sentence or two').max(600),
+        }),
+      )
+      .max(8)
+      .default([]),
   })
   .strict();
 

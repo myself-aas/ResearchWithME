@@ -15,7 +15,11 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
       </h1>
       <p className="mt-4 max-w-xl font-sans text-base leading-relaxed text-ink-secondary">
         The error has been logged. Retrying usually works; if it keeps failing, the archive and the rest of the
-        site are still readable.
+        site are still readable. The machine-readable form of this response is{' '}
+        <Link href="/errors/500" className="text-brand underline underline-offset-4 hover:text-brand-pressed">
+          problem+json
+        </Link>
+        .
       </p>
       {error.digest && (
         <p className="mt-3 font-mono text-xs text-ink-secondary">Reference: {error.digest}</p>
@@ -30,7 +34,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
           Try again
         </button>
         <Link
-          href="/posts"
+          href="/blog"
           className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand"
         >
           Browse the archive

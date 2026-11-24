@@ -1,15 +1,25 @@
 ---
 title: "Welcome to the new ResearchWithMe"
-description: "This site is now a single-author blog. Every essay is an MDX file in the repository, rendered at build time, with no accounts, no database, and no admin panel."
+description: "ResearchWithMe is now a single-author blog: every essay is an MDX file in the repository, rendered at build time, with no accounts, no database, and no admin panel."
 date: "2026-11-24"
+updated: "2026-11-24"
 tags: ["meta", "site-news", "mdx"]
 featured: true
 toc: false
+faq:
+  - question: "Where did the old posts go?"
+    answer: "They are still here. Essays from the multi-author era were consolidated into the archive under /blog, and the old URLs redirect there in one hop."
+  - question: "How do I follow new essays?"
+    answer: "Subscribe to the RSS feed at /rss.xml, or read the JSON Feed at /feed.json if you prefer structured data. Neither one requires an account."
+  - question: "Can I quote or republish an essay?"
+    answer: "Yes. Everything here is licensed CC BY 4.0, so quote, teach with, or translate it as long as you credit the author and link to the original."
+  - question: "Is there a CMS, database, or login?"
+    answer: "No. There is no account system, no database, and no admin panel. Publishing means committing an MDX file and pushing it, which triggers a rebuild of the pages, feeds, sitemap, and search index."
 ---
 
-I rebuilt ResearchWithMe around a simpler idea: the writing is the site. Every essay now lives as an
-MDX file in `content/posts/` in this repository. A push rebuilds the pages, the search index, the RSS
-feed, and the social cards from those same files.
+ResearchWithMe is now a single-author blog. Every essay is an MDX file in this repository, rendered at
+build time and published by pushing to main. There is no account system, no database, and no admin
+panel — the writing is the site, and git is the only publishing interface.
 
 <KeyTakeaways>
 
@@ -19,7 +29,7 @@ feed, and the social cards from those same files.
 
 </KeyTakeaways>
 
-## Why the change
+## Why change what already worked?
 
 The previous version was built to host many writers: applications, roles, an editorial dashboard, a
 draft studio, and a moderation queue. For a blog written by one person, all of that was machinery
@@ -27,9 +37,11 @@ around the actual work. Removing it made the site smaller, faster, and considera
 about.
 
 What is left is the part that matters: a reading experience, a durable archive, and a publishing
-workflow that is just git.
+workflow that is just git. The pages are pre-rendered with the Next.js App Router, so the essay text
+is in the first response rather than assembled by a script in the browser
+([Next.js docs](https://nextjs.org/docs/app)).
 
-## How publishing works now
+## How does publishing work now?
 
 A post is one file:
 
@@ -44,22 +56,25 @@ tags: ["reproducible-research", "methodology"]
 The body is MDX. Components are available without imports.
 ```
 
-Add the file, commit it, push. The build validates the frontmatter, renders the page, and updates the
-index. If a field is wrong, the build fails with the file name and the field — no silently missing
-post.
+MDX is Markdown that compiles to JSX, which is why the prose can use a figure or a callout without a
+bespoke page template ([MDX docs](https://mdxjs.com/docs/)). Add the file, commit it, push. The build
+validates the frontmatter with Zod, renders the page, and updates the index
+([Zod docs](https://zod.dev)). If a field is wrong, the build fails with the file name and the field —
+no silently missing post.
 
 <Callout tone="note" title="Drafts stay local">
   A post with <code>draft: true</code> appears when the site runs in development and is excluded from a
   production build. You can write in public view without publishing.
 </Callout>
 
-## What carried over
+## What carried over from the old site?
 
 The things that were worth keeping stayed: the typography, the paper-and-ink palette, the reading
 progress bar, the theme control, and the archive-first navigation. Bookmarks, accounts, the studio,
 and the research-network surfaces did not — they existed to support a multi-writer platform that is no
 longer here.
 
-If you are looking for something that used to be at a specific address, the [archive](/posts) and
+If you are looking for something that used to be at a specific address, the [archive](/blog) and
 [search](/search) are the places to start. The [RSS feed](/rss.xml) still works, and it is still the
-best way to follow new writing.
+best way to follow new writing. If you want the longer version of why this is a one-person site, the
+[about page](/about) explains it.

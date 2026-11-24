@@ -22,9 +22,11 @@ export interface PostMeta {
   draft: boolean;
   canonical?: string;
   toc: boolean;
+  /** Visible questions, mirrored into FAQPage structured data. */
+  faq: Array<{ question: string; answer: string }>;
   readingTimeMinutes: number;
   wordCount: number;
-  /** Canonical site path, e.g. `/posts/on-reproducible-benchmarks`. */
+  /** Canonical site path, e.g. `/blog/on-reproducible-benchmarks`. */
   href: string;
 }
 

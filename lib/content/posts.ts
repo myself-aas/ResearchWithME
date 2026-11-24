@@ -110,9 +110,10 @@ function readPost(filePath: string, includeDrafts: boolean): Post | null {
     draft: frontmatter.draft,
     canonical: frontmatter.canonical,
     toc: frontmatter.toc,
+    faq: frontmatter.faq,
     readingTimeMinutes: minutes,
     wordCount: words,
-    href: `/posts/${slug}`,
+    href: `/blog/${slug}`,
     body: parsed.content.trim(),
   };
 }

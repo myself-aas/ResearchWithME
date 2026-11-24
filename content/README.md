@@ -24,9 +24,12 @@ featured: false                   # optional, pins it to the top of the home pag
 draft: false                      # optional, true = development only
 toc: true                         # optional, false hides the table of contents
 canonical: "https://elsewhere.example/post"  # optional, if first published elsewhere
+faq:                              # optional, rendered and mirrored into FAQPage
+  - question: "Why does the harness disagree with the paper?"
+    answer: "Because the warm-up is excluded in the harness but included in the paper's timing."
 ---
 
-Opening paragraph. It receives the drop cap.
+The opening paragraph answers the post's question in 40–60 words. It receives the drop cap.
 ```
 
 | Field | Required | Notes |
@@ -40,9 +43,25 @@ Opening paragraph. It receives the drop cap.
 | `featured` | no | `true` makes it the lead card on the home page. |
 | `draft` | no | `true` renders in `npm run dev` and is excluded from production builds. |
 | `toc` | no | `false` disables the table of contents for that post. |
+| `faq` | no | 1–8 `{ question, answer }` pairs; rendered as a visible FAQ and as `FAQPage` data. |
 
-The file name is the URL slug (`how-i-read-a-benchmark.mdx` → `/posts/how-i-read-a-benchmark`).
+The file name is the URL slug (`how-i-read-a-benchmark.mdx` → `/blog/how-i-read-a-benchmark`).
 Override it with a `slug` field if you need to. Duplicate slugs fail the build.
+
+## The writing rules that are enforced
+
+These are not style preferences; `npm run check:site` fails the build on the structural ones.
+
+1. **Answer first.** The first body paragraph is 40–60 words and states the finding. No "in this post
+   I will".
+2. **One `h1`.** The title is the `h1`; your body starts at `##`. Write `h2`s as questions or claims.
+3. **Three primary sources, linked.** The paper, the repository, the spec — inline, with descriptive
+   anchor text.
+4. **Three internal links.** Point to related essays, `/tags/...`, or `/about`.
+5. **Images declare dimensions.** `<Figure>` requires `width` and `height`; every image needs alt text.
+6. **Dates are honest.** Add `updated:` when you revise, because `dateModified` and the sitemap
+   `lastmod` read from it.
+7. **FAQ only when real.** Questions a reader would actually ask; every answer is visible on the page.
 
 ## Components
 
@@ -61,6 +80,8 @@ These are available in every post without an import:
 <Figure
   src="/images/folio-process.jpeg"
   alt="A whiteboard sketch of the request path."
+  width={800}
+  height={533}
   caption="Always write a caption that stands alone."
 />
 
@@ -101,10 +122,12 @@ build.
 
 | Output | Source |
 | --- | --- |
-| `/posts/[slug]` | the MDX body + frontmatter |
-| `/posts` archive | dates, grouped by year |
+| `/blog/[slug]` | the MDX body + frontmatter |
+| `/blog` archive | dates, grouped by year |
 | `/tags` and `/tags/[tag]` | the union of all tags |
 | `/search` | title, description, tags, and plain-text body |
-| `/rss.xml` | title, description, date, tags, link |
-| `/sitemap.xml` | every post and tag page |
+| `/rss.xml` and `/feed.json` | title, description, date, tags, link |
+| `/blog/[slug]/markdown` | the same body as markdown, for agents |
+| `/llms.txt` | an index of every essay with its description |
+| `/sitemap.xml` | every indexable post and tag page, with real `lastmod` |
 | Social cards | title, date, author, first three tags |
