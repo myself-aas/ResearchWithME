@@ -6,6 +6,140 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- `.mcp.json` with eight MCP servers (shadcn, GitHub, Figma, fetch, sequential thinking, DeepWiki,
+  Brave search, Firecrawl), environment-variable placeholders only, plus `.agents/mcp/README.md` for
+  the per-server instructions and `npm run check:mcp` to spawn each stdio server and handshake with it
+  (verified here: shadcn 7 tools, sequential thinking 1, Firecrawl 28 keyless; Brave needs a key,
+  remote servers need a login).
+- `AGENTS.md` §17 states the MCP contract (untrusted output, no credentials, nothing publishes, local
+  authority wins), and `test/mcp-config.test.ts` enforces the trio of config + contract + manual so a
+  server cannot be added without documentation.
+
+### Changed
+- Search no longer inlines every essay's body into `/search`. Titles, descriptions, and tags stay in the
+  page (so `?q=` is still server-rendered); full text moves to the static, `noindex`, cacheable
+  `/search-index.json`, fetched when a reader focuses or types in the field. Index building and
+  ranking live in `lib/search.ts` and are covered by `test/search.test.ts`.
+
+### Added
+- `predeploy` now refuses a `NEXT_PUBLIC_SITE_URL` whose host is not one of the Worker's routes in
+  `wrangler.jsonc` (override with `ALLOW_FOREIGN_DOMAIN_DEPLOY=1`).
+- CI asserts the served headers (crawl signal, HTML cache policy, HSTS) and the `/search-index.json`
+  artifact, not only page bodies.
+
+## [1.2.0] — 2026-11-24
+
+Follow-up to the SEO audit: trust pages, copy fixes, caching, and the first paper review.
+
+### Added
+- `/contact` — the real channels (repository issues, GitHub profile, private security advisory) and what
+  happens to a message. No form, because there is nothing to store it in.
+- `/privacy` — no accounts, analytics, cookies, or third-party scripts; the one theme preference in
+  `localStorage`; what Cloudflare necessarily logs at the edge. Linked from the footer and sitemap.
+- First research-essay review: *Prithvi-EO-2.0: what the model adds, and what it hides* — 3D and
+  metadata embeddings, the GEO-Bench claim, a metadata ablation plan, and the fine-tuning path.
+
+### Changed
+- Titles: the `| ResearchWithMe` suffix is dropped when a title already names the site or would exceed
+  ~60 characters. Archive page renamed to "Essays on research and reproducible code".
+- Meta descriptions rewritten to 150–160 characters on `/blog`, `/tags`, `/tags/[tag]`, `/search`,
+  `/about`, `/contact`, `/privacy`, and both posts.
+- Home page H1 now shares its query language with the title: "Research papers and open code, reviewed
+  in public."
+- Cache policy in `next.config.ts`: HTML `max-age=0, s-maxage=31536000, stale-while-revalidate=86400`;
+  feeds and machine artifacts one hour; `/_next/static` immutable.
+- `security.txt` and the contact page read their channels from `CONTACT` in `lib/site.ts`.
+
+## [1.1.0] — 2026-11-24
+
+The site adopts [`AGENTS.md`](./AGENTS.md) as an engineering contract: crawlable, parseable, citable,
+operable. The rules are asserted against the built output by `npm run check:site`.
+
+### Added
+- `/blog` as the article tree, with one-hop permanent redirects from `/posts` and `/posts/:slug`.
+- Machine-readable surface: `/feed.json` (JSON Feed 1.1), `/llms.txt`, `/.well-known/security.txt`,
+  `/blog/<slug>/markdown`, and `/errors/<status>` (RFC 9457 `application/problem+json` or markdown,
+  honoring `Accept`, with `retryable` and `Retry-After` only on 429/503).
+- JSON-LD `@id` graph: one `Person` (`/about#person`), one `WebSite`, `BlogPosting` per article with
+  `wordCount` and a real `dateModified`, `BreadcrumbList`, `ProfilePage`, `CollectionPage` + `ItemList`,
+  and `FAQPage` only where a FAQ is visible.
+- `faq:` frontmatter, rendered on the page and mirrored into structured data.
+- Visible breadcrumbs (`components/seo/Breadcrumbs.tsx`) built from the same array as their JSON-LD.
+- `/search` renders results server-side for `?q=` and is hydrated afterwards, so search works without
+  JavaScript.
+- Per-crawler `robots.txt` groups (Googlebot, Bingbot, DuckDuckBot, Applebot, OAI-SearchBot, GPTBot,
+  ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended) and a `Content-Signal` header that matches
+  them.
+- `npm run check:site` and `npm run verify`, wired into CI after the production build: headings,
+  canonicals, unique metadata, JSON-LD, image dimensions, sitemap/page parity, orphans, feeds,
+  artifacts, JS/CSS/font budgets.
+
+### Changed
+- Sitemap excludes tag archives with fewer than three posts and every `noindex` route; `lastmod` is the
+  post's real revision date instead of the build date.
+- Articles advertise `<link rel="alternate" type="text/markdown">`, and the shared metadata builder gives
+  every page a 1200×630 card.
+- Removed `meta keywords` and the `%s | reme` title template; titles now end in the full site name.
+- Search is a `<form method="get" action="/search">`, so it submits without JavaScript.
+- Typography is a single downloaded family (Plus Jakarta Sans); Inter and Newsreader are gone, and mono
+  text uses the system stack.
+- Article HTML ships with no animation runtime: the preloader, GSAP/Lenis smooth scroll, `motion`, and
+  the route-transition wrapper were removed. `ReadingProgress` is a dependency-free scroll listener.
+
+### Removed
+- Dependencies `motion`, `gsap`, and `lenis`, along with `components/motion`, `components/preloader`, and
+  `lib/motion`.
+- `public/.well-known/security.txt` as a static file (now generated from `SITE.url`).
+
+## [1.0.0] — 2026-11-24
+
+The multi-author publishing platform becomes a single-author MDX blog. Git is the CMS.
+
+### Added
+- MDX content pipeline: `content/posts/*.mdx` is read from disk, validated with Zod
+  (`lib/content/schema.ts`), and rendered with `next-mdx-remote` and the site's
+  remark/rehype plugins. Frontmatter errors fail the build with the file name and field.
+- Routes: `/` (lead essay, latest writing, topics), `/posts` (archive by year), `/posts/[slug]`,
+  `/tags`, `/tags/[tag]`, `/search`, `/about`.
+- Per-post table of contents generated from the MDX source, with scroll-spy highlighting, and a
+  citation box with one-click copy.
+- MDX components available without imports: `Callout`, `Figure`, `Video`, `KeyTakeaways`,
+  `Sidenote`, plus a code block with syntax highlighting and a copy control.
+- Build-time static generation for posts, tags, RSS, sitemap, and 1200×630 social cards.
+- Client-side search over a generated index (Fuse.js), with `?q=` support and no network calls.
+- `npm run new -- "Title"` scaffolds a dated draft post.
+- Vitest suites for frontmatter validation, the loader (drafts, sorting, duplicate slugs, alt text),
+  TOC extraction, and MDX compilation of every post in the repository.
+
+### Changed
+- The site is statically generated: post pages use `generateStaticParams` with
+  `dynamicParams = false`, so unknown slugs are real 404s.
+- `outputFileTracingIncludes` carries `content/` into the standalone/OpenNext bundle.
+- The deploy guard now checks only the canonical origin (`NEXT_PUBLIC_SITE_URL`) instead of Supabase
+  credentials.
+- README, PRODUCT.md, DESIGN.md, and CLAUDE.md now describe the single-author site.
+- Old URLs redirect: `/post/:slug` → `/posts/:slug`, `/feed` → `/posts`, `/category/:slug` → `/tags`,
+  `/authors` and `/author/:id` → `/about`.
+
+### Removed
+- Supabase: auth, database adapters, RLS migrations, storage, realtime, and all `NEXT_PUBLIC_SUPABASE_*`
+  configuration.
+- The editorial studio (`/dashboard`, `/write`, `/editor`), the writers directory, editorial board,
+  applications, and contribution flows.
+- Research-network surfaces (claims, evidence, sources, graph, projects, workspaces, reviews, tools,
+  assistant, citations), their API routes, libraries, and tests.
+- Transactional email, LinkedIn automation, the assistant/outbox Workers, API discovery documents
+  (OpenAPI, MCP, A2A, OAuth metadata), WebMCP, Web Bot Auth, and the markdown-negotiation middleware.
+- Dependency pruning: 355 packages removed, including Supabase, Plate, React Email, Resend, Gemini,
+  Recharts, Lottie, and Playwright.
+
+### Migrated
+- Twelve repository-teardown drafts from `docs/articles/` were moved into `content/posts/` with
+  frontmatter derived from their headers. They remain `draft: true` until their status is reviewed.
+
+## [Unreleased]
+
+### Added
 - Honest engagement layer for writers. A profile-strength meter (`components/engagement/
   ProfileStrength.tsx`) shows on `/dashboard/access` and on the empty-draft state of
   `/dashboard/(studio)/writing`, computed from real signals (email confirmed, identity linked,

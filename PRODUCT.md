@@ -1,60 +1,86 @@
 # Product
 
-<!-- impeccable:product-schema 1 -->
-
 ## Platform
 
 web
 
+## Owner
+
+A single author: **Ashif Ahmed Shuvo**. There are no contributor accounts, no editorial board, and no
+reader sign-in.
+
 ## Users
-Academic researchers, computational scientists, graduate scholars, independent open-science investigators, and reviewers seeking rigorous technical analyses, reproducible code artifacts, dataset manifests, and open-access reviews across computational neuroscience, distributed systems, and climate telemetry.
+
+Researchers, engineers, and curious readers who want a close reading of a paper or an open-source
+repository — someone who would rather have the caveat and the reproduction command than a summary of
+the abstract.
 
 ## Product Purpose
-ResearchWithMe is an open-access research platform delivering rigorous, long-form technical syntheses, reproducible code artifacts, dataset manifests, and open peer-review threads without paywalls, commercial metric gamification, or disruptive pop-up modals.
+
+ResearchWithMe publishes long-form essays about research and code. A post exists to answer a question
+the abstract cannot: does the benchmark reproduce, where does the repository hide its complexity, which
+claims survive a closer read. The site is the archive of those answers.
 
 ## Positioning
-Unlike commercial academic publishers that lock preprints behind paywalls or developer blogs with superficial overviews, ResearchWithMe combines peer-reviewed rigor with live MCP data access, reproducible DOI manifests, verifiable open-science hashes, and dedicated distraction-free reading surfaces.
+
+Not a publisher, not a news feed, not a developer blog with a newsletter funnel. A personal research
+notebook made public: one writer, a durable archive, no paywall, no accounts, no algorithmic ordering.
+The publishing pipeline is git, and every post has a public history.
 
 ## Operating Context
-Scholars read research papers across desktop and mobile viewports, inspect math formulas and syntax-highlighted code blocks, copy DOI citations in BibTeX format, trigger native mobile share sheets, subscribe to weekly research digests, and query research repositories through a dedicated scholarly assistant interface.
+
+Readers arrive from search, RSS, a direct link, or a citation. They read on a phone in a queue and on a
+desktop with the paper open beside the essay. They need readable typography, a table of contents, code
+they can copy, citable metadata, and a way to find the rest of the archive by topic.
 
 ## Capabilities and Constraints
-- Dedicated article reading pages (`/post/[slug]`) with full markdown rendering, metadata panels, code syntax highlighting, DOI copy utilities, and related articles based on tag similarity.
-- Interactive category-filtered feed with verified topic thumbnail headers for all 6 core disciplines.
-- Dedicated scholarly research assistant (`/assistant`) for querying open literature and reproducible repos.
-- A dedicated writer application (`/dashboard/access`) where a reader connects a GitHub or ORCID identity and an editor reviews the request.
-- Native responsive layout adhering to WCAG AA contrast standards (>= 4.5:1), semantic markup, and clear typographic hierarchy.
-- Zero disruptive pop-ups or modal interruptions during reading.
+
+- MDX posts in `content/posts/`, validated at build time; invalid frontmatter fails the build.
+- Static rendering for every page. No runtime database, no auth, no write path.
+- Full-text client-side search over an index generated from the posts.
+- RSS 2.0, a sitemap, per-post social cards, and `BlogPosting` structured data.
+- Tags rather than a single category, so one essay can sit under several topics.
+- Drafts render locally and are excluded from production.
+- No comments, likes, bookmarks, or reading accounts: the archive is read-only.
 
 ## Brand Commitments
-- Name: ResearchWithMe
-- Editorial voice: Scholarly, precise, restrained, transparent, evidence-based.
-- Typography: Self-hosted Plus Jakarta Sans (WOFF2, OFL) for display headlines, reading copy, and interface chrome (with self-hosted Newsreader/Inter fallbacks), paired with Aptos Mono / JetBrains Mono for code, DOIs, and data tables.
-- Palette: Cool archival neutral canvas (`#F8F9FA`), crisp white cards (`#FFFFFF`), cobalt editorial accent (`#005BBF`), high-contrast dark ink (`#1F2329`), and WCAG AA semantic evidence badges.
+
+- Name: ResearchWithMe; wordmark `reme.`
+- Voice: precise, restrained, evidence-first. Claims name their limits.
+- Typography: self-hosted Plus Jakarta Sans (OFL) for display, reading, and chrome; Newsreader and Inter
+  as self-hosted fallbacks; Aptos Mono / JetBrains Mono for code, dates, and tags.
+- Palette: cool archival canvas (`#F8F9FA`), white surfaces, cobalt accent (`#005BBF`), high-contrast
+  ink, and a full dark theme from the same tokens.
+- Content licence: CC BY 4.0.
 
 ## Evidence on Hand
-- Published articles across domains including Computational Neuroscience, Distributed ML Infrastructure, Climate Telemetry, Quantum Algorithms, and Genomic Pipelines.
-- Real author credentials, reading time estimates, tags, and the primary DOI or identifier of each reviewed work.
+
+- One published essay and a migrated set of repository teardowns by the author, kept as drafts until
+  their status is reviewed.
+- Real dates, reading times computed from the files, and tag counts computed from the archive.
 
 ## Product Principles
-1. Content-first reading: The article is sacred; zero intrusive modals or obstructive overlays.
-2. Verifiability by default: Every claim, dataset, and code artifact carries citation metadata and reproducible links.
-3. Accessible precision: Typography and color choices optimize sustained reading comfort and WCAG AA contrast compliance.
-4. Cohesive fullstack experience: Dedicated URLs for every major user intent and task.
+
+1. The writing is the product. Chrome stays quiet and the reading column is the widest thing on the page.
+2. Verifiability over polish. Every claim can carry a link; reproduction steps are shown, not summarised.
+3. Static and durable. Content that can be a file should be a file; output that can be prerendered is.
+4. Accessible precision. WCAG AA contrast, visible focus, keyboard navigation, reduced-motion support,
+   and no horizontal scrolling down to 320px.
 
 ## Implementation Status
-- The active product is the root Next.js App Router application.
-- The editorial studio (`/login`, `/dashboard`) is backed by Supabase when credentials are configured: posts, comments, an image bucket, RLS, and realtime. Without credentials it writes to local JSON so the project stays runnable for review. See `docs/supabase-cms.md`.
-- Readers sign in through Supabase Auth with email and password, or Google. Signing in grants reader access only; publishing requires an approved application, which writes the account into `public.editors`.
-- Published CMS articles share the same canonical reader, feed, sitemap, and author record as the bundled catalogue. Drafts are private.
-- GitHub and ORCID are identity links on an existing account, not sign-in methods. Connecting one never replaces the session the reader applied from.
-- The research assistant uses Gemini only when `GEMINI_API_KEY` is configured; otherwise it returns a deterministic, cited response from the local catalog.
-- Reading and research tools remain free. This site does not sell products or offer paid subscriptions, and has no storefront or payment integration.
-- Newsletter and reading-list preferences are stored locally in the browser. No email is sent at runtime. A Resend scenario library exists in `lib/email/` and `emails/`, but no route calls it. No behavioral tracking is used.
+
+- Next.js 15 App Router with React Server Components; posts compiled from MDX at build time.
+- `lib/content/` owns schema validation, loading, sorting, tags, related posts, reading time, and the
+  search index.
+- Cloudflare Workers via the OpenNext adapter; `scripts/check-production-env.mjs` guards the canonical
+  origin before deploy.
+- The previous multi-author features (studio, Supabase auth, draft editor, authors directory, citation
+  builder, research graph) were removed in the 1.0 refactor.
 
 ## Accessibility & Inclusion
-- Strict adherence to WCAG 2.1 AA contrast ratios (>= 4.5:1 for body text, >= 3:1 for large display text).
+
+- WCAG 2.1 AA contrast for body text and UI.
 - Full keyboard navigation with visible focus rings and semantic landmarks.
-- Responsive reflow without horizontal scrolling down to 320px viewports.
-- Reduced-motion preferences preserve state feedback while removing travel and transform motion.
-- All form controls have accessible names; loading, empty, disabled, and error states are announced where they matter.
+- Reflow without horizontal scrolling down to 320px.
+- Reduced-motion preferences remove travel and transform motion while preserving state feedback.
+- Every cover image requires alt text; figures are captioned; no status is conveyed by colour alone.

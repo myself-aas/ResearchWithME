@@ -1,0 +1,85 @@
+---
+title: "Prithvi-EO-2.0: what the model adds, and what it hides"
+description: "A close read of Prithvi-EO-2.0: how 3D and metadata embeddings work, what the GEO-Bench gain covers, and which parts of the release you can reproduce."
+date: "2026-11-24"
+tags: ["earth-observation", "foundation-models", "remote-sensing", "reproducibility"]
+toc: true
+faq:
+  - question: "Is Prithvi-EO-2.0 open source?"
+    answer: "The code and fine-tuning configs are MIT-licensed on GitHub under NASA-IMPACT, and the pretrained weights are on Hugging Face in six sizes from 5M to 600M parameters. Read the model card for the weights' terms before shipping anything built on them."
+  - question: "What data was it pretrained on?"
+    answer: "4.2 million global time series samples from NASA's Harmonized Landsat and Sentinel-2 (HLS) version 2 archive at 30 m, using six reflectance bands in the order blue, green, red, narrow NIR, SWIR 1, SWIR 2."
+  - question: "Can I fine-tune it on one GPU?"
+    answer: "The 300M checkpoint with a handful of 224 px frames and mixed precision is plausible on a single 24–40 GB card, and the repository ships Colab notebooks for the small datasets. The 600M variants are tighter, and pretraining is out of reach: that ran on the JUWELS supercomputer."
+  - question: "How is it different from Prithvi-EO-1.0?"
+    answer: "The paper's own summary is architectural and data scale: 3D patch and positional embeddings for time series, location and acquisition-date embeddings, 4.2 million global samples, and a reported 8% gain over Prithvi-EO-1.0 across GEO-Bench tasks."
+---
+
+Prithvi-EO-2.0 is an Earth-observation foundation model: ViT backbones of 300M and 600M parameters, pretrained with a masked autoencoder on 4.2 million global Harmonized Landsat–Sentinel time series at 30 m. The architectural contribution is 3D patch and positional embeddings plus optional location and acquisition-date embeddings, which the authors report as an 8% gain over Prithvi-EO-1.0 on GEO-Bench.
+
+<KeyTakeaways>
+
+- Two changes carry the model: 3D embeddings for `T` frames, and metadata embeddings for where and when a scene was captured.
+- Location and date are randomly dropped during pretraining, so the model still runs on tiles that lost their metadata.
+- The headline benchmark number is an aggregate over GEO-Bench tasks; the per-task picture is the part worth checking before you quote it.
+
+</KeyTakeaways>
+
+## What does Prithvi-EO-2.0 actually add?
+
+Start with the base: a vision transformer trained as a masked autoencoder, the same broad recipe as its predecessor. Two modifications matter. The first is geometric. Standard 2D patch embeddings and 2D positional encodings are replaced with 3D versions, so the input is a sequence of `T` images of size `(H, W)` and the patch embedding is a 3D convolution over non-overlapping `(t, h, w)` cubes. The positional encoding is built by generating 1D sin/cos codes per axis and combining them, which is the cheapest way to keep a model trained on three frames usable with five.
+
+The second modification is where the paper differs from most remote-sensing foundation models: it feeds the model *where* and *when* the pixels came from. Center latitude and longitude, plus year and day-of-year, are encoded with 2D sin/cos codes and added to the tokens through learned weighted sums, with separate weights for encoder and decoder. Because acquisition metadata is often missing after tiling and reprojection, the training pipeline randomly drops the geolocation, the date, or both. The model therefore sees the metadata as an optional hint rather than a required input.
+
+That design explains the release matrix. The model ships in six sizes on Hugging Face, from a 5M-parameter tiny model to 600M, and each size comes in a plain and a `-TL` (temporal-location) variant. The plain checkpoints are not a packaging accident; they are the control arm of the metadata experiment. If you want to know what the embeddings buy, compare `prithvi_eo_v2_300` against `prithvi_eo_v2_300_tl` on your own task rather than trusting an aggregate elsewhere.
+
+The data side is what makes the headline defensible: 4.2 million global time series samples from NASA's HLS version 2 archive at 30 m, six bands in a fixed order, trained on the JUWELS system at Jülich. The [model card](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) names the band order and the reflectance units, which is the detail that turns "we used HLS" from a claim into an instruction.
+
+## Does the GEO-Bench gain survive a closer read?
+
+The evaluation uses [GEO-Bench](https://github.com/ServiceNow/geo-bench), which is the right choice: it is the harness the field already argues over, so a number reported against it can be compared without a private reimplementation. The [paper](https://arxiv.org/abs/2412.02732) reports that the 600M-TL model beats Prithvi-EO-1.0 by 8% across a range of tasks, and that it outperforms six other geospatial foundation models on tasks spanning 0.1 m to 15 m inputs.
+
+Read that sentence carefully, because it says less than it appears to. "Across a range of tasks" is an aggregate: it does not tell you whether the gain is a mean or a median, how much of it comes from the multi-temporal tasks where `T` frames and date embeddings should matter most, or how the numbers move across seeds. A single aggregate percentage can hide a large win on crop segmentation and a loss on a single-date task. The resolution range is also a statement about task inputs, not about 30 m pretraining data acquiring sub-meter detail; a model can be useful on a 0.1 m task after resampling without having learned anything at that scale.
+
+None of this makes the result weak. It makes the honest claim narrower than the abstract: **a better default initialization for multi-temporal segmentation and classification, measured on a shared benchmark**, not a universal win at every resolution. If you are citing it, cite the benchmark and the task family, not "state of the art for Earth observation".
+
+## Where do the metadata embeddings help, and where could they hurt?
+
+Optional metadata is a genuinely good engineering choice, and it is the part I would steal. Real pipelines lose acquisition dates when scenes are mosaicked and lose coordinates when tiles are shuffled into training shards. A model that treats both as hints degrades gracefully in exactly the conditions where a metadata-dependent model fails.
+
+The same design has a failure mode worth naming. Location and day-of-year are strong seasonality and geography priors. A model given those features can learn "this texture looks like July in Iowa" and get crop classification right for reasons that do not transfer to a new continent, a shifted growing season, or an anomalous year. The published evaluations are broad, but they are still evaluations on datasets the consortium helped assemble, with subject-matter experts in the loop. That collaboration is a strength for relevance and a weakness for independence: end-user-driven benchmarks tend to test the conditions the end users care about.
+
+The test is cheap, which is why I would run it first. Fine-tune the `-TL` and the plain checkpoint on the same split, then evaluate both on a held-out region and a held-out year. If the metadata version wins only in-distribution, you have measured a prior rather than a representation.
+
+## How would I reproduce the fine-tuning?
+
+You can reproduce the fine-tunes; you cannot reproduce the pretraining. The base model needs JUWELS, 4.2 million samples, and a data pipeline that the paper describes but does not ship as a sample list. The fine-tunes are a different story, because [TerraTorch](https://github.com/IBM/terratorch) wraps the backbone in a registry and the [project repository](https://github.com/NASA-IMPACT/Prithvi-EO-2.0) ships one config per dataset.
+
+```python
+from terratorch.registry import BACKBONE_REGISTRY
+
+model = BACKBONE_REGISTRY.build("prithvi_eo_v2_600_tl", pretrained=True)
+```
+
+My order of operations, from cheapest to most informative:
+
+1. **Sen1Floods11.** Small, public, binary, and fast enough to run several times. It tells you whether your band handling and normalization are right before any science question enters the picture.
+2. **HLS burn scars.** Multi-temporal, close to the pretraining distribution, and the config is in the repo. If the model is going to look strong anywhere, it is here.
+3. **Multi-temporal crop segmentation.** The task where date embeddings should pay off most, and therefore the task where a metadata ablation is worth the compute.
+4. **BioMassters or Landslide4Sense.** Regression and a different sensor geometry, as a check that the pipeline generalizes beyond one task shape.
+
+Two reproducibility details that will bite you. The repository's last commit is from February 2025, so pin the TerraTorch version you install instead of tracking `main`; config keys move. And fix the split before you run anything, because a benchmark gain is meaningless if the fine-tuning split drifts between runs.
+
+## What would I check before pointing it at my own data?
+
+- **Band order and units.** Six bands, reflectance units, HLS v2, in the order the model card states. A silent BGR swap produces a model that trains and predicts nonsense.
+- **Temporal ordering.** Frames must be chronological and from the same location. Shuffling them still trains; it just trains a different model.
+- **Metadata expectations.** The `-TL` checkpoints want coordinates and dates; the plain ones do not. Passing metadata to a plain checkpoint is a no-op that looks like a signal.
+- **Licence split.** The code repository is MIT. The weights have their own terms on the model card, and "the code is open" is not the same sentence as "the weights are unencumbered".
+- **A reconstruction sanity check.** The card ships an `inference.py` that masks patches and reconstructs them. Running it once on your own HLS scene is the fastest way to confirm preprocessing before you blame the model.
+
+## What does this release get right?
+
+Quite a lot, and mostly in the unglamorous places. Every size has public weights. Fine-tuning configs and notebooks cover seven downstream tasks. The datasets are on Hugging Face next to the models, the citation is provided, and the architecture description is specific enough to reimplement: 3D convolutions, sin/cos encodings, learned weighted sums, metadata dropout. That is more than most foundation-model releases offer, and it is why the reproduction path above is short.
+
+The gap is the usual one for this genre: the pretraining corpus is described, not distributed, so the base model remains a black box you can download but not rebuild. If you want the context for how this site reviews papers and repositories, the [about page](/about) explains the method, and the [archive](/blog) has the rest of these notes. The [welcome post](/blog/welcome-to-the-new-researchwithme) covers how publishing works here, and [search](/search) will find every essay by topic once the archive grows.

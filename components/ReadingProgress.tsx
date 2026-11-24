@@ -1,26 +1,40 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
 /**
- * ReadingProgress — the scroll-linked indicator at the top of the reading
- * surface.
+ * Reading progress bar.
  *
- * Principle 6 (slow in/slow out) applied to a motion the *reader* drives: the
- * raw scroll position is spring-smoothed (see `useScrollProgress`) so anchor
- * jumps and trackpad flings do not snap the bar. Principle 11 (solid drawing):
- * the track is 2px, the fill is the brand token, and the geometry never
- * changes height. Principle 9 (timing): no transition is longer than the
- * spring's settle; the bar is never allowed to lag behind the page.
- *
- * Accessibility is unchanged: a labelled `progressbar` with live
- * `aria-valuenow` (rounded to whole percent so assistive tech is not spammed
- * every frame), and `print:hidden`.
+ * Deliberately dependency-free: one passive scroll listener, one
+ * requestAnimationFrame per frame, and a composited transform. It updates
+ * `aria-valuenow` only when the rounded percentage changes, so assistive tech
+ * is not spammed every frame.
  */
-
-import * as m from 'motion/react-m';
-import { useScrollProgress } from '@/lib/motion/hooks';
-
 export default function ReadingProgress() {
-  const { smooth, percent } = useScrollProgress();
+  const [percent, setPercent] = useState(0);
+  const frame = useRef<number | null>(null);
+
+  useEffect(() => {
+    function update() {
+      frame.current = null;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const next = scrollable > 0 ? Math.round((window.scrollY / scrollable) * 100) : 0;
+      setPercent(Math.min(100, Math.max(0, next)));
+    }
+
+    function schedule() {
+      if (frame.current === null) frame.current = window.requestAnimationFrame(update);
+    }
+
+    update();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    return () => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      if (frame.current !== null) window.cancelAnimationFrame(frame.current);
+    };
+  }, []);
 
   return (
     <div
@@ -31,10 +45,10 @@ export default function ReadingProgress() {
       aria-valuemax={100}
       aria-valuenow={percent}
     >
-      <m.div
-        className="h-full origin-left bg-brand"
-        style={{ scaleX: smooth }}
+      <div
         aria-hidden="true"
+        className="h-full origin-left bg-brand"
+        style={{ transform: `scaleX(${percent / 100})` }}
       />
     </div>
   );

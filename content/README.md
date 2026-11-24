@@ -1,0 +1,133 @@
+# Writing for ResearchWithMe
+
+Every essay on this site is an `.mdx` file in [`posts/`](./posts). The repository is the CMS: add a
+file, commit it, push, and the build renders the page, the archive entry, the search index, the RSS
+item, and the social card from that one file.
+
+```bash
+npm run new -- "How I read a benchmark"     # creates a draft with today's date
+npm run new -- "How I read a benchmark" --publish
+```
+
+## Anatomy of a post
+
+```mdx
+---
+title: "How I read a benchmark"
+description: "One or two sentences used on cards, in search, and in the feed."
+date: "2026-11-24"
+tags: ["benchmarks", "methodology"]
+series: "Reproduction notes"      # optional
+cover: "/images/folio-dashboard.jpeg"   # optional, from /public
+coverAlt: "A dashboard of benchmark results."  # required when cover is set
+featured: false                   # optional, pins it to the top of the home page
+draft: false                      # optional, true = development only
+toc: true                         # optional, false hides the table of contents
+canonical: "https://elsewhere.example/post"  # optional, if first published elsewhere
+faq:                              # optional, rendered and mirrored into FAQPage
+  - question: "Why does the harness disagree with the paper?"
+    answer: "Because the warm-up is excluded in the harness but included in the paper's timing."
+---
+
+The opening paragraph answers the post's question in 40–60 words. It receives the drop cap.
+```
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `title` | yes | `h1` and metadata title. |
+| `description` | yes | 20–280 characters. Cards, search, RSS, meta description. |
+| `date` | yes | `YYYY-MM-DD`. Drives ordering and the archive year. |
+| `updated` | no | `YYYY-MM-DD`; shown next to the publication date. |
+| `tags` | no | Lowercase by convention; every tag gets a `/tags/[tag]` page. |
+| `cover` + `coverAlt` | no | A cover is not allowed without alt text. |
+| `featured` | no | `true` makes it the lead card on the home page. |
+| `draft` | no | `true` renders in `npm run dev` and is excluded from production builds. |
+| `toc` | no | `false` disables the table of contents for that post. |
+| `faq` | no | 1–8 `{ question, answer }` pairs; rendered as a visible FAQ and as `FAQPage` data. |
+
+The file name is the URL slug (`how-i-read-a-benchmark.mdx` → `/blog/how-i-read-a-benchmark`).
+Override it with a `slug` field if you need to. Duplicate slugs fail the build.
+
+## The writing rules that are enforced
+
+These are not style preferences; `npm run check:site` fails the build on the structural ones.
+
+1. **Answer first.** The first body paragraph is 40–60 words and states the finding. No "in this post
+   I will".
+2. **One `h1`.** The title is the `h1`; your body starts at `##`. Write `h2`s as questions or claims.
+3. **Three primary sources, linked.** The paper, the repository, the spec — inline, with descriptive
+   anchor text.
+4. **Three internal links.** Point to related essays, `/tags/...`, or `/about`.
+5. **Images declare dimensions.** `<Figure>` requires `width` and `height`; every image needs alt text.
+6. **Dates are honest.** Add `updated:` when you revise, because `dateModified` and the sitemap
+   `lastmod` read from it.
+7. **FAQ only when real.** Questions a reader would actually ask; every answer is visible on the page.
+
+## Components
+
+These are available in every post without an import:
+
+```mdx
+<KeyTakeaways>
+- The claim is narrower than the abstract suggests.
+- The harness is reproducible once the warm-up is excluded.
+</KeyTakeaways>
+
+<Callout tone="note" title="Worth reading first">
+  Tones: `note`, `tip`, `warning`, `danger`.
+</Callout>
+
+<Figure
+  src="/images/folio-process.jpeg"
+  alt="A whiteboard sketch of the request path."
+  width={800}
+  height={533}
+  caption="Always write a caption that stands alone."
+/>
+
+<Video src="/media/talk.mp4" poster="/images/talk-poster.jpg" caption="A five-minute walkthrough." />
+
+<Sidenote>A small aside that stays inline with the prose.</Sidenote>
+```
+
+Markdown also gives you GFM tables, footnotes[^1], fenced code blocks with syntax highlighting and a
+copy button, blockquotes, and heading anchors.
+
+[^1]: Footnotes render in a dedicated section at the end of the post.
+
+## Images and video
+
+- Put images in `public/images/` and reference them as `/images/name.ext`.
+- Remote `https://` images work in MDX figures and covers.
+- Write alt text for every meaningful image. Cover alt text is enforced by the schema.
+
+## Drafts and publishing
+
+`draft: true` keeps a post out of production. In development it renders normally with a **Draft**
+badge in lists, which makes it safe to review a piece in place before publishing.
+
+Publishing is a git operation:
+
+```bash
+git add content/posts/my-new-post.mdx
+git commit -m "Publish: my new post"
+git push
+```
+
+A push triggers the Cloudflare Workers build, which validates every file's frontmatter and fails with
+the file name and field if something is wrong. Deleted files disappear from the site on the same
+build.
+
+## What is generated from the files
+
+| Output | Source |
+| --- | --- |
+| `/blog/[slug]` | the MDX body + frontmatter |
+| `/blog` archive | dates, grouped by year |
+| `/tags` and `/tags/[tag]` | the union of all tags |
+| `/search` | title, description, tags, and plain-text body |
+| `/rss.xml` and `/feed.json` | title, description, date, tags, link |
+| `/blog/[slug]/markdown` | the same body as markdown, for agents |
+| `/llms.txt` | an index of every essay with its description |
+| `/sitemap.xml` | every indexable post and tag page, with real `lastmod` |
+| Social cards | title, date, author, first three tags |

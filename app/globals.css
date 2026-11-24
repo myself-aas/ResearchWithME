@@ -1,11 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "../styles/daisy-themes.css";
-@plugin "@tailwindcss/typography";
-@plugin "daisyui" {
-  themes: false;
-  exclude: rootscrollgutter;
-}
 /* reme v3.1 generated tokens — single source of truth: tokens/src/*.json
    (build: npm run tokens:build). Do not hand-edit token values here. */
 @import "../tokens/generated/tokens.css";
@@ -19,7 +12,7 @@
    aliases. Components reference semantic tokens, never primitives. */
 
 @font-face {
-  /* impeccable-disable-next-line overused-font: user-approved editorial font, self-hosted with OFL license */
+  /* User-approved editorial font, self-hosted with an OFL license. */
   font-family: 'Plus Jakarta Sans';
   src: url('/fonts/plus-jakarta-sans-variable.woff2') format('woff2');
   font-style: normal;
@@ -30,9 +23,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  /* Editorial typography: self-hosted Plus Jakarta Sans, with local fallbacks. */
-  --font-serif: 'Plus Jakarta Sans', var(--font-newsreader), 'Newsreader', Georgia, Cambria, "Times New Roman", serif;
-  --font-sans: 'Plus Jakarta Sans', var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  /* Editorial typography: one self-hosted family (Plus Jakarta Sans) plus the
+     system monospace stack. Two stacks, one font download per page. */
+  --font-serif: 'Plus Jakarta Sans', Georgia, Cambria, "Times New Roman", serif;
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: 'Aptos Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 
   /* Primitives — the reme neutral scale replaces Tailwind's stone scale so
@@ -522,8 +516,8 @@ html .shadow-2xs {
    Scoped rather than applied to `*`: a universal rule also captures anything
    that gains motion later, so a component's own timing would be silently
    flattened with no way to opt back in. The selector below names the three
-   families that actually animate here — entrance choreography, the scroll
-   reveal, and transitions painted by the utility layer.
+   families that actually animate here — the page reveal and transitions painted
+   by the utility layer.
 
    `.animate-pulse` is deliberately excluded. Skeleton shimmer carries the
    "still loading" state; freezing it would leave a bare grey block that looks
@@ -534,9 +528,6 @@ html .shadow-2xs {
     scroll-behavior: auto !important;
   }
 
-  [data-enter],
-  [data-reveal],
-  [data-reveal] > *,
   [class*="transition-colors"],
   [class*="transition-transform"],
   [class*="transition-opacity"],
@@ -548,141 +539,15 @@ html .shadow-2xs {
   }
 }
 
-/* ---------------------------------------------------------------------------
-   reme v3.1 §9 — motion utility layer.
-
-   The React implementation lives in `lib/motion/*` and `components/motion/*`;
-   these classes exist for the beats that must happen on the very first paint
-   (before hydration) and for content that never loads JavaScript at all.
-   Durations/easings are the generated tokens — never literals.
---------------------------------------------------------------------------- */
-
-/* Entrance poses mirroring lib/motion/variants.ts. */
-@keyframes reme-rise-in {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 12px, 0) scale(0.995);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-}
-
-@keyframes reme-arc-in {
-  from {
-    opacity: 0;
-    transform: translate3d(-9px, 12px, 0) rotate(-0.6deg);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0) rotate(0deg);
-  }
-}
-
-@keyframes reme-squash-in {
-  from {
-    opacity: 0;
-    transform: scaleX(1.02) scaleY(0.94);
-  }
-  to {
-    opacity: 1;
-    transform: scaleX(1) scaleY(1);
-  }
-}
-
-@keyframes reme-mask-in {
-  from {
-    opacity: 0;
-    clip-path: inset(0% 0% 100% 0%);
-  }
-  to {
-    opacity: 1;
-    clip-path: inset(0% 0% 0% 0%);
-  }
-}
-
-/* Apply with data-enter="rise|arc|squash|mask" and optional --enter-delay.
-   Only content that is already in the first viewport should use these: below
-   the fold, `Reveal` handles the beat on intersection. */
-@media (prefers-reduced-motion: no-preference) {
-  [data-enter] {
-    animation-duration: var(--reme-motion-duration-standard);
-    animation-timing-function: var(--ease-enter);
-    animation-fill-mode: both;
-    animation-delay: var(--enter-delay, 0ms);
-  }
-  [data-enter="rise"] {
-    animation-name: reme-rise-in;
-  }
-  [data-enter="arc"] {
-    animation-name: reme-arc-in;
-    animation-duration: var(--reme-motion-duration-standard);
-    animation-timing-function: var(--ease-emphasize);
-  }
-  [data-enter="squash"] {
-    animation-name: reme-squash-in;
-  }
-  [data-enter="mask"] {
-    animation-name: reme-mask-in;
-    animation-duration: var(--reme-motion-duration-deliberate);
-  }
-}
-
-/* Explicit reme motion modes. `reduced` keeps colour/opacity legibility while
-   removing transform choreography; `static` is the print-grade switch used by
-   the Motion Lab and visual regression runs. */
-[data-motion-mode="reduced"] [data-enter],
-[data-motion-mode="static"] [data-enter] {
-  animation: none !important;
-}
-
-html[data-motion-mode="reduced"],
-html[data-motion-mode="static"] {
-  scroll-behavior: auto !important;
-}
-
-[data-motion-mode="static"] *,
-[data-motion-mode="static"] *::before,
-[data-motion-mode="static"] *::after {
-  animation: none !important;
-  transition: none !important;
-  scroll-behavior: auto !important;
-}
-
-/* Native lazy rendering for long, below-the-fold sections. The intrinsic size
-   keeps the scrollbar honest until the section is rendered. */
+/* Motion utilities.
+   There is no animation library on the article path. The page reveals once, via
+   `main` below, and everything else is a CSS transition on a component class.
+   Decorative entrance choreography (`data-enter`), motion modes, and the
+   workflow/Lottie hooks were removed with the components that used them. */
 [data-lazy-section] {
   content-visibility: auto;
   contain-intrinsic-size: auto 640px;
 }
-
-/* Lottie micro-interactions (components/lottie). Compositions are painted in
-   placeholder ink; recolour every stroke and fill to the caller's text colour
-   so one asset serves both themes. Opacity attributes are left untouched. */
-.reme-lottie svg [stroke]:not([stroke="none"]) {
-  stroke: currentColor;
-}
-.reme-lottie svg [fill]:not([fill="none"]) {
-  fill: currentColor;
-}
-
-/* Research lifecycle diagrams (components/workflows): the connector between
-   stages is drawn with the `connect` pattern once, on first paint. */
-@media (prefers-reduced-motion: no-preference) {
-  [data-workflow-connector] {
-    transform-origin: top;
-    animation: reme-workflow-connect var(--reme-motion-duration-connect) var(--ease-emphasize) both;
-  }
-}
-[data-motion-mode="reduced"] [data-workflow-connector] {
-  animation: none;
-}
-@keyframes reme-workflow-connect {
-  from { transform: scaleY(0.2); }
-  to { transform: scaleY(1); }
-}
-
 
 @media (pointer: coarse) {
   :where(button, select, summary, input[type="checkbox"], input[type="radio"]) {
@@ -789,4 +654,286 @@ html[data-motion-mode="static"] {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   MDX article body
+   The prose column is `.reading-prose` (68ch, 1.125rem/1.7, old-style
+   numerals). These rules give MDX elements their rhythm; components carry
+   their own appearance so authors only write `<Callout>` / `<Figure>`.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.mdx-body > *:first-child {
+  margin-top: 0;
+}
+
+.mdx-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.mdx-body p {
+  margin: 1.15rem 0;
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--color-ink);
+}
+
+.mdx-body h2,
+.mdx-body h3,
+.mdx-body h4 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  scroll-margin-top: 6rem;
+  text-wrap: balance;
+}
+
+.mdx-body h2 {
+  margin: 2.75rem 0 0.9rem;
+  font-size: 1.75rem;
+  line-height: 1.25;
+}
+
+.mdx-body h3 {
+  margin: 2.1rem 0 0.65rem;
+  font-size: 1.3125rem;
+  line-height: 1.35;
+}
+
+.mdx-body h4 {
+  margin: 1.75rem 0 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+
+.mdx-body .heading-anchor {
+  margin-left: 0.375em;
+  font-weight: 400;
+  color: var(--color-brand);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.mdx-body .heading-anchor::after {
+  content: '#';
+  font-size: 0.8em;
+}
+
+.mdx-body :is(h2, h3, h4):hover .heading-anchor,
+.mdx-body .heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+.mdx-body ul,
+.mdx-body ol {
+  margin: 1.1rem 0;
+  padding-left: 1.4rem;
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+}
+
+.mdx-body ul {
+  list-style: disc;
+}
+
+.mdx-body ol {
+  list-style: decimal;
+}
+
+.mdx-body li {
+  margin: 0.4rem 0;
+}
+
+.mdx-body li::marker {
+  color: var(--color-brand);
+}
+
+.mdx-body li > p {
+  margin: 0.25rem 0;
+}
+
+.mdx-body blockquote {
+  margin: 1.75rem 0;
+  border-left: 3px solid var(--color-brand);
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  font-family: var(--font-serif);
+  font-size: 1.1875rem;
+  font-style: italic;
+  line-height: 1.7;
+  color: var(--color-ink-secondary);
+}
+
+.mdx-body blockquote p {
+  margin: 0.5rem 0;
+}
+
+.mdx-body hr {
+  margin: 3rem 0;
+  border: 0;
+  border-top: 1px solid var(--color-line);
+}
+
+.mdx-body a:not([class]) {
+  color: var(--color-brand);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.mdx-body strong {
+  font-weight: 700;
+}
+
+.mdx-body code:not(pre code) {
+  border: 1px solid var(--color-line);
+  border-radius: 0.375rem;
+  background: var(--color-surface-subtle);
+  padding: 0.1em 0.35em;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+
+.mdx-body pre {
+  margin: 0;
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: 0.9rem;
+  background: #14161b;
+  padding: 1.05rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: #e8e9ed;
+  font-variant-ligatures: none;
+  tab-size: 2;
+}
+
+.mdx-body pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+}
+
+.mdx-body table {
+  display: block;
+  width: 100%;
+  margin: 1.75rem 0;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+.mdx-body th {
+  border-bottom: 1px solid var(--color-border-strong, var(--color-line));
+  background: var(--color-surface-subtle);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.mdx-body td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.6rem 0.75rem;
+  vertical-align: top;
+  color: var(--color-ink-secondary);
+}
+
+.mdx-body img {
+  height: auto;
+}
+
+/* GFM footnotes */
+.mdx-body [data-footnotes] {
+  margin-top: 2.5rem;
+  border-top: 1px solid var(--color-line);
+  padding-top: 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--color-ink-secondary);
+}
+
+.mdx-body [data-footnotes] h2 {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.mdx-body sup a {
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.75em;
+}
+
+/* Syntax highlighting (rehype-highlight) on the dark code panel. */
+.mdx-body .hljs-comment,
+.mdx-body .hljs-quote {
+  color: #8b93a7;
+  font-style: italic;
+}
+
+.mdx-body .hljs-keyword,
+.mdx-body .hljs-selector-tag,
+.mdx-body .hljs-literal,
+.mdx-body .hljs-doctag {
+  color: #c792ea;
+}
+
+.mdx-body .hljs-string,
+.mdx-body .hljs-regexp,
+.mdx-body .hljs-addition {
+  color: #a5d6a7;
+}
+
+.mdx-body .hljs-number,
+.mdx-body .hljs-symbol,
+.mdx-body .hljs-bullet {
+  color: #f78c6c;
+}
+
+.mdx-body .hljs-title,
+.mdx-body .hljs-section,
+.mdx-body .hljs-function .hljs-title,
+.mdx-body .hljs-title.function_ {
+  color: #82aaff;
+}
+
+.mdx-body .hljs-attr,
+.mdx-body .hljs-attribute,
+.mdx-body .hljs-variable,
+.mdx-body .hljs-template-variable,
+.mdx-body .hljs-type,
+.mdx-body .hljs-selector-attr {
+  color: #ffcb6b;
+}
+
+.mdx-body .hljs-built_in,
+.mdx-body .hljs-meta,
+.mdx-body .hljs-selector-class,
+.mdx-body .hljs-selector-id {
+  color: #89ddff;
+}
+
+.mdx-body .hljs-deletion {
+  color: #ff7b72;
+}
+
+.mdx-body .hljs-emphasis {
+  font-style: italic;
+}
+
+.mdx-body .hljs-strong {
+  font-weight: 700;
 }

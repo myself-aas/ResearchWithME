@@ -8,38 +8,18 @@
 	"compatibility_date": "2026-10-23",
 	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 	// Minify the Worker bundle and disable implicit source-map uploads so both
-	// `wrangler deploy` and `wrangler preview` stay well under Cloudflare's
-	// 3 MiB Free-Plan compressed script limit (`wrangler preview` otherwise
-	// attaches a ~17 MB `worker.js.map` when `upload_source_maps` is unset).
+	// `wrangler deploy` and `wrangler preview` stay under Cloudflare's Free-Plan
+	// compressed script limit.
 	"minify": true,
 	"upload_source_maps": false,
-	// Non-secret runtime variables. `RESEND_API_KEY` is deliberately NOT here --
-	// it goes in as a Worker secret (`wrangler secret put RESEND_API_KEY`).
-	// The per-scenario `RESEND_TPL_*` ids come from `npm run email:template:sync`
-	// and are optional: unset, that scenario renders its component locally.
-	// Sending addresses live in lib/email/scenarios.ts. See docs/email-scenarios.md.
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
 	// Cloudflare custom domains on this Worker. `wrangler deploy` provisions the
-	// DNS records and the edge certificate for each host itself, and `www` serves
-	// the same Worker rather than redirecting.
-	//
-	// A hostname can only belong to one thing. If `researchwith.me` is still
-	// attached to the old Pages project the deploy fails on a domain conflict
-	// until that project releases it, so check DNS -> Records for a `*.pages.dev`
-	// target before the first production deploy.
-	//
-	// Nothing about the attachment can be inferred from an external DNS lookup,
-	// and it is worth saying why, because it looks like it should be possible.
-	// These records are proxied, so a resolver returns Cloudflare anycast and
-	// never the record's own content -- the `100::` placeholder a Worker origin
-	// uses is visible only in the dashboard. A lookup cannot distinguish a custom
-	// domain from a route, an attached hostname from an unattached one, or a
-	// Worker from a Pages project. Read Settings -> Domains & Routes instead.
-	//
-	// Canonical links use NEXT_PUBLIC_SITE_URL, the apex.
+	// DNS records and the edge certificate for each host, and `www` serves the
+	// same Worker rather than redirecting. Canonical links use
+	// NEXT_PUBLIC_SITE_URL, the apex.
 	"routes": [
 		{ "pattern": "researchwith.me", "custom_domain": true },
 		{ "pattern": "www.researchwith.me", "custom_domain": true }
@@ -47,73 +27,34 @@
 	"services": [
 		{
 			// Self-reference used by OpenNext's cache; must match "name" above.
-			// See https://opennext.js.org/cloudflare/caching
 			"binding": "WORKER_SELF_REFERENCE",
 			"service": "researchwithme"
-		},
-		{
-			// Dedicated Assistant RPC Worker (workers/assistant), called over RPC
-			// from lib/assistant/service.ts to isolate Gemini synthesis latency.
-			// Deploy `npm run worker:assistant:deploy` (with GEMINI_API_KEY secret)
-			// before deploying this Worker.
-			"binding": "ASSISTANT",
-			"service": "researchwithme-assistant",
-			"entrypoint": "AssistantService"
 		}
 	],
-	// Budget-friendly free-plan setup: no R2 or Images bindings, so next/image
-	// serves originals. One KV namespace (researchwithme-opennext-cache) backs
-	// OpenNext's incremental & tag caches only; their prefixes do not overlap.
-	// General IP rate limiting runs on Cloudflare's native Rate Limiting binding
-	// (`APP_RATE_LIMITER` below) so rate-limit traffic consumes zero KV writes
-	// against the free-tier 1,000-writes/day ceiling.
+	// One KV namespace backs OpenNext's incremental and tag caches. The blog is
+	// fully static, so the cache mostly stores rendered route output; keeping the
+	// bindings means a future preview/revalidation needs no config change.
 	"kv_namespaces": [
 		{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
 		{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
 	],
-	"ratelimits": [
-		// Burst limit for /api/v1 (lib/api/burst.ts). Approximate by design; the
-		// exact monthly count lives in Postgres. namespace_id is account-wide.
-		{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } },
-		// General IP rate limiter (lib/rate-limit.ts): zero KV writes, free plan.
-		{ "name": "APP_RATE_LIMITER", "namespace_id": "2002", "simple": { "limit": 30, "period": 60 } }
-	],
-	// Worker Previews (`wrangler preview`) — what Cloudflare's build runs for a
-	// pull request. A preview is a branch of the Worker, not the production
-	// instance, so it does not inherit the bindings above; anything it needs has
-	// to be named again here, or the preview deploy stops with
-	// "Your Wrangler configuration is missing a `previews` block".
-	//
-	// `WORKER_SELF_REFERENCE` and `ASSISTANT` are deliberately absent in previews:
-	// Worker Previews do not support service bindings, so a preview renders and
-	// caches and falls back to in-process assistant synthesis.
+	// Worker Previews (`wrangler preview`) branch off the Worker and do not
+	// inherit bindings, so the KV namespaces are repeated here. Service bindings
+	// are not supported in previews, which is why WORKER_SELF_REFERENCE is absent.
 	"previews": {
 		"kv_namespaces": [
 			{ "binding": "NEXT_INC_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" },
 			{ "binding": "NEXT_TAG_CACHE_KV", "id": "8d2dc8f0b1bb4839962ae63df8296b31" }
-		],
-		"ratelimits": [
-			{ "name": "API_BURST_LIMITER", "namespace_id": "2001", "simple": { "limit": 30, "period": 60 } },
-			{ "name": "APP_RATE_LIMITER", "namespace_id": "2002", "simple": { "limit": 30, "period": 60 } }
 		]
 	},
 	"observability": {
 		"enabled": true,
 		"head_sampling_rate": 1,
-		"redact_query_string": false,
 		"logs": {
 			"enabled": true,
 			"head_sampling_rate": 1,
 			"invocation_logs": true,
 			"persist": true
-		},
-		"traces": {
-			"enabled": true,
-			"head_sampling_rate": 1,
-			"persist": true
-		},
-		"issues": {
-			"enabled": true
 		}
 	}
 }

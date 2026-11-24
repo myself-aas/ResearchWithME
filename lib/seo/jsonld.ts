@@ -1,39 +1,108 @@
 /**
- * JSON-LD structured data — schemas follow schema.org (WebSite / Organization /
- * Article / ScholarlyArticle / VideoObject) with stable @id URIs so entity graphs
- * unify across pages without duplicate anonymous declarations.
+ * JSON-LD for a single-author blog.
+ *
+ * Every node gets a stable `@id`, and nodes reference each other by `@id`
+ * instead of restating fields. That is what lets a crawler resolve one
+ * `Person` entity across the home page, the about page, and every article,
+ * rather than guessing that three half-filled authors are the same person.
+ *
+ * Only things that are visible on the page are described. No aggregate
+ * ratings, no hidden FAQs, no invented publishers.
  */
-import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl, toIsoDate } from '@/lib/seo';
+import { AUTHOR, SITE } from '@/lib/site';
+import { absoluteUrl } from '@/lib/seo';
+import type { PostMeta } from '@/lib/content/types';
 
-export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
-export const WEBSITE_ID = `${SITE_URL}/#website`;
+const ABOUT_URL = absoluteUrl('/about');
 
-export function organizationEntity() {
+export const PERSON_ID = `${ABOUT_URL}#person`;
+export const WEBSITE_ID = `${SITE.url}/#website`;
+
+function personNode() {
   return {
-    '@id': ORGANIZATION_ID,
-    '@type': 'Organization',
-    name: SITE_NAME,
-    url: SITE_URL,
+    '@id': PERSON_ID,
+    '@type': 'Person',
+    name: AUTHOR.name,
+    description: AUTHOR.bio,
+    url: ABOUT_URL,
+    image: absoluteUrl(AUTHOR.avatar),
+    jobTitle: AUTHOR.role,
+    sameAs: AUTHOR.links.filter((link) => link.href.startsWith('http')).map((link) => link.href),
   };
 }
 
+function websiteNode() {
+  return {
+    '@id': WEBSITE_ID,
+    '@type': 'WebSite',
+    name: SITE.name,
+    url: SITE.url,
+    description: SITE.description,
+    inLanguage: SITE.language,
+    publisher: { '@id': PERSON_ID },
+  };
+}
+
+/** Home page: the site entity, its search action, and the author it resolves to. */
 export function websiteJsonLd() {
   return {
     '@context': 'https://schema.org',
     '@graph': [
+      personNode(),
       {
-        ...organizationEntity(),
-        description: SITE_DESCRIPTION,
-      },
-      {
-        '@id': WEBSITE_ID,
-        '@type': 'WebSite',
-        name: SITE_NAME,
-        url: SITE_URL,
-        description: SITE_DESCRIPTION,
-        publisher: { '@id': ORGANIZATION_ID },
+        ...websiteNode(),
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${absoluteUrl('/search')}?q={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
       },
     ],
+  };
+}
+
+/** `/about` is the resolvable home of the `Person` entity used everywhere else. */
+export function profilePageJsonLd() {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      personNode(),
+      {
+        '@id': `${ABOUT_URL}#profile`,
+        '@type': 'ProfilePage',
+        name: `About ${AUTHOR.name}`,
+        url: ABOUT_URL,
+        description: AUTHOR.bio,
+        mainEntity: { '@id': PERSON_ID },
+        isPartOf: { '@id': WEBSITE_ID },
+        inLanguage: SITE.language,
+      },
+      websiteNode(),
+    ],
+  };
+}
+
+export interface Crumb {
+  name: string;
+  /** Omitted for the current page; the current path supplies the URL. */
+  href?: string;
+}
+
+/** BreadcrumbList built from the same array that renders the visible trail. */
+export function breadcrumbJsonLd(crumbs: Crumb[], currentPath: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@id': `${absoluteUrl(currentPath)}#breadcrumb`,
+    '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.name,
+      item: absoluteUrl(crumb.href ?? currentPath),
+    })),
   };
 }
 
@@ -41,246 +110,189 @@ export interface ArticleJsonLdInput {
   title: string;
   description: string;
   path: string;
-  authorName: string;
-  authorId?: string;
-  authorSameAs?: string[];
-  datePublished?: string;
+  datePublished: string;
+  dateModified?: string;
+  tags?: string[];
   imagePath?: string;
+  canonical?: string;
+  wordCount?: number;
+  crumbs?: Crumb[];
+  faq?: Array<{ question: string; answer: string }>;
 }
 
-/**
- * JSON-LD must never carry a raw data URI: structured data is consumed by
- * crawlers, not browsers, and an embedded base64 image both bloats the
- * document and produces a useless `/data:...` URL. CMS covers stored as
- * data URIs are simply omitted from the Article schema.
- */
-function jsonLdImage(imagePath?: string): string[] | undefined {
-  if (!imagePath) return undefined;
-  const trimmed = imagePath.trim();
-  if (!trimmed || /^data:/i.test(trimmed)) return undefined;
-  return [absoluteUrl(trimmed)];
+export function articleJsonLd({
+  title,
+  description,
+  path,
+  datePublished,
+  dateModified,
+  tags,
+  imagePath,
+  canonical,
+  wordCount,
+  crumbs,
+  faq,
+}: ArticleJsonLdInput) {
+  const url = absoluteUrl(path);
+
+  const graph: Record<string, unknown>[] = [
+    websiteNode(),
+    personNode(),
+    {
+      '@id': `${url}#article`,
+      '@type': 'BlogPosting',
+      headline: title,
+      description,
+      datePublished,
+      dateModified: dateModified ?? datePublished,
+      url,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+      author: { '@id': PERSON_ID },
+      publisher: { '@id': PERSON_ID },
+      isPartOf: { '@id': WEBSITE_ID },
+      inLanguage: SITE.language,
+      isAccessibleForFree: true,
+      ...(canonical ? { sameAs: canonical } : {}),
+      ...(tags?.length ? { keywords: tags.join(', ') } : {}),
+      ...(wordCount ? { wordCount } : {}),
+      ...(imagePath
+        ? {
+            image: {
+              '@type': 'ImageObject',
+              url: imagePath.startsWith('http') ? imagePath : absoluteUrl(imagePath),
+              width: 1200,
+              height: 630,
+              caption: title,
+            },
+          }
+        : {}),
+    },
+  ];
+
+  if (crumbs?.length) {
+    const { '@context': _context, ...breadcrumb } = breadcrumbJsonLd(crumbs, path);
+    graph.push(breadcrumb);
+  }
+  if (faq?.length) graph.push(faqPageJsonLd(faq, path));
+
+  return { '@context': 'https://schema.org', '@graph': graph };
 }
 
-export function articleJsonLd(input: ArticleJsonLdInput) {
-  const sameAs = (input.authorSameAs ?? []).filter(Boolean);
-  const author = input.authorId
-    ? {
-        '@id': `${absoluteUrl(`/author/${input.authorId}`)}#person`,
-        '@type': 'Person' as const,
-        name: input.authorName,
-        url: absoluteUrl(`/author/${input.authorId}`),
-        ...(sameAs.length > 0 ? { sameAs } : {}),
-      }
-    : { '@type': 'Person' as const, name: input.authorName };
-
+/** FAQPage is emitted only when the questions are rendered on the page. */
+export function faqPageJsonLd(items: Array<{ question: string; answer: string }>, path: string) {
   return {
-    '@context': 'https://schema.org',
-    '@id': `${absoluteUrl(input.path)}#article`,
-    '@type': 'Article',
-    headline: input.title,
-    description: input.description,
-    mainEntityOfPage: absoluteUrl(input.path),
-    image: jsonLdImage(input.imagePath),
-    author,
-    publisher: organizationEntity(),
-    datePublished: toIsoDate(input.datePublished),
+    '@id': `${absoluteUrl(path)}#faq`,
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
   };
 }
 
-export interface VideoJsonLdInput {
+/** A plain page entity (contact, privacy) resolved into the site graph. */
+export function webPageJsonLd({
+  name,
+  description,
+  path,
+  type = 'WebPage',
+}: {
   name: string;
-  description: string;
-  contentPath: string;
-  thumbnailPath?: string;
-  uploadDate?: string;
-}
-
-export function videoJsonLd(input: VideoJsonLdInput) {
-  const thumb =
-    input.thumbnailPath && !/^data:/i.test(input.thumbnailPath.trim())
-      ? absoluteUrl(input.thumbnailPath)
-      : absoluteUrl('/images/folio-hero.jpeg');
-  return {
-    '@context': 'https://schema.org',
-    '@id': `${absoluteUrl(input.contentPath)}#video`,
-    '@type': 'VideoObject',
-    name: input.name,
-    description: input.description,
-    thumbnailUrl: [thumb],
-    contentUrl: absoluteUrl(input.contentPath),
-    uploadDate: toIsoDate(input.uploadDate) ?? '2026-10-01',
-    publisher: organizationEntity(),
-  };
-}
-
-export interface ScholarlyAuthorInput {
-  name: string;
-  slug?: string;
-  orcid?: string;
-}
-
-export interface ScholarlyArticleJsonLdInput {
-  title: string;
   description: string;
   path: string;
-  authors: string[];
-  authorProfiles?: ScholarlyAuthorInput[];
-  datePublished?: string;
-  doi?: string;
-  journal?: string;
-}
-
-export function scholarlyArticleJsonLd(input: ScholarlyArticleJsonLdInput) {
-  const authorEntities = input.authorProfiles
-    ? input.authorProfiles.map((profile) => {
-        const orcidUrl = profile.orcid
-          ? profile.orcid.startsWith('http')
-            ? profile.orcid
-            : `https://orcid.org/${profile.orcid}`
-          : undefined;
-        return {
-          ...(profile.slug ? { '@id': `${absoluteUrl(`/author/${profile.slug}`)}` } : {}),
-          '@type': 'Person' as const,
-          name: profile.name,
-          ...(orcidUrl ? { url: orcidUrl, sameAs: [orcidUrl] } : {}),
-        };
-      })
-    : input.authors.map((name) => ({ '@type': 'Person' as const, name }));
-
+  type?: 'WebPage' | 'ContactPage';
+}) {
+  const url = absoluteUrl(path);
   return {
     '@context': 'https://schema.org',
-    '@id': `${absoluteUrl(input.path)}#scholarly-article`,
-    '@type': 'ScholarlyArticle',
-    headline: input.title,
-    description: input.description,
-    mainEntityOfPage: absoluteUrl(input.path),
-    author: authorEntities,
-    publisher: organizationEntity(),
-    datePublished: toIsoDate(input.datePublished),
-    ...(input.doi ? { sameAs: `https://doi.org/${input.doi}` } : {}),
-    ...(input.journal ? { isPartOf: { '@type': 'Periodical', name: input.journal } } : {}),
+    '@graph': [
+      websiteNode(),
+      personNode(),
+      {
+        '@id': url,
+        '@type': type,
+        name,
+        description,
+        url,
+        isPartOf: { '@id': WEBSITE_ID },
+        about: { '@id': PERSON_ID },
+        inLanguage: SITE.language,
+      },
+    ],
   };
 }
 
-/** Render a JSON-LD script tag safely (JSON.stringify escapes </script> via \u003c). */
+/** Topic index: the visible list of tags, as an ItemList. */
+export function tagIndexJsonLd(tags: Array<{ tag: string; slug: string; count: number }>) {
+  const url = absoluteUrl('/tags');
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      websiteNode(),
+      {
+        '@id': url,
+        '@type': 'CollectionPage',
+        name: 'Topics',
+        url,
+        isPartOf: { '@id': WEBSITE_ID },
+        inLanguage: SITE.language,
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: tags.length,
+          itemListElement: tags.map((tag, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: absoluteUrl(`/tags/${tag.slug}`),
+            name: tag.tag,
+          })),
+        },
+      },
+    ],
+  };
+}
+
+/** Listing page: an ItemList of exactly the posts rendered on it. */
+export function collectionPageJsonLd({
+  name,
+  description,
+  path,
+  posts,
+}: {
+  name: string;
+  description: string;
+  path: string;
+  posts: PostMeta[];
+}) {
+  const url = absoluteUrl(path);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      websiteNode(),
+      {
+        '@id': url,
+        '@type': 'CollectionPage',
+        name,
+        description,
+        url,
+        isPartOf: { '@id': WEBSITE_ID },
+        inLanguage: SITE.language,
+        mainEntity: {
+          '@type': 'ItemList',
+          numberOfItems: posts.length,
+          itemListElement: posts.map((post, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            url: absoluteUrl(post.href),
+            name: post.title,
+          })),
+        },
+      },
+    ],
+  };
+}
+
+/** Safely inline JSON-LD; `<` is escaped so content cannot close the script tag. */
 export function jsonLdScript(data: unknown): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');
-}
-
-export interface PersonJsonLdInput {
-  id: string;
-  name: string;
-  role?: string;
-  bio?: string;
-  institution?: string;
-  orcid?: string;
-  github?: string;
-  website?: string;
-  scholar?: string;
-}
-
-export function personJsonLd(author: PersonJsonLdInput) {
-  const profileUrl = absoluteUrl(`/author/${author.id}`);
-  const sameAs = [
-    author.orcid
-      ? author.orcid.startsWith('http')
-        ? author.orcid
-        : `https://orcid.org/${author.orcid}`
-      : undefined,
-    author.github
-      ? author.github.startsWith('http')
-        ? author.github
-        : `https://github.com/${author.github.replace(/^@/, '')}`
-      : undefined,
-    author.website,
-    author.scholar,
-  ].filter((entry): entry is string => Boolean(entry));
-
-  return {
-    '@context': 'https://schema.org',
-    '@id': `${profileUrl}#person`,
-    '@type': 'Person',
-    name: author.name,
-    url: profileUrl,
-    ...(author.role ? { jobTitle: author.role } : {}),
-    ...(author.bio ? { description: author.bio } : {}),
-    ...(author.institution
-      ? { affiliation: { '@type': 'Organization', name: author.institution } }
-      : {}),
-    ...(sameAs.length > 0 ? { sameAs } : {}),
-  };
-}
-
-export function aboutPageJsonLd() {
-  return {
-    '@context': 'https://schema.org',
-    '@id': `${absoluteUrl('/about')}#about`,
-    '@type': 'AboutPage',
-    name: `About ${SITE_NAME}`,
-    url: absoluteUrl('/about'),
-    mainEntity: organizationEntity(),
-  };
-}
-
-export function contactPageJsonLd() {
-  return {
-    '@context': 'https://schema.org',
-    '@id': `${absoluteUrl('/contact')}#contact`,
-    '@type': 'ContactPage',
-    name: `Contact ${SITE_NAME}`,
-    url: absoluteUrl('/contact'),
-    mainEntity: {
-      ...organizationEntity(),
-      email: 'editorial@researchwith.me',
-    },
-  };
-}
-
-export interface ScholarlyContributionJsonLdInput {
-  id: string;
-  title: string;
-  summary: string;
-  authorName: string;
-  authorHandle: string;
-  datePublished?: string | null;
-  dateModified: string;
-  version: number;
-  topics?: string[];
-  primarySourceUrl?: string | null;
-  primarySourceTitle?: string | null;
-}
-
-/**
- * Schema.org `ScholarlyArticle` JSON-LD for canonical v3.4 Contributions (Part I §6.2).
- */
-export function scholarlyContributionJsonLd(input: ScholarlyContributionJsonLdInput) {
-  const pageUrl = absoluteUrl(`/contribution/${encodeURIComponent(input.id)}`);
-  return {
-    '@context': 'https://schema.org',
-    '@id': `${pageUrl}#scholarly-article`,
-    '@type': 'ScholarlyArticle',
-    headline: input.title,
-    description: input.summary,
-    mainEntityOfPage: pageUrl,
-    url: pageUrl,
-    version: String(input.version),
-    author: {
-      '@type': 'Person',
-      name: input.authorName,
-      url: absoluteUrl(`/profile/${encodeURIComponent(input.authorHandle)}`),
-    },
-    publisher: organizationEntity(),
-    ...(input.datePublished ? { datePublished: toIsoDate(input.datePublished) } : {}),
-    dateModified: toIsoDate(input.dateModified),
-    ...(input.topics && input.topics.length > 0 ? { keywords: input.topics.join(', ') } : {}),
-    ...(input.primarySourceUrl
-      ? {
-          isBasedOn: {
-            '@type': 'CreativeWork',
-            url: input.primarySourceUrl,
-            ...(input.primarySourceTitle ? { name: input.primarySourceTitle } : {}),
-          },
-        }
-      : {}),
-  };
 }

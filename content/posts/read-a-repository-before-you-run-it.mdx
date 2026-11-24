@@ -1,0 +1,81 @@
+---
+title: "Read a repository before you run it"
+description: "The README describes intent. The history, the tests, and the dependency graph describe reality. A short method for reading code you are about to trust."
+date: "2026-10-30"
+tags: ["open-source", "architecture", "code-review"]
+cover: "/images/folio-code.jpeg"
+coverAlt: "A terminal window showing a repository's commit history and file tree."
+draft: true
+---
+
+Most repository teardowns start by installing the thing. I have come to think that is backwards.
+Before I run a project I want to know how it was built, who built it, and which parts are load-bearing.
+That reading takes about forty minutes and it has saved me considerably more than forty minutes many
+times over.
+
+## Start with the history, not the README
+
+A git log is an honest document in a way a README is not. It records what changed, in what order, and
+how hurried the author was.
+
+```bash
+git log --oneline --no-merges | head -40
+git shortlog -sn --no-merges | head -10
+git log --since="1 year ago" --format="%ad" --date=format:"%Y-%m" | sort | uniq -c
+```
+
+Read the shape of that output. A project with one author and forty commits in the last month is a
+different thing from one with nine authors and a burst of activity three years ago. Neither is bad,
+but they call for different kinds of trust.
+
+<Callout tone="tip" title="Look for the commits nobody advertises">
+  Search for the unglamorous fixes: `git log --grep="fix" --grep="revert" --grep="hotfix"`. Revert
+  commits tell you where the design pushed back. A project with no reverts at all is often a project
+  with no users.
+</Callout>
+
+## Three signals I read next
+
+I look for three things, in this order, and I stop as soon as one of them fails badly.
+
+1. **Test-to-source ratio, by directory.** A repository with excellent tests around the parser and
+   none around the network layer is telling you where its author's confidence lives.
+2. **The dependency graph.** Not the count — the shape. Runtime dependencies that pull in build tools,
+   or a single package that appears in every layer, are a maintenance cost you are about to inherit.
+3. **Error paths.** Pick the most important public function. Read what happens when it fails. If the
+   failure mode is a raised generic exception, the boundaries are probably not designed yet.
+
+<Figure
+  src="/images/folio-process.jpeg"
+  alt="A whiteboard sketch of a system's modules, with arrows between the request path and the storage layer."
+  width={800}
+  height={533}
+  caption="Sketching the module graph from imports is faster than reading the architecture document — and it is often the only architecture document that exists."
+/>
+
+## Read one request end to end
+
+After the three signals, I trace a single request through the code. Not a mock, not a unit test — the
+actual entry point, down to whatever it writes, and back up to whatever it returns.
+
+<Sidenote>
+  This is where most "it looked clean" impressions fall apart. Layers that read well in isolation
+  often pass the same dictionary through six modules under five different names.
+</Sidenote>
+
+I keep a scratch file with three columns: module, input, output. When a module's input and output are
+the same object, I mark it. Those are usually either adapters or places where the design has stopped
+making decisions. Both are useful to know before I depend on the project.
+
+## What this buys you
+
+By the time I run the install command, I already know whether the project is a maintained system or a
+published snapshot, where its tests actually point, and which module will be the first to break under
+my workload.
+
+<Callout tone="warning" title="This is not a security audit">
+  Reading history and tests tells you about design and maintenance. It does not tell you whether the
+  code is safe to run. Treat the two activities as separate, and give the security pass its own time.
+</Callout>
+
+The README is still worth reading — last, as a claim to check against what you found.

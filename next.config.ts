@@ -1,52 +1,22 @@
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
-import { API_CATALOG_LINK } from './lib/api-catalog';
 
-/**
- * Supabase Storage serves article images from the project's public bucket.
- * The hostname is derived from the public URL so the optimizer only ever trusts
- * the project actually configured for this deployment.
- */
-function supabaseImagePattern() {
-  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim();
-  if (!url) return null;
-  try {
-    return {
-      protocol: new URL(url).protocol.replace(':', '') as 'https' | 'http',
-      hostname: new URL(url).hostname,
-      pathname: '/storage/v1/object/public/**',
-    };
-  } catch {
-    return null;
-  }
-}
-
-const supabaseImages = supabaseImagePattern();
-
-// `next dev` evaluates its module bundles with eval() (webpack eval source
-// maps + React Refresh). Without 'unsafe-eval' no route hydrates in dev.
-// Production (`next build`, OpenNext worker) never sets NODE_ENV=development,
-// so the shipped policy stays eval-free.
+// `next dev` evaluates its module bundles with eval() (webpack eval source maps
+// + React Refresh). Without 'unsafe-eval' no route hydrates in dev. Production
+// (`next build`, the OpenNext worker) never sets NODE_ENV=development, so the
+// shipped policy stays eval-free.
 const isDev = process.env.NODE_ENV === 'development';
-
-// When Supabase Auth's OAuth server is enabled, @supabase/auth-js loads part of
-// itself as ES modules from jsDelivr. That is a cross-origin script load, so
-// without this the authorization/consent flow dies on an opaque CSP violation.
-// Scoped to the package path on purpose: jsDelivr serves every npm package, and
-// the bare origin would be an allow-anything hole.
-// Pinned by lib/__tests__/auth-csp.test.ts.
-const SUPABASE_AUTH_SDK = 'https://cdn.jsdelivr.net/npm/@supabase/auth-js@*';
 
 const cspDirectives = [
   "default-src 'self'",
-  isDev
-    ? `script-src 'self' 'unsafe-inline' 'unsafe-eval' ${SUPABASE_AUTH_SDK}`
-    : `script-src 'self' 'unsafe-inline' ${SUPABASE_AUTH_SDK}`,
+  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
   "frame-src 'self'",
   "style-src 'self' 'unsafe-inline'",
+  // Post covers and MDX figures may point at any https host; local images are
+  // served from /images.
   "img-src 'self' data: https:",
   "font-src 'self' data:",
-  "connect-src 'self' https:",
+  "connect-src 'self'",
   "media-src 'self' https:",
   "frame-ancestors 'none'",
   "base-uri 'self'",
@@ -60,16 +30,41 @@ const securityHeaders = [
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
   { key: 'X-DNS-Prefetch-Control', value: 'on' },
-  // Deployed on Cloudflare (HTTPS enforced at the edge); HSTS is safe to send.
   { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
   { key: 'Content-Security-Policy', value: cspDirectives },
+  // Usage preference, expressed at the origin so it is authoritative and
+  // survives Cloudflare's Markdown conversion. Deliberately permissive and
+  // consistent with robots.txt: crawl yes, answer yes, train yes. Changing
+  // `ai-train` is a content-policy decision, not a build detail.
+  { key: 'Content-Signal', value: 'search=yes, ai-input=yes, ai-train=yes' },
 ];
+
+/**
+ * Caching policy.
+ *
+ * HTML: revalidate in the browser on every visit, cache at the edge for a year
+ * (the Worker is rebuilt on every push, and a stale-while-revalidate window
+ * keeps the first reader after a deploy from waiting on the origin).
+ * Feeds and machine artifacts: an hour, with a day of tolerance.
+ * Hashed build assets: immutable, which they are by construction.
+ */
+const HTML_CACHE = 'public, max-age=0, s-maxage=31536000, stale-while-revalidate=86400';
+const FEED_CACHE = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400';
+const ASSET_CACHE = 'public, max-age=31536000, immutable';
+
+const htmlRoutes = ['/', '/blog', '/blog/:slug', '/about', '/contact', '/privacy', '/tags', '/tags/:tag'];
+const feedRoutes = ['/rss.xml', '/feed.json', '/llms.txt', '/sitemap.xml', '/robots.txt', '/.well-known/security.txt'];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // `next dev` blocks cross-origin requests for its own assets and HMR socket.
+  // The sandboxed preview is proxied from a different origin, so allow that
+  // origin family in development only; production configuration is unchanged.
+  ...(process.env.NODE_ENV === 'development' ? { allowedDevOrigins: ['*.e2b.app'] } : {}),
   poweredByHeader: false,
   compress: true,
-  // Render blocking <head> metadata for all HTTP clients instead of streaming <meta> tags into <body>.
+  // Render blocking <head> metadata for all HTTP clients instead of streaming
+  // <meta> tags into <body>.
   htmlLimitedBots: /.*/,
   typescript: {
     ignoreBuildErrors: false,
@@ -77,37 +72,51 @@ const nextConfig: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 60 * 60 * 24 * 30,
-    localPatterns: [
-      {
-        pathname: '/images/**',
-      },
-    ],
-    remotePatterns: supabaseImages ? [supabaseImages] : [],
+    localPatterns: [{ pathname: '/images/**' }],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'motion', '@radix-ui/react-popover', '@radix-ui/react-dialog'],
+    optimizePackageImports: ['lucide-react', 'motion'],
   },
-  output: 'standalone', // switched back to avoid export build issues
-  async headers() {
+  output: 'standalone',
+  /**
+   * MDX posts are read from disk at build time. Next's file tracer has to carry
+   * `content/` into the standalone/OpenNext bundle, otherwise a Worker build
+   * would render empty pages.
+   */
+  outputFileTracingIncludes: {
+    '/**': ['./content/**/*'],
+  },
+  async redirects() {
+    // One hop, permanent. `/blog` is the canonical article tree; the 1.0
+    // refactor briefly used `/posts`, and the multi-author platform used
+    // `/post`, so both collapse here. A slug change must add its own entry in
+    // the same commit that renames the file.
     return [
-      {
-        source: '/',
-        headers: [{ key: 'Link', value: API_CATALOG_LINK }],
-      },
-      {
-        source: '/:path*',
-        headers: securityHeaders,
-      },
+      { source: '/posts', destination: '/blog', permanent: true },
+      { source: '/posts/:slug', destination: '/blog/:slug', permanent: true },
+      { source: '/post/:slug', destination: '/blog/:slug', permanent: true },
+      { source: '/feed', destination: '/blog', permanent: true },
+      { source: '/category/:slug', destination: '/tags', permanent: true },
+      { source: '/authors', destination: '/about', permanent: true },
+      { source: '/author/:id', destination: '/about', permanent: true },
     ];
   },
-  webpack: (config, { dev }) => {
-    // AI Studio uses DISABLE_HMR to prevent flickering during automated edits.
-    if (dev && process.env.DISABLE_HMR === 'true') {
-      config.watchOptions = {
-        ignored: /.*/,
-      };
-    }
-    return config;
+  async rewrites() {
+    return [{ source: '/feed.xml', destination: '/rss.xml' }];
+  },
+  async headers() {
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      { source: '/_next/static/:path*', headers: [{ key: 'Cache-Control', value: ASSET_CACHE }] },
+      ...htmlRoutes.map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: HTML_CACHE }],
+      })),
+      ...feedRoutes.map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: FEED_CACHE }],
+      })),
+    ];
   },
 };
 
@@ -118,6 +127,6 @@ if (process.env.NODE_ENV === 'development') {
   try {
     initOpenNextCloudflareForDev();
   } catch {
-    // Ignore when running outside of wrangler dev environment
+    // Ignore when running outside of wrangler dev environment.
   }
 }

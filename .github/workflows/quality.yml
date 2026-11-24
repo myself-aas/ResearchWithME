@@ -10,55 +10,69 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - name: Install dependencies (canonical lockfile)
         run: npm ci
-      - name: Token pipeline gates (build, validate, contrast)
+
+      - name: Design tokens (build, validate, contrast)
         run: npm run tokens:build && npm run tokens:check
-      - name: Lint, typecheck, tests, Impeccable source scan
-        run: npm run lint && npm run typecheck && npm run test && npm run impeccable:source
-      - name: Protocol, DNS-AID, WebMCP, and Assistant Worker checks
-        run: npm run dns:test && npm run webmcp:test && npm run worker:assistant:check
-      - name: reme offline draft & v3.4 backfill dry-run checks
-        run: npm run reme:check && npm run reme:test && node scripts/v34-backfill-reconcile.mjs --dry-run
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests (schema, loader, TOC, every post compiles as MDX)
+        run: npm test
+
       - name: Production build
         run: npm run build
-      - name: Performance budgets (§18)
-        run: npm run budgets
-      - name: Release gate machine checks (§44/§46)
-        run: npm run release:gate
 
-  v34-e2e-a11y:
-    needs: quality
-    runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:9
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: local-test-publishable-key
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
-      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3100
-      WORKERS_CI: "0"
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-      - name: Install dependencies & Chromium
-        run: npm ci && npx playwright install --with-deps chromium
-      - name: Build production server
-        run: npm run build
-      - name: Run live v3.4 SLO audit & Playwright axe/reflow matrix (320–1920px)
+      # §14 of AGENTS.md, executed against the artifacts that ship: one h1 per
+      # page, unique titles and descriptions, canonical == final URL, JSON-LD
+      # resolved by @id, no orphans, sitemap ↔ page parity, feeds and
+      # machine-readable artifacts present, JS/CSS budgets.
+      - name: Definition of done (SEO / AEO / GEO contract)
+        run: npm run check:site
+
+      - name: Smoke test the built site
         run: |
           npx next start -H 127.0.0.1 -p 3100 &
           SERVER_PID=$!
           trap "kill $SERVER_PID || true" EXIT
-          for i in $(seq 1 30); do
-            curl -sf http://127.0.0.1:3100/feed > /dev/null && break
+          for _ in $(seq 1 30); do
+            curl -sf http://127.0.0.1:3100/ > /dev/null && break
             sleep 1
           done
-          BASE_URL=http://127.0.0.1:3100 node scripts/verify-v34-live.mjs
-          RWM_NEXT_TEST_URL=http://127.0.0.1:3100 PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 npx playwright test -c test/playwright.v34.config.ts test/e2e/v34-a11y-reflow.spec.ts
+          for route in / /blog /tags /about /search /rss.xml /feed.json /llms.txt /robots.txt /sitemap.xml /search-index.json /blog/welcome-to-the-new-researchwithme /blog/welcome-to-the-new-researchwithme/markdown /.well-known/security.txt; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3100$route")
+            echo "$route $code"
+            test "$code" = "200"
+          done
+
+          # Served headers, not just page bodies: the crawl policy, the cache
+          # policy, and HSTS are configuration, and configuration regresses
+          # silently.
+          headers=$(curl -sI http://127.0.0.1:3100/)
+          echo "$headers" | grep -qi '^content-signal: search=yes, ai-input=yes, ai-train=yes' \
+            || { echo "missing or changed Content-Signal header"; exit 1; }
+          echo "$headers" | grep -qi '^cache-control: .*s-maxage=' \
+            || { echo "missing Cache-Control s-maxage on HTML"; exit 1; }
+          echo "$headers" | grep -qi '^strict-transport-security:' \
+            || { echo "missing Strict-Transport-Security"; exit 1; }
+          echo "headers ok"
+
+          # The search page must not inline the archive: bodies belong in
+          # /search-index.json. A regression here is invisible until the site
+          # grows, so budget the gzipped page now.
+          search_bytes=$(curl -s -H 'Accept-Encoding: gzip' -o /dev/null -w "%{size_download}" http://127.0.0.1:3100/search)
+          index_bytes=$(curl -s http://127.0.0.1:3100/search-index.json | wc -c | tr -d ' ')
+          echo "/search ${search_bytes} B gz, /search-index.json ${index_bytes} B raw"
+          test "$search_bytes" -lt 60000
+          test "$index_bytes" -gt 0

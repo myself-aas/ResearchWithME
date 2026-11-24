@@ -1,0 +1,108 @@
+---
+title: "RustDesk review: connection and build boundaries"
+description: "RustDesk repository review of rendezvous and relay boundaries, native build dependencies and remote-access trust, without untested security assurances."
+date: "2026-11-20"
+tags: ["repository-teardown", "source-review", "rustdesk"]
+draft: true
+---
+
+### Key findings
+- The application repository is not the same artifact as its rendezvous/relay server.
+- Native libraries, UI bridges and platform builds are part of the maintenance surface.
+- Self-hosted connectivity is not proof of endpoint authorization or complete security.
+
+## Review question and scope
+
+What does owning remote-desktop infrastructure change, and which endpoint responsibilities remain? This review is for IT teams and developers evaluating authorized remote support. It examines [rustdesk/rustdesk](https://github.com/rustdesk/rustdesk) at commit `eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7`, a pinned **default-branch source snapshot, not a release tag**. Findings apply to that snapshot rather than every packaged or hosted edition.
+
+## Bottom line: control of the relay is only one boundary
+
+RustDesk is a plausible candidate for authorized remote support when infrastructure ownership matters. The README describes a remote desktop application with a choice of the project’s rendezvous/relay infrastructure, self-hosted infrastructure or another implementation. It also makes broad data-control and security statements. Those statements should be evaluated, not repeated as this review’s findings. [1](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md#L11-L171)
+
+The repository boundary matters immediately. The README points separately to `rustdesk-server`; it maps this application’s mediator to communication with that server and describes direct or relayed connections. Reviewing this client/application repository therefore does not establish the complete behavior or security of the server deployment. [1](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md#L11-L171)
+
+## Connection controls are inspectable, but narrow
+
+The mediator contains a bounded record of relays previously reported by this peer. Its comment explicitly says that matching a relay bounds where a request can send the peer and does not authenticate the request. The record has a maximum size and time-to-live. This is a useful example of separating destination restriction from identity verification. [2](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs#L52-L103)
+
+Another nearby comment describes limiting concurrent WebRTC answerers as a guard against pathological setup concurrency. These passages establish intended local controls; they do not prove the absence of bypasses, denial-of-service conditions or authentication weaknesses elsewhere. No crafted request or remote connection was sent during this review. [2](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs#L52-L103)
+
+My adoption recommendation is to draw separate trust boundaries for discovery, transport establishment, endpoint consent, unattended access and release updates. Choosing your own relay may change one boundary without answering the others. This is an evaluation framework, not a claim that the application omits any of those controls.
+
+## A native application with several build surfaces
+
+The root Cargo manifest defines the RustDesk application and library outputs, references local libraries and includes platform-specific dependencies. The README names native codec dependencies and says its simpler build tutorial targets the deprecated Sciter UI, directing Flutter builds to CI. Copying the shortest build instructions is therefore not evidence that you reproduced the current intended desktop artifact. [3](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/Cargo.toml#L1-L103) [1](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md#L11-L171)
+
+The Flutter workflow contains bridge generation and separate platform build jobs, including a Windows Flutter build. That is useful provenance for locating the build path, but a checked-in workflow is not proof that the latest release passed it or that a downloaded binary matches a reviewed commit. This review inspected definitions only, not signatures, release attestations or build logs. [4](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/.github/workflows/flutter-build.yml#L1-L163)
+
+| Boundary | What was inspected | What still needs validation |
+| --- | --- | --- |
+| Discovery and relay | README map and mediator excerpt | Deployed server configuration and topology |
+| Endpoint access | README use/misuse framing | Consent, unattended policies and privilege behavior |
+| Build | Cargo manifest and Flutter workflow | Reproducibility and binary provenance |
+| Platform behavior | Platform-specific dependencies | Screen capture, input and permission behavior on each target OS |
+
+## License and operational fit
+
+The root `LICENCE` is AGPL version 3. Its network-interaction provision addresses offering corresponding source for modified versions under its conditions. That is relevant to modification and redistribution planning, but this article is not legal advice and does not decide whether a particular use triggers a specific obligation. [5](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/LICENCE#L1-L550)
+
+I would shortlist RustDesk where the team can administer both connection infrastructure and endpoint policy, and validate the exact OS/build combination. I would not accept “written in Rust” or “self-hosted” as a substitute for a remote-access threat model. The README itself rejects unethical or unauthorized access; any hands-on evaluation should use systems whose owners have explicitly authorized it. [1](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md#L11-L171)
+
+The important limitation is breadth: capture, clipboard, input, updates, authentication and server behavior are not all established by the few files retained here. Neither security superiority nor end-user performance relative to another remote-desktop product was measured.
+
+{/* review-source-map:start */}
+## Source map: where to inspect next
+
+Client modules, server-side application modules, platform code and Flutter UI are separate maintenance surfaces. This directory-only inventory excludes top-level files such as src/client.rs and src/server.rs, and does not inspect the separate rendezvous/relay server repository.
+
+```chart
+type: bar
+layout: vertical
+title: RustDesk — selected source-file map
+caption: Static file counts in selected roots at commit eedf39e3cb1a. Includes matching tests and generated files; not performance, coverage or a whole-repository breakdown.
+x: Selected root
+y: Files
+y-scale: linear
+series: Matching files
+notes: Counts start at zero. No smoothing or animation. File counts are not benchmarks, test coverage, integrations, product quality or a whole-repository share.
+Client modules: 12
+Server modules: 42
+Platform code: 22
+Flutter UI: 142
+```
+
+**Counting method and text equivalent.** Each value counts tracked Git blob paths under the exact root below, filtered by its include/exclude expression. Matching tests, declarations and generated files remain included unless explicitly excluded. No file contents were executed or benchmarked; submodules are not expanded. This is a deliberately selected reading map, not a complete repository breakdown.
+
+| Selected root | Matching files | Include / exclude expression |
+| --- | ---: | --- |
+| `src/client` | 12 | `\.rs$` / no additional exclusion |
+| `src/server` | 42 | `\.rs$` / no additional exclusion |
+| `src/platform` | 22 | `\.rs$` / no additional exclusion |
+| `flutter/lib` | 142 | `\.dart$` / no additional exclusion |
+
+**Provenance:** commit `eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7`; [Git tree 1](https://api.github.com/repos/rustdesk/rustdesk/git/trees/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7?recursive=1). Every counted path, blob identifier and selector is retained in the review's `chart-inventory.json` and can be recounted offline. Only complete tree responses are used for these chart groups.
+
+**Decision checkpoint.** An authorized support trial should cover both native endpoint behavior and UI consent flows on the target OS. Neither the amount of Rust nor the amount of Dart establishes remote-access security.
+{/* review-source-map:end */}
+
+## What can a reader inspect or reproduce?
+
+This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+
+For a next-stage evaluation:
+
+1. In an authorized lab, verify direct and relayed sessions, explicit consent, unattended policies and revocation on each intended OS.
+2. Resolve the separate server artifact and configuration; document which infrastructure and endpoints are trusted.
+3. Follow the intended Flutter release build path and verify binary provenance, update policy and applicable AGPL obligations.
+
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/rustdesk-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+
+Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+
+## References
+
+1. [1](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/README.md#L11-L171) — rustdesk/rustdesk, `README.md`, commit `eedf39e3cb1a`; locators: L11–L20, L39–L58, L159–L171. Retrieved 20 November 2026.
+2. [2](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/src/rendezvous_mediator.rs#L52-L103) — rustdesk/rustdesk, `src/rendezvous_mediator.rs`, commit `eedf39e3cb1a`; locators: L52–L60, L62–L78, L94–L103. Retrieved 20 November 2026.
+3. [3](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/Cargo.toml#L1-L103) — rustdesk/rustdesk, `Cargo.toml`, commit `eedf39e3cb1a`; locators: L1–L13, L52–L58, L93–L103. Retrieved 20 November 2026.
+4. [4](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/.github/workflows/flutter-build.yml#L1-L163) — rustdesk/rustdesk, `.github/workflows/flutter-build.yml`, commit `eedf39e3cb1a`; locators: L1–L10, L131–L163. Retrieved 20 November 2026.
+5. [5](https://github.com/rustdesk/rustdesk/blob/eedf39e3cb1a4007374f134ff6fd5ec007bcb6b7/LICENCE#L1-L550) — rustdesk/rustdesk, `LICENCE`, commit `eedf39e3cb1a`; locators: L1–L12, L540–L550. Retrieved 20 November 2026.

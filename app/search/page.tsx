@@ -1,62 +1,68 @@
 import type { Metadata } from 'next';
-import BlogHeader from '@/components/BlogHeader';
-import BlogFooter from '@/components/BlogFooter';
-import SearchClient from '@/components/v34/SearchClient';
-import { executeUnifiedSearch } from '@/lib/v34/search';
-import { SEARCH_ENTITY_TYPES, type SearchEntityType } from '@/lib/v34/wave6-contracts';
+import SiteHeader from '@/components/layout/SiteHeader';
+import SiteFooter from '@/components/layout/SiteFooter';
+import SearchClient from '@/components/search/SearchClient';
+import { getSearchIndex } from '@/lib/content/posts';
+import { searchDocs, toLiteDoc, toLiteDocs } from '@/lib/search';
+import { pageMetadata } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
-
-export const metadata: Metadata = {
-  title: 'Search Knowledge Network',
+export const metadata: Metadata = pageMetadata({
+  title: 'Search',
   description:
-    'Search across canonical sources, contributions, structured claims, open-source tools, projects, and FK-backed topics with transparent match reasons.',
-};
+    'Search every essay on ResearchWithMe by title, topic, description, or full text. The index is built with the site, so results appear without waiting.',
+  path: '/search',
+  noIndex: true,
+});
 
-const VALID_TYPES = new Set<string>(SEARCH_ENTITY_TYPES);
-
+/**
+ * Search is server-rendered for the current `?q=` and then hydrated. The first
+ * paint already contains the matching results, so the page works without
+ * JavaScript, in a text browser, and for anything that fetches the URL instead
+ * of driving the input.
+ *
+ * Only the short index is inlined; `/search-index.json` carries the bodies and
+ * is fetched when the reader starts searching.
+ */
 export default async function SearchPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; type?: string; topic?: string; integrity?: string; access?: string; language?: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }) {
-  const params = await searchParams;
-  const q = (params.q ?? '').trim();
-  const requestedType = params.type?.trim().toLowerCase();
-  const types =
-    requestedType && VALID_TYPES.has(requestedType)
-      ? [requestedType as SearchEntityType]
-      : undefined;
-
-  const initialResponse = await executeUnifiedSearch({
-    query: q,
-    types,
-    integrity: params.integrity?.trim() || undefined,
-    access: params.access?.trim() || undefined,
-    language: params.language?.trim() || undefined,
-    topic: params.topic?.trim() || undefined,
-    authorizedClassifications: ['PUBLIC'],
-  });
+  const docs = getSearchIndex();
+  const { q } = await searchParams;
+  const initialQuery = (Array.isArray(q) ? q[0] : q)?.slice(0, 120) ?? '';
+  // Rank against the full index so `?q=` can match body text on the server, then
+  // send the results stripped: the client component's props are inlined in the
+  // HTML, and a body attached to a result would put the whole archive back.
+  const lite = toLiteDocs(docs);
+  const liteBySlug = new Map(lite.map((doc) => [doc.slug, doc]));
+  // Re-use the same objects so the RSC payload references them instead of
+  // repeating each result a second time.
+  const initialResults = searchDocs(docs, initialQuery).map(
+    (doc) => liteBySlug.get(doc.slug) ?? toLiteDoc(doc),
+  );
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas">
-      <BlogHeader />
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <SiteHeader />
       <main
         id="main-content"
-        className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pb-16"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-4xl flex-1 px-5 pb-8 pt-12 sm:px-6 lg:px-8"
       >
-        <header className="mb-8 border-b border-line pb-6">
-          <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Search ResearchWithME
-          </h1>
-          <p className="mt-2 max-w-2xl font-sans text-sm text-ink-secondary sm:text-base">
-            Query canonical sources, empirical contributions, structured claims, global tool repositories, projects, and topics with transparent match reasons and optional editable expansions.
+        <header className="max-w-2xl border-b border-line pb-8">
+          <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">Search</h1>
+          <p className="mt-3 font-sans text-base leading-relaxed text-ink-secondary">
+            Titles and topics match instantly; full text is matched in your browser after the archive
+            index loads from this site. No query is ever sent to a server.
           </p>
         </header>
 
-        <SearchClient initialResponse={initialResponse} />
+        <div className="mt-8">
+          <SearchClient docs={lite} initialQuery={initialQuery} initialResults={initialResults} />
+        </div>
       </main>
-      <BlogFooter />
+      <SiteFooter />
     </div>
   );
 }

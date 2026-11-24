@@ -1,42 +1,61 @@
-import { NextResponse } from 'next/server';
-import { getArticleCatalogue } from '@/lib/cms/catalogue';
-import { SITE_DESCRIPTION, SITE_NAME, absoluteUrl } from '@/lib/seo';
+import { getAllPostMeta } from '@/lib/content/posts';
+import { absoluteUrl } from '@/lib/seo';
+import { AUTHOR, SITE } from '@/lib/site';
 
-export async function GET() {
-  const articles = await getArticleCatalogue();
+/**
+ * `/llms.txt` — the human-and-agent-readable index of what is here.
+ *
+ * This follows the llms.txt convention: an H1, a one-paragraph summary, then
+ * annotated links. It is generated from the same content collection as the
+ * site, so it cannot list a post that does not exist. It is an index, not a
+ * second copy of the writing: every link resolves to the canonical page or to
+ * that page's markdown representation.
+ */
+export const dynamic = 'force-static';
+
+export function GET() {
+  const posts = getAllPostMeta();
 
   const lines = [
-    `# ${SITE_NAME}`,
+    `# ${SITE.name}`,
     '',
-    `> ${SITE_DESCRIPTION}`,
+    `> ${SITE.description}`,
     '',
-    'ResearchWithMe is an open-access review platform publishing paper analyses, benchmark replications, and repository teardowns under CC BY 4.0.',
+    `${SITE.name} is a single-author blog by ${AUTHOR.name}. Every essay is an MDX file in a public`,
+    'git repository, rendered at build time. There is no paywall, no account wall, and no',
+    'client-only content: the full text is in the initial HTML of each URL.',
     '',
-    '## Pages',
-    `- [Home](${absoluteUrl('/')}): Latest reviews, essays, and repository teardowns.`,
-    `- [Markdown catalog](${absoluteUrl('/index.md')}): Plain-Markdown edition of the catalog for AI agents and offline tools.`,
-    `- [Writers](${absoluteUrl('/authors')}): Contributors with verifiable ORCID or GitHub identities.`,
-    `- [Editor](${absoluteUrl('/editorial-board')}): Editor-in-chief and editorial policy.`,
-    `- [Citation builder](${absoluteUrl('/cite')}): Export BibTeX, RIS, APA, MLA, and Chicago citations.`,
-    `- [Research assistant](${absoluteUrl('/assistant')}): Q&A grounded in the published catalog.`,
-    `- [About](${absoluteUrl('/about')}): Mission and contributor verification workflow.`,
-    `- [Contact](${absoluteUrl('/contact')}): Pitches, corrections, and security disclosure.`,
-    `- [Privacy](${absoluteUrl('/privacy')}): Reader privacy and local-storage policy.`,
-    `- [OpenAPI 3.1 specification](${absoluteUrl('/api/openapi.json')}): Machine-readable API contract.`,
+    '## Essays',
     '',
-    '## Published reviews & repository teardowns',
-    ...articles.map(
-      (article) =>
-        `- [${article.title}](${absoluteUrl(`/post/${article.slug}`)}) — ${article.author.name} (${article.category}): ${article.summary}`,
+    ...posts.map(
+      (post) =>
+        `- [${post.title}](${absoluteUrl(post.href)}): ${post.description} (${post.date}${post.updated ? `, updated ${post.updated}` : ''})`,
     ),
+    '',
+    '## Machine-readable',
+    '',
+    `- [Sitemap](${absoluteUrl('/sitemap.xml')}): every canonical, indexable URL.`,
+    `- [RSS](${absoluteUrl(SITE.feedPath)}): full archive, newest first.`,
+    `- [JSON Feed](${absoluteUrl('/feed.json')}): the same items as JSON Feed 1.1.`,
+    `- [robots.txt](${absoluteUrl('/robots.txt')}): crawl policy, including named AI crawlers.`,
+    '',
+    '## Representations',
+    '',
+    'Each essay is HTML at its canonical URL and markdown at `<canonical>/markdown`,',
+    'advertised with `<link rel="alternate" type="text/markdown">`. Both come from the same source.',
+    'Markdown responses carry `X-Markdown-Tokens` so agents can budget context before reading.',
+    '',
+    '## Use',
+    '',
+    `Text is licensed ${SITE.license}: quote, teach, and remix with attribution to ${AUTHOR.name}.`,
+    `Citation format: ${AUTHOR.name}. “Title.” ${SITE.name}, YYYY-MM-DD. URL.`,
     '',
   ];
 
-  return new NextResponse(lines.join('\n'), {
-    status: 200,
+  return new Response(lines.join('\n'), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
     },
   });
 }
