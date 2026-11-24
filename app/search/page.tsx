@@ -1,62 +1,36 @@
 import type { Metadata } from 'next';
-import BlogHeader from '@/components/BlogHeader';
-import BlogFooter from '@/components/BlogFooter';
-import SearchClient from '@/components/v34/SearchClient';
-import { executeUnifiedSearch } from '@/lib/v34/search';
-import { SEARCH_ENTITY_TYPES, type SearchEntityType } from '@/lib/v34/wave6-contracts';
+import SiteHeader from '@/components/layout/SiteHeader';
+import SiteFooter from '@/components/layout/SiteFooter';
+import SearchClient from '@/components/search/SearchClient';
+import { getSearchIndex } from '@/lib/content/posts';
+import { pageMetadata } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
+export const metadata: Metadata = pageMetadata({
+  title: 'Search',
+  description: 'Search every essay on ResearchWithMe by title, topic, description, or full text.',
+  path: '/search',
+  noIndex: true,
+});
 
-export const metadata: Metadata = {
-  title: 'Search Knowledge Network',
-  description:
-    'Search across canonical sources, contributions, structured claims, open-source tools, projects, and FK-backed topics with transparent match reasons.',
-};
-
-const VALID_TYPES = new Set<string>(SEARCH_ENTITY_TYPES);
-
-export default async function SearchPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; type?: string; topic?: string; integrity?: string; access?: string; language?: string }>;
-}) {
-  const params = await searchParams;
-  const q = (params.q ?? '').trim();
-  const requestedType = params.type?.trim().toLowerCase();
-  const types =
-    requestedType && VALID_TYPES.has(requestedType)
-      ? [requestedType as SearchEntityType]
-      : undefined;
-
-  const initialResponse = await executeUnifiedSearch({
-    query: q,
-    types,
-    integrity: params.integrity?.trim() || undefined,
-    access: params.access?.trim() || undefined,
-    language: params.language?.trim() || undefined,
-    topic: params.topic?.trim() || undefined,
-    authorizedClassifications: ['PUBLIC'],
-  });
+export default function SearchPage() {
+  const docs = getSearchIndex();
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas">
-      <BlogHeader />
-      <main
-        id="main-content"
-        className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-8 sm:px-6 lg:px-8 lg:pb-16"
-      >
-        <header className="mb-8 border-b border-line pb-6">
-          <h1 className="font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-            Search ResearchWithME
-          </h1>
-          <p className="mt-2 max-w-2xl font-sans text-sm text-ink-secondary sm:text-base">
-            Query canonical sources, empirical contributions, structured claims, global tool repositories, projects, and topics with transparent match reasons and optional editable expansions.
+    <div className="flex min-h-screen flex-col bg-canvas text-ink">
+      <SiteHeader />
+      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-4xl flex-1 px-5 pb-8 pt-12 sm:px-6 lg:px-8">
+        <header className="max-w-2xl border-b border-line pb-8">
+          <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">Search</h1>
+          <p className="mt-3 font-sans text-base leading-relaxed text-ink-secondary">
+            The whole archive is indexed at build time, so results are instant and nothing leaves your browser.
           </p>
         </header>
 
-        <SearchClient initialResponse={initialResponse} />
+        <div className="mt-8">
+          <SearchClient docs={docs} />
+        </div>
       </main>
-      <BlogFooter />
+      <SiteFooter />
     </div>
   );
 }

@@ -1,0 +1,101 @@
+---
+title: "I tried to reproduce the benchmark everyone cites. It did not survive."
+description: "A widely cited throughput claim turned out to depend on three undocumented choices. Here is the reproduction, the failure modes, and the reporting fix."
+date: "2026-11-18"
+updated: "2026-11-21"
+tags: ["reproducible-research", "benchmarks", "methodology"]
+cover: "/images/folio-dashboard.jpeg"
+coverAlt: "A dashboard of benchmark results with one series diverging from the rest."
+draft: true
+---
+
+A benchmark number can travel further than the paper that produced it. This one had been quoted in
+four surveys, two grant applications, and a conference keynote before anyone published the harness
+that generated it. When I finally ran the harness, the headline number was real — but only under a
+configuration the paper never states.
+
+<KeyTakeaways>
+
+- The reported 2.4× throughput gain reproduces only with the authors' unpublished warm-up schedule.
+- Cold-start measurements invert the result: the baseline is 1.3× faster on the same hardware.
+- None of this looks like fraud. It looks like three defensible choices that never made it into the methods section.
+
+</KeyTakeaways>
+
+## The claim
+
+The claim is simple enough to fit in a sentence: their scheduler moves 2.4× more requests per second
+than the baseline, at equal tail latency. The evaluation section reports a single configuration —
+batch size 64, one worker per core, 30-second runs — and a footnote says results are averaged over
+five runs.
+
+That is more detail than most papers give. It is also not enough to reproduce the result.
+
+## What I ran
+
+I rebuilt the harness from the released code, pinned the dependency lockfile, and used the same
+instance type the authors name in the appendix. Then I ran it twice: once with the published
+configuration, and once with a clean cold start for every measurement.
+
+```bash
+# Published configuration: warm process, 30 s window, five repetitions.
+python bench/serve.py --batch-size 64 --workers 8 --duration 30 --reps 5
+
+# Cold start: a fresh process per measurement, no warm-up window.
+for i in $(seq 1 5); do
+  python bench/serve.py --batch-size 64 --workers 8 --duration 30 --reps 1
+done
+```
+
+The warm run lands within 6% of the paper. The cold runs do not.
+
+| Measurement        | Baseline (req/s) | Their scheduler (req/s) | Ratio |
+| ------------------ | ---------------: | ----------------------: | ----: |
+| Warm, five runs    |            4,180 |                   9,910 |  2.37 |
+| Cold, fresh process |            3,940 |                  3,010 |  0.76 |
+| Cold, p99 latency  |            118 ms |                 402 ms |  3.41 |
+
+<Callout tone="warning" title="The warm-up is doing the work">
+  Their scheduler compiles a routing table on first request and caches it for the life of the
+  process. In a warm run that cost is paid once and amortised over thirty seconds. In a cold run it is
+  paid five times, inside the measurement. The paper's numbers are internally consistent; they simply
+  answer a different question than "how fast does this serve a request?"
+</Callout>
+
+## Where it broke
+
+Three choices explain the gap, and each one is individually reasonable:
+
+1. **Warm-up is excluded from the measurement.** Standard practice for serving benchmarks, and
+   invisible unless you read the harness.
+2. **Only one process lifetime is measured.** The harness starts a single server and loops requests
+   against it, so cold start never appears in the data.
+3. **The baseline is not given the same warm-up.** This one is harder to defend — the comparison
+   numbers come from a baseline that starts cold in every repetition.
+
+The third point is the one I would raise in review. The first two are documentation failures; the
+third is a comparison that favours the proposed system by construction.
+
+## Why this matters beyond one paper
+
+Reproduction is usually framed as a binary: the number matched, or it did not. That framing hides the
+actual failure, which is almost never a wrong number. It is an underspecified measurement.
+
+<Callout tone="note" title="A reporting checklist that would have caught this">
+  For every throughput claim, publish (a) process lifetime, (b) whether warm-up is inside the
+  measurement window, (c) the exact command that produces each row, and (d) the same information for
+  the baseline. Four lines in an appendix would make this paper reproducible in an afternoon.
+</Callout>
+
+I sent the harness and the cold-start numbers to the authors before publishing this. One replied,
+confirmed the routing-table cache, and added a note to the repository README. That is the right
+outcome: the claim is now scoped, not withdrawn.[^1]
+
+## What I would change
+
+If a result depends on a warm process, say so in the abstract. "2.4× at steady state" is a different
+sentence from "2.4×", and only one of them is true. The rest of us can then decide whether steady
+state is the number our workload cares about — often it is, and sometimes it is not.
+
+[^1]: The repository note is at the commit tagged `v0.9.4-notes`. I have kept my harness in a local
+branch; it is not a hostile audit, just a reader trying to run the code.

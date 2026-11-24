@@ -3,6 +3,52 @@
 All notable post-launch changes to ResearchWithMe are recorded here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.0] — 2026-11-24
+
+The multi-author publishing platform becomes a single-author MDX blog. Git is the CMS.
+
+### Added
+- MDX content pipeline: `content/posts/*.mdx` is read from disk, validated with Zod
+  (`lib/content/schema.ts`), and rendered with `next-mdx-remote` and the site's
+  remark/rehype plugins. Frontmatter errors fail the build with the file name and field.
+- Routes: `/` (lead essay, latest writing, topics), `/posts` (archive by year), `/posts/[slug]`,
+  `/tags`, `/tags/[tag]`, `/search`, `/about`.
+- Per-post table of contents generated from the MDX source, with scroll-spy highlighting, and a
+  citation box with one-click copy.
+- MDX components available without imports: `Callout`, `Figure`, `Video`, `KeyTakeaways`,
+  `Sidenote`, plus a code block with syntax highlighting and a copy control.
+- Build-time static generation for posts, tags, RSS, sitemap, and 1200×630 social cards.
+- Client-side search over a generated index (Fuse.js), with `?q=` support and no network calls.
+- `npm run new -- "Title"` scaffolds a dated draft post.
+- Vitest suites for frontmatter validation, the loader (drafts, sorting, duplicate slugs, alt text),
+  TOC extraction, and MDX compilation of every post in the repository.
+
+### Changed
+- The site is statically generated: post pages use `generateStaticParams` with
+  `dynamicParams = false`, so unknown slugs are real 404s.
+- `outputFileTracingIncludes` carries `content/` into the standalone/OpenNext bundle.
+- The deploy guard now checks only the canonical origin (`NEXT_PUBLIC_SITE_URL`) instead of Supabase
+  credentials.
+- README, PRODUCT.md, DESIGN.md, and CLAUDE.md now describe the single-author site.
+- Old URLs redirect: `/post/:slug` → `/posts/:slug`, `/feed` → `/posts`, `/category/:slug` → `/tags`,
+  `/authors` and `/author/:id` → `/about`.
+
+### Removed
+- Supabase: auth, database adapters, RLS migrations, storage, realtime, and all `NEXT_PUBLIC_SUPABASE_*`
+  configuration.
+- The editorial studio (`/dashboard`, `/write`, `/editor`), the writers directory, editorial board,
+  applications, and contribution flows.
+- Research-network surfaces (claims, evidence, sources, graph, projects, workspaces, reviews, tools,
+  assistant, citations), their API routes, libraries, and tests.
+- Transactional email, LinkedIn automation, the assistant/outbox Workers, API discovery documents
+  (OpenAPI, MCP, A2A, OAuth metadata), WebMCP, Web Bot Auth, and the markdown-negotiation middleware.
+- Dependency pruning: 355 packages removed, including Supabase, Plate, React Email, Resend, Gemini,
+  Recharts, Lottie, and Playwright.
+
+### Migrated
+- Twelve repository-teardown drafts from `docs/articles/` were moved into `content/posts/` with
+  frontmatter derived from their headers. They remain `draft: true` until their status is reviewed.
+
 ## [Unreleased]
 
 ### Added

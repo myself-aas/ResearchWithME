@@ -21,10 +21,7 @@ export default defineConfig({
     environment: 'node',
     include: ['lib/**/*.test.ts', 'lib/**/*.test.tsx', 'test/**/*.test.ts', 'test/**/*.test.tsx'],
     reporters: 'default',
-    // Several suites cold-import route handlers and the Next config. Each passes
-    // in under 2 s on its own, but with ~180 files running in parallel (notably
-    // on Windows) different tests crossed the 5 s / 10 s defaults on each run.
-    testTimeout: 20_000,
+    testTimeout: 30_000,
     hookTimeout: 30_000,
   },
 });

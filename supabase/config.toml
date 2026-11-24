@@ -1,5 +1,0 @@
-# Minimal Supabase CLI configuration for the isolated LOCAL verification
-# database used by the migration gates in this repository. `supabase start`
-# derives everything else from CLI defaults. Do NOT point this at any hosted
-# project: the migration gates are local-only by design.
-project_id = "researchwithme"

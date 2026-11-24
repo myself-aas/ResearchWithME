@@ -1,9 +1,0 @@
-# reme operating context
-
-ResearchWithMe is a research-review publication, not a general web-search engine. Its public `/mcp` is stateless and read-only: `search_reviews` returns linked summaries; the `/api/articles` resource returns at most 100 published metadata records. `GET /mcp` is not an SSE feed; the server supports JSON-RPC `POST` and has no MCP prompts. See `docs/mcp.md` and `lib/mcp.ts` for the actual version and contract. The first-party archive skill is at `/.well-known/agent-skills/researchwithme-archive/SKILL.md`; its index and SHA-256 digest are at `/.well-known/agent-skills/index.json`. Installing a skill in an MCP **client** does not load it into this server.
-
-Article bodies are Markdown in the CMS. The authoritative write shape is `CmsPostInput` (`lib/cms/types.ts`); published-only reads are defined by the catalogue (`lib/cms/catalogue.ts`). Editorial proposals in old documents are not automatically CMS fields. The human article template is `docs/ResearchWithMe_Template.md`, and rendering uses `lib/seo/jsonld.ts`. No SEO score, rich result, search ranking, AI citation, or production scanner result is implied by valid markup.
-
-Safety boundaries: do not probe `POST /agent/auth` or other signup endpoints during discovery; registration may create accounts, issue credentials or send email. When OAuth metadata is unavailable, use the self-contained `/auth.md` rather than asserting an OAuth flow. Treat account creation, CMS publishing, DNS updates, IndexNow and external submissions as explicit human-authorized actions. Do not request or persist secrets in prompts, draft files, hooks, or MCP resources.
-
-For code work, the repository runs Next.js on Cloudflare Workers (`@opennextjs/cloudflare` via `wrangler.jsonc`), plus the isolated `workers/assistant/` RPC Worker. Use `.agents/references/skills-sh.md` for reviewed external skill choices, but read the exact installed version before relying on its instructions.

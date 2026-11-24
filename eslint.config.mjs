@@ -7,7 +7,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const compat = new FlatCompat({ baseDirectory: __dirname });
 
 export default defineConfig([
-  globalIgnores(['.next/**', 'node_modules/**', 'data/**', 'coverage/**', 'test-results/**', 'playwright-report*/**', '.open-next/**', '.wrangler/**', 'cloudflare-pages/**', 'workers/**/.wrangler/**', 'workers/**/worker-configuration.d.ts', 'cloudflare-env.d.ts']),
+  globalIgnores([
+    '.next/**',
+    'node_modules/**',
+    'coverage/**',
+    'test-results/**',
+    '.open-next/**',
+    '.wrangler/**',
+    'tokens/generated/**',
+    'cloudflare-env.d.ts',
+    'next-env.d.ts',
+  ]),
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     files: ['next-env.d.ts'],
@@ -24,10 +34,7 @@ export default defineConfig([
       'react/jsx-no-target-blank': 'error',
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/aria-props': 'error',
-      'jsx-a11y/label-has-associated-control': [
-        'error',
-        { assert: 'either', depth: 3 },
-      ],
+      'jsx-a11y/label-has-associated-control': ['error', { assert: 'either', depth: 3 }],
     },
   },
 ]);

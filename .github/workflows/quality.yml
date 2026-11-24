@@ -10,55 +10,41 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - name: Install dependencies (canonical lockfile)
         run: npm ci
-      - name: Token pipeline gates (build, validate, contrast)
+
+      - name: Design tokens (build, validate, contrast)
         run: npm run tokens:build && npm run tokens:check
-      - name: Lint, typecheck, tests, Impeccable source scan
-        run: npm run lint && npm run typecheck && npm run test && npm run impeccable:source
-      - name: Protocol, DNS-AID, WebMCP, and Assistant Worker checks
-        run: npm run dns:test && npm run webmcp:test && npm run worker:assistant:check
-      - name: reme offline draft & v3.4 backfill dry-run checks
-        run: npm run reme:check && npm run reme:test && node scripts/v34-backfill-reconcile.mjs --dry-run
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Tests (schema, loader, TOC, every post compiles as MDX)
+        run: npm test
+
       - name: Production build
         run: npm run build
-      - name: Performance budgets (§18)
-        run: npm run budgets
-      - name: Release gate machine checks (§44/§46)
-        run: npm run release:gate
 
-  v34-e2e-a11y:
-    needs: quality
-    runs-on: ubuntu-latest
-    env:
-      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:9
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: local-test-publishable-key
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
-      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3100
-      WORKERS_CI: "0"
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-          cache: npm
-      - name: Install dependencies & Chromium
-        run: npm ci && npx playwright install --with-deps chromium
-      - name: Build production server
-        run: npm run build
-      - name: Run live v3.4 SLO audit & Playwright axe/reflow matrix (320–1920px)
+      - name: Smoke test the built site
         run: |
           npx next start -H 127.0.0.1 -p 3100 &
           SERVER_PID=$!
           trap "kill $SERVER_PID || true" EXIT
-          for i in $(seq 1 30); do
-            curl -sf http://127.0.0.1:3100/feed > /dev/null && break
+          for _ in $(seq 1 30); do
+            curl -sf http://127.0.0.1:3100/ > /dev/null && break
             sleep 1
           done
-          BASE_URL=http://127.0.0.1:3100 node scripts/verify-v34-live.mjs
-          RWM_NEXT_TEST_URL=http://127.0.0.1:3100 PLAYWRIGHT_BASE_URL=http://127.0.0.1:3100 npx playwright test -c test/playwright.v34.config.ts test/e2e/v34-a11y-reflow.spec.ts
+          for route in / /posts /tags /about /search /rss.xml /sitemap.xml; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3100$route")
+            echo "$route $code"
+            test "$code" = "200"
+          done

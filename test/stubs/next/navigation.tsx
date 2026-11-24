@@ -1,40 +1,40 @@
 /**
- * Temporary `next/navigation` compatibility shim for shared client components.
+ * `next/navigation` stand-in for vitest.
  *
- * Maps the small used surface onto React Router: push/replace navigate,
- * refresh re-navigates to the current location (a same-URL navigation is a
- * loader revalidation in a data router), usePathname reads the location and
- * useParams reads the matched route params. Generic signature mirrors
- * next's `useParams<T>()`.
+ * The tested modules are data loaders; navigation is inert here. Components
+ * that call these hooks render their default state in tests.
  */
-import { useLocation, useNavigate, useParams as useRouterParams } from 'react-router-dom';
 
 export interface RouterShim {
   push(path: string): void;
   replace(path: string): void;
   refresh(): void;
+  back(): void;
+  forward(): void;
 }
 
+const noop = () => {};
+
 export function useRouter(): RouterShim {
-  const navigate = useNavigate();
-  const location = useLocation();
-  return {
-    push: (path: string) => navigate(path),
-    replace: (path: string) => navigate(path, { replace: true }),
-    // Next's refresh() refetches the current route's server data. A same-URL
-    // navigation re-renders the route and, under a data router, revalidates
-    // its loaders — the closest equivalent available here.
-    refresh: () => navigate(location.pathname + location.search + location.hash, { replace: true }),
-  };
+  return { push: noop, replace: noop, refresh: noop, back: noop, forward: noop };
 }
 
 export function usePathname(): string {
-  return useLocation().pathname;
+  return '/';
 }
 
 export function useParams<T extends Record<string, string | undefined> = Record<string, string | undefined>>(): Readonly<T> {
-  return useRouterParams() as unknown as Readonly<T>;
+  return {} as Readonly<T>;
 }
 
-// useSearchParams is not in the used surface; add it here when a shared
-// component first needs it rather than guessing at its full contract.
+export function useSearchParams(): URLSearchParams {
+  return new URLSearchParams();
+}
+
+export function notFound(): never {
+  throw new Error('NEXT_NOT_FOUND');
+}
+
+export function redirect(): never {
+  throw new Error('NEXT_REDIRECT');
+}

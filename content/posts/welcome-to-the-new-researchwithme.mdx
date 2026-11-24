@@ -1,0 +1,65 @@
+---
+title: "Welcome to the new ResearchWithMe"
+description: "This site is now a single-author blog. Every essay is an MDX file in the repository, rendered at build time, with no accounts, no database, and no admin panel."
+date: "2026-11-24"
+tags: ["meta", "site-news", "mdx"]
+featured: true
+toc: false
+---
+
+I rebuilt ResearchWithMe around a simpler idea: the writing is the site. Every essay now lives as an
+MDX file in `content/posts/` in this repository. A push rebuilds the pages, the search index, the RSS
+feed, and the social cards from those same files.
+
+<KeyTakeaways>
+
+- One author, one archive: posts are written by me and published from git.
+- Content is MDX, so prose can use figures, callouts, video, tables, and highlighted code.
+- Everything is statically generated. There is no login, no database, and no runtime write path.
+
+</KeyTakeaways>
+
+## Why the change
+
+The previous version was built to host many writers: applications, roles, an editorial dashboard, a
+draft studio, and a moderation queue. For a blog written by one person, all of that was machinery
+around the actual work. Removing it made the site smaller, faster, and considerably easier to reason
+about.
+
+What is left is the part that matters: a reading experience, a durable archive, and a publishing
+workflow that is just git.
+
+## How publishing works now
+
+A post is one file:
+
+```mdx
+---
+title: "A post about something"
+description: "One or two sentences for cards, search, and the feed."
+date: "2026-11-24"
+tags: ["reproducible-research", "methodology"]
+---
+
+The body is MDX. Components are available without imports.
+```
+
+Add the file, commit it, push. The build validates the frontmatter, renders the page, and updates the
+index. If a field is wrong, the build fails with the file name and the field — no silently missing
+post.
+
+<Callout tone="note" title="Drafts stay local">
+  A post with <code>draft: true</code> appears when the site runs in development and is excluded from a
+  production build. You can write in public view without publishing.
+</Callout>
+
+## What carried over
+
+The things that were worth keeping stayed: the typography, the paper-and-ink palette, the reading
+progress bar, the theme control, and the archive-first navigation. Bookmarks, accounts, the studio,
+and the research-network surfaces did not — they existed to support a multi-writer platform that is no
+longer here.
+
+If you are looking for something that used to be at a specific address, the [archive](/posts) and
+[search](/search) are the places to start. The [RSS feed](/rss.xml) still works, and it is still the
+best way to follow new writing.

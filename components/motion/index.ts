@@ -11,7 +11,6 @@ export { default as Reveal, type RevealProps, type RevealTag } from './Reveal';
 export { Stagger, StaggerItem, type StaggerProps, type StaggerItemProps } from './Stagger';
 export { default as Pressable, type PressableProps, type PressableFeedback } from './Pressable';
 export { MotionList, MotionItem, type MotionListProps, type MotionItemProps } from './MotionList';
-export { default as MotionPillGroup, type MotionPillGroupProps, type MotionPillOption } from './MotionPillGroup';
 export { default as SuccessCheck, type SuccessCheckProps } from './SuccessCheck';
 export { default as AttentionPulse, type AttentionPulseProps } from './AttentionPulse';
 export {

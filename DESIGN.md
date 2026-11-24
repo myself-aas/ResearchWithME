@@ -1,6 +1,6 @@
 ---
 name: reme
-description: reme Frontend Design System v3.1 for researchwith.me — scholarly open-science platform and research engine. Full normative spec: docs/reme-design-system-v3.1.md
+description: reme Frontend Design System v3.1 as used by researchwith.me — a single-author research blog. Token source: tokens/src/*.json; token build: npm run tokens:build.
 version: 3.1.0
 status: stable-candidate
 updated: 2026-11-09
@@ -143,8 +143,6 @@ spacing:
 
 # Design System — reme v3.1
 
-<!-- impeccable:design-schema 1 -->
-
 The frontend is transitioning from **reme v3.1** to the user-approved editorial refresh (2026-11-15). The full normative specification — token architecture, accessibility baseline, components, motion, scholarly domain model, conformance profiles, and the release gate — lives in **[`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md)**, which remains a reference for domain and accessibility contracts; the current editorial palette and typography are documented here and in the refresh notes. The front-matter above is the machine-readable schema consumed by the Impeccable detector; the token layer implementing it is `app/globals.css`.
 
 ## Summary
@@ -186,33 +184,30 @@ pass `label` when the mark must name itself.
 
 ## Components
 
-The normative component contracts — Source Card, Evidence Card, Claim Card,
-Citation, Research Workspace, Provenance Graph, Scholarly Dialogue, AI-Assisted
-Output, Tables, Forms, Feedback — are §7 of
-[`docs/reme-design-system-v3.1.md`](./docs/reme-design-system-v3.1.md). This
-section records what actually ships and how to consume it; it does not restate
-that spec.
-
-### Three layers
+The site ships three layers. Product components own whole surfaces; nothing below them knows what a
+post is.
 
 | Layer | Location | Rule |
 |---|---|---|
-| Primitives | `components/primitives/` | Token-driven, mostly server-safe. Import from `@/components/primitives` only. |
-| UI composites | `components/ui/` | Stateful patterns (Dialog, Toast, DataTable, EmptyState, Skeleton, Alert). |
-| Product components | `components/` | Domain surfaces (feed, reading, authors, studio). Compose the two layers above. |
+| Tokens | `tokens/src/*.json` → `tokens/generated/` | The only source of colour, type, and motion values. Regenerate with `npm run tokens:build`; never hand-edit generated files. |
+| Motion primitives | `components/motion/` | `Reveal`, `Stagger`, `Pressable`, `RouteTransition`, `LoadingState`, `LazyMount`, `MotionModeProvider`. Durations and easings come from `lib/motion/tokens.ts`. |
+| Product components | `components/layout`, `components/post`, `components/mdx`, `components/search`, `components/preloader`, plus `BrandLogo` and `ReadingProgress` | Site chrome, post cards, the cover frame, table of contents, citation box, the MDX component map, search, and the entry animation. |
 
-### Primitives
+### The MDX surface
 
-`Box`, `Text`, `Stack`, `Card` (+ `CardHeader`/`CardTitle`/`CardDescription`/
-`CardFooter`), `Button`, `Divider`, `Badge`, `Input`, `Select`, `Textarea`,
-`Link`, `Icon`, `VisuallyHidden`.
+`components/mdx/mdx-components.tsx` is the design system's public face inside a post. Authors write:
 
-All are server-safe except `Button`, `Input`, `Select` and `Textarea`, which are
-client components with built-in label, error and `aria-describedby` wiring.
-`Text` variants are `eyebrow`, `card-title`, `section-title`, `page-title`, plus
-the reme v3.1 §2 display scale. `Link` variants are `inline`, `quiet`, `muted`,
-`plain`; internal paths render `next/link`. Full API: 
-[`docs/design-system/primitives.md`](./docs/design-system/primitives.md).
+- `Callout` — `note`, `tip`, `warning`, `danger`; icon, label, and a token-defined tint.
+- `Figure` — framed image with a mandatory caption; optional link.
+- `Video` — native `<video>` with poster and caption.
+- `KeyTakeaways` — the summary box; one per post at most.
+- `Sidenote` — a quiet aside that stays inline with the prose.
+- `pre` → `CodeBlock` — dark code panel, syntax highlighting, copy control.
+- Links distinguish internal (`next/link`) from external (new tab, announced).
+
+Prose rhythm lives in `app/globals.css` under `.mdx-body`; the column itself is `.reading-prose`
+(68ch, 1.125rem/1.7, old-style numerals). Heading anchors are added by `rehype-slug` +
+`rehype-autolink-headings`, and the table of contents reads the same ids.
 
 ### Two rules that bind every component
 
@@ -221,87 +216,35 @@ the reme v3.1 §2 display scale. `Link` variants are `inline`, `quiet`, `muted`,
    (`stone-*`, `red-*`, `white`): it does not switch with the theme. A utility
    naming an undefined token compiles to nothing and the element silently
    inherits its parent colour.
-2. **Repeated class strings become a primitive variant.** If a string appears
-   more than a few times it belongs in a variant, defined once.
-
-Both are enforced by `lib/__tests__/design-token-usage.test.ts` in
-`npm run quality`; deliberate exceptions go in its `ALLOW` map with a reason.
+2. **Repeated class strings become a component.** If a string appears more than
+   a few times it belongs in one component or one CSS layer, defined once.
 
 ### Component state contract
 
-Every component that fetches, submits or filters exposes loading, empty, error,
-disabled and success states. Loading skeletons mirror the final layout; empty
-states explain why the view is empty and offer one relevant action; errors name
-the problem and the recovery step. Status is never carried by colour alone — it
-is always paired with a text label.
+Every surface that can be empty says why it is empty and offers one relevant
+next step. The feed with no posts explains how posts are added; a tag with no
+matches links back to the topic index; a search with no results suggests a
+shorter query or the archive. Status is never carried by colour alone — it is
+always paired with a text label. Loading and error states are announced; the
+skeletons in `components/motion/LoadingState.tsx` mirror the final layout.
 
 ### Do not
 
 Gradient text, decorative glass or blur, nested cards, a coloured
 `border-left`/`border-right` above 1px, hard offset shadows, monospace as a
 "technical" costume, unicode glyphs standing in for an icon system, or a kicker
-above a heading.
-
-Engagement chrome never fabricates a number. A badge, meter, streak or ring renders
-only when fed a real count from a source that exists; `null`, `0` and "source absent"
-are the same UI: nothing. Sign-in and session chrome render nothing for signed-out
-visitors and nothing before hydration.
-
-Three copy categories are banned outright (the enforced guard is
-`lib/__tests__/forbidden-copy.test.ts`; the reviewed strings live in
-`lib/engagement/copy.ts`):
-
-- **Confirmshame** — never implies the reader is foolish for declining.
-  Accepted alternative: “Not now” / a plain decline with no adjectives.
-- **Fake scarcity** — never invents capacity or deadlines. Accepted
-  alternative: state the real reason (“we open review seats quarterly; this
-  batch is full”) or state nothing.
-- **Unit-mismatched anchoring** — “just 40% of…” where the 40% measures a
-  different unit than the thing named. Accepted alternative: quote the number
-  against the unit it actually measures, or drop the number. Regex cannot see
-  unit mismatch; this one is the PR checklist’s job (see
-  `.github/PULL_REQUEST_TEMPLATE.md`).
+above a heading. No fabricated counts: an archive count, reading time, or topic
+total is computed from the files or not shown at all.
 
 ## Literals that are allowed (2026-11-16)
 
-Two files cannot resolve CSS variables and therefore write palette values
-literally. Both are deliberate, and both are listed here so the detector has a
-record of them rather than a silent exception:
+Social cards are rasterised by `next/og` in a bare browser context and cannot
+resolve CSS variables. `app/opengraph-image.tsx` and
+`app/posts/[slug]/opengraph-image.tsx` therefore import `semanticLight` from the
+generated token module; they still track the design system, and a card is one
+image so it pins the light set by design.
 
-- **`public/404.html`** — a static-host fallback. It renders with no stylesheet
-  at all, so it carries `canvas` / `text-primary` / `action.primary` inline. It
-  has no dark theme; a 404 document is one page.
-- **`lib/og/brand-image.tsx` and `app/opengraph-image.tsx`** — social cards are
-  rasterised by `next/og` in a bare browser context. These do **not** hardcode
-  hex any more: they import `semanticLight` from the generated token module, so
-  they track the design system without a rebuild-by-hand step. A card is one
-  image, so it pins the light set by design.
-- **Brand icons** (`favicon.svg`, `icon.svg`, `*.png`, `favicon.ico`) — see
-  "Brand mark ink" above.
+Brand icons (`favicon.svg`, `icon.svg`, `*.png`, `favicon.ico`) are artwork, not
+UI, and carry their own ink.
 
-Everything else resolves through a token. The guard is
-`lib/__tests__/design-token-usage.test.ts`; the detector rule is
-`design-system-color`.
-
-## Charts (2026-11-16)
-
-Articles can carry a chart via a fenced `chart` block; see
-[`docs/charts.md`](./docs/charts.md). `recharts` renders it, and the contract is
-DESIGN §32, restated here as what the implementation actually enforces:
-
-- **Caption is mandatory and doubles as the text alternative.** A block without
-  one is refused rather than rendered unlabelled.
-- **Every chart renders a data table.** It is the accessible equivalent, the
-  no-JavaScript state, and the print form.
-- **Missing data is `null`, never `0`.** The table prints "Not reported".
-- **`y-scale: log` is disclosed in text**, and values ≤ 0 are rejected at parse
-  time instead of drawing an axis that lies.
-- **Colour comes from `chart.series` tokens**, seven roles per theme. Verified
-  each run for ≥ 4.5:1 against its canvas and for minimum pairwise CIELAB ΔE
-  under protanopia, deuteranopia, and tritanopia (light ≥ 13.7, dark ≥ 12.4).
-  The palette is not the `knowledge` or `trust` roles: §32 forbids reusing
-  semantic evidence colours for ordinary magnitude.
-- **No animated data.** `isAnimationActive={false}` everywhere; a measurement
-  must not move.
-- **`forced-colors` shows the table**, not a plot the OS has flattened to a
-  solid block.
+Everything else resolves through a token.

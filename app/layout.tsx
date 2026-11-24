@@ -1,18 +1,16 @@
-import { semanticDark, semanticLight } from '@/tokens/generated/tokens';
-import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
-import { SITE_DESCRIPTION, SITE_URL, absoluteUrl } from '@/lib/seo';
+import { semanticDark, semanticLight } from '@/tokens/generated/tokens';
+import { THEME_INIT_SCRIPT } from '@/lib/theme';
+import { absoluteUrl, SITE_DESCRIPTION, SITE_URL } from '@/lib/seo';
+import { AUTHOR, SITE } from '@/lib/site';
 import PremiumMotionProvider from '@/components/motion/PremiumMotionProvider';
 import { Preloader } from '@/components/preloader';
 import RouteTransition from '@/components/motion/RouteTransition';
-import PwaLifecycleBridge from '@/components/v34/PwaLifecycleBridge';
 
-// Canonical brand typography: self-hosted Plus Jakarta Sans (WOFF2, OFL) leads
-// editorial sans and display/body stacks in app/globals.css; Inter and Newsreader
-// remain bundled here via next/font/local as self-hosted OFL fallbacks, and
-// Aptos Mono / JetBrains Mono back monospace stacks.
+// Self-hosted OFL faces: Inter and Newsreader back the Plus Jakarta Sans
+// editorial stacks declared in globals.css.
 const inter = localFont({
   src: [{ path: './fonts/inter-latin-variable.woff2', weight: '100 900', style: 'normal' }],
   variable: '--font-inter',
@@ -32,43 +30,43 @@ const newsreader = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-      default: 'ResearchWithMe',
-      template: `%s | reme`,
+    default: `${SITE.name} — essays on research and open code`,
+    template: `%s | ${SITE.shortName}`,
   },
   description: SITE_DESCRIPTION,
-  applicationName: 'ResearchWithMe',
+  applicationName: SITE.name,
+  authors: [{ name: AUTHOR.name, url: absoluteUrl('/about') }],
+  creator: AUTHOR.name,
+  publisher: AUTHOR.name,
   keywords: [
-    'open access research',
-    'scholarly publishing',
+    'research essays',
     'paper reviews',
     'reproducible research',
-    'repository teardowns',
+    'open source teardowns',
     'open science',
+    'MDX blog',
   ],
+  alternates: {
+    canonical: '/',
+    types: { 'application/rss+xml': SITE.feedPath },
+  },
   openGraph: {
-      title: 'ResearchWithMe — Open-Access Research Reviews & Repository Teardowns',
+    title: `${SITE.name} — essays on research and open code`,
     description: SITE_DESCRIPTION,
     url: absoluteUrl('/'),
-      siteName: 'reme',
+    siteName: SITE.name,
     type: 'website',
-    locale: 'en_US',
-      images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630, alt: 'ResearchWithMe — Open-Access Research Reviews' }],
+    locale: SITE.locale,
+    images: [{ url: absoluteUrl('/opengraph-image'), width: 1200, height: 630, alt: SITE.name }],
   },
   twitter: {
     card: 'summary_large_image',
-      title: 'ResearchWithMe — Open-Access Research Reviews',
+    title: `${SITE.name} — essays on research and open code`,
     description: SITE_DESCRIPTION,
     images: [absoluteUrl('/opengraph-image')],
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
-  formatDetection: {
-    telephone: false,
-    email: false,
-    address: false,
-  },
+  robots: { index: true, follow: true },
+  formatDetection: { telephone: false, email: false, address: false },
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: '48x48' },
@@ -86,25 +84,17 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: 'cover',
   colorScheme: 'light dark',
-  // Browser/OS chrome tint. Read from the semantic tokens so the address bar
-  // matches the page canvas instead of drifting to a retired palette: a
-  // mismatched tint is a visible seam above the UI on every route.
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: semanticLight.canvas },
     { media: '(prefers-color-scheme: dark)', color: semanticDark.canvas },
   ],
 };
 
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" dir="ltr" className={`${inter.variable} ${newsreader.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        {/* WebMCP: registers the archive's read-only tools on page load, before
-            hydration, so an in-tab agent (or a readiness scanner) sees them.
-            The script no-ops where the browser has no modelContext. */}
-        <script src="/webmcp.js" defer />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased selection:bg-selection selection:text-ink" suppressHydrationWarning>
         <a
@@ -113,13 +103,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        {/* Entry sequence: brand mark draw → wordmark → progress → split-door exit */}
-        <Preloader minDisplayTime={800} />
-        {/* Premium motion runtime: GSAP + ScrollTrigger + Lenis smooth scroll
-            with reduced-motion guards (see components/motion/PremiumMotionProvider). */}
+        <Preloader minDisplayTime={700} />
         <PremiumMotionProvider>
-          <div className="min-h-screen">
-            <PwaLifecycleBridge />
+          <div className="flex min-h-screen flex-col">
             <RouteTransition>{children}</RouteTransition>
           </div>
         </PremiumMotionProvider>

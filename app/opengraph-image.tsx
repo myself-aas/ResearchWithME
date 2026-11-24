@@ -1,8 +1,8 @@
-import { BRAND_WORDMARK_DATA } from '@/lib/og/logo-data';
 import { ImageResponse } from 'next/og';
 import { semanticLight } from '@/tokens/generated/tokens';
+import { SITE } from '@/lib/site';
 
-export const alt = 'ResearchWithMe — Open-Access Scholarly Publishing & Research Reviews';
+export const alt = 'ResearchWithMe — essays on research and open code';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -20,21 +20,29 @@ export default function OpengraphImage() {
           color: semanticLight['text-primary'],
           padding: '72px 84px',
           borderTop: `18px solid ${semanticLight.action.primary}`,
-          fontFamily: 'ui-serif, Georgia, serif',
         }}
       >
-        <img src={BRAND_WORDMARK_DATA} width={200} height={119} alt="ResearchWithMe" />
+        <div style={{ fontSize: 34, fontWeight: 700, letterSpacing: '-0.02em' }}>reme.</div>
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div style={{ fontSize: 72, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 940 }}>
+          <div style={{ fontSize: 76, lineHeight: 1.05, letterSpacing: '-0.03em', maxWidth: 960, fontWeight: 700 }}>
             Open science, reviewed in public.
           </div>
-          <div style={{ fontSize: 30, color: semanticLight['text-secondary'], fontFamily: 'Inter, system-ui, sans-serif' }}>
-            Article reviews · reproducible research · repository teardowns
+          <div style={{ fontSize: 28, color: semanticLight['text-secondary'], maxWidth: 900 }}>
+            Essays on research papers, open-source repositories, and reproducible work.
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Inter, system-ui, sans-serif', fontSize: 24, color: semanticLight['text-secondary'] }}>
-          <span>researchwith.me</span>
-          <span>CC BY 4.0 · Open access</span>
+
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            fontSize: 24,
+            color: semanticLight['text-secondary'],
+          }}
+        >
+          <span>{SITE.url.replace(/^https?:\/\//, '')}</span>
+          <span>{SITE.license} · No paywall</span>
         </div>
       </div>
     ),

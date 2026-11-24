@@ -1,7 +1,0 @@
-# ResearchWithMe content and editorial context
-
-The current article contract is `CmsPostInput` in `lib/cms/types.ts`. Articles have `draft` or `published` status (not a four-stage persisted status); body content is Markdown. Consult `docs/supabase-cms.md` for the studio/write flow, `lib/cms/catalogue.ts` for public published-only reads, and `docs/research-workflows.md` for the product's explicitly labelled live versus planned lifecycle features. An editor's human approval is distinct from any persisted status.
-
-Use `docs/ResearchWithMe_Template.md` v3 for research article drafts and `.agents/skills/reme-editorial/SKILL.md` for the evidence-first editorial workflow. The older template's proposed fields, synthetic CITABLE scores, mandatory FAQ/schema/diagrams, auto-submission and fabricated success metrics are not supported CMS or publishing behavior. The current app builds Article JSON-LD in `lib/seo/jsonld.ts`; do not paste schema JSON into Markdown or invent author/citation metadata.
-
-Public `/mcp` and `/api/articles` expose published records only. To find and cite a review, use `.agents/skills/reme-archive/SKILL.md`. Registration, account provisioning, CMS writes and publication need separate authorization and must not happen during passive discovery. `npm run reme:check` checks Markdown draft structure, not claims or scientific validity; ask a human editor to review sources before publishing.

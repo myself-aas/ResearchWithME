@@ -2,13 +2,26 @@
 
 <!-- What changed and why. One or two sentences. -->
 
-## Review checklist
+## Content checklist
 
-- [ ] **No unit-mismatched anchoring** — a percent or count anchored against a different unit (e.g. "just 40% of jobs") is banned; anchors must name the same unit they measure. Regex cannot catch this, so the author and reviewer both check it.
-- [ ] **CTA copy names the action, never the emotion** — no confirmshame, no manufactured urgency, no "we miss you". See `lib/engagement/copy.ts` for the reviewed strings and `lib/__tests__/forbidden-copy.test.ts` for the enforced ban.
-- [ ] **Design tokens only** — no raw palette classes; `npm run tokens:check` and `lib/__tests__/design-token-usage.test.ts` pass. Deliberate exceptions are listed in DESIGN.md.
-- [ ] **Sign-in chrome only for signed-in users** — engagement chrome renders nothing pre-hydration or signed-out.
+- [ ] Every new or edited file in `content/posts/` passes `npm test` (frontmatter + MDX compilation).
+- [ ] `description` is 20–280 characters and reads as a complete sentence.
+- [ ] A `cover` is paired with `coverAlt`; every `<Figure>` and `<Video>` has a caption or label.
+- [ ] `draft: true` is set for anything not ready to be public.
+- [ ] Tags are lowercase and reuse an existing tag where one fits.
+
+## Code checklist
+
+- [ ] `npm run quality` passes (tokens, lint, typecheck, tests).
+- [ ] `npm run build` passes.
+- [ ] Post pages stay static (`generateStaticParams`, `dynamicParams = false`); no runtime database,
+      auth, or write path was introduced.
+- [ ] Colour and spacing use semantic tokens (`bg-canvas`, `text-ink`, `border-line`), not raw palette
+      families.
+- [ ] Interactive controls have accessible names, visible focus, and keyboard support; no status is
+      conveyed by colour alone.
+- [ ] Any user-facing copy is true: counts and dates come from the content, never invented.
 
 ## Test plan
 
-<!-- What you ran. npm test? A route smoke? Screenshots for visual changes (not committed). -->
+<!-- What you ran, and what you checked by hand (routes, 320px reflow, dark mode, reduced motion). -->

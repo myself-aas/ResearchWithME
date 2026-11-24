@@ -1,0 +1,76 @@
+---
+title: "What a p-value does not tell you"
+description: "A p-value is a statement about data under a model, not about your hypothesis. Four misreadings that survive peer review, and the sentences that avoid them."
+date: "2026-09-12"
+tags: ["statistics", "methodology", "evidence"]
+toc: true
+draft: true
+---
+
+A p-value answers one question: if the null hypothesis were true, how often would a test statistic at
+least this extreme appear? Everything else people say about it is an inference layered on top, and the
+layers are where most of the damage happens.
+
+This is not a argument against hypothesis tests. It is an argument for reading them precisely, because
+the imprecise reading has a way of travelling further than the careful one.
+
+## The four misreadings
+
+| What people write | What the p-value means |
+| --- | --- |
+| "There is a 3% chance the null is true." | If the null were true, 3% of experiments would produce data this extreme. |
+| "We have shown there is no effect." | A large p-value is a failure to detect, not evidence of absence. |
+| "The effect is large because p is small." | p conflates effect size with sample size. |
+| "p = 0.049 is significant; p = 0.051 is not." | The threshold is a convention; the underlying quantity is continuous. |
+
+The first row is the most common and the most consequential. It inverts the conditional probability,
+which is the kind of error that sounds technical until you notice it is exactly how most press
+releases read.
+
+## A concrete example
+
+Take a trial with 400 participants, a real but small effect, and a well-behaved test. The observed
+difference is 0.4 standard deviations, and the test returns p = 0.02.
+
+What can you say?
+
+- You can say the data are unlikely under the null, at the conventional threshold.
+- You can say the estimated effect is 0.4 SD, with a confidence interval that excludes zero.
+- You cannot say the probability that the treatment works is 98%.
+- You cannot say the effect is important. That is a question about consequences, not statistics.
+
+<Callout tone="danger" title="The sentence to avoid">
+  "The treatment is effective (p &lt; 0.05)." Write instead: "The estimated effect was 0.4 SD
+  (95% CI 0.06–0.74); the data are unusual under the null model." One sentence is a claim about data;
+  the other is a claim about the world that the test cannot support.
+</Callout>
+
+## Confidence intervals do more work
+
+If I could change one habit in how statistical results are reported, it would be to lead with the
+interval rather than the test. An interval carries the estimate, its precision, and the direction of
+uncertainty in a single object. A p-value collapses all of that into one number whose meaning is easy
+to state and hard to remember.
+
+> The p-value is not a measure of evidence in the sense most readers assume. It is a measure of
+> surprise, and surprise depends on how hard you looked.
+
+That sentence is not mine — it is a paraphrase of a point made repeatedly since the 1980s — but it is
+the one I return to when reviewing.
+
+## What to do instead
+
+1. Report the estimate and its interval, always, before the test.
+2. State the model and the null explicitly. "No difference in means, assuming independent observations"
+   is a claim you can check.
+3. Pre-register the analysis, or label it exploratory. Both are honest; conflating them is not.
+4. Treat the threshold as a convention, and say so when a result sits near it.
+
+<Callout tone="note" title="A reading habit">
+  When a paper reports a significant result, find the interval. If the interval is wide, the result is
+  a direction, not a magnitude. If the interval is narrow, check whether the sample was selected in a
+  way that makes narrowness plausible.
+</Callout>
+
+None of this requires abandoning statistical testing. It requires writing down what the test says,
+and letting the rest of the argument carry its own weight.

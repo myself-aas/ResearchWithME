@@ -5,10 +5,10 @@ import kvNextTagCache from '@opennextjs/cloudflare/overrides/tag-cache/kv-next-t
 
 /**
  * Workers free plan: rendered pages and revalidation tags both live in KV
- * (one namespace, disjoint key prefixes), so studio revalidatePath() calls
- * refresh static routes such as /sitemap.xml without a redeploy. KV is
- * eventually consistent, so a revalidation can take up to ~60 s to apply.
- * The memory queue regenerates stale pages through WORKER_SELF_REFERENCE.
+ * (one namespace, disjoint key prefixes). The blog is statically generated at
+ * build time, so the cache mainly serves prerendered route output; KV is
+ * eventually consistent, and a new deploy writes fresh entries. The memory
+ * queue regenerates stale pages through WORKER_SELF_REFERENCE.
  */
 // Pin the build command to npm, the repository's only package manager, so
 // OpenNext does not infer a different runner from whichever lockfile it finds.

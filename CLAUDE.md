@@ -1,65 +1,57 @@
 # ResearchWithMe — Agent Instructions
 
 ## Project overview
-Scholarly research platform: long-form paper reviews, reproducible teardowns, citation-first reading. Stack: Next.js 15 App Router, React 19, Tailwind CSS v4, Supabase, TypeScript.
 
-Read `PRODUCT.md` and `DESIGN.md` before touching any UI surface. Keep `.impeccable/surfaces/` briefs in sync with every route change.
+A single-author blog. Essays on research papers and open-source code are written as MDX files in
+`content/posts/` and statically rendered by Next.js 15 (App Router, RSC), React 19, and Tailwind CSS
+v4. There is no database, no auth, and no admin UI — git is the CMS.
+
+Read `PRODUCT.md` and `DESIGN.md` before touching a UI surface, and `content/README.md` before
+changing anything about the frontmatter contract.
 
 ## Quality gate (must pass before any commit or PR)
+
 ```bash
-npm run quality          # lint + typecheck + test + Impeccable source scan
+npm run quality          # tokens + lint + typecheck + test
+npm run build            # production build, types enforced
 ```
-Individual commands: `npm run lint`, `npm run typecheck`, `npm test`, `npm run impeccable:source`.
 
-## HyperFrames video skills
+Individual commands: `npm run lint`, `npm run typecheck`, `npm test`, `npm run tokens:build`.
 
-All seven HyperFrames skills are installed globally. Read `/hyperframes` **first** before generating any video, motion graphic, caption overlay, or slideshow for this project.
+Tests compile every post in `content/posts/` with the site's MDX plugins. If you change the component
+map or the remark/rehype pipeline, that suite is what proves the existing posts still render.
 
-### When to use each skill
-| Request | Skill to read first |
-|---|---|
-| Any video, launch film, explainer, chart animation | `/hyperframes` |
-| CLI scaffold, render, preview, publish | `/hyperframes-cli` |
-| Transitions, overlays, titles, kinetic type, charts, 3D | `/hyperframes-registry` |
-| Music, SFX, voiceover, avatar, image/icon sourcing | `/media-use` |
-| Research paper → slide deck presentation | `/slideshow` |
-| Figma design → motion | `/figma` |
-| Port Remotion / Lottie / After Effects animation | `/remotion-to-hyperframes` |
+## Content rules
 
-### Render contract (non-negotiable)
-- Default output: 1920×1080, 30 fps.
-- No `Date.now()`, `Math.random()` (unseeded), or network fetches at render time — compositions must be deterministic.
-- Each composition registers exactly one paused GSAP root timeline on `window.__timelines`.
-- Clips must carry `class="clip"`.
-- Run `npx hyperframes lint` and `npx hyperframes check` after every composition edit.
-
-### Research-specific conventions
-- Paper explainer videos: title card → abstract → key findings → methodology → takeaways. Target 60–90 s at 30 fps.
-- Use `/hyperframes-registry` before hand-building any named visual (charts, overlays, kinetic text).
-- Media for academic contexts: prefer `/media-use` to source royalty-free footage rather than stock with attribution requirements.
-- Slideshow presentations for `/editions` compendiums: use `/slideshow` to build `hyperframes present`-compatible decks.
+- Posts live in `content/posts/<slug>.mdx`; the file name is the URL slug.
+- Frontmatter is validated by `lib/content/schema.ts` (Zod, strict). Never loosen it to make a typo
+  pass — fix the post.
+- A cover image requires `coverAlt`. Descriptions are 20–280 characters.
+- `draft: true` is development-only; production builds exclude it.
+- Add posts with `npm run new -- "Title"` rather than hand-copying a skeleton.
+- MDX components available without imports: `Callout`, `Figure`, `Video`, `KeyTakeaways`, `Sidenote`
+  (see `components/mdx/mdx-components.tsx`).
 
 ## File conventions
-- Routes under `app/`, shared UI under `components/`, data-access + adapters under `lib/`.
-- CMS writes go through `/api/cms/*` — never directly to Supabase client-side with the service-role key.
-- Supabase migrations are idempotent SQL in `supabase/migrations/`.
+
+- Routes under `app/`; shared UI under `components/`; content loading and validation under
+  `lib/content/`.
+- `lib/content/posts.ts` is server-only (`import 'server-only'`). Client components take types from
+  `lib/content/types.ts` and formatting helpers from `lib/content/format.ts`.
+- Pages that render posts stay statically generated: `generateStaticParams` + `dynamicParams = false`.
+  Do not introduce `cookies()`, `headers()`, or `searchParams` into them without a reason.
+- Design tokens live in `tokens/`; use semantic Tailwind roles (`bg-canvas`, `text-ink`,
+  `border-line`, `text-brand`), not raw palette values.
 
 ## Motion system
-All interface motion is governed by `docs/motion-system.md` (reme §9/§10). Read it before adding any animation.
 
-- Tokens only: `lib/motion/tokens.ts` (no ad-hoc durations/easings).
-- Primitives: `Reveal`, `Stagger`, `Pressable`, `MotionList`, `MotionPillGroup`, `SuccessCheck`, `AttentionPulse`, `LoadingState`, `LazyMount`, `RouteTransition` from `@/components/motion`.
-- Never render `initial={{ opacity: 0 }}` on content that must exist without JavaScript — use `Reveal` (arms below the fold only).
-- Lazy-load interactive-only widgets with `lazyWidget()` + `LazyMount`; never lazy-load crawlable content.
-- Check `/motion` in `full`, `reduced`, and `static` modes after any motion change.
-
-## Design system
-- Fonts: Self-hosted `Plus Jakarta Sans` (WOFF2, OFL in `public/fonts/`) leads display, editorial reading, and UI stacks; self-hosted Newsreader and Inter in `app/fonts/` (`next/font/local`) serve as OFL fallbacks, and Aptos Mono / JetBrains Mono back code and scholarly identifiers. No third-party font CDN.
-- Palette: Cool neutral `#F8F9FA` canvas, `#FFFFFF` raised surfaces, `#005BBF` cobalt brand/action accent, high-contrast neutral ink (`#1F2329`), and semantic status accents (emerald verified, cobalt emerging, amber uncertain, red contradicted) from `tokens/src/*.json`.
-- Tailwind v4: no arbitrary values for spacing or colour that exist as tokens.
-- Follow `DESIGN.md` for surface-level design decisions; per-route detail is in `.impeccable/surfaces/`.
+All interface motion is governed by `lib/motion/tokens.ts` (durations and easings only — no ad-hoc
+numbers) and the primitives in `components/motion/`. Never render `initial={{ opacity: 0 }}` on
+content that must exist without JavaScript; use `Reveal`, which arms only below the fold.
 
 ## Git
+
 - Conventional commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`.
-- Never commit `.env` or any file containing secrets.
+- Never commit `.env.local` or secrets. The tracked `.env.production` contains only the public
+  canonical origin.
 - Run `npm run quality` and resolve all findings before opening a PR.
