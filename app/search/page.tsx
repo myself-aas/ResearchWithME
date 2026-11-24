@@ -8,7 +8,7 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata({
   title: "Search",
   description:
-    "Search every essay on ResearchWithMe by title, topic, description, or full text.",
+    "Search every essay on ResearchWithMe by title, topic, description, or full text. The index is built with the site, so results appear without waiting.",
   path: "/search",
   noIndex: true,
 });

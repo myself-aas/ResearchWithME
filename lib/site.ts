@@ -34,6 +34,16 @@ export const AUTHOR = {
   ],
 } as const;
 
+/**
+ * Where the site can actually be reached. Kept here so the contact page, the
+ * security policy, and the footer all point at the same place.
+ */
+export const CONTACT = {
+  profile: 'https://github.com/myself-aas',
+  issues: 'https://github.com/myself-aas/ResearchWithME/issues',
+  advisories: 'https://github.com/myself-aas/ResearchWithME/security/advisories/new',
+} as const;
+
 export const NAV = [
   { href: '/blog', label: 'Writing' },
   { href: '/tags', label: 'Topics' },

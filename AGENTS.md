@@ -126,7 +126,8 @@ Fixed order, because the first bytes are the ones that survive truncation and th
 first:
 
 1. `charset`, viewport
-2. `<title>` — unique; template `%s | ResearchWithMe` (home uses the full brand title)
+2. `<title>` — unique; template `%s | ResearchWithMe`, dropped when the title already names the site
+   or would exceed ~60 characters (home uses the full brand title)
 3. `description` — unique, 20–300 characters, written for a human, not a keyword list
 4. canonical
 5. `alternates`: RSS, JSON Feed, and `text/markdown` on articles
@@ -382,7 +383,7 @@ A change is done when all of these pass, locally and in CI:
 npm run tokens:check   # tokens build + contrast
 npm run lint
 npm run typecheck
-npm test               # 77 tests: schema, loader, TOC, MDX compile, JSON-LD
+npm test               # 79 tests: schema, loader, TOC, MDX compile, JSON-LD
 npm run build
 npm run check:site     # the contract in this file, asserted against ./next artifacts
 ```

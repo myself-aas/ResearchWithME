@@ -39,6 +39,22 @@ const securityHeaders = [
   { key: 'Content-Signal', value: 'search=yes, ai-input=yes, ai-train=yes' },
 ];
 
+/**
+ * Caching policy.
+ *
+ * HTML: revalidate in the browser on every visit, cache at the edge for a year
+ * (the Worker is rebuilt on every push, and a stale-while-revalidate window
+ * keeps the first reader after a deploy from waiting on the origin).
+ * Feeds and machine artifacts: an hour, with a day of tolerance.
+ * Hashed build assets: immutable, which they are by construction.
+ */
+const HTML_CACHE = 'public, max-age=0, s-maxage=31536000, stale-while-revalidate=86400';
+const FEED_CACHE = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400';
+const ASSET_CACHE = 'public, max-age=31536000, immutable';
+
+const htmlRoutes = ['/', '/blog', '/blog/:slug', '/about', '/contact', '/privacy', '/tags', '/tags/:tag'];
+const feedRoutes = ['/rss.xml', '/feed.json', '/llms.txt', '/sitemap.xml', '/robots.txt', '/.well-known/security.txt'];
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -85,7 +101,18 @@ const nextConfig: NextConfig = {
     return [{ source: '/feed.xml', destination: '/rss.xml' }];
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }];
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      { source: '/_next/static/:path*', headers: [{ key: 'Cache-Control', value: ASSET_CACHE }] },
+      ...htmlRoutes.map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: HTML_CACHE }],
+      })),
+      ...feedRoutes.map((source) => ({
+        source,
+        headers: [{ key: 'Cache-Control', value: FEED_CACHE }],
+      })),
+    ];
   },
 };
 

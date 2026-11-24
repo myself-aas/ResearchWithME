@@ -3,6 +3,29 @@
 All notable post-launch changes to ResearchWithMe are recorded here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.2.0] — 2026-11-24
+
+Follow-up to the SEO audit: trust pages, copy fixes, caching, and the first paper review.
+
+### Added
+- `/contact` — the real channels (repository issues, GitHub profile, private security advisory) and what
+  happens to a message. No form, because there is nothing to store it in.
+- `/privacy` — no accounts, analytics, cookies, or third-party scripts; the one theme preference in
+  `localStorage`; what Cloudflare necessarily logs at the edge. Linked from the footer and sitemap.
+- First research-essay review: *Prithvi-EO-2.0: what the model adds, and what it hides* — 3D and
+  metadata embeddings, the GEO-Bench claim, a metadata ablation plan, and the fine-tuning path.
+
+### Changed
+- Titles: the `| ResearchWithMe` suffix is dropped when a title already names the site or would exceed
+  ~60 characters. Archive page renamed to "Essays on research and reproducible code".
+- Meta descriptions rewritten to 150–160 characters on `/blog`, `/tags`, `/tags/[tag]`, `/search`,
+  `/about`, `/contact`, `/privacy`, and both posts.
+- Home page H1 now shares its query language with the title: "Research papers and open code, reviewed
+  in public."
+- Cache policy in `next.config.ts`: HTML `max-age=0, s-maxage=31536000, stale-while-revalidate=86400`;
+  feeds and machine artifacts one hour; `/_next/static` immutable.
+- `security.txt` and the contact page read their channels from `CONTACT` in `lib/site.ts`.
+
 ## [1.1.0] — 2026-11-24
 
 The site adopts [`AGENTS.md`](./AGENTS.md) as an engineering contract: crawlable, parseable, citable,

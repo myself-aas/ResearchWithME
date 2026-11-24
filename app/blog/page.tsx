@@ -8,9 +8,9 @@ import { pageMetadata } from '@/lib/seo';
 import { collectionPageJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Archive',
+  title: 'Essays on research and reproducible code',
   description:
-    'Every essay on ResearchWithMe, grouped by year — paper reviews, repository teardowns, and notes on reproducible work.',
+    'Every essay on ResearchWithMe, grouped by year: paper reviews, repository teardowns, and notes on reproducible research, with tags, search, and an RSS feed.',
   path: '/blog',
 });
 

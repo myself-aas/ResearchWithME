@@ -50,6 +50,8 @@ standalone mode); `node .next/standalone/server.js` is the standalone entry poin
 | `/tags`, `/tags/[tag]` | Topic index and per-topic archives |
 | `/search` | Search, server-rendered for `?q=` and refined in the browser |
 | `/about` | Who writes this, what gets published, how the site is built |
+| `/contact` | How to reach the writer, and what happens to a message |
+| `/privacy` | What is stored (one theme preference) and what is not |
 | `/rss.xml` | RSS 2.0 feed (also served at `/feed.xml`) |
 | `/feed.json` | JSON Feed 1.1 |
 | `/llms.txt` | Machine index of every essay, with links to the markdown form |

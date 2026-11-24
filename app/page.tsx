@@ -34,7 +34,7 @@ export default function HomePage() {
               id="home-title"
               className="mt-5 max-w-3xl font-serif text-[clamp(2.5rem,6vw,4.25rem)] font-bold leading-[1.02] tracking-[-0.03em] text-ink text-balance"
             >
-              Open science, reviewed in public.
+              Research papers and open code, reviewed in public.
             </h1>
             <p className="mt-5 max-w-2xl font-sans text-lg leading-relaxed text-ink-secondary">
               {SITE.description}

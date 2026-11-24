@@ -191,6 +191,38 @@ export function faqPageJsonLd(items: Array<{ question: string; answer: string }>
   };
 }
 
+/** A plain page entity (contact, privacy) resolved into the site graph. */
+export function webPageJsonLd({
+  name,
+  description,
+  path,
+  type = 'WebPage',
+}: {
+  name: string;
+  description: string;
+  path: string;
+  type?: 'WebPage' | 'ContactPage';
+}) {
+  const url = absoluteUrl(path);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      websiteNode(),
+      personNode(),
+      {
+        '@id': url,
+        '@type': type,
+        name,
+        description,
+        url,
+        isPartOf: { '@id': WEBSITE_ID },
+        about: { '@id': PERSON_ID },
+        inLanguage: SITE.language,
+      },
+    ],
+  };
+}
+
 /** Topic index: the visible list of tags, as an ItemList. */
 export function tagIndexJsonLd(tags: Array<{ tag: string; slug: string; count: number }>) {
   const url = absoluteUrl('/tags');

@@ -9,7 +9,8 @@ import { jsonLdScript, tagIndexJsonLd } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Topics',
-  description: 'Every topic covered on ResearchWithMe, with the number of essays filed under each.',
+  description:
+    'Every topic covered on ResearchWithMe, with the number of essays filed under each. Browse by subject to find paper reviews, teardowns, and methodology notes.',
   path: '/tags',
 });
 

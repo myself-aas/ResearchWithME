@@ -10,7 +10,7 @@ import { AUTHOR, SITE } from '@/lib/site';
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE.name} — essays on research and open code`,
+    default: `${SITE.name} — research papers and open code`,
     template: `%s | ${SITE.name}`,
   },
   description: SITE_DESCRIPTION,
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     types: { 'application/rss+xml': SITE.feedPath },
   },
   openGraph: {
-    title: `${SITE.name} — essays on research and open code`,
+    title: `${SITE.name} — research papers and open code`,
     description: SITE_DESCRIPTION,
     url: absoluteUrl('/'),
     siteName: SITE.name,
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE.name} — essays on research and open code`,
+    title: `${SITE.name} — research papers and open code`,
     description: SITE_DESCRIPTION,
     images: [absoluteUrl('/opengraph-image')],
   },

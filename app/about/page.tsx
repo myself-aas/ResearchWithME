@@ -10,7 +10,7 @@ import { jsonLdScript, profilePageJsonLd } from '@/lib/seo/jsonld';
 
 export const metadata: Metadata = pageMetadata({
   title: 'About',
-  description: `About ${AUTHOR.name} and ${SITE.name}: a single-author blog of long-form research essays, written in MDX and published from git.`,
+  description: `About ${AUTHOR.name} and ${SITE.name}: one writer, one archive, and long-form essays on research papers, open-source code, and reproducible work.`,
   path: '/about',
 });
 

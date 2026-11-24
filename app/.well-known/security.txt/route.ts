@@ -1,4 +1,4 @@
-import { SITE } from '@/lib/site';
+import { CONTACT, SITE } from '@/lib/site';
 
 /**
  * RFC 9116 security contact, generated so the domain comes from `SITE.url`
@@ -11,7 +11,7 @@ export function GET() {
   expires.setUTCFullYear(expires.getUTCFullYear() + 1);
 
   const body = [
-    'Contact: https://github.com/myself-aas/ResearchWithME/security/advisories/new',
+    `Contact: ${CONTACT.advisories}`,
     `Expires: ${expires.toISOString()}`,
     `Canonical: ${new URL('/.well-known/security.txt', SITE.url).toString()}`,
     'Preferred-Languages: en',

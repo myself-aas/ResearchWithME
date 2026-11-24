@@ -40,10 +40,18 @@ export default function SiteFooter() {
             ))}
             <li>
               <Link
-                href="/blog"
+                href="/contact"
                 className="font-sans text-sm text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
               >
-                Archive
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/privacy"
+                className="font-sans text-sm text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
+              >
+                Privacy
               </Link>
             </li>
           </ul>

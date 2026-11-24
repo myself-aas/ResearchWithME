@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: TagPageProps): Promise<Metada
   if (!tag) return {};
   return pageMetadata({
     title: `#${tag.tag}`,
-    description: `Every essay on ResearchWithMe filed under ${tag.tag} — ${tag.count} published.`,
+    description: `Every essay on ResearchWithMe filed under ${tag.tag}: ${tag.count} published so far, with links to the full archive, related topics, and the RSS feed.`,
     path: `/tags/${tag.slug}`,
     // Thin archives are duplicates of `/blog` until they carry enough posts.
     noIndex: tag.count < 3,

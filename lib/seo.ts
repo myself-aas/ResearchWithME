@@ -49,8 +49,15 @@ export function pageMetadata({
     },
   ];
 
+  // Keep the rendered title inside a search-result line. The template is
+  // dropped when it would push the title past ~60 characters, or when the
+  // title already names the site ("… ResearchWithMe | ResearchWithMe").
+  const titleBudget = 60 - SITE.name.length - 3;
+  const resolvedTitle =
+    title.includes(SITE.name) || title.length > titleBudget ? { absolute: title } : title;
+
   return {
-    title,
+    title: resolvedTitle,
     description,
     alternates: {
       canonical: path,
