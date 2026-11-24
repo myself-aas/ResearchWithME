@@ -36,7 +36,9 @@ npm run build && npm start
 ```
 
 Node 20.9 or newer. `package-lock.json` is the only lockfile and CI installs with `npm ci`.
-`next.config.ts` sets `output: 'standalone'`; `next start` is used for local verification.
+`next.config.ts` sets `output: 'standalone'` because the OpenNext adapter bundles from
+`.next/standalone`. `next start` still serves the build for verification (it prints a warning about
+standalone mode); `node .next/standalone/server.js` is the standalone entry point.
 
 ## Routes
 

@@ -42,6 +42,17 @@ export default function ThemeMenu() {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
+  // While the preference is `system`, follow OS-level theme changes live.
+  useEffect(() => {
+    if (preference !== 'system') return;
+    const query = window.matchMedia?.('(prefers-color-scheme: dark)');
+    if (!query) return;
+    const update = () => applyDocumentTheme('system', query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, [preference]);
+
   function choose(next: ThemePreference) {
     setPreference(next);
     try {
