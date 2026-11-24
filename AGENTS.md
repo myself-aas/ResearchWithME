@@ -265,9 +265,12 @@ lying to one of its audiences.
 | Security contact | `/.well-known/security.txt` | `app/.well-known/security.txt/route.ts` |
 | Robots | `/robots.txt` | `app/robots.ts` |
 | Markdown | `/blog/<slug>/markdown` | `app/blog/[slug]/markdown/route.ts` |
+| Search index | `/search-index.json` | `app/search-index.json/route.ts` |
 
 All generated from the same loader. An artifact that lists a post which does not exist is a bug, not a
-stale cache.
+stale cache. `/search-index.json` is an artifact in the same sense: it carries the plain-text body of
+every published essay so full-text search can run in the browser, and it is `noindex`, cacheable, and
+regenerated with the build.
 
 ### 8.4 Errors
 
@@ -282,6 +285,12 @@ stale cache.
 Search is server-rendered: `/search?q=…` returns matching results in the HTML, and the client refines
 them. Anything that must be read is readable without JS. Progressive enhancement, not progressive
 disclosure.
+
+The index is split so the page does not carry the archive. Titles, descriptions, and tags are inlined
+into `/search`; bodies live in `/search-index.json` and load on intent (focus or first keystroke).
+Queries never leave the browser in either mode — the index travels to the reader, not the reverse.
+Inlining the bodies instead is a bug that grows with the archive: at 19 posts it doubles the page, and
+it never stops doubling.
 
 ### 8.6 No cloaking, no forked content
 
@@ -435,9 +444,14 @@ Known tensions, resolved as follows:
 4. **Markdown negotiation.** The origin cannot rewrite an HTML response to markdown; Cloudflare's
    *Markdown for Agents* zone setting does. The repository ships a real markdown URL per article so the
    `<link rel="alternate">` is never a lie, and the zone setting is an operator step (§8.1).
-5. **`llms.txt`.** Experimental by definition. It is generated, tiny, and index-only; if it becomes a
+5. **Hosting.** Cloudflare Workers via `@opennextjs/cloudflare`, not Pages: `next-on-pages` is retired,
+   and a static export would drop server-rendered search (§8.5), `Accept` negotiation (§8.4), origin
+   headers (§8.7, §10), and `next/image` optimisation. Static asset requests are free and unlimited;
+   only dynamic paths bill. Do not migrate to vinext without a product decision — it is the path
+   Cloudflare recommends for *new* Next projects, and this one is already built and deployed.
+6. **`llms.txt`.** Experimental by definition. It is generated, tiny, and index-only; if it becomes a
    maintenance burden, removing it does not affect the other artifacts.
-6. **No database.** Anything that would require runtime storage — view counts, comments, per-user
+7. **No database.** Anything that would require runtime storage — view counts, comments, per-user
    state — is out of scope, no matter what it would do for engagement signals.
 
 ---

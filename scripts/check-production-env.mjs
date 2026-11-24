@@ -60,6 +60,39 @@ if (!site) {
   }
 }
 
+// The canonical origin must be a host this Worker actually serves, otherwise
+// every canonical link, sitemap entry, and JSON-LD @id points somewhere that
+// does not answer. Wrangler is the source of truth for the Worker's routes.
+const wranglerPath = join(root, 'wrangler.jsonc');
+if (existsSync(wranglerPath) && site) {
+  let siteHost = '';
+  try {
+    siteHost = new URL(site).hostname;
+  } catch {
+    siteHost = '';
+  }
+
+  if (siteHost) {
+    const routes = [...readFileSync(wranglerPath, 'utf8').matchAll(/"pattern"\s*:\s*"([^"]+)"/g)].map(
+      (match) => match[1],
+    );
+    const hosts = routes
+      .map((pattern) => pattern.replace(/^https?:\/\//, '').split('/')[0])
+      .filter(Boolean);
+    const served = hosts.some(
+      (host) => host === siteHost || (host.startsWith('*.') && siteHost.endsWith(host.slice(1))),
+    );
+
+    if (hosts.length > 0 && !served && process.env.ALLOW_FOREIGN_DOMAIN_DEPLOY !== '1') {
+      problems.push(
+        `NEXT_PUBLIC_SITE_URL host "${siteHost}" is not one of this Worker's routes (${hosts.join(', ')}). ` +
+          'Canonical links and the sitemap would point at a domain the Worker does not answer. ' +
+          'Set ALLOW_FOREIGN_DOMAIN_DEPLOY=1 to deploy anyway.',
+      );
+    }
+  }
+}
+
 if (problems.length > 0) {
   console.error('\nDeploy guard failed:\n');
   for (const problem of problems) console.error(`  - ${problem}`);

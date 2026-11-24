@@ -50,8 +50,29 @@ jobs:
             curl -sf http://127.0.0.1:3100/ > /dev/null && break
             sleep 1
           done
-          for route in / /blog /tags /about /search /rss.xml /feed.json /llms.txt /robots.txt /sitemap.xml /blog/welcome-to-the-new-researchwithme /blog/welcome-to-the-new-researchwithme/markdown /.well-known/security.txt; do
+          for route in / /blog /tags /about /search /rss.xml /feed.json /llms.txt /robots.txt /sitemap.xml /search-index.json /blog/welcome-to-the-new-researchwithme /blog/welcome-to-the-new-researchwithme/markdown /.well-known/security.txt; do
             code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3100$route")
             echo "$route $code"
             test "$code" = "200"
           done
+
+          # Served headers, not just page bodies: the crawl policy, the cache
+          # policy, and HSTS are configuration, and configuration regresses
+          # silently.
+          headers=$(curl -sI http://127.0.0.1:3100/)
+          echo "$headers" | grep -qi '^content-signal: search=yes, ai-input=yes, ai-train=yes' \
+            || { echo "missing or changed Content-Signal header"; exit 1; }
+          echo "$headers" | grep -qi '^cache-control: .*s-maxage=' \
+            || { echo "missing Cache-Control s-maxage on HTML"; exit 1; }
+          echo "$headers" | grep -qi '^strict-transport-security:' \
+            || { echo "missing Strict-Transport-Security"; exit 1; }
+          echo "headers ok"
+
+          # The search page must not inline the archive: bodies belong in
+          # /search-index.json. A regression here is invisible until the site
+          # grows, so budget the gzipped page now.
+          search_bytes=$(curl -s -H 'Accept-Encoding: gzip' -o /dev/null -w "%{size_download}" http://127.0.0.1:3100/search)
+          index_bytes=$(curl -s http://127.0.0.1:3100/search-index.json | wc -c | tr -d ' ')
+          echo "/search ${search_bytes} B gz, /search-index.json ${index_bytes} B raw"
+          test "$search_bytes" -lt 60000
+          test "$index_bytes" -gt 0

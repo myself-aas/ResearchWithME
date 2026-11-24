@@ -56,6 +56,7 @@ fonts — standalone output does not include them, because a CDN normally does.
 | `/blog/[slug]` | The essay: MDX body, table of contents, citation box, related posts, social card |
 | `/tags`, `/tags/[tag]` | Topic index and per-topic archives |
 | `/search` | Search, server-rendered for `?q=` and refined in the browser |
+| `/search-index.json` | The full-text search index the browser fetches on intent (`noindex`) |
 | `/about` | Who writes this, what gets published, how the site is built |
 | `/contact` | How to reach the writer, and what happens to a message |
 | `/privacy` | What is stored (one theme preference) and what is not |

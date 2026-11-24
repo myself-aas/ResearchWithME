@@ -3,6 +3,20 @@
 All notable post-launch changes to ResearchWithMe are recorded here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- Search no longer inlines every essay's body into `/search`. Titles, descriptions, and tags stay in the
+  page (so `?q=` is still server-rendered); full text moves to the static, `noindex`, cacheable
+  `/search-index.json`, fetched when a reader focuses or types in the field. Index building and
+  ranking live in `lib/search.ts` and are covered by `test/search.test.ts`.
+
+### Added
+- `predeploy` now refuses a `NEXT_PUBLIC_SITE_URL` whose host is not one of the Worker's routes in
+  `wrangler.jsonc` (override with `ALLOW_FOREIGN_DOMAIN_DEPLOY=1`).
+- CI asserts the served headers (crawl signal, HTML cache policy, HSTS) and the `/search-index.json`
+  artifact, not only page bodies.
+
 ## [1.2.0] — 2026-11-24
 
 Follow-up to the SEO audit: trust pages, copy fixes, caching, and the first paper review.

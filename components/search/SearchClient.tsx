@@ -1,64 +1,73 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import Fuse from "fuse.js";
-import { Search, X } from "lucide-react";
-import type { SearchDoc } from "@/lib/content/types";
-import { formatDateShort, readingTimeLabel } from "@/lib/content/format";
-
-const MAX_RESULTS = 20;
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
+import { Search, X } from 'lucide-react';
+import type { SearchDoc, SearchDocLite } from '@/lib/content/types';
+import { formatDateShort, readingTimeLabel } from '@/lib/content/format';
+import { searchDocs } from '@/lib/search';
 
 /**
- * Client-side search over the build-time index.
+ * Search over a build-time index.
  *
- * The index is a small JSON payload generated from the MDX files, so search
- * runs instantly with no API route, no database, and no network round-trip.
+ * The page arrives with titles, descriptions, and tags inlined, so the first
+ * paint already has results and typing filters instantly. Each post's body
+ * lives in `/search-index.json` and is fetched on intent (focus, first
+ * keystroke); until it lands, matches cover titles and topics. No query is
+ * sent anywhere — the index comes to the reader.
  */
 export default function SearchClient({
   docs,
-  initialQuery = "",
+  initialQuery = '',
+  initialResults = [],
 }: {
-  docs: SearchDoc[];
+  docs: SearchDocLite[];
   initialQuery?: string;
+  initialResults?: SearchDocLite[];
 }) {
   const [query, setQuery] = useState(initialQuery);
+  const [fullDocs, setFullDocs] = useState<SearchDoc[] | null>(null);
+  const [loadingFull, setLoadingFull] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const requestedFull = useRef(false);
 
+  const loadFullIndex = useCallback(() => {
+    if (requestedFull.current || fullDocs) return;
+    requestedFull.current = true;
+    setLoadingFull(true);
+
+    fetch('/search-index.json', { headers: { accept: 'application/json' } })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Search index returned ${response.status}`);
+        return response.json() as Promise<{ docs: SearchDoc[] }>;
+      })
+      .then((payload) => setFullDocs(payload.docs))
+      .catch(() => {
+        // The lite index keeps search working; the next intent retries.
+        requestedFull.current = false;
+      })
+      .finally(() => setLoadingFull(false));
+  }, [fullDocs]);
+
+  // Mirror the query into the URL so a search is shareable and reloadable.
   useEffect(() => {
     const trimmed = query.trim();
     const url = new URL(window.location.href);
-    if (trimmed) url.searchParams.set("q", trimmed);
-    else url.searchParams.delete("q");
-    window.history.replaceState(null, "", `${url.pathname}${url.search}`);
+    if (trimmed) url.searchParams.set('q', trimmed);
+    else url.searchParams.delete('q');
+    window.history.replaceState(null, '', `${url.pathname}${url.search}`);
   }, [query]);
 
-  const fuse = useMemo(
-    () =>
-      new Fuse(docs, {
-        includeScore: true,
-        threshold: 0.34,
-        ignoreLocation: true,
-        minMatchCharLength: 2,
-        keys: [
-          { name: "title", weight: 0.5 },
-          { name: "description", weight: 0.22 },
-          { name: "tags", weight: 0.18 },
-          { name: "text", weight: 0.1 },
-        ],
-      }),
-    [docs],
-  );
+  const trimmed = query.trim();
+  const corpus = fullDocs ?? docs;
+  const total = fullDocs?.length ?? docs.length;
 
   const results = useMemo(() => {
-    const trimmed = query.trim();
-    if (!trimmed) return docs.slice(0, 8);
-    return fuse
-      .search(trimmed, { limit: MAX_RESULTS })
-      .map((result) => result.item);
-  }, [docs, fuse, query]);
-
-  const trimmed = query.trim();
+    // Keep the server-rendered results identical until the reader changes the
+    // query, so hydration cannot reorder the first paint.
+    if (trimmed && trimmed === initialQuery && initialResults.length > 0) return initialResults;
+    return searchDocs(corpus, trimmed);
+  }, [corpus, initialQuery, initialResults, trimmed]);
 
   return (
     <div>
@@ -73,7 +82,11 @@ export default function SearchClient({
             type="search"
             name="q"
             value={query}
-            onChange={(event) => setQuery(event.target.value)}
+            onFocus={loadFullIndex}
+            onChange={(event) => {
+              setQuery(event.target.value);
+              loadFullIndex();
+            }}
             placeholder="Search titles, topics, and text…"
             aria-label="Search posts"
             autoComplete="off"
@@ -83,7 +96,7 @@ export default function SearchClient({
             <button
               type="button"
               onClick={() => {
-                setQuery("");
+                setQuery('');
                 inputRef.current?.focus();
               }}
               aria-label="Clear search"
@@ -95,26 +108,19 @@ export default function SearchClient({
         </div>
       </form>
 
-      <p
-        className="mt-3 font-mono text-xs text-ink-secondary"
-        aria-live="polite"
-      >
+      <p className="mt-3 font-mono text-xs text-ink-secondary" aria-live="polite">
         {trimmed
-          ? `${results.length} ${results.length === 1 ? "result" : "results"} for “${trimmed}”`
-          : `${docs.length} ${docs.length === 1 ? "essay" : "essays"} · newest first`}
+          ? `${results.length} ${results.length === 1 ? 'result' : 'results'} for “${trimmed}”`
+          : `${total} ${total === 1 ? 'essay' : 'essays'} · newest first`}
+        {trimmed && loadingFull && <span className="ml-2">· full text loading…</span>}
       </p>
 
       {results.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-line bg-surface p-8 text-center">
-          <p className="font-serif text-xl font-semibold text-ink">
-            Nothing matched that search.
-          </p>
+          <p className="font-serif text-xl font-semibold text-ink">Nothing matched that search.</p>
           <p className="mt-2 font-sans text-sm text-ink-secondary">
-            Try a shorter phrase, a topic like “replication”, or browse the{" "}
-            <Link
-              href="/blog"
-              className="text-brand underline underline-offset-4"
-            >
+            Try a shorter phrase, a topic like “replication”, or browse the{' '}
+            <Link href="/blog" className="text-brand underline underline-offset-4">
               archive
             </Link>
             .
@@ -143,10 +149,7 @@ export default function SearchClient({
                   </span>
                   {doc.tags.length > 0 && (
                     <span className="mt-2 block font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
-                      {doc.tags
-                        .slice(0, 4)
-                        .map((tag) => `#${tag}`)
-                        .join("  ")}
+                      {doc.tags.slice(0, 4).map((tag) => `#${tag}`).join('  ')}
                     </span>
                   )}
                 </span>

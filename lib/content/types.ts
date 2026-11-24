@@ -58,3 +58,12 @@ export interface SearchDoc {
   /** Plain-text body used for full-text matching. */
   text: string;
 }
+
+/**
+ * What the search page renders before the full-text index arrives: the same
+ * fields minus the body. Sending bodies inline would put every article's text
+ * into the HTML of `/search`, which grows without bound as the archive does.
+ */
+export interface SearchDocLite extends Omit<SearchDoc, 'text'> {
+  text?: string;
+}
