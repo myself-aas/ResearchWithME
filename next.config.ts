@@ -57,6 +57,10 @@ const feedRoutes = ['/rss.xml', '/feed.json', '/llms.txt', '/sitemap.xml', '/rob
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // `next dev` blocks cross-origin requests for its own assets and HMR socket.
+  // The sandboxed preview is proxied from a different origin, so allow that
+  // origin family in development only; production configuration is unchanged.
+  ...(process.env.NODE_ENV === 'development' ? { allowedDevOrigins: ['*.e2b.app'] } : {}),
   poweredByHeader: false,
   compress: true,
   // Render blocking <head> metadata for all HTTP clients instead of streaming
