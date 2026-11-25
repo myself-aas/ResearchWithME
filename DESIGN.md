@@ -43,8 +43,14 @@ These configured checks do not certify every rendered component composition.
 
 ## Brand mark ink (2026-11-17)
 
-The logo is the "reme." wordmark (Aptos Serif, semibold). The period uses the
-brand accent color (`text-brand`). The wordmark is rendered by
+The logo is the "reme." wordmark (Newsreader, extrabold). Colouring is
+author-specified (2026-11-25): "re" and the period sit in the brand accent
+(`text-brand`), "me" in the ink colour (`text-ink`), so the mark reads
+orange-black-orange and inverts correctly in dark theme. A horizontal
+gradient across the letters ("r>e>m>e" orange→orangish-black→black) was
+considered and rejected — the design system forbids gradient text. The
+wordmark is one size step larger than the v3.1 scale (`header` renders at
+1.75rem, 2rem from `sm`). The wordmark is rendered by
 `components/BrandLogo.tsx` and carries no monogram.
 
 The static icons (`favicon.svg`, `icon.svg`, `favicon*.png`, `apple-touch-icon.png`,
@@ -82,6 +88,29 @@ in CSS, so the theme classes keep working:
 - `tokens:check` passes WCAG AA on every configured pair; the domain-hue swaps
   keep near-equal lightness to the retired blues, so badge contrast is
   unaffected. Static brand icons were recolored to `#C93D0C`.
+
+## Minimal article hero (2026-11-25)
+
+Every article's hero follows one order: **title, then a single byline row,
+then the cover image** — the title is never overlaid on the cover.
+
+- The `<h1>` drops from `clamp(2.35rem–4.35rem)` to
+  `clamp(2rem, 4vw, 3.25rem)`; the hero was the densest screen on the site
+  (badge, word count, tag chips, description block, author card, dates) and
+  now carries only the title and one quiet mono row:
+  `By <author link> · <date> · Updated <date> · <reading time>`.
+- **Components relocated, not deleted:** the `PostHeroBanner` overlay banner
+  (title on the image) is retired — `PostCover` serves both styles, `hero`
+  mapping to a taller `aspect-[21/9]` frame and the default to `16/9`. Tag
+  chips live only at the article's end ("More topics"); the author card
+  becomes the byline link (§5's visible author block); the description stays
+  in metadata/JSON-LD — the body's answer paragraph does the introducing.
+- The abstract-artwork cover no longer repeats the post title inside the
+  artwork (it duplicated the `<h1>` directly above it); it keeps the
+  decorative "Field notes" chip and geometry.
+- The mobile header's search and menu icons are **bare** — no border, no
+  circle, no surface — the 40px touch area and the focus-visible ring carry
+  the interaction instead of chrome.
 
 ## Mobile drawer (2026-11-25)
 

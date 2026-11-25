@@ -30,7 +30,6 @@ function artworkIndex(slug: string) {
 
 function AbstractCover({ post }: { post: PostMeta }) {
   const artwork = ARTWORKS[artworkIndex(post.slug)];
-  const topic = post.tags[0]?.replaceAll('-', ' ') ?? 'research notes';
 
   return (
     <div className={`relative h-full w-full overflow-hidden bg-gradient-to-br ${artwork.background}`} aria-hidden="true">
@@ -62,12 +61,6 @@ function AbstractCover({ post }: { post: PostMeta }) {
         <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
         Field notes · {post.date.slice(0, 4)}
       </div>
-      <div className="absolute bottom-5 left-5 right-5 max-w-xl sm:bottom-7 sm:left-7">
-        <p className={`font-mono text-xs uppercase tracking-[0.16em] ${artwork.accent}`}>{topic}</p>
-        <p className="mt-2 max-w-lg font-serif text-xl font-semibold leading-tight text-white text-balance sm:text-2xl">
-          {post.title}
-        </p>
-      </div>
       <div className="absolute bottom-6 right-7 hidden h-12 w-12 rounded-full border border-white/30 sm:block" />
     </div>
   );
@@ -76,20 +69,24 @@ function AbstractCover({ post }: { post: PostMeta }) {
 /**
  * A consistent editorial frame for covers, with deterministic abstract artwork
  * when a post has no supplied image. Local images use next/image; remote covers
- * are allowed from any HTTPS host.
+ * are allowed from any HTTPS host. `aspect` widens the frame for the `hero`
+ * cover style; the title lives in the page's own `<h1>` above the frame, so
+ * the artwork never repeats it.
  */
 export default function PostCover({
   post,
   priority = false,
   sizes = '(max-width: 768px) 100vw, 40vw',
+  aspect = 'aspect-[16/9]',
   className = '',
 }: {
   post: PostMeta;
   priority?: boolean;
   sizes?: string;
+  aspect?: string;
   className?: string;
 }) {
-  const frameClassName = `relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-line bg-surface-subtle ${className}`;
+  const frameClassName = `relative ${aspect} w-full overflow-hidden rounded-xl border border-line bg-surface-subtle ${className}`;
 
   if (!post.cover) {
     return (

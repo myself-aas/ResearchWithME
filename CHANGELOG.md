@@ -6,6 +6,14 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Changed
+- Article hero made minimalist: title and one byline row (`By <author> · date · updated · reading
+  time`) sit above the cover image; the dense furniture moved to more relevant places —
+  `PostHeroBanner` retired in favour of `PostCover` (`hero` style → 21/9 frame), tag chips live at
+  the article's end, the author card became the byline link, the description stays in metadata/JSON-LD,
+  and the abstract-artwork cover no longer repeats the title.
+- "reme." wordmark recoloured ("re" and "." in brand accent, "me" in ink — gradient rejected per the
+  no-gradient-text rule) and bumped one size step; mobile search and menu icons are bare (no
+  border/circle chrome).
 - Mobile header carries only search and the menu trigger; theme and RSS moved into the drawer. The
   trigger icon is now Material Symbols' `view_cozy` (inline SVG, Apache-2.0) with a 90°-per-click
   rotation on the emphasize easing, `motion-reduce` safe. DESIGN.md's mobile-drawer section records it.

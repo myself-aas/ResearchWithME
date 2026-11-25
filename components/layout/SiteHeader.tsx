@@ -39,7 +39,7 @@ export default function SiteHeader() {
           <Link
             href="/search"
             aria-label="Search posts"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
           >
             <Search className="h-4 w-4" aria-hidden="true" />
           </Link>

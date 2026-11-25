@@ -334,8 +334,9 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 
 - Every image has descriptive `alt` text. Covers require `coverAlt` in frontmatter; a cover without alt
   fails the build.
-- Every image declares intrinsic dimensions. `PostCover` fills a fixed `aspect-[16/9]` frame; MDX
-  `Figure` requires `width` and `height` props.
+- Every image declares intrinsic dimensions. `PostCover` fills a fixed `aspect-[16/9]` frame
+  (`21/9` for the `hero` cover style); MDX `Figure` requires `width` and `height` props. The
+  article's `<h1>` sits above the cover, never overlaid on it.
 - Local covers go through `next/image` for modern formats and responsive sizing. Remote covers render
   as `<img>` with dimensions, `loading="lazy"`, and `decoding="async"`; the article's own cover is
   `priority`.
