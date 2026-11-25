@@ -645,6 +645,9 @@ The short form:
    before scaffolding.
 3. **Facts are data.** Library components import no post data; posts bind
    library components through their own data module and thin wrappers.
+   *Chrome figures* (`chrome: true`) bind site state instead and render in
+   site chrome — the drawer, the header, the lab, and the thread all compose
+   the one component.
 4. **A figure lands complete** — component, fixture, pure logic + tests,
    registry entry, passing constitution checks — or it does not land.
 5. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`

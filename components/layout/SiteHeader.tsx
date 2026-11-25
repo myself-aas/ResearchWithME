@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Rss, Search } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
-import ThemeMenu from './ThemeMenu';
+import { ThemeSwitchCompact } from '@/components/library/ThemeSwitch';
 import MobileMenu from './MobileMenu';
 import { NAV, SITE } from '@/lib/site';
 
@@ -50,7 +50,7 @@ export default function SiteHeader() {
           >
             <Rss className="h-4 w-4" aria-hidden="true" />
           </Link>
-          <ThemeMenu />
+          <ThemeSwitchCompact />
           <MobileMenu />
         </div>
       </div>

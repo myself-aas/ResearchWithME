@@ -5,6 +5,17 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- The mobile drawer's header now carries the "reme." wordmark instead of the word "Menu"; items are
+  grouped under mono captions (Archive / Interactive / Elsewhere / Appearance) with the figure lab
+  added, and the theme row is the generative theme switch — a segmented system/light/dark control
+  (`show_theme_switch` in the figure registry) whose desktop-header and assistant-thread renderings
+  are the same component bound to the same site state. `ThemeMenu` retired.
+- The homepage gains four sections: Recently revised (essays with real `updated` dates), a live
+  figure-lab spotlight (the registry's `WipeCompare` rendered in place, linking to `/lab`), an
+  assistant teaser whose sample prompts derive from the archive (`suggestPrompts`, never hardcoded),
+  and a "How this site is made" colophon strip. All sections are server-rendered and crawlable.
+
 ### Added
 - The interactive-figure library and its constitution. `components/library/`
   holds seven reusable, data-driven learning figures — `WipeCompare`

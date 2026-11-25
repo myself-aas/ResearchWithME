@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { ArrowRight, PenLine } from 'lucide-react';
+import { ArrowRight, FlaskConical, PenLine, Sparkles } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { FeaturedPost, PostRow } from '@/components/post/PostCard';
-import { getAllPostMeta, getAllTags, getFeaturedPost, getSiteStats } from '@/lib/content/posts';
+import { getAllPostMeta, getAllTags, getFeaturedPost, getSearchIndex, getSiteStats } from '@/lib/content/posts';
+import { suggestPrompts } from '@/lib/assistant/retrieval';
+import { FIGURES } from '@/lib/figures/registry';
 import { AUTHOR, SITE } from '@/lib/site';
 import { jsonLdScript, websiteJsonLd } from '@/lib/seo/jsonld';
 
@@ -13,6 +15,13 @@ export default function HomePage() {
   const latest = posts.filter((post) => post.slug !== featured?.slug).slice(0, 6);
   const topics = getAllTags().slice(0, 8);
   const stats = getSiteStats();
+  // Derived from the archive, never hardcoded (§18 rule 7).
+  const prompts = suggestPrompts(getSearchIndex());
+  // Revised essays: only ones with a real `updated` date — no fabricated recency.
+  const revised = posts.filter((post) => post.updated).slice(0, 3);
+  // The homepage spotlight renders a registry figure directly: the same
+  // component the lab demos and the assistant thread maintains (§20).
+  const spotlight = FIGURES.find((figure) => figure.toolName === 'show_wipe_compare');
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas text-ink">
@@ -158,6 +167,131 @@ export default function HomePage() {
             </ul>
           </section>
         )}
+
+        {revised.length > 0 && (
+          <section aria-labelledby="revised-heading" className="pt-14">
+            <h2 id="revised-heading" className="font-serif text-2xl font-bold tracking-tight text-ink">
+              Recently revised
+            </h2>
+            <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+              Essays are living documents: when a paper changes or the code moves, the essay is
+              corrected in the open, and the revision date is real.
+            </p>
+            <ul className="mt-4 divide-y divide-line rounded-2xl border border-line bg-surface">
+              {revised.map((post) => (
+                <li key={post.slug}>
+                  <Link
+                    href={post.href}
+                    className="flex flex-wrap items-baseline justify-between gap-2 px-5 py-3.5 transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus"
+                  >
+                    <span className="font-sans text-sm font-semibold text-ink">{post.title}</span>
+                    <span className="font-mono text-xs text-ink-secondary">
+                      revised <time dateTime={post.updated}>{post.updated}</time>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {spotlight && (
+          <section aria-labelledby="spotlight-heading" className="pt-14">
+            <p className="flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-brand">
+              <FlaskConical className="h-3.5 w-3.5" aria-hidden="true" />
+              From the figure lab
+            </p>
+            <h2 id="spotlight-heading" className="mt-3 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              See it, don&rsquo;t just read it
+            </h2>
+            <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+              The essays teach with interactive figures, and every figure is a reusable machine in
+              the library — the facts arrive as data, and the interaction pattern is the component.
+              This one is live, right here; the lab has the whole set.
+            </p>
+            <div className="mt-4">
+              <spotlight.component {...spotlight.defaults} />
+            </div>
+            <Link
+              href="/lab"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
+              Open the figure lab
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </section>
+        )}
+
+        {prompts.length > 0 && (
+          <section aria-labelledby="assistant-heading" className="pt-14">
+            <p className="flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-brand">
+              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              Ask the archive
+            </p>
+            <h2 id="assistant-heading" className="mt-3 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+              Answers that quote, not improvise
+            </h2>
+            <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+              The assistant answers questions about every published essay by quoting it and linking
+              the source — retrieval runs in your browser, no model service. It also renders the
+              essays&rsquo; interactive figures in the thread, so an answer can come with the machine
+              that explains it.
+            </p>
+            <ul className="mt-4 flex flex-col gap-2">
+              {prompts.map((prompt) => (
+                <li
+                  key={prompt}
+                  className="rounded-xl border border-line bg-surface px-4 py-3 font-mono text-xs leading-relaxed text-ink-secondary"
+                >
+                  {prompt}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/assistant"
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-brand px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            >
+              Ask the archive
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </section>
+        )}
+
+        <section aria-labelledby="machine-heading" className="mt-14 border-t border-line pt-10">
+          <h2 id="machine-heading" className="font-serif text-xl font-bold tracking-tight text-ink">
+            How this site is made
+          </h2>
+          <dl className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="rounded-2xl border border-line bg-surface p-4">
+              <dt className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
+                Static, crawlable, citable
+              </dt>
+              <dd className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
+                Every page ships as HTML with structured data and a machine-readable markdown twin —
+                readable by browsers, agents, and answer engines alike.
+              </dd>
+            </div>
+            <div className="rounded-2xl border border-line bg-surface p-4">
+              <dt className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
+                A governed figure library
+              </dt>
+              <dd className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
+                Interactive learning figures follow a written constitution — one interaction pattern
+                each, facts as data, token-only colour — and every one is maintained as generative UI
+                in the assistant.
+              </dd>
+            </div>
+            <div className="rounded-2xl border border-line bg-surface p-4">
+              <dt className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
+                On-device assistant
+              </dt>
+              <dd className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
+                Retrieval, ranking, and the quoted answers run in the reader&rsquo;s browser against a
+                build-time index. No model provider, no query leaving the tab by default.
+              </dd>
+            </div>
+          </dl>
+        </section>
       </main>
 
       <SiteFooter />

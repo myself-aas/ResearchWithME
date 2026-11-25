@@ -11,6 +11,7 @@ import LensPeek from '@/components/library/LensPeek';
 import HotspotAtlas from '@/components/library/HotspotAtlas';
 import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
+import ThemeSwitch from '@/components/library/ThemeSwitch';
 import {
   ASSUMPTION_SWITCHES_FIXTURE,
   HOTSPOT_ATLAS_FIXTURE,
@@ -60,6 +61,11 @@ export interface FigureDefinition {
   readonly status: 'adopted' | 'library';
   /** True for pre-library figures kept as-is pending migration (§ grandfather clause). */
   readonly legacy?: boolean;
+  /**
+   * True for chrome figures: they bind site state (not post data) and render
+   * in site chrome as well as the thread (FIGURE_CONSTITUTION.md Article 3).
+   */
+  readonly chrome?: boolean;
   /** Slugs of the posts that adopt this figure (empty for library status). */
   readonly posts: readonly string[];
   readonly component: FigureComponent;
@@ -229,6 +235,19 @@ export const FIGURES = [
     component: SelfCheckQuiz as FigureComponent,
     defaults: { ...SELF_CHECK_QUIZ_FIXTURE },
     keywords: ['quiz', 'test me', 'check yourself', 'question'],
+  },
+  {
+    toolName: 'show_theme_switch',
+    mdxName: 'ThemeSwitch',
+    title: 'Theme switch',
+    archetype: 'segmented-swatch-toggle',
+    blurb: 'The site’s theme control as a figure — flip it here and the site flips with it.',
+    status: 'adopted',
+    chrome: true,
+    posts: [],
+    component: ThemeSwitch as FigureComponent,
+    defaults: {},
+    keywords: ['theme', 'dark mode', 'light mode', 'appearance', 'color scheme'],
   },
 ] as const satisfies readonly FigureDefinition[];
 

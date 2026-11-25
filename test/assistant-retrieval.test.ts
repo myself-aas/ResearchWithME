@@ -244,3 +244,14 @@ describe('routeFigure — registry-driven routing', () => {
     expect(routeFigure('')).toBeUndefined();
   });
 });
+
+describe('routeFigure — chrome figures', () => {
+  it('routes appearance questions to the theme switch', () => {
+    expect(routeFigure('how do I switch to dark mode?')).toEqual({
+      toolName: 'show_theme_switch',
+      args: {},
+    });
+    expect(routeFigure('change the color scheme')?.toolName).toBe('show_theme_switch');
+    expect(routeFigure('theme too bright')?.toolName).toBe('show_theme_switch');
+  });
+});

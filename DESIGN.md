@@ -122,10 +122,25 @@ their own content (icon chip, label, one-line description) as a vertical
 list; there is no horizontal scrolling strip anymore.
 
 **The mobile header keeps only two controls: search and the menu trigger.**
-The theme control and the RSS link live in the drawer instead (the theme row
-cycles system → light → dark in place, mirroring the header button through
-the same `lib/theme` helpers); from `sm` up, the feed and theme buttons stay
-in the header beside the inline navigation.
+The theme control and the RSS link live in the drawer instead; from `sm` up,
+the feed and theme buttons stay in the header beside the inline navigation.
+
+**Drawer header and items (2026-11-25, author-directed).** The drawer's header
+carries the **"reme." wordmark** (`BrandLogo`, `sm`) instead of the word
+"Menu" — the dialog's accessible name already says what it is. Items are
+grouped under small mono captions — *Archive* (Writing, Topics, Search),
+*Interactive* (Assistant, Figure lab), *Elsewhere* (About, RSS), *Appearance*
+(theme) — each item keeping the icon chip + label + one-line description
+contract. The theme row is the **generative theme switch**: the registered
+`show_theme_switch` chrome figure's `ThemeSwitchControl` — a segmented
+system/light/dark radiogroup (roving tabindex, sliding `bg-selection`
+indicator at 300ms standard easing, `motion-reduce` safe) with an
+`aria-live` readout — bound to the same `lib/theme` storage the pre-paint
+script bootstraps from, and announcing `rwm-theme-change` so the header
+button, the drawer, the thread, and other tabs agree. The desktop header
+button is the same component's compact cycle variant; `ThemeMenu` is retired
+(one control, three surfaces — the third being the assistant thread, where
+asking to switch themes renders the actual switch).
 
 - **Trigger icon.** Material Symbols' `view_cozy` (Outlined, 24px geometry,
   Apache-2.0 from google/material-design-icons), embedded as inline SVG —

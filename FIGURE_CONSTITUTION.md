@@ -34,6 +34,7 @@ slider and a noise slider are the same figure. The current archetypes:
 | `pinned-hotspot-annotation` | `HotspotAtlas` | activate anchored pins, read the annotation |
 | `toggle-assumption-inference` | `AssumptionSwitches` | flip switches, outcomes re-derive |
 | `answer-reveal-quiz` | `SelfCheckQuiz` | commit to an answer, get judged |
+| `segmented-swatch-toggle` | `ThemeSwitch` | pick a segment, the site's theme re-derives |
 
 **Check:** registry archetype uniqueness among `library` and non-legacy
 `adopted` entries. `npm run figures:new` refuses a claimed archetype up front.
@@ -48,6 +49,8 @@ binding composes a library component; **re-implementing an existing pattern
 inside a post is forbidden** — extend the library instead.
 
 **Check:** import scan over `components/library/**` and `lib/figures/**`.
+*Chrome figures* (below) are the exception in the letter: they bind site state
+(`lib/theme`), never post data.
 
 ## Article 3 — Generative UI is not optional [check]
 
@@ -60,7 +63,11 @@ only exists in an article is half-shipped and cannot merge.
 
 **Check:** `mdx-components.tsx` and `GenerativeFigures.tsx` must derive from
 `FIGURES`; every registry entry must carry `toolName`, non-empty `keywords`,
-and defaults.
+and defaults. **Chrome figures** — controls bound to site state rather than
+post data (`chrome: true`; e.g. `ThemeSwitch`) — register exactly the same way
+and additionally render in site chrome through a thin composition of the same
+component; they may have empty `posts` but never a hand fork in the chrome
+they live in.
 
 ## Article 4 — Uniform chrome, one contract [check]
 

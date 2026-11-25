@@ -3,6 +3,8 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { FIGURES, type FigureDefinition } from '@/lib/figures/registry';
 
+const isChrome = (figure: FigureDefinition) => figure.chrome === true;
+
 /**
  * The figure constitution, enforced (FIGURE_CONSTITUTION.md). Every article
  * marked [check] in the document has an assertion here. A violation fails
@@ -71,8 +73,11 @@ describe('Article 3 — generative UI is not optional', () => {
 
   it('keeps adopted figures attached to at least one post and library figures unattached', () => {
     for (const figure of FIGURES) {
-      if (figure.status === 'adopted') {
+      if (figure.status === 'adopted' && !isChrome(figure)) {
         expect(figure.posts.length, figure.toolName).toBeGreaterThanOrEqual(1);
+      } else if (figure.status === 'adopted') {
+        // Chrome figures bind site state, not post data (Article 3).
+        expect(isChrome(figure), figure.toolName).toBe(true);
       } else {
         expect(figure.posts, figure.toolName).toHaveLength(0);
         // A library figure must ship with a fixture: defaults carry real data.
