@@ -18,6 +18,7 @@ export interface PostMeta {
   series?: string;
   cover?: string;
   coverAlt?: string;
+  coverStyle: 'default' | 'hero';
   featured: boolean;
   draft: boolean;
   canonical?: string;

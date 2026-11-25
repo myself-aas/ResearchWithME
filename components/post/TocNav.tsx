@@ -92,7 +92,7 @@ export default function TocNav({ entries }: { entries: TocEntry[] }) {
                 <span
                   aria-hidden="true"
                   className={`mt-0.5 font-mono text-[0.6875rem] font-semibold tabular-nums ${
-                    isActive ? 'text-primary' : 'text-muted-foreground/70 group-hover:text-primary'
+                    isActive ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'
                   }`}
                 >
                   {String(index + 1).padStart(2, '0')}

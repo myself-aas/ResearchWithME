@@ -5,8 +5,8 @@ import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import { absoluteUrl, SITE_DESCRIPTION, SITE_URL } from '@/lib/seo';
 import { AUTHOR, SITE } from '@/lib/site';
 
-// One downloaded typeface (Plus Jakarta Sans, declared in globals.css). Mono
-// text uses the system stack, so there is no third font request on any page.
+// Two self-hosted variable fonts: Newsreader for essay text and headlines,
+// Inter for navigation and interface. Mono text uses the system stack.
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {

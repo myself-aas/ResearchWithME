@@ -1,14 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  ArrowDown,
-  ArrowRight,
-  CalendarDays,
-  MapPin,
-  Orbit,
-  Sparkles,
-} from 'lucide-react';
+import { CalendarDays, MapPin, Orbit } from 'lucide-react';
+import PipelineExplorer from './PipelineExplorer';
 
 type FrameCount = 1 | 3 | 4 | 5;
 
@@ -67,6 +61,7 @@ function PatchTokenArtwork({ frameCount }: { frameCount: FrameCount }) {
 export default function PrithviExplorer() {
   const [frameCount, setFrameCount] = useState<FrameCount>(4);
   const [metadataEnabled, setMetadataEnabled] = useState(true);
+
   const visibleFrames =
     frameCount === 1
       ? ['T1']
@@ -75,139 +70,126 @@ export default function PrithviExplorer() {
         : frameCount === 4
           ? ['T1', 'T2', 'T3', 'T4']
           : ['T1', 'T3', 'T5'];
+
   const frameSummary = `Showing ${frameCount} ${frameCount === 1 ? 'observation' : 'observations'}${frameCount === 5 ? ', with three representative views shown above' : ''}`;
 
   return (
-    <section aria-label="Interactive Prithvi-EO-2.0 architecture explorer" className="prithvi-explorer my-10 overflow-hidden rounded-3xl border border-border bg-card shadow-raised">
-      <div className="border-b border-border bg-gradient-to-br from-muted/80 via-card to-card px-5 py-5 sm:px-7 sm:py-6">
-        <p className="inline-flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-primary">
-          <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-          Interactive figure · change the inputs
-        </p>
-        <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-muted-foreground sm:text-base">
-          Switch the time stack and metadata on or off. The diagram updates to show the two inputs that distinguish the temporal-location checkpoint.
-        </p>
-      </div>
-
-      <div className="grid gap-4 border-b border-border px-5 py-4 sm:grid-cols-[1fr_1.1fr] sm:px-7">
-        <div>
-          <p className="mb-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-muted-foreground">Observations</p>
-          <div role="group" aria-label="Number of image observations" className="inline-flex rounded-xl border border-border bg-muted/70 p-1">
-            {frameOptions.map((count) => (
-              <button
-                key={count}
-                type="button"
-                aria-pressed={frameCount === count}
-                onClick={() => setFrameCount(count)}
-                className={`min-h-9 min-w-12 rounded-lg px-3 font-mono text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring ${
-                  frameCount === count ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                {count} {count === 1 ? 'frame' : 'frames'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <p className="mb-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-muted-foreground">Checkpoint input</p>
-          <div role="group" aria-label="Toggle location and date metadata" className="inline-flex max-w-full rounded-xl border border-border bg-muted/70 p-1">
-            <button
-              type="button"
-              aria-pressed={metadataEnabled}
-              onClick={() => setMetadataEnabled(true)}
-              className={`min-h-9 rounded-lg px-3 font-sans text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring sm:px-4 ${
-                metadataEnabled ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Temporal-location
-            </button>
-            <button
-              type="button"
-              aria-pressed={!metadataEnabled}
-              onClick={() => setMetadataEnabled(false)}
-              className={`min-h-9 rounded-lg px-3 font-sans text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring sm:px-4 ${
-                !metadataEnabled ? 'bg-card text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              Pixels only
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid items-stretch gap-3 bg-muted/30 p-4 sm:p-6 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]">
-        <section aria-label="Satellite observations" className="rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-5">
-          <p className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-muted-foreground">01 · Image sequence</p>
-          <div className={`mt-4 grid gap-2 ${visibleFrames.length === 1 ? 'grid-cols-1' : visibleFrames.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-            {visibleFrames.map((label, index) => <ObservationTile key={label} index={index} label={label} />)}
-          </div>
-          {frameCount === 5 && (
-            <p className="mt-2 text-center font-mono text-[0.6875rem] text-muted-foreground">
-              3 representative views · 2 more in sequence
+    <PipelineExplorer
+      ariaLabel="Interactive Prithvi-EO-2.0 architecture explorer"
+      description="Switch the time stack and metadata on or off. The diagram updates to show the two inputs that distinguish the temporal-location checkpoint."
+      controls={[
+        {
+          id: 'frames',
+          label: 'Observations',
+          ariaLabel: 'Number of image observations',
+          value: String(frameCount),
+          mono: true,
+          options: frameOptions.map((c) => ({
+            value: String(c),
+            label: `${c} ${c === 1 ? 'frame' : 'frames'}`,
+          })),
+          onChange: (val) => setFrameCount(Number(val) as FrameCount),
+        },
+        {
+          id: 'metadata',
+          label: 'Checkpoint input',
+          ariaLabel: 'Toggle location and date metadata',
+          value: metadataEnabled ? 'tl' : 'plain',
+          options: [
+            { value: 'tl', label: 'Temporal-location' },
+            { value: 'plain', label: 'Pixels only' },
+          ],
+          onChange: (val) => setMetadataEnabled(val === 'tl'),
+        },
+      ]}
+      stages={[
+        {
+          step: '01',
+          title: 'Image sequence',
+          ariaLabel: 'Satellite observations',
+          body: (
+            <>
+              <div className={`grid gap-2 ${visibleFrames.length === 1 ? 'grid-cols-1' : visibleFrames.length === 3 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+                {visibleFrames.map((label, index) => (
+                  <ObservationTile key={label} index={index} label={label} />
+                ))}
+              </div>
+              {frameCount === 5 && (
+                <p className="mt-2 text-center font-mono text-[0.6875rem] text-muted-foreground">
+                  3 representative views · 2 more in sequence
+                </p>
+              )}
+            </>
+          ),
+          footer: (
+            <p className="flex items-center gap-2 font-sans text-xs leading-relaxed text-muted-foreground">
+              <Orbit className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+              HLS reflectance · six bands · 30 m
             </p>
-          )}
-          <p className="mt-4 flex items-center gap-2 font-sans text-xs leading-relaxed text-muted-foreground">
-            <Orbit className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
-            HLS reflectance · six bands · 30 m
-          </p>
-        </section>
-
-        <div className="flex items-center justify-center text-primary/70 md:px-0.5">
-          <ArrowDown className="h-4 w-4 md:hidden" aria-hidden="true" />
-          <ArrowRight className="hidden h-4 w-4 md:block" aria-hidden="true" />
-        </div>
-
-        <section aria-label="Space-time patch embeddings and optional metadata" className="rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-5">
-          <p className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-muted-foreground">02 · Add context</p>
-          <PatchTokenArtwork frameCount={frameCount} />
-          <p className="mt-2 text-center font-sans text-sm font-semibold text-foreground">3D patch embeddings</p>
-          <div aria-live="polite" className="mt-3 flex min-h-8 flex-wrap justify-center gap-1.5">
-            {metadataEnabled ? (
-              <>
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-mono text-[0.6875rem] text-primary">
-                  <MapPin className="h-3 w-3" aria-hidden="true" />
-                  latitude + longitude
+          ),
+        },
+        {
+          step: '02',
+          title: 'Add context',
+          ariaLabel: 'Space-time patch embeddings and optional metadata',
+          body: (
+            <>
+              <PatchTokenArtwork frameCount={frameCount} />
+              <p className="mt-2 text-center font-sans text-sm font-semibold text-foreground">3D patch embeddings</p>
+            </>
+          ),
+          footer: (
+            <div aria-live="polite" className="flex min-h-8 flex-wrap justify-center gap-1.5">
+              {metadataEnabled ? (
+                <>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-mono text-[0.6875rem] text-primary">
+                    <MapPin className="h-3 w-3" aria-hidden="true" />
+                    latitude + longitude
+                  </span>
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-mono text-[0.6875rem] text-primary">
+                    <CalendarDays className="h-3 w-3" aria-hidden="true" />
+                    year + day of year
+                  </span>
+                </>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border px-2.5 py-1 font-mono text-[0.6875rem] text-muted-foreground">
+                  Metadata not supplied
                 </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 font-mono text-[0.6875rem] text-primary">
-                  <CalendarDays className="h-3 w-3" aria-hidden="true" />
-                  year + day of year
-                </span>
-              </>
-            ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border px-2.5 py-1 font-mono text-[0.6875rem] text-muted-foreground">
-                Metadata not supplied
-              </span>
-            )}
-          </div>
-        </section>
-
-        <div className="flex items-center justify-center text-primary/70 md:px-0.5">
-          <ArrowDown className="h-4 w-4 md:hidden" aria-hidden="true" />
-          <ArrowRight className="hidden h-4 w-4 md:block" aria-hidden="true" />
-        </div>
-
-        <section aria-label="Vision transformer representation" className="rounded-2xl border border-border bg-card p-4 shadow-xs sm:p-5">
-          <p className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-muted-foreground">03 · Encode</p>
-          <div className="mt-4 flex h-24 items-center justify-center rounded-xl border border-border/70 bg-muted/50">
-            <div className="grid grid-cols-6 gap-1.5" aria-hidden="true">
-              {Array.from({ length: 24 }, (_, index) => (
-                <span key={index} className={`h-3 w-3 rounded-[3px] ${index % 7 === 0 ? 'bg-primary' : index % 4 === 0 ? 'bg-emerald-500/60' : 'bg-muted-foreground/25'}`} />
-              ))}
+              )}
             </div>
-          </div>
-          <p className="mt-3 text-center font-sans text-sm font-semibold text-foreground">Vision transformer</p>
-          <p className="mt-1 text-center font-mono text-[0.6875rem] text-muted-foreground">
-            {metadataEnabled ? 'Temporal-location · -TL' : 'Plain checkpoint'}
-          </p>
-        </section>
-      </div>
-
-      <p className="border-t border-border px-5 py-4 font-sans text-xs leading-relaxed text-muted-foreground sm:px-7">
-        {metadataEnabled
+          ),
+        },
+        {
+          step: '03',
+          title: 'Encode',
+          ariaLabel: 'Vision transformer representation',
+          body: (
+            <>
+              <div className="flex h-24 items-center justify-center rounded-xl border border-border/70 bg-muted/50">
+                <div className="grid grid-cols-6 gap-1.5" aria-hidden="true">
+                  {Array.from({ length: 24 }, (_, index) => (
+                    <span
+                      key={index}
+                      className={`h-3 w-3 rounded-[3px] ${index % 7 === 0 ? 'bg-primary' : index % 4 === 0 ? 'bg-emerald-500/60' : 'bg-muted-foreground/25'}`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <p className="mt-3 text-center font-sans text-sm font-semibold text-foreground">Vision transformer</p>
+            </>
+          ),
+          footer: (
+            <p className="text-center font-mono text-[0.6875rem] text-muted-foreground">
+              {metadataEnabled ? 'Temporal-location · -TL' : 'Plain checkpoint'}
+            </p>
+          ),
+        },
+      ]}
+      summary={
+        metadataEnabled
           ? `${frameSummary} with optional location and acquisition-date embeddings. The paper randomly drops metadata during pretraining so the model can still run when those fields are missing.`
-          : `${frameSummary} without metadata tokens. Compare this plain path with the temporal-location variant on the same held-out region and year.`}
-      </p>
-    </section>
+          : `${frameSummary} without metadata tokens. Compare this plain path with the temporal-location variant on the same held-out region and year.`
+      }
+    />
   );
 }

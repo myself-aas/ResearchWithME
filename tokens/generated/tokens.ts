@@ -72,9 +72,9 @@ export const primitive = {
   },
   "typography": {
     "family": {
-      "editorial": "'Newsreader', Georgia, serif",
-      "interface": "'Inter', system-ui, sans-serif",
-      "metadata": "'JetBrains Mono', monospace"
+      "editorial": "'Newsreader', Georgia, Cambria, \"Times New Roman\", serif",
+      "interface": "'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "metadata": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace"
     }
   },
   "space": {
@@ -176,30 +176,30 @@ export const primitive = {
   }
 } as const;
 export const semanticLight = {
-  "canvas": "#F8F9FA",
+  "canvas": "#F7F6F2",
   "surface": "#FFFFFF",
-  "surface-subtle": "#F1F3F4",
+  "surface-subtle": "#EFEDE6",
   "surface-raised": "#FFFFFF",
-  "surface-inverse": "#202124",
-  "text-primary": "#202124",
-  "text-secondary": "#5F6368",
-  "text-tertiary": "#5F6368",
+  "surface-inverse": "#20232A",
+  "text-primary": "#20232A",
+  "text-secondary": "#5D6572",
+  "text-tertiary": "#5D6572",
   "text-inverse": "#FFFFFF",
-  "border-subtle": "#DADCE0",
-  "border-strong": "#80868B",
-  "focus": "#005BBF",
-  "selection": "#D8E2FF",
+  "border-subtle": "#DFDDD5",
+  "border-strong": "#787F8C",
+  "focus": "#2457A7",
+  "selection": "#DCE6F7",
   "action": {
-    "primary": "#005BBF",
-    "primary-hover": "#174EA6",
-    "primary-pressed": "#004493",
+    "primary": "#2457A7",
+    "primary-hover": "#1C4688",
+    "primary-pressed": "#16376B",
     "on-primary": "#FFFFFF",
     "destructive": "#B91C1C",
-    "link": "#005BBF",
-    "visited": "#174EA6"
+    "link": "#2457A7",
+    "visited": "#1B3F7A"
   },
   "brand": {
-    "mark": "#1D4ED8",
+    "mark": "#2457A7",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
@@ -273,30 +273,30 @@ export const semanticLight = {
   }
 } as const;
 export const semanticDark = {
-  "canvas": "#0A0D14",
-  "surface": "#131823",
-  "surface-subtle": "#1D1F27",
-  "surface-raised": "#272A32",
-  "surface-inverse": "#E1E2EC",
-  "text-primary": "#F8F9FA",
-  "text-secondary": "#AEB4BE",
-  "text-tertiary": "#AEB4BE",
-  "text-inverse": "#10131A",
-  "border-subtle": "#414754",
-  "border-strong": "#8B909F",
-  "focus": "#ADC7FF",
-  "selection": "#003061",
+  "canvas": "#10141B",
+  "surface": "#171D26",
+  "surface-subtle": "#1E2632",
+  "surface-raised": "#222B38",
+  "surface-inverse": "#ECEFF4",
+  "text-primary": "#ECEFF4",
+  "text-secondary": "#A6B0BF",
+  "text-tertiary": "#A6B0BF",
+  "text-inverse": "#10141B",
+  "border-subtle": "#2E3746",
+  "border-strong": "#7D899C",
+  "focus": "#8CB4F8",
+  "selection": "#1C355E",
   "action": {
-    "primary": "#ADC7FF",
-    "primary-hover": "#D8E2FF",
-    "primary-pressed": "#8AB4F8",
-    "on-primary": "#002E68",
+    "primary": "#8CB4F8",
+    "primary-hover": "#ADC7FF",
+    "primary-pressed": "#6A9BF2",
+    "on-primary": "#0D1B30",
     "destructive": "#F87171",
-    "link": "#ADC7FF",
-    "visited": "#D5E3FF"
+    "link": "#8CB4F8",
+    "visited": "#B8CEFF"
   },
   "brand": {
-    "mark": "#93C5FD",
+    "mark": "#8CB4F8",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
@@ -427,12 +427,12 @@ export const motion = {
 export const component = {
   "button": {
     "primary": {
-      "background": "#005BBF",
-      "backgroundHover": "#174EA6",
-      "backgroundPressed": "#004493",
+      "background": "#2457A7",
+      "backgroundHover": "#1C4688",
+      "backgroundPressed": "#16376B",
       "foreground": "#FFFFFF",
       "radius": "0.5rem",
-      "focusRing": "#005BBF"
+      "focusRing": "#2457A7"
     },
     "destructive": {
       "background": "#B91C1C",
@@ -442,45 +442,45 @@ export const component = {
   },
   "evidenceCard": {
     "background": "#FFFFFF",
-    "border": "#DADCE0",
+    "border": "#DFDDD5",
     "accent": "#047857",
-    "title": "#202124",
-    "metadata": "#5F6368"
+    "title": "#20232A",
+    "metadata": "#5D6572"
   },
   "sourceCard": {
     "background": "#FFFFFF",
-    "border": "#DADCE0",
+    "border": "#DFDDD5",
     "accent": "#1D4ED8",
-    "title": "#202124",
-    "metadata": "#5F6368"
+    "title": "#20232A",
+    "metadata": "#5D6572"
   },
   "claimCard": {
     "support": "#047857",
     "contradiction": "#B91C1C",
     "unresolved": "#5C5C63",
     "background": "#FFFFFF",
-    "border": "#DADCE0"
+    "border": "#DFDDD5"
   },
   "focusRing": {
-    "color": "#005BBF",
+    "color": "#2457A7",
     "width": "2px",
     "offset": "2px"
   },
   "shadcnAlias": {
     "card": "#FFFFFF",
-    "card-foreground": "#202124",
-    "border": "#DADCE0",
-    "sidebar-border": "#80868B",
-    "input": "#DADCE0",
-    "primary": "#005BBF",
+    "card-foreground": "#20232A",
+    "border": "#DFDDD5",
+    "sidebar-border": "#787F8C",
+    "input": "#DFDDD5",
+    "primary": "#2457A7",
     "primary-foreground": "#FFFFFF",
-    "muted": "#F1F3F4",
-    "muted-foreground": "#5F6368",
-    "accent": "#F1F3F4",
-    "accent-foreground": "#202124",
-    "background": "#F8F9FA",
-    "foreground": "#202124",
-    "ring": "#005BBF"
+    "muted": "#EFEDE6",
+    "muted-foreground": "#5D6572",
+    "accent": "#EFEDE6",
+    "accent-foreground": "#20232A",
+    "background": "#F7F6F2",
+    "foreground": "#20232A",
+    "ring": "#2457A7"
   }
 } as const;
 export const tokens = { primitive, semanticLight, semanticDark, motion, component } as const;

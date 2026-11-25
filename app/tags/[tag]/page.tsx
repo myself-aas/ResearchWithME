@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ChevronRight } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { PostRow } from '@/components/post/PostCard';
+import Breadcrumbs from '@/components/seo/Breadcrumbs';
 import { getAllTags, getPostsByTag, getTagBySlug } from '@/lib/content/posts';
 import { pageMetadata } from '@/lib/seo';
 import { collectionPageJsonLd, jsonLdScript } from '@/lib/seo/jsonld';
@@ -56,29 +56,13 @@ export default async function TagPage({ params }: TagPageProps) {
       />
       <SiteHeader />
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-8 sm:px-6 lg:px-8">
-        <nav aria-label="Breadcrumb" className="font-mono text-xs text-ink-secondary">
-          <ol className="flex flex-wrap items-center gap-1.5">
-            <li>
-              <Link href="/" className="hover:text-ink hover:underline">
-                Home
-              </Link>
-            </li>
-            <li aria-hidden="true">
-              <ChevronRight className="h-3.5 w-3.5" />
-            </li>
-            <li>
-              <Link href="/tags" className="hover:text-ink hover:underline">
-                Topics
-              </Link>
-            </li>
-            <li aria-hidden="true">
-              <ChevronRight className="h-3.5 w-3.5" />
-            </li>
-            <li aria-current="page" className="text-ink">
-              #{tag.tag}
-            </li>
-          </ol>
-        </nav>
+        <Breadcrumbs
+          crumbs={[
+            { name: 'Home', href: '/' },
+            { name: 'Topics', href: '/tags' },
+            { name: `#${tag.tag}` },
+          ]}
+        />
 
         <header className="mt-6 max-w-2xl border-b border-line pb-8">
           <p className="font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">

@@ -2,6 +2,8 @@ import Link from 'next/link';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { Info, Lightbulb, TriangleAlert, CircleAlert, BookOpenCheck } from 'lucide-react';
 import CodeBlock from './CodeBlock';
+import BenchmarkChart from '@/components/post/BenchmarkChart';
+import PipelineExplorer from '@/components/post/PipelineExplorer';
 import PrithviExplorer from '@/components/post/PrithviExplorer';
 import { FloodResultsChart, PastisResultsChart } from '@/components/post/PrithviResultsCharts';
 
@@ -229,6 +231,8 @@ export const mdxComponents = {
   Figure,
   Video,
   KeyTakeaways,
+  BenchmarkChart,
+  PipelineExplorer,
   PrithviExplorer,
   FloodResultsChart,
   PastisResultsChart,

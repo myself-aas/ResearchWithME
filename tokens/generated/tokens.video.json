@@ -1,35 +1,35 @@
 {
   "color": {
-    "canvas": "#F8F9FA",
+    "canvas": "#F7F6F2",
     "surface": "#FFFFFF",
-    "surface-subtle": "#F1F3F4",
-    "text-primary": "#202124",
-    "text-secondary": "#5F6368",
+    "surface-subtle": "#EFEDE6",
+    "text-primary": "#20232A",
+    "text-secondary": "#5D6572",
     "action": {
-      "primary": "#005BBF",
-      "primary-hover": "#174EA6",
-      "primary-pressed": "#004493",
+      "primary": "#2457A7",
+      "primary-hover": "#1C4688",
+      "primary-pressed": "#16376B",
       "on-primary": "#FFFFFF",
       "destructive": "#B91C1C",
-      "link": "#005BBF",
-      "visited": "#174EA6"
+      "link": "#2457A7",
+      "visited": "#1B3F7A"
     },
-    "focus": "#005BBF"
+    "focus": "#2457A7"
   },
   "surface": {
     "background": "#FFFFFF",
     "raised": "#FFFFFF"
   },
   "text": {
-    "primary": "#202124",
-    "secondary": "#5F6368",
+    "primary": "#20232A",
+    "secondary": "#5D6572",
     "onAction": "#FFFFFF"
   },
   "font": {
     "latin": {
-      "editorial": "'Newsreader', Georgia, serif",
-      "interface": "'Inter', system-ui, sans-serif",
-      "metadata": "'JetBrains Mono', monospace"
+      "editorial": "'Newsreader', Georgia, Cambria, \"Times New Roman\", serif",
+      "interface": "'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+      "metadata": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", monospace"
     }
   },
   "motion": {

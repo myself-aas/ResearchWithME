@@ -2,7 +2,7 @@
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   return (
-    <html lang="en">
+    <html lang="en" dir="ltr">
       <body className="bg-canvas font-sans text-ink antialiased">
         <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col justify-center px-5 py-20 sm:px-6">
           <p className="font-mono text-xs uppercase tracking-wider text-destructive">Application error</p>

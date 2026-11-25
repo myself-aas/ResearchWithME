@@ -8,6 +8,7 @@ import MdxContent from '@/components/mdx/MdxContent';
 import ReadingProgress from '@/components/ReadingProgress';
 import TocNav from '@/components/post/TocNav';
 import PostCover from '@/components/post/PostCover';
+import PostHeroBanner from '@/components/post/PostHeroBanner';
 import FAQAccordion from '@/components/post/FAQAccordion';
 import CiteBox from '@/components/post/CiteBox';
 import Breadcrumbs from '@/components/seo/Breadcrumbs';
@@ -63,7 +64,11 @@ export default async function PostPage({ params }: PostPageProps) {
     : [];
   const related = getRelatedPosts(post.slug);
   const { newer, older } = getAdjacentPosts(post.slug);
-  const citation = `${AUTHOR.name}. “${post.title}.” ${SITE.name}, ${formatDate(post.date)}. ${absoluteUrl(post.href)}.`;
+  const postUrl = absoluteUrl(post.href);
+  const citation = `${AUTHOR.name}. “${post.title}.” ${SITE.name}, ${formatDate(post.date)}. ${postUrl}.`;
+  const bibKey = `${AUTHOR.name.split(' ').pop()?.toLowerCase() ?? 'author'}${post.date.slice(0, 4)}${post.slug.split('-')[0] ?? 'essay'}`;
+  const bibtex = `@article{${bibKey},\n  author = {${AUTHOR.name}},\n  title = {${post.title}},\n  journal = {${SITE.name}},\n  year = {${post.date.slice(0, 4)}},\n  url = {${postUrl}}\n}`;
+  const markdownCitation = `[${post.title}](${postUrl}) — ${AUTHOR.name}, ${SITE.name} (${formatDateShort(post.date)})`;
 
   const crumbs: Crumb[] = [
     { name: 'Home', href: '/' },
@@ -96,76 +101,82 @@ export default async function PostPage({ params }: PostPageProps) {
 
         <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_16rem] xl:gap-14">
           <article aria-labelledby="post-title" className="min-w-0">
-            <header>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs text-muted-foreground">
-                <span className="inline-flex min-h-8 items-center gap-2 rounded-full bg-primary/10 px-3 font-semibold uppercase tracking-wider text-primary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-                  Research note
-                </span>
-                <span>{post.wordCount.toLocaleString()} words</span>
-              </div>
-
-              {post.tags.length > 0 && (
-                <ul aria-label="Topics" className="mt-5 flex flex-wrap gap-2">
-                  {post.tags.map((tag) => (
-                    <li key={tag}>
-                      <Link
-                        href={`/tags/${tagToSlug(tag)}`}
-                        className="inline-flex min-h-8 items-center rounded-full border border-border bg-card px-3 font-mono text-[0.6875rem] text-muted-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                      >
-                        #{tag}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              <h1
-                id="post-title"
-                className="mt-5 max-w-5xl font-serif text-[clamp(2.35rem,5.1vw,4.35rem)] font-bold leading-[1.02] tracking-[-0.04em] text-foreground text-balance"
-              >
-                {post.title}
-              </h1>
-
-              <p className="mt-5 max-w-3xl font-sans text-lg leading-relaxed text-muted-foreground sm:text-xl">
-                {post.description}
-              </p>
-
-              <div className="mt-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-y border-border py-4">
-                <Link href="/about" className="group flex items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
-                  <span
-                    aria-hidden="true"
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-serif text-sm font-bold text-primary transition-transform group-hover:scale-105"
-                  >
-                    {AUTHOR.initials}
-                  </span>
-                  <span>
-                    <span className="block font-sans text-sm font-semibold text-foreground group-hover:text-primary">{AUTHOR.name}</span>
-                    <span className="mt-0.5 block font-mono text-[0.6875rem] uppercase tracking-wider text-muted-foreground">{AUTHOR.role}</span>
-                  </span>
-                </Link>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
-                    <time dateTime={toDateTime(post.date)}>{formatDateShort(post.date)}</time>
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
-                    <span>{readingTimeLabel(post.readingTimeMinutes)}</span>
-                  </span>
-                  {post.updated && (
-                    <span className="rounded-full border border-border px-2.5 py-1">
-                      Updated {formatDateShort(post.updated)}
+            {post.coverStyle === 'hero' && post.cover ? (
+              <PostHeroBanner post={post} />
+            ) : (
+              <>
+                <header>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs text-muted-foreground">
+                    <span className="inline-flex min-h-8 items-center gap-2 rounded-full bg-primary/10 px-3 font-semibold uppercase tracking-wider text-primary">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+                      Research note
                     </span>
-                  )}
-                </div>
-              </div>
-            </header>
+                    <span>{post.wordCount.toLocaleString()} words</span>
+                  </div>
 
-            <figure className="mt-8 overflow-hidden rounded-2xl border border-border bg-muted shadow-raised">
-              <PostCover post={post} priority sizes="(max-width: 1024px) 100vw, 72vw" className="aspect-[16/9] rounded-2xl border-0" />
-            </figure>
+                  {post.tags.length > 0 && (
+                    <ul aria-label="Topics" className="mt-5 flex flex-wrap gap-2">
+                      {post.tags.map((tag) => (
+                        <li key={tag}>
+                          <Link
+                            href={`/tags/${tagToSlug(tag)}`}
+                            className="inline-flex min-h-8 items-center rounded-full border border-border bg-card px-3 font-mono text-[0.6875rem] text-muted-foreground transition-colors hover:border-primary hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                          >
+                            #{tag}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  <h1
+                    id="post-title"
+                    className="mt-5 max-w-5xl font-serif text-[clamp(2.35rem,5.1vw,4.35rem)] font-bold leading-[1.02] tracking-[-0.04em] text-foreground text-balance"
+                  >
+                    {post.title}
+                  </h1>
+
+                  <p className="mt-5 max-w-3xl font-sans text-lg leading-relaxed text-muted-foreground sm:text-xl">
+                    {post.description}
+                  </p>
+
+                  <div className="mt-7 flex flex-wrap items-center justify-between gap-x-6 gap-y-4 border-y border-border py-4">
+                    <Link href="/about" className="group flex items-center gap-3 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+                      <span
+                        aria-hidden="true"
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-serif text-sm font-bold text-primary transition-transform group-hover:scale-105"
+                      >
+                        {AUTHOR.initials}
+                      </span>
+                      <span>
+                        <span className="block font-sans text-sm font-semibold text-foreground group-hover:text-primary">{AUTHOR.name}</span>
+                        <span className="mt-0.5 block font-mono text-[0.6875rem] uppercase tracking-wider text-muted-foreground">{AUTHOR.role}</span>
+                      </span>
+                    </Link>
+
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-xs text-muted-foreground">
+                      <span className="inline-flex items-center gap-1.5">
+                        <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
+                        <time dateTime={toDateTime(post.date)}>{formatDateShort(post.date)}</time>
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
+                        <span>{readingTimeLabel(post.readingTimeMinutes)}</span>
+                      </span>
+                      {post.updated && (
+                        <span className="rounded-full border border-border px-2.5 py-1">
+                          Updated {formatDateShort(post.updated)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </header>
+
+                <figure className="mt-8 overflow-hidden rounded-2xl border border-border bg-muted shadow-raised">
+                  <PostCover post={post} priority sizes="(max-width: 1024px) 100vw, 72vw" className="aspect-[16/9] rounded-2xl border-0" />
+                </figure>
+              </>
+            )}
 
             {toc.length >= 2 && (
               <div className="mt-8">
@@ -299,7 +310,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </article>
 
           <aside aria-label="Essay tools" className="h-fit space-y-4 xl:sticky xl:top-24">
-            <CiteBox citation={citation} />
+            <CiteBox citation={citation} bibtex={bibtex} markdown={markdownCitation} />
             <p className="rounded-2xl border border-border bg-card p-5 font-sans text-xs leading-relaxed text-muted-foreground">
               Licensed{' '}
               <a

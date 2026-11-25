@@ -42,7 +42,7 @@ export default function ArchivePage() {
         <header className="relative isolate overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-card via-card to-muted/60 p-6 shadow-raised sm:p-9 lg:p-10">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-16 -top-24 h-80 w-80 rounded-full border border-primary/10 bg-[radial-gradient(circle_at_center,rgba(109,69,47,.14),transparent_66%)]"
+            className="pointer-events-none absolute -right-16 -top-24 h-80 w-80 rounded-full border border-primary/10 bg-[radial-gradient(circle_at_center,color-mix(in_srgb,var(--reme-action-primary)_14%,transparent),transparent_66%)]"
           />
           <div aria-hidden="true" className="pointer-events-none absolute -right-4 top-5 hidden h-64 w-64 rounded-full border border-border/70 lg:block" />
 

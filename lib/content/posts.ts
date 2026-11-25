@@ -106,6 +106,7 @@ function readPost(filePath: string, includeDrafts: boolean): Post | null {
     series: frontmatter.series,
     cover: frontmatter.cover,
     coverAlt: frontmatter.coverAlt,
+    coverStyle: frontmatter.coverStyle,
     featured: frontmatter.featured,
     draft: frontmatter.draft,
     canonical: frontmatter.canonical,

@@ -1,0 +1,4 @@
+# Ignore generated build output
+.next/
+cloudflare-pages/dist/
+node_modules/

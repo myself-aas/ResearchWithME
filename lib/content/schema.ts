@@ -52,6 +52,8 @@ export const frontmatterSchema = z
     cover: z.string().trim().min(1).optional(),
     /** Alt text for the cover; required whenever a cover is set. */
     coverAlt: z.string().trim().max(200).optional(),
+    /** How the cover is displayed on the post page. 'hero' overlays title/meta on the image. */
+    coverStyle: z.enum(['default', 'hero']).default('default'),
     /** Feature this post at the top of the home page. */
     featured: z.boolean().default(false),
     /** Drafts render in development only and never reach a production build. */
