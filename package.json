@@ -35,6 +35,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "new": "node scripts/new-post.mjs",
+    "figures:new": "node scripts/new-figure.mjs",
     "tokens:build": "node tokens/scripts/build.mjs",
     "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs",
     "quality": "npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test",

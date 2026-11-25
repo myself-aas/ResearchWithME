@@ -6,6 +6,24 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- The interactive-figure library and its constitution. `components/library/`
+  holds seven reusable, data-driven learning figures — `WipeCompare`
+  (drag-wipe comparison), `TradeoffPad` (2-D parameter drag with budget
+  shading), `RacePlayback` (transport replay with live ranks), `LensPeek`
+  (hover lens swapping the layer under it), `HotspotAtlas` (pinned annotations
+  with keyboard tour), `AssumptionSwitches` (toggle assumptions, outcomes
+  re-derive), and `SelfCheckQuiz` (answer-reveal self-check) — each with a
+  declared interaction archetype, a fixture, and pure logic in `lib/figures/`
+  under unit test. `lib/figures/registry.ts` is the single source of truth: the
+  MDX component map, the assistant's generative `tools.by_name`, and figure
+  routing all derive from it, so every figure (library and adopted) is
+  maintained as generative UI by construction. `FIGURE_CONSTITUTION.md` fixes
+  the twelve rules agents follow, enforced by `test/figure-constitution.test.ts`;
+  two templates (`GENERATIVE_FIGURE_TEMPLATE`, `GENERATIVE_POST_LAYOUT`) and
+  `npm run figures:new` scaffold the next figure and the next figure-bearing
+  essay. `/lab` renders the whole registry live and is the pre-adoption proving
+  ground. The Prithvi post remains the scoped prototype; its components stay
+  post-local and are registered as adopted (result charts flagged legacy).
 - Three interactive figures in the Prithvi-EO-2.0 essay, each with a distinct interaction pattern and
   each also wired as generative UI in `/assistant` (a routed tool call renders the same component in
   the thread): `MaskedPatchReconstructor` (ratio slider 0–90% → staggered un-mask reveal of the 6×10

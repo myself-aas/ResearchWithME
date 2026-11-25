@@ -603,8 +603,9 @@ Rules:
     0.15.x line — do not use it). Tool args carry defaults (`initialRatio`,
     `initialMonth`, `initialCheckpoint`) so a tool call with partial arguments
     still renders a sensible figure. An article-only widget is half-shipped;
-    routing belongs in `lib/assistant/retrieval.ts` and lands with its tests
-    (rule 8).
+    since §20 the routing keywords and defaults live on the figure registry
+    entry and `routeFigure` is registry-driven — a routing change is still a
+    tested change (rule 8).
 
 ## §19 Agent skills layer
 
@@ -622,3 +623,32 @@ index and provenance live in `.agents/skills/README.md`, and
    publishing are the author's acts (§17 rule 3), never a skill's.
 4. **Skills carry no credentials.** A skill that needs a secret names the
    environment variable and stops; §17 rule 2 is the ceiling.
+
+---
+
+## §20 The figure library
+
+Interactive learning figures are a **library**, not per-post scripts. The
+Prithvi essay was the prototype; its post-specific components stay scoped to
+that post (`lib/post/prithvi.ts` is its data module — never promote post data
+to the global layer). Everything after the prototype follows
+**`FIGURE_CONSTITUTION.md`**, which is normative and enforced by
+`test/figure-constitution.test.ts` (its articles are marked **[check]** there).
+The short form:
+
+1. **The registry is the single source of truth.** `lib/figures/registry.ts`
+   carries every figure: tool name, MDX name, archetype, defaults, routing
+   keywords. The MDX component map and the thread's `tools.by_name` map are
+   **derived** from it — never hand-forked (§18 rule 10).
+2. **One archetype per figure.** A figure declares its interaction pattern;
+   no two library figures share one. `npm run figures:new` refuses duplicates
+   before scaffolding.
+3. **Facts are data.** Library components import no post data; posts bind
+   library components through their own data module and thin wrappers.
+4. **A figure lands complete** — component, fixture, pure logic + tests,
+   registry entry, passing constitution checks — or it does not land.
+5. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`
+   for components (scaffolded by `npm run figures:new`) and
+   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays.
+   `/lab` renders every registered figure with its defaults and is the
+   pre-adoption proving ground; it is a crawlable page like any other (§1).

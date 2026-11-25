@@ -170,6 +170,36 @@ prompt chips that reuse the pill shape. Chat text is interface copy (Inter,
 `.assistant-markdown` layer exists so chat never borrows `.mdx-body` rhythm.
 The family follows every rule in `AGENTS.md` §18.
 
+
+## The figure library and lab (2026-11-25)
+
+Interactive learning figures are a governed library, not per-post scripts
+(FIGURE_CONSTITUTION.md; AGENTS.md §20). The design contract every figure
+inherits:
+
+- **Chrome:** one shared frame — `FigureChrome` (`components/library/`) —
+  captioned header, body, footer readout on `border-line`/`bg-surface` with
+  the rounded-2xl card language. The assistant's in-thread frame strips the
+  same chrome, so a figure needs no surface variants.
+- **Archetype badge:** mono uppercase chips name the interaction archetype and
+  status (`library fixture` / `adopted`) on /lab — the uniqueness claim is
+  visible, not implied.
+- **The lab:** `/lab` lists every registered figure live with its registry
+  defaults — fixtures for library figures, the article's own render for
+  adopted ones. Editorial header, h2 per figure, governance section at the
+  foot. Same max-w-4xl column, serif headings, sans body as the assistant
+  page.
+- **Control grammar:** primary pill = `bg-brand`/`text-on-primary`; secondary
+  pill = `border-line`/`bg-canvas` with `hover:border-brand`; sliders carry
+  `accent-[var(--color-brand)]`; readouts are `font-mono text-xs
+  text-ink-secondary` inside `aria-live="polite"`.
+- **Data colour:** fixtures carry tone *names* (`brand`, `emerging`,
+  `insight`, `ink`) resolved through `lib/figures/tones.ts` ramps — never hex
+  — so palette changes move through `tokens/src/` only.
+
+Approved by the author's library commission (2026-11-25); new archetypes still
+require the §12/Article-12 approval note in the PR.
+
 ## Components
 
 The site ships three layers. Product components own whole surfaces; nothing below them knows what a

@@ -40,6 +40,14 @@ export default function SiteFooter() {
             ))}
             <li>
               <Link
+                href="/lab"
+                className="font-sans text-sm text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
+              >
+                Figure lab
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/contact"
                 className="font-sans text-sm text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
               >

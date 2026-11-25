@@ -4,11 +4,7 @@ import { Info, Lightbulb, TriangleAlert, CircleAlert, BookOpenCheck } from 'luci
 import CodeBlock from './CodeBlock';
 import BenchmarkChart from '@/components/post/BenchmarkChart';
 import PipelineExplorer from '@/components/post/PipelineExplorer';
-import PrithviExplorer from '@/components/post/PrithviExplorer';
-import MaskedPatchReconstructor from '@/components/post/MaskedPatchReconstructor';
-import SeasonScrubber from '@/components/post/SeasonScrubber';
-import CheckpointLadder from '@/components/post/CheckpointLadder';
-import { FloodResultsChart, PastisResultsChart } from '@/components/post/PrithviResultsCharts';
+import { FIGURES } from '@/lib/figures/registry';
 
 /**
  * Components available inside every MDX post without an import.
@@ -226,6 +222,17 @@ function MdxImage({ alt = '', className, ...props }: ComponentPropsWithoutRef<'i
   );
 }
 
+/**
+ * Every registry figure is available inside MDX by its `mdxName`, derived
+ * from the registry so an entry cannot exist in the thread but miss from the
+ * article or vice versa (FIGURE_CONSTITUTION.md Article 3). Legacy prop-fed
+ * components (BenchmarkChart, PipelineExplorer) stay hand-registered until
+ * they migrate onto the library.
+ */
+const figureComponents = Object.fromEntries(
+  FIGURES.map((figure) => [figure.mdxName, figure.component]),
+);
+
 export const mdxComponents = {
   a: MdxLink,
   img: MdxImage,
@@ -236,11 +243,6 @@ export const mdxComponents = {
   KeyTakeaways,
   BenchmarkChart,
   PipelineExplorer,
-  PrithviExplorer,
-  MaskedPatchReconstructor,
-  SeasonScrubber,
-  CheckpointLadder,
-  FloodResultsChart,
-  PastisResultsChart,
   Sidenote,
+  ...figureComponents,
 };

@@ -26,6 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: new URL('/blog', SITE_URL).toString(), lastModified: newest, changeFrequency: 'weekly', priority: 0.9 },
     { url: new URL('/tags', SITE_URL).toString(), lastModified: newest, changeFrequency: 'monthly', priority: 0.6 },
     { url: new URL('/assistant', SITE_URL).toString(), lastModified: newest, changeFrequency: 'monthly', priority: 0.5 },
+    { url: new URL('/lab', SITE_URL).toString(), lastModified: newest, changeFrequency: 'monthly', priority: 0.5 },
     { url: new URL('/about', SITE_URL).toString(), lastModified: newest, changeFrequency: 'yearly', priority: 0.5 },
     { url: new URL('/contact', SITE_URL).toString(), lastModified: newest, changeFrequency: 'yearly', priority: 0.4 },
     { url: new URL('/privacy', SITE_URL).toString(), lastModified: newest, changeFrequency: 'yearly', priority: 0.3 },

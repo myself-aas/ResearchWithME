@@ -17,6 +17,7 @@
  */
 import Fuse from 'fuse.js';
 import type { SearchDoc, SearchDocLite } from '@/lib/content/types';
+import { FIGURES, type FigureArg, type FigureTool } from '@/lib/figures/registry';
 
 /** One retrieved passage: a contiguous run of sentences from a single essay. */
 export interface Passage {
@@ -238,28 +239,24 @@ export function lastUserText(
    own learning components inside the thread (assistant-ui generative UI);
    the model stays local and no new network request exists (AGENTS.md §18.10). */
 
-export type FigureTool =
-  | 'show_season_scrubber'
-  | 'show_masked_patch_reconstructor'
-  | 'show_checkpoint_ladder';
-
+export type { FigureTool } from '@/lib/figures/registry';
 export interface FigureInvocation {
   toolName: FigureTool;
-  args: Record<string, string | number | boolean>;
+  args: Record<string, FigureArg>;
 }
 
+/**
+ * Registry-driven figure routing (§18.10, FIGURE_CONSTITUTION.md Article 3).
+ * Keyword lists live on the registry entries; registry order is precedence,
+ * so the Prithvi figures keep their precise claims. Same index + same query,
+ * same figure — determinism is the contract (rule 8).
+ */
 export function routeFigure(query: string): FigureInvocation | undefined {
   const text = query.toLowerCase();
-  const has = (...words: string[]) => words.some((word) => text.includes(word));
-
-  if (has('mask', 'autoencoder', 'mae', 'reconstruct', 'pretrain')) {
-    return { toolName: 'show_masked_patch_reconstructor', args: { initialRatio: 0.75 } };
-  }
-  if (has('season', 'seasonal', 'month', 'timeline', 'temporal', 'four dates')) {
-    return { toolName: 'show_season_scrubber', args: { initialMonth: 5 } };
-  }
-  if (has('checkpoint', 'gpu', 'parameter', 'model size', 'which model', 'variant')) {
-    return { toolName: 'show_checkpoint_ladder', args: { initialCheckpoint: '600m-tl' } };
+  for (const figure of FIGURES) {
+    if (figure.keywords.some((keyword) => text.includes(keyword))) {
+      return { toolName: figure.toolName, args: { ...figure.defaults } };
+    }
   }
   return undefined;
 }
