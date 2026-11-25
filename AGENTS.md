@@ -369,6 +369,11 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 - Focus is always visible (`focus-visible:outline-2`), and colour contrast is enforced by
   `npm run tokens:check`.
 - Motion respects `prefers-reduced-motion`. Decorative motion is not shipped on the article path.
+- Interactive figures in posts are data-driven components, not one-off scripts. Each figure in a
+  post must have its own interaction pattern (a slider, a scrubber, a picker — never two widgets
+  that differ only in subject matter), must server-render its initial state so the article survives
+  `curl` (§8.5), and must live in the MDX component registry (`components/mdx/mdx-components.tsx`)
+  with any derived facts unit-tested in `test/`.
 
 ---
 
@@ -590,6 +595,16 @@ Rules:
 9. **API questions resolve against the installed version.** The `assistant-ui`
    MCP server (§17) and `.agents/skills/assistant-ui-docs/SKILL.md` are the
    guides; `node_modules/@assistant-ui/react` is the authority.
+10. **Post figures are generative UI.** Every interactive figure an article
+    ships must also render inside the thread: the adapter routes matching
+    questions to a tool call whose name maps, via `MessagePrimitive.Content
+    components={{ tools: { by_name } }}`, to the same component the MDX body
+    uses (the `makeAssistantToolUI` escape hatch is deprecated in the installed
+    0.15.x line — do not use it). Tool args carry defaults (`initialRatio`,
+    `initialMonth`, `initialCheckpoint`) so a tool call with partial arguments
+    still renders a sensible figure. An article-only widget is half-shipped;
+    routing belongs in `lib/assistant/retrieval.ts` and lands with its tests
+    (rule 8).
 
 ## §19 Agent skills layer
 

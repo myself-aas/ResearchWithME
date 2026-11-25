@@ -5,6 +5,20 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Three interactive figures in the Prithvi-EO-2.0 essay, each with a distinct interaction pattern and
+  each also wired as generative UI in `/assistant` (a routed tool call renders the same component in
+  the thread): `MaskedPatchReconstructor` (ratio slider 0–90% → staggered un-mask reveal of the 6×10
+  patch grid, deterministic via a seeded PRNG, with the 4×60=240-token readout), `SeasonScrubber`
+  (a 12-month range input interpolating an illustrated NDVI field between five sampled keyframes,
+  pretraining months Apr/Jun/Sep/Nov highlighted), and `CheckpointLadder` (listbox pill picker →
+  animated width/left marker with payload cards for parameters, metadata training, and pretraining
+  GPU cost). Facts live in the pure module `lib/post/prithvi.ts` (13 unit tests); figure routing in
+  `lib/assistant/retrieval.ts` (5 tests). `AGENTS.md` §12 and §18.10 record the standing rule:
+  every interactive post figure must server-render its initial state and must be maintained as
+  generative UI, via `MessagePrimitive.Content components={{ tools: { by_name } }}` — the
+  `makeAssistantToolUI` escape hatch is deprecated in assistant-ui 0.15.x.
+
 ### Changed
 - Article hero made minimalist: title and one byline row (`By <author> · date · updated · reading
   time`) sit above the cover image; the dense furniture moved to more relevant places —

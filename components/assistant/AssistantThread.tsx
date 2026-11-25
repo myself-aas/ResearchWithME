@@ -16,8 +16,10 @@ import {
   composeAnswer,
   lastUserText,
   retrievePassages,
+  routeFigure,
   type RetrievalHit,
 } from '@/lib/assistant/retrieval';
+import { generativeTools } from './GenerativeFigures';
 
 /**
  * The Archive Assistant — the interactive half of `/assistant`.
@@ -105,12 +107,31 @@ const archiveAdapter: ChatModelAdapter = {
     const fallback = hits.length === 0 ? (searchDocs(docs, query, 1)[0] ?? undefined) : undefined;
     const answer = composeAnswer(query, hits, fallback);
 
+    // Generative figure (§18.10): when the question maps to one of the post's
+    // interactive components, emit its tool-call part complete and first, so
+    // the figure renders while the quoted answer streams beneath it.
+    const figure = routeFigure(query);
+    const figurePart = figure
+      ? ({
+          type: 'tool-call' as const,
+          toolCallId: `fig-${Date.now().toString(36)}`,
+          toolName: figure.toolName,
+          args: figure.args,
+          argsText: JSON.stringify(figure.args),
+          result: { rendered: true },
+        })
+      : undefined;
+
     // Cumulative yields, per the LocalRuntime contract: every yield replaces
     // the previous content, so the text grows without the UI flickering.
     let streamed = '';
     for (const token of answer.split(/(?<=\s)/)) {
       streamed += token;
-      yield { content: [{ type: 'text', text: streamed }] };
+      yield {
+        content: figurePart
+          ? [figurePart, { type: 'text', text: streamed }]
+          : [{ type: 'text', text: streamed }],
+      };
       await wait(STREAM_DELAY_MS, abortSignal);
       if (abortSignal.aborted) return;
     }
@@ -144,7 +165,7 @@ function AssistantMessage() {
         <span>From the archive</span>
       </div>
       <div className="max-w-full rounded-2xl rounded-bl-md border border-line bg-surface px-4 py-3 shadow-raised">
-        <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+        <MessagePrimitive.Content components={{ Text: MarkdownText, tools: generativeTools }} />
       </div>
     </MessagePrimitive.Root>
   );

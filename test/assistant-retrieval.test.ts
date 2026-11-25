@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { SearchDoc } from '@/lib/content/types';
 import {
   chunkDocs,
+  routeFigure,
   chunkText,
   composeAnswer,
   lastUserText,
@@ -162,5 +163,40 @@ describe('lastUserText', () => {
 
   it('returns an empty string when there is no user message', () => {
     expect(lastUserText([{ role: 'assistant', content: [{ type: 'text', text: 'hello' }] }])).toBe('');
+  });
+});
+
+describe('routeFigure', () => {
+  it('routes masked-autoencoding questions to the reconstructor figure', () => {
+    expect(routeFigure('explain the masked autoencoder objective')).toEqual({
+      toolName: 'show_masked_patch_reconstructor',
+      args: { initialRatio: 0.75 },
+    });
+    expect(routeFigure('what went into pretraining?')?.toolName).toBe('show_masked_patch_reconstructor');
+  });
+
+  it('routes seasonality questions to the scrubber figure', () => {
+    expect(routeFigure('why four dates across seasons?')).toEqual({
+      toolName: 'show_season_scrubber',
+      args: { initialMonth: 5 },
+    });
+    expect(routeFigure('temporal sampling timeline')?.toolName).toBe('show_season_scrubber');
+  });
+
+  it('routes checkpoint and cost questions to the ladder figure', () => {
+    expect(routeFigure('which checkpoint should I pick and how many GPUs?')).toEqual({
+      toolName: 'show_checkpoint_ladder',
+      args: { initialCheckpoint: '600m-tl' },
+    });
+    expect(routeFigure('model size 300M vs 600M')?.toolName).toBe('show_checkpoint_ladder');
+  });
+
+  it('routes nothing for ordinary retrieval questions', () => {
+    expect(routeFigure('why did the benchmark not reproduce?')).toBeUndefined();
+    expect(routeFigure('')).toBeUndefined();
+  });
+
+  it('is deterministic', () => {
+    expect(routeFigure('masked pretraining')).toEqual(routeFigure('masked pretraining'));
   });
 });

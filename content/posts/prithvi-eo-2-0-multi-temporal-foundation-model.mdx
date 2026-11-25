@@ -39,6 +39,10 @@ Four frames reproduce the paper's pretraining sequence. Use the controls to comp
 
 The backbone is a Vision Transformer trained as a masked autoencoder. The paper changes both the patch representation and positional encoding: each frame is divided into patches with a 3D convolution whose temporal patch size is `t = 1`, then time, height, and width receive combined 3D sin/cos positional encodings. Time is therefore represented across the sequence of image tokens; this is not a convolution that mixes four months into one temporal patch.
 
+The pretraining objective is easier to feel than to read. Hide most of the patches, keep the visible tokens in the encoder, and let the decoder predict what it never received — the figure below runs that loop on a grid you control, with the real token counts for the paper's four-frame input.
+
+<MaskedPatchReconstructor />
+
 In the paper's like-for-like comparison, the new 300M and 600M backbones are paired with a much larger global corpus than the US-only pretraining used for the 100M predecessor. That scale-up is part of the result; it is not an architecture-only comparison.
 
 The second change is metadata. A temporal-location model receives each image's acquisition date plus the sample's center latitude and longitude. The model encodes these separately and adds them to embedded tokens through learned weighted sums. During pretraining, the authors set metadata dropout to 0.1 so the model also learns to run when location, date, or both are missing. Metadata acts as a learned bias; it is not another spectral band.
@@ -46,6 +50,10 @@ The second change is metadata. A temporal-location model receives each image's a
 ## What exactly went into pretraining?
 
 The sampling design is as important as the architecture: four observations span months, not four adjacent days. The authors sampled sequences from HLS tiles over a decade, then filtered for clouds, missing pixels, and spatial overlap between training and validation areas.
+
+Drag the year below to see what a four-date sample actually captures: the same field at T1 and T3 is not a shifted image, it is a different landscape. The slider is illustrative, not data — but the sampled months it marks are the ones the paper describes.
+
+<SeasonScrubber />
 
 | Pretraining detail | Reported setup |
 | --- | --- |
@@ -73,6 +81,10 @@ The release has six checkpoints across 5M, 100M, 300M, and 600M parameter sizes.
 | [600M-TL](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) | 600M | Yes | Largest metadata-enabled model |
 
 The [model card](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) also gives the expected band order and an inference example with four chronologically ordered HLS scenes. For a clean metadata ablation, compare a same-sized pair—300M with 300M-TL, or 600M with 600M-TL—on the same split.
+
+The release is easier to compare as a ladder than as a table. Pick a checkpoint to see what ships, what carries metadata, and the pretraining cost the paper reports.
+
+<CheckpointLadder />
 
 ## Does the GEO-Bench gain survive a closer read?
 

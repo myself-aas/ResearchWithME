@@ -231,3 +231,35 @@ export function lastUserText(
   }
   return '';
 }
+
+/* ───────────────────────────── generative figures ────────────────────────────
+   Deterministic intent routing from a question to the interactive figure that
+   answers it visually. The emitted tool-call part renders one of the post's
+   own learning components inside the thread (assistant-ui generative UI);
+   the model stays local and no new network request exists (AGENTS.md §18.10). */
+
+export type FigureTool =
+  | 'show_season_scrubber'
+  | 'show_masked_patch_reconstructor'
+  | 'show_checkpoint_ladder';
+
+export interface FigureInvocation {
+  toolName: FigureTool;
+  args: Record<string, string | number | boolean>;
+}
+
+export function routeFigure(query: string): FigureInvocation | undefined {
+  const text = query.toLowerCase();
+  const has = (...words: string[]) => words.some((word) => text.includes(word));
+
+  if (has('mask', 'autoencoder', 'mae', 'reconstruct', 'pretrain')) {
+    return { toolName: 'show_masked_patch_reconstructor', args: { initialRatio: 0.75 } };
+  }
+  if (has('season', 'seasonal', 'month', 'timeline', 'temporal', 'four dates')) {
+    return { toolName: 'show_season_scrubber', args: { initialMonth: 5 } };
+  }
+  if (has('checkpoint', 'gpu', 'parameter', 'model size', 'which model', 'variant')) {
+    return { toolName: 'show_checkpoint_ladder', args: { initialCheckpoint: '600m-tl' } };
+  }
+  return undefined;
+}

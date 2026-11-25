@@ -5,6 +5,9 @@ import CodeBlock from './CodeBlock';
 import BenchmarkChart from '@/components/post/BenchmarkChart';
 import PipelineExplorer from '@/components/post/PipelineExplorer';
 import PrithviExplorer from '@/components/post/PrithviExplorer';
+import MaskedPatchReconstructor from '@/components/post/MaskedPatchReconstructor';
+import SeasonScrubber from '@/components/post/SeasonScrubber';
+import CheckpointLadder from '@/components/post/CheckpointLadder';
 import { FloodResultsChart, PastisResultsChart } from '@/components/post/PrithviResultsCharts';
 
 /**
@@ -234,6 +237,9 @@ export const mdxComponents = {
   BenchmarkChart,
   PipelineExplorer,
   PrithviExplorer,
+  MaskedPatchReconstructor,
+  SeasonScrubber,
+  CheckpointLadder,
   FloodResultsChart,
   PastisResultsChart,
   Sidenote,
