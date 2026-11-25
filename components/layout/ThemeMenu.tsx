@@ -77,7 +77,7 @@ export default function ThemeMenu() {
       onClick={cycle}
       aria-label={ready ? `${LABELS[preference]} — switch theme` : 'Switch theme'}
       title={ready ? LABELS[preference] : 'Switch theme'}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+      className="hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:inline-flex"
     >
       <Icon className="h-4 w-4" aria-hidden="true" />
     </button>

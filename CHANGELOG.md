@@ -5,6 +5,11 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Mobile header carries only search and the menu trigger; theme and RSS moved into the drawer. The
+  trigger icon is now Material Symbols' `view_cozy` (inline SVG, Apache-2.0) with a 90°-per-click
+  rotation on the emphasize easing, `motion-reduce` safe. DESIGN.md's mobile-drawer section records it.
+
 ### Added
 - `/assistant` thread sync to the author's Assistant Cloud project (assistant-ui's hosted backend,
   `proj_0k1j9pkb7977`). The publishable frontend URL lives in `NEXT_PUBLIC_ASSISTANT_BASE_URL`;

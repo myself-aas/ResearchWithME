@@ -86,12 +86,24 @@ in CSS, so the theme classes keep working:
 ## Mobile drawer (2026-11-25)
 
 Below `sm`, the horizontal pill strip in the header is replaced by a
-hamburger button (`components/layout/MobileMenu.tsx`) that opens a
+hamburger trigger (`components/layout/MobileMenu.tsx`) that opens a
 **right-side drawer**: a `role="dialog"` panel of `w-[min(19rem,84vw)]` —
 deliberately not a full-screen takeover — over a dimming scrim. Items wrap
 their own content (icon chip, label, one-line description) as a vertical
 list; there is no horizontal scrolling strip anymore.
 
+**The mobile header keeps only two controls: search and the menu trigger.**
+The theme control and the RSS link live in the drawer instead (the theme row
+cycles system → light → dark in place, mirroring the header button through
+the same `lib/theme` helpers); from `sm` up, the feed and theme buttons stay
+in the header beside the inline navigation.
+
+- **Trigger icon.** Material Symbols' `view_cozy` (Outlined, 24px geometry,
+  Apache-2.0 from google/material-design-icons), embedded as inline SVG —
+  no icon font, so the two-family font budget (§9) is untouched. Each click
+  rotates the icon a further 90° (accumulating) with the emphasize easing at
+  200ms — a small dynamic acknowledgment of the toggle — and collapses to
+  none under `prefers-reduced-motion`.
 - The panel and scrim render through a portal to `document.body`, because the
   header's `backdrop-blur-md` makes the header the containing block for
   `position: fixed` descendants — a drawer inside the header tree would be

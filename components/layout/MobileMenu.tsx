@@ -4,7 +4,13 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { PenLine, Rss, Search, Sparkles, Tags, User, X, type LucideIcon } from 'lucide-react';
+import { Monitor, Moon, PenLine, Rss, Search, Sparkles, Sun, Tags, User, X, type LucideIcon } from 'lucide-react';
+import {
+  applyDocumentTheme,
+  normalizeThemePreference,
+  THEME_STORAGE_KEY,
+  type ThemePreference,
+} from '@/lib/theme';
 import { NAV, SITE } from '@/lib/site';
 
 /**
@@ -12,11 +18,19 @@ import { NAV, SITE } from '@/lib/site';
  *
  * The drawer is a partial-width panel (max 19rem / 84vw) — never a full-screen
  * takeover — and its items wrap their own content (icon, label, one-line
- * description) instead of a horizontally scrolling strip. The interaction
- * follows AGENTS.md §12: real `<button>` and `<a>` elements, focus moved into
- * the panel and restored on close, Escape and scrim-click to dismiss, body
- * scroll locked while open, and every animation is a CSS transition that
- * collapses under `prefers-reduced-motion`.
+ * description) instead of a horizontally scrolling strip. On mobile the
+ * header keeps only search and this trigger; the theme control and the RSS
+ * link live in the drawer. The interaction follows AGENTS.md §12: real
+ * `<button>` and `<a>` elements, focus moved into the panel and restored on
+ * close, Escape and scrim-click to dismiss, body scroll locked while open,
+ * and every animation is a CSS transition that collapses under
+ * `prefers-reduced-motion`.
+ *
+ * The trigger icon is Material Symbols' `view_cozy` (Apache-2.0, embedded
+ * inline so no icon font is downloaded — §9 caps font families at two). Each
+ * click rotates it a further quarter turn with the emphasize easing, a small
+ * dynamic acknowledgment of the toggle; the drawer itself slides with the
+ * standard easing.
  *
  * The panel renders through a portal to `document.body`: the sticky header
  * carries `backdrop-blur-md`, which makes it the containing block for any
@@ -59,19 +73,27 @@ const ITEMS: MenuItem[] = [
   { href: SITE.feedPath, label: 'RSS', description: 'Subscribe to the feed', icon: Rss, external: true },
 ];
 
+/** Shared row styling so links and the theme button read as one list. */
+const itemClass =
+  'flex min-h-11 w-full items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-ink transition-colors hover:border-line hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
+
+function ItemChip({ icon: Icon }: { icon: LucideIcon }) {
+  return (
+    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-selection text-brand">
+      <Icon className="h-4 w-4" aria-hidden="true" />
+    </span>
+  );
+}
+
 function MenuItemLink({ item, onNavigate }: { item: MenuItem; onNavigate: () => void }) {
-  const Icon = item.icon;
-  const isFeed = item.external;
   return (
     <Link
       href={item.href}
       onClick={onNavigate}
-      {...(isFeed ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
-      className="flex min-h-11 items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-ink transition-colors hover:border-line hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+      {...(item.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
+      className={itemClass}
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-selection text-brand">
-        <Icon className="h-4 w-4" aria-hidden="true" />
-      </span>
+      <ItemChip icon={item.icon} />
       <span className="min-w-0">
         <span className="block font-sans text-sm font-semibold leading-tight">{item.label}</span>
         <span className="block font-sans text-xs leading-snug text-ink-secondary">
@@ -82,10 +104,76 @@ function MenuItemLink({ item, onNavigate }: { item: MenuItem; onNavigate: () => 
   );
 }
 
+const THEME_ORDER: ThemePreference[] = ['system', 'light', 'dark'];
+const THEME_LABEL: Record<ThemePreference, string> = {
+  system: 'System',
+  light: 'Light',
+  dark: 'Dark',
+};
+
+/**
+ * The drawer's theme row: cycles system → light → dark and applies the choice
+ * immediately, mirroring the header control's behaviour through the same
+ * `lib/theme` helpers so SSR bootstrap, the desktop button, and this row can
+ * never disagree.
+ */
+function ThemeDrawerItem() {
+  const [preference, setPreference] = useState<ThemePreference>('system');
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    try {
+      setPreference(normalizeThemePreference(window.localStorage.getItem(THEME_STORAGE_KEY)));
+    } catch {
+      // Storage denial leaves the in-memory choice usable.
+    }
+    setReady(true);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === THEME_STORAGE_KEY || event.key === null) {
+        setPreference(normalizeThemePreference(event.newValue));
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  function cycle() {
+    const next = THEME_ORDER[(THEME_ORDER.indexOf(preference) + 1) % THEME_ORDER.length];
+    setPreference(next);
+    try {
+      window.localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch {
+      // Ignore: the current session can still apply the theme.
+    }
+    const query = window.matchMedia?.('(prefers-color-scheme: dark)');
+    applyDocumentTheme(next, Boolean(query?.matches));
+  }
+
+  const Icon = preference === 'light' ? Sun : preference === 'dark' ? Moon : Monitor;
+
+  return (
+    <button
+      type="button"
+      onClick={cycle}
+      aria-label={ready ? `Switch theme — currently ${THEME_LABEL[preference]}` : 'Switch theme'}
+      title={ready ? `Theme: ${THEME_LABEL[preference]}` : 'Switch theme'}
+      className={itemClass}
+    >
+      <ItemChip icon={Icon} />
+      <span className="min-w-0">
+        <span className="block font-sans text-sm font-semibold leading-tight">Theme</span>
+        <span className="block font-sans text-xs leading-snug text-ink-secondary">
+          {ready ? `${THEME_LABEL[preference]} — tap to switch` : 'Light, dark, or system'}
+        </span>
+      </span>
+    </button>
+  );
+}
+
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
+  const [rotation, setRotation] = useState(0);
   const [mounted, setMounted] = useState(false);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
   const restoreFocusRef = useRef<HTMLElement | null>(null);
@@ -118,6 +206,12 @@ export default function MobileMenu() {
     };
   }, [open]);
 
+  function toggle() {
+    setOpen((value) => !value);
+    // A quarter turn per click: the icon's small dynamic acknowledgment.
+    setRotation((value) => value + 90);
+  }
+
   const close = () => setOpen(false);
 
   // Keep Tab cycling inside the open panel.
@@ -136,31 +230,26 @@ export default function MobileMenu() {
     }
   }
 
-  const hamburgerLine =
-    'absolute left-0 h-[2px] w-5 rounded-full bg-current transition-[transform,opacity] duration-200 ease-standard motion-reduce:transition-none';
-
   return (
     <>
       <button
-        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((value) => !value)}
+        onClick={toggle}
         aria-expanded={open}
         aria-haspopup="dialog"
         {...(mounted ? { 'aria-controls': 'mobile-menu' } : {})}
         aria-label={open ? 'Close menu' : 'Open menu'}
         className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
       >
-        <span className="relative block h-4 w-5" aria-hidden="true">
-          <span
-            className={`${hamburgerLine} top-0.5 ${open ? 'translate-y-[5px] rotate-45' : ''}`}
-          />
-          <span
-            className={`${hamburgerLine} top-[7px] ${open ? 'opacity-0' : ''}`}
-          />
-          <span
-            className={`${hamburgerLine} top-[13px] ${open ? '-translate-y-[5px] -rotate-45' : ''}`}
-          />
+        <span
+          aria-hidden="true"
+          className="inline-block transition-transform duration-200 ease-emphasize motion-reduce:transition-none"
+          style={{ transform: `rotate(${rotation}deg)` }}
+        >
+          {/* Material Symbols "view_cozy", Outlined 24px (Apache-2.0, google/material-design-icons). */}
+          <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
+            <path d="M340-540H200q-33 0-56.5-23.5T120-620v-140q0-33 23.5-56.5T200-840h140q33 0 56.5 23.5T420-760v140q0 33-23.5 56.5T340-540Zm-140-80h140v-140H200v140Zm140 500H200q-33 0-56.5-23.5T120-200v-140q0-33 23.5-56.5T200-420h140q33 0 56.5 23.5T420-340v140q0 33-23.5 56.5T340-120Zm-140-80h140v-140H200v140Zm560-340H620q-33 0-56.5-23.5T540-620v-140q0-33 23.5-56.5T620-840h140q33 0 56.5 23.5T840-760v140q0 33-23.5 56.5T760-540Zm-140-80h140v-140H620v140Zm140 500H620q-33 0-56.5-23.5T540-200v-140q0-33 23.5-56.5T620-420h140q33 0 56.5 23.5T840-340v140q0 33-23.5 56.5T760-120Zm-140-80h140v-140H620v140ZM340-620Zm0 280Zm280-280Zm0 280Z" />
+          </svg>
         </span>
       </button>
 
@@ -206,6 +295,9 @@ export default function MobileMenu() {
                       <MenuItemLink item={item} onNavigate={close} />
                     </li>
                   ))}
+                  <li>
+                    <ThemeDrawerItem />
+                  </li>
                 </ul>
               </nav>
 

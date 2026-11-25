@@ -6,9 +6,11 @@ import MobileMenu from './MobileMenu';
 import { NAV, SITE } from '@/lib/site';
 
 /**
- * Site chrome: brand, primary navigation (inline from `sm` up), search, feed,
- * the theme control, and the mobile hamburger that opens the right-side
- * drawer below `sm`.
+ * Site chrome: brand, primary navigation (inline from `sm` up), and the
+ * control cluster. On mobile the cluster is search + the view_cozy trigger
+ * that opens the right-side drawer (which carries the theme control and RSS
+ * along with the nav); from `sm` up the feed and theme buttons sit in the
+ * header beside the inline navigation.
  *
  * Rendered on the server; the interactive islands are the theme button and
  * the mobile menu.
@@ -44,7 +46,7 @@ export default function SiteHeader() {
           <Link
             href={SITE.feedPath}
             aria-label="RSS feed"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            className="hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:inline-flex"
           >
             <Rss className="h-4 w-4" aria-hidden="true" />
           </Link>
