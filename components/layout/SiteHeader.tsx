@@ -2,12 +2,16 @@ import Link from 'next/link';
 import { Rss, Search } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
 import ThemeMenu from './ThemeMenu';
+import MobileMenu from './MobileMenu';
 import { NAV, SITE } from '@/lib/site';
 
 /**
- * Site chrome: brand, primary navigation, search, feed, and the theme control.
+ * Site chrome: brand, primary navigation (inline from `sm` up), search, feed,
+ * the theme control, and the mobile hamburger that opens the right-side
+ * drawer below `sm`.
  *
- * Rendered on the server; the only interactive island is the theme button.
+ * Rendered on the server; the interactive islands are the theme button and
+ * the mobile menu.
  */
 export default function SiteHeader() {
   return (
@@ -45,23 +49,9 @@ export default function SiteHeader() {
             <Rss className="h-4 w-4" aria-hidden="true" />
           </Link>
           <ThemeMenu />
+          <MobileMenu />
         </div>
       </div>
-
-      <nav aria-label="Primary mobile" className="border-t border-line sm:hidden">
-        <ul className="mx-auto flex w-full max-w-6xl items-center gap-1 overflow-x-auto px-3 py-1.5">
-          {NAV.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full px-3 py-1.5 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </header>
   );
 }

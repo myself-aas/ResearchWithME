@@ -17,15 +17,6 @@ export const primitive = {
       "925": "#121214",
       "950": "#0C0D10"
     },
-    "indigo": {
-      "50": "#EFF6FF",
-      "100": "#DBEAFE",
-      "300": "#93C5FD",
-      "500": "#3B82F6",
-      "600": "#1D4ED8",
-      "700": "#1E40AF",
-      "900": "#1E3A8A"
-    },
     "emerald": {
       "50": "#ECFDF5",
       "100": "#D1FAE5",
@@ -68,6 +59,15 @@ export const primitive = {
       "500": "#A83A3A",
       "700": "#7A1414",
       "900": "#3E0000"
+    },
+    "tomato": {
+      "50": "#FFF3ED",
+      "100": "#FFE1D3",
+      "300": "#FFB59F",
+      "500": "#F65215",
+      "600": "#C93D0C",
+      "700": "#A83309",
+      "900": "#5C1B04"
     }
   },
   "typography": {
@@ -145,8 +145,8 @@ export const primitive = {
   "focus": {
     "width": "2px",
     "offset": "2px",
-    "light": "#1D4ED8",
-    "dark": "#60A5FA"
+    "light": "#F65215",
+    "dark": "#FFB59F"
   },
   "icon": {
     "small": "1rem",
@@ -157,15 +157,15 @@ export const primitive = {
   },
   "graph": {
     "node": {
-      "source": "#1D4ED8",
+      "source": "#6D28D9",
       "evidence": "#047857",
       "claim": "#0E7490",
       "discussion": "#B45309",
-      "publication": "#1E40AF",
+      "publication": "#0F766E",
       "archived": "#5C5C63"
     },
     "edge": {
-      "cites": "#1D4ED8",
+      "cites": "#6D28D9",
       "supports": "#10B981",
       "contradicts": "#EF4444",
       "derives": "#06B6D4",
@@ -187,34 +187,34 @@ export const semanticLight = {
   "text-inverse": "#FFFFFF",
   "border-subtle": "#DFDDD5",
   "border-strong": "#787F8C",
-  "focus": "#2457A7",
-  "selection": "#DCE6F7",
+  "focus": "#F65215",
+  "selection": "#FFE1D3",
   "action": {
-    "primary": "#2457A7",
-    "primary-hover": "#1C4688",
-    "primary-pressed": "#16376B",
+    "primary": "#C93D0C",
+    "primary-hover": "#A83309",
+    "primary-pressed": "#8C2A07",
     "on-primary": "#FFFFFF",
     "destructive": "#B91C1C",
-    "link": "#2457A7",
-    "visited": "#1B3F7A"
+    "link": "#C93D0C",
+    "visited": "#8C2A07"
   },
   "brand": {
-    "mark": "#2457A7",
+    "mark": "#C93D0C",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
-    "source": "#1D4ED8",
+    "source": "#6D28D9",
     "evidence": "#047857",
     "insight": "#0E7490",
     "discussion": "#B45309",
     "contradiction": "#B91C1C",
-    "publication": "#1E40AF",
+    "publication": "#0F766E",
     "archive": "#5C5C63"
   },
   "trust": {
-    "verified": "#1D4ED8",
+    "verified": "#6D28D9",
     "replicated": "#047857",
-    "peer-reviewed": "#1D4ED8",
+    "peer-reviewed": "#6D28D9",
     "emerging": "#0E7490",
     "uncertain": "#B45309",
     "contested": "#B91C1C",
@@ -222,34 +222,34 @@ export const semanticLight = {
   },
   "provenance": {
     "direct-source": "#047857",
-    "cited-source": "#1D4ED8",
+    "cited-source": "#6D28D9",
     "derived": "#0E7490",
     "inferred": "#B45309",
-    "ai-assisted": "#1E40AF",
+    "ai-assisted": "#0F766E",
     "unresolved": "#5C5C63"
   },
   "workflow": {
     "discovered": "#0E7490",
     "extracted": "#0F766E",
     "validated": "#047857",
-    "synthesized": "#1D4ED8",
-    "reviewed": "#1E40AF",
-    "published": "#1D4ED8",
+    "synthesized": "#6D28D9",
+    "reviewed": "#0F766E",
+    "published": "#6D28D9",
     "archived": "#5C5C63"
   },
   "collaboration": {
     "comment": "#0E7490",
     "suggestion": "#0F766E",
-    "review": "#1E40AF",
+    "review": "#0F766E",
     "consensus": "#047857",
     "disagreement": "#B91C1C"
   },
   "citation": {
-    "article": "#1D4ED8",
+    "article": "#6D28D9",
     "dataset": "#0E7490",
     "book": "#047857",
     "preprint": "#B45309",
-    "software": "#1D4ED8",
+    "software": "#0F766E",
     "protocol": "#0F766E",
     "webpage": "#5C5C63"
   },
@@ -262,7 +262,7 @@ export const semanticLight = {
     "grid": "#DADCE0",
     "label": "#5F6368",
     "series": {
-      "1": "#174EA6",
+      "1": "#C93D0C",
       "2": "#0E7490",
       "3": "#064E3B",
       "4": "#B45309",
@@ -284,34 +284,34 @@ export const semanticDark = {
   "text-inverse": "#10141B",
   "border-subtle": "#2E3746",
   "border-strong": "#7D899C",
-  "focus": "#8CB4F8",
-  "selection": "#1C355E",
+  "focus": "#FFB59F",
+  "selection": "#3D1D0E",
   "action": {
-    "primary": "#8CB4F8",
-    "primary-hover": "#ADC7FF",
-    "primary-pressed": "#6A9BF2",
-    "on-primary": "#0D1B30",
+    "primary": "#FF7A4D",
+    "primary-hover": "#FF9470",
+    "primary-pressed": "#E85A2E",
+    "on-primary": "#2A1206",
     "destructive": "#F87171",
-    "link": "#8CB4F8",
-    "visited": "#B8CEFF"
+    "link": "#FF9470",
+    "visited": "#FFB59F"
   },
   "brand": {
-    "mark": "#8CB4F8",
+    "mark": "#FFB59F",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
-    "source": "#60A5FA",
+    "source": "#A78BFA",
     "evidence": "#10B981",
     "insight": "#06B6D4",
     "discussion": "#F59E0B",
     "contradiction": "#F87171",
-    "publication": "#93C5FD",
+    "publication": "#5EEAD4",
     "archive": "#9496A1"
   },
   "trust": {
-    "verified": "#60A5FA",
+    "verified": "#A78BFA",
     "replicated": "#10B981",
-    "peer-reviewed": "#60A5FA",
+    "peer-reviewed": "#A78BFA",
     "emerging": "#06B6D4",
     "uncertain": "#F59E0B",
     "contested": "#F87171",
@@ -319,34 +319,34 @@ export const semanticDark = {
   },
   "provenance": {
     "direct-source": "#10B981",
-    "cited-source": "#60A5FA",
+    "cited-source": "#A78BFA",
     "derived": "#06B6D4",
     "inferred": "#F59E0B",
-    "ai-assisted": "#93C5FD",
+    "ai-assisted": "#5EEAD4",
     "unresolved": "#9496A1"
   },
   "workflow": {
     "discovered": "#06B6D4",
     "extracted": "#14B8A6",
     "validated": "#10B981",
-    "synthesized": "#60A5FA",
-    "reviewed": "#93C5FD",
-    "published": "#60A5FA",
+    "synthesized": "#A78BFA",
+    "reviewed": "#5EEAD4",
+    "published": "#A78BFA",
     "archived": "#9496A1"
   },
   "collaboration": {
     "comment": "#06B6D4",
     "suggestion": "#14B8A6",
-    "review": "#93C5FD",
+    "review": "#5EEAD4",
     "consensus": "#10B981",
     "disagreement": "#F87171"
   },
   "citation": {
-    "article": "#60A5FA",
+    "article": "#A78BFA",
     "dataset": "#06B6D4",
     "book": "#10B981",
     "preprint": "#F59E0B",
-    "software": "#60A5FA",
+    "software": "#A78BFA",
     "protocol": "#14B8A6",
     "webpage": "#9496A1"
   },
@@ -359,7 +359,7 @@ export const semanticDark = {
     "grid": "#414754",
     "label": "#AEB4BE",
     "series": {
-      "1": "#60A5FA",
+      "1": "#FF8A5C",
       "2": "#67E8F9",
       "3": "#34D399",
       "4": "#FDE047",
@@ -427,12 +427,12 @@ export const motion = {
 export const component = {
   "button": {
     "primary": {
-      "background": "#2457A7",
-      "backgroundHover": "#1C4688",
-      "backgroundPressed": "#16376B",
+      "background": "#C93D0C",
+      "backgroundHover": "#A83309",
+      "backgroundPressed": "#8C2A07",
       "foreground": "#FFFFFF",
       "radius": "0.5rem",
-      "focusRing": "#2457A7"
+      "focusRing": "#F65215"
     },
     "destructive": {
       "background": "#B91C1C",
@@ -450,7 +450,7 @@ export const component = {
   "sourceCard": {
     "background": "#FFFFFF",
     "border": "#DFDDD5",
-    "accent": "#1D4ED8",
+    "accent": "#6D28D9",
     "title": "#20232A",
     "metadata": "#5D6572"
   },
@@ -462,7 +462,7 @@ export const component = {
     "border": "#DFDDD5"
   },
   "focusRing": {
-    "color": "#2457A7",
+    "color": "#F65215",
     "width": "2px",
     "offset": "2px"
   },
@@ -472,7 +472,7 @@ export const component = {
     "border": "#DFDDD5",
     "sidebar-border": "#787F8C",
     "input": "#DFDDD5",
-    "primary": "#2457A7",
+    "primary": "#C93D0C",
     "primary-foreground": "#FFFFFF",
     "muted": "#EFEDE6",
     "muted-foreground": "#5D6572",
@@ -480,7 +480,7 @@ export const component = {
     "accent-foreground": "#20232A",
     "background": "#F7F6F2",
     "foreground": "#20232A",
-    "ring": "#2457A7"
+    "ring": "#F65215"
   }
 } as const;
 export const tokens = { primitive, semanticLight, semanticDark, motion, component } as const;

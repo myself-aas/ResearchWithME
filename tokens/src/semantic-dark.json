@@ -10,34 +10,34 @@
   "text-inverse": "#10141B",
   "border-subtle": "#2E3746",
   "border-strong": "#7D899C",
-  "focus": "#8CB4F8",
-  "selection": "#1C355E",
+  "focus": "#FFB59F",
+  "selection": "#3D1D0E",
   "action": {
-    "primary": "#8CB4F8",
-    "primary-hover": "#ADC7FF",
-    "primary-pressed": "#6A9BF2",
-    "on-primary": "#0D1B30",
+    "primary": "#FF7A4D",
+    "primary-hover": "#FF9470",
+    "primary-pressed": "#E85A2E",
+    "on-primary": "#2A1206",
     "destructive": "#F87171",
-    "link": "#8CB4F8",
-    "visited": "#B8CEFF"
+    "link": "#FF9470",
+    "visited": "#FFB59F"
   },
   "brand": {
-    "mark": "#8CB4F8",
+    "mark": "#FFB59F",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
-    "source": "#60A5FA",
+    "source": "#A78BFA",
     "evidence": "#10B981",
     "insight": "#06B6D4",
     "discussion": "#F59E0B",
     "contradiction": "#F87171",
-    "publication": "#93C5FD",
+    "publication": "#5EEAD4",
     "archive": "#9496A1"
   },
   "trust": {
-    "verified": "#60A5FA",
+    "verified": "#A78BFA",
     "replicated": "#10B981",
-    "peer-reviewed": "#60A5FA",
+    "peer-reviewed": "#A78BFA",
     "emerging": "#06B6D4",
     "uncertain": "#F59E0B",
     "contested": "#F87171",
@@ -45,34 +45,34 @@
   },
   "provenance": {
     "direct-source": "#10B981",
-    "cited-source": "#60A5FA",
+    "cited-source": "#A78BFA",
     "derived": "#06B6D4",
     "inferred": "#F59E0B",
-    "ai-assisted": "#93C5FD",
+    "ai-assisted": "#5EEAD4",
     "unresolved": "#9496A1"
   },
   "workflow": {
     "discovered": "#06B6D4",
     "extracted": "#14B8A6",
     "validated": "#10B981",
-    "synthesized": "#60A5FA",
-    "reviewed": "#93C5FD",
-    "published": "#60A5FA",
+    "synthesized": "#A78BFA",
+    "reviewed": "#5EEAD4",
+    "published": "#A78BFA",
     "archived": "#9496A1"
   },
   "collaboration": {
     "comment": "#06B6D4",
     "suggestion": "#14B8A6",
-    "review": "#93C5FD",
+    "review": "#5EEAD4",
     "consensus": "#10B981",
     "disagreement": "#F87171"
   },
   "citation": {
-    "article": "#60A5FA",
+    "article": "#A78BFA",
     "dataset": "#06B6D4",
     "book": "#10B981",
     "preprint": "#F59E0B",
-    "software": "#60A5FA",
+    "software": "#A78BFA",
     "protocol": "#14B8A6",
     "webpage": "#9496A1"
   },
@@ -85,7 +85,7 @@
     "grid": "#414754",
     "label": "#AEB4BE",
     "series": {
-      "1": "#60A5FA",
+      "1": "#FF8A5C",
       "2": "#67E8F9",
       "3": "#34D399",
       "4": "#FDE047",

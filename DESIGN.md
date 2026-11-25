@@ -23,7 +23,7 @@ uses the system monospace stack, so no page requests a third font family.
 ## Summary
 
 - **Principles:** Provenance, Trust, Scholarship, Collaboration, Preservation. Every claim keeps a visible path to its source; trust states are explicit, never implied by polish.
-- **Color:** warm paper neutrals with the blue action palette defined in `tokens/src/semantic-light.json` (action primary, focus, and link resolve through `--reme-*`), emerald verification, and domain palettes for knowledge, trust, provenance, workflow, collaboration, and citation. The current light/dark semantic maps are in `tokens/src/`; generated token styles define both themes. Color never carries meaning alone.
+- **Color:** warm paper neutrals with the tomato action palette defined in `tokens/src/semantic-light.json` (action primary, focus, and link resolve through `--reme-*`), emerald verification, and domain palettes for knowledge, trust, provenance, workflow, collaboration, and citation. The current light/dark semantic maps are in `tokens/src/`; generated token styles define both themes. Color never carries meaning alone.
 - **Typography:** self-hosted Newsreader is the editorial face (reading copy and headlines), self-hosted Inter is the interface face (navigation, controls, chat), with Georgia (serif) and system sans fallbacks. Metadata uses the system monospace stack (`ui-monospace`). Two downloaded families per page, per `AGENTS.md` §9.
 - **Shape and elevation:** reme radius scale (4px–24px, pill for tags), raised/floating/dialog shadows based on neutral-950.
 - **Motion:** CSS transitions only — reveals 200ms, larger settles 320–480ms, `prefers-reduced-motion: reduce` collapses all animation and transition duration. There is no animation library, no preloader, and no route-transition wrapper: the article path ships one `requestAnimationFrame` reading-progress bar and nothing else.
@@ -50,13 +50,59 @@ brand accent color (`text-brand`). The wordmark is rendered by
 The static icons (`favicon.svg`, `icon.svg`, `favicon*.png`, `apple-touch-icon.png`,
 `favicon.ico`) are raster/vector files that cannot read CSS variables. They use
 the project's brand-mark ink — `tokens/src/semantic-light.json` `brand.mark`
-(`#2457A7`) — baked in, recolored from the retired `#005BBF` on 2026-11-25 so
-the browser tab matches the in-page mark. Regenerating them is the only place
-that literal is allowed to appear.
+(`#C93D0C`, deep tomato since 2026-11-25; previously `#2457A7`, originally
+`#005BBF`) — baked in. Regenerating them is the only place that literal is
+allowed to appear.
 
 Accessibility: `BrandLogo` renders the wordmark only. The wrapper is
 `aria-hidden` by default so a wrapping link supplies the single accessible name;
 pass `label` when the mark must name itself.
+
+## Tomato palette (2026-11-25)
+
+The brand accent is tomato again, by author decision — the blue action palette
+of the previous iteration is retired. The change lives in `tokens/src/`, not
+in CSS, so the theme classes keep working:
+
+- **Light:** action primary / link / brand mark `#C93D0C` (deep tomato — the
+  darkest tomato that carries white text at ≥4.5:1 and clears AA on canvas),
+  hover `#A83309`, pressed `#8C2A07`; focus ring `#F65215` (vivid tomato, a
+  non-text role that only needs 3:1); selection `#FFE1D3`; chart series 1
+  `#C93D0C`.
+- **Dark:** action primary `#FF7A4D` with dark on-primary ink `#2A1206`,
+  hover `#FF9470`, pressed `#E85A2E`; link `#FF9470`; visited and brand mark
+  `#FFB59F`; focus `#FFB59F`; selection `#3D1D0E`; chart series 1 `#FF8A5C`.
+- **No blue anywhere in the UI:** the former blue domain hues moved to violet
+  (`#1D4ED8` → `#6D28D9` light, `#60A5FA` → `#A78BFA` dark) and teal
+  (`#1E40AF` → `#0F766E` light, `#93C5FD` → `#5EEAD4` dark) across knowledge,
+  trust, provenance, workflow, collaboration, citation, the primitive focus
+  pair, and the graph node/edge colors. The unused `indigo` primitive ramp is
+  now a `tomato` ramp. The one blue-tinted cover artwork in `PostCover`
+  became the tomato variant.
+- `tokens:check` passes WCAG AA on every configured pair; the domain-hue swaps
+  keep near-equal lightness to the retired blues, so badge contrast is
+  unaffected. Static brand icons were recolored to `#C93D0C`.
+
+## Mobile drawer (2026-11-25)
+
+Below `sm`, the horizontal pill strip in the header is replaced by a
+hamburger button (`components/layout/MobileMenu.tsx`) that opens a
+**right-side drawer**: a `role="dialog"` panel of `w-[min(19rem,84vw)]` —
+deliberately not a full-screen takeover — over a dimming scrim. Items wrap
+their own content (icon chip, label, one-line description) as a vertical
+list; there is no horizontal scrolling strip anymore.
+
+- The panel and scrim render through a portal to `document.body`, because the
+  header's `backdrop-blur-md` makes the header the containing block for
+  `position: fixed` descendants — a drawer inside the header tree would be
+  trapped in the header box.
+- Interaction contract (§12): the trigger is a real `<button>` with
+  `aria-expanded`/`aria-haspopup`/`aria-controls`; focus moves to the first
+  item on open and returns to the trigger on close; Tab cycles inside the
+  panel; Escape and scrim-click dismiss; body scroll locks while open; any
+  route change closes it. All animation is CSS (`transform`, `opacity`,
+  `visibility` at 200ms standard easing) with `motion-reduce:transition-none`.
+- Content-wrapping items keep 44px minimum touch targets (`min-h-11`).
 
 ## Token-role wiring (2026-11-25)
 

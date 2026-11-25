@@ -13,9 +13,9 @@ const ARTWORKS = [
     line: 'text-orange-200/70',
   },
   {
-    background: 'from-cyan-950 via-blue-950 to-indigo-950',
-    accent: 'text-cyan-100',
-    line: 'text-sky-200/70',
+    background: 'from-orange-950 via-red-950 to-stone-900',
+    accent: 'text-orange-100',
+    line: 'text-amber-200/70',
   },
   {
     background: 'from-emerald-950 via-lime-950 to-slate-950',
