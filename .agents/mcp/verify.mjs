@@ -108,7 +108,21 @@ async function checkStdio(name, server) {
           } catch {
             continue;
           }
-          if (message.id !== 2 || settled) continue;
+          if (settled) continue;
+          // A well-formed JSON-RPC error means the server is alive and
+          // speaking MCP. For a proxy server, a network-shaped error means
+          // its upstream is unreachable from this machine — the same
+          // "configuration you supply, not a defect" case as the HTTP skip
+          // below — while any other error is a wiring problem.
+          if (message.error) {
+            const detail = String(message.error.message ?? '').slice(0, 140);
+            if (/proxy|hosted|upstream|fetch|network|ENOTFOUND|ECONNREFUSED|ETIMEDOUT|EAI_AGAIN/i.test(detail)) {
+              settled = true;
+              resolve({ status: 'skip', detail: `speaks MCP; upstream unreachable from here: ${detail}` });
+            }
+            continue;
+          }
+          if (message.id !== 2) continue;
           settled = true;
           const tools = message.result?.tools ?? [];
           resolve({

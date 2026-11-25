@@ -1,0 +1,4 @@
+interface:
+  display_name: "Treeflow"
+  short_description: "Branch, PR, CI, and review flow via gh, ending with a ready-to-merge report"
+  default_prompt: "Use $treeflow to implement this change on its branch, open a PR with gh, and monitor CI and review threads until it is ready for the author to merge."

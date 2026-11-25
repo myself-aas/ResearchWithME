@@ -101,6 +101,25 @@ Verified: one tool, `sequentialthinking`.
 - **Do not** paste its output into a page or a commit message. The plan lives in
   the transcript; the artifact is the change.
 
+### `assistant-ui` — the chat library's live docs
+
+`npx -y @assistant-ui/mcp-docs-server`, a stdio proxy to the hosted assistant-ui
+documentation MCP endpoint (`https://www.assistant-ui.com/mcp`). Set
+`ASSISTANT_UI_MCP_URL` to point it somewhere else (for example a locally running
+docs server) — the variable is optional, so it has no credentials-table row.
+
+- **Use it** whenever a change touches `components/assistant/` or
+  `lib/assistant/`: current primitive APIs (`ThreadPrimitive`,
+  `MessagePrimitive`, `ComposerPrimitive`), `LocalRuntime` adapter contracts,
+  and streaming rules (yield cumulative content, never deltas).
+- **Do not** trust it over the code you have: the installed
+  `@assistant-ui/react` version is the authority, and `npm run check:mcp`
+  reports SKIP — not FAIL — when the hosted endpoint is unreachable from the
+  machine, because the proxy itself speaking a well-formed JSON-RPC error is
+  the wiring working as designed.
+- The on-site assistant is governed by `AGENTS.md` §18; the server answers API
+  questions and never decides product rules.
+
 ### `deepwiki` — questions about a repository
 
 `https://mcp.deepwiki.com/mcp`; `ask_question` takes a repository such as

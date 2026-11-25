@@ -47,6 +47,7 @@ export const CONTACT = {
 export const NAV = [
   { href: '/blog', label: 'Writing' },
   { href: '/tags', label: 'Topics' },
+  { href: '/assistant', label: 'Assistant' },
   { href: '/about', label: 'About' },
   { href: '/search', label: 'Search' },
 ] as const;

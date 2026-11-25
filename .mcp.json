@@ -5,6 +5,11 @@
       "command": "npx",
       "args": ["-y", "shadcn@latest", "mcp"]
     },
+    "assistant-ui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@assistant-ui/mcp-docs-server"]
+    },
     "github": {
       "type": "http",
       "url": "https://api.githubcopilot.com/mcp/",

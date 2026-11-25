@@ -48,6 +48,7 @@ export function GET() {
     '## Use',
     '',
     `Text is licensed ${SITE.license}: quote, teach, and remix with attribution to ${AUTHOR.name}.`,
+    `- [Assistant](${absoluteUrl('/assistant')}): a browser-side retrieval assistant; answers quote the essays and link to them. No query leaves the reader's browser.`,
     `Citation format: ${AUTHOR.name}. “Title.” ${SITE.name}, YYYY-MM-DD. URL.`,
     '',
   ];
