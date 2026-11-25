@@ -9,8 +9,19 @@ import { suggestPrompts } from '@/lib/assistant/retrieval';
 import { pageMetadata } from '@/lib/seo';
 import { jsonLdScript, webPageJsonLd } from '@/lib/seo/jsonld';
 
-const ASSISTANT_DESCRIPTION =
-  'Ask the archive: a browser-side assistant answers questions about every published essay by quoting it and linking to the source. No model service, and no query leaves your browser.';
+/**
+ * Thread sync is a build-time switch: when the Assistant Cloud frontend URL is
+ * set, the runtime persists threads, messages, titles, and run reports to the
+ * author's cloud project under an anonymous, account-less session (AGENTS.md
+ * §18). Unset — the local default — the thread stays in-memory and nothing
+ * leaves the browser. The copy below is honest about whichever mode shipped.
+ */
+const CLOUD_BASE_URL = process.env.NEXT_PUBLIC_ASSISTANT_BASE_URL || '';
+const CLOUD_CONNECTED = CLOUD_BASE_URL.length > 0;
+
+const ASSISTANT_DESCRIPTION = CLOUD_CONNECTED
+  ? 'Ask the archive: a browser-side assistant answers questions about every published essay by quoting it and linking to the source. No model service; conversations sync anonymously to Assistant Cloud.'
+  : 'Ask the archive: a browser-side assistant answers questions about every published essay by quoting it and linking to the source. No model service, and no query leaves your browser.';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Assistant',
@@ -52,21 +63,23 @@ export default function AssistantPage() {
           </h1>
           <p className="mt-3 font-sans text-base leading-relaxed text-ink-secondary">
             This assistant answers questions about the published essays by quoting them. It runs
-            entirely in your browser against the same build-time index that powers{' '}
+            against the same build-time index that powers{' '}
             <Link
               href="/search"
               className="font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
             >
               Search
             </Link>
-            : there is no language model behind it, no account, and no request that carries your
-            words off this site. Answers are extractive on purpose — every claim in a reply is a
-            quote you can open and check.
+            , and there is no language model behind it. Answers are extractive on purpose — every
+            claim in a reply is a quote you can open and check.{' '}
+            {CLOUD_CONNECTED
+              ? 'The conversation itself is stored anonymously in Assistant Cloud (assistant-ui’s hosted backend, on the author’s project) — no account and no sign-in — so the author can see what readers ask; the details are on the privacy page.'
+              : 'No request carries your words off this site.'}
           </p>
         </header>
 
         <div className="pt-8">
-          <AssistantThread suggestions={suggestions} />
+          <AssistantThread suggestions={suggestions} cloudConnected={CLOUD_CONNECTED} />
         </div>
 
         <noscript>
@@ -111,8 +124,9 @@ export default function AssistantPage() {
               </span>
               <h3 className="mt-3 font-sans text-sm font-semibold text-ink">Private by design</h3>
               <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-secondary">
-                The thread lives in memory and dies with the tab. Nothing is stored, tracked, or
-                sent anywhere — the index travels to you, not the reverse.
+                {CLOUD_CONNECTED
+                  ? 'No account and no sign-in: the browser holds an anonymous identity and the conversation is stored in the author’s Assistant Cloud project. Search stays fully on your device.'
+                  : 'The thread lives in memory and dies with the tab. Nothing is stored, tracked, or sent anywhere — the index travels to you, not the reverse.'}
               </p>
             </div>
           </div>

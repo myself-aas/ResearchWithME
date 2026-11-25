@@ -460,6 +460,15 @@ Known tensions, resolved as follows:
    maintenance burden, removing it does not affect the other artifacts.
 7. **No database.** Anything that would require runtime storage — view counts, comments, per-user
    state — is out of scope, no matter what it would do for engagement signals.
+8. **Assistant Cloud sync.** The author connected `/assistant`'s thread state to their Assistant
+   Cloud project (`proj_0k1j9pkb7977`, frontend URL in `NEXT_PUBLIC_ASSISTANT_BASE_URL`,
+   publishable by design — the browser mints anonymous session tokens from it and no secret exists
+   in the repo) on 2026-11-25, so the author can see what readers ask. This is the one deliberate
+   exception to rule 7 and to §18's memory-only state: a hosted, third-party store for assistant
+   conversations, reached from the reader's browser. It is bounded by §18 rule 1 (never answer
+   text — the model stays local), rule 6 (anonymous identity, disclosed in the same commit on the
+   page and in the privacy policy), and by search staying untouched. Removing the environment
+   variable reverts the site to fully local behaviour with no code change.
 
 ---
 
@@ -536,11 +545,20 @@ cuts the essay texts into sentence-aligned passages, matches them locally with
 the same technique as `/search`, and the reply is composed from the matched
 passages verbatim, grouped by essay, with a source list. There is no model
 service behind it, no API key, and no runtime process beyond the framework.
+When `NEXT_PUBLIC_ASSISTANT_BASE_URL` is set at build time, the runtime also
+syncs threads to the author's Assistant Cloud project under an anonymous,
+account-less session (see rule 6 and §15.8); unset — the local default — no
+cloud request exists at all.
 
 Rules:
 
-1. **No new network request.** The only fetch is `/search-index.json`, cached
-   for the session; queries never leave the browser, matching §8.5's promise.
+1. **The model stays local.** The reasoning fetch is `/search-index.json`,
+   cached for the session. The only other permitted origin is the Assistant
+   Cloud frontend URL from `NEXT_PUBLIC_ASSISTANT_BASE_URL`, and only for
+   thread persistence, titles, and run reports — never for producing answer
+   text. No other fetch, no model provider, no server route that carries a
+   query anywhere. Search (`/search`) keeps its §8.5 on-device promise
+   unconditionally.
 2. **Answers quote; they do not improvise.** Every non-boilerplate sentence in
    a reply is a passage from a published essay or a link to one. When nothing
    matches, the reply says so and points at `/search`. A reply that asserts
@@ -555,8 +573,14 @@ Rules:
 5. **The readable page survives `curl`.** The explanation, the how-it-works
    section, and the `<noscript>` fallback are server-rendered. The thread is
    an interaction, not content the reader needs (§8.5).
-6. **Thread state is memory-only.** No persistence, no `localStorage`, no
-   accounts. It dies with the tab, like §15's no-database rule demands.
+6. **Sync is anonymous, disclosed, and switchable.** With the cloud URL set,
+   threads, messages, titles, and run reports persist to Assistant Cloud under
+   a `usr_anon_` identity whose refresh token lives in `localStorage` (30 days,
+   no rotation secret, nothing credential-shaped). The `/assistant` page and
+   the privacy policy disclose this in the same commit that sets the variable,
+   and the copy must say which mode shipped — a page that promises "nothing
+   leaves your browser" while syncing is the §2.4 defect in prose form.
+   Unset, the thread is memory-only and dies with the tab.
 7. **Prompt suggestions derive from the archive** (`suggestPrompts`), never
    from hardcoded strings that rot as essays land.
 8. **Ranking changes are tested changes.** Any behaviour change in

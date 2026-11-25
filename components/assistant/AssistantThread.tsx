@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowDown, BookOpenText, CornerDownLeft, Library, Loader2, Quote, Sparkles } from 'lucide-react';
+import { ArrowDown, BookOpenText, CloudOff, CloudUpload, CornerDownLeft, Library, Loader2, Quote, Sparkles } from 'lucide-react';
 import {
   AssistantRuntimeProvider,
   ComposerPrimitive,
@@ -25,9 +25,18 @@ import {
  * The reasoning lives in `lib/assistant/retrieval.ts` (pure, unit-tested).
  * This component wires it into an assistant-ui `LocalRuntime`, which owns
  * thread state, branching, regeneration, and cancellation so none of that is
- * hand-rolled here. There is no model service: the only network request is
- * the same `/search-index.json` the search page uses, fetched once, and no
- * query ever leaves the browser.
+ * hand-rolled here. There is no model service: the only model is the local
+ * index, and the answers are extractive.
+ *
+ * Thread sync: when `NEXT_PUBLIC_ASSISTANT_BASE_URL` is set at build time
+ * (production sets it to the author's Assistant Cloud project), the runtime
+ * connects to Assistant Cloud with an anonymous, account-less session —
+ * threads, messages, titles, and run reports persist there so the author can
+ * see what readers ask, and returning visitors get a stable anonymous
+ * identity in localStorage. When the variable is unset (local development),
+ * the runtime falls back to in-memory state and nothing leaves the browser.
+ * `cloudConnected` only switches the honesty copy; the behaviour switch is
+ * the runtime's own env-driven one (AGENTS.md §18).
  *
  * The whole file is client-side and code-split to this route; the article
  * path never loads any of it (AGENTS.md §9).
@@ -141,7 +150,7 @@ function AssistantMessage() {
   );
 }
 
-function EmptyState({ suggestions }: { suggestions: string[] }) {
+function EmptyState({ suggestions, cloudConnected }: { suggestions: string[]; cloudConnected: boolean }) {
   return (
     <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-10 text-center">
       <span className="flex h-12 w-12 items-center justify-center rounded-full border border-line bg-selection text-brand">
@@ -151,7 +160,12 @@ function EmptyState({ suggestions }: { suggestions: string[] }) {
         <h3 className="font-serif text-xl font-semibold text-ink">Ask the archive</h3>
         <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-secondary">
           Ask about any published essay. The answer is quoted from the text itself and every quote
-          links to its source — nothing is invented, and nothing you type leaves your browser.
+          links to its source — nothing is invented.
+        </p>
+        <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-secondary">
+          {cloudConnected
+            ? 'Conversations are stored anonymously in Assistant Cloud — no account, no sign-in — so the author can see what readers ask. Use Search instead to keep everything on your device.'
+            : 'Nothing you type leaves your browser.'}
         </p>
       </div>
       {suggestions.length > 0 && (
@@ -188,7 +202,7 @@ function RunningIndicator() {
   );
 }
 
-function Composer() {
+function Composer({ cloudConnected }: { cloudConnected: boolean }) {
   return (
     <div className="border-t border-line bg-surface p-3">
       <ComposerPrimitive.Root className="flex items-end gap-2 rounded-2xl border border-line bg-canvas p-2 transition-colors focus-within:border-brand">
@@ -212,7 +226,9 @@ function Composer() {
         </ThreadPrimitive.If>
       </ComposerPrimitive.Root>
       <p className="mt-2 px-1 font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
-        Runs in your browser · Answers quote the archive only
+        {cloudConnected
+          ? 'Answers quote the archive only · Threads sync anonymously to Assistant Cloud'
+          : 'Runs in your browser · Answers quote the archive only'}
       </p>
     </div>
   );
@@ -229,7 +245,13 @@ function ScrollToBottomButton() {
   );
 }
 
-export default function AssistantThread({ suggestions }: { suggestions: string[] }) {
+export default function AssistantThread({
+  suggestions,
+  cloudConnected = false,
+}: {
+  suggestions: string[];
+  cloudConnected?: boolean;
+}) {
   const runtime = useLocalRuntime(archiveAdapter);
 
   return (
@@ -249,10 +271,18 @@ export default function AssistantThread({ suggestions }: { suggestions: string[]
             <div>
               <p className="font-serif text-sm font-semibold text-ink">Archive assistant</p>
               <p className="font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
-                Deterministic retrieval · no model service
+                {cloudConnected ? 'Assistant Cloud sync · no model service' : 'Deterministic retrieval · no model service'}
               </p>
             </div>
           </div>
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-[0.6875rem] uppercase tracking-wider ${
+              cloudConnected ? 'border-trust-emerging/40 text-trust-emerging' : 'border-line text-ink-secondary'
+            }`}
+          >
+            {cloudConnected ? <CloudUpload className="h-3 w-3" aria-hidden="true" /> : <CloudOff className="h-3 w-3" aria-hidden="true" />}
+            {cloudConnected ? 'Sync on' : 'Local only'}
+          </span>
         </div>
 
         <ThreadPrimitive.Root className="flex h-[32rem] flex-col sm:h-[36rem]">
@@ -260,7 +290,7 @@ export default function AssistantThread({ suggestions }: { suggestions: string[]
             <ThreadPrimitive.Viewport autoScroll className="flex-1 overflow-y-auto px-4 py-4">
               <div className="mx-auto flex w-full max-w-2xl flex-col gap-5">
                 <ThreadPrimitive.Empty>
-                  <EmptyState suggestions={suggestions} />
+                  <EmptyState suggestions={suggestions} cloudConnected={cloudConnected} />
                 </ThreadPrimitive.Empty>
                 <ThreadPrimitive.Messages components={{ UserMessage, AssistantMessage }} />
                 <RunningIndicator />
@@ -268,7 +298,7 @@ export default function AssistantThread({ suggestions }: { suggestions: string[]
             </ThreadPrimitive.Viewport>
             <ScrollToBottomButton />
           </div>
-          <Composer />
+          <Composer cloudConnected={cloudConnected} />
         </ThreadPrimitive.Root>
       </section>
     </AssistantRuntimeProvider>

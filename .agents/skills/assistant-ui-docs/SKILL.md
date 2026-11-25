@@ -13,11 +13,12 @@ what the library actually does and what this site can afford.
 
 - The assistant is **retrieval, not a model**. `lib/assistant/retrieval.ts` is
   pure and deterministic: same index + query in, same answer out. Do not add a
-  fetch to a model service, an API key, or a "just ask the LLM" fallback — the
-  product contract (`AGENTS.md` §0, §18) forbids accounts, runtime writes, and
-  third-party scripts, and answers must stay checkable quotes.
-- **No query leaves the browser.** The only network request is
-  `/search-index.json`, fetched once and cached module-wide.
+  fetch to a model service, an API key, a cloud LLM provider, or a "just ask
+  the LLM" fallback — answers must stay checkable quotes (`AGENTS.md` §18).
+- **Two origins, no more.** `/search-index.json` (fetched once, cached) and,
+  when `NEXT_PUBLIC_ASSISTANT_BASE_URL` is set, the author's Assistant Cloud
+  project for anonymous thread sync (persistence, titles, run reports —
+  `AGENTS.md` §15.8, §18.6). Anything else needs a contract change first.
 - **JS is quarantined to the route.** Every assistant-ui import lives in
   `components/assistant/AssistantThread.tsx` (client) or is a type import.
   Importing runtime code from a component used on an article page is a budget

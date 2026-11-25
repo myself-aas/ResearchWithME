@@ -6,6 +6,12 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- `/assistant` thread sync to the author's Assistant Cloud project (assistant-ui's hosted backend,
+  `proj_0k1j9pkb7977`). The publishable frontend URL lives in `NEXT_PUBLIC_ASSISTANT_BASE_URL`;
+  the browser holds an anonymous, account-less identity (localStorage refresh token, 30 days) and
+  threads, titles, and run reports persist for the author's dashboard. The model stays local —
+  answers still come from the build-time index. Unset, the thread stays in-memory. `AGENTS.md`
+  §15.8 and §18 record the decision; the assistant page and the privacy policy disclose it.
 - `.mcp.json` with eight MCP servers (shadcn, GitHub, Figma, fetch, sequential thinking, DeepWiki,
   Brave search, Firecrawl), environment-variable placeholders only, plus `.agents/mcp/README.md` for
   the per-server instructions and `npm run check:mcp` to spawn each stdio server and handshake with it

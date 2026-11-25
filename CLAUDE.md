@@ -62,7 +62,9 @@ A browser-side retrieval chat on assistant-ui (`@assistant-ui/react`). The reaso
 primitives stay inside `components/assistant/AssistantThread.tsx`. Never import assistant-ui from
 a component an article page renders — its JavaScript is quarantined to that route (`AGENTS.md` §9,
 §18). Answers quote the archive and link to it; do not add a model service, an API key, or any
-network request beyond the cached `/search-index.json` fetch.
+network origin beyond the cached `/search-index.json` fetch and the Assistant Cloud URL from
+`NEXT_PUBLIC_ASSISTANT_BASE_URL` (anonymous thread sync — set in `.env.production`, disclosed on
+the page and in the privacy policy; unset locally, where threads stay in-memory).
 
 ## Agent skills
 
