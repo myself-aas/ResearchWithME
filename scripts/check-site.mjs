@@ -237,8 +237,14 @@ for (const page of pages) {
 
     assert(/<time\b[^>]*datetime="[^"]+"/i.test(html), `${where}: <time datetime> for the publication date`);
 
-    // Answer-first: the first paragraph of the body is 40–60 words.
+    // The reading map belongs before the essay body, not below it on mobile.
+    const tocStart = html.indexOf('<nav aria-labelledby="toc-heading"');
     const bodyStart = html.search(/<div class="mdx-body/);
+    if (html.includes('id="toc-heading"')) {
+      assert(tocStart >= 0 && bodyStart > tocStart, `${where}: table of contents appears before the article body`);
+    }
+
+    // Answer-first: the first paragraph of the body is 40–60 words.
     const bodyEnd = html.indexOf('</article>', bodyStart);
     const body = bodyStart === -1 ? '' : html.slice(bodyStart, bodyEnd === -1 ? undefined : bodyEnd);
     const firstParagraph = body.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] ?? '';
@@ -265,6 +271,16 @@ for (const page of pages) {
         const answer = textOf(question.acceptedAnswer.text);
         assert(visibleText.includes(answer.slice(0, 60)), `${where}: FAQ answer is visible`);
       }
+      const disclosures = html.match(/<details[^>]*data-faq-item/g) ?? [];
+      assert(disclosures.length === faqNode.mainEntity.length, `${where}: every FAQ answer uses an interactive native disclosure`);
+    }
+
+    if (route === '/blog/prithvi-eo-2-0-multi-temporal-foundation-model') {
+      const tableCount = (body.match(/<table/gi) ?? []).length;
+      assert(tableCount >= 3 && tableCount <= 4, `${where}: contains 3–4 research tables (found ${tableCount})`);
+      const charts = [...body.matchAll(/<figure[^>]*data-chart="([^"]+)"/gi)].map((match) => match[1]);
+      assert(charts.includes('sen1floods11') && charts.includes('pastis'), `${where}: includes interactive Sen1Floods11 and PASTIS charts`);
+      assert(body.includes('Szwarcman et al.'), `${where}: quotes are attributed to the paper authors`);
     }
 
     // Machine-readable representation.

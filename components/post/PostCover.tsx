@@ -1,10 +1,82 @@
 import Image from 'next/image';
 import type { PostMeta } from '@/lib/content/types';
 
+const ARTWORKS = [
+  {
+    background: 'from-slate-950 via-teal-950 to-stone-800',
+    accent: 'text-emerald-100',
+    line: 'text-emerald-200/70',
+  },
+  {
+    background: 'from-amber-950 via-rose-950 to-slate-950',
+    accent: 'text-amber-100',
+    line: 'text-orange-200/70',
+  },
+  {
+    background: 'from-cyan-950 via-blue-950 to-indigo-950',
+    accent: 'text-cyan-100',
+    line: 'text-sky-200/70',
+  },
+  {
+    background: 'from-emerald-950 via-lime-950 to-slate-950',
+    accent: 'text-lime-100',
+    line: 'text-emerald-200/70',
+  },
+] as const;
+
+function artworkIndex(slug: string) {
+  return [...slug].reduce((sum, character) => sum + character.charCodeAt(0), 0) % ARTWORKS.length;
+}
+
+function AbstractCover({ post }: { post: PostMeta }) {
+  const artwork = ARTWORKS[artworkIndex(post.slug)];
+  const topic = post.tags[0]?.replaceAll('-', ' ') ?? 'research notes';
+
+  return (
+    <div className={`relative h-full w-full overflow-hidden bg-gradient-to-br ${artwork.background}`} aria-hidden="true">
+      <div
+        className="absolute inset-0 opacity-[0.12]"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)',
+          backgroundSize: '34px 34px',
+        }}
+      />
+      <svg
+        viewBox="0 0 720 400"
+        fill="none"
+        className={`absolute -right-[4%] -top-[18%] h-[132%] w-[78%] ${artwork.line}`}
+      >
+        <circle cx="436" cy="194" r="112" stroke="currentColor" strokeWidth="1.2" />
+        <circle cx="436" cy="194" r="80" stroke="currentColor" strokeWidth="1" strokeDasharray="4 8" />
+        <ellipse cx="436" cy="194" rx="176" ry="58" transform="rotate(-28 436 194)" stroke="currentColor" />
+        <path d="M82 304C172 234 228 251 305 181s118-43 180-97 90-39 155-64" stroke="currentColor" strokeWidth="1.4" />
+        <path d="M112 348c65-64 125-45 195-99 46-36 67-51 119-57 65-7 104 8 190-58" stroke="currentColor" strokeWidth="1" strokeDasharray="3 7" />
+        <path d="M436 82v224M324 194h224" stroke="currentColor" strokeWidth=".8" strokeDasharray="2 8" />
+        <circle cx="305" cy="181" r="5" fill="currentColor" />
+        <circle cx="484" cy="84" r="5" fill="currentColor" />
+        <circle cx="626" cy="134" r="5" fill="currentColor" />
+      </svg>
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/10" />
+      <div className="absolute left-5 top-5 flex items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-white/75 sm:left-7 sm:top-7">
+        <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+        Field notes · {post.date.slice(0, 4)}
+      </div>
+      <div className="absolute bottom-5 left-5 right-5 max-w-xl sm:bottom-7 sm:left-7">
+        <p className={`font-mono text-xs uppercase tracking-[0.16em] ${artwork.accent}`}>{topic}</p>
+        <p className="mt-2 max-w-lg font-serif text-xl font-semibold leading-tight text-white text-balance sm:text-2xl">
+          {post.title}
+        </p>
+      </div>
+      <div className="absolute bottom-6 right-7 hidden h-12 w-12 rounded-full border border-white/30 sm:block" />
+    </div>
+  );
+}
+
 /**
- * Post cover with the site's frame. Local covers go through `next/image`;
- * remote covers are rendered directly so any https host works without an
- * allow-list in next.config.
+ * A consistent editorial frame for covers, with deterministic abstract artwork
+ * when a post has no supplied image. Local images use next/image; remote covers
+ * are allowed from any HTTPS host.
  */
 export default function PostCover({
   post,
@@ -17,13 +89,20 @@ export default function PostCover({
   sizes?: string;
   className?: string;
 }) {
-  if (!post.cover) return null;
+  const frameClassName = `relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-line bg-surface-subtle ${className}`;
+
+  if (!post.cover) {
+    return (
+      <div className={frameClassName}>
+        <AbstractCover post={post} />
+      </div>
+    );
+  }
+
   const isLocal = post.cover.startsWith('/');
 
   return (
-    <div
-      className={`relative aspect-[16/9] w-full overflow-hidden rounded-xl border border-line bg-surface-subtle ${className}`}
-    >
+    <div className={frameClassName}>
       {isLocal ? (
         <Image
           src={post.cover}
@@ -38,6 +117,8 @@ export default function PostCover({
         <img
           src={post.cover}
           alt={post.coverAlt ?? ''}
+          width={1600}
+          height={900}
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           className="h-full w-full object-cover"
