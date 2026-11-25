@@ -2,6 +2,8 @@ import Link from 'next/link';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { Info, Lightbulb, TriangleAlert, CircleAlert, BookOpenCheck } from 'lucide-react';
 import CodeBlock from './CodeBlock';
+import PrithviExplorer from '@/components/post/PrithviExplorer';
+import { FloodResultsChart, PastisResultsChart } from '@/components/post/PrithviResultsCharts';
 
 /**
  * Components available inside every MDX post without an import.
@@ -154,16 +156,13 @@ export function Video({
 export function KeyTakeaways({ children }: { children: ReactNode }) {
   return (
     <section
-      aria-labelledby="key-takeaways"
+      aria-label="Key takeaways"
       className="my-8 rounded-2xl border border-line bg-surface p-5 sm:p-6"
     >
-      <h2
-        id="key-takeaways"
-        className="flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink [scroll-margin-top:6rem]"
-      >
+      <div className="flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
         <BookOpenCheck className="h-4 w-4 text-brand" aria-hidden="true" />
         Key takeaways
-      </h2>
+      </div>
       <div className="mt-3 font-sans text-[0.9375rem] leading-relaxed text-ink-secondary [&_li]:my-2 [&_li]:marker:text-brand [&_ul]:list-disc [&_ul]:pl-5">
         {children}
       </div>
@@ -230,5 +229,8 @@ export const mdxComponents = {
   Figure,
   Video,
   KeyTakeaways,
+  PrithviExplorer,
+  FloodResultsChart,
+  PastisResultsChart,
   Sidenote,
 };
