@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { semanticDark, semanticLight } from '@/tokens/generated/tokens';
+import { fontFiles } from '@/src/generated/media';
 import { THEME_INIT_SCRIPT } from '@/lib/theme';
 import { absoluteUrl, SITE_DESCRIPTION, SITE_URL } from '@/lib/seo';
 import { AUTHOR, SITE } from '@/lib/site';
@@ -73,11 +74,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" dir="ltr" suppressHydrationWarning>
       <head>
+        {Object.values(fontFiles).map(href => <link key={href} rel="preload" href={href} as="font" type="font/woff2" crossOrigin="anonymous" />)}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
         <link rel="describedby" type="text/plain" title="llms.txt" href="/llms.txt" />
       </head>
-      <body className="bg-canvas font-sans text-ink antialiased selection:bg-selection selection:text-ink" suppressHydrationWarning>
+      <body className="bg-canvas font-sans text-ink antialiased" suppressHydrationWarning>
         <a
           href="#main-content"
           className="sr-only left-4 top-4 z-[100] rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-primary focus:not-sr-only focus:fixed"

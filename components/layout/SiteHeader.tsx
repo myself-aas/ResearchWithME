@@ -1,26 +1,23 @@
 import Link from 'next/link';
-import { Rss, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
 import { ThemeSwitchCompact } from '@/components/library/ThemeSwitch';
 import MobileMenu from './MobileMenu';
 import { NAV, SITE } from '@/lib/site';
 
-/**
- * Site chrome: brand, primary navigation (inline from `sm` up), and the
- * control cluster. On mobile the cluster is search + the view_cozy trigger
- * that opens the right-side drawer (which carries the theme control and RSS
- * along with the nav); from `sm` up the feed and theme buttons sit in the
- * header beside the inline navigation.
- *
- * Rendered on the server; the interactive islands are the theme button and
- * the mobile menu.
+/** Shared SSR navigation; all controls have a 44px minimum touch target.
+ * The v4 landing shell supplies its manifest-generated header height/layer.
  */
 export default function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5 sm:px-6 lg:px-8">
-        <Link href="/" aria-label={`${SITE.name} — home`} className="rounded-sm">
-          <BrandLogo size="md" />
+    <header className="sticky top-0 z-40 border-b border-line bg-canvas">
+      <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between gap-4 px-4 sm:h-16 md:px-6 lg:px-8">
+        <Link
+          href="/"
+          aria-label={`${SITE.name} — home`}
+          className="inline-flex min-h-11 items-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:min-h-11"
+        >
+          <BrandLogo size="header" />
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-1 sm:flex">
@@ -28,32 +25,31 @@ export default function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-3 py-2 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              className="inline-flex min-h-11 items-center rounded-full px-3.5 font-sans text-sm font-medium text-ink-secondary transition-colors duration-200 ease-standard hover:bg-surface-subtle hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-2">
           <Link
             href="/search"
-            aria-label="Search posts"
-            className="inline-flex h-10 w-10 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
+            aria-label="Search"
+            className="inline-flex h-11 min-h-11 w-11 items-center justify-center text-ink-secondary transition-colors duration-200 ease-standard hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none sm:h-11 sm:min-h-11 sm:w-11 sm:min-w-11 sm:rounded-full sm:border sm:border-line sm:bg-surface sm:hover:border-brand"
           >
-            <Search className="h-4 w-4" aria-hidden="true" />
+            <Search className="h-5 w-5 sm:h-4 sm:w-4" aria-hidden="true" />
           </Link>
-          <Link
-            href={SITE.feedPath}
-            aria-label="RSS feed"
-            className="hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:inline-flex"
-          >
-            <Rss className="h-4 w-4" aria-hidden="true" />
-          </Link>
-          <ThemeSwitchCompact />
+          <ThemeSwitchCompact className="hidden sm:inline-flex" />
           <MobileMenu />
         </div>
       </div>
+      <noscript>
+        <nav aria-label="Navigation without JavaScript" className="r-noscript-nav">
+          {NAV.map(item => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+          <Link href="/assistant">Assistant</Link>
+        </nav>
+      </noscript>
     </header>
   );
 }

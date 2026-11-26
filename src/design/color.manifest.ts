@@ -1,0 +1,36 @@
+/** Reme v4 palette. Color literals for the new system belong only here. */
+export const color = {
+  roles: {
+    'bg-canvas': { light: '#F5F3EF', dark: '#121212' },
+    'bg-surface': { light: '#FFFFFF', dark: '#1A1A1A' },
+    'bg-brand': { light: '#111111', dark: '#F5F3EF' },
+    'text-ink': { light: '#111111', dark: '#F5F3EF' },
+    'text-ink-secondary': { light: '#4F4F4F', dark: '#A8A8A8' },
+    'text-disabled': { light: '#5F5D59', dark: '#8E8C88' },
+    'bg-mark': { light: '#F3E3A1', dark: '#4A3B08' },
+    'text-on-primary': { light: '#FFFFFF', dark: '#111111' },
+    'border-line': { light: '#E5E2DC', dark: '#2E2E2E' },
+    'border-strong': { light: '#8A8780', dark: '#7A7A7A' },
+    'focus-ring': { light: '#111111', dark: '#F5F3EF' },
+    'status-ok': { light: '#15541B', dark: '#7FD38A' },
+    'status-warn': { light: '#6B4200', dark: '#F2B84B' },
+    'status-error': { light: '#8A1C1C', dark: '#FF8A80' },
+    'status-info': { light: '#1F4E8C', dark: '#8AB4F8' },
+    'series-1': { light: '#0B5FA5', dark: '#7DB7F0' },
+    'series-2': { light: '#B34700', dark: '#F0A06A' },
+    'series-3': { light: '#2E7D32', dark: '#7FD38A' },
+    'series-4': { light: '#6A1B9A', dark: '#C79AE8' },
+  },
+  states: { surfaceHover: 0.05, surfaceActive: 0.10, primaryHover: 0.14, primaryActive: 0.22, selected: 0.08 },
+  pairs: [
+    ...['text-ink', 'text-ink-secondary', 'status-ok', 'status-warn', 'status-error', 'status-info'].map(fg => ({ fg, bg: ['bg-canvas', 'bg-surface'], min: 7, kind: 'text' as const })),
+    { fg: 'text-on-primary', bg: ['bg-brand'], min: 7, kind: 'text' as const },
+    ...['border-strong', 'focus-ring', 'series-1', 'series-2', 'series-3', 'series-4'].map(fg => ({ fg, bg: ['bg-canvas', 'bg-surface'], min: 3, kind: 'ui' as const })),
+  ],
+  status: {
+    verified: { token: 'status-ok', icon: 'check', labelKey: 'status.verified' },
+    pending: { token: 'status-warn', icon: 'clock', labelKey: 'status.pending' },
+    localLive: { token: 'status-info', icon: 'shield-check', labelKey: 'status.localLive' },
+    unavailable: { token: 'status-error', icon: 'minus', labelKey: 'status.unavailable' },
+  },
+} as const;

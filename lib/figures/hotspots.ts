@@ -14,12 +14,6 @@ export type HotspotPoint = {
   y: number;
 }
 
-export function clampPoint(point: HotspotPoint): HotspotPoint {
-  const clamp = (value: number) =>
-    Number.isFinite(value) ? Math.min(Math.max(value, 0), 100) : 50;
-  return { ...point, x: clamp(point.x), y: clamp(point.y) };
-}
-
 /** Next/previous hotspot id, wrapping around the ends. */
 export function cyclePoint(points: HotspotPoint[], currentId: string | null, step: 1 | -1): string | null {
   if (points.length === 0) return null;

@@ -1,43 +1,9 @@
+import { createSecurityHeaders } from './lib/security/headers';
+import { withAui } from '@assistant-ui/next';
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 
-// `next dev` evaluates its module bundles with eval() (webpack eval source maps
-// + React Refresh). Without 'unsafe-eval' no route hydrates in dev. Production
-// (`next build`, the OpenNext worker) never sets NODE_ENV=development, so the
-// shipped policy stays eval-free.
-const isDev = process.env.NODE_ENV === 'development';
-
-const cspDirectives = [
-  "default-src 'self'",
-  isDev ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'",
-  "frame-src 'self'",
-  "style-src 'self' 'unsafe-inline'",
-  // Post covers and MDX figures may point at any https host; local images are
-  // served from /images.
-  "img-src 'self' data: https:",
-  "font-src 'self' data:",
-  "connect-src 'self'",
-  "media-src 'self' https:",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "upgrade-insecure-requests",
-].join('; ');
-
-const securityHeaders = [
-  { key: 'X-Content-Type-Options', value: 'nosniff' },
-  { key: 'X-Frame-Options', value: 'DENY' },
-  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
-  { key: 'X-DNS-Prefetch-Control', value: 'on' },
-  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
-  { key: 'Content-Security-Policy', value: cspDirectives },
-  // Usage preference, expressed at the origin so it is authoritative and
-  // survives Cloudflare's Markdown conversion. Deliberately permissive and
-  // consistent with robots.txt: crawl yes, answer yes, train yes. Changing
-  // `ai-train` is a content-policy decision, not a build detail.
-  { key: 'Content-Signal', value: 'search=yes, ai-input=yes, ai-train=yes' },
-];
+const securityHeaders = createSecurityHeaders(process.env.NODE_ENV === 'development');
 
 /**
  * Caching policy.
@@ -120,7 +86,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withAui(nextConfig, { backendless: true, rules: ['*.generative.ts', '*.generative.tsx'] });
 
 // Exposes Cloudflare bindings to `next dev` via getCloudflareContext().
 if (process.env.NODE_ENV === 'development') {

@@ -20,7 +20,7 @@ export const TONE_FILL: Record<FigureTone, string> = {
 };
 
 /** Value ramps: five opacity steps from strongest to weakest, per tone. */
-export const TONE_RAMP: Record<FigureTone, readonly [string, string, string, string, string]> = {
+const TONE_RAMP: Record<FigureTone, readonly [string, string, string, string, string]> = {
   brand: ['bg-brand/85', 'bg-brand/60', 'bg-brand/40', 'bg-brand/25', 'bg-surface-subtle'],
   emerging: [
     'bg-trust-emerging/85',

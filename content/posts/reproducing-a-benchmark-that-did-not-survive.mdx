@@ -1,41 +1,52 @@
 ---
-title: "I tried to reproduce the benchmark everyone cites. It did not survive."
-description: "A widely cited throughput claim turned out to depend on three undocumented choices. Here is the reproduction, the failure modes, and the reporting fix."
+title: "Benchmark reproduction: when warm-up changes the throughput claim"
+description: "A worked benchmark-audit scenario: separate cold start from steady state, match baseline treatment, and require a public harness and raw runs before claiming a reproduction."
 date: "2026-11-18"
-updated: "2026-11-21"
 tags: ["reproducible-research", "benchmarks", "methodology"]
-cover: "/images/folio-dashboard.jpeg"
-coverAlt: "A dashboard of benchmark results with one series diverging from the rest."
-draft: true
+draft: false
+updated: "2026-11-26"
+toc: true
+faq:
+  - question: "Are the throughput numbers in this draft independently reproduced results?"
+    answer: "No. The supplied draft does not include a verifiable paper, harness or raw runs. The table and matching interactive fixtures are unverified teaching examples, not measured evidence."
+  - question: "What kind of evidence does this article provide?"
+    answer: "Unverified teaching scenario about warm versus cold measurements. The evaluation steps are proposed checks; they are not a claim that new experiments or security tests were run."
+  - question: "What should be recorded before applying this method?"
+    answer: "Record the system and harness versions, workload, hardware, raw repetitions, process lifetime, initialization policy and timing window. Apply equivalent treatment to both implementations before drawing an empirical comparison."
+cover: "/images/covers/reproducing-a-benchmark-that-did-not-survive.webp"
+coverAlt: "Two contrasting stopwatches connected by an arrow represent different timing regimes."
 ---
 
-A benchmark number can travel further than the paper that produced it. This one had been quoted in
-four surveys, two grant applications, and a conference keynote before anyone published the harness
-that generated it. When I finally ran the harness, the headline number was real — but only under a
-configuration the paper never states.
+A throughput claim can change meaning when warm-up, process lifetime, and baseline treatment are underspecified. This worked example uses an unverified benchmark scenario to explain that failure mode; its numerical examples are not established measurements. A defensible reproduction needs a public harness, matched workloads, raw runs, and explicit timing boundaries before any performance conclusion.
+
+## Engineering quick-spec
+
+| Review boundary | What this draft covers |
+| --- | --- |
+| Evidence level | Unverified teaching scenario about warm versus cold measurements |
+| Input contract | Process lifetime, workload, timing window, baseline treatment and raw repetitions |
+| Main limitation | Illustrative ratios can be misread as results from an identifiable real experiment |
 
 <KeyTakeaways>
 
-- The reported 2.4× throughput gain reproduces only with the authors' unpublished warm-up schedule.
-- Cold-start measurements invert the result: the baseline is 1.3× faster on the same hardware.
-- None of this looks like fraud. It looks like three defensible choices that never made it into the methods section.
+- In this unverified scenario, a 2.4× steady-state ratio is sensitive to how warm-up is handled.
+- The illustrative cold-start values reverse the ranking; no measured hardware result is established.
+- An omitted timing boundary is a methodological question, not evidence of misconduct by an unnamed author.
 
 </KeyTakeaways>
 
 ## The claim
 
-The claim is simple enough to fit in a sentence: their scheduler moves 2.4× more requests per second
-than the baseline, at equal tail latency. The evaluation section reports a single configuration —
+The claim is simple enough to fit in a sentence: a hypothetical scheduler moves 2.4× more requests per second
+than the baseline, at equal tail latency. The scenario assumes an evaluation reporting a single configuration —
 batch size 64, one worker per core, 30-second runs — and a footnote says results are averaged over
 five runs.
 
-That is more detail than most papers give. It is also not enough to reproduce the result.
+Even those assumed settings are not enough to reproduce a result without the workload, environment and timing contract.
 
-## What I ran
+## What would need to be run?
 
-I rebuilt the harness from the released code, pinned the dependency lockfile, and used the same
-instance type the authors name in the appendix. Then I ran it twice: once with the published
-configuration, and once with a clean cold start for every measurement.
+The earlier draft claimed a local reproduction, but no named paper, public harness, environment record or raw output accompanies it. The commands below are **illustrative** and refer to an unavailable `bench/serve.py`; they are not runnable evidence or a recipe for an identified upstream system.
 
 ```bash
 # Published configuration: warm process, 30 s window, five repetitions.
@@ -47,28 +58,28 @@ for i in $(seq 1 5); do
 done
 ```
 
-The warm run lands within 6% of the paper. The cold runs do not.
+**Unverified illustrative values from the supplied draft follow.** They have no accompanying raw run logs and must not be cited as observed performance or as a replication failure.
 
-| Measurement        | Baseline (req/s) | Their scheduler (req/s) | Ratio |
+| Measurement        | Baseline (req/s) | Illustrative scheduler (req/s) | Ratio |
 | ------------------ | ---------------: | ----------------------: | ----: |
 | Warm, five runs    |            4,180 |                   9,910 |  2.37 |
 | Cold, fresh process |            3,940 |                  3,010 |  0.76 |
 | Cold, p99 latency  |            118 ms |                 402 ms |  3.41 |
 
-The same table, sortable — sort by ratio and the inversion is the first row:
+The same illustrative values are used by the sortable fixture below. Sorting explains ratio interpretation; it does not turn the fixture into experimental evidence:
 
 <BenchResultsMatrix />
 
 <Callout tone="warning" title="The warm-up is doing the work">
-  Their scheduler compiles a routing table on first request and caches it for the life of the
+  In the hypothetical explanation, the scheduler compiles a routing table on first request and caches it for the life of the
   process. In a warm run that cost is paid once and amortised over thirty seconds. In a cold run it is
-  paid five times, inside the measurement. The paper's numbers are internally consistent; they simply
+  paid five times, inside the measurement. Those assumed numbers
   answer a different question than "how fast does this serve a request?"
 </Callout>
 
-## Where it broke
+## Which choices could reverse the ranking?
 
-Three choices explain the gap, and each one is individually reasonable:
+Three choices could produce such a gap. None is established for an actual paper here:
 
 1. **Warm-up is excluded from the measurement.** Standard practice for serving benchmarks, and
    invisible unless you read the harness.
@@ -86,32 +97,60 @@ Each choice as a fork — publish as-is, or answer the question the claim implie
 
 ## Why this matters beyond one paper
 
-Reproduction is usually framed as a binary: the number matched, or it did not. That framing hides the
-actual failure, which is almost never a wrong number. It is an underspecified measurement.
+Framing reproduction only as “the number matched” or “it did not” can hide a measurement-contract
+mismatch. In this scenario, the missing timing boundary is the issue to investigate. In a real
+reproduction, implementation bugs, workload differences and ordinary variation are alternative
+explanations; the scenario does not establish how often any of them occurs.
 
 <Callout tone="note" title="A reporting checklist that would have caught this">
   For every throughput claim, publish (a) process lifetime, (b) whether warm-up is inside the
   measurement window, (c) the exact command that produces each row, and (d) the same information for
-  the baseline. Four lines in an appendix would make this paper reproducible in an afternoon.
+  the baseline. Those details are necessary starting points; they do not guarantee a reproduction deadline.
 </Callout>
 
 Flip what your own benchmark reporting satisfies:
 
 <BenchChecklistSwitches />
 
-I sent the harness and the cold-start numbers to the authors before publishing this. One replied,
-confirmed the routing-table cache, and added a note to the repository README. That is the right
-outcome: the claim is now scoped, not withdrawn.[^1]
+No author correspondence or upstream correction is substantiated by the supplied materials. A real reproduction should give maintainers a traceable report and retain a public response only with appropriate attribution.
 
 ## What I would change
 
-If a result depends on a warm process, say so in the abstract. "2.4× at steady state" is a different
-sentence from "2.4×", and only one of them is true. The rest of us can then decide whether steady
-state is the number our workload cares about — often it is, and sometimes it is not.
+If a result depends on a warm process, state that scope alongside the headline. “2.4× at steady
+state” identifies a timing regime that an unqualified “2.4×” leaves ambiguous. A reader can then
+judge whether steady state matches the intended workload rather than assuming it describes cold
+start as well.
 
-Four readings of the reproduction, worth checking yourself on:
+Four checks on this hypothetical example, not on an established reproduction:
 
 <BenchQuiz />
 
-[^1]: The repository note is at the commit tagged `v0.9.4-notes`. I have kept my harness in a local
-branch; it is not a hostile audit, just a reader trying to run the code.
+## Reproduction playbook
+
+**Proposed evaluation.** No new experiment is reported by this editorial revision.
+
+1. First obtain the actual paper/version, public harness commit, resolved environment and raw logs. Until those artifacts exist, do not cite the draft’s numbers, commands or alleged correspondence as an empirical reproduction.
+
+2. Define cold start and steady state separately. Give each implementation the same workload, resource limits, initialization policy and measurement window, and record tail-latency and correctness criteria before comparing throughput.
+
+3. Archive each raw repetition with process lifetime and hardware metadata. Report variation and failures, not only the best ratio; compare cold and warm results as different questions rather than selecting the convenient winner.
+
+## Pre-publication audit
+
+- [ ] The real system, harness and raw outputs are available before empirical publication.
+- [ ] Both implementations receive the same initialization and workload treatment.
+- [ ] Every table and interactive figure is labeled illustrative until its provenance is supplied.
+
+## Verdict
+
+The useful lesson is a measurement contract, not a demonstrated reversal against an unnamed paper. This post is published as a hypothetical worked example, not an empirical reproduction; provenance and raw runs would be required to make that stronger claim. Do not claim an author response or corrected upstream result without a public record.
+
+Read the [site’s review approach](/about), browse the [writing archive](/blog), or use [archive search](/search) to place this method in context.
+
+## References
+
+These are primary methodological reading sources, not provenance for the personal observations or unverified numerical fixtures in this draft.
+
+1. [Google Benchmark documentation](https://github.com/google/benchmark).
+2. [pyperf benchmarking toolkit](https://github.com/psf/pyperf).
+3. [pytest-benchmark documentation and source](https://github.com/ionelmc/pytest-benchmark).

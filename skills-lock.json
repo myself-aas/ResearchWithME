@@ -1,12 +1,551 @@
 {
   "version": 2,
   "skills": {
+    "academic-paper": {
+      "source": "imbad0202/academic-research-skills",
+      "commit": "96925d2ab5f2f5d82cbffe7bada8fce163c6bfb4",
+      "sourceType": "github",
+      "skillPath": "academic-paper/SKILL.md",
+      "computedHash": "6ed5f315d9c4a47709ddf1b3790a0c5efbbc5c0e9eb49b223bf3a9d5665957a6",
+      "installMode": "copy"
+    },
+    "academic-paper-reviewer": {
+      "source": "imbad0202/academic-research-skills",
+      "commit": "96925d2ab5f2f5d82cbffe7bada8fce163c6bfb4",
+      "sourceType": "github",
+      "skillPath": "academic-paper-reviewer/SKILL.md",
+      "computedHash": "93a5d5608d1c4612154a0cbe81c1a65fd821ea050325233291661079320545ff",
+      "installMode": "copy"
+    },
+    "agent-browser": {
+      "source": "vercel-labs/agent-browser",
+      "commit": "a67ba089fec5fbfec07346aebad11666463d9799",
+      "sourceType": "github",
+      "skillPath": "skills/agent-browser/SKILL.md",
+      "computedHash": "a0dfac7503f69bcf529b2660fc79964064c4f179eb65695904ddc45fc0d99d20",
+      "installMode": "copy"
+    },
+    "agents-sdk": {
+      "source": "cloudflare/skills",
+      "commit": "ff191de7d903788eceaf516a514ae7d3b56b924a",
+      "sourceType": "github",
+      "skillPath": "skills/agents-sdk/SKILL.md",
+      "computedHash": "7522d2aa3b6b850e3778af08ba3f0d70d1dc9b8c2c5da47e7f2e3f5944e4d691",
+      "installMode": "copy"
+    },
+    "ai-ready": {
+      "source": "johnpapa/ai-ready",
+      "commit": "c251292d2aaf264cd21ac624a98dc34a8baa6150",
+      "sourceType": "github",
+      "skillPath": "skills/ai-ready/SKILL.md",
+      "computedHash": "63d6404ff5d95b5fcd2c94ef39ade8e48cb853c55d64fe7adbdce7c6ec50f0f2",
+      "installMode": "copy"
+    },
+    "ai-ready-awesome-copilot": {
+      "source": "github/awesome-copilot",
+      "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+      "sourceType": "github",
+      "skillPath": "skills/ai-ready/SKILL.md",
+      "computedHash": "885ecb689af2a1a6fed659fd95523e0965ae3de875f38e10952a58c48b76ebc3",
+      "installMode": "copy",
+      "upstreamName": "ai-ready",
+      "upstreamComputedHash": "5b12d391935810260b1078c76831dc38fbaf1b6fcaa0dfa9e7b251bb26e2929e",
+      "adaptation": "Frontmatter name only, to preserve colliding sources side by side."
+    },
+    "ai-seo": {
+      "source": "coreyhaines31/marketingskills",
+      "commit": "8fd2fcade2fd6629026e9dfe6d133b55b36968b9",
+      "sourceType": "github",
+      "skillPath": "skills/ai-seo/SKILL.md",
+      "computedHash": "bb68811a6f0f5e2f734ae2683132d5932bdf4a1a9e109fd719fe9cf2a727a0ff",
+      "installMode": "copy"
+    },
+    "animated-chart": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/animated-chart/SKILL.md",
+      "computedHash": "bf7f8644e66c3f9101d582642fb21b4c409011144741784323e7fb946c25a077",
+      "installMode": "copy"
+    },
+    "animated-infographic": {
+      "source": "iart-ai/data-animation-skills",
+      "commit": "6570c0c4fbc9daa8d7ac1f1163a890352344206b",
+      "sourceType": "github",
+      "skillPath": "skills/animated-infographic/SKILL.md",
+      "computedHash": "8581dfd7d12292d16baab6194b70dedab98099222f24e679ce63590de2a7ba75",
+      "installMode": "copy"
+    },
+    "apple-launch-film": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/apple-launch-film/SKILL.md",
+      "computedHash": "9d6c49377921c1607fadf188a28d7e863f64ad83ac06962b058b076795f5f90b",
+      "installMode": "copy"
+    },
+    "brand-intake": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/brand-intake/SKILL.md",
+      "computedHash": "a4ab9773c4e82b9c7453aed3ca68442bdc705944f1a4e7c2ff89c9a0d394a848",
+      "installMode": "copy"
+    },
+    "browser-mcp-agent": {
+      "source": "antibrow/anti-detect-browser-skills",
+      "commit": "b800e3a54d8d4f93ae5ee23c59d13b43df5d4462",
+      "sourceType": "github",
+      "skillPath": "browser-mcp-agent/SKILL.md",
+      "computedHash": "46df6a34c5c7390d7db035a1646c9cd0eb579d781efeb779c0e573fc0ebb45f3",
+      "installMode": "copy"
+    },
+    "chart-animation": {
+      "source": "iart-ai/data-animation-skills",
+      "commit": "6570c0c4fbc9daa8d7ac1f1163a890352344206b",
+      "sourceType": "github",
+      "skillPath": "skills/chart-animation/SKILL.md",
+      "computedHash": "32b27babec7201892b2c4dfb620c98c707db5f1a47fdcb0426088b53c5da2a70",
+      "installMode": "copy"
+    },
+    "chart-designer": {
+      "source": "claude-office-skills/skills",
+      "commit": "9c4c7d5cd2813a8936bf2c9fdb174ea883b85a11",
+      "sourceType": "github",
+      "skillPath": "chart-designer/SKILL.md",
+      "computedHash": "4420d077b5da73762ba55c2edd307226ebb1917be26b54dd631d8201f6398987",
+      "installMode": "copy"
+    },
+    "chart-visualization": {
+      "source": "antvis/chart-visualization-skills",
+      "commit": "a105fa12a9fa41fccccc2eba7f4b34973628f5d3",
+      "sourceType": "github",
+      "skillPath": "skills/chart-visualization/SKILL.md",
+      "computedHash": "4f5e88d2df95a79552833f3ea6dfee6ca89305a35e11794303e0d165b32e4c49",
+      "installMode": "copy"
+    },
+    "claude-md-improver": {
+      "source": "anthropics/claude-plugins-official",
+      "commit": "0fbfda5a91f4adc311daca25acc99132f40f0b6e",
+      "sourceType": "github",
+      "skillPath": "plugins/claude-md-management/skills/claude-md-improver/SKILL.md",
+      "computedHash": "d6067bb87758243b6817ae021a0b72e409db8919cec22a4cdfc053cd5b269622",
+      "installMode": "copy"
+    },
+    "clean-codebase": {
+      "source": "pjt222/agent-almanac",
+      "commit": "5907366b93fcfae4988161a1ee16ed7018c4e2be",
+      "sourceType": "github",
+      "skillPath": "skills/clean-codebase/SKILL.md",
+      "computedHash": "0b4ea49a0b88990dee5b4445ff7b11b3ad3274e8f7bec159f8b710590042c849",
+      "installMode": "copy",
+      "supportingFiles": [
+        {
+          "path": ".agents/guides/setting-up-your-environment.md",
+          "sourcePath": "guides/setting-up-your-environment.md",
+          "sha256": "ec2b7314617608922065299ea88f2e7608004747cdfe10ac29f1e34f3164d471"
+        }
+      ]
+    },
+    "cloudflare": {
+      "source": "cloudflare/skills",
+      "commit": "ff191de7d903788eceaf516a514ae7d3b56b924a",
+      "sourceType": "github",
+      "skillPath": "skills/cloudflare/SKILL.md",
+      "computedHash": "c87fdf5939f1c0b86dc895af18dbff1be369707fc3f1cd9cc038c3c3be5c694f",
+      "installMode": "copy"
+    },
+    "create-github-action-workflow-specification": {
+      "source": "github/awesome-copilot",
+      "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+      "sourceType": "github",
+      "skillPath": "skills/create-github-action-workflow-specification/SKILL.md",
+      "computedHash": "df127912e6985e328bb396bba8fa6944e0770ab8e644e9d4b5b24fe30a093dbf",
+      "installMode": "copy"
+    },
+    "design-doc-mermaid": {
+      "source": "spillwavesolutions/design-doc-mermaid",
+      "commit": "c36d83503d2ba9c1e51638dc2d8a34758a377dea",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "964fe47363d1c14bd000215d9ad9461d8210f0ed809599abac8fc10847b0f130",
+      "installMode": "copy"
+    },
+    "dispatching-parallel-agents": {
+      "source": "obra/superpowers",
+      "commit": "22f0b463e7a5e579904dd6211a520321035526f7",
+      "sourceType": "github",
+      "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
+      "computedHash": "d799e464fdfb0edc80b3b7ad7cce03e64ee07fc5db231c988688a81438503659",
+      "installMode": "copy"
+    },
+    "documentation-and-adrs": {
+      "source": "addyosmani/agent-skills",
+      "commit": "e997ac5b9a74eab332d5e9793bb38a38c8cfdd74",
+      "sourceType": "github",
+      "skillPath": "skills/documentation-and-adrs/SKILL.md",
+      "computedHash": "deb39d7c8157563bc14a48f0d22003c82f4d8370b69c96efde476fe12318d188",
+      "installMode": "copy"
+    },
+    "documentation-writer": {
+      "source": "github/awesome-copilot",
+      "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+      "sourceType": "github",
+      "skillPath": "skills/documentation-writer/SKILL.md",
+      "computedHash": "b2de0a266264b7a994d9bf1b771d3b35ab3780d16ccd658ffceb2936d3df1db6",
+      "installMode": "copy"
+    },
+    "echarts": {
+      "source": "sentimony/skills",
+      "commit": "8712218dcfb05c42ea5004e9001648659fd16e6c",
+      "sourceType": "github",
+      "skillPath": "skills/echarts/SKILL.md",
+      "computedHash": "bece7b127bdc83b8946d14e00286045d2c45bd14949413c6722cc9dd031169fe",
+      "installMode": "copy"
+    },
+    "elements": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/elements/SKILL.md",
+      "computedHash": "79b4f6c0c61ebb00be61a485c9c3ac49e08facde92547817b9e2e55e7d36e690",
+      "installMode": "copy"
+    },
+    "excalidraw-diagram-generator": {
+      "source": "github/awesome-copilot",
+      "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+      "sourceType": "github",
+      "skillPath": "skills/excalidraw-diagram-generator/SKILL.md",
+      "computedHash": "92f0577c08dede6615ec5c9260aae9a41ded67803f1591425601488654f8a890",
+      "installMode": "copy"
+    },
+    "firecrawl-seo-audit": {
+      "source": "firecrawl/firecrawl-workflows",
+      "commit": "d2a986240f9d786ae54fc33fcfd9ad37308e9cc3",
+      "sourceType": "github",
+      "skillPath": "skills/firecrawl-seo-audit/SKILL.md",
+      "computedHash": "35b30493520d2f242236231f2ec857aebaea175be9f9e78c51c292608f858661",
+      "installMode": "copy"
+    },
+    "generative-ui": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/generative-ui/SKILL.md",
+      "computedHash": "b33eff4f5bc9cd68d73bf2e6c5f6f43744295c4f4cf210cfd2142c0b912b774a",
+      "installMode": "copy"
+    },
+    "gh-fix-ci": {
+      "source": "openai/skills",
+      "commit": "49f948faa9258a0c61caceaf225e179651397431",
+      "sourceType": "github",
+      "skillPath": "skills/.curated/gh-fix-ci/SKILL.md",
+      "computedHash": "c937071ab3bf10c67ce9ca4152f318de0d9fbb5a24e2652a7e7d5a760bbc31be",
+      "installMode": "copy"
+    },
+    "gh-issue-sync": {
+      "source": "mitsuhiko/gh-issue-sync",
+      "commit": "955fe4c48653599294f9130008a996e2d9048ef5",
+      "sourceType": "github",
+      "skillPath": "skill/SKILL.md",
+      "computedHash": "387f792c94b7a081863d3185da31cd63b11e2a7f9640e1e459fcb6b518d7a923",
+      "installMode": "copy"
+    },
+    "gh-stack": {
+      "source": "github/gh-stack",
+      "commit": "80b6d6e910cc1b7eaa26b961d7721ade21084fed",
+      "sourceType": "github",
+      "skillPath": "skills/gh-stack/SKILL.md",
+      "computedHash": "4ff26e30a0103af77552e5eebbabfbf80734fd23b1485f0c513a0b35a3126613",
+      "installMode": "copy"
+    },
+    "git-commit": {
+      "source": "github/awesome-copilot",
+      "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+      "sourceType": "github",
+      "skillPath": "skills/git-commit/SKILL.md",
+      "computedHash": "90716f49501831c6c0679509b295495021eae83923d6a39035ce7c2d9cd2e8f2",
+      "installMode": "copy"
+    },
+    "github-actions": {
+      "source": "callstackincubator/agent-skills",
+      "commit": "59e9d17446a248b21d86f078fcd0bd2d36db1ca4",
+      "sourceType": "github",
+      "skillPath": "skills/github-actions/SKILL.md",
+      "computedHash": "ad180ec4e5dbc0b73695c269cd9e1bae465222ab7afb27ea4df2c162efcaadee",
+      "installMode": "copy"
+    },
+    "github-issues": {
+      "source": "github/awesome-copilot",
+      "commit": "93fc8b9ee3ef56b9b5e7261e6ce92d314cb2c1cf",
+      "sourceType": "github",
+      "skillPath": "skills/github-issues/SKILL.md",
+      "computedHash": "2f264ec8b6728b145806031d0e98c3d6e076684bce64ca596be8e82d5495814a",
+      "installMode": "copy"
+    },
+    "helm-chart-scaffolding": {
+      "source": "wshobson/agents",
+      "commit": "c96b5f6552dba32e4492307493ee613581430715",
+      "sourceType": "github",
+      "skillPath": "plugins/kubernetes-operations/skills/helm-chart-scaffolding/SKILL.md",
+      "computedHash": "1f4d52efa44e6f6aa935951007a57403b0ef400275ac09bfe2bd8492c6d0bd9d",
+      "installMode": "copy"
+    },
     "impeccable": {
       "source": "pbakaus/impeccable",
       "commit": "9e460a87ef338ee9d12c7beed8fedc597a5af5f7",
       "sourceType": "github",
       "skillPath": ".agents/skills/impeccable/SKILL.md",
       "computedHash": "b89bce2429b2b581d38620af9b555e2b4762b12f6f4f61fb07fba7757a284b3e"
+    },
+    "launch-video": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/launch-video/SKILL.md",
+      "computedHash": "0122a7e03c22a51693ac2c59269d3a4337dbb4ee2f6bdc9625cb6b1087c2a12e",
+      "installMode": "copy"
+    },
+    "loop-cover": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/loop-cover/SKILL.md",
+      "computedHash": "2fcd6dc8dd4f8efa63bd2b068ba0d31b311c30ef2fa8b4caa09ca95d6b5ef384",
+      "installMode": "copy"
+    },
+    "milestone-reveal": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/milestone-reveal/SKILL.md",
+      "computedHash": "99f107102ac218f40c294015c437ac68524416c8b6d962c9dba9dda4d9bf98a9",
+      "installMode": "copy"
+    },
+    "model-showdown": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/model-showdown/SKILL.md",
+      "computedHash": "c4c32be9c9816dff005c203dfa95c423df2aae70188800b4e6cfa1ee8dd6add4",
+      "installMode": "copy"
+    },
+    "motion-brief-writer": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/motion-brief-writer/SKILL.md",
+      "computedHash": "b2e846aaa2624bf95202ee290ba8a07eafadc4438911f382ce0f48d018236c13",
+      "installMode": "copy"
+    },
+    "motion-effects": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/motion-effects/SKILL.md",
+      "computedHash": "665f2911af78d794d32cd18c2c775b76ff12699fbbb05d7954eb21bb4f2b2b33",
+      "installMode": "copy"
+    },
+    "motion-prompt-writer": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/motion-prompt-writer/SKILL.md",
+      "computedHash": "a984c4625eea48c3b3ec779b8418f3b1f72b60b912474c5e6b93948d6217b306",
+      "installMode": "copy"
+    },
+    "nature-academic-search": {
+      "source": "yuan1z0825/nature-skills",
+      "commit": "96a89bc7ef78e3bece9a50bb9ad08ddea4dc0e1e",
+      "sourceType": "github",
+      "skillPath": "skills/nature-academic-search/SKILL.md",
+      "computedHash": "29c0bca5ceab11db25e06c379345fcfead81aac73c073377f3c67cf2e701e084",
+      "installMode": "copy"
+    },
+    "newsletter-promo": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/newsletter-promo/SKILL.md",
+      "computedHash": "ab4f48303759b75528b0fbd09ba021bc01843b00561b1d5a75d2d69f6a0e0e19",
+      "installMode": "copy"
+    },
+    "obsidian-markdown": {
+      "source": "obsidianmd/obsidian-skills",
+      "commit": "79e85b73ef041fdfb6437ab3824e2fe29eda9244",
+      "sourceType": "github",
+      "skillPath": "plugins/obsidian/skills/obsidian-markdown/SKILL.md",
+      "computedHash": "c5c46fd4ab6321d2ccc3f680ee5372efd1d070749e6ddb8e571e0b0c2ac1ae16",
+      "installMode": "copy"
+    },
+    "presentation-video": {
+      "source": "iart-ai/data-animation-skills",
+      "commit": "6570c0c4fbc9daa8d7ac1f1163a890352344206b",
+      "sourceType": "github",
+      "skillPath": "skills/presentation-video/SKILL.md",
+      "computedHash": "52eec9811ecea03a77026da27d1ec873ee702a4e54116d845cac26d473a1fbb4",
+      "installMode": "copy"
+    },
+    "primitives": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/primitives/SKILL.md",
+      "computedHash": "0619f2a78e45b3c9a895ea75727de0d9d634d2d159adc775401ed4152654baff",
+      "installMode": "copy"
+    },
+    "programmatic-seo": {
+      "source": "coreyhaines31/marketingskills",
+      "commit": "8fd2fcade2fd6629026e9dfe6d133b55b36968b9",
+      "sourceType": "github",
+      "skillPath": "skills/programmatic-seo/SKILL.md",
+      "computedHash": "f37db3caa28d6e8e7d4bc0b73e65db26cae7dfb15b53d97f58a0f2330bca545b",
+      "installMode": "copy"
+    },
+    "recharts": {
+      "source": "andy-spike/skills",
+      "commit": "2737eadc3b88390775e71b4e0e4c5e1571607409",
+      "sourceType": "github",
+      "skillPath": "skills/recharts/SKILL.md",
+      "computedHash": "a2c9d5fd941c2fb7596dd1b2ad1e9eb000b2a2efdc57539990ad56ba580550a6",
+      "installMode": "copy"
+    },
+    "reel-export": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/reel-export/SKILL.md",
+      "computedHash": "b1dc112e84eefb44000a2661ddb9d63b96ef0b6d26d0f3d6cc8e4c83de2d425d",
+      "installMode": "copy"
+    },
+    "reference-to-motion": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/reference-to-motion/SKILL.md",
+      "computedHash": "e090335adae1b0233d00fe2e341c19b0a02a18579af7b61765164655de45934f",
+      "installMode": "copy"
+    },
+    "research-paper-writer": {
+      "source": "ailabs-393/ai-labs-claude-skills",
+      "commit": "1a12bc7aadcc7b211f77a7455db454b77a71f827",
+      "sourceType": "github",
+      "skillPath": "packages/skills/research-paper-writer/SKILL.md",
+      "computedHash": "0f95561020d95f19cd83294ef27adfa313eef7736f49fcf82ebb6a4b24320946",
+      "installMode": "copy"
+    },
+    "research-paper-writing": {
+      "source": "master-cai/research-paper-writing-skills",
+      "commit": "77e7c2c1ba06f7d71844873147665437a03aac1b",
+      "sourceType": "github",
+      "skillPath": "research-paper-writing/SKILL.md",
+      "computedHash": "35762bf3cabe7ab129a307f17e9be0bd077bba1c57f488534d3d753dd84657b4",
+      "installMode": "copy"
+    },
+    "runtime": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/runtime/SKILL.md",
+      "computedHash": "c0ccfc2fa375dd9956327d2e77f7226c93f8d1234414c99d67267bc6c79faf73",
+      "installMode": "copy"
+    },
+    "seo": {
+      "source": "affaan-m/ecc",
+      "commit": "4adeee6732a12d1540f49a4d50a38ce8c97f9a53",
+      "sourceType": "github",
+      "skillPath": "skills/seo/SKILL.md",
+      "computedHash": "d3ab36bacbd4631faeff5d5e6d1ab3ca93fb9af33303fc25528ff650d842b1d0",
+      "installMode": "copy"
+    },
+    "seo-aeo-best-practices": {
+      "source": "sanity-io/agent-toolkit",
+      "commit": "627296c38d9bd80b23343f93666e5bcb3c9ccc86",
+      "sourceType": "github",
+      "skillPath": "skills/seo-aeo-best-practices/SKILL.md",
+      "computedHash": "3dd0a23b819eb148b81ebc609dfe0827491018591afc0c35dc0401013300b5a1",
+      "installMode": "copy"
+    },
+    "seo-audit": {
+      "source": "coreyhaines31/marketingskills",
+      "commit": "8fd2fcade2fd6629026e9dfe6d133b55b36968b9",
+      "sourceType": "github",
+      "skillPath": "skills/seo-audit/SKILL.md",
+      "computedHash": "537ccf84d4a257cb1b6a9a3643fe56738632989768e1823ffe206ad1c64cd68a",
+      "installMode": "copy"
+    },
+    "seo-claude": {
+      "source": "agricidaniel/claude-seo",
+      "commit": "5d7d85ef32ade08dd4265cb678af8357ca6e6098",
+      "sourceType": "github",
+      "skillPath": "skills/seo/SKILL.md",
+      "computedHash": "bd4dcfd02ffa55160934f29532b65d393b247f0389e87e1d700a4a7c5cf9c668",
+      "installMode": "copy",
+      "upstreamName": "seo",
+      "upstreamComputedHash": "dcb7b46907e46c5d8e211ccc21e5f6be50769ac5f6295be37165fa14d8e13436",
+      "adaptation": "Frontmatter name only, to preserve colliding sources side by side."
+    },
+    "seo-geo": {
+      "source": "resciencelab/opc-skills",
+      "commit": "775b56a48c64fb8633261e3d7fe3be48a005bdef",
+      "sourceType": "github",
+      "skillPath": "skills/seo-geo/SKILL.md",
+      "computedHash": "3a38d9449cb57e24e14de88045865c237e974b2ccb3ef8127fa84582f5a702c8",
+      "installMode": "copy"
+    },
+    "seo-iannuttall": {
+      "source": "iannuttall/seo",
+      "commit": "a96797b784d84a9551e84cca6b4b26679374f7c5",
+      "sourceType": "github",
+      "skillPath": "skills/seo/SKILL.md",
+      "computedHash": "82c16f215f4bc36743a520773e612682996f2318b1058c5493cb7033af97ac4b",
+      "installMode": "copy",
+      "upstreamName": "seo",
+      "upstreamComputedHash": "76d80d1090241b7f2746891f9ed3eea83f3ffe21aeec3102f9da3dd7d9334c6f",
+      "adaptation": "Frontmatter name only, to preserve colliding sources side by side."
+    },
+    "seo-web-quality": {
+      "source": "addyosmani/web-quality-skills",
+      "commit": "afa8da942115f2961fdbfa80807ea0b232ff6c00",
+      "sourceType": "github",
+      "skillPath": "skills/seo/SKILL.md",
+      "computedHash": "20dfa7a79de97a14096a18bd68cc73ec70b07eed3d21ccc921cc4f1133857be7",
+      "installMode": "copy",
+      "upstreamName": "seo",
+      "upstreamComputedHash": "fa30e94756c5c40663f4527e8220a985393abbe3a6256e43d02589948027467e",
+      "adaptation": "Frontmatter name only, to preserve colliding sources side by side."
+    },
+    "title-sequence-3d": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/title-sequence-3d/SKILL.md",
+      "computedHash": "c22dae16fed38d03886e1e060f26fa5e70b0b33d318477a9394f9a63d090ec2a",
+      "installMode": "copy"
+    },
+    "tools": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/tools/SKILL.md",
+      "computedHash": "ca670e9129d2b7d7e6f5690477d0d91f4544479128f80dc00676756b381f9e45",
+      "installMode": "copy"
+    },
+    "vox-explainer": {
+      "source": "charlie947/motion-graphics-skills",
+      "commit": "229022ebca76972e119e36ada23a1648d51665ab",
+      "sourceType": "github",
+      "skillPath": "skills/vox-explainer/SKILL.md",
+      "computedHash": "9f7033b698ad90313818325583b9bdf6db824fe1f385210d4a1b73db7c704676",
+      "installMode": "copy"
+    },
+    "writing-for-agents": {
+      "source": "mattpocock/skills",
+      "commit": "6f7f7831a625f040a8e06a0e7954826b87ce775a",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/writing-for-agents/SKILL.md",
+      "computedHash": "e79a2476b2417b228922453478d9505a6b9af19f3a412e560728ce62ed3555ca",
+      "installMode": "copy"
     }
   }
 }

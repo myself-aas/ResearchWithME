@@ -1,12 +1,33 @@
 ---
 title: "Apache Superset review: what to verify before you self-host"
 description: "Apache Superset repository review of BI architecture, metadata, workers and access controls, separating dashboard features from production guarantees."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "apache-superset"]
-draft: true
+draft: false
+faq:
+  - question: "Does backing up the warehouse also preserve Superset dashboards?"
+    answer: "Not by itself. The reviewed architecture stores application definitions and users in a separate metadata database. Rehearse a consistent restore of the actual application state and configuration."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Application metadata and analytical data have separate recovery plans. Role tests include SQL and underlying database identities."
+cover: "/images/covers/apache-superset-review-before-you-self-host.webp"
+coverAlt: "An analytics observatory above database layers and an access gate."
 ---
 
-### Key findings
+Superset separates analytical data access from its own application metadata and supporting services. A dashboard demonstration therefore cannot establish restore readiness or a secure data boundary. This pinned source review examines those responsibilities and proposes isolated role, query, and recovery checks before a team treats self-hosted business intelligence as production infrastructure.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | BI application state, query identities and recovery |
+| Inputs and boundaries | Warehouse connections, metadata database, cache/broker and optional worker features |
+| Principal failure case | Chart visibility and row filters do not replace least-privilege database credentials |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - Superset queries analytical data sources while storing its own metadata separately.
 - Caches and workers are optional only relative to the features a deployment enables.
 - Role and row-filter features require explicit access testing; a dashboard is not an isolation proof.
@@ -38,6 +59,7 @@ The cache description covers query results and message-broker responsibilities, 
 | Warehouse/data source | Executes analytical queries | What can the configured database identity read or change? |
 | Metadata database | Stores application definitions and users | Can the team restore a consistent application state? |
 | Cache/broker | Results reuse and worker messaging | What happens on expiry, loss or reconnect? |
+
 The platform as a structure — expand each service to the evaluation question it carries:
 
 <SupersetPlatformChart />
@@ -103,19 +125,29 @@ Three checks before you self-host:
 
 <SupersetQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. List required features before resolving the application, metadata database, cache and worker/beat topology. Pin versions and use a synthetic warehouse with known restricted rows and separate analyst/viewer identities.
 
-1. Restore a staged metadata backup and confirm dashboards, connections and authorized user access without exposing secrets.
-2. Test separate Admin, restricted analyst and viewer identities against charts, SQL access and intended row filters using least-privilege database credentials.
-3. Exercise cache loss, asynchronous failures and scheduled reports in the exact installation method and packaged version intended for production.
+2. Test chart access, SQL access and scheduled/async paths with those identities. Record the warehouse credential used by each request; compare returned rows with the intended policy rather than treating a hidden dashboard as proof of denial.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/apache-superset-review-before-you-self-host/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Restore metadata and required configuration/secrets in an isolated environment. Verify dashboard definitions, connections and authorized queries; exercise cache/worker failure for enabled features before approving the operating plan.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Application metadata and analytical data have separate recovery plans.
+- [ ] Role tests include SQL and underlying database identities.
+- [ ] Enabled asynchronous/reporting features have their required services and operators.
+
+The [inspection record](/evidence/apache-superset-review-before-you-self-host/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Shortlist Superset when a team can govern the warehouse and operate the application lifecycle. Pause if quick-start success or dashboard filters are the only security argument. Source-described features are worth testing; this review does not certify data isolation, concurrency or scheduled delivery.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

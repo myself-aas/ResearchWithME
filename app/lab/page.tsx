@@ -67,6 +67,7 @@ export default function LabPage() {
           </p>
         </header>
 
+        <p className="r-body"><Link href="/lab/genui" className="r-row-link">Explore the research UI catalog and illustrative fixtures</Link></p>
         <div className="flex flex-col gap-14 py-10">
           {FIGURES.map((figure) => (
             <section key={figure.toolName} aria-labelledby={figure.toolName} className="scroll-mt-24">

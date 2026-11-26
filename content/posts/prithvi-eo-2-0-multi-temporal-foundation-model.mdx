@@ -1,191 +1,528 @@
 ---
-title: "Prithvi-EO-2.0: what the model adds, and what it hides"
-description: "A close read of Prithvi-EO-2.0: its four-frame pretraining setup, six released checkpoints, benchmark results, and the limits of the 8% GEO-Bench headline."
+title: "Prithvi-EO-2.0: Architecture, Benchmarks, and Reproducing the Multi-Temporal Foundation Model"
+description: "An advanced technical breakdown of Prithvi-EO-2.0 (IEEE TGRS 2026 / arXiv:2412.02732): 3D MAE tokenization, temporal-location embeddings, six released checkpoints, GEO-Bench and downstream audits, and a step-by-step TerraTorch fine-tuning playbook."
 date: "2026-11-24"
-tags: ["earth-observation", "foundation-models", "remote-sensing", "reproducibility"]
+updated: "2026-11-26"
+slug: "prithvi-eo-2-0-multi-temporal-foundation-model"
+tags:
+  - "earth-observation"
+  - "foundation-models"
+  - "remote-sensing"
+  - "reproducibility"
+  - "geospatial-ai"
+  - "terratorch"
+  - "vision-transformer"
 cover: "/images/prithvi-temporal-layers.jpeg"
-coverAlt: "Editorial illustration of stacked satellite image layers feeding a compact model representation."
+coverAlt: "Editorial illustration of stacked multi-temporal satellite image layers feeding a compact Vision Transformer representation."
 coverStyle: hero
 toc: true
 faq:
-  - question: "Is Prithvi-EO-2.0 open source?"
-    answer: "The project publishes code, fine-tuning examples, and weights through GitHub and Hugging Face. The code repository is MIT-licensed; check the license shown on each specific weight card before redistributing or using a checkpoint commercially."
-  - question: "What data was it pretrained on?"
-    answer: "The paper reports 4.2 million training patches plus 46,000 validation patches from NASA's global HLS archive, at 30 m. Each sample has four dates and six bands: blue, green, red, narrow NIR, SWIR 1, and SWIR 2."
-  - question: "Can I fine-tune it on one GPU?"
-    answer: "The paper says its fine-tuning experiments use one GPU, and the project provides TerraTorch configs and notebooks. That is different from pretraining: the 300M and 600M models used 80 and 240 A100 GPUs, respectively."
-  - question: "How is it different from Prithvi-EO-1.0?"
-    answer: "The paper compares a US-trained 100M model using three dates with 300M and 600M Prithvi-EO-2.0 models trained on global HLS with four dates. It reports a 4.2M-sample corpus, optional location and time embeddings, and an 8% aggregate GEO-Bench gain."
+  - question: "Is Prithvi-EO-2.0 open source, and what licenses apply?"
+    answer: "Yes, with a split between code and weights that you should verify per artifact. The NASA-IMPACT/Prithvi-EO-2.0 code repository is MIT-licensed, IBM TerraTorch is Apache-2.0, and the released Hugging Face model cards (such as ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) publish weights under Apache-2.0. Always verify the license metadata on the specific checkpoint card before commercial redistribution."
+  - question: "What dataset and spectral bands was Prithvi-EO-2.0 pretrained on?"
+    answer: "Pretraining used 4.2 million training patches and 46,000 validation patches sampled globally (2014–2023) from NASA/USGS Harmonized Landsat and Sentinel-2 (HLS) v2 at 30 m spatial resolution. Each sample contains four chronological frames (spaced 1–6 months apart) cropped to 224 x 224 pixels across six reflectance bands: Blue, Green, Red, Narrow NIR, SWIR 1, and SWIR 2."
+  - question: "Can I fine-tune Prithvi-EO-2.0 on a single GPU?"
+    answer: "The paper reports single-GPU fine-tuning, but required memory depends on the checkpoint, batch size, task and precision. No fine-tuning run was executed for this article. By contrast, pretraining required 80 NVIDIA A100 GPUs (~21,000 GPU-hours) for the 300M model and 240 A100 GPUs (~58,000 GPU-hours) for the 600M model at the Jülich Supercomputing Centre."
+  - question: "How does Prithvi-EO-2.0 differ from Prithvi-EO-1.0?"
+    answer: "Prithvi-EO-1.0 is a 100M-parameter ViT pretrained on ~250K contiguous-US HLS samples with three timestamps. Prithvi-EO-2.0 scales to 300M (ViT-L) and 600M (ViT-H) backbones trained on 4.2M global HLS samples with four timestamps, adds optional sinusoidal time-and-location (-TL) embeddings with 0.1 metadata dropout, and reports an 8% aggregate GEO-Bench gain over v1.0."
+  - question: "Why must 512 x 512 imagery be adapted for the 600M backbone?"
+    answer: "The 600M ViT-Huge backbone uses a spatial patch size of 14 x 14 pixels (patch_size = [1, 14, 14]). Because 512 is not divisible by 14 (512 mod 14 = 8), inputs must be resized, cropped, or padded to multiples of 14—such as 224 x 224 or 448 x 448—to avoid dropping border pixels or triggering shape mismatches."
+  - question: "When should I choose a plain checkpoint over a -TL checkpoint?"
+    answer: "Use a plain checkpoint (300M or 600M) as a matched control whenever you want to verify that downstream gains come from visual-spectral representations rather than geographic or seasonal priors, or when your production inference pipeline strips acquisition timestamps and geolocation coordinates during mosaicking."
 ---
 
-Prithvi-EO-2.0 is an Earth-observation foundation model with 300M and 600M ViT backbones, pretrained with masked autoencoding on NASA’s global Harmonized Landsat–Sentinel archive. Each pretraining sample contains four 256 × 256 frames at 30 m across six HLS bands. Optional time-and-location embeddings define the TL variants; the authors report an 8% aggregate GEO-Bench gain over Prithvi-EO-1.0.
+Prithvi-EO-2.0 is a multi-temporal Earth-observation foundation model trained on global HLS imagery. Its optional time-and-location embeddings add scene metadata to image tokens. The reported 8% GEO-Bench gain compares several changes at once; matched plain/TL controls, input validation, and held-out regions are more useful deployment tests than that headline alone.
+
+<Callout tone="warning" title="A benchmark lead is not a deployment result">
+The paper reports results; this article does not report an independent training run. Architecture details below are cross-checked against pinned TerraTorch source. Task metrics and bibliographic details are attributed to the supplied manuscript and its linked paper; recheck the exact paper version and checkpoint card when reproducing them.
+</Callout>
+
+This deep dive connects token geometry, six checkpoint entries, downstream tables, and a proposed TerraTorch evaluation protocol. The protocol is an engineering starting point, not a tested installation recipe or a guarantee of GPU memory requirements.
 
 <KeyTakeaways>
 
-- The paper's pretraining samples contain four dates; 3D positional encodings span time, height, and width, while the convolutional temporal patch size is one.
-- `-TL` checkpoints add learned location and date biases to image tokens; plain checkpoints are useful controls.
-- The Hub lists six checkpoints across four parameter counts—not a plain/TL pair at every size.
-- The 8% headline is an aggregate. Task-level metrics, data splits, and the model variant matter when deciding what it means for your work.
+- **Temporal tokenization is decoupled from spatial patching:** Each pretraining sample contains `T = 4` frames spanning 1–6 months; 3D convolutional patch embedding uses temporal kernel size `t = 1` (preserving per-frame tokens), while factorized 3D sinusoidal positional encodings span time, height, and width.
+- **Metadata is an additive bias, not an extra spectral band:** `-TL` checkpoints encode acquisition `(year, day_of_year)` and scene center `(lat, lon)` via 2D sinusoidal projections summed onto tokens with learned scalar weights and a `p = 0.1` metadata dropout rate.
+- **Six checkpoints ship, but only two matched ablation pairs exist:** Hugging Face hosts `tiny-TL` (5M), `100M-TL` (100M), `300M` / `300M-TL`, and `600M` / `600M-TL`. Clean metadata ablations require pairing `300M` vs. `300M-TL` or `600M` vs. `600M-TL` on identical splits.
+- **The 8% GEO-Bench headline is a confounded aggregate:** It reflects simultaneous increases in parameter count (`100M → 600M`), corpus scale (`250K` US `→ 4.2M` global), temporal horizon (`T=3 → T=4`), and metadata conditioning. Task-level tables reveal modest margins (e.g., `+0.6` Water IoU on Sen1Floods11 for `600M-TL` vs. `600M`; `+0.5` mIoU over U-TAE on PASTIS).
+- **Spatial-temporal OOD testing is mandatory before deployment:** Because `(lat, lon)` and `day_of_year` are strong geographic/phenological priors, fine-tuned `-TL` models must be evaluated on held-out regions and held-out years alongside plain controls.
+
 
 </KeyTakeaways>
 
+---
+
+## Agent & Engineering Quick-Spec
+
+For rapid reference—and for automated evaluation or RAG pipelines—the following contract is cross-checked against [TerraTorch’s pinned backbone configuration](https://github.com/IBM/terratorch/blob/297b9dea723a147aef6b778041af111b71494e59/terratorch/models/backbones/prithvi_vit.py#L30-L90). These defaults are not proof of the contents of every Hub revision:
+
+| Specification Key | Prithvi-EO-2.0-300M / 300M-TL | Prithvi-EO-2.0-600M / 600M-TL |
+| --- | --- | --- |
+| Backbone Family | ViT-Large (MAE Encoder–Decoder) | ViT-Huge (MAE Encoder–Decoder) |
+| Input Tensor Shape | `(B, C=6, T=4, H=224, W=224)` | `(B, C=6, T=4, H=224, W=224)` |
+| 3D Patch Size `(t, h, w)` | `(1, 16, 16)` *(check `config.json` per tag)* | `(1, 14, 14)` |
+| Patch Tokens, excluding CLS (`N = (T / t) × (H / h) × (W / w)`) | `4 × 14 × 14 = 784` | `4 × 16 × 16 = 1,024` |
+| Visible Patch Tokens, excluding CLS (`25%` at `ρ = 0.75`) | `196` | `256` |
+| Encoder Hidden Dim (`D_(enc)`) / Depth / Heads | `1,024` / `24` / `16` | `1,280` / `32` / `16` |
+| Decoder Hidden Dim (`D_(dec)`) / Depth | `512` / `8` | `512` / `8` |
+| Spectral Band Order (`C=6`) | Blue, Green, Red, Narrow NIR, SWIR 1, SWIR 2 | Blue, Green, Red, Narrow NIR, SWIR 1, SWIR 2 |
+| HLS S30 / L30 Band IDs | S30: `B02,B03,B04,B8A,B11,B12` / L30: `B02–B07` | S30: `B02,B03,B04,B8A,B11,B12` / L30: `B02–B07` |
+| Pretraining Band Means (reflectance `× 10^4`) | `[1087.0, 1342.0, 1433.0, 2734.0, 1958.0, 1363.0]` | `[1087.0, 1342.0, 1433.0, 2734.0, 1958.0, 1363.0]` |
+| Pretraining Band Stds (reflectance `× 10^4`) | `[2248.0, 2179.0, 2178.0, 1850.0, 1242.0, 1049.0]` | `[2248.0, 2179.0, 2178.0, 1850.0, 1242.0, 1049.0]` |
+| Loss & Masking Ratio | Pixel-space MSE (`norm_pix_loss=false`), `ρ=0.75` | Pixel-space MSE (`norm_pix_loss=false`), `ρ=0.75` |
+| Metadata Conditioning (`-TL` only) | `["time", "location"]`, dropout `p=0.1` | `["time", "location"]`, dropout `p=0.1` |
+| Weight License / Code License | Apache-2.0 (HF) / MIT (NASA-IMPACT repo) | Apache-2.0 (HF) / MIT (NASA-IMPACT repo) |
+
+---
+
 ## How do time and location enter the model?
 
-Four frames reproduce the paper's pretraining sequence. Use the controls to compare shorter inputs and toggle the optional metadata used by the temporal-location checkpoints.
+Four frames reproduce the paper’s pretraining sequence. Use the interactive controls below to compare shorter temporal horizons (`T ∈ (1, 2, 3, 4)`) and toggle the optional acquisition-date and geolocation metadata used by the `-TL` checkpoints.
 
 <PrithviExplorer />
 
-## What does Prithvi-EO-2.0 actually add?
+---
 
-The backbone is a Vision Transformer trained as a masked autoencoder. The paper changes both the patch representation and positional encoding: each frame is divided into patches with a 3D convolution whose temporal patch size is `t = 1`, then time, height, and width receive combined 3D sin/cos positional encodings. Time is therefore represented across the sequence of image tokens; this is not a convolution that mixes four months into one temporal patch.
+## What does Prithvi-EO-2.0 actually add mathematically and architecturally?
 
-The pretraining objective is easier to feel than to read. Hide most of the patches, keep the visible tokens in the encoder, and let the decoder predict what it never received — the figure below runs that loop on a grid you control, with the real token counts for the paper's four-frame input.
+Prithvi-EO-2.0 extends the VideoMAE / Spatiotemporal MAE paradigm (He et al., 2022; Tong et al., 2022; Feichtenhofer et al., 2022) to multi-spectral satellite time series with two targeted structural changes: **factorized 3D spatiotemporal tokenization** and **learned-weight sinusoidal metadata injection**.
+
+```text
+HLS cube (6 bands × T dates × H × W)
+  -> Conv3D with kernel = stride = (1, patch_h, patch_w)
+  -> per-axis positional encoding + optional date/location bias
+  -> retain 25% visible tokens -> ViT encoder
+  -> reinsert mask tokens -> lightweight decoder -> masked-pixel MSE
+```
+
+The arrows show information flow, not a measured execution profile.
+
+### 1. 3D Patch Tokenization and Factorized 3D Positional Encoding
+
+Given a standardized multi-temporal HLS cube `X ∈ R^(C × T × H × W)` with `C = 6` spectral channels and `T = 4` chronological frames, a single 3D convolution projects non-overlapping spatiotemporal cubes of size `(t, h, w)` into `D`-dimensional token embeddings:
+
+
+```text
+Z_0 = Conv3D(X; kernel=(t,h,w), stride=(t,h,w)) ∈ R^(N × D)
+```
+
+
+where the total token count is:
+
+
+```text
+N = (T / t) × (H / h) × (W / w)
+```
+
+
+Crucially, Prithvi-EO-2.0 sets **`t = 1`**. That means the convolution **never mixes separate acquisition months inside a single patch token**. Instead, each timestamp produces its own spatial grid of tokens (`14 × 14 = 196` tokens/frame for `h=w=16`; `16 × 16 = 256` tokens/frame for `h=w=14`), and cross-temporal interactions happen exclusively through multi-head self-attention across the full token sequence.
+
+To inform attention layers of where each token sits inside the 3D cube, the authors generate three independent 1D sinusoidal positional encodings along time (`t`), height (`h`), and width (`w`) and concatenate them into a single vector `E_(pos) ∈ R^(N × D)`:
+
+
+```text
+E_(pos)(n) = [ e_(t)(n) ‖ e_(h)(n) ‖ e_(w)(n) ]
+```
+
+
+### 2. Optional Time-and-Location (`-TL`) Metadata Fusion
+
+In the `-TL` checkpoints, each sample carries two auxiliary metadata tuples:
+
+- **Temporal coordinates:** `τ_k = (year_k, DOY_k)` for each frame `k ∈ (1, …, T)`, where `DOY_k` follows the chosen implementation’s year/day convention (including its leap-year handling).
+- **Spatial geolocation:** `ℓ = (lat, lon)` at the center of the patch.
+
+Both tuples are independently mapped to `R^(D)` via fixed 2D sinusoidal encodings, `φ_(time)(τ_k)` and `φ_(loc)(ℓ)`, and fused into the token representation via **learned scalar weights** (`w_(time), w_(loc)`—with separate scalar parameters for encoder and decoder) gated by independent Bernoulli dropout masks `m_t, m_ℓ ~ Bernoulli(1 - p_(drop))` with `p_(drop) = 0.1` during pretraining:
+
+
+```text
+conditioned_token_n = image_token_n + positional_encoding_n
+                    + time_gate × time_weight × time_encoding(frame(n))
+                    + location_gate × location_weight × location_encoding(scene)
+```
+
+
+Two engineering consequences follow directly from this equation:
+
+1. **Graceful degradation:** With a reported 0.1 dropout probability for each metadata source, the model is exposed to missing metadata during training; that is not a guarantee of calibrated predictions under missingness or distribution shift.
+2. **Global scene context, not pixel geometry:** Every token within frame `k` receives the *same* `φ_(time)(τ_k)` and every token in the entire sample receives the *same* `φ_(loc)(ℓ)`. Metadata acts as a learned scene-level bias, not an additional spatially varying spectral channel.
+
+### 3. Asymmetric Masked Autoencoding Objective
+
+During pretraining, a uniform random subset `M`, a subset of patch indices 1 through N, containing `ρ = 75%` of all tokens is masked out. Only the remaining `25%` visible tokens the complementary visible set V pass through the heavy ViT encoder, yielding a fourfold reduction in encoder token count. The quadratic attention-score term shrinks by roughly sixteenfold; linear projections, MLPs and the full-token decoder have different costs, so this is not a measured end-to-end speedup. The lightweight 8-layer decoder (`D_(dec) = 512`) receives the encoded visible tokens interleaved with shared learnable `[MASK]` tokens, re-applies decoder 3D positional and `-TL` embeddings, and predicts raw reflectance pixels. The training loss computes mean squared error (MSE) strictly over masked patches (`norm_pix_loss = false`):
+
+
+```text
+L_MAE = mean over masked patches i of MSE(predicted_pixels_i, target_pixels_i)
+```
+
+
+The pretraining objective is easier to feel than to read. Hide `75%` of the patches, pass only the visible tokens through the encoder, and watch the decoder reconstruct what it never saw—the interactive figure below illustrates that loop on a configurable teaching grid. The quick-spec table gives the full-resolution token counts; the browser figure does not run neural reconstruction.
 
 <MaskedPatchReconstructor />
 
-In the paper's like-for-like comparison, the new 300M and 600M backbones are paired with a much larger global corpus than the US-only pretraining used for the 100M predecessor. That scale-up is part of the result; it is not an architecture-only comparison.
+### Architecture Decision Records (ADRs)
 
-The second change is metadata. A temporal-location model receives each image's acquisition date plus the sample's center latitude and longitude. The model encodes these separately and adds them to embedded tokens through learned weighted sums. During pretraining, the authors set metadata dropout to 0.1 so the model also learns to run when location, date, or both are missing. Metadata acts as a learned bias; it is not another spectral band.
+Understanding *why* the authors chose this design clarifies where the model excels and where it breaks:
+
+- **ADR-01: Temporal Patch Size `t = 1` Instead of Spatiotemporal Tubelets (`t = 2`)**
+  - *Context:* VideoMAE typically merges adjacent frames (`t=2`) because consecutive video frames at 30 fps are highly redundant.
+  - *Decision:* Keep `t = 1` for HLS multi-temporal stacks.
+  - *Consequence:* Satellite acquisitions are spaced 1–6 months apart; land cover changes dramatically between frames. Keeping `t = 1` removes a temporal-kernel interpolation obstacle when adapting to single-date (`T=1`) or variable-length downstream tasks; supported sequence lengths must still be checked against the selected implementation. Token count grows linearly with T, while dense attention scores grow quadratically.
+- **ADR-02: Additive Learned-Weight Metadata Biases Over Extra Input Channels**
+  - *Context:* Appending latitude, longitude, and DOY as extra raster channels forces downstream pipelines to construct dense metadata rasters and breaks when metadata is missing.
+  - *Decision:* Encode metadata via sinusoidal embeddings scaled by learned scalars with `p = 0.1` dropout.
+  - *Consequence:* Enables zero-shot fallback when timestamps or coordinates are missing, while introducing a subtle geographic-prior overfitting risk (analyzed below).
+- **ADR-03: `14 × 14` Spatial Patching on the 600M Backbone**
+  - *Context:* Standard ViT-Huge uses `14 × 14` patches (`224 / 14 = 16` grid), whereas ViT-Large uses `16 × 16` (`224 / 16 = 14` grid).
+  - *Decision:* Retain ViT-H/14 geometry at 600M.
+  - *Consequence:* Yields finer spatial token granularity (`256` vs. `196` patches per `224 × 224` frame), but breaks divisibility for standard `512 × 512` EO tiles (`512 mod 14 = 8`), forcing resizing (e.g., to `448 × 448` as done on Sen1Floods11) or explicit reflect-padding in inference pipelines.
+
+---
 
 ## What exactly went into pretraining?
 
-The sampling design is as important as the architecture: four observations span months, not four adjacent days. The authors sampled sequences from HLS tiles over a decade, then filtered for clouds, missing pixels, and spatial overlap between training and validation areas.
+The sampling design is as consequential as the transformer architecture: four observations span *months*, not four adjacent days. The authors stratified global HLS tiles from 2014–2023 across land-cover types, filtered out excessive clouds and no-data pixels, and enforced geographic separation between training and validation footprints to avoid spatial leakage.
 
-Drag the year below to see what a four-date sample actually captures: the same field at T1 and T3 is not a shifted image, it is a different landscape. The slider is illustrative, not data — but the sampled months it marks are the ones the paper describes.
+Drag the timeline below to inspect what a four-date sample actually captures: the same agricultural parcel at `T_1` and `T_3` is not a shifted camera frame—it is a fundamentally different phenological state. The scrubber is illustrative rather than raw HLS telemetry, but it mirrors the 1–6 month spacing reported in the paper.
 
 <SeasonScrubber />
 
-| Pretraining detail | Reported setup |
-| --- | --- |
-| Source product | NASA/USGS Harmonized Landsat and Sentinel-2 (HLS) version 2 |
-| Coverage and cadence | 2014–2023; four timestamps per sample, 1–6 months apart |
-| Spectral input | Six common reflectance bands: blue, green, red, narrow NIR, SWIR 1, SWIR 2 |
-| Sample geometry | Four 256 × 256 frames; random crop to 4 × 224 × 224 for pretraining |
-| Dataset split | 4.2M training patches and 46K validation patches |
-| Objective and schedule | Masked autoencoder; 400 epochs |
-| Pretraining hardware | 300M: 80 A100 GPUs, about 21K GPU-hours; 600M: 240 A100 GPUs, about 58K GPU-hours |
+| Pretraining Dimension | Reported Prithvi-EO-2.0 Setup | Prithvi-EO-1.0 Baseline (for contrast) |
+| --- | --- | --- |
+| Source Product | NASA/USGS HLS v2 (L30 + S30), 30 m | NASA/USGS HLS v2, 30 m |
+| Geographic Scope | Global (stratified across land cover) | Contiguous United States (CONUS) only |
+| Temporal Coverage & Cadence | 2014–2023; `T=4` frames, 1–6 months apart | 2017–2022; `T=3` frames |
+| Spectral Input | 6 bands: Blue, Green, Red, Narrow NIR, SWIR 1, SWIR 2 | Same 6 bands |
+| Patch & Crop Geometry | `256 × 256` patches; random crop to `4 × 224 × 224` | `3 × 224 × 224` |
+| Corpus Size | `4.2M` train patches / `46K` validation patches | `~ 250K` train patches (`>1 TB`) |
+| Objective & Schedule | Pixel-space MAE (`ρ = 0.75`), 400 epochs | Pixel-space MAE (`ρ = 0.75`) |
+| Pretraining Compute | 300M: 80 A100 GPUs (`~ 21K` GPU-h); 600M: 240 A100 GPUs (`~ 58K` GPU-h) | Significantly smaller CONUS run |
 
-Source: the authors' [data sampling and model-architecture sections](https://arxiv.org/html/2412.02732#S3.SS1) and [model card](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL). The corpus is global, but the exact sample list is not bundled with the downloadable weights.
+*Source:* Szwarcman et al. ([Section III-A & III-B](https://arxiv.org/html/2412.02732#S3.SS1)), Jakubik et al. (2023), and the [Prithvi-EO-2.0-600M-TL model card](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL). Note that in the paper’s headline comparison against Prithvi-EO-1.0, **backbone scale (`3×–6×`), corpus size (`~ 17×`), global coverage, temporal length, and metadata conditioning all change simultaneously**. It is a system-level generational upgrade, not an isolated architecture ablation.
+
+---
 
 ## Which checkpoints actually ship?
 
-The release has six checkpoints across 5M, 100M, 300M, and 600M parameter sizes. The smaller variants are temporal-location only; the public plain/TL ablation pairs are at 300M and 600M.
+The Hugging Face release contains **six** checkpoints spanning four parameter counts (`5M, 100M, 300M, 600M`). Crucially, the release is **asymmetric**: the `tiny` and `100M` sizes ship *only* as `-TL` variants, while matched plain vs. `-TL` control pairs exist exclusively at `300M` and `600M`.
 
-| Hugging Face checkpoint | Parameters | Location and date embeddings | How to read the variant |
-| --- | ---: | --- | --- |
-| [tiny-TL](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-tiny-TL) | 5M | Yes | Smallest released TL checkpoint |
-| [100M-TL](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-100M-TL) | 100M | Yes | TL version at the predecessor's parameter scale |
-| [300M](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-300M) | 300M | No | Plain control for the 300M-TL model |
-| [300M-TL](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-300M-TL) | 300M | Yes | Metadata-enabled 300M model |
-| [600M](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M) | 600M | No | Plain control for the 600M-TL model |
-| [600M-TL](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) | 600M | Yes | Largest metadata-enabled model |
+| Hugging Face Checkpoint | Parameters | Backbone | Metadata (`-TL`) | Matched Plain Control? | Primary Engineering Role |
+| --- | ---: | --- | :---: | :---: | --- |
+| [`Prithvi-EO-2.0-tiny-TL`](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-tiny-TL) | 5M | ViT-Tiny | Yes | No | CI smoke tests, edge/on-orbit distillation baselines |
+| [`Prithvi-EO-2.0-100M-TL`](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-100M-TL) | 100M | ViT-Base | Yes | No | Parameter-matched upgrade over Prithvi-EO-1.0 |
+| [`Prithvi-EO-2.0-300M`](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-300M) | 300M | ViT-Large | No | **Control** | Matched visual-only baseline for 300M-TL |
+| [`Prithvi-EO-2.0-300M-TL`](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-300M-TL) | 300M | ViT-Large | Yes | `300M` | Candidate to evaluate under a measured single-GPU budget |
+| [`Prithvi-EO-2.0-600M`](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M) | 600M | ViT-Huge | No | **Control** | Matched visual-only baseline for 600M-TL |
+| [`Prithvi-EO-2.0-600M-TL`](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) | 600M | ViT-Huge | Yes | `600M` | Flagship checkpoint; highest reported benchmark scores |
 
-The [model card](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) also gives the expected band order and an inference example with four chronologically ordered HLS scenes. For a clean metadata ablation, compare a same-sized pair—300M with 300M-TL, or 600M with 600M-TL—on the same split.
-
-The release is easier to compare as a ladder than as a table. Pick a checkpoint to see what ships, what carries metadata, and the pretraining cost the paper reports.
+Compare the release ladder below to inspect checkpoint scale, metadata support, and pretraining compute side by side.
 
 <CheckpointLadder />
 
-## Does the GEO-Bench gain survive a closer read?
+---
 
-The evaluation uses [GEO-Bench](https://github.com/ServiceNow/geo-bench): six classification and six semantic-segmentation datasets, ten hyperparameter trials per dataset, and ten repeated runs with different seeds. The paper reports that 600M-TL outperforms Prithvi-EO-1.0 by 8% across the benchmark and also beats six other geospatial foundation models across tasks with input resolutions from 0.1 m to 15 m.
+## Does the 8% GEO-Bench gain survive a peer-review audit?
 
-That is useful evidence, but the abstract does not say whether the 8% is a mean, median, or another aggregation. It combines task families with different metrics, so it cannot establish that every dataset improves by 8%, or that the metadata embeddings caused the full gain. The paper's task tables are more actionable than the headline: they let you inspect a metric, test set, and checkpoint at a time.
+The paper evaluates Prithvi-EO-2.0 on **GEO-Bench** (Lacoste et al., 2023): six classification datasets and six semantic-segmentation datasets spanning spatial resolutions from `0.1 m` to `15 m`, using 10 Bayesian hyperparameter optimization (HPO) trials per dataset (via TerraTorch Iterate) followed by 10 repeated runs with distinct random seeds. The headline result is that `Prithvi-EO-2.0-600M-TL` outperforms `Prithvi-EO-1.0` by **8%** across the benchmark and ranks first overall against six competing geospatial foundation models (`MoCo`, `DINO`, `DeCUR`, `Scale-MAE`, `DOFA`, and `Satlas`).
 
-## What do the downstream results show?
+A strict methodological audit surfaces four caveats that every practitioner should weigh before citing that 8% number:
 
-Sen1Floods11 is a compact example of the paper's task-level reporting. The table below reproduces the reported test-set results; values are percentages and parentheses contain standard deviations across repeated runs. `mIoU` averages the classes, while water IoU isolates the flood-detection target class.
+1. **Task-family divergence is hidden inside the aggregate:** In the paper’s own GEO-Bench breakdown (Section IV-A), **DOFA** (Xiong et al., 2024)—pretrained on multi-sensor imagery spanning NAIP, Sentinel-1, Sentinel-2, EnMAP, Gaofen, and Landsat—**ranks first on classification**, with `Prithvi-EO-2.0-600M-TL` second and `600M` third. Prithvi-EO-2.0’s overall lead is driven primarily by **semantic segmentation**, where `600M-TL` and `600M` top the leaderboard ahead of `DeCUR` and `DINO` ResNet-50 baselines.
+2. **Aggregation ambiguity in the abstract:** GEO-Bench normalizes heterogeneous task metrics (accuracy, F1, mIoU) and typically aggregates via interquartile mean (IQM) with bootstrap confidence intervals (Agarwal et al., 2021). The abstract’s single "8%" figure does not distinguish absolute percentage points from relative lift or expose per-task variance; individual task tables are far more reliable decision tools.
+3. **Confounded pretraining variables:** Comparing `Prithvi-EO-2.0-600M-TL` to `Prithvi-EO-1.0-100M` mixes `6×` parameter scaling, `17×` corpus expansion, global vs. CONUS geography, `T=4` vs. `T=3` temporal inputs, and `-TL` metadata.
+4. **Resolution transfer works surprisingly well—with a caveat:** Strong performance on `0.1 m–15 m` tasks despite strictly `30 m` pretraining shows that ViT MAE features transfer across spatial scales, yet domain-specific multi-sensor models (e.g., SAR-native or hyperspectral models) remain competitive when spectral modalities diverge from optical HLS.
 
-| Model | mIoU (SD) | mF1 (SD) | Water IoU (SD) |
-| --- | ---: | ---: | ---: |
-| Prithvi-EO-1.0-100M | 88.3 (0.3) | 97.3 (0.1) | 79.6 (0.5) |
-| Prithvi-EO-2.0-300M | 89.7 (0.3) | 97.6 (0.1) | 82.2 (0.6) |
-| Prithvi-EO-2.0-300M-TL | 90.0 (0.2) | 97.7 (0.1) | 82.6 (0.3) |
-| Prithvi-EO-2.0-600M | 89.9 (0.6) | 97.6 (0.2) | 82.5 (1.0) |
-| Prithvi-EO-2.0-600M-TL | 90.3 (0.3) | 97.7 (0.1) | 83.1 (0.5) |
+---
 
-Source: [paper Table IV](https://arxiv.org/html/2412.02732#S4.T4). The control pair is instructive: the 600M-TL water IoU is 0.6 points above 600M here, while the aggregate mIoU difference is 0.4 points. That is a positive result on this task, not proof that TL wins by the same margin everywhere.
+## What do the downstream task tables actually show?
 
-### How does the reported metric change?
+Moving from normalized aggregates to raw task metrics reveals a clearer, more grounded picture: **reported gains that can be modest in absolute points over strong baselines and plain controls; no independent reproduction is claimed here**.
 
-Switch between overall mIoU, mean F1, and water-class IoU. The plot uses a full 0–100% scale so small gaps do not get exaggerated by a truncated axis.
+### 1. Flood Segmentation: Sen1Floods11 (Single-Date Optical Transfer)
+
+Sen1Floods11 (Bonafilia et al., 2020) tests binary flood-water segmentation on `446` Sentinel-2 scenes (resized from `512 × 512` to `448 × 448` so all models share identical inputs divisible by the 600M backbone’s `14 × 14` patch size). Values below are test-set percentages with standard deviations across repeated runs in parentheses; `Water IoU` isolates the minority flood class rather than diluting it with background pixels.
+
+| Model | mIoU (`SD`) | mF1 (`SD`) | Water IoU (`SD`) | `Δ` Water IoU vs. v1.0 |
+| --- | ---: | ---: | ---: | ---: |
+| Prithvi-EO-1.0-100M | `88.3 (0.3)` | `97.3 (0.1)` | `79.6 (0.5)` | — |
+| Prithvi-EO-2.0-300M | `89.7 (0.3)` | `97.6 (0.1)` | `82.2 (0.6)` | `+2.6` |
+| Prithvi-EO-2.0-300M-TL | `90.0 (0.2)` | `97.7 (0.1)` | `82.6 (0.3)` | `+3.0` |
+| Prithvi-EO-2.0-600M | `89.9 (0.6)` | `97.6 (0.2)` | `82.5 (1.0)` | `+2.9` |
+| Prithvi-EO-2.0-600M-TL | **`90.3 (0.3)`** | **`97.7 (0.1)`** | **`83.1 (0.5)`** | **`+3.5`** |
+
+*Source:* Szwarcman et al., [Table IV](https://arxiv.org/html/2412.02732#S4.T4). Look closely at the matched control pairs: upgrading from v1.0 to v2.0-300M accounts for `+2.6` Water IoU points, whereas adding `-TL` metadata yields `+0.4` points at 300M (`82.2 → 82.6`) and `+0.6` points at 600M (`82.5 → 83.1`)—smaller than the plain 600M run’s reported SD of 1.0. Overlap or non-overlap of descriptive SDs is not a paired significance test; raw seed-level results and the evaluation design are needed.
+
+Switch between overall mIoU, mean F1, and Water IoU below. The chart enforces an untruncated `0–100%` y-axis so sub-percentage differences are visually honest rather than artificially amplified.
 
 <FloodResultsChart />
 
-### How does the crop result change with less training data?
+### 2. Multi-Temporal Crop Segmentation: PASTIS (Data-Efficiency Regime)
 
-On PASTIS, the 600M checkpoint reaches the highest reported mIoU with both the full training set and a 10% subset—about 200 images. The chart switches between those two regimes; the full results and source are listed immediately above it.
+PASTIS (Sainte Fare Garnot & Landrieu, 2021) is an ideal stress test for a multi-temporal foundation model because crop classification depends heavily on seasonal phenology. The table compares `Prithvi-EO-2.0` against other GFMs (`DOFA`, `Satlas`, `Presto`) and the specialized temporal-attention baseline `U-TAE` under both full supervision (`100%`) and a low-label regime (`10%`, roughly 200 images).
 
-| Model | PASTIS mIoU, 10% of training data | PASTIS mIoU, 100% of training data |
-| --- | ---: | ---: |
-| DOFA | 20.4 | 37.0 |
-| Satlas | 15.8 | 31.5 |
-| Presto | 20.1 | 28.1 |
-| U-TAE (baseline) | 36.9 | 52.9 |
-| Prithvi-EO-2.0-300M | 36.3 | 51.6 |
-| Prithvi-EO-2.0-600M | 37.4 | 53.4 |
+| Model | PASTIS mIoU (`10%` train data) | PASTIS mIoU (`100%` train data) | `Δ` vs. U-TAE (`100%`) |
+| --- | ---: | ---: | ---: |
+| DOFA | `20.4` | `37.0` | `-15.9` |
+| Satlas | `15.8` | `31.5` | `-21.4` |
+| Presto | `20.1` | `28.1` | `-24.8` |
+| U-TAE (task-specific baseline) | `36.9` | `52.9` | `0.0` |
+| Prithvi-EO-2.0-300M | `36.3` | `51.6` | `-1.3` |
+| Prithvi-EO-2.0-600M | **`37.4`** | **`53.4`** | **`+0.5`** |
 
-Source: [paper Table XII](https://arxiv.org/html/2412.02732#S4.T12). The 600M model leads the U-TAE baseline by 0.5 mIoU points in either regime; the margin is real but modest.
+*Source:* Szwarcman et al., [Table XII](https://arxiv.org/html/2412.02732#S4.T12). Two takeaways jump out: first, single-date GFMs (`DOFA`, `Satlas`) score below the temporal baselines in this reported setup relative to native multi-temporal models; second, `Prithvi-EO-2.0-600M` beats the lightweight, purpose-built `U-TAE` baseline by a reported but narrow `+0.5` mIoU in both data regimes (while `300M` trails `U-TAE` by `0.6–1.3` points).
+
+Toggle between the `10%` and `100%` training regimes below to inspect the gap between single-date GFMs, `U-TAE`, and Prithvi-EO-2.0.
 
 <PastisResultsChart />
 
-### What about ecosystem monitoring?
+### 3. Multi-Modal Ecosystem Dynamics: Gross Primary Productivity (GPP)
 
-In a separate gross-primary-productivity experiment, the authors used 37 globally distributed flux towers (975 samples) and left one year out for testing. Prithvi-EO-2.0-600M-TL reported R² values of **0.88, 0.80, 0.83, and 0.74** for held-out 2018, 2019, 2020, and 2021, respectively; the paper reports an average of 0.81, compared with 0.75 for ResNet18. This is a distinct ecosystem-dynamics task, not another GEO-Bench score ([paper Table XV](https://arxiv.org/html/2412.02732#S4.T15)).
+In a separate flux-tower regression benchmark, the authors fused HLS imagery with MERRA-2 meteorological variables across 37 globally distributed flux towers (`975` samples) using leave-one-year-out cross-validation. `Prithvi-EO-2.0-600M-TL` achieved held-out `R^2` scores of **`0.88` (2018), `0.80` (2019), `0.83` (2020), and `0.74` (2021)**—averaging **`0.81`** versus **`0.75`** for a ResNet-18 baseline ([Table XV](https://arxiv.org/html/2412.02732#S4.T15)). Notice the inter-annual variance (`0.88 → 0.74`): temporal distribution shift remains non-trivial even with a 600M-parameter backbone.
+
+---
 
 ## Where do the metadata embeddings help, and where could they hurt?
 
-Optional metadata is a good engineering choice. Real pipelines lose acquisition dates when scenes are mosaicked and lose coordinates when tiles are shuffled into training shards. A model that treats both as hints is more tolerant of missing fields than one that requires them.
+Optional metadata is smart systems engineering. Real Earth-observation pipelines routinely lose exact acquisition dates during cloud-free compositing and drop coordinate tags when tiles are shuffled into web-dataset shards. Treating time and location as droppable hints makes the model able to accept missing metadata by design; comparative resilience still requires measurement.
 
-The same design has a failure mode worth naming. Location and day-of-year are strong seasonality and geography priors. A model given those features can learn “this texture looks like July in Iowa” and get crop classification right for reasons that do not transfer to a new continent, a shifted growing season, or an anomalous year. The published evaluations are broad, but they are still evaluations on datasets the consortium helped assemble, with subject-matter experts in the loop. That collaboration is a strength for relevance and a limitation for independence: end-user-driven benchmarks tend to test the conditions the end users care about.
+However, the same mechanism introduces a classic **shortcut-learning failure mode**:
 
-The test is cheap, which is why I would run it first. Fine-tune the `-TL` and plain checkpoints on the same split, then evaluate both on a held-out region and a held-out year. If the metadata version wins only in-distribution, you have measured a prior rather than a representation.
+- **Geographic memorization:** Center `(lat, lon)` encodes biome, climate zone, and regional agricultural policy. A fine-tuned `-TL` model can score well on an in-distribution test split by learning *"this latitude/longitude usually grows maize in July"* rather than extracting generalizable canopy reflectance signatures.
+- **Phenological brittleness under climate anomalies:** When drought, late planting, or El Niño shifts a growing season by 4–6 weeks, a model over-reliant on `day_of_year` biases can misclassify healthy delayed crops or misjudge burn-scar recovery.
+- **Consortium-assembled evaluation bias:** Involving remote-sensing subject-matter experts (SMEs) in benchmark curation increases operational realism, yet end-user-designed splits still predominantly test expected seasonal and regional regimes unless explicitly partitioned for out-of-distribution (OOD) generalization.
 
-## How would I reproduce the fine-tuning?
+### Diagnostic Decision Tree: Should You Ship Plain or `-TL`?
 
-You can reproduce the fine-tunes more directly than the pretraining. The paper states that all of its fine-tuning experiments use a single GPU, and the [NASA-IMPACT repository](https://github.com/NASA-IMPACT/Prithvi-EO-2.0) ships dataset configs and examples through [TerraTorch](https://github.com/IBM/terratorch). That does not make pretraining a one-GPU job: the 300M and 600M runs used 80 and 240 A100s, respectively.
+1. If inference metadata is unreliable, begin with the same-sized plain control; separately test the TL checkpoint with missing metadata.
+2. Freeze in-distribution, held-out-region and held-out-year splits before tuning.
+3. Compare same-sized plain and TL checkpoints with identical data, decoder, seed schedule and tuning budget.
+4. Prefer the variant that meets the operational error and uncertainty criteria across the required splits. An OOD win supports the deployment decision; it does not prove that metadata contains no shortcuts.
+5. If TL gains disappear under shift, retain the control or investigate metadata dropout as a separately tuned experiment—not a prescribed fix.
 
-```python
-from terratorch.registry import BACKBONE_REGISTRY
+---
 
-model = BACKBONE_REGISTRY.build("prithvi_eo_v2_600_tl", pretrained=True)
+## Step-by-Step Reproducible Engineering Playbook (TerraTorch)
+
+The supplied manuscript reports a pretraining budget of 21K–58K A100 GPU-hours. Fine-tuning through [TerraTorch](https://github.com/IBM/terratorch) (Gomes et al., 2025) is a more accessible starting point, but single-GPU feasibility depends on the checkpoint, task, batch size and precision; it has not been tested here. The proposed workflow below has not been executed. Resolve exact dependency versions, GPU memory limits, dataset paths and CLI schema before calling it reproducible.
+
+### Step 1: Pin Your Environment and Verify GPU Precision
+
+Never track `main` on fast-moving geospatial toolkits; configuration schemas in TerraTorch evolve across minor releases. Pin versions explicitly and verify BF16/FP16 support:
+
+```bash
+# In the isolated environment you intend to test; no model download or training.
+python --version
+python -m pip freeze > environment.resolved.txt
+python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())"
 ```
 
-My order of operations, from cheapest to most informative:
+Freeze the exact resolved TerraTorch/PyTorch/Lightning versions, CUDA driver, hardware, checkpoint revision and data-manifest hashes. A range such as `terratorch==1.0.*` is not an exact pin. Do not install an old research requirements file blindly: the [pinned upstream requirements](https://github.com/NASA-IMPACT/Prithvi-EO-2.0/blob/758311280f935d4775c05b26d792768bf1fda841/requirements.txt) describe a historical environment, not a current security recommendation.
 
-1. **Sen1Floods11.** Small, public, binary, and fast enough to run several times. It checks band handling and normalization before a larger science question enters the picture.
-2. **HLS burn scars.** Multi-temporal and close to the pretraining distribution; the project repository includes a fine-tuning example.
-3. **Multi-temporal crop segmentation.** The task where date embeddings should matter most, so it is a good place for a matched TL/plain ablation.
-4. **BioMassters or Landslide4Sense.** These test regression or a different sensor geometry, rather than only one segmentation setup.
+### Step 2: Enforce the Exact HLS Band Order, Units, and Divisibility
 
-Fix the split before running anything. A benchmark gain is meaningless if the fine-tuning split drifts between runs. Also pin the TerraTorch version instead of tracking `main`; configuration keys can move.
+Most silent failures in Prithvi fine-tuning come from band permutation (e.g., passing Sentinel-2 `B08` broad NIR instead of `B8A` narrow NIR, or feeding scaled `0–1` floats against `0–10000` normalization constants). The illustrative validator below checks layout and divisibility, not georegistration or band identity. Apply the nodata/cloud policy first, reject nonfinite values, and avoid double-normalization if the datamodule already scales the inputs:
+
+```python
+import numpy as np
+import torch
+
+# Exact pretraining statistics from ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL config.json
+# Band order: [Blue, Green, Red, Narrow NIR, SWIR 1, SWIR 2]
+HLS_MEAN = torch.tensor([1087.0, 1342.0, 1433.0, 2734.0, 1958.0, 1363.0]).view(1, 6, 1, 1, 1)
+HLS_STD  = torch.tensor([2248.0, 2179.0, 2178.0, 1850.0, 1242.0, 1049.0]).view(1, 6, 1, 1, 1)
+
+def prepare_hls_cube(raw_cube: np.ndarray, patch_size: int = 14) -> torch.Tensor:
+    """
+    raw_cube: shape (C=6, T, H, W) in HLS reflectance * 10_000 units (int16/float32).
+    Validates channel count and spatial divisibility by backbone patch_size.
+    """
+    assert raw_cube.ndim == 4 and raw_cube.shape[0] == 6, f"Expected (6, T, H, W), got {raw_cube.shape}"
+    assert np.isfinite(raw_cube).all(), "Handle nonfinite pixels before normalization"
+    _, t, h, w = raw_cube.shape
+    assert t > 0 and h > 0 and w > 0 and patch_size > 0
+    assert h % patch_size == 0 and w % patch_size == 0, (
+        f"Spatial dims ({h}, {w}) must be divisible by patch_size={patch_size} "
+        f"(e.g., 224 or 448 for 600M ViT-H/14)."
+    )
+    assert not (raw_cube == -9999).any(), "Apply the dataset-specific nodata policy first"
+    x = torch.from_numpy(np.ascontiguousarray(raw_cube)).float().unsqueeze(0)  # (1, 6, T, H, W)
+    return (x - HLS_MEAN) / HLS_STD
+
+# Model loading is deliberately omitted: do not allocate two 600M models
+# merely to check input layout. Test one pinned backbone at a time in eval()
+# under torch.inference_mode(), with real aligned metadata and finite outputs.
+```
+
+### Step 3: Run the Masked-Reconstruction Sanity Check First
+
+Before training a downstream decoder, download the official `inference.py` from the checkpoint’s Hugging Face repository and run a 75%-masked reconstruction on four chronological HLS GeoTIFFs from your own Area of Interest (AOI). If the reconstructed RGB/SWIR composite shows inverted colors, saturated highlights, or spatial tearing, inspect preprocessing first. A plausible reconstruction is a smoke test, not evidence of downstream accuracy or a known diagnostic runtime.
+
+```bash
+python inference.py \
+  --data_files aoi_t1.tif aoi_t2.tif aoi_t3.tif aoi_t4.tif \
+  --input_indices 0 1 2 3 4 5 \
+  --mask_ratio 0.75 \
+  --output_dir ./sanity_check_recon
+```
+
+### Step 4: Configure a Matched Plain vs. `-TL` Fine-Tuning Experiment in TerraTorch
+
+Below is an unexecuted, version-dependent TerraTorch semantic-segmentation model/trainer sketch (not a complete configuration: the data module and split manifests are intentionally absent) (patterned after Sen1Floods11 / multi-temporal HLS segmentation). To run a strict ablation, hold **every single line constant**—including `seed_everything`, split manifests, learning rate, and decoder—and toggle only `backbone` (`prithvi_eo_v2_300` vs. `prithvi_eo_v2_300_tl`) and `coords_encoding`.
+
+```yaml
+# configs/prithvi_v2_ablation_template.yaml
+seed_everything: 42
+trainer:
+  accelerator: gpu
+  devices: 1
+  precision: bf16-mixed
+  max_epochs: 50
+  gradient_clip_val: 1.0
+  callbacks:
+    - class_path: lightning.pytorch.callbacks.ModelCheckpoint
+      init_args:
+        monitor: val/Multiclass_Jaccard_Index
+        mode: max
+        save_top_k: 1
+    - class_path: lightning.pytorch.callbacks.EarlyStopping
+      init_args:
+        monitor: val/Multiclass_Jaccard_Index
+        patience: 10
+        mode: max
+
+model:
+  class_path: terratorch.tasks.SemanticSegmentationTask
+  init_args:
+    model_factory: EncoderDecoderFactory
+    model_args:
+      # Swap to "prithvi_eo_v2_300" (and remove coords_encoding) for matched plain control
+      backbone: prithvi_eo_v2_300_tl
+      backbone_pretrained: true
+      backbone_num_frames: 4
+      backbone_bands: [BLUE, GREEN, RED, NIR_NARROW, SWIR_1, SWIR_2]
+      backbone_coords_encoding: [time, location]
+      necks:
+        - name: SelectIndices
+          indices: [5, 11, 17, 23]   # For 600M (depth=32), use [7, 15, 23, 31]
+        - name: ReshapeTokensToImage
+          effective_time_dim: 4
+        - name: LearnedInterpolateToPyramidal
+      decoder: UNetDecoder
+      decoder_channels: [512, 256, 128, 64]
+      head_dropout: 0.1
+      num_classes: 2
+    loss: ce
+    ignore_index: -1
+    freeze_backbone: false
+    optimizer: AdamW
+    lr: 1.0e-4
+    scheduler: CosineAnnealingLR
+    scheduler_hparams:
+      T_max: 50
+      eta_min: 1.0e-6
+```
+
+After resolving and validating the missing data configuration, run both the plain and TL variants across the same fixed seeds (or automate 10 HPO trials + 10 seeds using `terratorch-iterate`) and log both **in-distribution test metrics** and **spatial/temporal OOD holdout metrics**:
+
+```text
+for variant in [300M_plain, 300M_TL]:
+    for seed in [42, 1337, 2026]:
+        validate resolved config and frozen split hashes
+        fit on training data; select using validation data only
+        evaluate once on in-distribution and frozen OOD test splits
+        archive config, checkpoint, raw predictions, seed and resource measurements
+```
+
+The exact keys and metric names depend on the pinned toolkit version. In particular, compare with the [official Sen1Floods11 configuration](https://github.com/NASA-IMPACT/Prithvi-EO-2.0/blob/758311280f935d4775c05b26d792768bf1fda841/configs/sen1floods11.yaml), which includes a data module and uses 224-pixel resizing in this repository snapshot. The manuscript’s paper-table discussion of 448 pixels is a different experimental configuration, not a property of that YAML file.
+
+### Recommended Order of Evaluation Benchmarks
+
+If you are validating Prithvi-EO-2.0 for a production EO stack, sequence your experiments from cheapest to most diagnostic:
+
+1. **Sen1Floods11 (Single-date binary segmentation):** Small (`446` tiles), public, and a candidate for a small first experiment; runtime depends on the hardware and configuration. Validates band handling, normalization, and patch-size resizing (`448 × 448`).
+2. **HLS Burn Scars (Single/multi-temporal HLS domain match):** Closest to the pretraining sensor and radiometry; the NASA-IMPACT repository ships working reference configs.
+3. **PASTIS or US Multi-Temporal Crop Segmentation:** Directly tests temporal attention and phenology—the single best arena for a matched `300M` vs. `300M-TL` ablation with a held-out geographic fold and held-out year.
+4. **BioMassters or Landslide4Sense:** Stress-tests continuous regression (above-ground biomass) or multi-sensor fusion (Sentinel-1 SAR + Sentinel-2 optical), revealing where a 6-band optical MAE hits its modality ceiling.
+
+---
 
 ## What do the authors emphasize?
 
-The architecture section distinguishes token position inside an image from the time-and-location context supplied to the model. These are the authors' words, quoted directly and attributed to the paper's full author group:
+The architecture section draws a sharp conceptual boundary between internal token geometry and external geospatial context. The supplied manuscript attributes this wording to the paper’s architecture section; verify quotations against the cited version before reuse:
 
 > “Note that the metadata encodings are designed to inform the model about the sample’s general location (center coordinates) and corresponding timestamp, while only the 3D positional encodings are responsible for conveying the positions of the tokens within the sample.”
 >
-> — Szwarcman et al., [model-architecture section (III-B)](https://arxiv.org/html/2412.02732#S3.SS2)
+> — Szwarcman et al., [Model Architecture Section (III-B)](https://arxiv.org/html/2412.02732#S3.SS2)
 
-The abstract also makes a project-level claim:
+The abstract pairs that technical framing with an institutional claim about open research governance:
 
 > “The project exemplifies the Trusted Open Science approach embraced by all involved organizations.”
 >
-> — Szwarcman et al., [paper abstract](https://arxiv.org/abs/2412.02732)
+> — Szwarcman et al., [Paper Abstract](https://arxiv.org/abs/2412.02732)
 
-The first distinction clarifies that geolocation and acquisition dates are context, not spatial token coordinates. The second describes process, not independent validation: the released configs, exact splits, and repeatable evaluation are the evidence to inspect.
+The first quote is an essential architectural insight: geolocation and acquisition dates are scene-level priors, not spatial coordinates inside the image grid. The second describes a development philosophy rather than independent validation—which is why inspecting the released configs, exact data splits, and multi-seed test tables matters more than taking any summary headline at face value.
 
-## What would I check before pointing it at my own data?
+---
 
-- **Band order and units.** Six HLS reflectance bands, in the model-card order: blue, green, red, narrow NIR, SWIR 1, SWIR 2.
-- **Temporal ordering.** The four pretraining frames are chronological and separated by months. Keep inference scenes ordered and tied to the same location.
-- **Metadata expectations.** The `-TL` variants accept coordinates and dates; plain checkpoints do not use those embeddings. Do not compare unmatched model sizes and call it a metadata ablation.
-- **Licence split.** The code repository is MIT-licensed. Check the individual [weight card](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) for the terms on the model artifact.
-- **Reconstruction sanity check.** The card provides `inference.py` for masked-patch reconstruction. Run it on a known HLS scene to validate preprocessing before interpreting downstream predictions.
+## Pre-Deployment Audit Checklist
 
-## What does this release get right?
+Before pointing Prithvi-EO-2.0 at operational satellite imagery, verify every item below:
 
-The release is unusually testable: public checkpoints, fine-tuning configs, sample notebooks, and a benchmark protocol with repeated runs. The [architecture description](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) is specific enough to inspect the 3D positional encoding, metadata bias, and dropout behavior, while the [paper's task tables](https://arxiv.org/html/2412.02732#S4.T4) let readers inspect scores beyond the abstract's aggregate.
+- [ ] **Band order & radiometric units:** Confirm six reflectance bands in strict model-card order (`Blue`, `Green`, `Red`, `Narrow NIR [B8A/B05]`, `SWIR 1`, `SWIR 2`), scaled identically to the checkpoint’s `mean`/`std` config (`0–10000` reflectance scale).
+- [ ] **Patch-size divisibility:** Verify `config.json` for your exact checkpoint (`16` vs. `14`). For `600M` / `600M-TL` (`14 × 14` patches), use tiled sliding-window inference with window sizes divisible by 14 (e.g., `224 × 224` or `448 × 448`) and overlap blending.
+- [ ] **Chronological frame ordering:** Keep multi-temporal frames strictly sorted oldest-to-newest and co-registered to the exact same geographic footprint.
+- [ ] **Matched metadata ablation:** Never compare `100M-TL` to `300M` and attribute the delta to metadata. Pair `300M` vs. `300M-TL` or `600M` vs. `600M-TL` on frozen spatial and temporal OOD splits.
+- [ ] **NoData & cloud masking policy:** Confirm how masked/cloud fill values (e.g., `-9999` in HLS) are handled prior to standardization so extreme negative sentinels do not explode layer-norm statistics.
+- [ ] **License compliance:** Verify MIT (NASA-IMPACT repo) vs. Apache-2.0 (TerraTorch & Hugging Face weight cards) for every artifact bundled into your container.
+- [ ] **Reconstruction sanity check:** Run `inference.py` on a known AOI scene before interpreting downstream task metrics.
 
-The remaining gap is the pretraining corpus: the paper describes its sampling and filtering, but the exact 4.2M-patch sequence list is not distributed with the weights. You can test the released representation and reproduce fine-tuning more readily than rebuild the precise pretraining run. For how this site reviews papers and repositories, see the [about page](/about), browse the [archive](/blog), read the [welcome post](/blog/welcome-to-the-new-researchwithme), or use [search](/search).
+---
+
+## Verdict: What does this release get right—and what remains hidden?
+
+**What it gets right:** Prithvi-EO-2.0 sets a high bar for inspectability in geospatial AI. Public Apache-2.0 weights across six checkpoints, matched plain/`-TL` ablation pairs at 300M and 600M, native TerraTorch integration, explicit multi-seed GEO-Bench protocols, and transparent task-level tables make it unusually straightforward to audit and fine-tune on a single GPU.
+
+**What it hides:** Two gaps remain. First, the supplied sources do not include the exact **4.2M-patch pretraining manifest**—released configurations provide a starting point for downstream reproduction, but you cannot audit potential geographic overlap between the pretraining corpus and arbitrary downstream test regions without recreating the HLS sampling pipeline. Second, the headline **8% GEO-Bench figure** compresses distinct classification and segmentation behaviors (and a `6×` model + `17×` data scale-up) into a single number. Treat Prithvi-EO-2.0 as a strong, well-engineered multi-temporal optical backbone—then let your own matched plain vs. `-TL` OOD experiment decide whether it earns a slot in production.
+
+For how this site reviews papers and repositories, see the [about page](/about), browse the [archive](/blog), read the [welcome post](/blog/welcome-to-the-new-researchwithme), or use [search](/search).
+
+---
+
+## References
+
+1. **Szwarcman, D., Roy, S., Fraccaro, P., Gíslason, Þ. E., Blumenstiel, B., Ghosal, R., de Oliveira, P. H., Almeida, J. L. d. S., Sedona, R., Kang, Y., Chakraborty, S., et al. (2026).** *Prithvi-EO-2.0: A Versatile Multitemporal Foundation Model for Earth Observation Applications.* IEEE Transactions on Geoscience and Remote Sensing, Vol. 64, Art. no. 4400120, pp. 1–20. DOI: [10.1109/TGRS.2025.3642610](https://doi.org/10.1109/TGRS.2025.3642610) | Preprint: [arXiv:2412.02732](https://arxiv.org/abs/2412.02732) (v1 Dec 2024; v3 Mar 2026).
+2. **Jakubik, J., Roy, S., Phillips, C. E., Fraccaro, P., Godwin, D., Zadrozny, B., Szwarcman, D., Gomes, C., Nyirjesy, G., Edwards, B., et al. (2023).** *Foundation Models for Generalist Geospatial Artificial Intelligence (Prithvi-EO-1.0).* [arXiv:2310.18660](https://arxiv.org/abs/2310.18660).
+3. **Gomes, C., Blumenstiel, B., Almeida, J. L. d. S., de Oliveira, P. H., Fraccaro, P., Roy, S., Szwarcman, D., et al. (2025).** *TerraTorch: The Geospatial Foundation Models Toolkit.* IEEE IGARSS 2025 / [arXiv:2503.20563](https://arxiv.org/abs/2503.20563). Repository: [github.com/IBM/terratorch](https://github.com/IBM/terratorch).
+4. **Lacoste, A., Lehmann, N., Rodriguez, P., Sherwin, E. D., Kerner, H., Lütjens, B., Irvin, J. A., Dao, D., Alemohammad, H., Drouin, A., et al. (2023).** *GEO-Bench: Toward Foundation Models for Earth Monitoring.* Advances in Neural Information Processing Systems (NeurIPS 2023), Datasets and Benchmarks Track, Vol. 36. [arXiv:2306.03831](https://arxiv.org/abs/2306.03831) | Repository: [github.com/ServiceNow/geo-bench](https://github.com/ServiceNow/geo-bench).
+5. **He, K., Chen, X., Xie, S., Li, Y., Dollár, P., & Girshick, R. (2022).** *Masked Autoencoders Are Scalable Vision Learners.* Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR 2022), pp. 16000–16009. [arXiv:2111.06377](https://arxiv.org/abs/2111.06377).
+6. **Tong, Z., Song, Y., Wang, J., & Wang, L. (2022).** *VideoMAE: Masked Autoencoders Are Data-Efficient Learners for Self-Supervised Video Pre-Training.* Advances in Neural Information Processing Systems (NeurIPS 2022), Vol. 35. [arXiv:2203.12602](https://arxiv.org/abs/2203.12602).
+7. **Feichtenhofer, C., Fan, H., Li, Y., & He, K. (2022).** *Masked Autoencoders As Spatiotemporal Learners.* Advances in Neural Information Processing Systems (NeurIPS 2022), Vol. 35. [arXiv:2205.09113](https://arxiv.org/abs/2205.09113).
+8. **Claverie, M., Ju, J., Masek, J. G., Dungan, J. L., Vermote, E. F., Roger, J.-C., Skakun, S. V., & Justice, C. (2018).** *The Harmonized Landsat and Sentinel-2 Surface Reflectance Data Set.* Remote Sensing of Environment, Vol. 219, pp. 145–161. DOI: [10.1016/j.rse.2018.09.002](https://doi.org/10.1016/j.rse.2018.09.002).
+9. **Bonafilia, D., Tellman, B., Anderson, T., & Issenberg, E. (2020).** *Sen1Floods11: A Georeferenced Dataset to Train and Test Deep Learning Flood Algorithms for Sentinel-1.* Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW 2020), pp. 210–211.
+10. **Sainte Fare Garnot, V., & Landrieu, L. (2021).** *Panoptic Segmentation of Satellite Image Time Series with Convolutional Temporal Attention Networks (PASTIS & U-TAE).* Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV 2021), pp. 4872–4881. [arXiv:2107.07933](https://arxiv.org/abs/2107.07933).
+11. **Xiong, Z., Wang, Y., Zhang, F., Stewart, A. J., Hanna, J., Borth, D., Papoutsis, I., Le Saux, B., Camps-Valls, G., & Zhu, X. X. (2024).** *Neural Plasticity-Inspired Multimodal Foundation Model for Earth Observation (DOFA).* [arXiv:2403.15356](https://arxiv.org/abs/2403.15356).
+12. **Bastani, F., Wolters, P., Gupta, R., Ferdinando, J., & Kembhavi, A. (2023).** *SatlasPretrain: A Large-Scale Dataset for Remote Sensing Image Understanding.* Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV 2023), pp. 16772–16782. [arXiv:2211.15660](https://arxiv.org/abs/2211.15660).
+13. **Tseng, G., Cartuyvels, R., Zvonkov, I., Purohit, M., Rolnick, D., & Kerner, H. (2023).** *Lightweight, Pre-trained Transformers for Remote Sensing Timeseries (Presto).* [arXiv:2304.14065](https://arxiv.org/abs/2304.14065).
+14. **Wang, Y., Braham, N. A. A., Xiong, Z., Liu, C., Albrecht, C. M., & Zhu, X. X. (2023).** *SSL4EO-S12: A Large-Scale Multimodal, Multitemporal Dataset for Self-Supervised Learning in Earth Observation.* IEEE Geoscience and Remote Sensing Magazine, Vol. 11, No. 3, pp. 98–106.
+15. **Wang, Y., Albrecht, C. M., Braham, N. A. A., Liu, C., Xiong, Z., & Zhu, X. X. (2024).** *DeCUR: Decoupling Common & Unique Representations for Multimodal Self-Supervision.* European Conference on Computer Vision (ECCV 2024). [arXiv:2309.05300](https://arxiv.org/abs/2309.05300).
+16. **Reed, C. J., Gupta, R., Li, S., Brockman, S., Funk, C., Clipp, B., Keutzer, K., Candido, S., Uyttendaele, M., & Darrell, T. (2023).** *Scale-MAE: A Scale-Aware Masked Autoencoder for Multiscale Geospatial Representation Learning.* Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV 2023), pp. 4088–4099.
+17. **Agarwal, R., Schwarzer, M., Castro, P. S., Courville, A. C., & Bellemare, M. G. (2021).** *Deep Reinforcement Learning at the Edge of the Statistical Precipice.* Advances in Neural Information Processing Systems (NeurIPS 2021), Vol. 34, pp. 29304–29320.
+18. **IBM–NASA Geospatial Model Cards & Code Repositories (2024–2026).** Hugging Face Collection: [ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL](https://huggingface.co/ibm-nasa-geospatial/Prithvi-EO-2.0-600M-TL) (Apache-2.0); Code & Examples: [github.com/NASA-IMPACT/Prithvi-EO-2.0](https://github.com/NASA-IMPACT/Prithvi-EO-2.0) (MIT).
+
+### Citation (BibTeX)
+
+```bibtex
+@article{szwarcman2026prithvi2,
+  title     = {Prithvi-EO-2.0: A Versatile Multitemporal Foundation Model for Earth Observation Applications},
+  author    = {Szwarcman, Daniela and Roy, Sujit and Fraccaro, Paolo and G{\'i}slason, {\TH}orsteinn El{\'i} and Blumenstiel, Benedikt and Ghosal, Rinki and de Oliveira, Pedro Henrique and de Sousa Almeida, Jo{\~a}o Lucas and Sedona, Rocco and Kang, Yanghui and Chakraborty, Srija and others},
+  journal   = {IEEE Transactions on Geoscience and Remote Sensing},
+  volume    = {64},
+  pages     = {1--20},
+  year      = {2026},
+  doi       = {10.1109/TGRS.2025.3642610},
+  eprint    = {2412.02732},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV}
+}
+```

@@ -146,7 +146,7 @@ npm run typecheck   # tsc --noEmit
 npm test            # Vitest: schema, loader, TOC, and MDX compilation of every post
 npm run build       # production build, types enforced
 npm run check:site  # the AGENTS.md definition of done, against .next artifacts
-npm run quality     # tokens + lint + typecheck + test
+npm run quality     # manifest verification + tokens + lint + typecheck + test
 npm run verify      # build + check:site
 npm run check:mcp   # spawn each MCP server in .mcp.json and handshake with it
 ```
@@ -190,7 +190,9 @@ lib/
   content/           schema, loader, TOC, slugs, types, formatting
   seo/               metadata builders and the JSON-LD graph
   site.ts            site + author identity
-tokens/              design tokens (source of truth for the theme)
+src/design/          reme v4.1 typed design manifests (ten-module system source)
+src/generated/       generated CSS, maps, and test fixtures (never hand-edit)
+tokens/              generated compatibility tokens and legacy domain palettes
 scripts/             post scaffolder, deploy guard, build wrapper, site checks
 test/                Vitest suites
 .mcp.json            MCP servers for agent tooling (env placeholders only)
@@ -198,7 +200,8 @@ test/                Vitest suites
 ```
 
 `DESIGN.md` records the design system, `PRODUCT.md` what the site is and who it is for, and `AGENTS.md`
-the SEO/AEO/GEO rules that every change has to pass.
+the SEO/AEO/GEO rules that every change has to pass. For the reme v4.1 incremental Next.js integration,
+commands, measurements, and incomplete gates, see [`docs/design/MIGRATION.md`](docs/design/MIGRATION.md).
 
 ## Agent tooling (MCP)
 
@@ -222,3 +225,42 @@ This repository previously ran a multi-author research platform: an editorial st
 a draft editor, author directories, a citation builder, and a research-network graph. The 1.0 refactor
 replaced all of that with the MDX blog described above. The design system, typography, reading
 experience, and Cloudflare deployment were kept. See [`CHANGELOG.md`](./CHANGELOG.md).
+
+
+### v4.1 design audit
+
+`docs/design/AUDIT-v4.1.md` records all 23 gates and the remaining work. The
+strict nine-widget research catalog can be explored at `/lab/genui`; its data
+is illustrative. The assistant remains memory-only deterministic retrieval,
+not model inference.
+
+Run `npm run audit:all` for production/browser/source/payload evidence. It
+currently exits nonzero: the original 50KB initial-JS budget and full-tree
+token migration do not pass, and manual/model/localization/security work is
+not certified. Detailed logs are gitignored under `artifacts/design-audit/`.
+
+
+### Cloudflare/Workers verification
+
+Run `npm run verify:worker` to build/package without deploying, enforce Worker
+artifact limits, and test cold content/search plus the browser suite in workerd.
+The separate Workers CI job catches failures that a standalone Node smoke test
+cannot. See `docs/design/WORKERS-DIAGNOSIS.md` for current evidence and the
+private dashboard log needed to diagnose an external deployment failure.
+
+Production content is a validated build snapshot. After editing/publishing posts,
+run `npm run content:gen` and commit `lib/content/snapshot.generated.ts`;
+`content:verify` rejects stale snapshots before builds.
+
+
+### Codebase maintenance
+
+`AGENTS.md` routes hygiene work through the pinned `clean-codebase` skill.
+Start with a measured safe audit; review references, runtime registrations and
+history before deleting dead-code candidates. `npm run typecheck` also rejects
+unused locals and parameters. Do not hand-format generated or vendored files.
+
+The [cleanup report](CLEANUP_REPORT.md) records the current scope, measurements,
+retained extension contracts, and test results; [the deletion log](CLEANUP_LOG.md)
+records exactly what was removed. `knip.jsonc` provides a repeatable optional
+advisory inventory, not permission to delete everything it flags.

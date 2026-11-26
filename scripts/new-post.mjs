@@ -4,20 +4,22 @@
  *
  *   npm run new -- "The title of the essay"
  *   npm run new -- "The title" --publish
+ *   npm run new -- "The title" --deep-dive
  *
  * Creates `content/posts/<slug>.mdx` as a draft (drafts render in development
  * only) unless `--publish` is passed. Refuses to overwrite an existing file.
  */
-import { existsSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const args = process.argv.slice(2);
 const publish = args.includes('--publish');
+const deepDive = args.includes('--deep-dive');
 const words = args.filter((arg) => !arg.startsWith('--'));
 const title = words.join(' ').trim();
 
 if (!title) {
-  console.error('Usage: npm run new -- "Post title" [--publish]');
+  console.error('Usage: npm run new -- "Post title" [--publish] [--deep-dive]');
   process.exit(1);
 }
 
@@ -40,7 +42,7 @@ if (existsSync(file)) {
 }
 
 const date = new Date().toISOString().slice(0, 10);
-const body = `---
+const basicBody = `---
 title: ${JSON.stringify(title)}
 description: "TODO: one or two sentences for cards, search, and the feed."
 date: "${date}"
@@ -55,6 +57,13 @@ Write the essay here. Custom components are available without imports — see
 \`content/README.md\` for \`<Callout>\`, \`<Figure>\`, \`<Video>\`, and \`<KeyTakeaways>\`.
 `;
 
-writeFileSync(file, body, 'utf8');
+const body = deepDive
+  ? readFileSync(new URL('../templates/TECHNICAL_DEEP_DIVE_POST.mdx.tmpl', import.meta.url), 'utf8')
+    .replaceAll('__TITLE_JSON__', () => JSON.stringify(title))
+    .replaceAll('__DATE__', date)
+    .replaceAll('__DRAFT__', String(!publish))
+  : basicBody;
+
+writeFileSync(file, body, { encoding: 'utf8', flag: 'wx' });
 console.log(`Created ${path.relative(process.cwd(), file)}${publish ? '' : ' (draft)'}`);
 console.log('Edit the title, description, tags, and body, then commit it.');

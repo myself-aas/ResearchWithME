@@ -247,9 +247,9 @@ export default async function PostPage({ params }: PostPageProps) {
                 <h2 id="related-heading" className="mt-2 font-serif text-2xl font-bold tracking-tight text-foreground">
                   Keep reading
                 </h2>
-                <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+                <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {related.map((item) => (
-                    <li key={item.slug}>
+                    <li key={item.slug} className="min-w-0 break-words">
                       <Link
                         href={item.href}
                         className="group flex h-full flex-col rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"

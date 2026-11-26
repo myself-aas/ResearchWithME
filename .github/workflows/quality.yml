@@ -6,18 +6,32 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 (Node 24)
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0 (Node 24)
         with:
           node-version: 22
           cache: npm
 
       - name: Install dependencies (canonical lockfile)
         run: npm ci
+
+      - name: Published content snapshot
+        run: npm run content:verify
+
+      - name: Manifest design system (determinism and token boundary)
+        run: npm run design:check
 
       - name: Design tokens (build, validate, contrast)
         run: npm run tokens:build && npm run tokens:check
@@ -41,38 +55,73 @@ jobs:
       - name: Definition of done (SEO / AEO / GEO contract)
         run: npm run check:site
 
-      - name: Smoke test the built site
+      - name: Install browser for design conformance checks
+        run: npx playwright install --with-deps chromium
+
+      - name: Smoke test and browser-check the built site
+        run: npm run test:production
+
+      - name: Keep browser failure evidence
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: production-browser-failures
+          path: test-results/design/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  generated-artifacts:
+    name: Generated artifacts (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - name: Verify committed artifacts on each runtime (never regenerate in CI)
+        run: npm run design:verify && npm run content:verify
+
+  workers:
+    name: Workers build and runtime
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      WORKERS_CI: '1'
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: mkdir -p artifacts/worker-checks
+      - name: Build with the Workers CI entry point
+        run: npm run build 2>&1 | tee artifacts/worker-checks/build.log
+      - name: Package without deploying and enforce artifact limits
+        run: npm run check:worker 2>&1 | tee artifacts/worker-checks/package.log
+      - name: Validate every font face and scientific glyph coverage
         run: |
-          npx next start -H 127.0.0.1 -p 3100 &
-          SERVER_PID=$!
-          trap "kill $SERVER_PID || true" EXIT
-          for _ in $(seq 1 30); do
-            curl -sf http://127.0.0.1:3100/ > /dev/null && break
-            sleep 1
-          done
-          for route in / /blog /tags /about /search /rss.xml /feed.json /llms.txt /robots.txt /sitemap.xml /search-index.json /blog/welcome-to-the-new-researchwithme /blog/welcome-to-the-new-researchwithme/markdown /.well-known/security.txt; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:3100$route")
-            echo "$route $code"
-            test "$code" = "200"
-          done
-
-          # Served headers, not just page bodies: the crawl policy, the cache
-          # policy, and HSTS are configuration, and configuration regresses
-          # silently.
-          headers=$(curl -sI http://127.0.0.1:3100/)
-          echo "$headers" | grep -qi '^content-signal: search=yes, ai-input=yes, ai-train=yes' \
-            || { echo "missing or changed Content-Signal header"; exit 1; }
-          echo "$headers" | grep -qi '^cache-control: .*s-maxage=' \
-            || { echo "missing Cache-Control s-maxage on HTML"; exit 1; }
-          echo "$headers" | grep -qi '^strict-transport-security:' \
-            || { echo "missing Strict-Transport-Security"; exit 1; }
-          echo "headers ok"
-
-          # The search page must not inline the archive: bodies belong in
-          # /search-index.json. A regression here is invisible until the site
-          # grows, so budget the gzipped page now.
-          search_bytes=$(curl -s -H 'Accept-Encoding: gzip' -o /dev/null -w "%{size_download}" http://127.0.0.1:3100/search)
-          index_bytes=$(curl -s http://127.0.0.1:3100/search-index.json | wc -c | tr -d ' ')
-          echo "/search ${search_bytes} B gz, /search-index.json ${index_bytes} B raw"
-          test "$search_bytes" -lt 60000
-          test "$index_bytes" -gt 0
+          python3 -m venv /tmp/reme-font-check
+          /tmp/reme-font-check/bin/pip install 'fonttools[woff]==4.69.1'
+          /tmp/reme-font-check/bin/python scripts/design/fonts.py --check
+      - run: npx playwright install --with-deps chromium
+      - name: Cold-cache content, search, assistant and browser checks in workerd
+        run: npm run test:worker 2>&1 | tee artifacts/worker-checks/runtime.log
+      - name: Keep Worker build evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: workers-build-and-runtime-${{ github.event_name }}
+          path: |
+            artifacts/worker-checks/
+            test-results/design/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -3,20 +3,33 @@ title: "Read a repository before you run it"
 description: "The README describes intent. The history, the tests, and the dependency graph describe reality. A short method for reading code you are about to trust."
 date: "2026-10-30"
 tags: ["open-source", "architecture", "code-review"]
-cover: "/images/folio-code.jpeg"
-coverAlt: "A terminal window showing a repository's commit history and file tree."
-draft: true
+draft: false
+updated: "2026-11-26"
+toc: true
+faq:
+  - question: "Can a source review prove that a repository is safe to run?"
+    answer: "No. It identifies implementation and maintenance evidence within a chosen scope. A separate security assessment and controlled execution plan are needed before stronger claims are justified."
+  - question: "What kind of evidence does this article provide?"
+    answer: "Read-only source assessment before deciding whether to execute. The evaluation steps are proposed checks; they are not a claim that new experiments or security tests were run."
+  - question: "What should be recorded before applying this method?"
+    answer: "Install/build hooks are inspected before any decision to execute them. A test-file count is not reported as test coverage or a reliability score."
+cover: "/images/covers/read-a-repository-before-you-run-it.webp"
+coverAlt: "A magnifying lens examines a branching source tree beside an open code folio."
 ---
 
-Most repository teardowns start by installing the thing. I have come to think that is backwards.
-Before I run a project I want to know how it was built, who built it, and which parts are load-bearing.
-That reading takes about forty minutes and it has saved me considerably more than forty minutes many
-times over.
+Read a repository to identify its trust boundaries before executing its installation or examples. History, tests, dependencies, and one end-to-end request provide a useful map, not a safety certificate. Pin the source, separate documented intent from observed implementation, and postpone execution until the risks and permitted environment are explicit.
+
+## Engineering quick-spec
+
+| Review boundary | What this draft covers |
+| --- | --- |
+| Evidence level | Read-only source assessment before deciding whether to execute |
+| Input contract | Pinned commit, entry point, dependency boundary and error path |
+| Main limitation | Maintenance signals and visible tests can be mistaken for security or correctness proof |
 
 ## Start with the history, not the README
 
-A git log is an honest document in a way a README is not. It records what changed, in what order, and
-how hurried the author was.
+A Git log records changes visible in that repository’s history. It can reveal design pressure, but squashing, imported history and private work limit what it tells you; it cannot establish how hurried or careful an author was.
 
 ```bash
 git log --oneline --no-merges | head -40
@@ -30,16 +43,14 @@ but they call for different kinds of trust.
 
 <Callout tone="tip" title="Look for the commits nobody advertises">
   Search for the unglamorous fixes: `git log --grep="fix" --grep="revert" --grep="hotfix"`. Revert
-  commits tell you where the design pushed back. A project with no reverts at all is often a project
-  with no users.
+  commits tell you where the design pushed back. The absence of reverts does not establish an absence of users or failures.
 </Callout>
 
 ## Three signals I read next
 
 I look for three things, in this order, and I stop as soon as one of them fails badly.
 
-1. **Test-to-source ratio, by directory.** A repository with excellent tests around the parser and
-   none around the network layer is telling you where its author's confidence lives.
+1. **Test-to-source ratio, by directory.** File counts help locate tests, not establish their quality or coverage. Read assertions and failure cases before drawing conclusions about a subsystem.
 2. **The dependency graph.** Not the count — the shape. Runtime dependencies that pull in build tools,
    or a single package that appears in every layer, are a maintenance cost you are about to inherit.
 3. **Error paths.** Pick the most important public function. Read what happens when it fails. If the
@@ -78,8 +89,7 @@ making decisions. Both are useful to know before I depend on the project.
 ## What this buys you
 
 By the time I run the install command, I already know whether the project is a maintained system or a
-published snapshot, where its tests actually point, and which module will be the first to break under
-my workload.
+published snapshot, where its tests actually point, and which boundaries need testing under my workload; reading alone cannot predict the first failure.
 
 The whole method as a structure — expand a branch to the claim it carries:
 
@@ -95,3 +105,33 @@ The README is still worth reading — last, as a claim to check against what you
 Four readings of the method, worth checking yourself on:
 
 <ReadRepoQuiz />
+
+## Reproduction playbook
+
+**Proposed evaluation.** No new experiment is reported by this editorial revision.
+
+1. Record the repository URL and full commit identifier. Read manifests, install scripts, contribution/security guidance and license files as text; do not enable hooks or run a build just to discover what installation does.
+
+2. Trace one important entry point through validation, state changes and error handling. Keep a small input/output/side-effect ledger and identify which claims have a code locator versus only a README statement.
+
+3. Choose a separate authorized execution phase only after defining isolation, credentials and expected outputs. Archive exact commands and failures if you run it; leave unexecuted tests explicitly unexecuted in the review.
+
+## Pre-publication audit
+
+- [ ] Install/build hooks are inspected before any decision to execute them.
+- [ ] A test-file count is not reported as test coverage or a reliability score.
+- [ ] Runtime and security conclusions remain bounded by actual tests performed.
+
+## Verdict
+
+Use source reading to choose what to test and whether a project deserves a controlled trial. Do not use contributor counts, commit tone or an attractive module graph as a verdict on safety. The best outcome may be a clear list of unresolved risks rather than an install command.
+
+Read the [site’s review approach](/about), browse the [writing archive](/blog), or use [archive search](/search) to place this method in context.
+
+## References
+
+These are primary methodological reading sources, not provenance for the personal observations or unverified numerical fixtures in this draft.
+
+1. [Git documentation and source](https://github.com/git/git).
+2. [OpenSSF Scorecard checks and limitations](https://github.com/ossf/scorecard).
+3. [OpenSSF Best Practices Badge criteria](https://github.com/coreinfrastructure/best-practices-badge).

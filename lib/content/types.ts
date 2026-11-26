@@ -42,11 +42,6 @@ export interface TagSummary {
   count: number;
 }
 
-export interface ArchiveYear {
-  year: string;
-  posts: PostMeta[];
-}
-
 /** Shape handed to the client-side search index. */
 export interface SearchDoc {
   slug: string;

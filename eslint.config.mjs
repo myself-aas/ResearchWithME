@@ -9,6 +9,7 @@ const compat = new FlatCompat({ baseDirectory: __dirname });
 export default defineConfig([
   globalIgnores([
     '.next/**',
+    'cloudflare-pages/dist/**',
     'node_modules/**',
     'coverage/**',
     'test-results/**',

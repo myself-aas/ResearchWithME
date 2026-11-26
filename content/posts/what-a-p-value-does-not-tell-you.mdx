@@ -4,21 +4,37 @@ description: "A p-value is a statement about data under a model, not about your 
 date: "2026-09-12"
 tags: ["statistics", "methodology", "evidence"]
 toc: true
-draft: true
+draft: false
+updated: "2026-11-26"
+faq:
+  - question: "Is a p-value of 0.03 a 3% probability that the null is true?"
+    answer: "No. It is a tail probability for the chosen statistic under the null model and its assumptions. A probability assigned to a hypothesis requires additional modeling and prior assumptions."
+  - question: "What kind of evidence does this article provide?"
+    answer: "Interpretation of statistical tests, not new experimental findings. The evaluation steps are proposed checks; they are not a claim that new experiments or security tests were run."
+  - question: "What should be recorded before applying this method?"
+    answer: "The p-value is stated conditionally on a null model and its assumptions. Effect size, uncertainty and practical consequences are reported separately."
+cover: "/images/covers/what-a-p-value-does-not-tell-you.webp"
+coverAlt: "A conceptual bell curve highlights its right-hand tail beyond a vertical threshold."
 ---
 
-A p-value answers one question: if the null hypothesis were true, how often would a test statistic at
-least this extreme appear? Everything else people say about it is an inference layered on top, and the
-layers are where most of the damage happens.
+A p-value describes how unusual a test statistic is under a specified null model and its assumptions. It is not the probability that a hypothesis is true, an effect-size estimate, or a deployment decision. Read it alongside the estimand, uncertainty interval, study design, and analysis choices rather than translating a threshold into certainty.
 
-This is not a argument against hypothesis tests. It is an argument for reading them precisely, because
+## Engineering quick-spec
+
+| Review boundary | What this draft covers |
+| --- | --- |
+| Evidence level | Interpretation of statistical tests, not new experimental findings |
+| Input contract | Null model, statistic, sampling/stopping plan, estimate and uncertainty interval |
+| Main limitation | Inverting a conditional probability or treating a threshold as practical importance |
+
+This is not an argument against hypothesis tests. It is an argument for reading them precisely, because
 the imprecise reading has a way of travelling further than the careful one.
 
 ## The four misreadings
 
 | What people write | What the p-value means |
 | --- | --- |
-| "There is a 3% chance the null is true." | If the null were true, 3% of experiments would produce data this extreme. |
+| "There is a 3% chance the null is true." | Under the null model and its assumptions, the chosen statistic is at least this extreme with probability 0.03. |
 | "We have shown there is no effect." | A large p-value is a failure to detect, not evidence of absence. |
 | "The effect is large because p is small." | p conflates effect size with sample size. |
 | "p = 0.049 is significant; p = 0.051 is not." | The threshold is a convention; the underlying quantity is continuous. |
@@ -31,11 +47,9 @@ The four side by side, sortable by the kind of error each one makes:
 
 <PValueMisreadingMatrix />
 
-
 ## A concrete example
 
-Take a trial with 400 participants, a real but small effect, and a well-behaved test. The observed
-difference is 0.4 standard deviations, and the test returns p = 0.02.
+Consider illustrative summary values, not a real trial or a reconstruction from a specified sample: an estimated difference of 0.4 standard deviations and a reported p-value of 0.02. The design and test must be supplied before either can be checked. The interval below is also illustrative, not derived from an unstated sample size.
 
 What can you say?
 
@@ -57,11 +71,7 @@ interval rather than the test. An interval carries the estimate, its precision, 
 uncertainty in a single object. A p-value collapses all of that into one number whose meaning is easy
 to state and hard to remember.
 
-> The p-value is not a measure of evidence in the sense most readers assume. It is a measure of
-> surprise, and surprise depends on how hard you looked.
-
-That sentence is not mine — it is a paraphrase of a point made repeatedly since the 1980s — but it is
-the one I return to when reviewing.
+A useful reading question is how the analysis was selected. An unusual statistic under a stated null is not automatically strong evidence for the particular substantive explanation a reader prefers.
 
 ## What to do instead
 
@@ -75,7 +85,6 @@ The claims a p-value can support are conditional on the model behind it. Flip ea
 
 <PValueAssumptionSwitches />
 
-
 <Callout tone="note" title="A reading habit">
   When a paper reports a significant result, find the interval. If the interval is wide, the result is
   a direction, not a magnitude. If the interval is narrow, check whether the sample was selected in a
@@ -86,10 +95,39 @@ That habit, as a guided tour of a results paragraph — four pins, in reading or
 
 <PValueResultsAtlas />
 
-
 Before you go — the four misreadings as a self-check:
 
 <PValueQuiz />
 
 None of this requires abandoning statistical testing. It requires writing down what the test says,
 and letting the rest of the argument carry its own weight.
+
+## Reproduction playbook
+
+**Proposed evaluation.** No new experiment is reported by this editorial revision.
+
+1. Write down the null model, the statistic and its tail rule before calculating a p-value. Record sampling, stopping, exclusions and multiplicity; when reviewing existing work, mark unspecified choices rather than assuming a clean preregistered analysis.
+
+2. Use a labeled synthetic example or a documented dataset to compare estimates, intervals and test outputs. If you simulate repeated samples, retain the generator, seed, number of repetitions and model assumptions; those simulations do not validate an unrelated real study.
+
+3. Report the effect in meaningful units with its uncertainty and decision consequences. Distinguish exploratory from prespecified analyses and explain how assumption failures would change interpretation rather than hiding behind a significance threshold.
+
+## Pre-publication audit
+
+- [ ] The p-value is stated conditionally on a null model and its assumptions.
+- [ ] Effect size, uncertainty and practical consequences are reported separately.
+- [ ] Toy values and illustrative figures are not presented as a real clinical trial.
+
+## Verdict
+
+Keep hypothesis tests in their proper role: conditional model checks that accompany effect estimates and design information. Neither a small p-value nor a wide interval decides whether an intervention matters. Better reporting makes the assumptions visible instead of asking one number to carry the whole argument.
+
+Read the [site’s review approach](/about), browse the [writing archive](/blog), or use [archive search](/search) to place this method in context.
+
+## References
+
+These are primary methodological reading sources, not provenance for the personal observations or unverified numerical fixtures in this draft.
+
+1. [ASA statement on statistical significance and p-values (2016)](https://doi.org/10.1080/00031305.2016.1154108).
+2. [Greenland et al.: statistical tests, p-values and confidence intervals (2016)](https://doi.org/10.1007/s10654-016-0149-3).
+3. [SciPy statistical implementation and documentation](https://github.com/scipy/scipy).

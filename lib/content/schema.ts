@@ -85,5 +85,3 @@ export const frontmatterSchema = z
   .strict();
 
 export type Frontmatter = z.infer<typeof frontmatterSchema>;
-
-export { SLUG_PATTERN };

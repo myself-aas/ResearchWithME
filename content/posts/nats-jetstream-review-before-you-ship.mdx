@@ -1,12 +1,33 @@
 ---
 title: "NATS JetStream review: settle delivery guarantees before you ship"
 description: "NATS Server repository review of JetStream retention, acknowledgments and resource controls, separating source mechanisms from delivery guarantees."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "nats-server"]
-draft: true
+draft: false
+faq:
+  - question: "Does a broker acknowledgment guarantee exactly-once business effects?"
+    answer: "Not across an unrelated service or database by itself. Test what happens when the business action commits but its acknowledgment is lost, and reconcile durable operation identifiers."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Retention intent and resource exhaustion behavior are specified. Acknowledgment and idempotency boundaries are tested independently."
+cover: "/images/covers/nats-jetstream-review-before-you-ship.webp"
+coverAlt: "Message packets move along rails toward storage through an acknowledgment gate."
 ---
 
-### Key findings
+JetStream exposes separate resource, stream, and consumer controls; enabling persistence is only the start of a delivery design. This pinned source review examines those boundaries without claiming throughput or failover results. Choose retention and acknowledgment policies explicitly, then test recovery and duplicate external effects under the failures your application must survive.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Message retention, delivery and application acknowledgment boundaries |
+| Inputs and boundaries | Server/account budgets, stream policy, storage/replicas and consumer acknowledgments |
+| Principal failure case | A business operation and its broker acknowledgment can fail at different times |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - JetStream configuration separates server resource budgets from individual stream policies.
 - Stream retention, storage and replica settings are explicit adoption decisions.
 - Consumer acknowledgments do not by themselves establish exactly-once external side effects.
@@ -40,6 +61,7 @@ Consider the application boundary: a worker may perform a business operation and
 | Server/account | Memory, disk and resource budgets | What happens when the budget is reached? |
 | Stream | Retention, discard, replicas, storage | Which history must survive and where? |
 | Consumer | Ack timing, retries, pending work | How does a slow or failing worker recover? |
+
 The same four layers as a stack — open each for the evaluation question it carries:
 
 <NatsLayerStack />
@@ -95,19 +117,29 @@ Three reliability readings worth checking yourself on:
 
 <NatsQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Define whether the stream is history, a bounded buffer or work input. Pin server/client versions and record retention, discard, storage, replicas and consumer delivery/ack settings before publishing synthetic numbered messages.
 
-1. Test the selected stream retention/discard policy under disk and message-budget pressure in an isolated cluster.
-2. Interrupt a worker before and after its business write and acknowledgment; verify redelivery and application idempotency.
-3. Measure recovery, slow-consumer behavior and resource usage with the intended clients and deployment topology.
+2. Delay acknowledgment, disconnect a consumer after its external write, and exhaust a chosen resource budget in an isolated deployment. Record duplicates, gaps, redelivery order and recovery rather than inferring them from a field name.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/nats-jetstream-review-before-you-ship/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Restart the tested topology and reconcile message IDs with a durable application ledger. Measure recovery against the stated objective; a replica-count setting is not evidence that a functioning cluster existed.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Retention intent and resource exhaustion behavior are specified.
+- [ ] Acknowledgment and idempotency boundaries are tested independently.
+- [ ] The actual topology and recovery procedure match the proposed deployment.
+
+The [inspection record](/evidence/nats-jetstream-review-before-you-ship/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Shortlist JetStream when explicit lifecycle policies and application reconciliation fit the workload. Do not sign off on an external exactly-once claim from acknowledgment configuration alone. This review identifies controls to exercise, not a universal delivery, ordering or recovery guarantee.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

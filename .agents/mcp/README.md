@@ -47,6 +47,18 @@ Verified: 7 tools (`get_project_registries`, `list_items_in_registries`,
   shadcn component system: the theme is in `app/globals.css` + `tokens/`, the
   primitives are hand-written in `components/`, and `DESIGN.md` governs. The
   project-scoped tools will answer "no components.json" — that is expected.
+- **Read-only assistant-ui catalog use.** The same `shadcn` MCP proxy also reaches
+  the assistant-ui styled catalog at `https://r.assistant-ui.com/styles/{style}/{name}.json`
+  (Radix fallback `https://r.assistant-ui.com/{name}.json`) — including the 120
+  standalone elements (`elements-*-`) and the runtime-connected `thread`,
+  `thread-list`, `tool-fallback`, `reasoning`, `sources`, `attachment`, …
+  elements. Use it to *read* how a component is built, then re-implement the
+  relevant part against this site's `reme v3.2` tokens (`bg-surface`,
+  `border-line`, `bg-brand`, `text-ink`, `bg-selection`, … — never the shadcn
+  `--primary`/`--border` variables, never blue, never hex). Never run
+  `npx assistant-ui@latest add` or `npx shadcn@latest add` into this repository;
+  there is no `components.json`, and the vendored `assistant-ui/skills` at the
+  commit pinned in `skills-lock.json` are the source of truth, not a CLI fetch.
 - Design-system changes need the author's approval (`AGENTS.md` §16), no matter
   where the code was copied from.
 
@@ -110,8 +122,14 @@ docs server) — the variable is optional, so it has no credentials-table row.
 
 - **Use it** whenever a change touches `components/assistant/` or
   `lib/assistant/`: current primitive APIs (`ThreadPrimitive`,
-  `MessagePrimitive`, `ComposerPrimitive`), `LocalRuntime` adapter contracts,
-  and streaming rules (yield cumulative content, never deltas).
+  `MessagePrimitive`, `ComposerPrimitive`, `MessagePrimitive.Parts`,
+  `MessagePrimitive.GenerativeUI`, `AuiIf`, `AuiConfig`, `Tools`), `LocalRuntime`
+  adapter contracts, and streaming rules (yield cumulative content, never deltas).
+  It is the MCP front-end for the live corpus at
+  [`https://www.assistant-ui.com/llms.txt`](https://www.assistant-ui.com/llms.txt)
+  — consult that URL directly (or via this server) for the latest API before
+  adding anything new; the vendored `assistant-ui/skills` at the `skills-lock.json`
+  commit are the in-repo copy.
 - **Do not** trust it over the code you have: the installed
   `@assistant-ui/react` version is the authority, and `npm run check:mcp`
   reports SKIP — not FAIL — when the hosted endpoint is unreachable from the

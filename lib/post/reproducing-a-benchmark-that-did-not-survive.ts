@@ -4,22 +4,21 @@ import type { Assumption, AssumptionOutcome } from '@/lib/figures/assumptions';
 import type { QuizQuestion } from '@/lib/figures/quiz';
 
 /**
- * Figure data for "I tried to reproduce the benchmark everyone cites.
- * It did not survive." Facts restated from the essay's measurement table,
- * the three undocumented choices, and the reporting checklist.
+ * Unverified teaching fixtures retained from the supplied draft.
+ * These values have no public harness or raw runs and are not measured results.
+ * Keep that status visible both in article bindings and shared generative UI.
  */
 
-/** The measurements (essay §3, reproduced table). */
 export const BENCH_RESULT_COLUMNS: MatrixColumn[] = [
   { key: 'baseline', label: 'Baseline' },
-  { key: 'scheduler', label: 'Their scheduler' },
+  { key: 'scheduler', label: 'Illustrative scheduler' },
   { key: 'ratio', label: 'Ratio', numeric: true },
 ];
 
 export const BENCH_RESULT_ROWS: MatrixRow[] = [
-  { label: 'Warm, five runs (req/s)', cells: { baseline: '4,180', scheduler: '9,910', ratio: 2.37 } },
-  { label: 'Cold, fresh process (req/s)', cells: { baseline: '3,940', scheduler: '3,010', ratio: 0.76 } },
-  { label: 'Cold, p99 latency', cells: { baseline: '118 ms', scheduler: '402 ms', ratio: 3.41 } },
+  { label: 'Illustrative warm (req/s)', cells: { baseline: '4,180', scheduler: '9,910', ratio: 2.37 } },
+  { label: 'Illustrative cold (req/s)', cells: { baseline: '3,940', scheduler: '3,010', ratio: 0.76 } },
+  { label: 'Illustrative cold p99', cells: { baseline: '118 ms', scheduler: '402 ms', ratio: 3.41 } },
 ];
 
 /** The three choices (essay §4); each fork = publish as-is vs answer the stated question. */
@@ -37,7 +36,7 @@ export const BENCH_GAP_STAGES: PathwayStage[] = [
     label: 'How many process lifetimes?',
     options: [
       { id: 'one', label: 'One warm server, requests looped', detail: 'Cold start never appears in the data.', cost: 1 },
-      { id: 'fresh', label: 'A fresh process per measurement', detail: 'The cold-start question the paper never states.', cost: 0 },
+      { id: 'fresh', label: 'A fresh process per measurement', detail: 'A separate cold-start evaluation question.', cost: 0 },
     ],
   },
   {
@@ -51,7 +50,7 @@ export const BENCH_GAP_STAGES: PathwayStage[] = [
   {
     id: 'scope',
     label: 'Report the scope',
-    note: '"2.4\u00d7" and "2.4\u00d7 at steady state" are different sentences; only one is true',
+    note: 'An illustrative steady-state ratio does not establish cold-start performance',
   },
 ];
 
@@ -65,7 +64,7 @@ export const BENCH_CHECKLIST_ASSUMPTIONS: Assumption[] = [
 
 export const BENCH_CHECKLIST_OUTCOMES: AssumptionOutcome[] = [
   {
-    label: 'Reproducible in an afternoon',
+    label: 'Reporting completeness (illustrative checklist)',
     base: 0,
     unit: 'of checklist',
     betterWhen: 'higher',
@@ -82,31 +81,31 @@ export const BENCH_CHECKLIST_OUTCOMES: AssumptionOutcome[] = [
 
 export const BENCH_QUIZ: QuizQuestion[] = [
   {
-    prompt: 'Under the published configuration, the 2.4\u00d7 gain:',
+    prompt: 'What do the numbers in this teaching fixture establish?',
     options: [
-      { text: 'Reproduces as stated', why: 'Only under the authors\u2019 unpublished warm-up schedule — the warm run lands within 6% of the paper.' },
-      { text: 'Reproduces only with the unpublished warm-up schedule', why: 'The headline number is real, but only in that configuration.', correct: true },
+      { text: 'An independently reproduced speedup', why: 'No public harness or raw runs support that claim.' },
+      { text: 'An illustrative comparison only', why: 'The supplied draft values remain unverified, not observed performance.', correct: true },
     ],
   },
   {
-    prompt: 'On cold starts, the baseline is:',
+    prompt: 'What does the illustrative cold throughput ratio compare?',
     options: [
-      { text: 'Still slower than the scheduler', why: 'Inverted: the baseline is 1.3\u00d7 faster on the same hardware (3,940 vs 3,010 req/s).', },
-      { text: '1.3\u00d7 faster on the same hardware', why: 'Cold-start measurements invert the result.', correct: true },
+      { text: '3,010 divided by 3,940', why: 'This is approximately 0.76 for the supplied illustrative values, not a hardware result.', correct: true },
+      { text: 'A measured universal cold-start advantage', why: 'The fixture does not establish performance outside its hypothetical example.' },
     ],
   },
   {
-    prompt: 'Which of the three choices does the post say is hardest to defend?',
+    prompt: 'What must a matched comparison control?',
     options: [
-      { text: 'Warm-up excluded from the measurement', why: 'That is standard practice — a documentation failure.' },
-      { text: 'The baseline is not given the same warm-up', why: 'A comparison that favours the proposed system by construction.', correct: true },
+      { text: 'Only the proposed system’s warm-up', why: 'Different initialization policies can answer different questions.' },
+      { text: 'Both implementations’ timing boundaries and workloads', why: 'Record environment, process lifetime, initialization and workload for both.', correct: true },
     ],
   },
   {
-    prompt: 'What happened after the author sent the numbers to the paper\u2019s authors?',
+    prompt: 'Does the supplied material substantiate an upstream correction?',
     options: [
-      { text: 'The claim was withdrawn', why: 'One author confirmed the routing-table cache and added a README note.' },
-      { text: 'The claim was scoped, not withdrawn', why: 'The repository note at v0.9.4-notes is the right outcome.', correct: true },
+      { text: 'No; a traceable public record is still needed', why: 'The draft’s alleged author correspondence and repository note were not supplied as evidence.', correct: true },
+      { text: 'Yes, the quiz itself proves correspondence occurred', why: 'A teaching fixture cannot establish a real author response.' },
     ],
   },
 ];

@@ -1,284 +1,130 @@
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
-import { FeaturedPost, PostRow } from '@/components/post/PostCard';
-import { getAllPostMeta, getAllTags, getFeaturedPost, getSearchIndex, getSiteStats } from '@/lib/content/posts';
+import HomeHero from '@/components/post/HomeHero';
+import { Control, Cover, DesignSlot, Status, WritingRow } from '@/components/design/Primitives';
+import { getAllPostMeta, getAllTags, getFeaturedPost, getSearchIndex } from '@/lib/content/posts';
 import { suggestPrompts } from '@/lib/assistant/retrieval';
 import { FIGURES } from '@/lib/figures/registry';
-import { AUTHOR, SITE } from '@/lib/site';
 import { jsonLdScript, websiteJsonLd } from '@/lib/seo/jsonld';
+import { AUTHOR, CONTACT, SITE } from '@/lib/site';
+import { design } from '@/src/design';
+
+const faq = [
+  ['What is ResearchWithMe?', 'A personal research notebook by Ashif Ahmed Shuvo: close readings of research papers and open-source code, with sources, caveats, and interactive explanations.'],
+  ['Does the assistant send my questions to a model provider?', 'No. The current assistant retrieves and quotes published essays in your browser. It does not use a generative model or a cloud model service.'],
+  ['Can I reuse the writing?', 'Essays are licensed under CC BY 4.0. Credit the author, link the original article, and indicate changes. Check linked code and datasets for their own licenses.'],
+  ['How do I follow corrections?', 'Articles carry an updated date when revised. The source repository keeps their public history, and the RSS feed provides a way to follow the archive without an account.'],
+];
 
 export default function HomePage() {
   const posts = getAllPostMeta();
   const featured = getFeaturedPost();
-  const latest = posts.filter((post) => post.slug !== featured?.slug).slice(0, 6);
-  const topics = getAllTags().slice(0, 8);
-  const stats = getSiteStats();
-  // Derived from the archive, never hardcoded (§18 rule 7).
-  const prompts = suggestPrompts(getSearchIndex());
-  // Revised essays: only ones with a real `updated` date — no fabricated recency.
-  const revised = posts.filter((post) => post.updated).slice(0, 3);
-  // The homepage spotlight renders a registry figure directly: the same
-  // component the lab demos and the assistant thread maintains (§20).
-  const spotlight = FIGURES.find((figure) => figure.toolName === 'show_wipe_compare');
+  const lead = posts.find(post => post.slug !== featured?.slug) ?? featured;
+  const rest = posts.filter(post => post.slug !== lead?.slug).slice(0, 3);
+  const topics = getAllTags().slice(0, 3);
+  const prompts = suggestPrompts(getSearchIndex()).slice(0, 3);
+  const spotlight = FIGURES.find(figure => figure.toolName === 'show_wipe_compare');
+  const updated = posts.map(post => post.updated ?? post.date).sort().at(-1);
 
-  return (
-    <div className="flex min-h-screen flex-col bg-canvas text-ink">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
-      <SiteHeader />
-
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-        <section aria-labelledby="home-title" className="grid gap-10 border-b border-line pb-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-14">
-          <div>
-            <h1
-              id="home-title"
-              className="mt-5 max-w-3xl font-serif text-[clamp(2.5rem,6vw,4.25rem)] font-bold leading-[1.02] tracking-[-0.03em] text-ink text-balance"
-            >
-              Research papers and open code, reviewed in public.
-            </h1>
-            <p className="mt-5 max-w-2xl font-sans text-lg leading-relaxed text-ink-secondary">
-              {SITE.description}
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              {featured && (
-                <Link
-                  href={featured.href}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-action-primary px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-                >
-                  Read the latest
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              )}
-              <Link
-                href="/blog"
-                className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-              >
-                Browse the archive
-              </Link>
-            </div>
-          </div>
-
-          <aside aria-label="About the author" className="h-fit rounded-2xl border border-line bg-surface p-5">
-            <div className="flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-line bg-selection font-serif text-sm font-bold text-brand"
-              >
-                {AUTHOR.initials}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate font-serif text-base font-semibold text-ink">{AUTHOR.name}</p>
-                <p className="truncate font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
-                  {AUTHOR.role}
-                </p>
-              </div>
-            </div>
-            <p className="mt-4 font-sans text-sm leading-relaxed text-ink-secondary">{AUTHOR.shortBio}</p>
-            <Link
-              href="/about"
-              className="mt-4 inline-flex items-center gap-1 font-sans text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
-            >
-              About this site
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
-            <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4">
-              <div>
-                <dt className="font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">Essays</dt>
-                <dd className="font-serif text-xl font-semibold text-ink">{stats.posts}</dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">Topics</dt>
-                <dd className="font-serif text-xl font-semibold text-ink">{stats.tags}</dd>
-              </div>
-            </dl>
-          </aside>
-        </section>
-
-        {featured && (
-          <section aria-labelledby="featured-heading" className="pt-12">
-            <h2 id="featured-heading" className="sr-only">
-              Featured essay
-            </h2>
-            <FeaturedPost post={featured} />
-          </section>
-        )}
-
-        {(latest.length > 0 || posts.length === 0) && (
-          <section aria-labelledby="latest-heading" className="pt-14">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <h2 id="latest-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-                Latest writing
-              </h2>
-              {latest.length > 0 && (
-                <Link
-                  href="/blog"
-                  className="inline-flex items-center gap-1 font-sans text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
-                >
-                  All essays
-                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                </Link>
-              )}
-            </div>
-
-            {latest.length > 0 ? (
-              <div className="mt-4 border-t border-line">
-                {latest.map((post) => (
-                  <PostRow key={post.slug} post={post} />
-                ))}
-              </div>
-            ) : (
-              <div className="mt-4 rounded-2xl border border-line bg-surface p-8">
-                <p className="font-serif text-xl font-semibold text-ink">The first essay is on its way.</p>
-                <p className="mt-2 max-w-lg font-sans text-sm leading-relaxed text-ink-secondary">
-                  Posts are written as MDX files in this repository. Until one is published, this page is
-                  honestly empty — no placeholder cards, no invented writing.
-                </p>
-              </div>
-            )}
-          </section>
-        )}
-
-        {topics.length > 0 && (
-          <section aria-labelledby="topics-heading" className="pt-14">
-            <h2 id="topics-heading" className="font-serif text-2xl font-bold tracking-tight text-ink">
-              Browse by topic
-            </h2>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {topics.map((topic) => (
-                <li key={topic.slug}>
-                  <Link
-                    href={`/tags/${topic.slug}`}
-                    className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-                  >
-                    {topic.tag}
-                    <span className="font-mono text-[0.6875rem] text-ink-secondary">{topic.count}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {revised.length > 0 && (
-          <section aria-labelledby="revised-heading" className="pt-14">
-            <h2 id="revised-heading" className="font-serif text-2xl font-bold tracking-tight text-ink">
-              Recently revised
-            </h2>
-            <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
-              Essays are living documents: when a paper changes or the code moves, the essay is
-              corrected in the open, and the revision date is real.
-            </p>
-            <ul className="mt-4 divide-y divide-line rounded-2xl border border-line bg-surface">
-              {revised.map((post) => (
-                <li key={post.slug}>
-                  <Link
-                    href={post.href}
-                    className="flex flex-wrap items-baseline justify-between gap-2 px-5 py-3.5 transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus"
-                  >
-                    <span className="font-sans text-sm font-semibold text-ink">{post.title}</span>
-                    <span className="font-mono text-xs text-ink-secondary">
-                      revised <time dateTime={post.updated}>{post.updated}</time>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {spotlight && (
-          <section aria-labelledby="spotlight-heading" className="pt-14">
-            <h2 id="spotlight-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              See it, don&rsquo;t just read it
-            </h2>
-            <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
-              The essays teach with interactive figures, and every figure is a reusable machine in
-              the library — the facts arrive as data, and the interaction pattern is the component.
-              This one is live, right here; the lab has the whole set.
-            </p>
-            <div className="mt-4">
-              <spotlight.component {...spotlight.defaults} />
-            </div>
-            <Link
-              href="/lab"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-            >
-              Open the figure lab
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </section>
-        )}
-
-        {prompts.length > 0 && (
-          <section aria-labelledby="assistant-heading" className="pt-14">
-            <h2 id="assistant-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
-              Answers that quote, not improvise
-            </h2>
-            <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
-              The assistant answers questions about every published essay by quoting it and linking
-              the source — retrieval runs in your browser, no model service. It also renders the
-              essays&rsquo; interactive figures in the thread, so an answer can come with the machine
-              that explains it.
-            </p>
-            <ul className="mt-4 flex flex-col gap-2">
-              {prompts.map((prompt) => (
-                <li
-                  key={prompt}
-                  className="rounded-xl border border-line bg-surface px-4 py-3 font-mono text-xs leading-relaxed text-ink-secondary"
-                >
-                  {prompt}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/assistant"
-              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-brand px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-            >
-              Ask the archive
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-          </section>
-        )}
-
-        <section aria-labelledby="machine-heading" className="mt-14 border-t border-line pt-10">
-          <h2 id="machine-heading" className="font-serif text-xl font-bold tracking-tight text-ink">
-            How this site is made
-          </h2>
-          <dl className="mt-4 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-line bg-surface p-4">
-              <dt className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
-                Static, crawlable, citable
-              </dt>
-              <dd className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
-                Every page ships as HTML with structured data and a machine-readable markdown twin —
-                readable by browsers, agents, and answer engines alike.
-              </dd>
-            </div>
-            <div className="rounded-2xl border border-line bg-surface p-4">
-              <dt className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
-                A governed figure library
-              </dt>
-              <dd className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
-                Interactive learning figures follow a written constitution — one interaction pattern
-                each, facts as data, token-only colour — and every one is maintained as generative UI
-                in the assistant.
-              </dd>
-            </div>
-            <div className="rounded-2xl border border-line bg-surface p-4">
-              <dt className="font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink">
-                On-device assistant
-              </dt>
-              <dd className="mt-2 font-sans text-sm leading-relaxed text-ink-secondary">
-                Retrieval, ranking, and the quoted answers run in the reader&rsquo;s browser against a
-                build-time index. No model provider, no query leaving the tab by default.
-              </dd>
-            </div>
-          </dl>
-        </section>
-      </main>
-
-      <SiteFooter />
-    </div>
-  );
+  function content(key: typeof design.section[number]['key']) {
+    switch (key) {
+      case 'writing': return <>
+        <DesignSlot name="writing.lead">
+          {lead ? <article className="r-flow r-flow-wide">
+            <Cover post={lead} />
+            <h3 className="r-h3"><Link href={lead.href} className="r-row-link">{lead.title}</Link></h3>
+            <p className="r-body r-muted">{lead.description}</p>
+            <Control href={lead.href} secondary>Read article</Control>
+          </article> : <p className="r-body">{design.locales.en['writing.empty']}</p>}
+        </DesignSlot>
+        <DesignSlot name="writing.list"><div className="r-flow r-flow-wide">
+          {rest.map(post => <WritingRow key={post.slug} post={post} />)}
+          <Control href="/blog" secondary>All essays</Control>
+        </div></DesignSlot>
+      </>;
+      case 'topics': return <>
+        {(['topics.first', 'topics.second', 'topics.third'] as const).map((slot, i) => <DesignSlot key={slot} name={slot}>
+          {topics[i] ? <Link href={`/tags/${topics[i].slug}`} className="r-card r-topic">
+            <h3 className="r-h3">{topics[i].tag}</h3>
+            <p className="r-meta r-muted">{topics[i].count} {topics[i].count === 1 ? 'essay' : 'essays'} in the archive</p>
+            <span className="r-body">Explore topic</span>
+          </Link> : <p className="r-body r-muted">{design.locales.en['topics.empty']}</p>}
+        </DesignSlot>)}
+      </>;
+      case 'figure': return <>
+        <DesignSlot name="figure.frame">{spotlight ? <spotlight.component {...spotlight.defaults} /> : <p className="r-body">No figure available. Read the essays for their text explanations.</p>}</DesignSlot>
+        <DesignSlot name="figure.notes"><div className="r-flow r-flow-wide">
+          <h3 className="r-h3">Change one thing. See what follows.</h3>
+          <p className="r-body r-muted">The essays teach with interactive figures. This comparison comes from the same governed library used in articles and assistant answers: the facts arrive as data, and the interaction pattern stays consistent.</p>
+          <p className="r-body r-muted">Use the slider to compare the two views. A written explanation remains available alongside the figure.</p>
+          <Control href="/lab" secondary>Open the figure lab</Control>
+        </div></DesignSlot>
+      </>;
+      case 'datasets': return <>
+        <DesignSlot name="datasets.first"><div className="r-card r-flow">
+          <Status state="unavailable">{design.locales.en['status.unavailable']}</Status>
+          <h3 className="r-h3">Standalone datasets</h3>
+          <p className="r-body r-muted">{design.locales.en['datasets.empty']} Sources and artifacts are linked from the essays that discuss them.</p>
+        </div></DesignSlot>
+        <DesignSlot name="datasets.second"><div className="r-card r-flow">
+          <h3 className="r-h3">Methods in context</h3>
+          <p className="r-body r-muted">Read the original claims alongside the implementation, assumptions, and limitations. A close reading is not a claim of independent reproduction.</p>
+          <Link href="/blog" className="r-row-link">Find a research essay</Link>
+        </div></DesignSlot>
+        <DesignSlot name="datasets.third"><div className="r-card r-flow">
+          <h3 className="r-h3">A traceable record</h3>
+          <p className="r-body r-muted">Article dates, citations, and public source history keep the writing attributable. Essays are licensed under {SITE.license}.</p>
+          <a href="https://github.com/myself-aas/ResearchWithME" className="r-row-link">View the source repository</a>
+        </div></DesignSlot>
+      </>;
+      case 'assistant': return <>
+        <DesignSlot name="assistant.prompt"><div className="r-flow r-flow-wide">
+          <h3 className="r-h3">Answers that quote, not improvise.</h3>
+          <p className="r-body r-muted">Ask about the published essays. Retrieval runs in your browser and answers link back to their source. This is an archive guide, not a generative model.</p>
+          <Control href="/assistant">Ask the archive</Control>
+          <Link href="/search" className="r-row-link">Prefer a search? Find an essay directly.</Link>
+        </div></DesignSlot>
+        <DesignSlot name="assistant.links"><div className="r-flow">
+          <p className="r-body r-muted">Questions to take to the archive</p>
+          {prompts.length ? <ul className="r-list">{prompts.map(prompt => <li key={prompt} className="r-row"><p className="r-body">{prompt}</p></li>)}</ul> : <p className="r-body">{design.locales.en['assistant.empty']}</p>}
+        </div></DesignSlot>
+      </>;
+      case 'author': return <>
+        <DesignSlot name="author.bio"><div className="r-flow r-flow-wide">
+          <h3 className="r-h3">{AUTHOR.name}</h3><p className="r-body r-muted">{AUTHOR.bio}</p><Control href="/about" secondary>About the author</Control>
+        </div></DesignSlot>
+        <DesignSlot name="author.meta"><dl className="r-list">
+          <div className="r-row"><dt className="r-meta r-muted">Design system</dt><dd className="r-body">reme {design.meta.version} · Next.js adaptation</dd></div>
+          {updated && <div className="r-row"><dt className="r-meta r-muted">Archive last updated</dt><dd className="r-body"><time dateTime={updated}>{updated}</time></dd></div>}
+          <div className="r-row"><dt className="r-meta r-muted">License</dt><dd className="r-body"><a className="r-row-link" href={SITE.licenseUrl}>{SITE.license}</a></dd></div>
+        </dl></DesignSlot>
+      </>;
+      case 'faq': return <DesignSlot name="faq.body">{faq.map(([question, answer]) => <details key={question} className="r-disclosure"><summary className="r-body">{question}</summary><p className="r-body r-muted">{answer}</p></details>)}</DesignSlot>;
+      case 'dispatch': return <DesignSlot name="dispatch.body"><div className="r-flow r-flow-wide">
+        <p className="r-body r-muted">Found a mistake, have a source to share, or want to discuss an essay? Open an issue or use the contact page. There is no subscription form or tracking funnel.</p>
+        <Control href={CONTACT.issues} secondary>Start a conversation</Control>
+        <Link className="r-row-link" href="/contact">Other ways to get in touch</Link>
+        <Link className="r-row-link" href={SITE.feedPath}>Follow new writing with RSS</Link>
+      </div></DesignSlot>;
+      case 'hero': return null;
+    }
+  }
+  const headings = {
+    hero: '', writing: 'Recent writing', topics: 'Follow a question', figure: 'Make the explanation tangible',
+    datasets: 'Evidence, methods, and the record', assistant: 'Read with a guide', author: 'Written in public',
+    faq: 'A few useful answers', dispatch: 'Research is a conversation',
+  };
+  return <div className="reme-page">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
+    <SiteHeader />
+    <main id="main-content" tabIndex={-1}>
+      <HomeHero post={featured} />
+      {design.section.filter(s => s.key !== 'hero').map(s => <section key={s.id} data-section={s.key} aria-labelledby={`${s.key}-heading`} className="r-section">
+        <div className="r-grid r-heading"><div className="r-slot r-slot-section-head"><h2 id={`${s.key}-heading`} className="r-h2">{headings[s.key]}</h2></div></div>
+        <div className="r-grid">{content(s.key)}</div>
+      </section>)}
+    </main>
+    <SiteFooter />
+  </div>;
 }

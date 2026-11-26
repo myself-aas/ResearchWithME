@@ -1,17 +1,35 @@
 ---
 title: "Tooling notes, still under construction"
-description: "A draft in progress: the small set of tools I reach for when reading code, and why most of them are boring on purpose."
+description: "Working notes on a small research-tool kit: source capture, isolated experiments, reviewed command records and evidence preservation, with open questions kept explicit."
 date: "2026-11-22"
 tags: ["tools", "research-practice"]
-draft: true
+draft: false
+updated: "2026-11-26"
+toc: true
+faq:
+  - question: "Is retaining shell history enough to make an experiment reproducible?"
+    answer: "No. Commands need source and dependency versions, inputs, environment details and outputs. Histories can also contain secrets, so review and redact before preserving or sharing them."
+  - question: "What kind of evidence does this article provide?"
+    answer: "Proposed minimal research-tool workflow. The evaluation steps are proposed checks; they are not a claim that new experiments or security tests were run."
+  - question: "What should be recorded before applying this method?"
+    answer: "Histories and logs are reviewed for secrets before retention or publication. Execution environments and source versions are recoverable, not just shell commands."
+cover: "/images/covers/tooling-notes-under-construction.webp"
+coverAlt: "A notebook, terminal and evidence record form a connected research toolkit."
 ---
 
-This post is a draft. It exists to demonstrate that `draft: true` keeps a file out of the production
-build while still letting me read it locally with `npm run dev`.
+Research tooling should preserve the route from a source to a checkable conclusion, not merely make a workspace look sophisticated. This working note proposes a small kit for source capture, isolated experiments, diffs, and measurement records. The recommendations are a workflow to evaluate; no comparative productivity study or tool benchmark has been performed.
+
+## Engineering quick-spec
+
+| Review boundary | What this draft covers |
+| --- | --- |
+| Evidence level | Proposed minimal research-tool workflow |
+| Input contract | Pinned sources, isolated scratch work, explicit commands and durable evidence |
+| Main limitation | A command history can contain credentials or fail to describe the environment |
 
 ## The list so far
 
-- A pinned shell history, so a command from two years ago still runs.
+- A reviewed command record with source/input hashes and environment details; shell history alone neither ensures repeatability nor protects secrets.
 - One scratch repository per long read, with the harness committed beside the notes.
 - A diff viewer I actually like. This matters more than it should.
 
@@ -26,12 +44,42 @@ And the workflow they serve, as a trace:
 ## Still to write
 
 The section on measurement tooling is not finished, and the argument about editor choice is probably
-not worth making. I will publish when the first paragraph can state what changed my mind.
+not worth making. This published working note leaves that gap explicit rather than inventing a completed example.
 
-The draft itself, as a structure — written and still-to-write, honestly separated:
+The working note itself, as a structure — written and still-to-write, honestly separated:
 
 <ToolsDraftTree />
 
 Three readings of the list, worth checking yourself on:
 
 <ToolsQuiz />
+
+## Reproduction playbook
+
+**Proposed evaluation.** No new experiment is reported by this editorial revision.
+
+1. Choose a non-sensitive reading task and save its source URL/version plus the question being tested. Start with text notes and version control; do not add an integration unless it preserves a concrete missing artifact.
+
+2. If execution is necessary, use a disposable environment with no production credentials. Save reviewed commands, dependency versions, inputs and outputs in a small evidence directory; redact tokens and private paths before sharing.
+
+3. Ask another reader to repeat the conclusion from the recorded artifacts. Record missing steps and the cost of maintaining the kit before recommending another tool; distinguish a failed reproduction from an editor preference.
+
+## Pre-publication audit
+
+- [ ] Histories and logs are reviewed for secrets before retention or publication.
+- [ ] Execution environments and source versions are recoverable, not just shell commands.
+- [ ] Recommendations identify an evidence-preservation task rather than a brand preference.
+
+## Verdict
+
+Prefer the smallest tool set that preserves sources, decisions and reproducible outputs. Treat this as a published working note, not a completed comparative tool evaluation. An honest gap in the evidence is more useful than a finished-looking list that another reader cannot use.
+
+Read the [site’s review approach](/about), browse the [writing archive](/blog), or use [archive search](/search) to place this method in context.
+
+## References
+
+These are primary methodological reading sources, not provenance for the personal observations or unverified numerical fixtures in this draft.
+
+1. [Git documentation and source](https://github.com/git/git).
+2. [CPython documentation and standard-library source](https://github.com/python/cpython).
+3. [pyperf documentation and source](https://github.com/psf/pyperf).

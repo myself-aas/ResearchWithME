@@ -1,5 +1,5 @@
 <!--
-TEMPLATE B — Generative post layout system (figure constitution v2)
+TEMPLATE B — Generative post layout system (figure constitution v2, reme v3.2)
 ============================================================================
 The anatomy of an essay that teaches with interactive figures. Every post
 must carry **4–5 unique interaction archetypes** (enforced by
@@ -8,6 +8,19 @@ every one of them is generative UI maintained.
 
 AUDITION PATTERNS ON /lab FIRST. The adoption procedure is at the foot —
 it is the same for every genre; only the PLACEMENT differs.
+
+RULES THAT BIND THIS TEMPLATE (DESIGN.md `reme v3.2`, AGENTS.md §12):
+- No kicker/eyebrow above a heading. No text overlaid on a cover. The `<h1>`
+  drops from the cover; the cover image sits below the title.
+- Tokens only. Every class resolves through a semantic role (bg-canvas,
+  text-ink, border-line, bg-brand, …). Never hex, never blue, never the
+  shadcn `--primary`/`--border` variables. Data colours arrive as tone names
+  via lib/figures/tones.ts.
+- Prose first, figure second. Each figure is introduced by a lead-in sentence
+  and followed by an interpretation sentence that reads its default state aloud.
+- Composed in-thread surfaces (one `generative-ui` part stacking several
+  registry components) use templates/GENERATIVE_UI_SURFACE_TEMPLATE.tsx.tmpl,
+  not hand-rolled JSX in the MDX body.
 ============================================================================
 -->
 

@@ -1,12 +1,33 @@
 ---
 title: "PostHog review: the checks to run before you self-host"
 description: "PostHog repository review of product architecture, hobby self-hosting and mixed licensing, with deployment and privacy questions left explicit."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "posthog"]
-draft: true
+draft: false
+faq:
+  - question: "Does the public checkout promise hosted-feature parity when self-hosted?"
+    answer: "No. The reviewed README distinguishes Cloud from its hobby deployment. Confirm support, enabled features, operational ownership and license terms for the actual edition being evaluated."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Required features and support commitments are confirmed for the chosen deployment. Event/replay data collection, masking and deletion have a privacy owner."
+cover: "/images/covers/posthog-review-before-you-self-host.webp"
+coverAlt: "A stylized hedgehog beside server layers and a gated data connection."
 ---
 
-### Key findings
+PostHog’s public repository helps explain its product platform, but repository visibility does not establish hosted-feature parity or a supported production self-hosting plan. This pinned source review follows service, edition, and license boundaries. Resolve the deployment model and data-governance obligations before treating a hobby stack or product list as an adoption guarantee.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Product analytics deployment and edition boundaries |
+| Inputs and boundaries | Product-specific services, hobby stack composition and enterprise exceptions |
+| Principal failure case | A successful hobby install may not satisfy support, restore or privacy requirements |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - The pinned README distinguishes Cloud from unsupported hobby self-hosting.
 - The hobby configuration names multiple stateful dependencies, not one standalone analytics process.
 - MIT Expat root terms explicitly exclude the enterprise directory.
@@ -27,9 +48,11 @@ The monorepo layout describes legacy Django code, product-specific backend/front
 
 That structure suggests a useful evaluation strategy: choose a product path and trace it, rather than assuming all capabilities have the same storage, query and deployment needs. A product analytics trial does not validate replay retention or a separate flag-serving workload. This is reviewer analysis of the documented architecture, not a measured account of internal service behavior.
 
-The hobby Compose file is explicitly labeled hobby-only. It names a PostgreSQL service, Redis, Valkey and ClickHouse, with ClickHouse depending on Kafka and ZooKeeper. Several definitions extend a base Compose file; the inspected overlay alone is not a complete resolved production topology. It nevertheless establishes that “self-host the analytics app” The hobby stack opened service by service — each layer a fact the Compose file establishes:
+The hobby Compose file is explicitly labeled hobby-only. It names a PostgreSQL service, Redis, Valkey and ClickHouse, with ClickHouse depending on Kafka and ZooKeeper. Several definitions extend a base Compose file; the inspected overlay alone is not a complete resolved production topology. It nevertheless establishes that self-hosting this application involves more than a single dashboard process. The figure below separates the supporting services; it is not a verified production topology:
 
-<PosthogStackLayers /> [3](https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docker-compose.hobby.yml#L1-L90)
+<PosthogStackLayers />
+
+[3](https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docker-compose.hobby.yml#L1-L90)
 
 ## License scope needs a separate review
 
@@ -42,6 +65,7 @@ The architecture document also says enterprise features are being migrated to ot
 | Hosted versus self-hosted | README recommends Cloud; hobby has no support guarantee | Obtain the support and deployment commitments you need |
 | Operating burden | Hobby overlay names multiple data services | Resolve the full stack and practice restore |
 | Reuse rights | MIT Expat with explicit enterprise exception | Inspect the exact code and terms being used |
+
 The decisions as a sortable matrix — evidence against the follow-up it demands:
 
 <PosthogDecisionMatrix />
@@ -95,19 +119,29 @@ Three parity claims worth checking before you self-host:
 
 <PosthogQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Choose the exact product path and required support commitments before selecting Cloud or a self-hosted trial. Pin application and service versions and resolve the Compose overlay plus its base definitions.
 
-1. Resolve the complete hobby stack and inventory database, event, replay and object-storage state before a restore drill.
-2. Check the intended product and edition against actual file notices, license terms and support commitments.
-3. Use synthetic events and replay data to verify masking, access, deletion and retention before collecting real user data.
+2. Use synthetic events and non-sensitive replay fixtures. Test retention, deletion, masking and access with separate identities; record which service stores each data class rather than inferring it from the UI.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/posthog-review-before-you-self-host/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. PostHog’s recursive tree response was truncated; selected paths were retrieved directly at this commit. This review makes no exhaustive repository or missing-file claim. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Rehearse backup/restore and an upgrade for the resolved topology. Obtain edition and license decisions for the actual files and features used; record gaps instead of assuming the hosted offering’s commitments transfer.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Required features and support commitments are confirmed for the chosen deployment.
+- [ ] Event/replay data collection, masking and deletion have a privacy owner.
+- [ ] Restore and license scope are checked beyond the hobby overlay.
+
+The [inspection record](/evidence/posthog-review-before-you-self-host/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Evaluate PostHog with a specific product and operating model in mind. Source access is valuable for inspection, not a substitute for support, privacy or licensing decisions. A hobby trial is evidence about that trial only; it should not be presented as production parity.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

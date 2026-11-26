@@ -1,0 +1,122 @@
+[
+  {
+    "tier": "xs",
+    "role": "h1",
+    "slot": "hero.text",
+    "slotWidth": 358,
+    "size": 32,
+    "cqi": 8.938547
+  },
+  {
+    "tier": "xs",
+    "role": "h2",
+    "slot": "section.head",
+    "slotWidth": 358,
+    "size": 24,
+    "cqi": 6.703911
+  },
+  {
+    "tier": "xs",
+    "role": "h3",
+    "slot": "card",
+    "slotWidth": 358,
+    "size": 20,
+    "cqi": 5.586592
+  },
+  {
+    "tier": "md",
+    "role": "h1",
+    "slot": "hero.text",
+    "slotWidth": 720,
+    "size": 44,
+    "cqi": 6.111111
+  },
+  {
+    "tier": "md",
+    "role": "h2",
+    "slot": "section.head",
+    "slotWidth": 720,
+    "size": 30,
+    "cqi": 4.166667
+  },
+  {
+    "tier": "md",
+    "role": "h3",
+    "slot": "card",
+    "slotWidth": 720,
+    "size": 22,
+    "cqi": 3.055556
+  },
+  {
+    "tier": "lg",
+    "role": "h1",
+    "slot": "hero.text",
+    "slotWidth": 381.333333,
+    "size": 41,
+    "cqi": 10.751748
+  },
+  {
+    "tier": "lg",
+    "role": "h2",
+    "slot": "section.head",
+    "slotWidth": 960,
+    "size": 30,
+    "cqi": 3.125
+  },
+  {
+    "tier": "lg",
+    "role": "h3",
+    "slot": "card",
+    "slotWidth": 298.666667,
+    "size": 22,
+    "cqi": 7.366071
+  },
+  {
+    "tier": "xl",
+    "role": "h1",
+    "slot": "hero.text",
+    "slotWidth": 483.333333,
+    "size": 52,
+    "cqi": 10.758621
+  },
+  {
+    "tier": "xl",
+    "role": "h2",
+    "slot": "section.head",
+    "slotWidth": 1216,
+    "size": 32,
+    "cqi": 2.631579
+  },
+  {
+    "tier": "xl",
+    "role": "h3",
+    "slot": "card",
+    "slotWidth": 378.666667,
+    "size": 24,
+    "cqi": 6.338028
+  },
+  {
+    "tier": "2xl",
+    "role": "h1",
+    "slot": "hero.text",
+    "slotWidth": 483.333333,
+    "size": 52,
+    "cqi": 10.758621
+  },
+  {
+    "tier": "2xl",
+    "role": "h2",
+    "slot": "section.head",
+    "slotWidth": 1216,
+    "size": 32,
+    "cqi": 2.631579
+  },
+  {
+    "tier": "2xl",
+    "role": "h3",
+    "slot": "card",
+    "slotWidth": 378.666667,
+    "size": 24,
+    "cqi": 6.338028
+  }
+]

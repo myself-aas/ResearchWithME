@@ -1,12 +1,33 @@
 ---
 title: "RustDesk review: what to audit before you deploy remote access"
 description: "RustDesk repository review of rendezvous and relay boundaries, native build dependencies and remote-access trust, without untested security assurances."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "rustdesk"]
-draft: true
+draft: false
+faq:
+  - question: "Does self-hosting RustDesk alone establish a secure deployment?"
+    answer: "No. The deployment still needs trusted clients, correct server identity/key distribution, session authorization and operational checks. This review performed no penetration test or live remote session."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Remote access is explicitly authorized and uses disposable test endpoints. Client distribution and server identity/key configuration are controlled."
+cover: "/images/covers/rustdesk-review-before-you-deploy.webp"
+coverAlt: "Two desktop displays connect through a central shield-shaped trust boundary."
 ---
 
-### Key findings
+RustDesk deployment decisions depend on the client, rendezvous and relay services, and the trust placed in their configuration. This pinned source review distinguishes direct and relayed connection paths without certifying a deployment. Verify server identity, key distribution, access policy, and recovery behavior in an isolated trial before exposing remote access to real users.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Remote-access client/server trust and connection paths |
+| Inputs and boundaries | Rendezvous, direct connectivity, relay fallback and deployed server identity |
+| Principal failure case | Self-hosting a relay does not independently prove endpoint or key-distribution security |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - The application repository is not the same artifact as its rendezvous/relay server.
 - Native libraries, UI bridges and platform builds are part of the maintenance surface.
 - Self-hosted connectivity is not proof of endpoint authorization or complete security.
@@ -40,6 +61,7 @@ The Flutter workflow contains bridge generation and separate platform build jobs
 | Discovery and relay | README map and mediator excerpt | Deployed server configuration and topology |
 | Endpoint access | README use/misuse framing | Consent, unattended policies and privilege behavior |
 | Build | Cargo manifest and Flutter workflow | Reproducibility and binary provenance |
+
 The connection as a flow you can walk — each lit arrow is one boundary:
 
 <RustdeskConnectionFlow />
@@ -99,19 +121,29 @@ Three trust readings worth checking before you deploy:
 
 <RustdeskQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Define the client/server versions, server identity and key-distribution method in a lab with disposable endpoints. Write an access and consent policy before attempting connections; do not use real customer sessions as a smoke test.
 
-1. In an authorized lab, verify direct and relayed sessions, explicit consent, unattended policies and revocation on each intended OS.
-2. Resolve the separate server artifact and configuration; document which infrastructure and endpoints are trusted.
-3. Follow the intended Flutter release build path and verify binary provenance, update policy and applicable AGPL obligations.
+2. Exercise both reachable-peer and relay-required cases while recording the configured endpoints and connection evidence. Check mismatched identity/key behavior and session authorization rather than equating connectivity with trust.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/rustdesk-review-before-you-deploy/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Revoke access, rotate the intended key material and rehearse server recovery according to the pinned deployment documentation. Evaluate logs for sensitive data and document operational ownership before considering an exposed deployment.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Remote access is explicitly authorized and uses disposable test endpoints.
+- [ ] Client distribution and server identity/key configuration are controlled.
+- [ ] Direct/relayed behavior, revocation and recovery are tested separately.
+
+The [inspection record](/evidence/rustdesk-review-before-you-deploy/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Consider RustDesk only with an explicit remote-access threat model and ownership of clients as well as server infrastructure. A working self-hosted relay is a connectivity result, not a full security assessment. Treat this review as a map of boundaries that need verification.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

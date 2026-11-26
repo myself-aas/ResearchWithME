@@ -112,7 +112,12 @@ These are never traded away for a design, a framework upgrade, or a deadline.
   derived from the file name unless frontmatter overrides them.
 - Endpoints never carry a trailing slash; `trailingSlash` stays off. The canonical link and the
   sitemap both emit the slashless form. (§15 records why this differs from the `…/slug/` sketch.)
-- `/blog`, `/tags`, `/tags/<tag>`, `/about`, `/search` are the only non-article routes.
+- Non-article routes: `/blog`, `/tags`, `/tags/<tag>`, `/about`, `/search`,
+  `/assistant` (the archive chat), `/lab` (the figure library showcase),
+  `/contact`, and `/privacy`. Every one of them is a crawlable page like any
+  other (§1) — `/assistant` and `/lab` are server-rendered shells whose
+  readable content survives `curl`, with the chat island or the figure registry
+  code-split to the route (§9, §18, §20).
 - A slug change is a rename **plus** a permanent redirect in `next.config.ts`, in the same commit.
   Never delete a URL that has been public without leaving a redirect.
 - Legacy maps already in place: `/posts` and `/posts/:slug` → `/blog`, `/post/:slug` → `/blog/:slug`,
@@ -370,6 +375,21 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 - Focus is always visible (`focus-visible:outline-2`), and colour contrast is enforced by
   `npm run tokens:check`.
 - Motion respects `prefers-reduced-motion`. Decorative motion is not shipped on the article path.
+- **Colour comes from semantic tokens only** (`DESIGN.md`, reme v4.1 incremental integration). New landing
+  visuals are authored in the ten `src/design/*.manifest.ts` modules and emitted through
+  `npm run design:gen`; authored components consume generated `r-*` classes. The v4 palette
+  projects into `tokens/generated/` for legacy semantic Tailwind consumers, including OG images.
+  No raw palette utility, hex, or `rgb()`/`hsl()` in migrated JSX/CSS. V4 explicitly permits
+  info/chart blue from the color manifest; the former blanket no-blue rule is superseded.
+  Existing figure/domain palettes still resolve through `lib/figures/tones.ts` and the legacy
+  pipeline. `design:lint` covers ten migrated source files, not every inner route;
+  `docs/design/AUDIT-v4.1.md` records the full-tree inventory and incomplete gates.
+- **Generated artifacts are committed, not edited.** `src/generated/**` and
+  `docs/design/*.generated.md` must match a fresh `design:gen` run byte-for-byte.
+  `design:check` runs in quality, prebuild, and CI. The author approved keeping Next.js/Tailwind 4
+  and the supplied heading caps (24/32/34ch; 45–75ch for reading roles). This does not relax v4
+  contrast, payload, or interaction thresholds; never claim all 23 gates pass.
+- **No forbidden patterns** (`DESIGN.md` "Do not"): no kicker/eyebrow above a heading, no text overlaid on cover artwork, no gradient text, no decorative `backdrop-blur` glass, no nested cards, no hard offset shadows, no `>1px` coloured left/right border, and no unicode icon glyphs. No horizontal-scrolling topic-chip strip in the hero or mobile header. No carousel/animation library, preloader, or client-side `<canvas>` luminance script. At most two downloaded fonts (Newsreader + Inter) plus the system monospace.
 - Interactive figures in posts are data-driven components, not one-off scripts. Each figure in a
   post must have its own interaction pattern (a slider, a scrubber, a picker — never two widgets
   that differ only in subject matter), must server-render its initial state so the article survives
@@ -399,6 +419,7 @@ If a change does not improve one of these, it is maintenance, not SEO.
 A change is done when all of these pass, locally and in CI:
 
 ```bash
+npm run design:check   # generated determinism + migrated-source boundary
 npm run tokens:check   # tokens build + contrast
 npm run lint
 npm run typecheck
@@ -467,15 +488,11 @@ Known tensions, resolved as follows:
    maintenance burden, removing it does not affect the other artifacts.
 7. **No database.** Anything that would require runtime storage — view counts, comments, per-user
    state — is out of scope, no matter what it would do for engagement signals.
-8. **Assistant Cloud sync.** The author connected `/assistant`'s thread state to their Assistant
-   Cloud project (`proj_0k1j9pkb7977`, frontend URL in `NEXT_PUBLIC_ASSISTANT_BASE_URL`,
-   publishable by design — the browser mints anonymous session tokens from it and no secret exists
-   in the repo) on 2026-11-25, so the author can see what readers ask. This is the one deliberate
-   exception to rule 7 and to §18's memory-only state: a hosted, third-party store for assistant
-   conversations, reached from the reader's browser. It is bounded by §18 rule 1 (never answer
-   text — the model stays local), rule 6 (anonymous identity, disclosed in the same commit on the
-   page and in the privacy policy), and by search staying untouched. Removing the environment
-   variable reverts the site to fully local behaviour with no code change.
+8. **Assistant privacy (v4.1).** The v4.1 brief supersedes the previous optional
+   Assistant Cloud exception. `/assistant` is memory-only, with no anonymous
+   identity, thread upload, cloud model, or cloud fallback. Do not reintroduce
+   `NEXT_PUBLIC_ASSISTANT_BASE_URL`. No local weights or inference engine ship;
+   the optional device probe must not imply model availability.
 
 ---
 
@@ -510,8 +527,8 @@ section is the contract. `npm run check:mcp` proves the wiring: it spawns every 
 
 | Server | Transport | Used for | Writes |
 | --- | --- | --- | --- |
-| `shadcn` | stdio | Reading registry component source as reference | No — `add`/`init` are forbidden here |
-| `assistant-ui` | stdio | Live assistant-ui docs for `components/assistant/` and `lib/assistant/` work (§18) | No |
+| `shadcn` | stdio | Reading registry component source as reference, **including the assistant-ui catalog at `r.assistant-ui.com`** (read-only) | No — `add`/`init` are forbidden here |
+| `assistant-ui` | stdio | Live assistant-ui docs for `components/assistant/` and `lib/assistant/` work (§18); front-end for `https://www.assistant-ui.com/llms.txt` | No |
 | `github` | http | Actions logs, review threads, code scanning, issue search | Read-only toolsets by default |
 | `figma` | http | Variables, screenshots, component code from a design file | No |
 | `fetch` | stdio | Primary sources as markdown (papers, model cards, docs) | No |
@@ -552,20 +569,16 @@ cuts the essay texts into sentence-aligned passages, matches them locally with
 the same technique as `/search`, and the reply is composed from the matched
 passages verbatim, grouped by essay, with a source list. There is no model
 service behind it, no API key, and no runtime process beyond the framework.
-When `NEXT_PUBLIC_ASSISTANT_BASE_URL` is set at build time, the runtime also
-syncs threads to the author's Assistant Cloud project under an anonymous,
-account-less session (see rule 6 and §15.8); unset — the local default — no
-cloud request exists at all.
+The v4.1 integration explicitly disables cloud sync. Conversations live in this
+browser tab only. A capability probe is available on explicit click; no model
+weights, engine, or model service is installed.
 
 Rules:
 
 1. **The model stays local.** The reasoning fetch is `/search-index.json`,
-   cached for the session. The only other permitted origin is the Assistant
-   Cloud frontend URL from `NEXT_PUBLIC_ASSISTANT_BASE_URL`, and only for
-   thread persistence, titles, and run reports — never for producing answer
-   text. No other fetch, no model provider, no server route that carries a
-   query anywhere. Search (`/search`) keeps its §8.5 on-device promise
-   unconditionally.
+   cached for the session. No outbound origin is permitted for query processing,
+   persistence, telemetry, titles, or answer generation. The optional device
+   probe downloads nothing. Search keeps its §8.5 on-device promise.
 2. **Answers quote; they do not improvise.** Every non-boilerplate sentence in
    a reply is a passage from a published essay or a link to one. When nothing
    matches, the reply says so and points at `/search`. A reply that asserts
@@ -580,14 +593,10 @@ Rules:
 5. **The readable page survives `curl`.** The explanation, the how-it-works
    section, and the `<noscript>` fallback are server-rendered. The thread is
    an interaction, not content the reader needs (§8.5).
-6. **Sync is anonymous, disclosed, and switchable.** With the cloud URL set,
-   threads, messages, titles, and run reports persist to Assistant Cloud under
-   a `usr_anon_` identity whose refresh token lives in `localStorage` (30 days,
-   no rotation secret, nothing credential-shaped). The `/assistant` page and
-   the privacy policy disclose this in the same commit that sets the variable,
-   and the copy must say which mode shipped — a page that promises "nothing
-   leaves your browser" while syncing is the §2.4 defect in prose form.
-   Unset, the thread is memory-only and dies with the tab.
+6. **No cloud sync.** The v4.1 requirement supersedes the old anonymous-sync
+   exception. Current code and privacy copy must agree. Thread state stays in
+   memory; old stored tokens can be removed by clearing site data. No cookies,
+   cloud fallback, or query-bearing URLs.
 7. **Prompt suggestions derive from the archive** (`suggestPrompts`), never
    from hardcoded strings that rot as essays land.
 8. **Ranking changes are tested changes.** Any behaviour change in
@@ -598,22 +607,47 @@ Rules:
    guides; `node_modules/@assistant-ui/react` is the authority.
 10. **Post figures are generative UI.** Every interactive figure an article
     ships must also render inside the thread: the adapter routes matching
-    questions to a tool call whose name maps, via `MessagePrimitive.Content
-    components={{ tools: { by_name } }}`, to the same component the MDX body
-    uses (the `makeAssistantToolUI` escape hatch is deprecated in the installed
-    0.15.x line — do not use it). Tool args carry defaults (`initialRatio`,
-    `initialMonth`, `initialCheckpoint`) so a tool call with partial arguments
-    still renders a sensible figure. An article-only widget is half-shipped;
-    since §20 the routing keywords and defaults live on the figure registry
-    entry and `routeFigure` is registry-driven — a routing change is still a
-    tested change (rule 8).
+    questions to a tool call whose name maps, via the registry-derived
+    `generativeTools.by_name` (in `components/assistant/GenerativeFigures.tsx`),
+    to the **same** component the MDX body uses. `by_name` is produced by the
+    shared `makeFigureToolUI` factory — the `makeAssistantToolUI` escape hatch
+    is deprecated in the installed 0.15.x line, so do not use it. The thread
+    currently renders tool-call parts through `MessagePrimitive.Content`
+    (`components={{ Text, tools: generativeTools }}`); `Content` is the
+    deprecated alias of `MessagePrimitive.Parts`, and the planned, like-for-like
+    migration to `.Parts` (per-part render callback, keeping `by_name` reachable)
+    is documented in `.agents/skills/assistant-ui-docs/references/reme-generative-architecture.md`
+    §4 — it is a functional equivalent, not a visual change. Tool args carry
+    defaults (`initialRatio`, `initialMonth`, `initialCheckpoint`, …) so a tool
+    call with partial arguments still renders a sensible figure. An article-only
+    widget is half-shipped; since §20 the routing keywords and defaults live on
+    the figure registry entry and `routeFigure` is registry-driven — a routing
+    change is still a tested change (rule 8). The **forward path** for *composed*
+    in-thread surfaces (one spec stacking several registry components) is
+    `MessagePrimitive.GenerativeUI` with a `GenerativeUIComponentRegistry`
+    allowlist + `Fallback`; the two spec shapes (`present` flat `_type` vs
+    primitive `{ root: { component, props } }`) do **not** interchange — see the
+    bridge doc §1. Both paths share one security boundary: the allowlist bounds
+    *which* components render (no `eval`, no dynamic import); it does not
+    constrain props, so never forward agent/tool-supplied props into
+    `dangerouslySetInnerHTML` and reject `javascript:` URLs (§18.9, bridge §7).
 
 ## §19 Agent skills layer
 
 `.agents/skills/` carries SKILL.md-format instruction packages for coding
-agents, adapted from the assistant-ui repository's agent infrastructure; the
+agents: repo-adapted procedures and pinned upstream packages. The task-routing
 index and provenance live in `.agents/skills/README.md`, and
 `.claude/commands/` holds command entry points that point into the skills.
+Vendored provenance is pinned in `skills-lock.json` (`version: 2`): every
+vendored skill records its `source`, `commit`, `sourceType`, `computedHash`,
+and `installMode`, so the contents are reproducible and auditable. The five
+`assistant-ui/skills` packages — `generative-ui`, `elements`, `primitives`,
+`runtime`, `tools` — are vendored **verbatim** at the pinned commit and are
+normative for any `/assistant` or figure-library change; `assistant-ui-docs`
+is the repo-adapted translation layer (with the bridge doc in
+`references/reme-generative-architecture.md`). For live API reference beyond the
+vendored skills, consult [`https://www.assistant-ui.com/llms.txt`](https://www.assistant-ui.com/llms.txt)
+via the `assistant-ui` MCP server (§17).
 
 1. **A skill is a procedure, not an exemption.** `AGENTS.md` outranks any
    skill — this generalizes §17's "the local authority wins".
@@ -624,6 +658,76 @@ index and provenance live in `.agents/skills/README.md`, and
    publishing are the author's acts (§17 rule 3), never a skill's.
 4. **Skills carry no credentials.** A skill that needs a secret names the
    environment variable and stops; §17 rule 2 is the ceiling.
+5. **Vendored skills stay in lockstep with `skills-lock.json`.** When a vendored
+   skill's `source`/`commit`/`computedHash` changes, the lockfile row and the
+   installed `.agents/skills/<name>/` tree change in the same commit, and
+   `.agents/skills/README.md` lists it. `npm run quality` includes a contract
+   test (`test/skills-and-templates.test.ts`) that fails when a vendored skill
+   is missing from the lockfile, when a `SKILL.md` links to a relative path
+   that does not exist, or when `templates/*.tmpl` carry stray hex/raw-palette
+   classes or forbidden glyphs.
+6. **`llms.txt` is machine-readable, not a second copy.** The site's own
+   `/llms.txt` is generated from the same content loader as the rest of the
+   artifacts (§8.3); keep it tiny and index-only. assistant-ui's
+   `https://www.assistant-ui.com/llms.txt` is an *external* API reference for
+   agents, reached via the `assistant-ui` MCP server — never vendored into this
+   repo as a file.
+
+### User-requested skill routing
+
+Read only the relevant `SKILL.md` when its task occurs. The complete source/name
+index is in [`.agents/skills/README.md`](.agents/skills/README.md); installation
+scope, the user-level restore command, and unresolved requests are recorded in
+[`SKILLS-INSTALLATION.md`](SKILLS-INSTALLATION.md). These are instructions, not
+newly enabled tools or services. The requested packages are copied globally for
+the current sandbox user and vendored here so they survive workspace snapshots.
+
+| Task trigger | Skills to consult |
+| --- | --- |
+| Audit/clean codebase hygiene, unused imports, dead-code candidates or formatting | `clean-codebase` (pjt222/agent-almanac); start in safe mode with before/after evidence and tests; aggressive removal requires author opt-in |
+| Edit agent-facing instructions or audit project memory | `writing-for-agents`; `claude-md-improver` for CLAUDE.md audits (approval before its proposed edits) |
+| Write technical documentation, ADRs, notes, or design diagrams | `documentation-writer`, `documentation-and-adrs`, `obsidian-markdown`, `design-doc-mermaid`, `excalidraw-diagram-generator` |
+| Design a chart or compare visual encodings | `chart-designer`, `chart-visualization`, `recharts`, `echarts`; implement site figures through §20 and the figure constitution |
+| Produce standalone animated charts, infographic/presentation videos, or motion media | `chart-animation`, `animated-infographic`, `presentation-video`, and the 15 motion-graphics skills indexed in the README; start with `motion-brief-writer` for an underspecified brief |
+| Search literature, review methods, or draft/revise a manuscript | `nature-academic-search`, `academic-paper-reviewer`, `academic-paper`, `research-paper-writer`, `research-paper-writing` |
+| Audit SEO/AEO/GEO or assess scalable content | `seo-audit`, `ai-seo`, `programmatic-seo`, `firecrawl-seo-audit`, `seo-geo`, `seo-aeo-best-practices`; choose a named SEO provider from the index rather than loading all four |
+| Browser QA, screenshots, or an explicitly authorized automation task | `agent-browser`; `browser-mcp-agent` only within the authorized scope and available tooling |
+| Cloudflare platform/Agents SDK work, or separately requested Kubernetes work | `cloudflare`, `agents-sdk`; `helm-chart-scaffolding` only for explicit Kubernetes tasks |
+| Assess readiness for coding agents or split independent tasks | `ai-ready` (johnpapa), `ai-ready-awesome-copilot` (GitHub), `dispatching-parallel-agents` when parallel-agent tools actually exist |
+| Diagnose CI, prepare commits/issues, or specify/implement Actions workflows | `gh-fix-ci`, `git-commit`, `github-issues`, `gh-issue-sync`, `create-github-action-workflow-specification`, `github-actions`; `gh-stack` is reference only when its branch workflow conflicts with the assigned session branch |
+
+- **Cleanup preserves behavior.** `clean-codebase` does not authorize architectural
+  rewrites, dependency upgrades, route/content deletion, or threshold changes.
+  Do not format vendored skills, generated outputs, licenses, or verbatim source
+  specifications. Regenerate outputs through their owners. Record uncertain or
+  recently edited dead-code candidates for author review before removal.
+  Keep deletion backups outside Git and never archive reachable code in place
+  merely to silence a static analyzer. Existing tests/build/site/Worker gates
+  remain authoritative; static-analysis findings are candidates, not proof.
+
+- **Resolve name collisions explicitly.** `seo` is from `affaan-m/ecc`;
+  `seo-iannuttall`, `seo-web-quality`, and `seo-claude` preserve the other three
+  requested sources. `ai-ready` is from `johnpapa/ai-ready`;
+  `ai-ready-awesome-copilot` preserves GitHub's version. The four namespaced
+  packages change only frontmatter names; both upstream and installed hashes
+  are pinned. Reinstall/update them in isolation, preserving the aliases.
+- **Keep site architecture authoritative.** Chart and motion skills provide
+  techniques, not permission to add runtime libraries, replace reme tokens,
+  change figure designs without approval, or exceed §9 budgets. Standalone
+  media exports are separate from site frontend dependencies. Obsidian syntax
+  must be converted/validated before publication through the MDX pipeline.
+- **Verify evidence.** Research/SEO skills must use traceable sources and honest
+  measurements: no fabricated citations, search rankings, experimental data,
+  or thin programmatic pages. Record missing tools, shared files, network
+  access, and credentials as blockers rather than inventing results.
+- **Keep actions scoped.** Installation does not authorize running bundled
+  scripts, enabling services, bypassing browser access controls, changing this
+  session's branch, or publishing/merging/deploying. Use existing `git`/`gh`
+  authentication and the author's requested scope; retain all normal gates.
+- **Report unresolved requests accurately.** `gh-cli` is absent from the requested
+  upstream catalog at installation time; `code.deepline.com` is blocked by this
+  environment's network allowlist. Neither is silently substituted or claimed
+  installed. Do not treat the presence of related skills as either capability.
 
 ---
 
@@ -658,7 +762,66 @@ The short form:
    `components/post/`. The genre layouts in
    `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` say where each archetype slots.
 6. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`
-   for components (scaffolded by `npm run figures:new`) and
-   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays.
+   for components (scaffolded by `npm run figures:new`),
+   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays, and
+   `templates/GENERATIVE_UI_SURFACE_TEMPLATE.tsx.tmpl` for **composed** in-thread
+   generative-UI surfaces (a `GenerativeUIComponentRegistry` allowlist + `Fallback`
+   that stacks several registry components behind one `generative-ui` message
+   part — the forward path from §18 rule 10). All three are programmatically
+   consumed (the figure template by `scripts/new-figure.mjs`) and are scanned by
+   `test/skills-and-templates.test.ts` for stray hex/raw-palette classes and
+   forbidden glyphs; keep them token-only (`reme v3.2`, §12).
    `/lab` renders every registered figure with its defaults and is the
    pre-adoption proving ground; it is a crawlable page like any other (§1).
+
+
+## §21 Reme v4.1 integration boundary
+
+`DESIGN.md` and `docs/design/AUDIT-v4.1.md` govern the current incremental
+upgrade. All ten frozen manifest modules (including GenUI) generate token and
+layout artifacts. The strict nine-widget catalog is separate from the existing
+figure registry, whose author/constitution rules remain unchanged.
+
+- Keep Next 15, React 19, Tailwind 4 and Zod 4; the installed generative-ui API
+  requires Zod 4. The attachment's sample API signatures are not authoritative.
+- `MessagePrimitive.Parts` and `AuiIf` are the shipped thread primitives.
+- `ResearchUI` validates the entire tree before the upstream spec renderer; no
+  default vocabulary, HTML fallback, arbitrary props/styles, or unsafe URLs.
+- JS is quarantined to `/assistant` and the explicit `/lab/genui` test catalog,
+  never shared chrome/articles. The existing figure-tool registry is preserved.
+- `design:lint` enforces the expanding migrated boundary; `design:lint:all`
+  inventories the whole app/components tree and currently fails. Never call a
+  boundary-only pass whole-site compliance.
+- `audit:all` runs quality, production/site verification, isolated production
+  browser tests, payload and whole-tree inventory. Noncompliance must remain a
+  nonzero exit; manual/unmeasured gates must not be relabeled passing.
+- The 50KB initial-JS / 80KB font / 15KB lazy-lab budgets remain unchanged.
+  Locale routes, strict nonce CSP, actual model inference/delivery, dispatch and full
+  multi-template migration are not certified by this integration.
+
+
+### §21.1 Follow-up security and CI
+
+`lib/security/headers.ts` owns response headers. COOP/COEP/CORP are enforced;
+resource origins are first-party-only. Inline hydration/legacy-figure policy
+exceptions remain, so strict CSP is not certified. Model asset infrastructure
+validates sizes, same-origin paths, SHA-256 and versioned cache contents, but
+no model/engine is installed. Never turn that infrastructure into an inference
+availability claim. CI smoke tests use `npm run test:production` and the tested
+standalone-server lifecycle helper rather than `next start`.
+
+
+### §21.2 Worker content and font-budget completeness
+
+Production content is bundled in `lib/content/snapshot.generated.ts`; Workers
+must not scan the repository filesystem for dynamic search/assistant queries.
+Filesystem authoring/loading stays in `lib/content/load.ts`. After content
+changes, run `npm run content:gen` and commit the verified snapshot. Builds and
+CI reject stale snapshots. Node success does not imply Worker correctness: run
+`npm run verify:worker` for adapter packaging and cold-runtime/browser tests.
+The private dashboard error is not exposed by the GitHub check; never infer a
+remote deployment success from a local dry run.
+
+All served WOFF2 faces, including editorial italic, belong in the manifest and
+the unchanged 80KB font budget. Only roman faces are preloaded. Scientific/UI
+glyph checks and system Bengali/device checks remain distinct claims.

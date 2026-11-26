@@ -14,6 +14,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const src = join(here, '..', 'src');
 const read = (name) => JSON.parse(readFileSync(join(src, name), 'utf8'));
 const root = {
+  v4: JSON.parse(readFileSync(join(here, '../../src/generated/palette.json'), 'utf8')),
   primitive: read('primitive.json'),
   semantic: { light: read('semantic-light.json'), dark: read('semantic-dark.json') },
   motion: read('motion.json'),
