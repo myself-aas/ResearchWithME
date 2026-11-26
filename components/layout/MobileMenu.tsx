@@ -196,7 +196,7 @@ export default function MobileMenu() {
         aria-haspopup="dialog"
         {...(mounted ? { 'aria-controls': 'mobile-menu' } : {})}
         aria-label={open ? 'Close menu' : 'Open menu'}
-        className="inline-flex h-10 min-h-10 w-10 items-center justify-center text-ink-secondary transition-colors duration-200 ease-standard hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none sm:hidden"
+        className="inline-flex h-11 min-h-11 w-11 items-center justify-center text-ink-secondary transition-colors duration-200 ease-standard hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none sm:hidden"
       >
         <span
           aria-hidden="true"

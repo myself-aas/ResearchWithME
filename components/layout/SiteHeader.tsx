@@ -5,19 +5,8 @@ import { ThemeSwitchCompact } from '@/components/library/ThemeSwitch';
 import MobileMenu from './MobileMenu';
 import { NAV, SITE } from '@/lib/site';
 
-/**
- * Site chrome: brand wordmark, three-destination primary navigation (inline
- * from `sm` up: Writing, Topics, Lab), and the right utility cluster.
- *
- * - Mobile (`<sm`): 56px (`h-14`) bar with `BrandLogo` (`1.75rem`) on the left
- *   and ONLY two bare `40×40px` icon triggers on the right (Search + `view_cozy`
- *   drawer trigger, `gap-1` = `84px` cluster, zero border/surface chrome).
- * - Tablet & Desktop (`sm:` up): 64px (`sm:h-16`) bar with `BrandLogo` (`2rem`),
- *   three primary nav links (`min-h-11`), and two `44×44px` compact utility
- *   controls (Search + `ThemeSwitchCompact`).
- *
- * Rendered on the server; the interactive islands are the theme button and
- * the mobile menu.
+/** Shared SSR navigation; all controls have a 44px minimum touch target.
+ * The v4 landing shell supplies its manifest-generated header height/layer.
  */
 export default function SiteHeader() {
   return (
@@ -26,7 +15,7 @@ export default function SiteHeader() {
         <Link
           href="/"
           aria-label={`${SITE.name} — home`}
-          className="inline-flex min-h-10 items-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:min-h-11"
+          className="inline-flex min-h-11 items-center rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:min-h-11"
         >
           <BrandLogo size="header" />
         </Link>
@@ -47,7 +36,7 @@ export default function SiteHeader() {
           <Link
             href="/search"
             aria-label="Search"
-            className="inline-flex h-10 min-h-10 w-10 items-center justify-center text-ink-secondary transition-colors duration-200 ease-standard hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none sm:h-11 sm:min-h-11 sm:w-11 sm:min-w-11 sm:rounded-full sm:border sm:border-line sm:bg-surface sm:hover:border-brand"
+            className="inline-flex h-11 min-h-11 w-11 items-center justify-center text-ink-secondary transition-colors duration-200 ease-standard hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none sm:h-11 sm:min-h-11 sm:w-11 sm:min-w-11 sm:rounded-full sm:border sm:border-line sm:bg-surface sm:hover:border-brand"
           >
             <Search className="h-5 w-5 sm:h-4 sm:w-4" aria-hidden="true" />
           </Link>
@@ -55,6 +44,12 @@ export default function SiteHeader() {
           <MobileMenu />
         </div>
       </div>
+      <noscript>
+        <nav aria-label="Navigation without JavaScript" className="r-noscript-nav">
+          {NAV.map(item => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+          <Link href="/assistant">Assistant</Link>
+        </nav>
+      </noscript>
     </header>
   );
 }

@@ -50,7 +50,10 @@ map or the remark/rehype pipeline, that suite is what proves the existing posts 
   Do not introduce `cookies()`, `headers()`, or `searchParams` into them without a reason. The two
   exceptions are `/search`, which reads `?q=` so results are in the HTML without JavaScript, and
   `/assistant`, which ships a client-side chat island (see below).
-- Design tokens live in `tokens/`; use semantic Tailwind roles (`bg-canvas`, `text-ink`,
+- Reme v4.1 source is `src/design/`; `npm run design:gen` emits CSS, maps, fixtures, and docs.
+  Run `npm run design:check`; never edit generated artifacts. The current adaptation keeps
+  Next.js/Tailwind 4; see `docs/design/MIGRATION.md` for incomplete gates. Legacy consumers
+  receive v4 base colors through `tokens/`; use semantic Tailwind roles (`bg-canvas`, `text-ink`,
   `border-line`, `text-brand`), not raw palette values. `app/globals.css` carries no hex colors:
   the semantic roles reference the generated `--reme-*` layer, so both the ThemeMenu's explicit
   light/dark classes and the OS preference flip every role at once.
@@ -62,16 +65,18 @@ A browser-side retrieval chat on assistant-ui (`@assistant-ui/react@0.15.38`). T
 primitives stay inside `components/assistant/AssistantThread.tsx`. Never import assistant-ui from
 a component an article page renders — its JavaScript is quarantined to that route (`AGENTS.md` §9,
 §18). Answers quote the archive and link to it; do not add a model service, an API key, or any
-network origin beyond the cached `/search-index.json` fetch and the Assistant Cloud URL from
-`NEXT_PUBLIC_ASSISTANT_BASE_URL` (anonymous thread sync — set in `.env.production`, disclosed on
-the page and in the privacy policy; unset locally, where threads stay in-memory).
+network origin beyond the cached same-origin `/search-index.json` fetch. Cloud sync is disabled;
+conversations stay in memory.
 
-The thread currently renders tool-call parts through `MessagePrimitive.Content`
-(`components={{ Text, tools: generativeTools }}`); `Content` is the 0.15.x-deprecated alias of
-`MessagePrimitive.Parts`. The like-for-like migration to `.Parts`, the `AuiIf` replacement for
-every `.If`, and the forward `MessagePrimitive.GenerativeUI` allowlist path are documented in
-`.agents/skills/assistant-ui-docs/references/reme-generative-architecture.md`. Keep `reme v3.2`
-tokens (`bg-surface`, `border-line`, `bg-brand`, … — never blue, never hex) on any assistant UI.
+The thread now uses `MessagePrimitive.Parts` and `AuiIf`. The v4.1 nine-widget
+catalog (`components/assistant/reme-catalog.tsx`) validates complete response
+trees before rendering through the actual installed spec APIs. The existing
+figure-tool map remains registry-derived. See `docs/design/AUDIT-v4.1.md` for
+API corrections, the migration boundary, and all 23 gates.
+
+V4.1 supersedes the previous optional cloud-sync permission: memory-only
+conversations, no anonymous identity, no outbound query or model fallback.
+A device probe is not a model; no weights/engine ship. Keep Tailwind 4/Zod 4.
 
 ## Agent skills
 
@@ -83,7 +88,7 @@ normative for assistant-ui work, with `assistant-ui-docs` as the repo-adapted br
 (`references/reme-generative-architecture.md`). A skill is a procedure, not an exemption:
 `AGENTS.md` outranks any skill, and `test/mcp-config.test.ts` plus `npm run check:mcp` keep the
 `.mcp.json` wiring honest (`AGENTS.md` §17–§19). New figure/library code follows
-`FIGURE_CONSTITUTION.md` and `DESIGN.md` (`reme v3.2`).
+`FIGURE_CONSTITUTION.md` and `DESIGN.md` (reme v4.1 incremental integration).
 
 ## Motion
 

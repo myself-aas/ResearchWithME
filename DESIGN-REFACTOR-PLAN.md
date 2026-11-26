@@ -1,5 +1,9 @@
 # Frontend Design System & Generative UI/UX Refactor Plan
 
+> Historical v3.2 roadmap. The author-approved reme v4 Next.js adaptation now
+> supersedes its palette and manifest guidance. See `DESIGN.md` and
+> `docs/design/MIGRATION.md` for current implementation scope and gate status.
+
 **Scope:** the entire `ResearchWithMe` frontend — header/footer chrome, home, blog,
 article, tags/about/contact/privacy, `/assistant`, `/lab`, search, and the
 interactive figure library — re-based onto `DESIGN.md` (`reme v3.2`) with the

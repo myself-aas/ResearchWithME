@@ -1,0 +1,781 @@
+{
+  "slots": {
+    "hero.text": {
+      "xs": 1,
+      "md": 2,
+      "lg": 5,
+      "xl": 5,
+      "2xl": 5
+    },
+    "hero.visual": {
+      "xs": 1,
+      "md": 2,
+      "lg": 7,
+      "xl": 7,
+      "2xl": 7
+    },
+    "writing.lead": {
+      "xs": 1,
+      "md": 2,
+      "lg": 7,
+      "xl": 7,
+      "2xl": 7
+    },
+    "writing.list": {
+      "xs": 1,
+      "md": 2,
+      "lg": 5,
+      "xl": 5,
+      "2xl": 5
+    },
+    "topics.first": {
+      "xs": 1,
+      "md": 1,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "topics.second": {
+      "xs": 1,
+      "md": 1,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "topics.third": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "figure.frame": {
+      "xs": 1,
+      "md": 2,
+      "lg": 6,
+      "xl": 6,
+      "2xl": 6
+    },
+    "figure.notes": {
+      "xs": 1,
+      "md": 2,
+      "lg": 6,
+      "xl": 6,
+      "2xl": 6
+    },
+    "datasets.first": {
+      "xs": 1,
+      "md": 1,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "datasets.second": {
+      "xs": 1,
+      "md": 1,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "datasets.third": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "assistant.prompt": {
+      "xs": 1,
+      "md": 2,
+      "lg": 7,
+      "xl": 7,
+      "2xl": 7
+    },
+    "assistant.links": {
+      "xs": 1,
+      "md": 2,
+      "lg": 5,
+      "xl": 5,
+      "2xl": 5
+    },
+    "author.bio": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "author.meta": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "faq.body": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "dispatch.body": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "archive.filters": {
+      "xs": 1,
+      "md": 2,
+      "lg": 3,
+      "xl": 3,
+      "2xl": 3
+    },
+    "archive.feed": {
+      "xs": 1,
+      "md": 2,
+      "lg": 9,
+      "xl": 9,
+      "2xl": 9
+    },
+    "article.header": {
+      "xs": 1,
+      "md": 2,
+      "lg": 10,
+      "xl": 10,
+      "2xl": 10
+    },
+    "article.body": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "article.toc": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "labPage.stage": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "labPage.controls": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "workspace.threads": {
+      "xs": 1,
+      "md": 2,
+      "lg": 3,
+      "xl": 3,
+      "2xl": 3
+    },
+    "workspace.thread": {
+      "xs": 1,
+      "md": 2,
+      "lg": 9,
+      "xl": 9,
+      "2xl": 9
+    },
+    "searchPage.bar": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "searchPage.results": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "topicsPage.list": {
+      "xs": 1,
+      "md": 2,
+      "lg": 12,
+      "xl": 12,
+      "2xl": 12
+    },
+    "topicPage.feed": {
+      "xs": 1,
+      "md": 2,
+      "lg": 12,
+      "xl": 12,
+      "2xl": 12
+    },
+    "datasetsPage.list": {
+      "xs": 1,
+      "md": 2,
+      "lg": 12,
+      "xl": 12,
+      "2xl": 12
+    },
+    "aboutPage.bio": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "aboutPage.meta": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "dispatchThanks.body": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "notFound.body": {
+      "xs": 1,
+      "md": 2,
+      "lg": 8,
+      "xl": 8,
+      "2xl": 8
+    },
+    "footer.brand": {
+      "xs": 1,
+      "md": 2,
+      "lg": 5,
+      "xl": 5,
+      "2xl": 5
+    },
+    "footer.nav": {
+      "xs": 1,
+      "md": 1,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "footer.feed": {
+      "xs": 1,
+      "md": 1,
+      "lg": 3,
+      "xl": 3,
+      "2xl": 3
+    },
+    "section.head": {
+      "xs": 1,
+      "md": 2,
+      "lg": 12,
+      "xl": 12,
+      "2xl": 12
+    },
+    "prose": {
+      "xs": 1,
+      "md": 2,
+      "lg": 12,
+      "xl": 12,
+      "2xl": 12
+    },
+    "card": {
+      "xs": 1,
+      "md": 2,
+      "lg": 4,
+      "xl": 4,
+      "2xl": 4
+    },
+    "field": {
+      "xs": 1,
+      "md": 2,
+      "lg": 7,
+      "xl": 7,
+      "2xl": 7
+    }
+  },
+  "placement": {
+    "faq.body": {
+      "start": 3,
+      "maxInline": 720
+    },
+    "dispatch.body": {
+      "start": 3,
+      "maxInline": 720
+    },
+    "article.header": {
+      "start": 2
+    },
+    "article.body": {
+      "start": 1,
+      "maxInline": 720
+    },
+    "article.toc": {
+      "start": 9
+    },
+    "searchPage.bar": {
+      "start": 3,
+      "maxInline": 720
+    },
+    "searchPage.results": {
+      "start": 3,
+      "maxInline": 720
+    }
+  },
+  "rows": [
+    {
+      "xs": [
+        [
+          "hero.text"
+        ],
+        [
+          "hero.visual"
+        ]
+      ],
+      "md": [
+        [
+          "hero.text"
+        ],
+        [
+          "hero.visual"
+        ]
+      ],
+      "lg": [
+        [
+          "hero.text",
+          "hero.visual"
+        ]
+      ],
+      "xl": [
+        [
+          "hero.text",
+          "hero.visual"
+        ]
+      ],
+      "2xl": [
+        [
+          "hero.text",
+          "hero.visual"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "writing.lead"
+        ],
+        [
+          "writing.list"
+        ]
+      ],
+      "md": [
+        [
+          "writing.lead"
+        ],
+        [
+          "writing.list"
+        ]
+      ],
+      "lg": [
+        [
+          "writing.lead",
+          "writing.list"
+        ]
+      ],
+      "xl": [
+        [
+          "writing.lead",
+          "writing.list"
+        ]
+      ],
+      "2xl": [
+        [
+          "writing.lead",
+          "writing.list"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "topics.first"
+        ],
+        [
+          "topics.second"
+        ],
+        [
+          "topics.third"
+        ]
+      ],
+      "md": [
+        [
+          "topics.first",
+          "topics.second"
+        ],
+        [
+          "topics.third"
+        ]
+      ],
+      "lg": [
+        [
+          "topics.first",
+          "topics.second",
+          "topics.third"
+        ]
+      ],
+      "xl": [
+        [
+          "topics.first",
+          "topics.second",
+          "topics.third"
+        ]
+      ],
+      "2xl": [
+        [
+          "topics.first",
+          "topics.second",
+          "topics.third"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "figure.frame"
+        ],
+        [
+          "figure.notes"
+        ]
+      ],
+      "md": [
+        [
+          "figure.frame"
+        ],
+        [
+          "figure.notes"
+        ]
+      ],
+      "lg": [
+        [
+          "figure.frame",
+          "figure.notes"
+        ]
+      ],
+      "xl": [
+        [
+          "figure.frame",
+          "figure.notes"
+        ]
+      ],
+      "2xl": [
+        [
+          "figure.frame",
+          "figure.notes"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "datasets.first"
+        ],
+        [
+          "datasets.second"
+        ],
+        [
+          "datasets.third"
+        ]
+      ],
+      "md": [
+        [
+          "datasets.first",
+          "datasets.second"
+        ],
+        [
+          "datasets.third"
+        ]
+      ],
+      "lg": [
+        [
+          "datasets.first",
+          "datasets.second",
+          "datasets.third"
+        ]
+      ],
+      "xl": [
+        [
+          "datasets.first",
+          "datasets.second",
+          "datasets.third"
+        ]
+      ],
+      "2xl": [
+        [
+          "datasets.first",
+          "datasets.second",
+          "datasets.third"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "archive.filters"
+        ],
+        [
+          "archive.feed"
+        ]
+      ],
+      "md": [
+        [
+          "archive.filters"
+        ],
+        [
+          "archive.feed"
+        ]
+      ],
+      "lg": [
+        [
+          "archive.filters",
+          "archive.feed"
+        ]
+      ],
+      "xl": [
+        [
+          "archive.filters",
+          "archive.feed"
+        ]
+      ],
+      "2xl": [
+        [
+          "archive.filters",
+          "archive.feed"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "article.body"
+        ],
+        [
+          "article.toc"
+        ]
+      ],
+      "md": [
+        [
+          "article.body"
+        ],
+        [
+          "article.toc"
+        ]
+      ],
+      "lg": [
+        [
+          "article.body",
+          "article.toc"
+        ]
+      ],
+      "xl": [
+        [
+          "article.body",
+          "article.toc"
+        ]
+      ],
+      "2xl": [
+        [
+          "article.body",
+          "article.toc"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "labPage.stage"
+        ],
+        [
+          "labPage.controls"
+        ]
+      ],
+      "md": [
+        [
+          "labPage.stage"
+        ],
+        [
+          "labPage.controls"
+        ]
+      ],
+      "lg": [
+        [
+          "labPage.stage",
+          "labPage.controls"
+        ]
+      ],
+      "xl": [
+        [
+          "labPage.stage",
+          "labPage.controls"
+        ]
+      ],
+      "2xl": [
+        [
+          "labPage.stage",
+          "labPage.controls"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "workspace.threads"
+        ],
+        [
+          "workspace.thread"
+        ]
+      ],
+      "md": [
+        [
+          "workspace.threads"
+        ],
+        [
+          "workspace.thread"
+        ]
+      ],
+      "lg": [
+        [
+          "workspace.threads",
+          "workspace.thread"
+        ]
+      ],
+      "xl": [
+        [
+          "workspace.threads",
+          "workspace.thread"
+        ]
+      ],
+      "2xl": [
+        [
+          "workspace.threads",
+          "workspace.thread"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "aboutPage.bio"
+        ],
+        [
+          "aboutPage.meta"
+        ]
+      ],
+      "md": [
+        [
+          "aboutPage.bio"
+        ],
+        [
+          "aboutPage.meta"
+        ]
+      ],
+      "lg": [
+        [
+          "aboutPage.bio",
+          "aboutPage.meta"
+        ]
+      ],
+      "xl": [
+        [
+          "aboutPage.bio",
+          "aboutPage.meta"
+        ]
+      ],
+      "2xl": [
+        [
+          "aboutPage.bio",
+          "aboutPage.meta"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "assistant.prompt"
+        ],
+        [
+          "assistant.links"
+        ]
+      ],
+      "md": [
+        [
+          "assistant.prompt"
+        ],
+        [
+          "assistant.links"
+        ]
+      ],
+      "lg": [
+        [
+          "assistant.prompt",
+          "assistant.links"
+        ]
+      ],
+      "xl": [
+        [
+          "assistant.prompt",
+          "assistant.links"
+        ]
+      ],
+      "2xl": [
+        [
+          "assistant.prompt",
+          "assistant.links"
+        ]
+      ]
+    },
+    {
+      "xs": [
+        [
+          "author.bio"
+        ],
+        [
+          "author.meta"
+        ]
+      ],
+      "md": [
+        [
+          "author.bio"
+        ],
+        [
+          "author.meta"
+        ]
+      ],
+      "lg": [
+        [
+          "author.bio",
+          "author.meta"
+        ]
+      ],
+      "xl": [
+        [
+          "author.bio",
+          "author.meta"
+        ]
+      ],
+      "2xl": [
+        [
+          "author.bio",
+          "author.meta"
+        ]
+      ]
+    }
+  ]
+}

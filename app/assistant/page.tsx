@@ -9,19 +9,7 @@ import { suggestPrompts } from '@/lib/assistant/retrieval';
 import { pageMetadata } from '@/lib/seo';
 import { jsonLdScript, webPageJsonLd } from '@/lib/seo/jsonld';
 
-/**
- * Thread sync is a build-time switch: when the Assistant Cloud frontend URL is
- * set, the runtime persists threads, messages, titles, and run reports to the
- * author's cloud project under an anonymous, account-less session (AGENTS.md
- * §18). Unset — the local default — the thread stays in-memory and nothing
- * leaves the browser. The copy below is honest about whichever mode shipped.
- */
-const CLOUD_BASE_URL = process.env.NEXT_PUBLIC_ASSISTANT_BASE_URL || '';
-const CLOUD_CONNECTED = CLOUD_BASE_URL.length > 0;
-
-const ASSISTANT_DESCRIPTION = CLOUD_CONNECTED
-  ? 'Ask the archive: a browser-side assistant answers questions about every published essay by quoting it and linking to the source. No model service; conversations sync anonymously to Assistant Cloud.'
-  : 'Ask the archive: a browser-side assistant answers questions about every published essay by quoting it and linking to the source. No model service, and no query leaves your browser.';
+const ASSISTANT_DESCRIPTION = 'Ask the archive: browser-side, deterministic retrieval with source quotations. No language model, cloud sync, or outbound query.';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Assistant',
@@ -42,7 +30,7 @@ export default function AssistantPage() {
   const suggestions = suggestPrompts(getSearchIndex());
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas text-ink">
+    <div className="reme-page">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -55,88 +43,84 @@ export default function AssistantPage() {
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto w-full max-w-4xl flex-1 px-5 pb-8 pt-12 sm:px-6 lg:px-8"
+        className="r-grid r-section"
       >
-        <header className="max-w-2xl border-b border-line pb-8">
-          <h1 className="font-serif text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+        <header className="r-slot r-slot-section-head r-flow">
+          <h1 className="r-h1">
             Ask the archive
           </h1>
-          <p className="mt-3 font-sans text-base leading-relaxed text-ink-secondary">
+          <p className="r-body r-muted">
             This assistant answers questions about the published essays by quoting them. It runs
             against the same build-time index that powers{' '}
             <Link
               href="/search"
-              className="font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+              className="r-row-link"
             >
               Search
             </Link>
             , and there is no language model behind it. Answers are extractive on purpose — every
             claim in a reply is a quote you can open and check.{' '}
-            {CLOUD_CONNECTED
-              ? 'The conversation itself is stored anonymously in Assistant Cloud (assistant-ui’s hosted backend, on the author’s project) — no account and no sign-in — so the author can see what readers ask; the details are on the privacy page.'
-              : 'No request carries your words off this site.'}
+            No request carries your words off this site.
           </p>
         </header>
 
-        <div className="pt-8">
-          <AssistantThread suggestions={suggestions} cloudConnected={CLOUD_CONNECTED} />
+        <div className="r-slot r-slot-workspace-thread">
+          <AssistantThread suggestions={suggestions} />
         </div>
 
-        <noscript>
-          <p className="mt-6 rounded-xl border border-line bg-surface-subtle p-4 font-sans text-sm leading-relaxed text-ink-secondary">
+        <noscript><div className="r-slot r-slot-section-head">
+          <p className="r-callout r-body">
             The assistant needs JavaScript because it searches the index locally in your browser.
             Without it, use{' '}
-            <Link href="/search" className="font-semibold text-brand underline underline-offset-4">
+            <Link href="/search" className="r-row-link">
               the server-rendered search
             </Link>{' '}
             — it answers the same questions as a ranked list of essays.
           </p>
-        </noscript>
+        </div></noscript>
 
-        <section aria-labelledby="how-it-works" className="mt-12 border-t border-line pt-10">
-          <h2 id="how-it-works" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+        <section aria-labelledby="how-it-works" className="r-slot r-slot-section-head r-section r-flow">
+          <h2 id="how-it-works" className="r-h2">
             How it works
           </h2>
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-line bg-surface p-5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-selection text-brand">
-                <Braces className="h-4 w-4" aria-hidden="true" />
+          <div className="assistant-info-grid">
+            <div className="r-flow">
+              <span className="assistant-label">
+                <Braces className="r-icon" aria-hidden="true" />
               </span>
-              <h3 className="mt-3 font-sans text-sm font-semibold text-ink">Local retrieval</h3>
-              <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-secondary">
+              <h3 className="r-h3">Local retrieval</h3>
+              <p className="r-body r-muted">
                 The essay texts are cut into passages and matched with fuzzy search in your browser.
                 The index is a static file built with the site.
               </p>
             </div>
-            <div className="rounded-2xl border border-line bg-surface p-5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-selection text-brand">
-                <Search className="h-4 w-4" aria-hidden="true" />
+            <div className="r-flow">
+              <span className="assistant-label">
+                <Search className="r-icon" aria-hidden="true" />
               </span>
-              <h3 className="mt-3 font-sans text-sm font-semibold text-ink">Quoted answers</h3>
-              <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-secondary">
+              <h3 className="r-h3">Quoted answers</h3>
+              <p className="r-body r-muted">
                 Replies are composed from the matched passages verbatim, grouped by essay, with a
                 source list. When nothing matches, it says so instead of guessing.
               </p>
             </div>
-            <div className="rounded-2xl border border-line bg-surface p-5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-selection text-brand">
-                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+            <div className="r-flow">
+              <span className="assistant-label">
+                <ShieldCheck className="r-icon" aria-hidden="true" />
               </span>
-              <h3 className="mt-3 font-sans text-sm font-semibold text-ink">Private by design</h3>
-              <p className="mt-1.5 font-sans text-sm leading-relaxed text-ink-secondary">
-                {CLOUD_CONNECTED
-                  ? 'No account and no sign-in: the browser holds an anonymous identity and the conversation is stored in the author’s Assistant Cloud project. Search stays fully on your device.'
-                  : 'The thread lives in memory and dies with the tab. Nothing is stored, tracked, or sent anywhere — the index travels to you, not the reverse.'}
+              <h3 className="r-h3">Private by design</h3>
+              <p className="r-body r-muted">
+                The conversation stays in memory in this tab. There is no cloud sync or model service.
               </p>
             </div>
           </div>
-          <p className="mt-6 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+          <p className="r-body r-muted">
             The chat interface is built on{' '}
             <a
               href="https://www.assistant-ui.com/"
               target="_blank"
               rel="noreferrer noopener"
-              className="font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+              className="r-row-link"
             >
               assistant-ui
             </a>{' '}
@@ -144,14 +128,14 @@ export default function AssistantPage() {
             sources in{' '}
             <Link
               href="/about"
-              className="font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+              className="r-row-link"
             >
               About
             </Link>
             , or browse the full{' '}
             <Link
               href="/blog"
-              className="font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+              className="r-row-link"
             >
               archive
             </Link>

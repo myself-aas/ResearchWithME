@@ -1,0 +1,11 @@
+/** v4.1: shared by the validator, catalog, generated CSS, and fixtures. */
+export const genui = {
+  surface: { container: 'inline-size', maxInline: 720, gap: 4, radius: 'xl', bg: 'bg-surface', border: 'hair' },
+  layoutGrammar: { stack: { gap: [3, 4, 6] }, split: { minColPx: 260, maxCols: 2, gap: 4 }, metrics: { minColPx: 160, maxCols: 3, gap: 3 } },
+  streaming: { loadingPattern: 'explicit-text-status', hoistRootFirst: true, updateThrottleMs: 120, reserveMinHeightPx: 96 },
+  allowlist: ['RemeStack', 'RemeSplit', 'RemeMetricCard', 'RemeMetricTable', 'RemeBenchmarkChart', 'RemeCitationCard', 'RemeStatusNotice', 'RemeAuditChecklist', 'RemeEmptyState'],
+  fixtures: { panes: [288, 358, 720] },
+  limits: { maxDepth: 8, maxNodes: 80, maxText: 4000, maxItems: 40 },
+  // No weights or inference engine have been approved/shipped. Never pretend otherwise.
+  model: { available: false, maxBytes: 150000000, maxShardBytes: 20971520, pathPrefix: '/models/', cache: 'reme-model-v4.1' },
+} as const;

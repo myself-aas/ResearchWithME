@@ -13,6 +13,25 @@ afford. It is the repo-adapted translation layer for the **vendored** assistant-
 skills (`generative-ui`, `primitives`, `runtime`, `tools`, `elements`) at the
 commit pinned in `skills-lock.json`.
 
+## Current v4.1 integration (supersedes older bridge details below)
+
+The thread has migrated to `MessagePrimitive.Parts` and `AuiIf`. The approved
+v4.1 brief removes the previous optional cloud-sync exception: all conversations
+are memory-only and no outbound query, anonymous identity or cloud fallback is
+permitted. No model weights/engine ship; the support probe is not inference.
+
+The new strict nine-widget catalog is `components/assistant/reme-catalog.tsx`;
+`lib/assistant/genui-schema.ts` validates the whole tree before conversion to
+`generative-frame` spec mode. `toSpecCatalog` returns `{ catalog, components }`,
+not a catalog by itself. `createSpecToolkit` requires two arguments on the
+installed version; do not copy the attachment's one-argument pseudocode. No
+raw-HTML widget/frame or unvalidated `render_spec` tool is registered. Existing
+figure tools remain registry-derived and subject to their constitution.
+
+Use `DESIGN.md` (v4.1 incremental integration) and
+`docs/design/AUDIT-v4.1.md` as current design/migration authority. The older
+v3.2/Cloud references below are historical guidance only where not superseded.
+
 ## Read this first
 
 - **Architecture bridge:** [`references/reme-generative-architecture.md`](references/reme-generative-architecture.md)

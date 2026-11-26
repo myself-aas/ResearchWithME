@@ -47,10 +47,12 @@ they can copy, citable metadata, and a way to find the rest of the archive by to
 
 - Name: ResearchWithMe; wordmark `reme.`
 - Voice: precise, restrained, evidence-first. Claims name their limits.
-- Typography: self-hosted Plus Jakarta Sans (OFL) for display, reading, and chrome; Newsreader and Inter
-  as self-hosted fallbacks; Aptos Mono / JetBrains Mono for code, dates, and tags.
-- Palette: cool archival canvas (`#F8F9FA`), white surfaces, cobalt accent (`#005BBF`), high-contrast
-  ink, and a full dark theme from the same tokens.
+- Typography: self-hosted Newsreader for editorial headings and Inter for interface/body;
+  system monospace for metadata/code. The landing roman subsets cover weights 400–600.
+- Palette: reme v4 warm paper canvas, solid surfaces, near-black ink/controls, and
+  semantic status/series roles from `src/design/color.manifest.ts`, with a dark theme.
+- Design architecture: nine typed manifests generate the landing system. The approved
+  adaptation preserves Next.js/Tailwind 4; legacy inner routes migrate incrementally.
 - Content licence: CC BY 4.0.
 
 ## Evidence on Hand
@@ -84,3 +86,15 @@ they can copy, citable metadata, and a way to find the rest of the archive by to
 - Reflow without horizontal scrolling down to 320px.
 - Reduced-motion preferences remove travel and transform motion while preserving state feedback.
 - Every cover image requires alt text; figures are captioned; no status is conveyed by colour alone.
+
+
+## v4.1 research UI integration
+
+The author-requested v4.1 upgrade keeps Next/React and the existing publishing
+model. Typed manifests now include a nine-widget, host-validated research UI
+catalog. Archive answers still quote published essays; the catalog does not
+author new research claims. Assistant conversations are memory-only, with no
+cloud sync or model fallback. Local inference is unavailable until real licensed
+weights and an engine are supplied and validated. Full locale routes, dispatch,
+strict isolation and all-site migration are tracked, not claimed complete, in
+`docs/design/AUDIT-v4.1.md`.

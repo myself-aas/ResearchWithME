@@ -375,7 +375,20 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 - Focus is always visible (`focus-visible:outline-2`), and colour contrast is enforced by
   `npm run tokens:check`.
 - Motion respects `prefers-reduced-motion`. Decorative motion is not shipped on the article path.
-- **Colour comes from semantic tokens only** (`reme v3.2`, `DESIGN.md`). Every colour resolves through a semantic Tailwind role (`bg-canvas`, `bg-surface`, `text-ink`, `text-ink-secondary`, `border-line`, `bg-brand`, `text-on-primary`, `text-brand`, `bg-selection`, …) backed by `--reme-*`. Never a raw palette family (`stone-*`, `gray-*`, `neutral-*`, `white`, `black`, `orange-*`, `blue-*`), never an inline hex value, never `rgb()`/`hsl()` in JSX or CSS, and **never blue anywhere in the UI** (`DESIGN.md` "No blue anywhere"). Data colours arrive as tone *names* and resolve through `lib/figures/tones.ts`. `app/globals.css` carries no literal colour for any theme-able role; the only allowed literals are the static brand icons and the pinned dark code-panel tokens (`DESIGN.md` "Literals that are allowed"). `npm run quality` includes a source scan that fails on stray hex/raw-palette classes in `app/`, `components/`, and `lib/`.
+- **Colour comes from semantic tokens only** (`DESIGN.md`, reme v4.1 incremental integration). New landing
+  visuals are authored in the ten `src/design/*.manifest.ts` modules and emitted through
+  `npm run design:gen`; authored components consume generated `r-*` classes. The v4 palette
+  projects into `tokens/generated/` for legacy semantic Tailwind consumers, including OG images.
+  No raw palette utility, hex, or `rgb()`/`hsl()` in migrated JSX/CSS. V4 explicitly permits
+  info/chart blue from the color manifest; the former blanket no-blue rule is superseded.
+  Existing figure/domain palettes still resolve through `lib/figures/tones.ts` and the legacy
+  pipeline. `design:lint` covers ten migrated source files, not every inner route;
+  `docs/design/AUDIT-v4.1.md` records the full-tree inventory and incomplete gates.
+- **Generated artifacts are committed, not edited.** `src/generated/**` and
+  `docs/design/*.generated.md` must match a fresh `design:gen` run byte-for-byte.
+  `design:check` runs in quality, prebuild, and CI. The author approved keeping Next.js/Tailwind 4
+  and the supplied heading caps (24/32/34ch; 45–75ch for reading roles). This does not relax v4
+  contrast, payload, or interaction thresholds; never claim all 23 gates pass.
 - **No forbidden patterns** (`DESIGN.md` "Do not"): no kicker/eyebrow above a heading, no text overlaid on cover artwork, no gradient text, no decorative `backdrop-blur` glass, no nested cards, no hard offset shadows, no `>1px` coloured left/right border, and no unicode icon glyphs. No horizontal-scrolling topic-chip strip in the hero or mobile header. No carousel/animation library, preloader, or client-side `<canvas>` luminance script. At most two downloaded fonts (Newsreader + Inter) plus the system monospace.
 - Interactive figures in posts are data-driven components, not one-off scripts. Each figure in a
   post must have its own interaction pattern (a slider, a scrubber, a picker — never two widgets
@@ -406,6 +419,7 @@ If a change does not improve one of these, it is maintenance, not SEO.
 A change is done when all of these pass, locally and in CI:
 
 ```bash
+npm run design:check   # generated determinism + migrated-source boundary
 npm run tokens:check   # tokens build + contrast
 npm run lint
 npm run typecheck
@@ -474,15 +488,11 @@ Known tensions, resolved as follows:
    maintenance burden, removing it does not affect the other artifacts.
 7. **No database.** Anything that would require runtime storage — view counts, comments, per-user
    state — is out of scope, no matter what it would do for engagement signals.
-8. **Assistant Cloud sync.** The author connected `/assistant`'s thread state to their Assistant
-   Cloud project (`proj_0k1j9pkb7977`, frontend URL in `NEXT_PUBLIC_ASSISTANT_BASE_URL`,
-   publishable by design — the browser mints anonymous session tokens from it and no secret exists
-   in the repo) on 2026-11-25, so the author can see what readers ask. This is the one deliberate
-   exception to rule 7 and to §18's memory-only state: a hosted, third-party store for assistant
-   conversations, reached from the reader's browser. It is bounded by §18 rule 1 (never answer
-   text — the model stays local), rule 6 (anonymous identity, disclosed in the same commit on the
-   page and in the privacy policy), and by search staying untouched. Removing the environment
-   variable reverts the site to fully local behaviour with no code change.
+8. **Assistant privacy (v4.1).** The v4.1 brief supersedes the previous optional
+   Assistant Cloud exception. `/assistant` is memory-only, with no anonymous
+   identity, thread upload, cloud model, or cloud fallback. Do not reintroduce
+   `NEXT_PUBLIC_ASSISTANT_BASE_URL`. No local weights or inference engine ship;
+   the optional device probe must not imply model availability.
 
 ---
 
@@ -559,20 +569,16 @@ cuts the essay texts into sentence-aligned passages, matches them locally with
 the same technique as `/search`, and the reply is composed from the matched
 passages verbatim, grouped by essay, with a source list. There is no model
 service behind it, no API key, and no runtime process beyond the framework.
-When `NEXT_PUBLIC_ASSISTANT_BASE_URL` is set at build time, the runtime also
-syncs threads to the author's Assistant Cloud project under an anonymous,
-account-less session (see rule 6 and §15.8); unset — the local default — no
-cloud request exists at all.
+The v4.1 integration explicitly disables cloud sync. Conversations live in this
+browser tab only. A capability probe is available on explicit click; no model
+weights, engine, or model service is installed.
 
 Rules:
 
 1. **The model stays local.** The reasoning fetch is `/search-index.json`,
-   cached for the session. The only other permitted origin is the Assistant
-   Cloud frontend URL from `NEXT_PUBLIC_ASSISTANT_BASE_URL`, and only for
-   thread persistence, titles, and run reports — never for producing answer
-   text. No other fetch, no model provider, no server route that carries a
-   query anywhere. Search (`/search`) keeps its §8.5 on-device promise
-   unconditionally.
+   cached for the session. No outbound origin is permitted for query processing,
+   persistence, telemetry, titles, or answer generation. The optional device
+   probe downloads nothing. Search keeps its §8.5 on-device promise.
 2. **Answers quote; they do not improvise.** Every non-boilerplate sentence in
    a reply is a passage from a published essay or a link to one. When nothing
    matches, the reply says so and points at `/search`. A reply that asserts
@@ -587,14 +593,10 @@ Rules:
 5. **The readable page survives `curl`.** The explanation, the how-it-works
    section, and the `<noscript>` fallback are server-rendered. The thread is
    an interaction, not content the reader needs (§8.5).
-6. **Sync is anonymous, disclosed, and switchable.** With the cloud URL set,
-   threads, messages, titles, and run reports persist to Assistant Cloud under
-   a `usr_anon_` identity whose refresh token lives in `localStorage` (30 days,
-   no rotation secret, nothing credential-shaped). The `/assistant` page and
-   the privacy policy disclose this in the same commit that sets the variable,
-   and the copy must say which mode shipped — a page that promises "nothing
-   leaves your browser" while syncing is the §2.4 defect in prose form.
-   Unset, the thread is memory-only and dies with the tab.
+6. **No cloud sync.** The v4.1 requirement supersedes the old anonymous-sync
+   exception. Current code and privacy copy must agree. Thread state stays in
+   memory; old stored tokens can be removed by clearing site data. No cookies,
+   cloud fallback, or query-bearing URLs.
 7. **Prompt suggestions derive from the archive** (`suggestPrompts`), never
    from hardcoded strings that rot as essays land.
 8. **Ranking changes are tested changes.** Any behaviour change in
@@ -633,7 +635,7 @@ Rules:
 ## §19 Agent skills layer
 
 `.agents/skills/` carries SKILL.md-format instruction packages for coding
-agents, adapted from the assistant-ui repository's agent infrastructure; the
+agents: repo-adapted procedures and pinned upstream packages. The task-routing
 index and provenance live in `.agents/skills/README.md`, and
 `.claude/commands/` holds command entry points that point into the skills.
 Vendored provenance is pinned in `skills-lock.json` (`version: 2`): every
@@ -670,6 +672,52 @@ via the `assistant-ui` MCP server (§17).
    `https://www.assistant-ui.com/llms.txt` is an *external* API reference for
    agents, reached via the `assistant-ui` MCP server — never vendored into this
    repo as a file.
+
+### User-requested skill routing
+
+Read only the relevant `SKILL.md` when its task occurs. The complete source/name
+index is in [`.agents/skills/README.md`](.agents/skills/README.md); installation
+scope, the user-level restore command, and unresolved requests are recorded in
+[`SKILLS-INSTALLATION.md`](SKILLS-INSTALLATION.md). These are instructions, not
+newly enabled tools or services. The requested packages are copied globally for
+the current sandbox user and vendored here so they survive workspace snapshots.
+
+| Task trigger | Skills to consult |
+| --- | --- |
+| Edit agent-facing instructions or audit project memory | `writing-for-agents`; `claude-md-improver` for CLAUDE.md audits (approval before its proposed edits) |
+| Write technical documentation, ADRs, notes, or design diagrams | `documentation-writer`, `documentation-and-adrs`, `obsidian-markdown`, `design-doc-mermaid`, `excalidraw-diagram-generator` |
+| Design a chart or compare visual encodings | `chart-designer`, `chart-visualization`, `recharts`, `echarts`; implement site figures through §20 and the figure constitution |
+| Produce standalone animated charts, infographic/presentation videos, or motion media | `chart-animation`, `animated-infographic`, `presentation-video`, and the 15 motion-graphics skills indexed in the README; start with `motion-brief-writer` for an underspecified brief |
+| Search literature, review methods, or draft/revise a manuscript | `nature-academic-search`, `academic-paper-reviewer`, `academic-paper`, `research-paper-writer`, `research-paper-writing` |
+| Audit SEO/AEO/GEO or assess scalable content | `seo-audit`, `ai-seo`, `programmatic-seo`, `firecrawl-seo-audit`, `seo-geo`, `seo-aeo-best-practices`; choose a named SEO provider from the index rather than loading all four |
+| Browser QA, screenshots, or an explicitly authorized automation task | `agent-browser`; `browser-mcp-agent` only within the authorized scope and available tooling |
+| Cloudflare platform/Agents SDK work, or separately requested Kubernetes work | `cloudflare`, `agents-sdk`; `helm-chart-scaffolding` only for explicit Kubernetes tasks |
+| Assess readiness for coding agents or split independent tasks | `ai-ready` (johnpapa), `ai-ready-awesome-copilot` (GitHub), `dispatching-parallel-agents` when parallel-agent tools actually exist |
+| Diagnose CI, prepare commits/issues, or specify/implement Actions workflows | `gh-fix-ci`, `git-commit`, `github-issues`, `gh-issue-sync`, `create-github-action-workflow-specification`, `github-actions`; `gh-stack` is reference only when its branch workflow conflicts with the assigned session branch |
+
+- **Resolve name collisions explicitly.** `seo` is from `affaan-m/ecc`;
+  `seo-iannuttall`, `seo-web-quality`, and `seo-claude` preserve the other three
+  requested sources. `ai-ready` is from `johnpapa/ai-ready`;
+  `ai-ready-awesome-copilot` preserves GitHub's version. The four namespaced
+  packages change only frontmatter names; both upstream and installed hashes
+  are pinned. Reinstall/update them in isolation, preserving the aliases.
+- **Keep site architecture authoritative.** Chart and motion skills provide
+  techniques, not permission to add runtime libraries, replace reme tokens,
+  change figure designs without approval, or exceed §9 budgets. Standalone
+  media exports are separate from site frontend dependencies. Obsidian syntax
+  must be converted/validated before publication through the MDX pipeline.
+- **Verify evidence.** Research/SEO skills must use traceable sources and honest
+  measurements: no fabricated citations, search rankings, experimental data,
+  or thin programmatic pages. Record missing tools, shared files, network
+  access, and credentials as blockers rather than inventing results.
+- **Keep actions scoped.** Installation does not authorize running bundled
+  scripts, enabling services, bypassing browser access controls, changing this
+  session's branch, or publishing/merging/deploying. Use existing `git`/`gh`
+  authentication and the author's requested scope; retain all normal gates.
+- **Report unresolved requests accurately.** `gh-cli` is absent from the requested
+  upstream catalog at installation time; `code.deepline.com` is blocked by this
+  environment's network allowlist. Neither is silently substituted or claimed
+  installed. Do not treat the presence of related skills as either capability.
 
 ---
 
@@ -715,3 +763,39 @@ The short form:
    forbidden glyphs; keep them token-only (`reme v3.2`, §12).
    `/lab` renders every registered figure with its defaults and is the
    pre-adoption proving ground; it is a crawlable page like any other (§1).
+
+
+## §21 Reme v4.1 integration boundary
+
+`DESIGN.md` and `docs/design/AUDIT-v4.1.md` govern the current incremental
+upgrade. All ten frozen manifest modules (including GenUI) generate token and
+layout artifacts. The strict nine-widget catalog is separate from the existing
+figure registry, whose author/constitution rules remain unchanged.
+
+- Keep Next 15, React 19, Tailwind 4 and Zod 4; the installed generative-ui API
+  requires Zod 4. The attachment's sample API signatures are not authoritative.
+- `MessagePrimitive.Parts` and `AuiIf` are the shipped thread primitives.
+- `ResearchUI` validates the entire tree before the upstream spec renderer; no
+  default vocabulary, HTML fallback, arbitrary props/styles, or unsafe URLs.
+- JS is quarantined to `/assistant` and the explicit `/lab/genui` test catalog,
+  never shared chrome/articles. The existing figure-tool registry is preserved.
+- `design:lint` enforces the expanding migrated boundary; `design:lint:all`
+  inventories the whole app/components tree and currently fails. Never call a
+  boundary-only pass whole-site compliance.
+- `audit:all` runs quality, production/site verification, isolated production
+  browser tests, payload and whole-tree inventory. Noncompliance must remain a
+  nonzero exit; manual/unmeasured gates must not be relabeled passing.
+- The 50KB initial-JS / 80KB font / 15KB lazy-lab budgets remain unchanged.
+  Locale routes, strict nonce CSP, actual model inference/delivery, dispatch and full
+  multi-template migration are not certified by this integration.
+
+
+### §21.1 Follow-up security and CI
+
+`lib/security/headers.ts` owns response headers. COOP/COEP/CORP are enforced;
+resource origins are first-party-only. Inline hydration/legacy-figure policy
+exceptions remain, so strict CSP is not certified. Model asset infrastructure
+validates sizes, same-origin paths, SHA-256 and versioned cache contents, but
+no model/engine is installed. Never turn that infrastructure into an inference
+availability claim. CI smoke tests use `npm run test:production` and the tested
+standalone-server lifecycle helper rather than `next start`.

@@ -1,0 +1,220 @@
+{
+  "frame": {
+    "capabilities": [
+      "bg",
+      "border",
+      "radius"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-surface",
+        "border": "hair",
+        "radius": "xl"
+      },
+      "nested": {
+        "bg": "bg-surface",
+        "border": "hair",
+        "radius": "inset"
+      }
+    },
+    "ratio": "16 / 9",
+    "mediaWidth": 1200,
+    "mediaHeight": 675,
+    "fallback": {
+      "avif": "/images/reme-research-desk.avif",
+      "webp": "/images/reme-research-desk.webp",
+      "alt": "Illustrative editorial still life of a notebook, research printouts, and a pencil."
+    }
+  },
+  "card": {
+    "capabilities": [
+      "bg",
+      "text",
+      "border",
+      "radius",
+      "space"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-surface",
+        "text": "text-ink",
+        "border": "hair",
+        "radius": "xl",
+        "space": 6
+      }
+    }
+  },
+  "row": {
+    "capabilities": [
+      "border",
+      "space"
+    ],
+    "variants": {
+      "default": {
+        "border": "hair",
+        "space": 6
+      }
+    },
+    "minTarget": 44
+  },
+  "control": {
+    "capabilities": [
+      "bg",
+      "text",
+      "border",
+      "radius",
+      "space"
+    ],
+    "variants": {
+      "primary": {
+        "bg": "bg-brand",
+        "text": "text-on-primary",
+        "radius": "pill",
+        "space": 5
+      },
+      "secondary": {
+        "bg": "bg-surface",
+        "text": "text-ink",
+        "border": "strong",
+        "radius": "pill",
+        "space": 5
+      }
+    },
+    "minTarget": 44
+  },
+  "field": {
+    "elements": {
+      "singleline": "input",
+      "multiline": "textarea"
+    },
+    "capabilities": [
+      "bg",
+      "text",
+      "border",
+      "radius",
+      "space"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-canvas",
+        "text": "text-ink",
+        "border": "strong",
+        "radius": "md",
+        "space": 3
+      }
+    },
+    "minTarget": 44
+  },
+  "disclosure": {
+    "capabilities": [
+      "border",
+      "space"
+    ],
+    "variants": {
+      "default": {
+        "border": "hair",
+        "space": 4
+      }
+    },
+    "minTarget": 44,
+    "sign": {
+      "closed": "+",
+      "open": "−"
+    }
+  },
+  "drawer": {
+    "capabilities": [
+      "bg",
+      "text"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-surface",
+        "text": "text-ink"
+      }
+    },
+    "minTarget": 44,
+    "width": "min(19rem, 84vw)"
+  },
+  "range": {
+    "capabilities": [
+      "bg",
+      "border"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-brand",
+        "border": "strong"
+      }
+    },
+    "minTarget": 44
+  },
+  "live": {
+    "capabilities": [
+      "text"
+    ],
+    "variants": {
+      "default": {
+        "text": "text-ink-secondary"
+      }
+    }
+  },
+  "callout": {
+    "capabilities": [
+      "bg",
+      "text",
+      "border",
+      "radius",
+      "space"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-surface",
+        "text": "text-ink",
+        "border": "strong",
+        "radius": "md",
+        "space": 5
+      },
+      "punchline": {
+        "bg": "bg-mark",
+        "text": "text-ink",
+        "radius": "md",
+        "space": 5
+      }
+    }
+  },
+  "statusBadge": {
+    "capabilities": [
+      "text"
+    ],
+    "variants": {
+      "default": {
+        "text": "text-ink"
+      }
+    }
+  },
+  "table": {
+    "capabilities": [
+      "bg",
+      "text",
+      "border"
+    ],
+    "variants": {
+      "default": {
+        "bg": "bg-surface",
+        "text": "text-ink",
+        "border": "hair"
+      }
+    }
+  },
+  "prose": {
+    "capabilities": [
+      "text"
+    ],
+    "variants": {
+      "default": {
+        "text": "text-ink-secondary"
+      }
+    }
+  }
+}

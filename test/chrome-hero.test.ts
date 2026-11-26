@@ -16,7 +16,7 @@ const REFACTORED_FILES = [
   'components/search/SearchClient.tsx',
 ] as const;
 
-describe('reme v3.2 navigation & hero contract', () => {
+describe('reme v4 adapted navigation & hero contract', () => {
   it('narrows primary top-bar navigation strictly to Writing, Topics, and Lab', () => {
     expect(NAV.map((item) => item.label)).toEqual(['Writing', 'Topics', 'Lab']);
     expect(NAV.map((item) => item.href)).toEqual(['/blog', '/tags', '/lab']);
@@ -57,9 +57,10 @@ describe('reme v3.2 navigation & hero contract', () => {
     expect(heroSource).not.toContain('Ashif Ahmed Shuvo');
     expect(heroSource).not.toContain('AUTHOR');
     expect(heroSource).not.toMatch(/FEATURED STUDY|TRENDING/i);
-    expect(heroSource).toContain('text-[clamp(2rem,4vw,3.25rem)]');
-    expect(heroSource).toContain('lg:grid-cols-12');
-    expect(heroSource).toContain('lg:col-span-5');
-    expect(heroSource).toContain('lg:col-span-7');
+    expect(heroSource).toContain('r-h1');
+    expect(heroSource).toContain('r-grid r-hero');
+    expect(heroSource).toContain('name="hero.text"');
+    expect(heroSource).toContain('name="hero.visual"');
+    expect(heroSource).not.toContain('4vw');
   });
 });

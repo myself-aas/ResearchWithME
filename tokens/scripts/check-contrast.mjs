@@ -10,6 +10,7 @@ import { dirname, join } from 'node:path';
 const here = dirname(fileURLToPath(import.meta.url));
 const light = JSON.parse(readFileSync(join(here, '..', 'src', 'semantic-light.json'), 'utf8'));
 const dark = JSON.parse(readFileSync(join(here, '..', 'src', 'semantic-dark.json'), 'utf8'));
+const v4 = JSON.parse(readFileSync(join(here, '../../src/generated/palette.json'), 'utf8'));
 const primitive = JSON.parse(readFileSync(join(here, '..', 'src', 'primitive.json'), 'utf8'));
 
 // Semantic files may point at a primitive ({primitive.color.x.y}) the same way
@@ -21,7 +22,7 @@ const resolveRef = (value, seen = new Set()) => {
   if (!match) return value;
   const path = match[1];
   if (seen.has(path)) throw new Error(`Circular token reference: ${[...seen, path].join(' -> ')}`);
-  let cur = { primitive };
+  let cur = { primitive, v4 };
   for (const part of path.split('.')) {
     if (cur == null || typeof cur !== 'object' || !(part in cur)) {
       throw new Error(`Unresolved token reference: {${path}}`);
@@ -30,7 +31,13 @@ const resolveRef = (value, seen = new Set()) => {
   }
   return resolveRef(cur, new Set([...seen, path]));
 };
-for (const theme of [light, dark]) theme.brand.mark = resolveRef(theme.brand.mark);
+function resolveTree(node) {
+  for (const [key, value] of Object.entries(node)) {
+    if (value && typeof value === 'object') resolveTree(value);
+    else node[key] = resolveRef(value);
+  }
+}
+for (const theme of [light, dark]) resolveTree(theme);
 
 const RGBA_RE = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([0-9.]+))?\s*\)$/i;
 
