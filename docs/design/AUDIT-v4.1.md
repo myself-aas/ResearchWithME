@@ -50,7 +50,7 @@ The existing figure registry is intentionally preserved; its author-approval and
 
 ## Validation evidence
 
-- **Quality:** ESLint, TypeScript and **263 tests / 20 files** pass, including 17 GenUI/invariant tests, five model-delivery tests, four security-header tests and five server-lifecycle tests and three production snapshot regression tests.
+- **Quality:** ESLint, TypeScript and **264 tests / 20 files** pass, including 17 GenUI/invariant tests, five model-delivery tests, four security-header tests and five server-lifecycle tests and three production snapshot regression tests.
 - **Production:** `npm run verify` passes build and existing crawlability/content/SEO/feed/site-budget checks. Those older budgets are **not** substituted for the stricter v4.1 limits.
 - **Browser:** **10/10 tests** pass against a fresh standalone production server. Coverage includes the original landing reflow/geometry/no-JS suite, nine widgets at **288 / 358 / 720px** in both themes, catalog axe A/AA, a bounded status-stream CLS fixture, and an actual local assistant query with no outbound traffic/cookies/model downloads.
 - **Determinism:** **14 outputs** match two independent renders and fresh temporary files byte-for-byte.
@@ -145,3 +145,14 @@ additional legacy italic download. That face is now subset, manifest-owned and
 included in the unchanged 80KB limit. Every served WOFF2 must appear in the
 manifest. This corrects the audit scope rather than treating the old roman-only
 number as a complete font-budget pass.
+
+
+### Supplied Cloudflare log: stale contrast fixture
+
+The author supplied the actual prebuild error for build `8ee90c03`: I14 rejected
+`src/generated/fixtures/contrast.json`. Node 24 reproduces it, while regeneration
+on Node 22 produces no diff. The generator now canonicalizes contrast report
+ratios to 10 decimal places; raw calculations/threshold validation remain
+unchanged. The fixture is regenerated and CI checks committed artifacts on
+Node 20/22/24. See WORKERS-DIAGNOSIS.md for the reproduction and correction to
+the earlier unknown-cause assessment. This does not close unrelated v4.1 gates.

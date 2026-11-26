@@ -1,13 +1,46 @@
 # Workers build diagnosis and v4.1 delivery checks
 
-## What is known
+## Build failure: confirmed from the supplied log
 
-The failing external build linked from commit `b500978` is Cloudflare build
-`8ee90c03-182c-4b19-b66f-e9da86334049`. GitHub check `140141432874`
-contains a build ID and dashboard link, **not the build log or error text**.
-The private Cloudflare dashboard/API is not accessible in this environment.
-Consequently its exact install/build/upload/account failure is **unconfirmed**.
-No successful Node build is substituted for a successful remote deployment.
+The author supplied the private error for Cloudflare build
+`8ee90c03-182c-4b19-b66f-e9da86334049` (commit `b500978`):
+
+```text
+prebuild → design:check → design:verify
+Error: I14: stale generated file src/generated/fixtures/contrast.json; run npm run design:gen
+```
+
+Dependencies installed; the failure was the repository's generated-artifact
+guard, not a demonstrated Cloudflare platform failure. Previously GitHub check
+`140141432874` exposed only a dashboard link, so the cause was unconfirmed.
+The supplied log supersedes that limitation for this build.
+
+Regeneration on Node 22 produced no change. Running the same verifier on Node
+24 reproduced **the exact stale contrast fixture error**. Comparing fresh
+outputs showed V8 fractional-exponentiation differences in the final binary
+floating-point digits, e.g. `15.704613707397463` versus `15.704613707397465`.
+This explains why Node 22 CI passed while another runtime could fail the
+byte-for-byte check; merely recommitting Node 22 output would not fix it.
+The original dashboard Node version was not supplied, so Node 24 is a local
+reproduction, not an assertion about that build's environment.
+
+The contrast fixture now serializes ratios at **10 decimal places** and has
+been regenerated. Raw contrast calculations and threshold validation remain
+unrounded and unchanged. `renderDesign` still validates before rendering;
+byte-for-byte verification still rejects stale artifacts. A regression test
+also proves a near-threshold raw failure cannot be rounded into a pass.
+CI verifies the same committed outputs on **Node 20, 22 and 24**, without
+regenerating files there. All three versions pass locally.
+
+The supplied dashboard deploy command is `npx wrangler preview`, not a
+production deploy. That did not cause the reported prebuild error, and is
+external dashboard configuration, not a repository script. Review it before
+expecting production publication; this fix does not silently deploy or change
+account settings. The reported 16 npm vulnerabilities (including 2 critical)
+also did not cause this failure; no forced dependency upgrades are included.
+Remote success must still be confirmed by the next external check.
+
+## Previously validated Worker build/runtime evidence
 
 Locally, the following were reproduced with the pinned dependencies:
 
@@ -19,10 +52,9 @@ Locally, the following were reproduced with the pinned dependencies:
   configured **3 MiB** Worker limit. No static asset exceeds 25 MiB.
 - The bundle starts in workerd; the complete browser suite is executable there.
 
-These observations rule out a reproducible local compile/packaging/size/startup
-failure in the tested environment. They do not rule out dashboard command,
-Node/install environment, token permissions, binding, cache-population, or
-account-plan failures in the external build.
+These observations were collected on Node 22 before the cross-version
+contrast reproduction above. They demonstrate successful local packaging and
+runtime behavior, not universal runtime determinism or a remote deployment.
 
 ## Confirmed runtime defect and fix
 

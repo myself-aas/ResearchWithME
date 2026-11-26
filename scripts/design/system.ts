@@ -253,7 +253,9 @@ export function renderDesign(d: Design = design): Record<string, string> {
     'src/generated/fixtures/type.json': json(fixtures),
     'src/generated/fixtures/fonts.json': json(d.type.fonts),
     'src/generated/fixtures/sections.json': json(d.section),
-    'src/generated/fixtures/contrast.json': json(contrastMeasurements(d)),
+    // Fractional exponentiation can differ by a few ULPs across V8 versions.
+    // Canonicalize only the report, never the raw ratios used by validateDesign.
+    'src/generated/fixtures/contrast.json': json(contrastMeasurements(d).map(m => ({ ...m, ratio: Number(m.ratio.toFixed(10)) }))),
     'src/generated/fixtures/genui.json': json(d.genui),
     'src/generated/fixtures/layouts.json': json({ slots: d.layout, placement: d.placement, rows: d.layoutRows }),
     'src/generated/fixtures/primitives.json': json(d.primitive),

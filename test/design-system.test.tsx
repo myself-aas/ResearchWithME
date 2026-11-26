@@ -56,6 +56,22 @@ describe('reme v4 manifest and generator', () => {
     expect(new Set(measurements.map(m => m.mode)).size).toBe(4);
     for (const m of measurements) expect(m.ratio, `${m.mode} ${m.fg}/${m.bg}`).toBeGreaterThanOrEqual(m.threshold);
   });
+  it('serializes contrast at stable precision without rounding validation inputs', () => {
+    const raw = contrastMeasurements();
+    const fixture = JSON.parse(renderDesign()['src/generated/fixtures/contrast.json']);
+    expect(fixture).toEqual(raw.map(m => ({ ...m, ratio: Number(m.ratio.toFixed(10)) })));
+    expect(raw.some((m, i) => m.ratio !== fixture[i].ratio)).toBe(true);
+    for (const [i, m] of raw.entries()) {
+      expect(Math.abs(m.ratio - fixture[i].ratio)).toBeLessThanOrEqual(5.1e-11);
+      expect(m.ratio).toBeGreaterThanOrEqual(m.threshold);
+    }
+    // This rounds to a passing 21:1 in the fixture, but raw validation must fail.
+    const nearThreshold = clone();
+    nearThreshold.color.roles['text-ink'].light = '#000000';
+    nearThreshold.color.roles['bg-canvas'].light = '#ffffff';
+    nearThreshold.color.pairs[0].min = 21 + 1e-12;
+    expect(() => renderDesign(nearThreshold)).toThrow(/I3/);
+  });
   it('proves the corrected grid identities and all published span widths', () => {
     const sizes = geometry();
     const lg = sizes.find(g => g.tier === 'lg')!;
