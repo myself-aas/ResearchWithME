@@ -1,12 +1,52 @@
 {
   "version": 2,
   "skills": {
+    "elements": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/elements/SKILL.md",
+      "computedHash": "79b4f6c0c61ebb00be61a485c9c3ac49e08facde92547817b9e2e55e7d36e690",
+      "installMode": "copy"
+    },
+    "generative-ui": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/generative-ui/SKILL.md",
+      "computedHash": "b33eff4f5bc9cd68d73bf2e6c5f6f43744295c4f4cf210cfd2142c0b912b774a",
+      "installMode": "copy"
+    },
     "impeccable": {
       "source": "pbakaus/impeccable",
       "commit": "9e460a87ef338ee9d12c7beed8fedc597a5af5f7",
       "sourceType": "github",
       "skillPath": ".agents/skills/impeccable/SKILL.md",
       "computedHash": "b89bce2429b2b581d38620af9b555e2b4762b12f6f4f61fb07fba7757a284b3e"
+    },
+    "primitives": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/primitives/SKILL.md",
+      "computedHash": "0619f2a78e45b3c9a895ea75727de0d9d634d2d159adc775401ed4152654baff",
+      "installMode": "copy"
+    },
+    "runtime": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/runtime/SKILL.md",
+      "computedHash": "c0ccfc2fa375dd9956327d2e77f7226c93f8d1234414c99d67267bc6c79faf73",
+      "installMode": "copy"
+    },
+    "tools": {
+      "source": "assistant-ui/skills",
+      "commit": "53b2631fa16d2904e10d7cb9382bda4bec04649e",
+      "sourceType": "github",
+      "skillPath": "assistant-ui/skills/tools/SKILL.md",
+      "computedHash": "ca670e9129d2b7d7e6f5690477d0d91f4544479128f80dc00676756b381f9e45",
+      "installMode": "copy"
     }
   }
 }

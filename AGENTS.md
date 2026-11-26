@@ -112,7 +112,12 @@ These are never traded away for a design, a framework upgrade, or a deadline.
   derived from the file name unless frontmatter overrides them.
 - Endpoints never carry a trailing slash; `trailingSlash` stays off. The canonical link and the
   sitemap both emit the slashless form. (§15 records why this differs from the `…/slug/` sketch.)
-- `/blog`, `/tags`, `/tags/<tag>`, `/about`, `/search` are the only non-article routes.
+- Non-article routes: `/blog`, `/tags`, `/tags/<tag>`, `/about`, `/search`,
+  `/assistant` (the archive chat), `/lab` (the figure library showcase),
+  `/contact`, and `/privacy`. Every one of them is a crawlable page like any
+  other (§1) — `/assistant` and `/lab` are server-rendered shells whose
+  readable content survives `curl`, with the chat island or the figure registry
+  code-split to the route (§9, §18, §20).
 - A slug change is a rename **plus** a permanent redirect in `next.config.ts`, in the same commit.
   Never delete a URL that has been public without leaving a redirect.
 - Legacy maps already in place: `/posts` and `/posts/:slug` → `/blog`, `/post/:slug` → `/blog/:slug`,
@@ -370,6 +375,8 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 - Focus is always visible (`focus-visible:outline-2`), and colour contrast is enforced by
   `npm run tokens:check`.
 - Motion respects `prefers-reduced-motion`. Decorative motion is not shipped on the article path.
+- **Colour comes from semantic tokens only** (`reme v3.2`, `DESIGN.md`). Every colour resolves through a semantic Tailwind role (`bg-canvas`, `bg-surface`, `text-ink`, `text-ink-secondary`, `border-line`, `bg-brand`, `text-on-primary`, `text-brand`, `bg-selection`, …) backed by `--reme-*`. Never a raw palette family (`stone-*`, `gray-*`, `neutral-*`, `white`, `black`, `orange-*`, `blue-*`), never an inline hex value, never `rgb()`/`hsl()` in JSX or CSS, and **never blue anywhere in the UI** (`DESIGN.md` "No blue anywhere"). Data colours arrive as tone *names* and resolve through `lib/figures/tones.ts`. `app/globals.css` carries no literal colour for any theme-able role; the only allowed literals are the static brand icons and the pinned dark code-panel tokens (`DESIGN.md` "Literals that are allowed"). `npm run quality` includes a source scan that fails on stray hex/raw-palette classes in `app/`, `components/`, and `lib/`.
+- **No forbidden patterns** (`DESIGN.md` "Do not"): no kicker/eyebrow above a heading, no text overlaid on cover artwork, no gradient text, no decorative `backdrop-blur` glass, no nested cards, no hard offset shadows, no `>1px` coloured left/right border, and no unicode icon glyphs. No horizontal-scrolling topic-chip strip in the hero or mobile header. No carousel/animation library, preloader, or client-side `<canvas>` luminance script. At most two downloaded fonts (Newsreader + Inter) plus the system monospace.
 - Interactive figures in posts are data-driven components, not one-off scripts. Each figure in a
   post must have its own interaction pattern (a slider, a scrubber, a picker — never two widgets
   that differ only in subject matter), must server-render its initial state so the article survives
@@ -510,8 +517,8 @@ section is the contract. `npm run check:mcp` proves the wiring: it spawns every 
 
 | Server | Transport | Used for | Writes |
 | --- | --- | --- | --- |
-| `shadcn` | stdio | Reading registry component source as reference | No — `add`/`init` are forbidden here |
-| `assistant-ui` | stdio | Live assistant-ui docs for `components/assistant/` and `lib/assistant/` work (§18) | No |
+| `shadcn` | stdio | Reading registry component source as reference, **including the assistant-ui catalog at `r.assistant-ui.com`** (read-only) | No — `add`/`init` are forbidden here |
+| `assistant-ui` | stdio | Live assistant-ui docs for `components/assistant/` and `lib/assistant/` work (§18); front-end for `https://www.assistant-ui.com/llms.txt` | No |
 | `github` | http | Actions logs, review threads, code scanning, issue search | Read-only toolsets by default |
 | `figma` | http | Variables, screenshots, component code from a design file | No |
 | `fetch` | stdio | Primary sources as markdown (papers, model cards, docs) | No |
@@ -598,15 +605,30 @@ Rules:
    guides; `node_modules/@assistant-ui/react` is the authority.
 10. **Post figures are generative UI.** Every interactive figure an article
     ships must also render inside the thread: the adapter routes matching
-    questions to a tool call whose name maps, via `MessagePrimitive.Content
-    components={{ tools: { by_name } }}`, to the same component the MDX body
-    uses (the `makeAssistantToolUI` escape hatch is deprecated in the installed
-    0.15.x line — do not use it). Tool args carry defaults (`initialRatio`,
-    `initialMonth`, `initialCheckpoint`) so a tool call with partial arguments
-    still renders a sensible figure. An article-only widget is half-shipped;
-    since §20 the routing keywords and defaults live on the figure registry
-    entry and `routeFigure` is registry-driven — a routing change is still a
-    tested change (rule 8).
+    questions to a tool call whose name maps, via the registry-derived
+    `generativeTools.by_name` (in `components/assistant/GenerativeFigures.tsx`),
+    to the **same** component the MDX body uses. `by_name` is produced by the
+    shared `makeFigureToolUI` factory — the `makeAssistantToolUI` escape hatch
+    is deprecated in the installed 0.15.x line, so do not use it. The thread
+    currently renders tool-call parts through `MessagePrimitive.Content`
+    (`components={{ Text, tools: generativeTools }}`); `Content` is the
+    deprecated alias of `MessagePrimitive.Parts`, and the planned, like-for-like
+    migration to `.Parts` (per-part render callback, keeping `by_name` reachable)
+    is documented in `.agents/skills/assistant-ui-docs/references/reme-generative-architecture.md`
+    §4 — it is a functional equivalent, not a visual change. Tool args carry
+    defaults (`initialRatio`, `initialMonth`, `initialCheckpoint`, …) so a tool
+    call with partial arguments still renders a sensible figure. An article-only
+    widget is half-shipped; since §20 the routing keywords and defaults live on
+    the figure registry entry and `routeFigure` is registry-driven — a routing
+    change is still a tested change (rule 8). The **forward path** for *composed*
+    in-thread surfaces (one spec stacking several registry components) is
+    `MessagePrimitive.GenerativeUI` with a `GenerativeUIComponentRegistry`
+    allowlist + `Fallback`; the two spec shapes (`present` flat `_type` vs
+    primitive `{ root: { component, props } }`) do **not** interchange — see the
+    bridge doc §1. Both paths share one security boundary: the allowlist bounds
+    *which* components render (no `eval`, no dynamic import); it does not
+    constrain props, so never forward agent/tool-supplied props into
+    `dangerouslySetInnerHTML` and reject `javascript:` URLs (§18.9, bridge §7).
 
 ## §19 Agent skills layer
 
@@ -614,6 +636,16 @@ Rules:
 agents, adapted from the assistant-ui repository's agent infrastructure; the
 index and provenance live in `.agents/skills/README.md`, and
 `.claude/commands/` holds command entry points that point into the skills.
+Vendored provenance is pinned in `skills-lock.json` (`version: 2`): every
+vendored skill records its `source`, `commit`, `sourceType`, `computedHash`,
+and `installMode`, so the contents are reproducible and auditable. The five
+`assistant-ui/skills` packages — `generative-ui`, `elements`, `primitives`,
+`runtime`, `tools` — are vendored **verbatim** at the pinned commit and are
+normative for any `/assistant` or figure-library change; `assistant-ui-docs`
+is the repo-adapted translation layer (with the bridge doc in
+`references/reme-generative-architecture.md`). For live API reference beyond the
+vendored skills, consult [`https://www.assistant-ui.com/llms.txt`](https://www.assistant-ui.com/llms.txt)
+via the `assistant-ui` MCP server (§17).
 
 1. **A skill is a procedure, not an exemption.** `AGENTS.md` outranks any
    skill — this generalizes §17's "the local authority wins".
@@ -624,6 +656,20 @@ index and provenance live in `.agents/skills/README.md`, and
    publishing are the author's acts (§17 rule 3), never a skill's.
 4. **Skills carry no credentials.** A skill that needs a secret names the
    environment variable and stops; §17 rule 2 is the ceiling.
+5. **Vendored skills stay in lockstep with `skills-lock.json`.** When a vendored
+   skill's `source`/`commit`/`computedHash` changes, the lockfile row and the
+   installed `.agents/skills/<name>/` tree change in the same commit, and
+   `.agents/skills/README.md` lists it. `npm run quality` includes a contract
+   test (`test/skills-and-templates.test.ts`) that fails when a vendored skill
+   is missing from the lockfile, when a `SKILL.md` links to a relative path
+   that does not exist, or when `templates/*.tmpl` carry stray hex/raw-palette
+   classes or forbidden glyphs.
+6. **`llms.txt` is machine-readable, not a second copy.** The site's own
+   `/llms.txt` is generated from the same content loader as the rest of the
+   artifacts (§8.3); keep it tiny and index-only. assistant-ui's
+   `https://www.assistant-ui.com/llms.txt` is an *external* API reference for
+   agents, reached via the `assistant-ui` MCP server — never vendored into this
+   repo as a file.
 
 ---
 
@@ -658,7 +704,14 @@ The short form:
    `components/post/`. The genre layouts in
    `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` say where each archetype slots.
 6. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`
-   for components (scaffolded by `npm run figures:new`) and
-   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays.
+   for components (scaffolded by `npm run figures:new`),
+   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays, and
+   `templates/GENERATIVE_UI_SURFACE_TEMPLATE.tsx.tmpl` for **composed** in-thread
+   generative-UI surfaces (a `GenerativeUIComponentRegistry` allowlist + `Fallback`
+   that stacks several registry components behind one `generative-ui` message
+   part — the forward path from §18 rule 10). All three are programmatically
+   consumed (the figure template by `scripts/new-figure.mjs`) and are scanned by
+   `test/skills-and-templates.test.ts` for stray hex/raw-palette classes and
+   forbidden glyphs; keep them token-only (`reme v3.2`, §12).
    `/lab` renders every registered figure with its defaults and is the
    pre-adoption proving ground; it is a crawlable page like any other (§1).

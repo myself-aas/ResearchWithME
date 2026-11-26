@@ -57,7 +57,7 @@ map or the remark/rehype pipeline, that suite is what proves the existing posts 
 
 ## The assistant (`/assistant`)
 
-A browser-side retrieval chat on assistant-ui (`@assistant-ui/react`). The reasoning lives in
+A browser-side retrieval chat on assistant-ui (`@assistant-ui/react@0.15.38`). The reasoning lives in
 `lib/assistant/retrieval.ts` (pure, tested by `test/assistant-retrieval.test.ts`); the runtime and
 primitives stay inside `components/assistant/AssistantThread.tsx`. Never import assistant-ui from
 a component an article page renders — its JavaScript is quarantined to that route (`AGENTS.md` §9,
@@ -66,12 +66,24 @@ network origin beyond the cached `/search-index.json` fetch and the Assistant Cl
 `NEXT_PUBLIC_ASSISTANT_BASE_URL` (anonymous thread sync — set in `.env.production`, disclosed on
 the page and in the privacy policy; unset locally, where threads stay in-memory).
 
+The thread currently renders tool-call parts through `MessagePrimitive.Content`
+(`components={{ Text, tools: generativeTools }}`); `Content` is the 0.15.x-deprecated alias of
+`MessagePrimitive.Parts`. The like-for-like migration to `.Parts`, the `AuiIf` replacement for
+every `.If`, and the forward `MessagePrimitive.GenerativeUI` allowlist path are documented in
+`.agents/skills/assistant-ui-docs/references/reme-generative-architecture.md`. Keep `reme v3.2`
+tokens (`bg-surface`, `border-line`, `bg-brand`, … — never blue, never hex) on any assistant UI.
+
 ## Agent skills
 
 `.agents/skills/` holds SKILL.md instruction packages (index in `.agents/skills/README.md`), and
-`.claude/commands/treeflow.md` is the branch → PR → CI flow entry point. A skill is a procedure,
-not an exemption: `AGENTS.md` outranks any skill, and `test/mcp-config.test.ts` plus
-`npm run check:mcp` keep the `.mcp.json` wiring honest (`AGENTS.md` §17–§19).
+`.claude/commands/treeflow.md` is the branch → PR → CI flow entry point. Vendored provenance is
+pinned in `skills-lock.json` (`version: 2`); the five `assistant-ui/skills` packages
+(`generative-ui`, `elements`, `primitives`, `runtime`, `tools`) are vendored verbatim and are
+normative for assistant-ui work, with `assistant-ui-docs` as the repo-adapted bridge
+(`references/reme-generative-architecture.md`). A skill is a procedure, not an exemption:
+`AGENTS.md` outranks any skill, and `test/mcp-config.test.ts` plus `npm run check:mcp` keep the
+`.mcp.json` wiring honest (`AGENTS.md` §17–§19). New figure/library code follows
+`FIGURE_CONSTITUTION.md` and `DESIGN.md` (`reme v3.2`).
 
 ## Motion
 

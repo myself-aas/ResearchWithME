@@ -1,11 +1,16 @@
 /**
- * TEMPLATE A — Generative figure component (figure constitution v1)
+ * TEMPLATE A — Generative figure component (figure constitution v1, reme v3.2)
  * ============================================================================
- * Scaffold with:  npm run figures:new -- <slug>
+ * Scaffold with:  npm run figures:new -- <slug> "Human title" [archetype]
  *   e.g. `npm run figures:new -- lens_peek` writes:
  *     components/library/LensPeek.tsx          ← this file
  *     lib/figures/fixtures/lens-peek.ts        ← its fixture data
  *   and prints the registration checklist (registry entry, tests, docs).
+ *
+ * PLACEHOLDERS (do not rename — scripts/new-figure.mjs replaces these):
+ *   __NAME__       PascalCase component name        __SLUG__      kebab fixture slug
+ *   __TITLE__      Human title from the CLI          __ARCHETYPE__ interaction archetype
+ *   __TOOL_NAME__  show_<kebab> tool name            __KEYWORDS__  routing keywords
  *
  * THE CONSTITUTION IN ONE SCREEN — every article is checked by
  * test/figure-constitution.test.ts; a violation fails CI, not just review:
@@ -26,7 +31,10 @@
  *   6. TOKENS ONLY     Chrome uses semantic token classes (bg-surface,
  *                      text-ink, border-line, bg-brand…). No hex, no blue.
  *                      Data colours arrive as tone *names* and resolve via
- *                      lib/figures/tones.ts.
+ *                      lib/figures/tones.ts. If you render a generative-UI
+ *                      vocabulary node, tag it with `data-aui` and restyle it
+ *                      in app/globals.css against [data-aui="..."], never with
+ *                      shadcn `--primary`/`--border` variables.
  *   7. A11Y            Every control is a real <button>/<input>/<a>; min
  *                      44px touch targets (min-h-11); focus-visible outlines;
  *                      dynamic readouts live in an aria-live="polite" region;
@@ -42,6 +50,11 @@
  *                      timers).
  *  10. TESTED          Pure logic lives in lib/figures/<slug>.ts and lands
  *                      with unit tests; the component lands with a fixture.
+ *  11. SECURITY       If this component is ever rendered from an agent/tool
+ *                      spec, treat every prop as untrusted: never forward a
+ *                      prop into dangerouslySetInnerHTML, and validate or
+ *                      reject href/src (no `javascript:` URLs). The allowlist
+ *                      bounds which components render, not the props they get.
  * ============================================================================
  */
 
@@ -49,6 +62,7 @@
 
 import { useState } from 'react';
 import FigureChrome, { PRIMARY_BUTTON, READOUT_CLASS, SECONDARY_BUTTON } from './FigureChrome';
+
 // Pure logic next door — testable without React (Article 10):
 //   import { thing } from '@/lib/figures/__SLUG__';
 // Data tones by name, never hex (Article 6):

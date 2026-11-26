@@ -1,0 +1,84 @@
+/**
+ * TEMPLATE C — Composed generative-UI surface (forward path, reme v3.2)
+ * ============================================================================
+ * A composed in-thread surface: one `generative-ui` message part that stacks
+ * several registry components behind a `GenerativeUIComponentRegistry`
+ * allowlist + `Fallback`. This is the forward path from AGENTS.md §18 rule 10
+ * and the bridge doc (references/reme-generative-architecture.md) §1 — it is
+ * NOT the same shape as the legacy `present`/`JSONGenerativeUI` flat `_type`
+ * tree, and the two do not interchange.
+ *
+ * When to use: a single assistant answer needs to render a *composition* of
+ * registered figures (e.g. a sources panel + a comparison card + a chart)
+ * from a `generative-ui` part, rather than one tool-call per figure. The
+ * per-figure tool-UI path (GenerativeFigures.tsx / `by_name`) stays the
+ * default for a single routed figure.
+ *
+ * FILL-IN PLACEHOLDERS (manual — no scaffolder consumes this template yet):
+ *   __SURFACE_NAME__   PascalCase component name, e.g. `AnswerSurface`
+ *   __REGISTRY_IMPORTS__  the registry components the surface may render
+ *   __ALLOWLIST_KEYS__   the component names the allowlist accepts (these are
+ *                         the ONLY keys a `generative-ui` part may name)
+ *
+ * HARD RULES (reme v3.2, AGENTS.md §12/§18, FIGURE_CONSTITUTION.md):
+ *  - Tokens only. No hex, no blue, no shadcn `--primary`/`--border` variables.
+ *    Restyle any `data-aui` node in app/globals.css, never inline.
+ *  - The allowlist bounds WHICH components render (no eval, no dynamic import).
+ *    It does NOT bound the props they receive: never forward agent/tool-supplied
+ *    props into dangerouslySetInnerHTML; validate or reject href/src.
+ *  - Every control is a real <button>/<input>/<a>, min-h-11, focus-visible,
+ *    aria-live readouts. State is never carried by colour alone.
+ *  - JS stays quarantined to /assistant (§9); do not import this into an
+ *    article-rendered component.
+ * ============================================================================
+ */
+
+'use client';
+
+import { type ComponentType } from 'react';
+import {
+  MessagePrimitive,
+  type GenerativeUIComponentRegistry,
+  type GenerativeUISpec,
+  // GenerativeUIRenderError is thrown for unrecognised names unless Fallback is set
+} from '@assistant-ui/react';
+
+// __REGISTRY_IMPORTS__
+
+/**
+ * The allowlist. Only these component names may appear in a `generative-ui`
+ * part's `{ root: { component } }`. Anything else renders through `Fallback`
+ * instead of throwing (and never reaches a component it should not).
+ */
+const SURFACE_ALLOWLIST: GenerativeUIComponentRegistry = {
+  // __ALLOWLIST_KEYS__
+  // e.g. Sources: SourcesElement,
+  //      Comparison: ComparisonCardElement,
+  //      Chart: ChartElement,
+};
+
+/** Honest fallback for an unrecognised component name (bridge doc §7). */
+function UnknownComponentFallback({ component }: { component: string }) {
+  return (
+    <p className="rounded-lg border border-line bg-surface-subtle px-3 py-2 font-mono text-xs text-ink-secondary">
+      Unknown surface component: {component}
+    </p>
+  );
+}
+
+export default function __SURFACE_NAME__({ spec }: { spec: GenerativeUISpec }) {
+  return (
+    <div className="my-2 overflow-hidden rounded-xl border border-line bg-canvas">
+      <div className="border-b border-line px-4 py-2 font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
+        Generated answer surface
+      </div>
+      <div className="p-1">
+        <MessagePrimitive.GenerativeUI
+          spec={spec}
+          components={SURFACE_ALLOWLIST}
+          Fallback={UnknownComponentFallback}
+        />
+      </div>
+    </div>
+  );
+}
