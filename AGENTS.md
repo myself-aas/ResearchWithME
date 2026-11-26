@@ -536,6 +536,7 @@ section is the contract. `npm run check:mcp` proves the wiring: it spawns every 
 | `deepwiki` | http | Orienting in a research codebase before reading it | No |
 | `brave-search` | stdio | An independent web index for facts, titles, and live URLs | No |
 | `firecrawl` | stdio | Client-rendered pages and small crawls | No |
+| `graphify` | http | The codebase's Graphify knowledge graph: code-structure, caller, and impact questions against indexed repositories (§ Graphify rule) | No — OAuth sign-in, no API key |
 
 Rules:
 
@@ -825,3 +826,14 @@ remote deployment success from a local dry run.
 All served WOFF2 faces, including editorial italic, belong in the manifest and
 the unchanged 80KB font budget. Only roman faces are preloaded. Scientific/UI
 glyph checks and system Bengali/device checks remain distinct claims.
+
+## Graphify
+
+This repo is indexed in Graphify. For questions about code structure, callers,
+dependencies, or the impact of a change, use Graphify's MCP tools before grep
+or reading files one by one: query_graph for how something works, graphify_find
+for where a symbol is defined, graphify_callers for who calls it,
+graphify_impact for what a change could affect, review_status for Graphify's
+review of a pull request. Use grep for exact strings, such as error messages or
+config keys. If a Graphify tool fails or the repository isn't indexed, say so,
+then fall back to grep.
