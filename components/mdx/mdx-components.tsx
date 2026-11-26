@@ -54,6 +54,30 @@ import {
   PlaneQuiz,
 } from '@/components/post/plane-figures';
 import {
+  NotesPipelineFlow,
+  NotesPracticePathway,
+  NotesCostSwitches,
+  NotesQuiz,
+} from '@/components/post/notes-figures';
+import {
+  ReadRepoSignalsMatrix,
+  ReadRepoTree,
+  ReadRepoRequestFlow,
+  ReadRepoQuiz,
+} from '@/components/post/readrepo-figures';
+import {
+  BenchResultsMatrix,
+  BenchGapPathway,
+  BenchChecklistSwitches,
+  BenchQuiz,
+} from '@/components/post/bench-figures';
+import {
+  ToolsListStack,
+  ToolsWorkflowFlow,
+  ToolsDraftTree,
+  ToolsQuiz,
+} from '@/components/post/tools-figures';
+import {
   SupersetPlatformChart,
   SupersetAssetMatrix,
   SupersetAssumptionSwitches,
@@ -387,4 +411,20 @@ export const mdxComponents = {
   Gta6ClaimAtlas,
   Gta6VerifyPathway,
   Gta6Quiz,
+  NotesPipelineFlow,
+  NotesPracticePathway,
+  NotesCostSwitches,
+  NotesQuiz,
+  ReadRepoSignalsMatrix,
+  ReadRepoTree,
+  ReadRepoRequestFlow,
+  ReadRepoQuiz,
+  BenchResultsMatrix,
+  BenchGapPathway,
+  BenchChecklistSwitches,
+  BenchQuiz,
+  ToolsListStack,
+  ToolsWorkflowFlow,
+  ToolsDraftTree,
+  ToolsQuiz,
 };

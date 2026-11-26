@@ -37,6 +37,10 @@ describe('per-post figure contract', () => {
     const perspective = await import('@/lib/post/perspective-api-review-before-you-moderate');
     const rustdesk = await import('@/lib/post/rustdesk-review-before-you-deploy');
     const gta6 = await import('@/lib/post/gta6-emulator-review-verify-the-claim');
+    const notes = await import('@/lib/post/notes-from-a-year-of-public-reading');
+    const readrepo = await import('@/lib/post/read-a-repository-before-you-run-it');
+    const bench = await import('@/lib/post/reproducing-a-benchmark-that-did-not-survive');
+    const tools = await import('@/lib/post/tooling-notes-under-construction');
 
     const manifests: Record<string, ReadonlyArray<{ mdxName: string; archetype: string }>> = {
       'apache-airflow-review-should-you-use-it': airflow.AIRFLOW_FIGURES,
@@ -53,6 +57,10 @@ describe('per-post figure contract', () => {
       'perspective-api-review-before-you-moderate': perspective.PERSPECTIVE_FIGURES,
       'rustdesk-review-before-you-deploy': rustdesk.RUSTDESK_FIGURES,
       'gta6-emulator-review-verify-the-claim': gta6.GTA6_FIGURES,
+      'notes-from-a-year-of-public-reading': notes.NOTES_FIGURES,
+      'read-a-repository-before-you-run-it': readrepo.READREPO_FIGURES,
+      'reproducing-a-benchmark-that-did-not-survive': bench.BENCH_FIGURES,
+      'tooling-notes-under-construction': tools.TOOLS_FIGURES,
     };
 
     for (const [slug, manifest] of Object.entries(manifests)) {

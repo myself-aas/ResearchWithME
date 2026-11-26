@@ -17,6 +17,12 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and a "How this site is made" colophon strip. All sections are server-rendered and crawlable.
 
 ### Added
+- Third integration batch, completing the per-post figure floor across all 19 posts: the
+  public-reading notes essay (note-pipeline flow diagram, practice pathway with drafts-abandoned
+  cost, named-costs switches, quiz), the repository-reading method (signals matrix, repo-as-structure
+  org chart, request-trace flow diagram, quiz), the benchmark reproduction (measurement matrix with
+  the real warm/cold numbers, three-fork gap pathway, reporting-checklist switches, quiz), and the
+  tooling draft (tool list stack, workflow flow diagram, draft-as-structure org chart, quiz).
 - The diagram family of generative-UI components: `FlowDiagram` (stepped block/flow-chart trace
   over a typed node graph), `OrgChart` (expand/collapse hierarchical tree with live leaf counts), and
   `PathwayMap` (sequential forks whose choices accumulate a route cost) — logic in

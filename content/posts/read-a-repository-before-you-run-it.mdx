@@ -45,6 +45,10 @@ I look for three things, in this order, and I stop as soon as one of them fails 
 3. **Error paths.** Pick the most important public function. Read what happens when it fails. If the
    failure mode is a raised generic exception, the boundaries are probably not designed yet.
 
+The signals as a sortable matrix:
+
+<ReadRepoSignalsMatrix />
+
 <Figure
   src="/images/folio-process.jpeg"
   alt="A whiteboard sketch of a system's modules, with arrows between the request path and the storage layer."
@@ -57,6 +61,10 @@ I look for three things, in this order, and I stop as soon as one of them fails 
 
 After the three signals, I trace a single request through the code. Not a mock, not a unit test — the
 actual entry point, down to whatever it writes, and back up to whatever it returns.
+
+The trace, block by block:
+
+<ReadRepoRequestFlow />
 
 <Sidenote>
   This is where most "it looked clean" impressions fall apart. Layers that read well in isolation
@@ -73,9 +81,17 @@ By the time I run the install command, I already know whether the project is a m
 published snapshot, where its tests actually point, and which module will be the first to break under
 my workload.
 
+The whole method as a structure — expand a branch to the claim it carries:
+
+<ReadRepoTree />
+
 <Callout tone="warning" title="This is not a security audit">
   Reading history and tests tells you about design and maintenance. It does not tell you whether the
   code is safe to run. Treat the two activities as separate, and give the security pass its own time.
 </Callout>
 
 The README is still worth reading — last, as a claim to check against what you found.
+
+Four readings of the method, worth checking yourself on:
+
+<ReadRepoQuiz />
