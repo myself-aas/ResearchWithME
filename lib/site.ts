@@ -28,8 +28,18 @@ export const AUTHOR = {
   shortBio: 'Writing about research papers, open-source code, and reproducible work.',
   avatar: '/images/author.jpg',
   initials: 'AS',
+  // Every profile the author actually publishes under, sourced from the
+  // GitHub profile (api.github.com/users/myself-aas) and the author's own
+  // public portfolio repository (`myself-aas/me`). Rendered as icon links in
+  // the footer, the about page, and the article author card; the JSON-LD
+  // `sameAs` list is derived from this same array (lib/seo/jsonld.ts).
   links: [
     { label: 'GitHub', href: 'https://github.com/myself-aas' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/me-aas' },
+    { label: 'X', href: 'https://x.com/myself_aas' },
+    { label: 'Bluesky', href: 'https://bsky.app/profile/myself-aas.bsky.social' },
+    { label: 'ORCID', href: 'https://orcid.org/0009-0003-5734-1519' },
+    { label: 'Website', href: 'https://myself-aas.github.io/me/' },
     { label: 'RSS', href: '/rss.xml' },
   ],
 } as const;
@@ -47,6 +57,7 @@ export const CONTACT = {
 export const NAV = [
   { href: '/blog', label: 'Writing' },
   { href: '/tags', label: 'Topics' },
+  { href: '/assistant', label: 'Assistant' },
   { href: '/about', label: 'About' },
   { href: '/search', label: 'Search' },
 ] as const;

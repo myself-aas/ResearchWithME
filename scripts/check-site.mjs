@@ -459,6 +459,19 @@ assert(
 );
 pass(`article JS measured: ${Math.round(pageSpecific / 1024)} KB page-specific, ${Math.round(totalJs / 1024)} KB total including the framework runtime`);
 
+// The lab renders the whole figure registry client-side (AGENTS.md §9); it
+// gets its own budget so the library cannot grow without paying attention.
+const labPage = pageByRoute.get('/lab');
+const labScripts = executableScripts(labPage?.html ?? '');
+const labPageSpecific = labScripts
+  .filter((src) => !sharedScripts.has(src))
+  .reduce((total, src) => total + gzipSize(assetPath(src)), 0);
+assert(
+  labPageSpecific <= 80 * 1024,
+  `lab page-specific JS ≤ 80 KB gz (${Math.round(labPageSpecific / 1024)} KB)`,
+);
+pass(`lab JS measured: ${Math.round(labPageSpecific / 1024)} KB page-specific (whole figure registry)`);
+
 const cssFiles = [...(articlePage?.html ?? '').matchAll(/<link[^>]*rel="stylesheet"[^>]*href="(\/_next\/[^"]+)"/gi)].map(
   (m) => m[1],
 );

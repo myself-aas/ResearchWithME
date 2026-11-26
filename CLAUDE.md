@@ -47,10 +47,31 @@ map or the remark/rehype pipeline, that suite is what proves the existing posts 
 - `lib/content/posts.ts` is server-only (`import 'server-only'`). Client components take types from
   `lib/content/types.ts` and formatting helpers from `lib/content/format.ts`.
 - Pages that render posts stay statically generated: `generateStaticParams` + `dynamicParams = false`.
-  Do not introduce `cookies()`, `headers()`, or `searchParams` into them without a reason. The single
-  exception is `/search`, which reads `?q=` so results are in the HTML without JavaScript.
+  Do not introduce `cookies()`, `headers()`, or `searchParams` into them without a reason. The two
+  exceptions are `/search`, which reads `?q=` so results are in the HTML without JavaScript, and
+  `/assistant`, which ships a client-side chat island (see below).
 - Design tokens live in `tokens/`; use semantic Tailwind roles (`bg-canvas`, `text-ink`,
-  `border-line`, `text-brand`), not raw palette values.
+  `border-line`, `text-brand`), not raw palette values. `app/globals.css` carries no hex colors:
+  the semantic roles reference the generated `--reme-*` layer, so both the ThemeMenu's explicit
+  light/dark classes and the OS preference flip every role at once.
+
+## The assistant (`/assistant`)
+
+A browser-side retrieval chat on assistant-ui (`@assistant-ui/react`). The reasoning lives in
+`lib/assistant/retrieval.ts` (pure, tested by `test/assistant-retrieval.test.ts`); the runtime and
+primitives stay inside `components/assistant/AssistantThread.tsx`. Never import assistant-ui from
+a component an article page renders — its JavaScript is quarantined to that route (`AGENTS.md` §9,
+§18). Answers quote the archive and link to it; do not add a model service, an API key, or any
+network origin beyond the cached `/search-index.json` fetch and the Assistant Cloud URL from
+`NEXT_PUBLIC_ASSISTANT_BASE_URL` (anonymous thread sync — set in `.env.production`, disclosed on
+the page and in the privacy policy; unset locally, where threads stay in-memory).
+
+## Agent skills
+
+`.agents/skills/` holds SKILL.md instruction packages (index in `.agents/skills/README.md`), and
+`.claude/commands/treeflow.md` is the branch → PR → CI flow entry point. A skill is a procedure,
+not an exemption: `AGENTS.md` outranks any skill, and `test/mcp-config.test.ts` plus
+`npm run check:mcp` keep the `.mcp.json` wiring honest (`AGENTS.md` §17–§19).
 
 ## Motion
 

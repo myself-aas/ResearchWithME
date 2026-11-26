@@ -8,8 +8,8 @@ Two things make the contract enforceable rather than aspirational:
 
 1. Every rule states which layer it belongs to, so it is obvious what breaks when it is ignored.
 2. `npm run check:site` asserts most of them against the built HTML, feeds and assets, and `npm test`
-   covers what never reaches the browser — the content schema and the MCP wiring in §17. If either
-   check fails, the change does not ship.
+   covers what never reaches the browser — the content schema, the assistant's retrieval rules in
+   §18, and the MCP wiring in §17. If either check fails, the change does not ship.
 
 Read §1 and §13 first. They explain why the rest of the document exists.
 
@@ -25,6 +25,7 @@ Read §1 and §13 first. They explain why the rest of the document exists.
 | Publishing | commit + push → Cloudflare rebuild. There is no CMS, database, or login |
 | Hosting | Cloudflare Worker via OpenNext; domain in `lib/site.ts` `SITE.url` |
 | Identity | One author, declared once in `lib/site.ts` `AUTHOR` |
+| Assistant | `/assistant`, a browser-side retrieval chat on assistant-ui; see §18 |
 
 Non-negotiables inherited from the product, not from SEO: no accounts, no database, no runtime writes,
 no third-party scripts. If a recommendation in this file would require any of those, it is the
@@ -318,9 +319,11 @@ Measured on a representative article by `npm run check:site`, which prints the n
 | TTFB | ≤ 500 ms | prerendered HTML served from the edge |
 | JS per article | ≤ 100 KB gz **page-specific** | measured and asserted in CI |
 | JS total per article | reported (currently ~115 KB gz) | the Next/React runtime is a fixed floor (§15) |
+| JS on `/assistant` | measured and reported | the chat island is code-split to that route only; article pages never load it (§18) |
+| JS on `/lab` | ≤ 80 KB gz **page-specific** | the whole figure registry renders there; measured and asserted in CI |
 | CSS | ≤ 50 KB gz | one stylesheet, tokens, no component-library CSS |
 | Page weight | ≤ 1 MB | text-first pages, images sized and lazy by default |
-| Font families | ≤ 2 downloaded | today: one (Plus Jakarta Sans); mono is the system stack |
+| Font families | ≤ 2 downloaded | today: two (Newsreader for editorial text, Inter for interface); mono is the system stack |
 | Third-party scripts | 0 | analytics is not worth the LCP |
 
 Removing a client component is always preferable to shrinking one. The site removed its preloader,
@@ -332,8 +335,9 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 
 - Every image has descriptive `alt` text. Covers require `coverAlt` in frontmatter; a cover without alt
   fails the build.
-- Every image declares intrinsic dimensions. `PostCover` fills a fixed `aspect-[16/9]` frame; MDX
-  `Figure` requires `width` and `height` props.
+- Every image declares intrinsic dimensions. `PostCover` fills a fixed `aspect-[16/9]` frame
+  (`21/9` for the `hero` cover style); MDX `Figure` requires `width` and `height` props. The
+  article's `<h1>` sits above the cover, never overlaid on it.
 - Local covers go through `next/image` for modern formats and responsive sizing. Remote covers render
   as `<img>` with dimensions, `loading="lazy"`, and `decoding="async"`; the article's own cover is
   `priority`.
@@ -366,6 +370,11 @@ smooth-scroll runtime, and animation provider to keep the article path close to 
 - Focus is always visible (`focus-visible:outline-2`), and colour contrast is enforced by
   `npm run tokens:check`.
 - Motion respects `prefers-reduced-motion`. Decorative motion is not shipped on the article path.
+- Interactive figures in posts are data-driven components, not one-off scripts. Each figure in a
+  post must have its own interaction pattern (a slider, a scrubber, a picker — never two widgets
+  that differ only in subject matter), must server-render its initial state so the article survives
+  `curl` (§8.5), and must live in the MDX component registry (`components/mdx/mdx-components.tsx`)
+  with any derived facts unit-tested in `test/`.
 
 ---
 
@@ -393,7 +402,7 @@ A change is done when all of these pass, locally and in CI:
 npm run tokens:check   # tokens build + contrast
 npm run lint
 npm run typecheck
-npm test               # schema, loader, TOC, MDX compile, JSON-LD, search, MCP config
+npm test               # schema, loader, TOC, MDX compile, JSON-LD, search, assistant retrieval, MCP config
 npm run build
 npm run check:site     # the contract in this file, asserted against ./next artifacts
 ```
@@ -458,6 +467,15 @@ Known tensions, resolved as follows:
    maintenance burden, removing it does not affect the other artifacts.
 7. **No database.** Anything that would require runtime storage — view counts, comments, per-user
    state — is out of scope, no matter what it would do for engagement signals.
+8. **Assistant Cloud sync.** The author connected `/assistant`'s thread state to their Assistant
+   Cloud project (`proj_0k1j9pkb7977`, frontend URL in `NEXT_PUBLIC_ASSISTANT_BASE_URL`,
+   publishable by design — the browser mints anonymous session tokens from it and no secret exists
+   in the repo) on 2026-11-25, so the author can see what readers ask. This is the one deliberate
+   exception to rule 7 and to §18's memory-only state: a hosted, third-party store for assistant
+   conversations, reached from the reader's browser. It is bounded by §18 rule 1 (never answer
+   text — the model stays local), rule 6 (anonymous identity, disclosed in the same commit on the
+   page and in the privacy policy), and by search staying untouched. Removing the environment
+   variable reverts the site to fully local behaviour with no code change.
 
 ---
 
@@ -493,6 +511,7 @@ section is the contract. `npm run check:mcp` proves the wiring: it spawns every 
 | Server | Transport | Used for | Writes |
 | --- | --- | --- | --- |
 | `shadcn` | stdio | Reading registry component source as reference | No — `add`/`init` are forbidden here |
+| `assistant-ui` | stdio | Live assistant-ui docs for `components/assistant/` and `lib/assistant/` work (§18) | No |
 | `github` | http | Actions logs, review threads, code scanning, issue search | Read-only toolsets by default |
 | `figma` | http | Variables, screenshots, component code from a design file | No |
 | `fetch` | stdio | Primary sources as markdown (papers, model cards, docs) | No |
@@ -518,3 +537,128 @@ Rules:
 6. **Frameworks are not servers.** CrewAI and LangGraph are MCP clients; they are documented as bridges
    in `.agents/mcp/README.md` and are not added as dependencies here: the site builds with npm alone,
    and nothing in the deploy path may need a Python agent runtime.
+
+---
+
+## §18 The `/assistant` page
+
+`/assistant` is a chat surface over the archive, built on assistant-ui
+(`@assistant-ui/react`). It exists so a reader can ask the archive a question
+and get a quote instead of a guess. It is subject to everything above — it is
+a page like any other for §1–§12 — plus this section.
+
+**What it is.** Deterministic retrieval in the browser. `lib/assistant/retrieval.ts`
+cuts the essay texts into sentence-aligned passages, matches them locally with
+the same technique as `/search`, and the reply is composed from the matched
+passages verbatim, grouped by essay, with a source list. There is no model
+service behind it, no API key, and no runtime process beyond the framework.
+When `NEXT_PUBLIC_ASSISTANT_BASE_URL` is set at build time, the runtime also
+syncs threads to the author's Assistant Cloud project under an anonymous,
+account-less session (see rule 6 and §15.8); unset — the local default — no
+cloud request exists at all.
+
+Rules:
+
+1. **The model stays local.** The reasoning fetch is `/search-index.json`,
+   cached for the session. The only other permitted origin is the Assistant
+   Cloud frontend URL from `NEXT_PUBLIC_ASSISTANT_BASE_URL`, and only for
+   thread persistence, titles, and run reports — never for producing answer
+   text. No other fetch, no model provider, no server route that carries a
+   query anywhere. Search (`/search`) keeps its §8.5 on-device promise
+   unconditionally.
+2. **Answers quote; they do not improvise.** Every non-boilerplate sentence in
+   a reply is a passage from a published essay or a link to one. When nothing
+   matches, the reply says so and points at `/search`. A reply that asserts
+   something the archive does not contain is the same defect class as
+   structured data naming an entity the page never shows (§2.4).
+3. **JS stays quarantined to the route.** assistant-ui imports live in
+   `components/assistant/AssistantThread.tsx` and its children. Importing the
+   runtime from anything an article page renders is a §9 budget violation.
+4. **CSS stays lean.** Tailwind emits one global stylesheet; every utility the
+   chat adds is paid by the article path's CSS budget (§9). Reuse semantic
+   tokens (`bg-surface`, `border-line`, `text-ink`, `bg-brand`) — never hex.
+5. **The readable page survives `curl`.** The explanation, the how-it-works
+   section, and the `<noscript>` fallback are server-rendered. The thread is
+   an interaction, not content the reader needs (§8.5).
+6. **Sync is anonymous, disclosed, and switchable.** With the cloud URL set,
+   threads, messages, titles, and run reports persist to Assistant Cloud under
+   a `usr_anon_` identity whose refresh token lives in `localStorage` (30 days,
+   no rotation secret, nothing credential-shaped). The `/assistant` page and
+   the privacy policy disclose this in the same commit that sets the variable,
+   and the copy must say which mode shipped — a page that promises "nothing
+   leaves your browser" while syncing is the §2.4 defect in prose form.
+   Unset, the thread is memory-only and dies with the tab.
+7. **Prompt suggestions derive from the archive** (`suggestPrompts`), never
+   from hardcoded strings that rot as essays land.
+8. **Ranking changes are tested changes.** Any behaviour change in
+   `lib/assistant/retrieval.ts` lands with `test/assistant-retrieval.test.ts`
+   updated. Determinism is the contract: same index + same query, same answer.
+9. **API questions resolve against the installed version.** The `assistant-ui`
+   MCP server (§17) and `.agents/skills/assistant-ui-docs/SKILL.md` are the
+   guides; `node_modules/@assistant-ui/react` is the authority.
+10. **Post figures are generative UI.** Every interactive figure an article
+    ships must also render inside the thread: the adapter routes matching
+    questions to a tool call whose name maps, via `MessagePrimitive.Content
+    components={{ tools: { by_name } }}`, to the same component the MDX body
+    uses (the `makeAssistantToolUI` escape hatch is deprecated in the installed
+    0.15.x line — do not use it). Tool args carry defaults (`initialRatio`,
+    `initialMonth`, `initialCheckpoint`) so a tool call with partial arguments
+    still renders a sensible figure. An article-only widget is half-shipped;
+    since §20 the routing keywords and defaults live on the figure registry
+    entry and `routeFigure` is registry-driven — a routing change is still a
+    tested change (rule 8).
+
+## §19 Agent skills layer
+
+`.agents/skills/` carries SKILL.md-format instruction packages for coding
+agents, adapted from the assistant-ui repository's agent infrastructure; the
+index and provenance live in `.agents/skills/README.md`, and
+`.claude/commands/` holds command entry points that point into the skills.
+
+1. **A skill is a procedure, not an exemption.** `AGENTS.md` outranks any
+   skill — this generalizes §17's "the local authority wins".
+2. **A new skill is a code change.** It lands with a `SKILL.md`, a row in the
+   `.agents/skills/README.md` table, and the gates run — in the same commit.
+3. **The GitHub flow lives in `treeflow`.** Branch → PR → CI → review via
+   `gh`, ending with a ready-to-merge report. Merging, deploying, and
+   publishing are the author's acts (§17 rule 3), never a skill's.
+4. **Skills carry no credentials.** A skill that needs a secret names the
+   environment variable and stops; §17 rule 2 is the ceiling.
+
+---
+
+## §20 The figure library
+
+Interactive learning figures are a **library**, not per-post scripts. The
+Prithvi essay was the prototype; its post-specific components stay scoped to
+that post (`lib/post/prithvi.ts` is its data module — never promote post data
+to the global layer). Everything after the prototype follows
+**`FIGURE_CONSTITUTION.md`**, which is normative and enforced by
+`test/figure-constitution.test.ts` (its articles are marked **[check]** there).
+The short form:
+
+1. **The registry is the single source of truth.** `lib/figures/registry.ts`
+   carries every figure: tool name, MDX name, archetype, defaults, routing
+   keywords. The MDX component map and the thread's `tools.by_name` map are
+   **derived** from it — never hand-forked (§18 rule 10).
+2. **One archetype per figure.** A figure declares its interaction pattern;
+   no two library figures share one. `npm run figures:new` refuses duplicates
+   before scaffolding.
+3. **Facts are data.** Library components import no post data; posts bind
+   library components through their own data module and thin wrappers.
+   *Chrome figures* (`chrome: true`) bind site state instead and render in
+   site chrome — the drawer, the header, the lab, and the thread all compose
+   the one component.
+4. **A figure lands complete** — component, fixture, pure logic + tests,
+   registry entry, passing constitution checks — or it does not land.
+5. **The per-post floor.** Every post that adopts figures carries at least
+   4 distinct interaction archetypes (manifest + registry + MDX-body
+   agreement, enforced by `test/post-figures.test.ts`). Data lives in the
+   post's own `lib/post/<slug>.ts`; components bind through thin wrappers in
+   `components/post/`. The genre layouts in
+   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` say where each archetype slots.
+6. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`
+   for components (scaffolded by `npm run figures:new`) and
+   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays.
+   `/lab` renders every registered figure with its defaults and is the
+   pre-adoption proving ground; it is a crawlable page like any other (§1).

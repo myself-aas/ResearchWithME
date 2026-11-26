@@ -1,0 +1,99 @@
+/**
+ * TEMPLATE A — Generative figure component (figure constitution v1)
+ * ============================================================================
+ * Scaffold with:  npm run figures:new -- <slug>
+ *   e.g. `npm run figures:new -- lens_peek` writes:
+ *     components/library/LensPeek.tsx          ← this file
+ *     lib/figures/fixtures/lens-peek.ts        ← its fixture data
+ *   and prints the registration checklist (registry entry, tests, docs).
+ *
+ * THE CONSTITUTION IN ONE SCREEN — every article is checked by
+ * test/figure-constitution.test.ts; a violation fails CI, not just review:
+ *
+ *   1. UNIQUENESS      Declare one interaction archetype. No other figure may
+ *                      share it — check `lib/figures/registry.ts` first.
+ *   2. DATA SEPARATION All facts arrive as props. Zero topic data, zero
+ *                      imports from lib/post/* or content/*. Post data lives
+ *                      in the adopting post's own module.
+ *   3. GENERATIVE UI   Registered in lib/figures/registry.ts with toolName,
+ *                      defaults, and routing keywords — or it does not ship.
+ *                      Article-only widgets are half-shipped.
+ *   4. UNIFORM CHROME  Render the `<figure>` chrome through FigureChrome so
+ *                      the assistant's FigureFrame can strip it in-thread.
+ *   5. SSR STATE       Initial render is meaningful server-side: no
+ *                      loading spinners, no `typeof window` branching on
+ *                      first paint, no layout the HTML doesn't carry.
+ *   6. TOKENS ONLY     Chrome uses semantic token classes (bg-surface,
+ *                      text-ink, border-line, bg-brand…). No hex, no blue.
+ *                      Data colours arrive as tone *names* and resolve via
+ *                      lib/figures/tones.ts.
+ *   7. A11Y            Every control is a real <button>/<input>/<a>; min
+ *                      44px touch targets (min-h-11); focus-visible outlines;
+ *                      dynamic readouts live in an aria-live="polite" region;
+ *                      state never carried by colour alone.
+ *   8. DETERMINISM     No Math.random(), no Date.now(), no wall-clock in
+ *                      render. Unpredictability comes from lib/figures/random.ts
+ *                      seeded by a prop or constant. Props are JSON-serialisable
+ *                      (FigureArg) so the same figure renders on /lab, in MDX,
+ *                      and in the assistant thread.
+ *   9. MOTION MEANS    Animation must encode information (a reveal, a rank
+ *      SOMETHING       swap) and must have a motion-reduce fallback
+ *                      (`motion-reduce:transition-none`, or jump-to-end for
+ *                      timers).
+ *  10. TESTED          Pure logic lives in lib/figures/<slug>.ts and lands
+ *                      with unit tests; the component lands with a fixture.
+ * ============================================================================
+ */
+
+'use client';
+
+import { useState } from 'react';
+import FigureChrome, { PRIMARY_BUTTON, READOUT_CLASS, SECONDARY_BUTTON } from './FigureChrome';
+// Pure logic next door — testable without React (Article 10):
+//   import { thing } from '@/lib/figures/__SLUG__';
+// Data tones by name, never hex (Article 6):
+//   import { shadeFor, TONE_FILL } from '@/lib/figures/tones';
+
+export type __NAME__Props = {
+  /**
+   * All facts as props (Article 2). Defaults may exist, but every visual
+   * fact a post needs to vary must be settable here, and the whole object
+   * must stay JSON-serialisable (Article 8).
+   */
+};
+
+export default function __NAME__({}: __NAME__Props) {
+  // State that the reader drives. Derive everything else from props + state;
+  // never store derived values (the render must be a pure function).
+  const [active, setActive] = useState(0);
+
+  return (
+    <FigureChrome
+      title="__TITLE__"
+      subtitle="One sentence on what the reader does, addressed to the reader."
+    >
+      {/* The stage: the visual the interaction acts on. Give it an
+          aria-label that restates the current state in words. */}
+      <div className="rounded-xl border border-line bg-surface-subtle p-4" aria-live="off">
+        {/* …the figure body… */}
+      </div>
+
+      {/* Controls: real buttons, min-h-11, PRIMARY_BUTTON / SECONDARY_BUTTON. */}
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <button type="button" onClick={() => setActive(0)} className={PRIMARY_BUTTON}>
+          Primary action
+        </button>
+        <button type="button" className={SECONDARY_BUTTON}>
+          Secondary action
+        </button>
+      </div>
+
+      {/* The state readout — required: state never lives in colour alone
+          (Article 7), and the aria-live region is what a screen reader
+          hears as the figure changes. */}
+      <p aria-live="polite" className={`${READOUT_CLASS} mt-4`}>
+        Current state: {active}
+      </p>
+    </FigureChrome>
+  );
+}

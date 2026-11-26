@@ -29,6 +29,11 @@ panel — the writing is the site, and git is the only publishing interface.
 
 </KeyTakeaways>
 
+What an essay on this site is made of, pinned to the places a reader meets it:
+
+<WelcomeAnatomyAtlas />
+
+
 ## Why change what already worked?
 
 The previous version was built to host many writers: applications, roles, an editorial dashboard, a
@@ -62,6 +67,15 @@ validates the frontmatter with Zod, renders the page, and updates the index
 ([Zod docs](https://zod.dev)). If a field is wrong, the build fails with the file name and the field —
 no silently missing post.
 
+Publishing is the easy part; staying honest is enforced. The gates every page ships under, as a sortable table:
+
+<WelcomeGatesMatrix />
+
+The page-weight budget itself, as a partition you can drag — the caps are the real §9 limits; only the split is illustrative:
+
+<WelcomeBudgetSplit />
+
+
 <Callout tone="note" title="Drafts stay local">
   A post with <code>draft: true</code> appears when the site runs in development and is excluded from a
   production build. You can write in public view without publishing.
@@ -73,6 +87,10 @@ The things that were worth keeping stayed: the typography, the paper-and-ink pal
 progress bar, the theme control, and the archive-first navigation. Bookmarks, accounts, the studio,
 and the research-network surfaces did not — they existed to support a multi-writer platform that is no
 longer here.
+
+Check yourself on how the machine works — every answer is on this page:
+
+<WelcomeQuiz />
 
 If you are looking for something that used to be at a specific address, the [archive](/blog) and
 [search](/search) are the places to start. The [RSS feed](/rss.xml) still works, and it is still the

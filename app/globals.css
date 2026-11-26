@@ -61,60 +61,50 @@
   --color-stone-900: var(--reme-color-neutral-900);
   --color-stone-950: var(--reme-color-neutral-950);
 
-  /* Refactored global color palette using design tokens
-     Primary Orange: #f65215
-     Light background: #eae9ea
-     Dark ink (primary text): #0d0a09
-     Muted ink (secondary/tertiary text): #8a8b8c */
+  /* Semantic color roles — every value is a reference into the generated
+     token layer (tokens/generated/tokens.css, built from tokens/src/*.json).
+     No hex literals here: the generated file carries the light palette at
+     `:root`, the system-dark palette under `@media (prefers-color-scheme:
+     dark)` on `:root:not(.light)`, and the user-selected dark palette under
+     `.dark` — so a theme choice made in the ThemeMenu flips every role at
+     once, which hardcoded hex values in this file cannot do. Palette
+     candidates belong in tokens/src, never here. */
+  --color-canvas: var(--reme-canvas);
+  --color-surface: var(--reme-surface);
+  --color-surface-subtle: var(--reme-surface-subtle);
+  --color-surface-raised: var(--reme-surface-raised);
+  --color-surface-inverse: var(--reme-surface-inverse);
+  --color-text-primary: var(--reme-text-primary);
+  --color-text-secondary: var(--reme-text-secondary);
+  --color-text-tertiary: var(--reme-text-tertiary);
+  --color-text-inverse: var(--reme-text-inverse);
+  --color-border-subtle: var(--reme-border-subtle);
+  --color-border-strong: var(--reme-border-strong);
+  --color-focus: var(--reme-focus);
+  --color-selection: var(--reme-selection);
 
-  /* Light theme */
-  --color-canvas: #eae9ea;
-  --color-surface: #eae9ea;
-  --color-surface-subtle: #f5f5f5;
-  --color-surface-raised: #ffffff;
-  --color-surface-inverse: #0d0a09;
-  --color-text-primary: #0d0a09;
-  --color-text-secondary: #8a8b8c;
-  --color-text-tertiary: #8a8b8c;
-  --color-text-inverse: #eae9ea;
-  --color-border-subtle: #d0d0d0;
-  --color-border-strong: #8a8b8c;
-  --color-focus: #f65215;
-  --color-selection: rgba(246,82,21,0.2);
+  /* Code panel — pinned dark in both themes by design (DESIGN.md literals):
+     the same code-* values live in both semantic sets, so syntax colours are
+     stable while every other role flips with the theme. */
+  --color-code-panel-bg: var(--reme-code-panel-bg);
+  --color-code-panel-text: var(--reme-code-panel-text);
+  --color-code-token-comment: var(--reme-code-token-comment);
+  --color-code-token-keyword: var(--reme-code-token-keyword);
+  --color-code-token-string: var(--reme-code-token-string);
+  --color-code-token-number: var(--reme-code-token-number);
+  --color-code-token-function: var(--reme-code-token-function);
+  --color-code-token-attr: var(--reme-code-token-attr);
+  --color-code-token-builtin: var(--reme-code-token-builtin);
+  --color-code-token-deletion: var(--reme-code-token-deletion);
 
   /* Action roles */
-  --color-action-primary: #f65215;
-  --color-action-primary-hover: #e04c13;
-  --color-action-primary-pressed: #c74412;
-  --color-on-primary: #ffffff;
-  --color-destructive: #b91c1c;
-  --color-link: #f65215;
-  --color-visited: #8a8b8c;
-
-  /* Dark theme overrides */
-  @media (prefers-color-scheme: dark) {
-    --color-canvas: #0d0a09;
-    --color-surface: #0d0a09;
-    --color-surface-subtle: #1a1a1a;
-    --color-surface-raised: #10141b;
-    --color-surface-inverse: #eae9ea;
-    --color-text-primary: #eae9ea;
-    --color-text-secondary: #8a8b8c;
-    --color-text-tertiary: #8a8b8c;
-    --color-text-inverse: #0d0a09;
-    --color-border-subtle: #333333;
-    --color-border-strong: #8a8b8c;
-    --color-focus: #f65215;
-    --color-selection: rgba(246,82,21,0.3);
-
-    --color-action-primary: #f65215;
-    --color-action-primary-hover: #e04c13;
-    --color-action-primary-pressed: #c74412;
-    --color-on-primary: #ffffff;
-    --color-destructive: #b91c1c;
-    --color-link: #f65215;
-    --color-visited: #8a8b8c;
-  }
+  --color-action-primary: var(--reme-action-primary);
+  --color-action-primary-hover: var(--reme-action-primary-hover);
+  --color-action-primary-pressed: var(--reme-action-primary-pressed);
+  --color-on-primary: var(--reme-action-on-primary);
+  --color-destructive: var(--reme-action-destructive);
+  --color-link: var(--reme-action-link);
+  --color-visited: var(--reme-action-visited);
   /* Semantic — domain palettes and provenance-graph nodes/edges. */
   --color-knowledge-source: var(--reme-knowledge-source);
   --color-knowledge-evidence: var(--reme-knowledge-evidence);
@@ -438,6 +428,18 @@
     background: var(--color-stone-400);
     border: 2px solid var(--color-stone-100);
     border-radius: 999px;
+  }
+
+  /* Readers who ask for more contrast get the strong border everywhere. The
+     subtle role is decorative by definition, so strengthening it costs the
+     design nothing and rescues low-vision users in both themes. The doubled
+     selector matches the generated tokens.css specificity so the override
+     wins in every theme path (light, system-dark, and .dark). */
+  @media (prefers-contrast: more) {
+    :root,
+    :root:not(.light) {
+      --reme-border-subtle: var(--reme-border-strong);
+    }
   }
 }
 
@@ -849,12 +851,12 @@ html .shadow-2xs {
   overflow-x: auto;
   border: 1px solid var(--color-line);
   border-radius: 0.9rem;
-  background: #10141B;
+  background: var(--color-code-panel-bg);
   padding: 1.05rem 1.25rem;
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.65;
-  color: #ECEFF4;
+  color: var(--color-code-panel-text);
   font-variant-ligatures: none;
   tab-size: 2;
 }
@@ -925,7 +927,7 @@ html .shadow-2xs {
 /* Syntax highlighting (rehype-highlight) on the dark code panel. */
 .mdx-body .hljs-comment,
 .mdx-body .hljs-quote {
-  color: #8b93a7;
+  color: var(--color-code-token-comment);
   font-style: italic;
 }
 
@@ -933,26 +935,26 @@ html .shadow-2xs {
 .mdx-body .hljs-selector-tag,
 .mdx-body .hljs-literal,
 .mdx-body .hljs-doctag {
-  color: #c792ea;
+  color: var(--color-code-token-keyword);
 }
 
 .mdx-body .hljs-string,
 .mdx-body .hljs-regexp,
 .mdx-body .hljs-addition {
-  color: #a5d6a7;
+  color: var(--color-code-token-string);
 }
 
 .mdx-body .hljs-number,
 .mdx-body .hljs-symbol,
 .mdx-body .hljs-bullet {
-  color: #f78c6c;
+  color: var(--color-code-token-number);
 }
 
 .mdx-body .hljs-title,
 .mdx-body .hljs-section,
 .mdx-body .hljs-function .hljs-title,
 .mdx-body .hljs-title.function_ {
-  color: #82aaff;
+  color: var(--color-code-token-function);
 }
 
 .mdx-body .hljs-attr,
@@ -961,18 +963,18 @@ html .shadow-2xs {
 .mdx-body .hljs-template-variable,
 .mdx-body .hljs-type,
 .mdx-body .hljs-selector-attr {
-  color: #ffcb6b;
+  color: var(--color-code-token-attr);
 }
 
 .mdx-body .hljs-built_in,
 .mdx-body .hljs-meta,
 .mdx-body .hljs-selector-class,
 .mdx-body .hljs-selector-id {
-  color: #89ddff;
+  color: var(--color-code-token-builtin);
 }
 
 .mdx-body .hljs-deletion {
-  color: #ff7b72;
+  color: var(--color-code-token-deletion);
 }
 
 .mdx-body .hljs-emphasis {
@@ -982,4 +984,66 @@ html .shadow-2xs {
 .mdx-body .hljs-strong {
   font-weight: 700;
 }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Archive assistant (components/assistant): markdown rendered by
+   @assistant-ui/react-markdown inside a reply bubble. Deliberately tighter
+   than .mdx-body — chat text is interface copy, not reading prose — and
+   built from the same semantic tokens.
+   ───────────────────────────────────────────────────────────────────────── */
+@layer components {
+  .assistant-markdown {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-ink);
+  }
+
+  .assistant-markdown > * + * {
+    margin-top: 0.75rem;
+  }
+
+  .assistant-markdown > *:first-child {
+    margin-top: 0;
+  }
+
+  .assistant-markdown > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .assistant-markdown p {
+    max-width: none;
+  }
+
+  .assistant-markdown a {
+    color: var(--color-brand);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .assistant-markdown a:hover {
+    color: var(--color-brand-pressed);
+  }
+
+  .assistant-markdown blockquote {
+    border-left: 3px solid var(--color-brand);
+    padding: 0.35rem 0 0.35rem 0.9rem;
+    color: var(--color-ink-secondary);
+  }
+
+  .assistant-markdown blockquote p {
+    margin: 0.35rem 0;
+  }
+
+  .assistant-markdown ul {
+    margin: 0.5rem 0;
+    padding-left: 1.1rem;
+    list-style: disc;
+  }
+
+  .assistant-markdown li {
+    margin: 0.2rem 0;
+  }
 }

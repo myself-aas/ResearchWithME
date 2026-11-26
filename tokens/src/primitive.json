@@ -16,15 +16,6 @@
       "925": "#121214",
       "950": "#0C0D10"
     },
-    "indigo": {
-      "50": "#EFF6FF",
-      "100": "#DBEAFE",
-      "300": "#93C5FD",
-      "500": "#3B82F6",
-      "600": "#1D4ED8",
-      "700": "#1E40AF",
-      "900": "#1E3A8A"
-    },
     "emerald": {
       "50": "#ECFDF5",
       "100": "#D1FAE5",
@@ -67,6 +58,15 @@
       "500": "#A83A3A",
       "700": "#7A1414",
       "900": "#3E0000"
+    },
+    "tomato": {
+      "50": "#FFF3ED",
+      "100": "#FFE1D3",
+      "300": "#FFB59F",
+      "500": "#F65215",
+      "600": "#C93D0C",
+      "700": "#A83309",
+      "900": "#5C1B04"
     }
   },
   "typography": {
@@ -144,8 +144,8 @@
   "focus": {
     "width": "2px",
     "offset": "2px",
-    "light": "#1D4ED8",
-    "dark": "#60A5FA"
+    "light": "#F65215",
+    "dark": "#FFB59F"
   },
   "icon": {
     "small": "1rem",
@@ -156,15 +156,15 @@
   },
   "graph": {
     "node": {
-      "source": "#1D4ED8",
+      "source": "#6D28D9",
       "evidence": "#047857",
       "claim": "#0E7490",
       "discussion": "#B45309",
-      "publication": "#1E40AF",
+      "publication": "#0F766E",
       "archived": "#5C5C63"
     },
     "edge": {
-      "cites": "#1D4ED8",
+      "cites": "#6D28D9",
       "supports": "#10B981",
       "contradicts": "#EF4444",
       "derives": "#06B6D4",

@@ -10,34 +10,34 @@
   "text-inverse": "#FFFFFF",
   "border-subtle": "#DFDDD5",
   "border-strong": "#787F8C",
-  "focus": "#2457A7",
-  "selection": "#DCE6F7",
+  "focus": "#F65215",
+  "selection": "#FFE1D3",
   "action": {
-    "primary": "#2457A7",
-    "primary-hover": "#1C4688",
-    "primary-pressed": "#16376B",
+    "primary": "#C93D0C",
+    "primary-hover": "#A83309",
+    "primary-pressed": "#8C2A07",
     "on-primary": "#FFFFFF",
     "destructive": "#B91C1C",
-    "link": "#2457A7",
-    "visited": "#1B3F7A"
+    "link": "#C93D0C",
+    "visited": "#8C2A07"
   },
   "brand": {
-    "mark": "#2457A7",
+    "mark": "#C93D0C",
     "mark-inverse": "#FFFFFF"
   },
   "knowledge": {
-    "source": "#1D4ED8",
+    "source": "#6D28D9",
     "evidence": "#047857",
     "insight": "#0E7490",
     "discussion": "#B45309",
     "contradiction": "#B91C1C",
-    "publication": "#1E40AF",
+    "publication": "#0F766E",
     "archive": "#5C5C63"
   },
   "trust": {
-    "verified": "#1D4ED8",
+    "verified": "#6D28D9",
     "replicated": "#047857",
-    "peer-reviewed": "#1D4ED8",
+    "peer-reviewed": "#6D28D9",
     "emerging": "#0E7490",
     "uncertain": "#B45309",
     "contested": "#B91C1C",
@@ -45,34 +45,34 @@
   },
   "provenance": {
     "direct-source": "#047857",
-    "cited-source": "#1D4ED8",
+    "cited-source": "#6D28D9",
     "derived": "#0E7490",
     "inferred": "#B45309",
-    "ai-assisted": "#1E40AF",
+    "ai-assisted": "#0F766E",
     "unresolved": "#5C5C63"
   },
   "workflow": {
     "discovered": "#0E7490",
     "extracted": "#0F766E",
     "validated": "#047857",
-    "synthesized": "#1D4ED8",
-    "reviewed": "#1E40AF",
-    "published": "#1D4ED8",
+    "synthesized": "#6D28D9",
+    "reviewed": "#0F766E",
+    "published": "#6D28D9",
     "archived": "#5C5C63"
   },
   "collaboration": {
     "comment": "#0E7490",
     "suggestion": "#0F766E",
-    "review": "#1E40AF",
+    "review": "#0F766E",
     "consensus": "#047857",
     "disagreement": "#B91C1C"
   },
   "citation": {
-    "article": "#1D4ED8",
+    "article": "#6D28D9",
     "dataset": "#0E7490",
     "book": "#047857",
     "preprint": "#B45309",
-    "software": "#1D4ED8",
+    "software": "#0F766E",
     "protocol": "#0F766E",
     "webpage": "#5C5C63"
   },
@@ -85,7 +85,7 @@
     "grid": "#DADCE0",
     "label": "#5F6368",
     "series": {
-      "1": "#174EA6",
+      "1": "#C93D0C",
       "2": "#0E7490",
       "3": "#064E3B",
       "4": "#B45309",
@@ -93,5 +93,15 @@
       "6": "#991B1B",
       "7": "#5C5C63"
     }
-  }
+  },
+  "code-panel-bg": "#10141B",
+  "code-panel-text": "#ECEFF4",
+  "code-token-comment": "#9C958D",
+  "code-token-keyword": "#C792EA",
+  "code-token-string": "#A5D6A7",
+  "code-token-number": "#F78C6C",
+  "code-token-function": "#62D0C4",
+  "code-token-attr": "#FFCB6B",
+  "code-token-builtin": "#D8B4FE",
+  "code-token-deletion": "#FF7B72"
 }

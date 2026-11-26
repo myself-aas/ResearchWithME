@@ -55,6 +55,10 @@ The warm run lands within 6% of the paper. The cold runs do not.
 | Cold, fresh process |            3,940 |                  3,010 |  0.76 |
 | Cold, p99 latency  |            118 ms |                 402 ms |  3.41 |
 
+The same table, sortable — sort by ratio and the inversion is the first row:
+
+<BenchResultsMatrix />
+
 <Callout tone="warning" title="The warm-up is doing the work">
   Their scheduler compiles a routing table on first request and caches it for the life of the
   process. In a warm run that cost is paid once and amortised over thirty seconds. In a cold run it is
@@ -76,6 +80,10 @@ Three choices explain the gap, and each one is individually reasonable:
 The third point is the one I would raise in review. The first two are documentation failures; the
 third is a comparison that favours the proposed system by construction.
 
+Each choice as a fork — publish as-is, or answer the question the claim implies:
+
+<BenchGapPathway />
+
 ## Why this matters beyond one paper
 
 Reproduction is usually framed as a binary: the number matched, or it did not. That framing hides the
@@ -87,6 +95,10 @@ actual failure, which is almost never a wrong number. It is an underspecified me
   the baseline. Four lines in an appendix would make this paper reproducible in an afternoon.
 </Callout>
 
+Flip what your own benchmark reporting satisfies:
+
+<BenchChecklistSwitches />
+
 I sent the harness and the cold-start numbers to the authors before publishing this. One replied,
 confirmed the routing-table cache, and added a note to the repository README. That is the right
 outcome: the claim is now scoped, not withdrawn.[^1]
@@ -96,6 +108,10 @@ outcome: the claim is now scoped, not withdrawn.[^1]
 If a result depends on a warm process, say so in the abstract. "2.4× at steady state" is a different
 sentence from "2.4×", and only one of them is true. The rest of us can then decide whether steady
 state is the number our workload cares about — often it is, and sometimes it is not.
+
+Four readings of the reproduction, worth checking yourself on:
+
+<BenchQuiz />
 
 [^1]: The repository note is at the commit tagged `v0.9.4-notes`. I have kept my harness in a local
 branch; it is not a hostile audit, just a reader trying to run the code.

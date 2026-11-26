@@ -5,7 +5,110 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- The mobile drawer's header now carries the "reme." wordmark instead of the word "Menu"; items are
+  grouped under mono captions (Archive / Interactive / Elsewhere / Appearance) with the figure lab
+  added, and the theme row is the generative theme switch — a segmented system/light/dark control
+  (`show_theme_switch` in the figure registry) whose desktop-header and assistant-thread renderings
+  are the same component bound to the same site state. `ThemeMenu` retired.
+- The homepage gains four sections: Recently revised (essays with real `updated` dates), a live
+  figure-lab spotlight (the registry's `WipeCompare` rendered in place, linking to `/lab`), an
+  assistant teaser whose sample prompts derive from the archive (`suggestPrompts`, never hardcoded),
+  and a "How this site is made" colophon strip. All sections are server-rendered and crawlable.
+
 ### Added
+- Third integration batch, completing the per-post figure floor across all 19 posts: the
+  public-reading notes essay (note-pipeline flow diagram, practice pathway with drafts-abandoned
+  cost, named-costs switches, quiz), the repository-reading method (signals matrix, repo-as-structure
+  org chart, request-trace flow diagram, quiz), the benchmark reproduction (measurement matrix with
+  the real warm/cold numbers, three-fork gap pathway, reporting-checklist switches, quiz), and the
+  tooling draft (tool list stack, workflow flow diagram, draft-as-structure org chart, quiz).
+- The diagram family of generative-UI components: `FlowDiagram` (stepped block/flow-chart trace
+  over a typed node graph), `OrgChart` (expand/collapse hierarchical tree with live leaf counts), and
+  `PathwayMap` (sequential forks whose choices accumulate a route cost) — logic in
+  `lib/figures/{flow,tree,pathway}.ts`, fixtures for `/lab`, three registry archetypes
+  (`flow-diagram-trace`, `tree-expand-org`, `route-choice-pathway`), and the lab page budget still
+  green.
+- Second integration batch: five more posts at ≥4 distinct archetypes each, all data essay-derived —
+  Apache Superset (platform org chart, asset matrix, platform-owner switches, quiz), OWASP WSTG
+  (testing pathway, practice/inference matrix, report anatomy atlas, quiz), Perspective API (mode
+  matrix, boundary pathway, placement switches, quiz), RustDesk (connection flow diagram, boundary
+  matrix, audit switches, quiz), and the GTA VI emulator claim (inspected-file matrix, claim anatomy
+  atlas, verification pathway, quiz).
+- Every GitHub repo teardown retitled and re-slugged around call-to-action phrasing
+  (e.g. `apache-airflow-review-should-you-use-it`, `rustdesk-review-before-you-deploy`); MDX
+  frontmatter, evidence directories, post modules, figure bindings, and registry posts lists all
+  follow the new slugs.
+- The per-post figure contract: every adopting post carries **≥4 distinct interaction archetypes**,
+  enforced by `test/post-figures.test.ts` (manifest ↔ registry ↔ MDX-body agreement, posts derived
+  from the registry — no hand list). First batch integrated with real, essay-derived data: the Airflow
+  teardown (component layer stack, evidence-ledger matrix, pilot-checklist switches, review quiz), the
+  Svelte teardown (compiler-pipeline stack, reactivity-boundary matrix, decision-checkpoint switches,
+  reactivity quiz), the p-value essay (misreadings matrix, model-assumption switches, results-paragraph
+  anatomy atlas, reading quiz), and the welcome post (page-anatomy atlas, §9 gates matrix, page-weight
+  budget split with real caps, how-the-site-works quiz). Three new library archetypes built for these
+  data shapes: `LayerStack` (accordion-layer-stack), `BudgetSplit` (partition-drag-allocation), and
+  `MetricMatrix` (column-sort-matrix). Data modules live in `lib/post/<slug>.ts`; thin bindings in
+  `components/post/*-figures.tsx`; the post-layout template gained genre layouts (teardown / methods /
+  meta) and a do-not-force-fit list.
+- Batch two — five more teardowns bound to their reviewed facts: **n8n** (concerns matrix, workflow-run
+  anatomy pins, adoption switches, retry/licence quiz), **NATS Server** (JetStream layer stack, server
+  source-map matrix, delivery-guarantee switches, reliability quiz), **Polars** (decision matrix with
+  the unmeasured column, lazy-query anatomy pins, plan-confidence switches, adjective quiz), **PostHog**
+  (hobby Compose stack, decision matrix, parity switches, parity quiz), and **Plane** (Compose layer
+  stack, acceptance-criteria matrix, migration switches, migration quiz). Nine posts now carry ≥4
+  unique generative-UI figures each.
+- The interactive-figure library and its constitution. `components/library/`
+  holds seven reusable, data-driven learning figures — `WipeCompare`
+  (drag-wipe comparison), `TradeoffPad` (2-D parameter drag with budget
+  shading), `RacePlayback` (transport replay with live ranks), `LensPeek`
+  (hover lens swapping the layer under it), `HotspotAtlas` (pinned annotations
+  with keyboard tour), `AssumptionSwitches` (toggle assumptions, outcomes
+  re-derive), and `SelfCheckQuiz` (answer-reveal self-check) — each with a
+  declared interaction archetype, a fixture, and pure logic in `lib/figures/`
+  under unit test. `lib/figures/registry.ts` is the single source of truth: the
+  MDX component map, the assistant's generative `tools.by_name`, and figure
+  routing all derive from it, so every figure (library and adopted) is
+  maintained as generative UI by construction. `FIGURE_CONSTITUTION.md` fixes
+  the twelve rules agents follow, enforced by `test/figure-constitution.test.ts`;
+  two templates (`GENERATIVE_FIGURE_TEMPLATE`, `GENERATIVE_POST_LAYOUT`) and
+  `npm run figures:new` scaffold the next figure and the next figure-bearing
+  essay. `/lab` renders the whole registry live and is the pre-adoption proving
+  ground. The Prithvi post remains the scoped prototype; its components stay
+  post-local and are registered as adopted (result charts flagged legacy).
+- Three interactive figures in the Prithvi-EO-2.0 essay, each with a distinct interaction pattern and
+  each also wired as generative UI in `/assistant` (a routed tool call renders the same component in
+  the thread): `MaskedPatchReconstructor` (ratio slider 0–90% → staggered un-mask reveal of the 6×10
+  patch grid, deterministic via a seeded PRNG, with the 4×60=240-token readout), `SeasonScrubber`
+  (a 12-month range input interpolating an illustrated NDVI field between five sampled keyframes,
+  pretraining months Apr/Jun/Sep/Nov highlighted), and `CheckpointLadder` (listbox pill picker →
+  animated width/left marker with payload cards for parameters, metadata training, and pretraining
+  GPU cost). Facts live in the pure module `lib/post/prithvi.ts` (13 unit tests); figure routing in
+  `lib/assistant/retrieval.ts` (5 tests). `AGENTS.md` §12 and §18.10 record the standing rule:
+  every interactive post figure must server-render its initial state and must be maintained as
+  generative UI, via `MessagePrimitive.Content components={{ tools: { by_name } }}` — the
+  `makeAssistantToolUI` escape hatch is deprecated in assistant-ui 0.15.x.
+
+### Changed
+- Article hero made minimalist: title and one byline row (`By <author> · date · updated · reading
+  time`) sit above the cover image; the dense furniture moved to more relevant places —
+  `PostHeroBanner` retired in favour of `PostCover` (`hero` style → 21/9 frame), tag chips live at
+  the article's end, the author card became the byline link, the description stays in metadata/JSON-LD,
+  and the abstract-artwork cover no longer repeats the title.
+- "reme." wordmark recoloured ("re" and "." in brand accent, "me" in ink — gradient rejected per the
+  no-gradient-text rule) and bumped one size step; mobile search and menu icons are bare (no
+  border/circle chrome).
+- Mobile header carries only search and the menu trigger; theme and RSS moved into the drawer. The
+  trigger icon is now Material Symbols' `view_cozy` (inline SVG, Apache-2.0) with a 90°-per-click
+  rotation on the emphasize easing, `motion-reduce` safe. DESIGN.md's mobile-drawer section records it.
+
+### Added
+- `/assistant` thread sync to the author's Assistant Cloud project (assistant-ui's hosted backend,
+  `proj_0k1j9pkb7977`). The publishable frontend URL lives in `NEXT_PUBLIC_ASSISTANT_BASE_URL`;
+  the browser holds an anonymous, account-less identity (localStorage refresh token, 30 days) and
+  threads, titles, and run reports persist for the author's dashboard. The model stays local —
+  answers still come from the build-time index. Unset, the thread stays in-memory. `AGENTS.md`
+  §15.8 and §18 record the decision; the assistant page and the privacy policy disclose it.
 - `.mcp.json` with eight MCP servers (shadcn, GitHub, Figma, fetch, sequential thinking, DeepWiki,
   Brave search, Firecrawl), environment-variable placeholders only, plus `.agents/mcp/README.md` for
   the per-server instructions and `npm run check:mcp` to spawn each stdio server and handshake with it
@@ -139,7 +242,25 @@ The multi-author publishing platform becomes a single-author MDX blog. Git is th
 
 ## [Unreleased]
 
+### Changed
+- Resolved the three UI/UX-audit decisions (2026-11-25): kickers above headings are gone — the
+  homepage hero eyebrow and the two section labels were deleted (headings carry their own weight;
+  the essay count lives in the hero's stat block), and the lab's metadata chips moved below each
+  figure heading. The code-panel syntax palette is tokenized: ten `code-*` tokens in both semantic
+  sets (pinned dark by design), CI-gated for contrast in `tokens:check`, with the blue syntax hues
+  replaced by teal/light-violet and the comment hue warmed — no blue anywhere in the UI. And
+  `check:site` now asserts a `/lab` page-specific JS budget (≤ 80 KB gz) beside the article's,
+  so the figure library cannot grow unnoticed.
+
 ### Added
+- The `impeccable` design-review skill (pbakaus/impeccable v4.11.0, verbatim) installed into
+  `.agents/skills/`, and the audit it produced: `UIUX-AUDIT.md` grades the frontend 17/20 (Good) —
+  implementation integrity passes on the registry-derivation discipline, and it drove three fixes
+  shipped in the same commit: `touch-action` on the drag surfaces (`WipeCompare`, `TradeoffPad`,
+  `LensPeek` — pointer drags no longer lose to page scroll on touch) and removal of a dead
+  acknowledge transition in the compact theme switch. Author decisions queued: the kicker/eyebrow
+  pattern (the site's own DESIGN.md bans it; homepage sections and the hero eyebrow trip it), the
+  pinned code-panel syntax palette, and a `/lab` JS budget gate.
 - Honest engagement layer for writers. A profile-strength meter (`components/engagement/
   ProfileStrength.tsx`) shows on `/dashboard/access` and on the empty-draft state of
   `/dashboard/(studio)/writing`, computed from real signals (email confirmed, identity linked,

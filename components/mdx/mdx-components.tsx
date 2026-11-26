@@ -4,8 +4,115 @@ import { Info, Lightbulb, TriangleAlert, CircleAlert, BookOpenCheck } from 'luci
 import CodeBlock from './CodeBlock';
 import BenchmarkChart from '@/components/post/BenchmarkChart';
 import PipelineExplorer from '@/components/post/PipelineExplorer';
-import PrithviExplorer from '@/components/post/PrithviExplorer';
-import { FloodResultsChart, PastisResultsChart } from '@/components/post/PrithviResultsCharts';
+import { FIGURES } from '@/lib/figures/registry';
+import {
+  AirflowLayerStack,
+  AirflowEvidenceMatrix,
+  AirflowPilotSwitches,
+  AirflowQuiz,
+} from '@/components/post/apache-airflow-figures';
+import {
+  SvelteLayerStack,
+  SvelteBoundaryMatrix,
+  SvelteAdoptionSwitches,
+  SvelteQuiz,
+} from '@/components/post/svelte-figures';
+import {
+  PValueMisreadingMatrix,
+  PValueAssumptionSwitches,
+  PValueResultsAtlas,
+  PValueQuiz,
+} from '@/components/post/pvalue-figures';
+import {
+  N8nConcernsMatrix,
+  N8nRunAtlas,
+  N8nAdoptionSwitches,
+  N8nQuiz,
+} from '@/components/post/n8n-figures';
+import {
+  NatsLayerStack,
+  NatsSourceMatrix,
+  NatsGuaranteeSwitches,
+  NatsQuiz,
+} from '@/components/post/nats-figures';
+import {
+  PolarsDecisionMatrix,
+  PolarsQueryAtlas,
+  PolarsAssumptionSwitches,
+  PolarsQuiz,
+} from '@/components/post/polars-figures';
+import {
+  PosthogStackLayers,
+  PosthogDecisionMatrix,
+  PosthogAssumptionSwitches,
+  PosthogQuiz,
+} from '@/components/post/posthog-figures';
+import {
+  PlaneStackLayers,
+  PlaneDecisionMatrix,
+  PlaneMigrationSwitches,
+  PlaneQuiz,
+} from '@/components/post/plane-figures';
+import {
+  NotesPipelineFlow,
+  NotesPracticePathway,
+  NotesCostSwitches,
+  NotesQuiz,
+} from '@/components/post/notes-figures';
+import {
+  ReadRepoSignalsMatrix,
+  ReadRepoTree,
+  ReadRepoRequestFlow,
+  ReadRepoQuiz,
+} from '@/components/post/readrepo-figures';
+import {
+  BenchResultsMatrix,
+  BenchGapPathway,
+  BenchChecklistSwitches,
+  BenchQuiz,
+} from '@/components/post/bench-figures';
+import {
+  ToolsListStack,
+  ToolsWorkflowFlow,
+  ToolsDraftTree,
+  ToolsQuiz,
+} from '@/components/post/tools-figures';
+import {
+  SupersetPlatformChart,
+  SupersetAssetMatrix,
+  SupersetAssumptionSwitches,
+  SupersetQuiz,
+} from '@/components/post/superset-figures';
+import {
+  WstgTestingPathway,
+  WstgFeatureMatrix,
+  WstgReportAtlas,
+  WstgQuiz,
+} from '@/components/post/wstg-figures';
+import {
+  PerspectiveModeMatrix,
+  PerspectiveBoundaryPathway,
+  PerspectiveAssumptionSwitches,
+  PerspectiveQuiz,
+} from '@/components/post/perspective-figures';
+import {
+  RustdeskConnectionFlow,
+  RustdeskBoundaryMatrix,
+  RustdeskAuditSwitches,
+  RustdeskQuiz,
+} from '@/components/post/rustdesk-figures';
+import {
+  Gta6FilesMatrix,
+  Gta6ClaimAtlas,
+  Gta6VerifyPathway,
+  Gta6Quiz,
+} from '@/components/post/gta6-figures';
+import {
+  WelcomeAnatomyAtlas,
+  WelcomeGatesMatrix,
+  WelcomeBudgetSplit,
+  WelcomeQuiz,
+} from '@/components/post/welcome-figures';
 
 /**
  * Components available inside every MDX post without an import.
@@ -223,6 +330,17 @@ function MdxImage({ alt = '', className, ...props }: ComponentPropsWithoutRef<'i
   );
 }
 
+/**
+ * Every registry figure is available inside MDX by its `mdxName`, derived
+ * from the registry so an entry cannot exist in the thread but miss from the
+ * article or vice versa (FIGURE_CONSTITUTION.md Article 3). Legacy prop-fed
+ * components (BenchmarkChart, PipelineExplorer) stay hand-registered until
+ * they migrate onto the library.
+ */
+const figureComponents = Object.fromEntries(
+  FIGURES.map((figure) => [figure.mdxName, figure.component]),
+);
+
 export const mdxComponents = {
   a: MdxLink,
   img: MdxImage,
@@ -233,8 +351,80 @@ export const mdxComponents = {
   KeyTakeaways,
   BenchmarkChart,
   PipelineExplorer,
-  PrithviExplorer,
-  FloodResultsChart,
-  PastisResultsChart,
   Sidenote,
+  ...figureComponents,
+  // Post bindings (Article 2): thin compositions of library components with
+  // the post's own data module. One entry per adopted figure, per post.
+  AirflowLayerStack,
+  AirflowEvidenceMatrix,
+  AirflowPilotSwitches,
+  AirflowQuiz,
+  SvelteLayerStack,
+  SvelteBoundaryMatrix,
+  SvelteAdoptionSwitches,
+  SvelteQuiz,
+  PValueMisreadingMatrix,
+  PValueAssumptionSwitches,
+  PValueResultsAtlas,
+  PValueQuiz,
+  WelcomeAnatomyAtlas,
+  WelcomeGatesMatrix,
+  WelcomeBudgetSplit,
+  WelcomeQuiz,
+  N8nConcernsMatrix,
+  N8nRunAtlas,
+  N8nAdoptionSwitches,
+  N8nQuiz,
+  NatsLayerStack,
+  NatsSourceMatrix,
+  NatsGuaranteeSwitches,
+  NatsQuiz,
+  PolarsDecisionMatrix,
+  PolarsQueryAtlas,
+  PolarsAssumptionSwitches,
+  PolarsQuiz,
+  PosthogStackLayers,
+  PosthogDecisionMatrix,
+  PosthogAssumptionSwitches,
+  PosthogQuiz,
+  PlaneStackLayers,
+  PlaneDecisionMatrix,
+  PlaneMigrationSwitches,
+  PlaneQuiz,
+  SupersetPlatformChart,
+  SupersetAssetMatrix,
+  SupersetAssumptionSwitches,
+  SupersetQuiz,
+  WstgTestingPathway,
+  WstgFeatureMatrix,
+  WstgReportAtlas,
+  WstgQuiz,
+  PerspectiveModeMatrix,
+  PerspectiveBoundaryPathway,
+  PerspectiveAssumptionSwitches,
+  PerspectiveQuiz,
+  RustdeskConnectionFlow,
+  RustdeskBoundaryMatrix,
+  RustdeskAuditSwitches,
+  RustdeskQuiz,
+  Gta6FilesMatrix,
+  Gta6ClaimAtlas,
+  Gta6VerifyPathway,
+  Gta6Quiz,
+  NotesPipelineFlow,
+  NotesPracticePathway,
+  NotesCostSwitches,
+  NotesQuiz,
+  ReadRepoSignalsMatrix,
+  ReadRepoTree,
+  ReadRepoRequestFlow,
+  ReadRepoQuiz,
+  BenchResultsMatrix,
+  BenchGapPathway,
+  BenchChecklistSwitches,
+  BenchQuiz,
+  ToolsListStack,
+  ToolsWorkflowFlow,
+  ToolsDraftTree,
+  ToolsQuiz,
 };

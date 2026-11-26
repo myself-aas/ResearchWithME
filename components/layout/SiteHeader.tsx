@@ -1,13 +1,19 @@
 import Link from 'next/link';
 import { Rss, Search } from 'lucide-react';
 import BrandLogo from '@/components/BrandLogo';
-import ThemeMenu from './ThemeMenu';
+import { ThemeSwitchCompact } from '@/components/library/ThemeSwitch';
+import MobileMenu from './MobileMenu';
 import { NAV, SITE } from '@/lib/site';
 
 /**
- * Site chrome: brand, primary navigation, search, feed, and the theme control.
+ * Site chrome: brand, primary navigation (inline from `sm` up), and the
+ * control cluster. On mobile the cluster is search + the view_cozy trigger
+ * that opens the right-side drawer (which carries the theme control and RSS
+ * along with the nav); from `sm` up the feed and theme buttons sit in the
+ * header beside the inline navigation.
  *
- * Rendered on the server; the only interactive island is the theme button.
+ * Rendered on the server; the interactive islands are the theme button and
+ * the mobile menu.
  */
 export default function SiteHeader() {
   return (
@@ -33,35 +39,21 @@ export default function SiteHeader() {
           <Link
             href="/search"
             aria-label="Search posts"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
+            className="inline-flex h-10 w-10 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
           >
             <Search className="h-4 w-4" aria-hidden="true" />
           </Link>
           <Link
             href={SITE.feedPath}
             aria-label="RSS feed"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+            className="hidden h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:inline-flex"
           >
             <Rss className="h-4 w-4" aria-hidden="true" />
           </Link>
-          <ThemeMenu />
+          <ThemeSwitchCompact />
+          <MobileMenu />
         </div>
       </div>
-
-      <nav aria-label="Primary mobile" className="border-t border-line sm:hidden">
-        <ul className="mx-auto flex w-full max-w-6xl items-center gap-1 overflow-x-auto px-3 py-1.5">
-          {NAV.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className="inline-flex min-h-9 items-center whitespace-nowrap rounded-full px-3 py-1.5 font-sans text-sm font-medium text-ink-secondary transition-colors hover:bg-surface-subtle hover:text-ink"
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </header>
   );
 }

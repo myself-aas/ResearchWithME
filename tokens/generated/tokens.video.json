@@ -6,15 +6,15 @@
     "text-primary": "#20232A",
     "text-secondary": "#5D6572",
     "action": {
-      "primary": "#2457A7",
-      "primary-hover": "#1C4688",
-      "primary-pressed": "#16376B",
+      "primary": "#C93D0C",
+      "primary-hover": "#A83309",
+      "primary-pressed": "#8C2A07",
       "on-primary": "#FFFFFF",
       "destructive": "#B91C1C",
-      "link": "#2457A7",
-      "visited": "#1B3F7A"
+      "link": "#C93D0C",
+      "visited": "#8C2A07"
     },
-    "focus": "#2457A7"
+    "focus": "#F65215"
   },
   "surface": {
     "background": "#FFFFFF",
