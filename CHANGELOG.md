@@ -17,6 +17,25 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and a "How this site is made" colophon strip. All sections are server-rendered and crawlable.
 
 ### Added
+- The per-post figure contract: every adopting post carries **≥4 distinct interaction archetypes**,
+  enforced by `test/post-figures.test.ts` (manifest ↔ registry ↔ MDX-body agreement, posts derived
+  from the registry — no hand list). First batch integrated with real, essay-derived data: the Airflow
+  teardown (component layer stack, evidence-ledger matrix, pilot-checklist switches, review quiz), the
+  Svelte teardown (compiler-pipeline stack, reactivity-boundary matrix, decision-checkpoint switches,
+  reactivity quiz), the p-value essay (misreadings matrix, model-assumption switches, results-paragraph
+  anatomy atlas, reading quiz), and the welcome post (page-anatomy atlas, §9 gates matrix, page-weight
+  budget split with real caps, how-the-site-works quiz). Three new library archetypes built for these
+  data shapes: `LayerStack` (accordion-layer-stack), `BudgetSplit` (partition-drag-allocation), and
+  `MetricMatrix` (column-sort-matrix). Data modules live in `lib/post/<slug>.ts`; thin bindings in
+  `components/post/*-figures.tsx`; the post-layout template gained genre layouts (teardown / methods /
+  meta) and a do-not-force-fit list.
+- Batch two — five more teardowns bound to their reviewed facts: **n8n** (concerns matrix, workflow-run
+  anatomy pins, adoption switches, retry/licence quiz), **NATS Server** (JetStream layer stack, server
+  source-map matrix, delivery-guarantee switches, reliability quiz), **Polars** (decision matrix with
+  the unmeasured column, lazy-query anatomy pins, plan-confidence switches, adjective quiz), **PostHog**
+  (hobby Compose stack, decision matrix, parity switches, parity quiz), and **Plane** (Compose layer
+  stack, acceptance-criteria matrix, migration switches, migration quiz). Nine posts now carry ≥4
+  unique generative-UI figures each.
 - The interactive-figure library and its constitution. `components/library/`
   holds seven reusable, data-driven learning figures — `WipeCompare`
   (drag-wipe comparison), `TradeoffPad` (2-D parameter drag with budget

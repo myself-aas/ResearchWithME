@@ -31,7 +31,9 @@ My migration recommendation is to compare source and destination counts by recor
 
 ## Self-hosting is a service lifecycle
 
-The root Compose file defines frontend-facing services, an API, worker and beat-worker, a migrator and a live service. Its stateful definitions include PostgreSQL, a service named `plane-redis` using a Valkey image, RabbitMQ and object storage. These are source-visible definitions, not a claim that this root file is the current recommended production installation method. [2](https://github.com/makeplane/plane/blob/da21a8ff8b4b0a1d7bfcca72eb184a13233bb143/docker-compose.yml#L1-L153)
+The root Compose file defines frontend-facing services, an API, worker and beat-worker, a migrator and a live service. Its stateful definitions include PostgreSQL, a service named `plane-redis` using a Valkey image, RabbitMQ and object storage. These are source-visible definitions, The Compose responsibilities as a stack — services on top, stateful services at the bottom:
+
+<PlaneStackLayers /> [2](https://github.com/makeplane/plane/blob/da21a8ff8b4b0a1d7bfcca72eb184a13233bb143/docker-compose.yml#L1-L153)
 
 The separate migrator is especially important to an adoption plan: application upgrades and data migrations should be treated as a coordinated event. Persistent database and upload volumes also need a recovery plan. Those are operational inferences from the topology, not completed backup or rollback tests. [2](https://github.com/makeplane/plane/blob/da21a8ff8b4b0a1d7bfcca72eb184a13233bb143/docker-compose.yml#L1-L153)
 
@@ -40,7 +42,13 @@ The separate migrator is especially important to an adoption plan: application u
 | Workflow migration | Rich issue relationships and filters | Preserve inactive records and relationship meaning |
 | Identifier generation | Project-derived lock in one save path | Concurrent imports and creation behave as intended |
 | Upgrade ownership | API, workers and a migrator | Tested upgrade and recovery procedure |
-| Data recovery | Database and upload volumes | Consistent restore of records and attachments |
+The decisions as a sortable matrix — evidence against the acceptance criterion:
+
+<PlaneDecisionMatrix />
+
+The migration checklist as switches — flip what your migration has actually verified:
+
+<PlaneMigrationSwitches />
 
 ## Configuration is not a security verdict
 
@@ -86,6 +94,10 @@ Live service: 62
 
 **Decision checkpoint.** Use this map to assign investigation owners for migration, administration and public access. Approve a trial on restored data and verified permissions, not on the relative size of the frontend.
 {/* review-source-map:end */}
+
+Three migration readings worth checking yourself on:
+
+<PlaneQuiz />
 
 ## What can a reader inspect or reproduce?
 

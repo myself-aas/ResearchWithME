@@ -40,7 +40,13 @@ Consider the application boundary: a worker may perform a business operation and
 | Server/account | Memory, disk and resource budgets | What happens when the budget is reached? |
 | Stream | Retention, discard, replicas, storage | Which history must survive and where? |
 | Consumer | Ack timing, retries, pending work | How does a slow or failing worker recover? |
-| Application | Not established by these structures | Can repeating a business operation cause harm? |
+The same four layers as a stack — open each for the evaluation question it carries:
+
+<NatsLayerStack />
+
+What the settings are worth, as switches — acknowledgments included:
+
+<NatsGuaranteeSwitches />
 
 ## Adoption boundary
 
@@ -49,6 +55,10 @@ The repository uses Apache License 2.0 terms. That identifies the root source te
 I would shortlist NATS Server where the team can make message lifecycle choices explicit and test them. I would reject any architecture proposal whose only recovery argument is that a messaging product promises reliability. This source snapshot demonstrates configurable controls, not a measured throughput, recovery-time, ordering or end-to-end exactly-once result.
 
 {/* review-source-map:start */}
+The server's own source map, sortable (real counts from the pinned tree):
+
+<NatsSourceMatrix />
+
 ## Source map: where to inspect next
 
 The inventory separates direct server Go files, direct server test files and nested Go packages. The test-file count is a navigation aid, not coverage: it does not establish which failure scenarios run in CI or how many assertions they contain.
@@ -80,6 +90,10 @@ Subpackages: 60
 
 **Decision checkpoint.** Before adopting a delivery policy, identify the matching server implementation and a relevant failure test, then design an application-level duplicate-effect test of your own.
 {/* review-source-map:end */}
+
+Three reliability readings worth checking yourself on:
+
+<NatsQuiz />
 
 ## What can a reader inspect or reproduce?
 

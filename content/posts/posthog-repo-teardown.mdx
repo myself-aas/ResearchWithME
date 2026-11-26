@@ -27,7 +27,9 @@ The monorepo layout describes legacy Django code, product-specific backend/front
 
 That structure suggests a useful evaluation strategy: choose a product path and trace it, rather than assuming all capabilities have the same storage, query and deployment needs. A product analytics trial does not validate replay retention or a separate flag-serving workload. This is reviewer analysis of the documented architecture, not a measured account of internal service behavior.
 
-The hobby Compose file is explicitly labeled hobby-only. It names a PostgreSQL service, Redis, Valkey and ClickHouse, with ClickHouse depending on Kafka and ZooKeeper. Several definitions extend a base Compose file; the inspected overlay alone is not a complete resolved production topology. It nevertheless establishes that “self-host the analytics app” carries more stateful dependency responsibility than one process and one volume. [3](https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docker-compose.hobby.yml#L1-L90)
+The hobby Compose file is explicitly labeled hobby-only. It names a PostgreSQL service, Redis, Valkey and ClickHouse, with ClickHouse depending on Kafka and ZooKeeper. Several definitions extend a base Compose file; the inspected overlay alone is not a complete resolved production topology. It nevertheless establishes that “self-host the analytics app” The hobby stack opened service by service — each layer a fact the Compose file establishes:
+
+<PosthogStackLayers /> [3](https://github.com/PostHog/posthog/blob/4e10f441e36bc017f350bb7cb41a009089df0df6/docker-compose.hobby.yml#L1-L90)
 
 ## License scope needs a separate review
 
@@ -40,7 +42,13 @@ The architecture document also says enterprise features are being migrated to ot
 | Hosted versus self-hosted | README recommends Cloud; hobby has no support guarantee | Obtain the support and deployment commitments you need |
 | Operating burden | Hobby overlay names multiple data services | Resolve the full stack and practice restore |
 | Reuse rights | MIT Expat with explicit enterprise exception | Inspect the exact code and terms being used |
-| Privacy suitability | Product includes event collection and replay | Validate actual capture, retention and access settings |
+The decisions as a sortable matrix — evidence against the follow-up it demands:
+
+<PosthogDecisionMatrix />
+
+The parity checklist as switches — flip only what you have obtained or practiced:
+
+<PosthogAssumptionSwitches />
 
 ## Who should evaluate it?
 
@@ -82,6 +90,10 @@ Flags product: 326
 
 **Decision checkpoint.** For self-hosting, trace one required product through its model, request and worker paths, then verify that the intended deployment and license actually support it. Directory size establishes none of those entitlements.
 {/* review-source-map:end */}
+
+Three parity claims worth checking before you self-host:
+
+<PosthogQuiz />
 
 ## What can a reader inspect or reproduce?
 

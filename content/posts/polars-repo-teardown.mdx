@@ -40,7 +40,13 @@ There is a further source-quality caveat: this file contains a comment saying it
 | Lazy instead of eager | Deferred planning and documented pushdown | Actual I/O avoided on your files |
 | Streaming collection | Batch execution with operator qualifications | Peak RSS, spill volume and fallback impact |
 | SQL plus expressions | README describes a shared engine | Complete semantic equivalence for a migration |
-| Distributed execution | README links a separate scaling offering | Cluster deployment and its terms |
+The decision table as a sortable matrix — then read the unmeasured column twice:
+
+<PolarsDecisionMatrix />
+
+One lazy query, pinned in execution order — the plan, the two pushdowns, and the qualification:
+
+<PolarsQueryAtlas />
 
 ## Fit and license
 
@@ -49,6 +55,10 @@ The README links distributed Polars separately; this review does not infer that 
 I would prioritize a Polars trial for pipelines where query planning, selected-column reads and explicit expressions can replace chains of unnecessary intermediates. I would not approve a migration solely on upstream performance language. Null handling, schemas, joins, sorting and output materialization should be acceptance criteria alongside elapsed time; this is a proposed evaluation agenda, not an observed migration failure.
 
 {/* review-source-map:start */}
+The memory-and-equivalence checklist as switches:
+
+<PolarsAssumptionSwitches />
+
 ## Source map: where to inspect next
 
 The lazy API, logical planner and execution engines occupy distinct source roots. Follow a query across those boundaries rather than assuming that the API layer alone explains streaming fallback. File counts do not measure optimizer effectiveness.
@@ -82,6 +92,10 @@ Memory engine: 34
 
 **Decision checkpoint.** Advance a trial only when a representative lazy plan produces correct results within a measured memory budget. A large planner directory cannot substitute for examining that plan.
 {/* review-source-map:end */}
+
+Three checks before you trust the adjectives:
+
+<PolarsQuiz />
 
 ## What can a reader inspect or reproduce?
 

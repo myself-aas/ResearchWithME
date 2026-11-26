@@ -24,6 +24,36 @@ import {
   PValueQuiz,
 } from '@/components/post/pvalue-figures';
 import {
+  N8nConcernsMatrix,
+  N8nRunAtlas,
+  N8nAdoptionSwitches,
+  N8nQuiz,
+} from '@/components/post/n8n-teardown-figures';
+import {
+  NatsLayerStack,
+  NatsSourceMatrix,
+  NatsGuaranteeSwitches,
+  NatsQuiz,
+} from '@/components/post/nats-teardown-figures';
+import {
+  PolarsDecisionMatrix,
+  PolarsQueryAtlas,
+  PolarsAssumptionSwitches,
+  PolarsQuiz,
+} from '@/components/post/polars-teardown-figures';
+import {
+  PosthogStackLayers,
+  PosthogDecisionMatrix,
+  PosthogAssumptionSwitches,
+  PosthogQuiz,
+} from '@/components/post/posthog-teardown-figures';
+import {
+  PlaneStackLayers,
+  PlaneDecisionMatrix,
+  PlaneMigrationSwitches,
+  PlaneQuiz,
+} from '@/components/post/plane-teardown-figures';
+import {
   WelcomeAnatomyAtlas,
   WelcomeGatesMatrix,
   WelcomeBudgetSplit,
@@ -287,4 +317,24 @@ export const mdxComponents = {
   WelcomeGatesMatrix,
   WelcomeBudgetSplit,
   WelcomeQuiz,
+  N8nConcernsMatrix,
+  N8nRunAtlas,
+  N8nAdoptionSwitches,
+  N8nQuiz,
+  NatsLayerStack,
+  NatsSourceMatrix,
+  NatsGuaranteeSwitches,
+  NatsQuiz,
+  PolarsDecisionMatrix,
+  PolarsQueryAtlas,
+  PolarsAssumptionSwitches,
+  PolarsQuiz,
+  PosthogStackLayers,
+  PosthogDecisionMatrix,
+  PosthogAssumptionSwitches,
+  PosthogQuiz,
+  PlaneStackLayers,
+  PlaneDecisionMatrix,
+  PlaneMigrationSwitches,
+  PlaneQuiz,
 };
