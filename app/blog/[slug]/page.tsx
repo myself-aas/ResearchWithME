@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
+import SocialIcons from '@/components/layout/SocialIcons';
 import SiteFooter from '@/components/layout/SiteFooter';
 import MdxContent from '@/components/mdx/MdxContent';
 import ReadingProgress from '@/components/ReadingProgress';
@@ -179,12 +181,13 @@ export default async function PostPage({ params }: PostPageProps) {
             <footer className="mx-auto mt-10 max-w-[68ch]">
               <div className="rounded-3xl border border-border bg-gradient-to-br from-card via-card to-muted/60 p-5 shadow-xs sm:p-7">
                 <div className="flex items-center gap-3">
-                  <span
-                    aria-hidden="true"
-                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 font-serif text-sm font-bold text-primary"
-                  >
-                    {AUTHOR.initials}
-                  </span>
+                  <Image
+                    src={AUTHOR.avatar}
+                    alt=""
+                    width={48}
+                    height={48}
+                    className="h-12 w-12 shrink-0 rounded-full border border-primary/20 object-cover"
+                  />
                   <div className="min-w-0">
                     <p className="font-serif text-lg font-semibold text-foreground">{AUTHOR.name}</p>
                     <p className="font-mono text-[0.6875rem] uppercase tracking-wider text-muted-foreground">
@@ -193,26 +196,14 @@ export default async function PostPage({ params }: PostPageProps) {
                   </div>
                 </div>
                 <p className="mt-4 font-sans text-sm leading-relaxed text-muted-foreground">{AUTHOR.bio}</p>
-                <div className="mt-4 flex flex-wrap gap-4">
+                <div className="mt-4 flex flex-wrap items-center gap-4">
                   <Link
                     href="/about"
                     className="font-sans text-sm font-semibold text-primary underline underline-offset-4 hover:text-primary/80"
                   >
                     More about the author
                   </Link>
-                  {AUTHOR.links
-                    .filter((link) => link.href.startsWith('http'))
-                    .map((link) => (
-                      <a
-                        key={link.href}
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer noopener"
-                        className="font-sans text-sm font-semibold text-primary underline underline-offset-4 hover:text-primary/80"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
+                  <SocialIcons className="gap-1.5 [&_a]:h-8 [&_a]:w-8 [&_a]:rounded-lg [&_a]:border-0 [&_a]:bg-transparent [&_a]:text-primary [&_a:hover]:text-primary/70" />
                 </div>
               </div>
             </footer>

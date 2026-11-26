@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, GitBranch, Rss } from 'lucide-react';
+import { ArrowRight, BookOpen } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
+import { socialIconFor } from '@/components/layout/SocialIcons';
 import { AUTHOR, SITE } from '@/lib/site';
 import { getSiteStats } from '@/lib/content/posts';
 import { pageMetadata } from '@/lib/seo';
@@ -37,12 +39,14 @@ export default function AboutPage() {
         </header>
 
         <section aria-labelledby="author-heading" className="mt-10 grid gap-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:gap-8">
-          <div
-            aria-hidden="true"
-            className="flex h-24 w-24 items-center justify-center rounded-full border border-line bg-selection font-serif text-2xl font-bold text-brand"
-          >
-            {AUTHOR.initials}
-          </div>
+          <Image
+            src={AUTHOR.avatar}
+            alt={`Profile picture of ${AUTHOR.name}`}
+            width={96}
+            height={96}
+            priority
+            className="h-24 w-24 rounded-full border border-line object-cover"
+          />
           <div>
             <h2 id="author-heading" className="font-serif text-2xl font-bold tracking-tight text-ink">
               {AUTHOR.name}
@@ -56,26 +60,18 @@ export default function AboutPage() {
               something here is wrong, I would rather hear it than leave it up.
             </p>
             <ul className="mt-5 flex flex-wrap gap-3">
-              <li>
-                <a
-                  href="https://github.com/myself-aas"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 font-sans text-sm font-medium text-ink transition-colors hover:border-brand"
-                >
-                  <GitBranch className="h-4 w-4 text-brand" aria-hidden="true" />
-                  GitHub
-                </a>
-              </li>
-              <li>
-                <Link
-                  href={SITE.feedPath}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 font-sans text-sm font-medium text-ink transition-colors hover:border-brand"
-                >
-                  <Rss className="h-4 w-4 text-brand" aria-hidden="true" />
-                  RSS feed
-                </Link>
-              </li>
+              {AUTHOR.links.map((link) => (
+                <li key={link.href}>
+                  <a
+                    href={link.href}
+                    {...(link.href.startsWith('http') ? { target: '_blank', rel: 'me noreferrer noopener' } : {})}
+                    className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 font-sans text-sm font-medium text-ink transition-colors hover:border-brand"
+                  >
+                    {socialIconFor(link.label, link.href)}
+                    {link.label === 'RSS' ? 'RSS feed' : link.label}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
         </section>

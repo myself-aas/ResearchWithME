@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import { Rss } from 'lucide-react';
+import Image from 'next/image';
 import BrandLogo from '@/components/BrandLogo';
+import { socialIconFor } from '@/components/layout/SocialIcons';
 import { AUTHOR, NAV, SITE } from '@/lib/site';
 
 const elsewhere = AUTHOR.links;
@@ -18,7 +19,14 @@ export default function SiteFooter() {
           <p className="mt-3 max-w-sm font-sans text-sm leading-relaxed text-ink-secondary">
             {SITE.description}
           </p>
-          <p className="mt-4 font-mono text-xs text-ink-secondary">
+          <p className="mt-4 flex items-center gap-2 font-mono text-xs text-ink-secondary">
+            <Image
+              src={AUTHOR.avatar}
+              alt=""
+              width={20}
+              height={20}
+              className="h-5 w-5 rounded-full border border-line object-cover"
+            />
             Written by {AUTHOR.name}
           </p>
         </div>
@@ -77,7 +85,7 @@ export default function SiteFooter() {
                   {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
                   className="inline-flex items-center gap-2 font-sans text-sm text-ink-secondary underline-offset-4 transition-colors hover:text-ink hover:underline"
                 >
-                  {link.label === 'RSS' && <Rss className="h-3.5 w-3.5" aria-hidden="true" />}
+                  {socialIconFor(link.label, link.href)}
                   {link.label}
                 </a>
               </li>
