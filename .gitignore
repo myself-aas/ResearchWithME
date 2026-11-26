@@ -32,3 +32,6 @@ image-search/
 
 # Reproducible local design audit logs (do not commit browser traces/builds).
 artifacts/design-audit/
+
+# Local Worker packaging/runtime evidence.
+artifacts/worker-checks/

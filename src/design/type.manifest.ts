@@ -15,6 +15,6 @@ export const type_ = {
     meta: { slot: 'prose', font: 'mono', weight: 400, lh: 1.45, measureCh: 60, fixed: 13 },
     input: { slot: 'field', font: 'sans', weight: 400, lh: 1.40, measureCh: 60, fixed: 16 },
   },
-  fonts: { ranges: [[32, 126], [160, 255], [8211, 8212], [8216, 8221], [8226, 8226], [8230, 8230], [8592, 8595], [215, 215], [43, 43], [8722, 8722]], files: { serif: '/fonts/newsreader-variable.woff2', sans: '/fonts/inter-variable.woff2' }, maxBytes: 80000, weightMin: 400, weightMax: 600, opticalSize: 16, glyphs: '→ × + − · ≤ ≥ ≈ ≠ °' },
+  fonts: { ranges: [[32, 126], [160, 255], [8211, 8212], [8216, 8221], [8226, 8226], [8230, 8230], [8592, 8595], [215, 215], [43, 43], [8722, 8722]], files: { serif: '/fonts/newsreader-variable.woff2', sans: '/fonts/inter-variable.woff2', serifItalic: '/fonts/newsreader-italic-variable.woff2' }, maxBytes: 80000, italicWeight: 400, weightMin: 400, weightMax: 600, opticalSize: 16, glyphs: '→ × + − · ≤ ≥ ≈ ≠ °' },
   bangla: { bodyLh: 1.7, headingLh: 1.35 },
 } as const;

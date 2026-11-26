@@ -50,12 +50,12 @@ The existing figure registry is intentionally preserved; its author-approval and
 
 ## Validation evidence
 
-- **Quality:** ESLint, TypeScript and **259 tests / 19 files** pass, including 17 GenUI/invariant tests, five model-delivery tests, four security-header tests and four server-lifecycle tests.
+- **Quality:** ESLint, TypeScript and **263 tests / 20 files** pass, including 17 GenUI/invariant tests, five model-delivery tests, four security-header tests and five server-lifecycle tests and three production snapshot regression tests.
 - **Production:** `npm run verify` passes build and existing crawlability/content/SEO/feed/site-budget checks. Those older budgets are **not** substituted for the stricter v4.1 limits.
 - **Browser:** **10/10 tests** pass against a fresh standalone production server. Coverage includes the original landing reflow/geometry/no-JS suite, nine widgets at **288 / 358 / 720px** in both themes, catalog axe A/AA, a bounded status-stream CLS fixture, and an actual local assistant query with no outbound traffic/cookies/model downloads.
 - **Determinism:** **14 outputs** match two independent renders and fresh temporary files byte-for-byte.
 - **Contrast:** **180 measurements** pass declared thresholds. Base text ≥7:1, UI ≥3:1, explicit disabled text ≥4.5:1. Migrated secondary active borders were corrected rather than lowering their threshold. This is not a live-DOM contrast certification of legacy routes.
-- **Fonts:** **58,972 / 80,000 bytes** combined roman fonts (Newsreader 34,116; Inter 24,856); required Latin/UI/scientific glyph checks pass. Bangla system-font/device coverage remains unverified. Original Google Fonts source/license provenance remains in the historical migration report and existing font licenses.
+- **Fonts (corrected to include italic):** **79,716 / 80,000 bytes** across every served font face (Newsreader roman 34,116; Inter 24,856; Newsreader italic 20,744); required Latin/UI/scientific glyph checks pass. Bangla system-font/device coverage remains unverified. Original Google Fonts source/license provenance remains in the historical migration report and existing font licenses.
 - **Artwork:** illustrative fallback AVIF **29,304 bytes**, WebP **20,086 bytes**; each below 100KB.
 - **Initial modern JS:** **140,165 / 50,000 gzip bytes — FAIL**. Method: unique modern script files declared in built landing HTML, independently gzipped; not a Lighthouse timing claim.
 - **Legacy lab JS:** approximately **20KB page-specific** in site verification, exceeding the requested **15KB** lazy-lab cap. No threshold was relaxed.
@@ -68,7 +68,7 @@ The existing figure registry is intentionally preserved; its author-approval and
 
 | # | Gate | Status | Evidence / remaining requirement |
 | ---: | --- | --- | --- |
-| 1 | Payload | **Fail** | Initial JS 140,165 >50,000; legacy lab ≈20KB >15KB. Roman fonts and fallback artwork pass their limits. |
+| 1 | Payload | **Fail** | Initial JS 140,165 >50,000; legacy lab ≈20KB >15KB. All served font faces and fallback artwork pass their limits. |
 | 2 | Lighthouse | **Unmeasured** | No median-of-five throttled mobile Lighthouse run; do not infer scores from unit/build/axe passes. |
 | 3 | CLS | **Partial** | Bounded GenUI status fixture <0.05 in production browser test. Font swap, all templates and arbitrary large streamed trees are not certified. |
 | 4 | Grid geometry | **Partial** | Landing geometry across seven widths, including generated 720px caps, ±0.5px. Declared subpage contracts are not all rendered/measured. |
@@ -128,3 +128,20 @@ The requested `npx skills use "https://github.com/sickn33/agentic-awesome-skills
 Actions inspection found PR #46's title check rejected its missing Conventional Commit prefix. The title was corrected and the check now passes. The old Quality run failed in its tests step; full log download is blocked by this sandbox's outbound-host restrictions, so its exact prior test assertion is not claimed known. The complete current test suite and a clean `npm ci` now pass locally.
 
 Quality now uses SHA-pinned Node-24-compatible checkout/setup/upload actions, explicit read-only permissions, cancellation of superseded runs, a job timeout, and retained browser failure traces. The old `next start` smoke flow is replaced with the real standalone server, which copies static/public assets and is started, deadline-checked and shut down by a tested shared helper. `npm run test:production` verifies routes, cache/security/crawl headers, compressed search payload and the browser suite. The obsolete ESLint ignore file was migrated to flat configuration. These changes do not waive the failing v4.1 payload/full-tree gates.
+
+
+## Workers correctness and remaining platform diagnosis
+
+[WORKERS-DIAGNOSIS.md](WORKERS-DIAGNOSIS.md) records a confirmed cold-runtime
+content bug, its build-snapshot fix, and the external-log limitation. The
+Workers target now has a separate CI job: build the actual adapter entry, dry-run
+package/size checks, all-face font/glyph validation, cold search/content checks
+and all ten browser tests in workerd. Both standalone and Workers browser suites
+pass locally. This does not certify the remote dashboard build, whose private
+error log is not exposed by its GitHub check.
+
+The font total previously covered only roman faces; runtime testing exposed an
+additional legacy italic download. That face is now subset, manifest-owned and
+included in the unchanged 80KB limit. Every served WOFF2 must appear in the
+manifest. This corrects the audit scope rather than treating the old roman-only
+number as a complete font-budget pass.

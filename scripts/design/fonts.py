@@ -2,7 +2,7 @@
 """Optional fonttools pipeline. See docs/design/MIGRATION.md for setup.
 
 --source-dir must contain the original licensed WOFF2 files. Never subset an
-already-subset file to add coverage. --check audits the installed roman fonts.
+already-subset file to add coverage. --check audits every installed font face.
 The type manifest is projected by design:gen into fixtures/fonts.json.
 """
 import argparse
@@ -32,7 +32,7 @@ for family, path in config['files'].items():
         font = TTFont(args.source_dir / target.name, lazy=False, recalcTimestamp=False)
         font.ensureDecompiled()
         axes = {axis.axisTag for axis in font['fvar'].axes}
-        pins = {'wght': (config['weightMin'], config['weightMax'])}
+        pins = {'wght': config['italicWeight'] if family == 'serifItalic' else (config['weightMin'], config['weightMax'])}
         if 'opsz' in axes:
             pins['opsz'] = config['opticalSize']
         font = instantiateVariableFont(font, pins, inplace=False)
@@ -67,7 +67,7 @@ for family, path in config['files'].items():
     size = target.stat().st_size
     total += size
     print(f'PASS {family}: {size} bytes; {len(required)} required Latin/UI codepoints covered')
-print(f'{"PASS" if total <= config["maxBytes"] else "FAIL"} roman font payload {total} / {config["maxBytes"]} bytes')
+print(f'{"PASS" if total <= config["maxBytes"] else "FAIL"} all-face font payload {total} / {config["maxBytes"]} bytes')
 if total > config['maxBytes']:
     raise SystemExit(1)
 print('Bangla uses system fonts: device glyph coverage is NOT certified by this check.')

@@ -164,3 +164,11 @@ performance, whole-tree migration or manual/unimplemented requirements remain.
 
 
 The follow-up hardening centralizes response headers in `lib/security/headers.ts`: first-party resource origins, COOP/COEP/CORP isolation, and WASM compilation permission. Legacy inline script/style exceptions remain explicit and must not be described as strict CSP. `lib/assistant/model-assets.ts` implements bounded, manifest/hash-verified same-origin shard caching; it is delivery infrastructure, not a shipped model or inference engine.
+
+
+All served font faces, including the 400-weight editorial italic, are now owned
+by the type manifest and counted against the **single 80KB font budget**. Only
+roman faces are preloaded; italic is on-demand. See
+`docs/design/WORKERS-DIAGNOSIS.md` for the hidden-font correction and Worker
+content/runtime checks. Do not quote the older roman-only byte count as total
+font payload.

@@ -1,5 +1,5 @@
-import { readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { basename, join } from 'node:path';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { design } from '@/src/design';
@@ -78,9 +78,10 @@ describe('reme v4 manifest and generator', () => {
     expect(h1.find(row => row.tier === 'lg')!.size).toBe(41);
     for (const row of h1) expect(row.cqi * row.slotWidth / 100).toBeCloseTo(row.size, 4);
   });
-  it('keeps the two roman fonts within the unchanged 80KB threshold', () => {
+  it('keeps every roman and italic face within the unchanged 80KB threshold', () => {
     const bytes = Object.values(design.type.fonts.files).reduce((sum, file) => sum + statSync(join('public', file)).size, 0);
     expect(bytes).toBeLessThanOrEqual(design.type.fonts.maxBytes);
+    expect(Object.values(design.type.fonts.files).map(file => basename(file)).sort()).toEqual(readdirSync('public/fonts').filter(file => file.endsWith('.woff2')).sort());
   });
 });
 

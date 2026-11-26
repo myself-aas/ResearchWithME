@@ -238,3 +238,16 @@ Run `npm run audit:all` for production/browser/source/payload evidence. It
 currently exits nonzero: the original 50KB initial-JS budget and full-tree
 token migration do not pass, and manual/model/localization/security work is
 not certified. Detailed logs are gitignored under `artifacts/design-audit/`.
+
+
+### Cloudflare/Workers verification
+
+Run `npm run verify:worker` to build/package without deploying, enforce Worker
+artifact limits, and test cold content/search plus the browser suite in workerd.
+The separate Workers CI job catches failures that a standalone Node smoke test
+cannot. See `docs/design/WORKERS-DIAGNOSIS.md` for current evidence and the
+private dashboard log needed to diagnose an external deployment failure.
+
+Production content is a validated build snapshot. After editing/publishing posts,
+run `npm run content:gen` and commit `lib/content/snapshot.generated.ts`;
+`content:verify` rejects stale snapshots before builds.

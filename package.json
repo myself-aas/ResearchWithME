@@ -38,7 +38,7 @@
     "figures:new": "node scripts/new-figure.mjs",
     "tokens:build": "node tokens/scripts/build.mjs",
     "tokens:check": "node tokens/scripts/validate.mjs && node tokens/scripts/check-contrast.mjs",
-    "quality": "npm run design:check && npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test",
+    "quality": "npm run content:verify && npm run design:check && npm run tokens:build && npm run tokens:check && npm run lint && npm run typecheck && npm run test",
     "clean": "node -e \"require('node:fs').rmSync('.next',{recursive:true,force:true})\"",
     "preinstall": "node scripts/ensure-npm.mjs",
     "check:site": "node scripts/check-site.mjs",
@@ -49,12 +49,17 @@
     "design:verify": "tsx scripts/design/gen.ts --verify",
     "design:lint": "tsx scripts/design/lint.ts",
     "design:check": "npm run design:verify && npm run design:lint",
-    "prebuild": "npm run design:check && npm run tokens:build",
+    "prebuild": "npm run content:verify && npm run design:check && npm run tokens:build",
     "design:browser": "playwright test --config playwright.design.config.ts",
     "design:payload": "tsx scripts/design/payload.ts",
     "design:lint:all": "tsx scripts/design/audit-source.ts",
     "audit:all": "node scripts/design/audit-all.mjs",
-    "test:production": "node scripts/design/smoke-production.mjs"
+    "test:production": "node scripts/design/smoke-production.mjs",
+    "content:gen": "tsx scripts/content/snapshot.ts",
+    "content:verify": "tsx scripts/content/snapshot.ts --verify",
+    "check:worker": "node scripts/workers/check-build.mjs",
+    "test:worker": "node scripts/workers/smoke.mjs",
+    "verify:worker": "npm run build:worker && npm run check:worker && npm run test:worker"
   },
   "dependencies": {
     "@assistant-ui/generative-ui": "^0.0.13",

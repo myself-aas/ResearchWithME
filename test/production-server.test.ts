@@ -18,6 +18,13 @@ describe('production server readiness', () => {
     expect(server.stdout.listenerCount('data')).toBe(0);
   });
 
+  it('accepts the Workers emulator readiness marker', async () => {
+    const server = fakeServer();
+    const ready = waitForServer(server, 500, /Ready on/);
+    server.stdout.write('[wrangler:info] Ready on http://0.0.0.0:3102');
+    await expect(ready).resolves.toBeUndefined();
+  });
+
   it('includes diagnostic stderr when startup exits', async () => {
     const server = fakeServer();
     const ready = waitForServer(server, 500);

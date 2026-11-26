@@ -8,17 +8,8 @@
 /* v4 manifest output follows legacy aliases while inner routes migrate. */
 @import "../src/generated/design.css";
 
-/* Legacy inner-route typography and domain aliases remain below during the
-   incremental v4 migration. Roman font faces are generated; this italic face
-   remains a separately loaded article asset. See docs/design/MIGRATION.md. */
-
-@font-face {
-  font-family: 'Newsreader';
-  src: url('/fonts/newsreader-italic-variable.woff2') format('woff2');
-  font-style: italic;
-  font-weight: 200 800;
-  font-display: swap;
-}
+/* Legacy inner-route typography/domain aliases remain below. All font faces,
+   including the budgeted editorial italic, are emitted by the manifest. */
 
 @custom-variant dark (&:where(.dark, .dark *));
 

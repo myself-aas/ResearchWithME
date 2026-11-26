@@ -799,3 +799,19 @@ validates sizes, same-origin paths, SHA-256 and versioned cache contents, but
 no model/engine is installed. Never turn that infrastructure into an inference
 availability claim. CI smoke tests use `npm run test:production` and the tested
 standalone-server lifecycle helper rather than `next start`.
+
+
+### §21.2 Worker content and font-budget completeness
+
+Production content is bundled in `lib/content/snapshot.generated.ts`; Workers
+must not scan the repository filesystem for dynamic search/assistant queries.
+Filesystem authoring/loading stays in `lib/content/load.ts`. After content
+changes, run `npm run content:gen` and commit the verified snapshot. Builds and
+CI reject stale snapshots. Node success does not imply Worker correctness: run
+`npm run verify:worker` for adapter packaging and cold-runtime/browser tests.
+The private dashboard error is not exposed by the GitHub check; never infer a
+remote deployment success from a local dry run.
+
+All served WOFF2 faces, including editorial italic, belong in the manifest and
+the unchanged 80KB font budget. Only roman faces are preloaded. Scientific/UI
+glyph checks and system Bengali/device checks remain distinct claims.
