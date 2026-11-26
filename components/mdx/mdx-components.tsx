@@ -5,6 +5,30 @@ import CodeBlock from './CodeBlock';
 import BenchmarkChart from '@/components/post/BenchmarkChart';
 import PipelineExplorer from '@/components/post/PipelineExplorer';
 import { FIGURES } from '@/lib/figures/registry';
+import {
+  AirflowLayerStack,
+  AirflowEvidenceMatrix,
+  AirflowPilotSwitches,
+  AirflowQuiz,
+} from '@/components/post/airflow-teardown-figures';
+import {
+  SvelteLayerStack,
+  SvelteBoundaryMatrix,
+  SvelteAdoptionSwitches,
+  SvelteQuiz,
+} from '@/components/post/svelte-teardown-figures';
+import {
+  PValueMisreadingMatrix,
+  PValueAssumptionSwitches,
+  PValueResultsAtlas,
+  PValueQuiz,
+} from '@/components/post/pvalue-figures';
+import {
+  WelcomeAnatomyAtlas,
+  WelcomeGatesMatrix,
+  WelcomeBudgetSplit,
+  WelcomeQuiz,
+} from '@/components/post/welcome-figures';
 
 /**
  * Components available inside every MDX post without an import.
@@ -245,4 +269,22 @@ export const mdxComponents = {
   PipelineExplorer,
   Sidenote,
   ...figureComponents,
+  // Post bindings (Article 2): thin compositions of library components with
+  // the post's own data module. One entry per adopted figure, per post.
+  AirflowLayerStack,
+  AirflowEvidenceMatrix,
+  AirflowPilotSwitches,
+  AirflowQuiz,
+  SvelteLayerStack,
+  SvelteBoundaryMatrix,
+  SvelteAdoptionSwitches,
+  SvelteQuiz,
+  PValueMisreadingMatrix,
+  PValueAssumptionSwitches,
+  PValueResultsAtlas,
+  PValueQuiz,
+  WelcomeAnatomyAtlas,
+  WelcomeGatesMatrix,
+  WelcomeBudgetSplit,
+  WelcomeQuiz,
 };

@@ -1,12 +1,13 @@
 <!--
-TEMPLATE B — Generative post layout system (figure constitution v1)
+TEMPLATE B — Generative post layout system (figure constitution v2)
 ============================================================================
-The anatomy of an essay that teaches with interactive figures. Copy this
-skeleton when drafting a post, then follow the adoption checklist so every
-figure in it is generative-UI-maintained before it ships.
+The anatomy of an essay that teaches with interactive figures. Every post
+must carry **4–5 unique interaction archetypes** (enforced by
+`test/post-figures.test.ts`: manifest ↔ registry ↔ MDX-body agreement), and
+every one of them is generative UI maintained.
 
-Audition patterns on /lab first — pick one per concept, never two of the
-same archetype in one essay.
+AUDITION PATTERNS ON /lab FIRST. The adoption procedure is at the foot —
+it is the same for every genre; only the PLACEMENT differs.
 ============================================================================
 -->
 
@@ -21,22 +22,58 @@ coverStyle: hero # optional; 21/9 frame, only when the essay deserves a banner
 ---
 
 <!--
-LAYOUT LAW (summary — the full constitution is FIGURE_CONSTITUTION.md):
+LAYOUT LAW (unchanged):
 
 1.  Prose first, figure second. Every figure is introduced by a lead-in
     sentence in the preceding paragraph that names the question it answers.
-    A figure never opens a section; a reader should meet the idea before
-    the control.
-2.  One archetype per concept. Two figures in one essay may not share an
-    interaction pattern — that is what makes each one expressive (Article 1).
-3.  Interpretation after the figure. One or two sentences that read the
-    figure's *default* state aloud, so the static page (curl, no JS,
-    screen reader) still makes the point the figure makes.
-4.  Figures carry no facts the prose does not also carry. The figure is a
-    way of seeing the essay's own numbers (Article 2), never a second essay.
-5.  Spacing: figures flow in the prose column (`my-8` chrome), never side
-    by side, never inside KeyTakeaways or Callouts.
+2.  One archetype per concept *within the essay* — and the manifest test
+    requires ≥4 distinct archetypes overall, so no padding with repeats.
+3.  Interpretation after the figure: read the figure's default state aloud
+    so the static page still makes the point.
+4.  Figures carry no facts the prose does not also carry.
+5.  Figures flow in the prose column (`my-8` chrome), never side by side,
+    never inside KeyTakeaways or Callouts.
 -->
+
+## Genre layouts — where each archetype slots
+
+### Repository teardown (`*-repo-teardown.mdx`)
+
+| Essay moment | Figure (binding) | Why this archetype |
+| --- | --- | --- |
+| The components/architecture table | `LayerStack` (accordion-layer-stack) | disclosure is the right shape for a stack; order carries structure |
+| Key findings / evidence mix | `MetricMatrix` (column-sort-matrix) | lets the reader sort claims by evidence kind — including "not measured" |
+| The adoption/deployment checklist | `AssumptionSwitches` (toggle-assumption-inference) | a checklist is a set of earned assumptions |
+| Before "What remains unverified?" | `SelfCheckQuiz` (answer-reveal-quiz) | the reader audits the review before citing it |
+| (optional) A cost/complexity split | `BudgetSplit` (partition-drag-allocation) | where the fixed budget concentrates |
+
+### Methods essay (statistics, benchmarking, reviewing)
+
+| Essay moment | Figure (binding) | Why |
+| --- | --- | --- |
+| The taxonomy table (misreadings, fallacies) | `MetricMatrix` | sort by error type |
+| The model behind the claims | `AssumptionSwitches` | flip assumptions, watch what the claim supports |
+| "Read the paragraph/figure like this" | `HotspotAtlas` (pinned-hotspot-annotation) | anchored pins, reading-order tour |
+| Recall check near the end | `SelfCheckQuiz` | commit before quoting |
+| A worked number evolving | `RacePlayback` (playback-race-series) | only with *computed* values, never invented ones |
+
+### Site/meta post (`welcome-*`, `notes-*`)
+
+| Essay moment | Figure (binding) | Why |
+| --- | --- | --- |
+| "What a page here is made of" | `HotspotAtlas` | anatomy pins in reading order |
+| The enforced gates | `MetricMatrix` | real budgets, sortable |
+| A real budget split | `BudgetSplit` | caps are real, shares labelled illustrative |
+| How the machine works | `SelfCheckQuiz` | every answer is on the page |
+
+### DO NOT force-fit
+
+No `WipeCompare` without two full fields of the same shape; no `TradeoffPad`
+without a genuine 2-D parameter space with honest (linear) outcomes; no
+`LensPeek` without a real derived layer. If the essay has no data of that
+shape, the essay does not get that archetype — pick from the 13 available.
+
+---
 
 ## The problem in one paragraph
 
@@ -49,8 +86,8 @@ Lead-in sentence naming the question, then the figure:
 
 <__FIGURE_1__ />
 
-Read the default state aloud here: what the reader is looking at before
-they touch anything, and what changes when they do.
+Read the default state aloud: what the reader sees before touching anything,
+and what changes when they do.
 
 ## Section two — the mechanism
 
@@ -58,27 +95,24 @@ A different archetype for a different kind of understanding:
 
 <__FIGURE_2__ />
 
-Interpretation: the sentence that survives the figure being scrolled past.
-
-## Section three — the evidence
+## The evidence
 
 Tables and result charts carry evidence; interactive figures carry
 mechanisms. Keep the two apart.
 
 <!--
-ADOPTION CHECKLIST — all in the same commit (the constitution tests enforce
-each item):
+ADOPTION CHECKLIST — all in the same commit (test/post-figures.test.ts
+enforces the first three):
 
-[ ] lib/post/<slug>.ts      — the post's figure data, pure and JSON-only
-[ ] components/post/<slug>  — thin bindings: library component + post data
-                              (a binding composes a library component;
-                              re-implementing a pattern in the post is
-                              forbidden — Article 2)
-[ ] lib/figures/registry.ts — entry flips status: 'library' → 'adopted'
-                              (or a new entry), posts: ['<slug>'], routing
-                              keywords that send real questions to it
-[ ] test/                   — unit tests for the post's figure logic and
-                              routeFigure cases for the new keywords
-[ ] check:site              — the article HTML must contain each figure's
-                              server-rendered initial state (Article 5)
+[ ] lib/post/<slug>.ts          — the post's figure data (real facts only) +
+                                  export const <POST>_FIGURES manifest
+                                  (≥4 distinct archetypes, all in the registry)
+[ ] components/post/<slug>-figures.tsx — thin bindings: library component +
+                                  post data; no logic, no new interaction
+[ ] lib/figures/registry.ts     — each used figure: status 'adopted',
+                                  posts: [..., '<slug>']
+[ ] components/mdx/mdx-components.tsx — register the binding names
+[ ] content/posts/<slug>.mdx    — 4–5 insertions, each with a lead-in and
+                                  an interpretation sentence
+[ ] npm run quality && npm run verify
 -->

@@ -35,6 +35,9 @@ slider and a noise slider are the same figure. The current archetypes:
 | `toggle-assumption-inference` | `AssumptionSwitches` | flip switches, outcomes re-derive |
 | `answer-reveal-quiz` | `SelfCheckQuiz` | commit to an answer, get judged |
 | `segmented-swatch-toggle` | `ThemeSwitch` | pick a segment, the site's theme re-derives |
+| `accordion-layer-stack` | `LayerStack` | open architecture layers one at a time, facts inside |
+| `partition-drag-allocation` | `BudgetSplit` | drag dividers; a fixed budget re-partitions, caps clamp |
+| `column-sort-matrix` | `MetricMatrix` | activate a column heading; the evidence reorders |
 
 **Check:** registry archetype uniqueness among `library` and non-legacy
 `adopted` entries. `npm run figures:new` refuses a claimed archetype up front.
@@ -149,7 +152,12 @@ component from `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl` and the fixture,
 and refuses duplicate archetypes and tool names.
 
 **Check:** `npm run quality` (includes the constitution suite) and
-`npm run verify` must pass before push; CI re-runs both.
+`npm run verify` must pass before push; CI re-runs both. **Per-post floor:**
+every post that adopts figures carries **at least 4 distinct interaction
+archetypes** — enforced by `test/post-figures.test.ts`, which reads each
+post's manifest, checks it against the registry (registered, adopted,
+`posts` list), and verifies the MDX body renders the bindings. A post with
+fewer than four distinct patterns fails the suite.
 
 ## Article 11 — The assistant contract is the article contract [check]
 

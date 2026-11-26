@@ -194,3 +194,68 @@ describe('quiz', () => {
     expect(scoreOf([], [question])).toBe(0);
   });
 });
+
+import { clampOpen, nextLayer } from '@/lib/figures/layers';
+import { bucketValue, moveDivider, normalizeShares } from '@/lib/figures/budget';
+import { cycleSort, sortRows } from '@/lib/figures/matrix';
+
+describe('layers', () => {
+  const layers = [
+    { id: 'a', title: 'A', summary: '', facts: ['one'] },
+    { id: 'b', title: 'B', summary: '', facts: [] },
+  ];
+  it('clamps the open layer into the stack', () => {
+    expect(clampOpen('b', layers)).toBe('b');
+    expect(clampOpen('nope', layers)).toBe('a');
+    expect(clampOpen(null, layers)).toBeNull();
+  });
+  it('cycles next/prev with wraparound', () => {
+    expect(nextLayer(layers, 'a', 1)).toBe('b');
+    expect(nextLayer(layers, 'b', 1)).toBe('a');
+    expect(nextLayer(layers, 'a', -1)).toBe('b');
+  });
+});
+
+describe('budget', () => {
+  it('normalizes shares to a full 100', () => {
+    expect(normalizeShares([10, 30])).toEqual([25, 75]);
+    expect(normalizeShares([0, 0, 0])).toEqual([100 / 3, 100 / 3, 100 / 3]);
+  });
+  it('moves a divider and keeps the total fixed', () => {
+    const buckets = [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }];
+    const moved = moveDivider([50, 50], 0, 20, buckets);
+    expect(Math.round(moved[0])).toBe(70);
+    expect(Math.round(moved[1])).toBe(30);
+    expect(moved.reduce((s, x) => s + x, 0)).toBeCloseTo(100);
+  });
+  it('cannot drag past an empty neighbour', () => {
+    const moved = moveDivider([80, 20], 0, 50, [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }]);
+    expect(moved[1]).toBeCloseTo(0);
+  });
+  it('maps shares to real units and clamps at caps', () => {
+    const totals = { value: 1000, unit: 'KB' };
+    expect(bucketValue({ id: 'x', label: 'X' }, 25, totals)).toBe(250);
+    expect(bucketValue({ id: 'x', label: 'X', max: 100 }, 25, totals)).toBe(100);
+  });
+});
+
+describe('matrix', () => {
+  const columns = [{ key: 'n', label: 'N', numeric: true }, { key: 't', label: 'T' }];
+  const rows = [
+    { label: 'r1', cells: { n: 3, t: 'b' } },
+    { label: 'r2', cells: { n: 1, t: 'a' } },
+    { label: 'r3', cells: { n: 2, t: 'a' } },
+  ];
+  it('cycles asc → desc → data order', () => {
+    expect(cycleSort(null, 'n')).toEqual({ key: 'n', dir: 'asc' });
+    expect(cycleSort({ key: 'n', dir: 'asc' }, 'n')).toEqual({ key: 'n', dir: 'desc' });
+    expect(cycleSort({ key: 'n', dir: 'desc' }, 'n')).toBeNull();
+  });
+  it('sorts numerically, stably, both directions', () => {
+    expect(sortRows(rows, columns, { key: 'n', dir: 'asc' }).map((r) => r.label)).toEqual(['r2', 'r3', 'r1']);
+    expect(sortRows(rows, columns, { key: 'n', dir: 'desc' }).map((r) => r.label)).toEqual(['r1', 'r3', 'r2']);
+  });
+  it('sorts text columns with data order as tiebreak', () => {
+    expect(sortRows(rows, columns, { key: 't', dir: 'asc' }).map((r) => r.label)).toEqual(['r2', 'r3', 'r1']);
+  });
+});

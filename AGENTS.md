@@ -651,7 +651,13 @@ The short form:
    the one component.
 4. **A figure lands complete** — component, fixture, pure logic + tests,
    registry entry, passing constitution checks — or it does not land.
-5. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`
+5. **The per-post floor.** Every post that adopts figures carries at least
+   4 distinct interaction archetypes (manifest + registry + MDX-body
+   agreement, enforced by `test/post-figures.test.ts`). Data lives in the
+   post's own `lib/post/<slug>.ts`; components bind through thin wrappers in
+   `components/post/`. The genre layouts in
+   `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` say where each archetype slots.
+6. **Templates are the entry point:** `templates/GENERATIVE_FIGURE_TEMPLATE.tsx.tmpl`
    for components (scaffolded by `npm run figures:new`) and
    `templates/GENERATIVE_POST_LAYOUT.mdx.tmpl` for figure-bearing essays.
    `/lab` renders every registered figure with its defaults and is the

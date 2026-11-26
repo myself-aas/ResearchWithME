@@ -10,3 +10,6 @@ export { LENS_PEEK_FIXTURE } from './lens-peek';
 export { HOTSPOT_ATLAS_FIXTURE } from './hotspot-atlas';
 export { ASSUMPTION_SWITCHES_FIXTURE } from './assumption-switches';
 export { SELF_CHECK_QUIZ_FIXTURE } from './self-check-quiz';
+export { LAYER_STACK_FIXTURE } from './layer-stack';
+export { BUDGET_SPLIT_FIXTURE } from './budget-split';
+export { METRIC_MATRIX_FIXTURE } from './metric-matrix';

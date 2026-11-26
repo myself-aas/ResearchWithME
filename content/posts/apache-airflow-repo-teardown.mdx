@@ -22,7 +22,12 @@ A **DAG**, or directed acyclic graph, expresses task dependencies. The graph des
 - **Scheduling and execution are distinct responsibilities.** The scheduler selects work; an executor determines how tasks are run. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
 - **The metadata database participates in coordination.** The reviewed enqueue path accounts for parallelism and pool capacity before routing work to executors. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354)
 - **Retries require retry-safe work.** The best-practices guide recommends repeatable outputs, partitioned inputs, and avoiding duplicate writes. [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116)
-- **A local demonstration is not a production design.** Database choice, executor topology, logs, DAG distribution, health checks, and trust boundaries require explicit decisions. [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
+- **A local demonstration is not a production design.** Database choice, executor topology, logs, DAG distribution, health checks, and trust boundaries require explicit decisions. [6]
+
+The findings sorted by what kind of evidence carries them — and, just as important, what this review did **not** measure:
+
+<AirflowEvidenceMatrix />
+(https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
 
 ## Which Airflow version does this review cover?
 
@@ -44,6 +49,11 @@ The core package declares `requires-python = ">=3.11,!=3.15"`; the README's stab
 | Triggerer, when needed | Run asynchronous trigger work for deferred tasks. | Deferred workloads can introduce another component to operate. |
 
 Sources: the pinned architecture overview and executor guide. These are architectural responsibilities, not measurements of resource use. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
+
+The same components as a stack you can open layer by layer — each fact inside is one the review cites:
+
+<AirflowLayerStack />
+
 
 ## What does the scheduler code actually do?
 
@@ -94,6 +104,11 @@ Installation reproducibility deserves a separate check. The installation guide e
 
 Before a pilot, record the exact Airflow version, Python version, provider set, constraints reference, executor, database, and task/log storage arrangements. That is a proposed evaluation checklist, not a deployment configuration validated by this teardown.
 
+The checklist as switches — flip each one your pilot has actually made, and watch readiness move. The switches are the essay's proposal, not a validated configuration:
+
+<AirflowPilotSwitches />
+
+
 ## Is an Airflow deployment a sandbox for untrusted DAG authors?
 
 **Do not assume so. The reviewed security model treats DAG authors as code authors with substantial trust.** It says their code is not sandboxed by Airflow and can execute in workers, the DAG processor, and the triggerer. It also warns that the experimental multi-team feature does not yet guarantee full task-level isolation. [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
@@ -123,7 +138,12 @@ gh api "repos/$repo/contents/airflow-core/docs/security/security_model.rst?ref=$
 
 The repository also contains a scheduler pool-selection test and a unit-test workflow with Python/backend matrix inputs. Inspecting their assertions and invocation establishes that the test artifacts exist; it does **not** establish their current pass status, exhaustive coverage, or successful reproduction in this environment. [10](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py#L2225-L2266) [11](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml#L142-L163)
 
+Three facts worth checking yourself on before quoting this review — every answer is a claim the sources above support:
+
+<AirflowQuiz />
+
 ## What remains unverified?
+
 
 > **Review limits**
 > This is a selected source-and-documentation inspection of Airflow 3.4.0. No Airflow package was installed, no DAG was executed, no scheduler failover was induced, and no upstream tests or security probes were run. Throughput, latency, operating cost, recovery time, compatibility with a particular provider set, and production isolation remain unmeasured.
