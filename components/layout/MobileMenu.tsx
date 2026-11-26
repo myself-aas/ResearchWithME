@@ -4,36 +4,29 @@ import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { FlaskConical, PenLine, Rss, Search, Sparkles, Tags, User, X, type LucideIcon } from 'lucide-react';
+import { FlaskConical, PenLine, Rss, Tags, User, X, type LucideIcon } from 'lucide-react';
 import { ThemeSwitchControl } from '@/components/library/ThemeSwitch';
 import BrandLogo from '@/components/BrandLogo';
-import { NAV, SITE } from '@/lib/site';
+import { SITE } from '@/lib/site';
 
 /**
- * Mobile menu: a hamburger control that opens a right-side drawer.
+ * Mobile menu: a bare `40×40px` trigger that opens a right-side drawer.
  *
- * The drawer is a partial-width panel (max 19rem / 84vw) — never a full-screen
- * takeover. Its header carries the "reme." wordmark (not the word "Menu" —
- * the dialog's accessible name already says what it is), the items are
- * grouped under small mono captions, and the theme row is the *generative*
- * theme switch: the same registered control the assistant thread renders
- * (`show_theme_switch` in the figure registry), bound to the same site state.
+ * The drawer is a partial-width panel (`w-[min(19rem,84vw)]`) — never a
+ * full-screen takeover — portaled to `document.body`. Its header carries the
+ * "reme." wordmark (`BrandLogo` at `sm` size), the narrowed destinations
+ * (`Writing`, `Topics`, `Lab`, `About`, `RSS`), and the generative
+ * `ThemeSwitchControl` segmented radiogroup (`System` / `Light` / `Dark`).
  *
  * The interaction follows AGENTS.md §12: real `<button>` and `<a>` elements,
- * focus moved into the panel and restored on close, Escape and scrim-click to
- * dismiss, body scroll locked while open, and every animation is a CSS
- * transition that collapses under `prefers-reduced-motion`.
+ * focus moved into the panel on open and restored on close, Tab cycled inside
+ * the panel, Escape and scrim-click to dismiss, body scroll locked while open,
+ * and every animation is a CSS transition that collapses under
+ * `prefers-reduced-motion`.
  *
- * The trigger icon is Material Symbols' `view_cozy` (Apache-2.0, embedded
- * inline so no icon font is downloaded — §9 caps font families at two). Each
- * click rotates it a further quarter turn with the emphasize easing, a small
- * dynamic acknowledgment of the toggle; the drawer itself slides with the
- * standard easing.
- *
- * The panel renders through a portal to `document.body`: the sticky header
- * carries `backdrop-blur-md`, which makes it the containing block for any
- * `position: fixed` descendant — a drawer inside the header would be trapped
- * in the header's box instead of spanning the viewport.
+ * The trigger icon is Material Symbols' `view_cozy` (Outlined 24px geometry,
+ * Apache-2.0, embedded inline so no icon font is downloaded — §9 caps font
+ * families at two).
  */
 
 interface MenuItem {
@@ -45,59 +38,53 @@ interface MenuItem {
   external?: boolean;
 }
 
-const MENU_ICONS: Record<string, LucideIcon> = {
-  '/blog': PenLine,
-  '/tags': Tags,
-  '/assistant': Sparkles,
-  '/lab': FlaskConical,
-  '/about': User,
-  '/search': Search,
-};
-
-const MENU_DESCRIPTIONS: Record<string, string> = {
-  '/blog': 'Essays and repository teardowns',
-  '/tags': 'Browse the archive by topic',
-  '/assistant': 'Ask the archive, get quoted answers',
-  '/lab': 'Interactive figures, live with their data',
-  '/about': 'The person behind the site',
-  '/search': 'Full-text index of every essay',
-};
-
-/**
- * Grouped navigation: captions are nav section headings (rendered as-is),
- * the items inside keep the icon + label + one-line description contract.
- */
-const GROUPS: Array<{ caption: string; hrefs: string[] }> = [
-  { caption: 'Archive', hrefs: ['/blog', '/tags', '/search'] },
-  { caption: 'Interactive', hrefs: ['/assistant', '/lab'] },
-  { caption: 'Elsewhere', hrefs: ['/about', SITE.feedPath] },
+const GROUPS: Array<{ caption: string; items: MenuItem[] }> = [
+  {
+    caption: 'Explore',
+    items: [
+      {
+        href: '/blog',
+        label: 'Writing',
+        description: 'Essays and repository teardowns',
+        icon: PenLine,
+      },
+      {
+        href: '/tags',
+        label: 'Topics',
+        description: 'Browse the archive by topic',
+        icon: Tags,
+      },
+      {
+        href: '/lab',
+        label: 'Lab',
+        description: 'Interactive figures, live with their data',
+        icon: FlaskConical,
+      },
+    ],
+  },
+  {
+    caption: 'Elsewhere',
+    items: [
+      {
+        href: '/about',
+        label: 'About',
+        description: 'The person behind the site',
+        icon: User,
+      },
+      {
+        href: SITE.feedPath,
+        label: 'RSS',
+        description: 'Subscribe to the feed',
+        icon: Rss,
+        external: true,
+      },
+    ],
+  },
 ];
 
-const EXTRA_ITEMS: Record<string, MenuItem> = {
-  [SITE.feedPath]: {
-    href: SITE.feedPath,
-    label: 'RSS',
-    description: 'Subscribe to the feed',
-    icon: Rss,
-    external: true,
-  },
-};
-
-function itemFor(href: string): MenuItem {
-  const nav = NAV.find((entry) => entry.href === href);
-  return (
-    EXTRA_ITEMS[href] ?? {
-      href,
-      label: nav?.label ?? href,
-      description: MENU_DESCRIPTIONS[href] ?? '',
-      icon: MENU_ICONS[href] ?? PenLine,
-    }
-  );
-}
-
-/** Shared row styling so links and the theme control read as one list. */
+/** Shared row styling so links read as one accessible vertical list (`min-h-11`). */
 const itemClass =
-  'flex min-h-11 w-full items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-ink transition-colors hover:border-line hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
+  'flex min-h-11 w-full items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-left text-ink transition-colors duration-200 ease-standard hover:border-line hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none';
 
 function ItemChip({ icon: Icon }: { icon: LucideIcon }) {
   return (
@@ -107,9 +94,18 @@ function ItemChip({ icon: Icon }: { icon: LucideIcon }) {
   );
 }
 
-function MenuItemLink({ item, onNavigate }: { item: MenuItem; onNavigate: () => void }) {
+function MenuItemLink({
+  item,
+  onNavigate,
+  linkRef,
+}: {
+  item: MenuItem;
+  onNavigate: () => void;
+  linkRef?: React.Ref<HTMLAnchorElement>;
+}) {
   return (
     <Link
+      ref={linkRef}
       href={item.href}
       onClick={onNavigate}
       {...(item.external ? { target: '_blank', rel: 'noreferrer noopener' } : {})}
@@ -164,8 +160,13 @@ export default function MobileMenu() {
 
   function toggle() {
     setOpen((value) => !value);
-    // A quarter turn per click: the icon's small dynamic acknowledgment.
-    setRotation((value) => value + 90);
+    const reduced =
+      typeof window !== 'undefined' &&
+      Boolean(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+    if (!reduced) {
+      // A quarter turn per click: dynamic acknowledgment when motion is permitted.
+      setRotation((value) => value + 90);
+    }
   }
 
   const close = () => setOpen(false);
@@ -195,15 +196,15 @@ export default function MobileMenu() {
         aria-haspopup="dialog"
         {...(mounted ? { 'aria-controls': 'mobile-menu' } : {})}
         aria-label={open ? 'Close menu' : 'Open menu'}
-        className="inline-flex h-10 w-10 items-center justify-center text-ink-secondary transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus sm:hidden"
+        className="inline-flex h-10 min-h-10 w-10 items-center justify-center text-ink-secondary transition-colors duration-200 ease-standard hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none sm:hidden"
       >
         <span
           aria-hidden="true"
-          className="inline-block transition-transform duration-200 ease-emphasize motion-reduce:transition-none"
+          className="inline-block transition-transform duration-200 ease-emphasize motion-reduce:!transform-none motion-reduce:transition-none"
           style={{ transform: `rotate(${rotation}deg)` }}
         >
           {/* Material Symbols "view_cozy", Outlined 24px (Apache-2.0, google/material-design-icons). */}
-          <svg xmlns="http://www.w3.org/2000/svg" height="22" viewBox="0 -960 960 960" width="22" fill="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="currentColor">
             <path d="M340-540H200q-33 0-56.5-23.5T120-620v-140q0-33 23.5-56.5T200-840h140q33 0 56.5 23.5T420-760v140q0 33-23.5 56.5T340-540Zm-140-80h140v-140H200v140Zm140 500H200q-33 0-56.5-23.5T120-200v-140q0-33 23.5-56.5T200-420h140q33 0 56.5 23.5T420-340v140q0 33-23.5 56.5T340-120Zm-140-80h140v-140H200v140Zm560-340H620q-33 0-56.5-23.5T540-620v-140q0-33 23.5-56.5T620-840h140q33 0 56.5 23.5T840-760v140q0 33-23.5 56.5T760-540Zm-140-80h140v-140H620v140Zm140 500H620q-33 0-56.5-23.5T540-200v-140q0-33 23.5-56.5T620-420h140q33 0 56.5 23.5T840-340v140q0 33-23.5 56.5T760-120Zm-140-80h140v-140H620v140ZM340-620Zm0 280Zm280-280Zm0 280Z" />
           </svg>
         </span>
@@ -215,7 +216,7 @@ export default function MobileMenu() {
             <div
               aria-hidden="true"
               onClick={close}
-              className={`fixed inset-0 z-40 bg-surface-inverse/45 backdrop-blur-[2px] transition-opacity duration-200 ease-standard motion-reduce:transition-none ${
+              className={`fixed inset-0 z-40 bg-surface-inverse/45 transition-opacity duration-200 ease-standard motion-reduce:transition-none ${
                 open ? 'opacity-100' : 'pointer-events-none opacity-0'
               }`}
             />
@@ -236,22 +237,26 @@ export default function MobileMenu() {
                   type="button"
                   onClick={close}
                   aria-label="Close menu"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-canvas text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                  className="inline-flex h-11 min-h-11 w-11 min-w-11 items-center justify-center rounded-full border border-line bg-canvas text-ink-secondary transition-colors duration-200 ease-standard hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
                 >
                   <X className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
 
               <nav aria-label="Primary mobile" className="flex-1 overflow-y-auto p-3">
-                {GROUPS.map((group) => (
+                {GROUPS.map((group, groupIndex) => (
                   <div key={group.caption} className="mt-2 first:mt-0">
                     <p className="px-3 pb-1 pt-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink-secondary first:pt-1">
                       {group.caption}
                     </p>
                     <ul className="flex flex-col gap-1">
-                      {group.hrefs.map((href) => (
-                        <li key={href}>
-                          <MenuItemLink item={itemFor(href)} onNavigate={close} />
+                      {group.items.map((item, itemIndex) => (
+                        <li key={item.href}>
+                          <MenuItemLink
+                            item={item}
+                            onNavigate={close}
+                            linkRef={groupIndex === 0 && itemIndex === 0 ? firstLinkRef : undefined}
+                          />
                         </li>
                       ))}
                     </ul>
@@ -261,7 +266,7 @@ export default function MobileMenu() {
                 <p className="px-3 pb-1 pt-4 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-ink-secondary">
                   Appearance
                 </p>
-                <div className="rounded-xl border border-transparent px-3 py-2.5 transition-colors hover:border-line hover:bg-surface-subtle">
+                <div className="rounded-xl border border-transparent px-3 py-2.5 transition-colors duration-200 ease-standard hover:border-line hover:bg-surface-subtle motion-reduce:transition-none">
                   <ThemeSwitchControl />
                 </div>
               </nav>

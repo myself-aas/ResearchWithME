@@ -19,6 +19,12 @@ const shortDate = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 });
 
+const monthYearDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+});
+
 /** `2026-11-20` → `November 20, 2026` (UTC, so it never drifts by timezone). */
 export function formatDate(iso: string): string {
   const date = new Date(`${iso.slice(0, 10)}T00:00:00.000Z`);
@@ -29,6 +35,12 @@ export function formatDate(iso: string): string {
 export function formatDateShort(iso: string): string {
   const date = new Date(`${iso.slice(0, 10)}T00:00:00.000Z`);
   return Number.isNaN(date.getTime()) ? iso : shortDate.format(date);
+}
+
+/** `2026-11-20` → `Nov 2026`. */
+export function formatMonthYear(iso: string): string {
+  const date = new Date(`${iso.slice(0, 10)}T00:00:00.000Z`);
+  return Number.isNaN(date.getTime()) ? iso : monthYearDate.format(date);
 }
 
 /** `2026-11-20` → `2026`. */

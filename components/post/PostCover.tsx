@@ -3,24 +3,24 @@ import type { PostMeta } from '@/lib/content/types';
 
 const ARTWORKS = [
   {
-    background: 'from-slate-950 via-teal-950 to-stone-800',
-    accent: 'text-emerald-100',
-    line: 'text-emerald-200/70',
+    wash: 'from-code-panel-bg via-trust-emerging/25 to-code-panel-bg',
+    line: 'text-code-token-function/75',
+    dot: 'bg-trust-replicated',
   },
   {
-    background: 'from-amber-950 via-rose-950 to-slate-950',
-    accent: 'text-amber-100',
-    line: 'text-orange-200/70',
+    wash: 'from-code-panel-bg via-brand/25 to-code-panel-bg',
+    line: 'text-code-token-number/75',
+    dot: 'bg-brand',
   },
   {
-    background: 'from-orange-950 via-red-950 to-stone-900',
-    accent: 'text-orange-100',
-    line: 'text-amber-200/70',
+    wash: 'from-code-panel-bg via-knowledge-source/25 to-code-panel-bg',
+    line: 'text-code-token-builtin/75',
+    dot: 'bg-trust-replicated',
   },
   {
-    background: 'from-emerald-950 via-lime-950 to-slate-950',
-    accent: 'text-lime-100',
-    line: 'text-emerald-200/70',
+    wash: 'from-code-panel-bg via-trust-replicated/25 to-code-panel-bg',
+    line: 'text-code-token-string/75',
+    dot: 'bg-trust-replicated',
   },
 ] as const;
 
@@ -32,12 +32,15 @@ function AbstractCover({ post }: { post: PostMeta }) {
   const artwork = ARTWORKS[artworkIndex(post.slug)];
 
   return (
-    <div className={`relative h-full w-full overflow-hidden bg-gradient-to-br ${artwork.background}`} aria-hidden="true">
+    <div
+      className={`relative h-full w-full overflow-hidden bg-code-panel-bg bg-gradient-to-br ${artwork.wash}`}
+      aria-hidden="true"
+    >
       <div
         className="absolute inset-0 opacity-[0.12]"
         style={{
           backgroundImage:
-            'linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)',
+            'linear-gradient(color-mix(in srgb, var(--reme-code-panel-text) 55%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--reme-code-panel-text) 55%, transparent) 1px, transparent 1px)',
           backgroundSize: '34px 34px',
         }}
       />
@@ -56,12 +59,12 @@ function AbstractCover({ post }: { post: PostMeta }) {
         <circle cx="484" cy="84" r="5" fill="currentColor" />
         <circle cx="626" cy="134" r="5" fill="currentColor" />
       </svg>
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/10" />
-      <div className="absolute left-5 top-5 flex items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-white/75 sm:left-7 sm:top-7">
-        <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
+      <div className="absolute inset-0 bg-gradient-to-t from-code-panel-bg/80 via-transparent to-code-panel-bg/10" />
+      <div className="absolute left-5 top-5 flex items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-[0.18em] text-code-panel-text/80 sm:left-7 sm:top-7">
+        <span className={`h-1.5 w-1.5 rounded-full ${artwork.dot}`} />
         Field notes · {post.date.slice(0, 4)}
       </div>
-      <div className="absolute bottom-6 right-7 hidden h-12 w-12 rounded-full border border-white/30 sm:block" />
+      <div className="absolute bottom-6 right-7 hidden h-12 w-12 rounded-full border border-code-panel-text/25 sm:block" />
     </div>
   );
 }
@@ -69,15 +72,15 @@ function AbstractCover({ post }: { post: PostMeta }) {
 /**
  * A consistent editorial frame for covers, with deterministic abstract artwork
  * when a post has no supplied image. Local images use next/image; remote covers
- * are allowed from any HTTPS host. `aspect` widens the frame for the `hero`
- * cover style; the title lives in the page's own `<h1>` above the frame, so
- * the artwork never repeats it.
+ * are allowed from any HTTPS host. `aspect` locks the intrinsic ratio (`16:9`
+ * default, `21:9` for `hero`) so CLS stays 0; the title lives in the page's
+ * own `<h1>` above the frame, so the artwork never repeats it.
  */
 export default function PostCover({
   post,
   priority = false,
   sizes = '(max-width: 768px) 100vw, 40vw',
-  aspect = 'aspect-[16/9]',
+  aspect = 'aspect-video',
   className = '',
 }: {
   post: PostMeta;
@@ -86,7 +89,11 @@ export default function PostCover({
   aspect?: string;
   className?: string;
 }) {
-  const frameClassName = `relative ${aspect} w-full overflow-hidden rounded-xl border border-line bg-surface-subtle ${className}`;
+  const radiusClass = /\brounded-(?:none|xs|sm|md|lg|xl|2xl|3xl|full)\b/.test(className) ? '' : 'rounded-2xl';
+  const borderClass = /\bborder(?:-0|-2|-4|-8)?\b/.test(className) ? '' : 'border border-line';
+  const frameClassName = ['relative', aspect, 'w-full overflow-hidden bg-surface-subtle', radiusClass, borderClass, className]
+    .filter(Boolean)
+    .join(' ');
 
   if (!post.cover) {
     return (
@@ -106,6 +113,7 @@ export default function PostCover({
           alt={post.coverAlt ?? ''}
           fill
           priority={priority}
+          fetchPriority={priority ? 'high' : undefined}
           sizes={sizes}
           className="object-cover"
         />
@@ -117,6 +125,7 @@ export default function PostCover({
           width={1600}
           height={900}
           loading={priority ? 'eager' : 'lazy'}
+          fetchPriority={priority ? 'high' : undefined}
           decoding="async"
           className="h-full w-full object-cover"
         />

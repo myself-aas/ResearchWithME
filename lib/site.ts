@@ -57,7 +57,16 @@ export const CONTACT = {
 export const NAV = [
   { href: '/blog', label: 'Writing' },
   { href: '/tags', label: 'Topics' },
+  { href: '/lab', label: 'Lab' },
+] as const;
+
+export const FOOTER_NAV = [
+  { href: '/blog', label: 'Writing' },
+  { href: '/tags', label: 'Topics' },
+  { href: '/lab', label: 'Lab' },
   { href: '/assistant', label: 'Assistant' },
   { href: '/about', label: 'About' },
   { href: '/search', label: 'Search' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/privacy', label: 'Privacy' },
 ] as const;

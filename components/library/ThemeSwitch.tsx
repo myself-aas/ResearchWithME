@@ -130,7 +130,7 @@ export function ThemeSwitchControl() {
             tabIndex={preference === option ? 0 : -1}
             onClick={() => choose(option)}
             aria-label={`${LONG_LABELS[option]}${ready && preference === option ? ' (current)' : ''}`}
-            className={`relative z-10 inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-full px-2 font-sans text-xs font-medium transition-colors duration-200 ease-standard focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus ${
+            className={`relative z-10 inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-2 font-sans text-xs font-medium transition-colors duration-200 ease-standard focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none ${
               preference === option ? 'text-brand' : 'text-ink-secondary hover:text-ink'
             }`}
           >
@@ -148,9 +148,9 @@ export function ThemeSwitchControl() {
 
 /**
  * Compact cycle button for tight chrome (the desktop header): same control
- * state, one button, a quarter-turn acknowledge on change.
+ * state, one button, 44×44px accessible touch target.
  */
-export function ThemeSwitchCompact() {
+export function ThemeSwitchCompact({ className = 'inline-flex' }: { className?: string } = {}) {
   const [preference, ready, choose] = useThemePreference();
   return (
     <button
@@ -158,7 +158,7 @@ export function ThemeSwitchCompact() {
       onClick={() => choose(ORDER[(ORDER.indexOf(preference) + 1) % ORDER.length])}
       aria-label={ready ? `${LABELS[preference]} theme — switch theme` : 'Switch theme'}
       title={ready ? `${LABELS[preference]} theme` : 'Switch theme'}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+      className={`${className} h-11 min-h-11 w-11 min-w-11 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors duration-200 ease-standard hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none`}
     >
       <SegmentIcon preference={preference} />
     </button>

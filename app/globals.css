@@ -46,21 +46,6 @@
   --font-sans: var(--reme-font-interface);
   --font-mono: var(--reme-font-metadata);
 
-  /* Primitives — the reme neutral scale replaces Tailwind's stone scale so
-     every existing stone-* utility renders the reme neutral ramp. All values
-     reference the generated --reme-* tokens (tokens/generated/tokens.css). */
-  --color-stone-50: var(--reme-color-neutral-50);
-  --color-stone-100: var(--reme-color-neutral-100);
-  --color-stone-200: var(--reme-color-neutral-200);
-  --color-stone-300: var(--reme-color-neutral-300);
-  --color-stone-400: var(--reme-color-neutral-400);
-  --color-stone-500: var(--reme-color-neutral-500);
-  --color-stone-600: var(--reme-color-neutral-600);
-  --color-stone-700: var(--reme-color-neutral-700);
-  --color-stone-800: var(--reme-color-neutral-800);
-  --color-stone-900: var(--reme-color-neutral-900);
-  --color-stone-950: var(--reme-color-neutral-950);
-
   /* Semantic color roles — every value is a reference into the generated
      token layer (tokens/generated/tokens.css, built from tokens/src/*.json).
      No hex literals here: the generated file carries the light palette at
@@ -265,8 +250,8 @@
   }
 
   h1 {
-    font-size: clamp(2rem, 3.5vw, 3rem);
-    line-height: 1.12;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.15;
     letter-spacing: -0.02em;
   }
 
@@ -412,7 +397,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-stone-400) var(--color-stone-100);
+    scrollbar-color: var(--reme-border-strong) var(--reme-surface-subtle);
   }
 
   *::-webkit-scrollbar {
@@ -421,25 +406,26 @@
   }
 
   *::-webkit-scrollbar-track {
-    background: var(--color-stone-100);
+    background: var(--reme-surface-subtle);
   }
 
   *::-webkit-scrollbar-thumb {
-    background: var(--color-stone-400);
-    border: 2px solid var(--color-stone-100);
+    background: var(--reme-border-strong);
+    border: 2px solid var(--reme-surface-subtle);
     border-radius: 999px;
   }
+}
 
-  /* Readers who ask for more contrast get the strong border everywhere. The
-     subtle role is decorative by definition, so strengthening it costs the
-     design nothing and rescues low-vision users in both themes. The doubled
-     selector matches the generated tokens.css specificity so the override
-     wins in every theme path (light, system-dark, and .dark). */
-  @media (prefers-contrast: more) {
-    :root,
-    :root:not(.light) {
-      --reme-border-subtle: var(--reme-border-strong);
-    }
+/* Readers who ask for more contrast get the strong border everywhere
+   (including around the PostCover frame and interactive controls). Placed
+   outside `@layer base` so it beats the unlayered `tokens/generated/tokens.css`
+   rules across light (`:root`), system-dark (`:root:not(.light)`), and
+   explicit dark (`.dark`) themes. */
+@media (prefers-contrast: more) {
+  :root,
+  :root:not(.light),
+  .dark {
+    --reme-border-subtle: var(--reme-border-strong);
   }
 }
 
@@ -498,48 +484,12 @@ html .px-1\.5 {
   padding-right: 0.5rem;
 }
 
-/* Neutral colors on light surfaces must stay AA-legible. */
-html:not(.dark) .text-stone-400,
-html:not(.dark) .text-stone-500,
-html:not(.dark) .placeholder-stone-400,
-html:not(.dark) .placeholder-stone-500 {
-  color: var(--color-stone-600);
-}
-
-html .dark-surface .text-stone-400,
-html .dark-surface .text-stone-500,
-html .dark-surface .text-stone-600,
-html .dark-surface .text-stone-700,
-html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-400,
-html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-500,
-html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-600,
-html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) .text-stone-700 {
-  color: var(--color-stone-200);
-}
-
-html :where(input, textarea)::placeholder {
-  color: var(--color-stone-600) !important;
-  opacity: 1;
-}
-
-html :where(input, textarea)[class*="bg-stone-9"]::placeholder,
-html :where(input, textarea)[class*="bg-slate-9"]::placeholder,
-html :where(input, textarea)[class*="bg-zinc-9"]::placeholder,
-html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(input, textarea)::placeholder {
-  color: var(--color-stone-300) !important;
-}
-
-/* Dark surfaces use the shared focus token (switches with the theme). */
-html :is([class*="bg-stone-9"], [class*="bg-slate-9"], [class*="bg-zinc-9"]) :where(a, button, input, select, textarea, summary):focus-visible {
-  outline-color: var(--color-focus);
-}
-
 html .shadow-xs,
 html .shadow-2xs {
-  --tw-shadow: 0 1px 2px 0 rgb(11 16 15 / 0.05);
+  --tw-shadow: 0 1px 2px 0 color-mix(in srgb, var(--reme-text-primary) 5%, transparent);
 }
 
-/* One restrained route reveal — reme v3.1 motion pattern "reveal":
+/* One restrained route reveal — reme v3.2 motion pattern "reveal":
    200ms, standard easing. */
 @keyframes rwm-page-settle {
   from {
@@ -558,27 +508,27 @@ html .shadow-2xs {
   }
 }
 
-/* reme v3.1 §9 reduced-motion contract.
-   Scoped rather than applied to `*`: a universal rule also captures anything
-   that gains motion later, so a component's own timing would be silently
-   flattened with no way to opt back in. The selector below names the three
-   families that actually animate here — the page reveal and transitions painted
-   by the utility layer.
-
-   `.animate-pulse` is deliberately excluded. Skeleton shimmer carries the
-   "still loading" state; freezing it would leave a bare grey block that looks
-   like a failed render, and a slow opacity pulse is not vestibular motion.
-   `animate-spin` (the button busy indicator) is kept for the same reason. */
+/* reme v3.2 §9 reduced-motion contract.
+   Scoped rather than applied to `*`: collapses the page reveal, 200ms reveals,
+   320–480ms settles, arbitrary transition-[...] utilities, and icon rotations.
+   `.animate-pulse` and `.animate-spin` stay excluded for non-vestibular busy
+   states. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto !important;
   }
 
+  main {
+    animation: none !important;
+  }
+
+  .transition,
   [class*="transition-colors"],
   [class*="transition-transform"],
   [class*="transition-opacity"],
   [class*="transition-shadow"],
-  [class*="transition-all"] {
+  [class*="transition-all"],
+  [class*="transition-\["] {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

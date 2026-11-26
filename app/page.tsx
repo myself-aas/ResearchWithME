@@ -2,11 +2,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
-import { FeaturedPost, PostRow } from '@/components/post/PostCard';
-import { getAllPostMeta, getAllTags, getFeaturedPost, getSearchIndex, getSiteStats } from '@/lib/content/posts';
+import HomeHero from '@/components/post/HomeHero';
+import { PostRow } from '@/components/post/PostCard';
+import { getAllPostMeta, getAllTags, getFeaturedPost, getSearchIndex } from '@/lib/content/posts';
 import { suggestPrompts } from '@/lib/assistant/retrieval';
 import { FIGURES } from '@/lib/figures/registry';
-import { AUTHOR, SITE } from '@/lib/site';
 import { jsonLdScript, websiteJsonLd } from '@/lib/seo/jsonld';
 
 export default function HomePage() {
@@ -14,7 +14,6 @@ export default function HomePage() {
   const featured = getFeaturedPost();
   const latest = posts.filter((post) => post.slug !== featured?.slug).slice(0, 6);
   const topics = getAllTags().slice(0, 8);
-  const stats = getSiteStats();
   // Derived from the archive, never hardcoded (§18 rule 7).
   const prompts = suggestPrompts(getSearchIndex());
   // Revised essays: only ones with a real `updated` date — no fabricated recency.
@@ -28,81 +27,12 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd()) }} />
       <SiteHeader />
 
-      <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-12 sm:px-6 sm:pt-16 lg:px-8">
-        <section aria-labelledby="home-title" className="grid gap-10 border-b border-line pb-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-14">
-          <div>
-            <h1
-              id="home-title"
-              className="mt-5 max-w-3xl font-serif text-[clamp(2.5rem,6vw,4.25rem)] font-bold leading-[1.02] tracking-[-0.03em] text-ink text-balance"
-            >
-              Research papers and open code, reviewed in public.
-            </h1>
-            <p className="mt-5 max-w-2xl font-sans text-lg leading-relaxed text-ink-secondary">
-              {SITE.description}
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              {featured && (
-                <Link
-                  href={featured.href}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-action-primary px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-                >
-                  Read the latest
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              )}
-              <Link
-                href="/blog"
-                className="inline-flex min-h-11 items-center rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-              >
-                Browse the archive
-              </Link>
-            </div>
-          </div>
-
-          <aside aria-label="About the author" className="h-fit rounded-2xl border border-line bg-surface p-5">
-            <div className="flex items-center gap-3">
-              <span
-                aria-hidden="true"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-line bg-selection font-serif text-sm font-bold text-brand"
-              >
-                {AUTHOR.initials}
-              </span>
-              <div className="min-w-0">
-                <p className="truncate font-serif text-base font-semibold text-ink">{AUTHOR.name}</p>
-                <p className="truncate font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
-                  {AUTHOR.role}
-                </p>
-              </div>
-            </div>
-            <p className="mt-4 font-sans text-sm leading-relaxed text-ink-secondary">{AUTHOR.shortBio}</p>
-            <Link
-              href="/about"
-              className="mt-4 inline-flex items-center gap-1 font-sans text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
-            >
-              About this site
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-            </Link>
-            <dl className="mt-5 grid grid-cols-2 gap-3 border-t border-line pt-4">
-              <div>
-                <dt className="font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">Essays</dt>
-                <dd className="font-serif text-xl font-semibold text-ink">{stats.posts}</dd>
-              </div>
-              <div>
-                <dt className="font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">Topics</dt>
-                <dd className="font-serif text-xl font-semibold text-ink">{stats.tags}</dd>
-              </div>
-            </dl>
-          </aside>
-        </section>
-
-        {featured && (
-          <section aria-labelledby="featured-heading" className="pt-12">
-            <h2 id="featured-heading" className="sr-only">
-              Featured essay
-            </h2>
-            <FeaturedPost post={featured} />
-          </section>
-        )}
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-7xl flex-1 px-4 pb-12 pt-6 md:px-6 md:pt-10 lg:px-8 lg:pt-12"
+      >
+        <HomeHero post={featured} />
 
         {(latest.length > 0 || posts.length === 0) && (
           <section aria-labelledby="latest-heading" className="pt-14">
@@ -113,7 +43,7 @@ export default function HomePage() {
               {latest.length > 0 && (
                 <Link
                   href="/blog"
-                  className="inline-flex items-center gap-1 font-sans text-sm font-semibold text-brand underline underline-offset-4 hover:text-brand-pressed"
+                  className="inline-flex min-h-11 items-center gap-1 font-sans text-sm font-semibold text-brand underline underline-offset-4 transition-colors duration-200 ease-standard hover:text-brand-pressed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
                 >
                   All essays
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -149,7 +79,7 @@ export default function HomePage() {
                 <li key={topic.slug}>
                   <Link
                     href={`/tags/${topic.slug}`}
-                    className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 font-sans text-sm text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-line bg-surface px-4 py-2 font-sans text-sm text-ink-secondary transition-colors duration-200 ease-standard hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
                   >
                     {topic.tag}
                     <span className="font-mono text-[0.6875rem] text-ink-secondary">{topic.count}</span>
@@ -174,7 +104,7 @@ export default function HomePage() {
                 <li key={post.slug}>
                   <Link
                     href={post.href}
-                    className="flex flex-wrap items-baseline justify-between gap-2 px-5 py-3.5 transition-colors hover:bg-surface-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus"
+                    className="flex min-h-11 flex-wrap items-baseline justify-between gap-2 px-5 py-3.5 transition-colors duration-200 ease-standard hover:bg-surface-subtle focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
                   >
                     <span className="font-sans text-sm font-semibold text-ink">{post.title}</span>
                     <span className="font-mono text-xs text-ink-secondary">
@@ -202,7 +132,7 @@ export default function HomePage() {
             </div>
             <Link
               href="/lab"
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-surface px-5 py-2.5 font-sans text-sm font-semibold text-ink transition-colors duration-200 ease-standard hover:border-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
             >
               Open the figure lab
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -233,7 +163,7 @@ export default function HomePage() {
             </ul>
             <Link
               href="/assistant"
-              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-brand px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-colors hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-brand px-6 py-2.5 font-sans text-sm font-semibold text-on-primary transition-colors duration-200 ease-standard hover:bg-brand-hover active:bg-brand-pressed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus motion-reduce:transition-none"
             >
               Ask the archive
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
