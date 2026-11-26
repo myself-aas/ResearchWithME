@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, FlaskConical, PenLine, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import SiteHeader from '@/components/layout/SiteHeader';
 import SiteFooter from '@/components/layout/SiteFooter';
 import { FeaturedPost, PostRow } from '@/components/post/PostCard';
@@ -31,14 +31,6 @@ export default function HomePage() {
       <main id="main-content" tabIndex={-1} className="mx-auto w-full max-w-6xl flex-1 px-5 pb-8 pt-12 sm:px-6 sm:pt-16 lg:px-8">
         <section aria-labelledby="home-title" className="grid gap-10 border-b border-line pb-14 lg:grid-cols-[minmax(0,1fr)_18rem] lg:gap-14">
           <div>
-            <p className="flex flex-wrap items-center gap-2 font-mono text-[0.6875rem] uppercase tracking-wider text-ink-secondary">
-              <PenLine className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
-              <span>Essays on research &amp; open code</span>
-              <span aria-hidden="true">·</span>
-              <span>
-                {stats.posts} {stats.posts === 1 ? 'essay' : 'essays'}
-              </span>
-            </p>
             <h1
               id="home-title"
               className="mt-5 max-w-3xl font-serif text-[clamp(2.5rem,6vw,4.25rem)] font-bold leading-[1.02] tracking-[-0.03em] text-ink text-balance"
@@ -197,11 +189,7 @@ export default function HomePage() {
 
         {spotlight && (
           <section aria-labelledby="spotlight-heading" className="pt-14">
-            <p className="flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-brand">
-              <FlaskConical className="h-3.5 w-3.5" aria-hidden="true" />
-              From the figure lab
-            </p>
-            <h2 id="spotlight-heading" className="mt-3 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            <h2 id="spotlight-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
               See it, don&rsquo;t just read it
             </h2>
             <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
@@ -224,11 +212,7 @@ export default function HomePage() {
 
         {prompts.length > 0 && (
           <section aria-labelledby="assistant-heading" className="pt-14">
-            <p className="flex items-center gap-2 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider text-brand">
-              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
-              Ask the archive
-            </p>
-            <h2 id="assistant-heading" className="mt-3 font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            <h2 id="assistant-heading" className="font-serif text-2xl font-bold tracking-tight text-ink sm:text-3xl">
               Answers that quote, not improvise
             </h2>
             <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">

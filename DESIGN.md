@@ -279,4 +279,13 @@ image so it pins the light set by design.
 Brand icons (`favicon.svg`, `icon.svg`, `*.png`, `favicon.ico`) are artwork, not
 UI, and carry their own ink.
 
+Code-panel tokens (2026-11-25): the dark code panel is pinned by `code-*`
+tokens present identically in both semantic sets (`tokens/src/semantic-*.json`)
+— panel background, text, and the ten syntax roles — so syntax colours are
+stable while every other role flips with the theme. The palette is blue-free
+(the two blue syntax hues became teal `#62D0C4` and light violet `#D8B4FE`,
+matching the site's blue→violet/teal substitution rule), every pair is
+contrast-gated in `tokens:check`, and the comment hue warms to `#9C958D`.
+The pinned darkness is a deliberate token decision, not a hex escape.
+
 Everything else resolves through a token.

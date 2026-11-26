@@ -227,6 +227,16 @@
   --reme-chart-series-5: #7C3AED;
   --reme-chart-series-6: #991B1B;
   --reme-chart-series-7: #5C5C63;
+  --reme-code-panel-bg: #10141B;
+  --reme-code-panel-text: #ECEFF4;
+  --reme-code-token-comment: #9C958D;
+  --reme-code-token-keyword: #C792EA;
+  --reme-code-token-string: #A5D6A7;
+  --reme-code-token-number: #F78C6C;
+  --reme-code-token-function: #62D0C4;
+  --reme-code-token-attr: #FFCB6B;
+  --reme-code-token-builtin: #D8B4FE;
+  --reme-code-token-deletion: #FF7B72;
   --reme-component-button-primary-background: var(--reme-action-primary);
   --reme-component-button-primary-background-hover: var(--reme-action-primary-hover);
   --reme-component-button-primary-background-pressed: var(--reme-action-primary-pressed);
@@ -346,6 +356,16 @@
     --reme-chart-series-5: #FDBA74;
     --reme-chart-series-6: #F87171;
     --reme-chart-series-7: #C4B5FD;
+    --reme-code-panel-bg: #10141B;
+    --reme-code-panel-text: #ECEFF4;
+    --reme-code-token-comment: #9C958D;
+    --reme-code-token-keyword: #C792EA;
+    --reme-code-token-string: #A5D6A7;
+    --reme-code-token-number: #F78C6C;
+    --reme-code-token-function: #62D0C4;
+    --reme-code-token-attr: #FFCB6B;
+    --reme-code-token-builtin: #D8B4FE;
+    --reme-code-token-deletion: #FF7B72;
   }
 }
 
@@ -424,4 +444,14 @@
   --reme-chart-series-5: #FDBA74;
   --reme-chart-series-6: #F87171;
   --reme-chart-series-7: #C4B5FD;
+  --reme-code-panel-bg: #10141B;
+  --reme-code-panel-text: #ECEFF4;
+  --reme-code-token-comment: #9C958D;
+  --reme-code-token-keyword: #C792EA;
+  --reme-code-token-string: #A5D6A7;
+  --reme-code-token-number: #F78C6C;
+  --reme-code-token-function: #62D0C4;
+  --reme-code-token-attr: #FFCB6B;
+  --reme-code-token-builtin: #D8B4FE;
+  --reme-code-token-deletion: #FF7B72;
 }

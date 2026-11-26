@@ -145,3 +145,22 @@ standing rule):**
    and a rendered-screenshot pass on a machine with the engine network access
    (`impeccable shot` at 390 px and 1280 px) to close the untested gap this
    run documented.
+
+---
+
+## Resolution (2026-11-25, author-approved)
+
+All three reported P2s are resolved in the follow-up commit:
+
+1. **Kickers above headings** → best practice applied: the hero eyebrow and the two homepage
+   section labels were deleted outright (the headings carry their own weight; the essay count
+   lives in the hero's stat block), and the lab's metadata chips moved below each figure heading,
+   where they read as apparatus rather than label.
+2. **Code-panel palette** → tokenized: ten `code-*` tokens added identically to both semantic
+   sets (the panel is pinned dark by design), wired through `--color-code-*` roles, CI-gated in
+   `tokens:check` (10 new WCAG pairs). The two blue syntax hues were replaced per the site's
+   blue→violet/teal rule (function `#82AAFF`→teal `#62D0C4`, built-in `#89DDFF`→light violet
+   `#D8B4FE`) and the comment hue warmed (`#8B93A7`→`#9C958D`). DESIGN.md's literals clause
+   documents the exception.
+3. **`/lab` budget** → `check:site` asserts lab page-specific JS ≤ 80 KB gz and prints the
+   measured number, mirroring the article gate (AGENTS.md §9 table row added).

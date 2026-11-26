@@ -201,6 +201,16 @@ The multi-author publishing platform becomes a single-author MDX blog. Git is th
 
 ## [Unreleased]
 
+### Changed
+- Resolved the three UI/UX-audit decisions (2026-11-25): kickers above headings are gone — the
+  homepage hero eyebrow and the two section labels were deleted (headings carry their own weight;
+  the essay count lives in the hero's stat block), and the lab's metadata chips moved below each
+  figure heading. The code-panel syntax palette is tokenized: ten `code-*` tokens in both semantic
+  sets (pinned dark by design), CI-gated for contrast in `tokens:check`, with the blue syntax hues
+  replaced by teal/light-violet and the comment hue warmed — no blue anywhere in the UI. And
+  `check:site` now asserts a `/lab` page-specific JS budget (≤ 80 KB gz) beside the article's,
+  so the figure library cannot grow unnoticed.
+
 ### Added
 - The `impeccable` design-review skill (pbakaus/impeccable v4.11.0, verbatim) installed into
   `.agents/skills/`, and the audit it produced: `UIUX-AUDIT.md` grades the frontend 17/20 (Good) —

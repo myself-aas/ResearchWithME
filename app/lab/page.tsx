@@ -70,28 +70,28 @@ export default function LabPage() {
         <div className="flex flex-col gap-14 py-10">
           {FIGURES.map((figure) => (
             <section key={figure.toolName} aria-labelledby={figure.toolName} className="scroll-mt-24">
-              <div className="flex flex-wrap items-center gap-2">
+              <h2
+                id={figure.toolName}
+                className="font-serif text-2xl font-bold tracking-tight text-ink"
+              >
+                {figure.title}
+              </h2>
+              <p className="mt-2 flex flex-wrap items-center gap-2 font-mono text-[0.6875rem] text-ink-secondary">
                 <span
-                  className={`rounded-full border px-2.5 py-1 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider ${
+                  className={`rounded-full border px-2.5 py-1 font-semibold uppercase tracking-wider ${
                     figure.status === 'adopted'
                       ? 'border-brand/40 bg-selection/60 text-brand'
-                      : 'border-line bg-canvas text-ink-secondary'
+                      : 'border-line bg-canvas'
                   }`}
                 >
                   {figure.status === 'adopted' ? (isLegacy(figure) ? 'Adopted · legacy' : 'Adopted') : 'Library fixture'}
                 </span>
-                <span className="rounded-full border border-line bg-canvas px-2.5 py-1 font-mono text-[0.6875rem] text-ink-secondary">
+                <span className="rounded-full border border-line bg-canvas px-2.5 py-1">
                   archetype: {figure.archetype}
                 </span>
-                <span className="font-mono text-[0.6875rem] text-ink-secondary">{figure.toolName}</span>
-              </div>
-              <h2
-                id={figure.toolName}
-                className="mt-3 font-serif text-2xl font-bold tracking-tight text-ink"
-              >
-                {figure.title}
-              </h2>
-              <p className="mt-2 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
+                <span>{figure.toolName}</span>
+              </p>
+              <p className="mt-3 max-w-2xl font-sans text-sm leading-relaxed text-ink-secondary">
                 {figure.blurb} {figure.status === 'adopted' && !isLegacy(figure)
                   ? 'It is adopted in the essay below and routes from the assistant by its keywords.'
                   : figure.status === 'adopted'

@@ -320,6 +320,7 @@ Measured on a representative article by `npm run check:site`, which prints the n
 | JS per article | ≤ 100 KB gz **page-specific** | measured and asserted in CI |
 | JS total per article | reported (currently ~115 KB gz) | the Next/React runtime is a fixed floor (§15) |
 | JS on `/assistant` | measured and reported | the chat island is code-split to that route only; article pages never load it (§18) |
+| JS on `/lab` | ≤ 80 KB gz **page-specific** | the whole figure registry renders there; measured and asserted in CI |
 | CSS | ≤ 50 KB gz | one stylesheet, tokens, no component-library CSS |
 | Page weight | ≤ 1 MB | text-first pages, images sized and lazy by default |
 | Font families | ≤ 2 downloaded | today: two (Newsreader for editorial text, Inter for interface); mono is the system stack |

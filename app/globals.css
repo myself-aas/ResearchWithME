@@ -83,6 +83,20 @@
   --color-focus: var(--reme-focus);
   --color-selection: var(--reme-selection);
 
+  /* Code panel — pinned dark in both themes by design (DESIGN.md literals):
+     the same code-* values live in both semantic sets, so syntax colours are
+     stable while every other role flips with the theme. */
+  --color-code-panel-bg: var(--reme-code-panel-bg);
+  --color-code-panel-text: var(--reme-code-panel-text);
+  --color-code-token-comment: var(--reme-code-token-comment);
+  --color-code-token-keyword: var(--reme-code-token-keyword);
+  --color-code-token-string: var(--reme-code-token-string);
+  --color-code-token-number: var(--reme-code-token-number);
+  --color-code-token-function: var(--reme-code-token-function);
+  --color-code-token-attr: var(--reme-code-token-attr);
+  --color-code-token-builtin: var(--reme-code-token-builtin);
+  --color-code-token-deletion: var(--reme-code-token-deletion);
+
   /* Action roles */
   --color-action-primary: var(--reme-action-primary);
   --color-action-primary-hover: var(--reme-action-primary-hover);
@@ -837,12 +851,12 @@ html .shadow-2xs {
   overflow-x: auto;
   border: 1px solid var(--color-line);
   border-radius: 0.9rem;
-  background: #10141B;
+  background: var(--color-code-panel-bg);
   padding: 1.05rem 1.25rem;
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.65;
-  color: #ECEFF4;
+  color: var(--color-code-panel-text);
   font-variant-ligatures: none;
   tab-size: 2;
 }
@@ -913,7 +927,7 @@ html .shadow-2xs {
 /* Syntax highlighting (rehype-highlight) on the dark code panel. */
 .mdx-body .hljs-comment,
 .mdx-body .hljs-quote {
-  color: #8b93a7;
+  color: var(--color-code-token-comment);
   font-style: italic;
 }
 
@@ -921,26 +935,26 @@ html .shadow-2xs {
 .mdx-body .hljs-selector-tag,
 .mdx-body .hljs-literal,
 .mdx-body .hljs-doctag {
-  color: #c792ea;
+  color: var(--color-code-token-keyword);
 }
 
 .mdx-body .hljs-string,
 .mdx-body .hljs-regexp,
 .mdx-body .hljs-addition {
-  color: #a5d6a7;
+  color: var(--color-code-token-string);
 }
 
 .mdx-body .hljs-number,
 .mdx-body .hljs-symbol,
 .mdx-body .hljs-bullet {
-  color: #f78c6c;
+  color: var(--color-code-token-number);
 }
 
 .mdx-body .hljs-title,
 .mdx-body .hljs-section,
 .mdx-body .hljs-function .hljs-title,
 .mdx-body .hljs-title.function_ {
-  color: #82aaff;
+  color: var(--color-code-token-function);
 }
 
 .mdx-body .hljs-attr,
@@ -949,18 +963,18 @@ html .shadow-2xs {
 .mdx-body .hljs-template-variable,
 .mdx-body .hljs-type,
 .mdx-body .hljs-selector-attr {
-  color: #ffcb6b;
+  color: var(--color-code-token-attr);
 }
 
 .mdx-body .hljs-built_in,
 .mdx-body .hljs-meta,
 .mdx-body .hljs-selector-class,
 .mdx-body .hljs-selector-id {
-  color: #89ddff;
+  color: var(--color-code-token-builtin);
 }
 
 .mdx-body .hljs-deletion {
-  color: #ff7b72;
+  color: var(--color-code-token-deletion);
 }
 
 .mdx-body .hljs-emphasis {
