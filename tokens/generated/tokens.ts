@@ -2,72 +2,17 @@
 export const primitive = {
   "color": {
     "neutral": {
-      "0": "#FFFFFF",
-      "25": "#F2F2F5",
-      "50": "#FAF9F6",
-      "100": "#F3F1EC",
-      "200": "#E5E3DD",
-      "300": "#C9C8C3",
-      "400": "#9496A1",
-      "500": "#6E6E77",
-      "600": "#5C5C63",
-      "700": "#2A2D36",
-      "800": "#1C1F26",
-      "900": "#14161B",
-      "925": "#121214",
-      "950": "#0C0D10"
-    },
-    "emerald": {
-      "50": "#ECFDF5",
-      "100": "#D1FAE5",
-      "500": "#10B981",
-      "600": "#059669",
-      "700": "#047857"
-    },
-    "cyan": {
-      "50": "#ECFEFF",
-      "100": "#CFFAFE",
-      "500": "#06B6D4",
-      "600": "#0891B2",
-      "700": "#0E7490"
-    },
-    "amber": {
-      "50": "#FFFBEB",
-      "100": "#FEF3C7",
-      "500": "#F59E0B",
-      "600": "#D97706",
-      "700": "#B45309"
-    },
-    "red": {
-      "50": "#FEF2F2",
-      "100": "#FEE2E2",
-      "500": "#EF4444",
-      "600": "#DC2626",
-      "700": "#B91C1C"
-    },
-    "violet": {
-      "50": "#F5F3FF",
-      "100": "#EDE9FE",
-      "500": "#8B5CF6",
-      "600": "#7C3AED",
-      "700": "#6D28D9"
-    },
-    "maroon": {
-      "50": "#FDF5F5",
-      "100": "#F9E6E6",
-      "300": "#D9A3A3",
-      "500": "#A83A3A",
-      "700": "#7A1414",
-      "900": "#3E0000"
+      "0": "#F2F2F7",
+      "900": "#1C1C1E"
     },
     "tomato": {
-      "50": "#FFF3ED",
-      "100": "#FFE1D3",
-      "300": "#FFB59F",
-      "500": "#F65215",
-      "600": "#C93D0C",
-      "700": "#A83309",
-      "900": "#5C1B04"
+      "500": "#FF3B30"
+    },
+    "orange": {
+      "500": "#FF9F0A"
+    },
+    "yellow": {
+      "500": "#FFD60A"
     }
   },
   "typography": {
@@ -145,8 +90,8 @@ export const primitive = {
   "focus": {
     "width": "2px",
     "offset": "2px",
-    "light": "#F65215",
-    "dark": "#FFB59F"
+    "light": "#1C1C1E",
+    "dark": "#FF3B30"
   },
   "icon": {
     "small": "1rem",
@@ -157,237 +102,237 @@ export const primitive = {
   },
   "graph": {
     "node": {
-      "source": "#6D28D9",
-      "evidence": "#047857",
-      "claim": "#0E7490",
-      "discussion": "#B45309",
-      "publication": "#0F766E",
-      "archived": "#5C5C63"
+      "source": "#FF3B30",
+      "evidence": "#FFD60A",
+      "claim": "#FF9F0A",
+      "discussion": "#FFD60A",
+      "publication": "#FF9F0A",
+      "archived": "#1C1C1E"
     },
     "edge": {
-      "cites": "#6D28D9",
-      "supports": "#10B981",
-      "contradicts": "#EF4444",
-      "derives": "#06B6D4",
-      "relates": "#9496A1",
+      "cites": "#FF3B30",
+      "supports": "#FFD60A",
+      "contradicts": "#FF3B30",
+      "derives": "#FF9F0A",
+      "relates": "#1C1C1E",
       "direct-style": "solid",
       "inferred-style": "dashed"
     }
   }
 } as const;
 export const semanticLight = {
-  "canvas": "#F5F3EF",
-  "surface": "#FFFFFF",
-  "surface-subtle": "#F5F3EF",
-  "surface-raised": "#FFFFFF",
-  "surface-inverse": "#111111",
-  "text-primary": "#111111",
-  "text-secondary": "#4F4F4F",
-  "text-tertiary": "#4F4F4F",
-  "text-inverse": "#FFFFFF",
-  "border-subtle": "#E5E2DC",
-  "border-strong": "#8A8780",
-  "focus": "#111111",
-  "selection": "#F5F3EF",
+  "canvas": "#F2F2F7",
+  "surface": "#F2F2F7",
+  "surface-subtle": "#F2F2F7",
+  "surface-raised": "#F2F2F7",
+  "surface-inverse": "#1C1C1E",
+  "text-primary": "#1C1C1E",
+  "text-secondary": "#1C1C1E",
+  "text-tertiary": "#1C1C1E",
+  "text-inverse": "#F2F2F7",
+  "border-subtle": "#1C1C1E",
+  "border-strong": "#1C1C1E",
+  "focus": "#1C1C1E",
+  "selection": "#F2F2F7",
   "action": {
-    "primary": "#111111",
-    "primary-hover": "#111111",
-    "primary-pressed": "#111111",
-    "on-primary": "#FFFFFF",
-    "destructive": "#B91C1C",
-    "link": "#111111",
-    "visited": "#4F4F4F"
+    "primary": "#1C1C1E",
+    "primary-hover": "#1C1C1E",
+    "primary-pressed": "#1C1C1E",
+    "on-primary": "#F2F2F7",
+    "destructive": "#1C1C1E",
+    "link": "#1C1C1E",
+    "visited": "#1C1C1E"
   },
   "brand": {
-    "mark": "#111111",
-    "mark-inverse": "#FFFFFF"
+    "mark": "#1C1C1E",
+    "mark-inverse": "#F2F2F7"
   },
   "knowledge": {
-    "source": "#6D28D9",
-    "evidence": "#047857",
-    "insight": "#0E7490",
-    "discussion": "#B45309",
-    "contradiction": "#B91C1C",
-    "publication": "#0F766E",
-    "archive": "#5C5C63"
+    "source": "#1C1C1E",
+    "evidence": "#1C1C1E",
+    "insight": "#1C1C1E",
+    "discussion": "#1C1C1E",
+    "contradiction": "#1C1C1E",
+    "publication": "#1C1C1E",
+    "archive": "#1C1C1E"
   },
   "trust": {
-    "verified": "#6D28D9",
-    "replicated": "#047857",
-    "peer-reviewed": "#6D28D9",
-    "emerging": "#0E7490",
-    "uncertain": "#B45309",
-    "contested": "#B91C1C",
-    "unknown": "#5C5C63"
+    "verified": "#1C1C1E",
+    "replicated": "#1C1C1E",
+    "peer-reviewed": "#1C1C1E",
+    "emerging": "#1C1C1E",
+    "uncertain": "#1C1C1E",
+    "contested": "#1C1C1E",
+    "unknown": "#1C1C1E"
   },
   "provenance": {
-    "direct-source": "#047857",
-    "cited-source": "#6D28D9",
-    "derived": "#0E7490",
-    "inferred": "#B45309",
-    "ai-assisted": "#0F766E",
-    "unresolved": "#5C5C63"
+    "direct-source": "#1C1C1E",
+    "cited-source": "#1C1C1E",
+    "derived": "#1C1C1E",
+    "inferred": "#1C1C1E",
+    "ai-assisted": "#1C1C1E",
+    "unresolved": "#1C1C1E"
   },
   "workflow": {
-    "discovered": "#0E7490",
-    "extracted": "#0F766E",
-    "validated": "#047857",
-    "synthesized": "#6D28D9",
-    "reviewed": "#0F766E",
-    "published": "#6D28D9",
-    "archived": "#5C5C63"
+    "discovered": "#1C1C1E",
+    "extracted": "#1C1C1E",
+    "validated": "#1C1C1E",
+    "synthesized": "#1C1C1E",
+    "reviewed": "#1C1C1E",
+    "published": "#1C1C1E",
+    "archived": "#1C1C1E"
   },
   "collaboration": {
-    "comment": "#0E7490",
-    "suggestion": "#0F766E",
-    "review": "#0F766E",
-    "consensus": "#047857",
-    "disagreement": "#B91C1C"
+    "comment": "#1C1C1E",
+    "suggestion": "#1C1C1E",
+    "review": "#1C1C1E",
+    "consensus": "#1C1C1E",
+    "disagreement": "#1C1C1E"
   },
   "citation": {
-    "article": "#6D28D9",
-    "dataset": "#0E7490",
-    "book": "#047857",
-    "preprint": "#B45309",
-    "software": "#0F766E",
-    "protocol": "#0F766E",
-    "webpage": "#5C5C63"
+    "article": "#1C1C1E",
+    "dataset": "#1C1C1E",
+    "book": "#1C1C1E",
+    "preprint": "#1C1C1E",
+    "software": "#1C1C1E",
+    "protocol": "#1C1C1E",
+    "webpage": "#1C1C1E"
   },
   "domainText": {
-    "emerging": "#155E75",
-    "uncertain": "#92400E"
+    "emerging": "#1C1C1E",
+    "uncertain": "#1C1C1E"
   },
   "chart": {
-    "axis": "#5F6368",
-    "grid": "#DADCE0",
-    "label": "#5F6368",
+    "axis": "#1C1C1E",
+    "grid": "#1C1C1E",
+    "label": "#1C1C1E",
     "series": {
-      "1": "#C93D0C",
-      "2": "#0E7490",
-      "3": "#064E3B",
-      "4": "#B45309",
-      "5": "#7C3AED",
-      "6": "#991B1B",
-      "7": "#5C5C63"
+      "1": "#FF3B30",
+      "2": "#1C1C1E",
+      "3": "#FF3B30",
+      "4": "#1C1C1E",
+      "5": "#FF3B30",
+      "6": "#1C1C1E",
+      "7": "#FF3B30"
     }
   },
-  "code-panel-bg": "#10141B",
-  "code-panel-text": "#ECEFF4",
-  "code-token-comment": "#9C958D",
-  "code-token-keyword": "#C792EA",
-  "code-token-string": "#A5D6A7",
-  "code-token-number": "#F78C6C",
-  "code-token-function": "#62D0C4",
-  "code-token-attr": "#FFCB6B",
-  "code-token-builtin": "#D8B4FE",
-  "code-token-deletion": "#FF7B72"
+  "code-panel-bg": "#1C1C1E",
+  "code-panel-text": "#F2F2F7",
+  "code-token-comment": "#F2F2F7",
+  "code-token-keyword": "#FF3B30",
+  "code-token-string": "#FFD60A",
+  "code-token-number": "#FF9F0A",
+  "code-token-function": "#F2F2F7",
+  "code-token-attr": "#FFD60A",
+  "code-token-builtin": "#FF9F0A",
+  "code-token-deletion": "#FF3B30"
 } as const;
 export const semanticDark = {
-  "canvas": "#121212",
-  "surface": "#1A1A1A",
-  "surface-subtle": "#121212",
-  "surface-raised": "#1A1A1A",
-  "surface-inverse": "#F5F3EF",
-  "text-primary": "#F5F3EF",
-  "text-secondary": "#A8A8A8",
-  "text-tertiary": "#A8A8A8",
-  "text-inverse": "#111111",
-  "border-subtle": "#2E2E2E",
-  "border-strong": "#7A7A7A",
-  "focus": "#F5F3EF",
-  "selection": "#121212",
+  "canvas": "#1C1C1E",
+  "surface": "#1C1C1E",
+  "surface-subtle": "#1C1C1E",
+  "surface-raised": "#1C1C1E",
+  "surface-inverse": "#F2F2F7",
+  "text-primary": "#F2F2F7",
+  "text-secondary": "#F2F2F7",
+  "text-tertiary": "#F2F2F7",
+  "text-inverse": "#1C1C1E",
+  "border-subtle": "#F2F2F7",
+  "border-strong": "#F2F2F7",
+  "focus": "#FF3B30",
+  "selection": "#1C1C1E",
   "action": {
-    "primary": "#F5F3EF",
-    "primary-hover": "#F5F3EF",
-    "primary-pressed": "#F5F3EF",
-    "on-primary": "#111111",
-    "destructive": "#F87171",
-    "link": "#F5F3EF",
-    "visited": "#A8A8A8"
+    "primary": "#FFD60A",
+    "primary-hover": "#FFD60A",
+    "primary-pressed": "#FFD60A",
+    "on-primary": "#1C1C1E",
+    "destructive": "#FF3B30",
+    "link": "#F2F2F7",
+    "visited": "#F2F2F7"
   },
   "brand": {
-    "mark": "#F5F3EF",
-    "mark-inverse": "#FFFFFF"
+    "mark": "#F2F2F7",
+    "mark-inverse": "#F2F2F7"
   },
   "knowledge": {
-    "source": "#A78BFA",
-    "evidence": "#10B981",
-    "insight": "#06B6D4",
-    "discussion": "#F59E0B",
-    "contradiction": "#F87171",
-    "publication": "#5EEAD4",
-    "archive": "#9496A1"
+    "source": "#FF3B30",
+    "evidence": "#FFD60A",
+    "insight": "#FF9F0A",
+    "discussion": "#FFD60A",
+    "contradiction": "#FF3B30",
+    "publication": "#FF9F0A",
+    "archive": "#F2F2F7"
   },
   "trust": {
-    "verified": "#A78BFA",
-    "replicated": "#10B981",
-    "peer-reviewed": "#A78BFA",
-    "emerging": "#06B6D4",
-    "uncertain": "#F59E0B",
-    "contested": "#F87171",
-    "unknown": "#9496A1"
+    "verified": "#FFD60A",
+    "replicated": "#FF9F0A",
+    "peer-reviewed": "#FFD60A",
+    "emerging": "#FF9F0A",
+    "uncertain": "#FFD60A",
+    "contested": "#FF3B30",
+    "unknown": "#F2F2F7"
   },
   "provenance": {
-    "direct-source": "#10B981",
-    "cited-source": "#A78BFA",
-    "derived": "#06B6D4",
-    "inferred": "#F59E0B",
-    "ai-assisted": "#5EEAD4",
-    "unresolved": "#9496A1"
+    "direct-source": "#FF9F0A",
+    "cited-source": "#FFD60A",
+    "derived": "#FF9F0A",
+    "inferred": "#FFD60A",
+    "ai-assisted": "#FF9F0A",
+    "unresolved": "#F2F2F7"
   },
   "workflow": {
-    "discovered": "#06B6D4",
-    "extracted": "#14B8A6",
-    "validated": "#10B981",
-    "synthesized": "#A78BFA",
-    "reviewed": "#5EEAD4",
-    "published": "#A78BFA",
-    "archived": "#9496A1"
+    "discovered": "#FF9F0A",
+    "extracted": "#FF9F0A",
+    "validated": "#FF9F0A",
+    "synthesized": "#FFD60A",
+    "reviewed": "#FF9F0A",
+    "published": "#FFD60A",
+    "archived": "#F2F2F7"
   },
   "collaboration": {
-    "comment": "#06B6D4",
-    "suggestion": "#14B8A6",
-    "review": "#5EEAD4",
-    "consensus": "#10B981",
-    "disagreement": "#F87171"
+    "comment": "#FF9F0A",
+    "suggestion": "#FF9F0A",
+    "review": "#FF9F0A",
+    "consensus": "#FFD60A",
+    "disagreement": "#FF3B30"
   },
   "citation": {
-    "article": "#A78BFA",
-    "dataset": "#06B6D4",
-    "book": "#10B981",
-    "preprint": "#F59E0B",
-    "software": "#A78BFA",
-    "protocol": "#14B8A6",
-    "webpage": "#9496A1"
+    "article": "#FFD60A",
+    "dataset": "#FF9F0A",
+    "book": "#FF9F0A",
+    "preprint": "#FFD60A",
+    "software": "#FFD60A",
+    "protocol": "#FF9F0A",
+    "webpage": "#F2F2F7"
   },
   "domainText": {
-    "emerging": "#67E8F9",
-    "uncertain": "#FCD34D"
+    "emerging": "#FFD60A",
+    "uncertain": "#FF9F0A"
   },
   "chart": {
-    "axis": "#AEB4BE",
-    "grid": "#414754",
-    "label": "#AEB4BE",
+    "axis": "#F2F2F7",
+    "grid": "#F2F2F7",
+    "label": "#F2F2F7",
     "series": {
-      "1": "#FF8A5C",
-      "2": "#67E8F9",
-      "3": "#34D399",
-      "4": "#FDE047",
-      "5": "#FDBA74",
-      "6": "#F87171",
-      "7": "#C4B5FD"
+      "1": "#FF3B30",
+      "2": "#FF9F0A",
+      "3": "#FFD60A",
+      "4": "#F2F2F7",
+      "5": "#FF3B30",
+      "6": "#FF9F0A",
+      "7": "#FFD60A"
     }
   },
-  "code-panel-bg": "#10141B",
-  "code-panel-text": "#ECEFF4",
-  "code-token-comment": "#9C958D",
-  "code-token-keyword": "#C792EA",
-  "code-token-string": "#A5D6A7",
-  "code-token-number": "#F78C6C",
-  "code-token-function": "#62D0C4",
-  "code-token-attr": "#FFCB6B",
-  "code-token-builtin": "#D8B4FE",
-  "code-token-deletion": "#FF7B72"
+  "code-panel-bg": "#1C1C1E",
+  "code-panel-text": "#F2F2F7",
+  "code-token-comment": "#F2F2F7",
+  "code-token-keyword": "#FF3B30",
+  "code-token-string": "#FFD60A",
+  "code-token-number": "#FF9F0A",
+  "code-token-function": "#F2F2F7",
+  "code-token-attr": "#FFD60A",
+  "code-token-builtin": "#FF9F0A",
+  "code-token-deletion": "#FF3B30"
 } as const;
 export const motion = {
   "duration": {
@@ -447,60 +392,60 @@ export const motion = {
 export const component = {
   "button": {
     "primary": {
-      "background": "#111111",
-      "backgroundHover": "#111111",
-      "backgroundPressed": "#111111",
-      "foreground": "#FFFFFF",
+      "background": "#1C1C1E",
+      "backgroundHover": "#1C1C1E",
+      "backgroundPressed": "#1C1C1E",
+      "foreground": "#F2F2F7",
       "radius": "0.5rem",
-      "focusRing": "#111111"
+      "focusRing": "#1C1C1E"
     },
     "destructive": {
-      "background": "#B91C1C",
-      "foreground": "#FFFFFF",
+      "background": "#1C1C1E",
+      "foreground": "#F2F2F7",
       "radius": "0.5rem"
     }
   },
   "evidenceCard": {
-    "background": "#FFFFFF",
-    "border": "#E5E2DC",
-    "accent": "#047857",
-    "title": "#111111",
-    "metadata": "#4F4F4F"
+    "background": "#F2F2F7",
+    "border": "#1C1C1E",
+    "accent": "#1C1C1E",
+    "title": "#1C1C1E",
+    "metadata": "#1C1C1E"
   },
   "sourceCard": {
-    "background": "#FFFFFF",
-    "border": "#E5E2DC",
-    "accent": "#6D28D9",
-    "title": "#111111",
-    "metadata": "#4F4F4F"
+    "background": "#F2F2F7",
+    "border": "#1C1C1E",
+    "accent": "#1C1C1E",
+    "title": "#1C1C1E",
+    "metadata": "#1C1C1E"
   },
   "claimCard": {
-    "support": "#047857",
-    "contradiction": "#B91C1C",
-    "unresolved": "#5C5C63",
-    "background": "#FFFFFF",
-    "border": "#E5E2DC"
+    "support": "#1C1C1E",
+    "contradiction": "#1C1C1E",
+    "unresolved": "#1C1C1E",
+    "background": "#F2F2F7",
+    "border": "#1C1C1E"
   },
   "focusRing": {
-    "color": "#111111",
+    "color": "#1C1C1E",
     "width": "2px",
     "offset": "2px"
   },
   "shadcnAlias": {
-    "card": "#FFFFFF",
-    "card-foreground": "#111111",
-    "border": "#E5E2DC",
-    "sidebar-border": "#8A8780",
-    "input": "#E5E2DC",
-    "primary": "#111111",
-    "primary-foreground": "#FFFFFF",
-    "muted": "#F5F3EF",
-    "muted-foreground": "#4F4F4F",
-    "accent": "#F5F3EF",
-    "accent-foreground": "#111111",
-    "background": "#F5F3EF",
-    "foreground": "#111111",
-    "ring": "#111111"
+    "card": "#F2F2F7",
+    "card-foreground": "#1C1C1E",
+    "border": "#1C1C1E",
+    "sidebar-border": "#1C1C1E",
+    "input": "#1C1C1E",
+    "primary": "#1C1C1E",
+    "primary-foreground": "#F2F2F7",
+    "muted": "#F2F2F7",
+    "muted-foreground": "#1C1C1E",
+    "accent": "#F2F2F7",
+    "accent-foreground": "#1C1C1E",
+    "background": "#F2F2F7",
+    "foreground": "#1C1C1E",
+    "ring": "#1C1C1E"
   }
 } as const;
 export const tokens = { primitive, semanticLight, semanticDark, motion, component } as const;

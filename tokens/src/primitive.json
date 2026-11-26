@@ -1,72 +1,17 @@
 {
   "color": {
     "neutral": {
-      "0": "#FFFFFF",
-      "25": "#F2F2F5",
-      "50": "#FAF9F6",
-      "100": "#F3F1EC",
-      "200": "#E5E3DD",
-      "300": "#C9C8C3",
-      "400": "#9496A1",
-      "500": "#6E6E77",
-      "600": "#5C5C63",
-      "700": "#2A2D36",
-      "800": "#1C1F26",
-      "900": "#14161B",
-      "925": "#121214",
-      "950": "#0C0D10"
-    },
-    "emerald": {
-      "50": "#ECFDF5",
-      "100": "#D1FAE5",
-      "500": "#10B981",
-      "600": "#059669",
-      "700": "#047857"
-    },
-    "cyan": {
-      "50": "#ECFEFF",
-      "100": "#CFFAFE",
-      "500": "#06B6D4",
-      "600": "#0891B2",
-      "700": "#0E7490"
-    },
-    "amber": {
-      "50": "#FFFBEB",
-      "100": "#FEF3C7",
-      "500": "#F59E0B",
-      "600": "#D97706",
-      "700": "#B45309"
-    },
-    "red": {
-      "50": "#FEF2F2",
-      "100": "#FEE2E2",
-      "500": "#EF4444",
-      "600": "#DC2626",
-      "700": "#B91C1C"
-    },
-    "violet": {
-      "50": "#F5F3FF",
-      "100": "#EDE9FE",
-      "500": "#8B5CF6",
-      "600": "#7C3AED",
-      "700": "#6D28D9"
-    },
-    "maroon": {
-      "50": "#FDF5F5",
-      "100": "#F9E6E6",
-      "300": "#D9A3A3",
-      "500": "#A83A3A",
-      "700": "#7A1414",
-      "900": "#3E0000"
+      "0": "#F2F2F7",
+      "900": "#1C1C1E"
     },
     "tomato": {
-      "50": "#FFF3ED",
-      "100": "#FFE1D3",
-      "300": "#FFB59F",
-      "500": "#F65215",
-      "600": "#C93D0C",
-      "700": "#A83309",
-      "900": "#5C1B04"
+      "500": "#FF3B30"
+    },
+    "orange": {
+      "500": "#FF9F0A"
+    },
+    "yellow": {
+      "500": "#FFD60A"
     }
   },
   "typography": {
@@ -144,8 +89,8 @@
   "focus": {
     "width": "2px",
     "offset": "2px",
-    "light": "#F65215",
-    "dark": "#FFB59F"
+    "light": "#1C1C1E",
+    "dark": "#FF3B30"
   },
   "icon": {
     "small": "1rem",
@@ -156,19 +101,19 @@
   },
   "graph": {
     "node": {
-      "source": "#6D28D9",
-      "evidence": "#047857",
-      "claim": "#0E7490",
-      "discussion": "#B45309",
-      "publication": "#0F766E",
-      "archived": "#5C5C63"
+      "source": "#FF3B30",
+      "evidence": "#FFD60A",
+      "claim": "#FF9F0A",
+      "discussion": "#FFD60A",
+      "publication": "#FF9F0A",
+      "archived": "#1C1C1E"
     },
     "edge": {
-      "cites": "#6D28D9",
-      "supports": "#10B981",
-      "contradicts": "#EF4444",
-      "derives": "#06B6D4",
-      "relates": "#9496A1",
+      "cites": "#FF3B30",
+      "supports": "#FFD60A",
+      "contradicts": "#FF3B30",
+      "derives": "#FF9F0A",
+      "relates": "#1C1C1E",
       "direct-style": "solid",
       "inferred-style": "dashed"
     }
