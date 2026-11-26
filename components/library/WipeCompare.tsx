@@ -53,7 +53,7 @@ export default function WipeCompare({
         onPointerMove={(event) => {
           if (event.currentTarget.hasPointerCapture(event.pointerId)) dragTo(event.clientX);
         }}
-        className="relative select-none overflow-hidden rounded-xl border border-line bg-surface-subtle"
+        className="relative select-none overflow-hidden rounded-xl border border-line bg-surface-subtle [touch-action:pan-y]"
         role="img"
         aria-label={`${before.label} on the left of the boundary, ${after.label} on the right, boundary at ${split}%`}
       >

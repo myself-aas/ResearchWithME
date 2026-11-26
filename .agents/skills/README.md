@@ -23,6 +23,7 @@ left dangling.
 | [`update-deps`](update-deps/SKILL.md) | assistant-ui `.claude/skills/update-deps` | Dependency bumps and lockfile refreshes |
 | [`trusted-publishing`](trusted-publishing/SKILL.md) | assistant-ui `.claude/skills/trusted-publishing` | Only if this repo ever publishes to npm (currently scoped out) |
 | [`variants`](variants/SKILL.md) | assistant-ui `.claude/skills/variants` | Comparing UI options in the running app (optional dev-only package) |
+| [`impeccable`](impeccable/SKILL.md) | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) (v4.11.0, verbatim) | Designing, auditing, or polishing any frontend surface — UX review, a11y/perf audits, motion, copy |
 
 Rules that bind every skill here:
 

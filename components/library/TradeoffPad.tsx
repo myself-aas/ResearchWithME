@@ -84,7 +84,7 @@ export default function TradeoffPad({
           onPointerMove={(event) => {
             if (event.currentTarget.hasPointerCapture(event.pointerId)) dragTo(event.clientX, event.clientY);
           }}
-          className="relative aspect-[4/3] flex-1 cursor-crosshair select-none overflow-hidden rounded-xl border border-line bg-canvas focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+          className="relative aspect-[4/3] flex-1 cursor-crosshair select-none overflow-hidden rounded-xl border border-line bg-canvas [touch-action:none] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         >
           {feasible && (
             <div

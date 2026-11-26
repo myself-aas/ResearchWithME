@@ -73,7 +73,7 @@ export default function LensPeek({
           event.preventDefault();
           setPosition(clampPosition(next, cols, rows));
         }}
-        className="grid select-none gap-1 rounded-xl border border-line bg-surface-subtle p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+        className="grid select-none gap-1 rounded-xl border border-line bg-surface-subtle p-3 [touch-action:pan-y] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
         role="group"
         aria-label={`A ${rows} by ${cols} field with a ${radius}-cell-radius lens at column ${position.col}, row ${position.row}`}

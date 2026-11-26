@@ -14,6 +14,9 @@ export default defineConfig([
     'test-results/**',
     '.open-next/**',
     '.wrangler/**',
+    // Vendored agent tooling: skills carry their own scripts and third-party
+    // bundles, which are not project code (AGENTS.md §19).
+    '.agents/**',
     'tokens/generated/**',
     'cloudflare-env.d.ts',
     'next-env.d.ts',

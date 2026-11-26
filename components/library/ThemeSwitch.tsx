@@ -160,14 +160,7 @@ export function ThemeSwitchCompact() {
       title={ready ? `${LABELS[preference]} theme` : 'Switch theme'}
       className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:border-brand hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
     >
-      <span
-        aria-hidden="true"
-        className="transition-transform duration-200 ease-emphasize motion-reduce:transition-none"
-        key={preference}
-        style={{ transform: 'rotate(0deg)' }}
-      >
-        <SegmentIcon preference={preference} />
-      </span>
+      <SegmentIcon preference={preference} />
     </button>
   );
 }

@@ -202,6 +202,14 @@ The multi-author publishing platform becomes a single-author MDX blog. Git is th
 ## [Unreleased]
 
 ### Added
+- The `impeccable` design-review skill (pbakaus/impeccable v4.11.0, verbatim) installed into
+  `.agents/skills/`, and the audit it produced: `UIUX-AUDIT.md` grades the frontend 17/20 (Good) —
+  implementation integrity passes on the registry-derivation discipline, and it drove three fixes
+  shipped in the same commit: `touch-action` on the drag surfaces (`WipeCompare`, `TradeoffPad`,
+  `LensPeek` — pointer drags no longer lose to page scroll on touch) and removal of a dead
+  acknowledge transition in the compact theme switch. Author decisions queued: the kicker/eyebrow
+  pattern (the site's own DESIGN.md bans it; homepage sections and the hero eyebrow trip it), the
+  pinned code-panel syntax palette, and a `/lab` JS budget gate.
 - Honest engagement layer for writers. A profile-strength meter (`components/engagement/
   ProfileStrength.tsx`) shows on `/dashboard/access` and on the empty-draft state of
   `/dashboard/(studio)/writing`, computed from real signals (email confirmed, identity linked,
