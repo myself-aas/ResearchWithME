@@ -684,6 +684,7 @@ the current sandbox user and vendored here so they survive workspace snapshots.
 
 | Task trigger | Skills to consult |
 | --- | --- |
+| Audit/clean codebase hygiene, unused imports, dead-code candidates or formatting | `clean-codebase` (pjt222/agent-almanac); start in safe mode with before/after evidence and tests; aggressive removal requires author opt-in |
 | Edit agent-facing instructions or audit project memory | `writing-for-agents`; `claude-md-improver` for CLAUDE.md audits (approval before its proposed edits) |
 | Write technical documentation, ADRs, notes, or design diagrams | `documentation-writer`, `documentation-and-adrs`, `obsidian-markdown`, `design-doc-mermaid`, `excalidraw-diagram-generator` |
 | Design a chart or compare visual encodings | `chart-designer`, `chart-visualization`, `recharts`, `echarts`; implement site figures through §20 and the figure constitution |
@@ -694,6 +695,15 @@ the current sandbox user and vendored here so they survive workspace snapshots.
 | Cloudflare platform/Agents SDK work, or separately requested Kubernetes work | `cloudflare`, `agents-sdk`; `helm-chart-scaffolding` only for explicit Kubernetes tasks |
 | Assess readiness for coding agents or split independent tasks | `ai-ready` (johnpapa), `ai-ready-awesome-copilot` (GitHub), `dispatching-parallel-agents` when parallel-agent tools actually exist |
 | Diagnose CI, prepare commits/issues, or specify/implement Actions workflows | `gh-fix-ci`, `git-commit`, `github-issues`, `gh-issue-sync`, `create-github-action-workflow-specification`, `github-actions`; `gh-stack` is reference only when its branch workflow conflicts with the assigned session branch |
+
+- **Cleanup preserves behavior.** `clean-codebase` does not authorize architectural
+  rewrites, dependency upgrades, route/content deletion, or threshold changes.
+  Do not format vendored skills, generated outputs, licenses, or verbatim source
+  specifications. Regenerate outputs through their owners. Record uncertain or
+  recently edited dead-code candidates for author review before removal.
+  Keep deletion backups outside Git and never archive reachable code in place
+  merely to silence a static analyzer. Existing tests/build/site/Worker gates
+  remain authoritative; static-analysis findings are candidates, not proof.
 
 - **Resolve name collisions explicitly.** `seo` is from `affaan-m/ecc`;
   `seo-iannuttall`, `seo-web-quality`, and `seo-claude` preserve the other three

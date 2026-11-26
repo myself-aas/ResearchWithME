@@ -3,7 +3,7 @@ import { genui } from '@/src/design/genui.manifest';
 
 const text = z.string().trim().min(1).max(genui.limits.maxText);
 const items = <T extends z.ZodType>(schema: T) => z.array(schema).min(1).max(genui.limits.maxItems);
-export const statusState = z.enum(['verified', 'pending', 'unavailable', 'localLive']);
+const statusState = z.enum(['verified', 'pending', 'unavailable', 'localLive']);
 // Internal destinations or DOI links only; never javascript:, protocol-relative,
 // userinfo, backslashes, or model-supplied data URLs.
 export const safeHref = text.refine(value => {

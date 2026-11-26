@@ -118,6 +118,18 @@ status, name collisions, blocked entries, and the user-level restore command.
 | [`vox-explainer`](vox-explainer/SKILL.md) | charlie947/motion-graphics-skills (vendored) | Produce standalone documentary-style explainer media. |
 | [`writing-for-agents`](writing-for-agents/SKILL.md) | mattpocock/skills (vendored) | Write concise, trigger-driven AGENTS.md, skills, and agent-facing docs. |
 
+## Additional maintenance skill (2026-11-26)
+
+| Skill | Source | Task |
+| --- | --- | --- |
+| [`clean-codebase`](clean-codebase/SKILL.md) | pjt222/agent-almanac (verbatim; commit/hash in `skills-lock.json`) | Behavior-preserving hygiene audit and cleanup; safe mode by default, explicit opt-in before aggressive dead-code deletion. |
+
+The skill's MIT license is included. Its linked optional WSL/R environment guide
+is vendored verbatim at [`.agents/guides/setting-up-your-environment.md`](../guides/setting-up-your-environment.md)
+and separately hash-pinned in the lock entry. It is reference material, **not**
+a requirement to set up R, Windows, MCP, credentials, or services for this Next.js
+project. Related sibling skills are not installed by this request.
+
 ## Rules
 
 Rules that bind every skill here:

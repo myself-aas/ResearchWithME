@@ -3,8 +3,6 @@
  * components and in tests.
  */
 
-const DAY = 24 * 60 * 60 * 1000;
-
 const longDate = new Intl.DateTimeFormat('en-US', {
   year: 'numeric',
   month: 'long',
@@ -43,11 +41,6 @@ export function formatMonthYear(iso: string): string {
   return Number.isNaN(date.getTime()) ? iso : monthYearDate.format(date);
 }
 
-/** `2026-11-20` → `2026`. */
-export function formatYear(iso: string): string {
-  return iso.slice(0, 4);
-}
-
 /** ISO date for `<time dateTime>`; the loader already stores YYYY-MM-DD. */
 export function toDateTime(iso: string): string {
   return `${iso.slice(0, 10)}T00:00:00.000Z`;
@@ -56,11 +49,4 @@ export function toDateTime(iso: string): string {
 /** `1` → `1 min read`. */
 export function readingTimeLabel(minutes: number): string {
   return `${Math.max(1, Math.round(minutes))} min read`;
-}
-
-/** Whole days between two ISO dates, used for "updated" hints. */
-export function daysBetween(fromIso: string, toIso: string): number {
-  const from = new Date(`${fromIso.slice(0, 10)}T00:00:00.000Z`).getTime();
-  const to = new Date(`${toIso.slice(0, 10)}T00:00:00.000Z`).getTime();
-  return Math.round((to - from) / DAY);
 }

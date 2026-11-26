@@ -144,3 +144,28 @@ SEO/AEO checks, credentials, and author-approved GitHub/deployment operations.
 Standalone video instructions do not authorize adding motion/chart runtimes to
 the site. Browser skills do not authorize bypassing access controls or anti-bot
 protections. Installing `gh-stack` does not permit changing this session's branch.
+
+
+## clean-codebase follow-up (2026-11-26)
+
+Installed the requested `pjt222/agent-almanac` **clean-codebase** skill from
+commit `5907366b93fcfae4988161a1ee16ed7018c4e2be`, upstream path
+`skills/clean-codebase/SKILL.md`. The requested GitHub URL encodes slashes as
+`%2F`; it refers to that path, not a differently named package.
+
+- Verbatim project copy: `.agents/skills/clean-codebase/SKILL.md`, with MIT license.
+- User copy: `~/.agents/skills/clean-codebase/` (current sandbox user).
+- Linked optional guide: `.agents/guides/setting-up-your-environment.md`, also
+  copied to `~/.agents/guides/`, with a SHA-256 in the skill's lock entry.
+- Skill folder content hash, source commit and supporting-guide provenance are
+  pinned in `skills-lock.json`; AGENTS.md routes cleanup tasks to safe mode.
+- No setup commands in the guide were executed. No runtime dependency, service,
+  credential, architecture change or publishing action is authorized by installation.
+
+To restore this user-level installation from a later repository snapshot:
+
+```bash
+mkdir -p ~/.agents/skills ~/.agents/guides
+cp -R .agents/skills/clean-codebase ~/.agents/skills/
+cp .agents/guides/setting-up-your-environment.md ~/.agents/guides/
+```

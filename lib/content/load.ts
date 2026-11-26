@@ -6,12 +6,12 @@ import { frontmatterSchema } from './schema';
 import type { Post } from './types';
 
 /** Directory scanned for posts, relative to the project root. */
-export const POSTS_DIR = path.join(process.cwd(), 'content', 'posts');
+const POSTS_DIR = path.join(process.cwd(), 'content', 'posts');
 
 const WORDS_PER_MINUTE = 225;
 const MDX_EXTENSIONS = new Set(['.mdx', '.md']);
 
-export interface LoadOptions {
+interface LoadOptions {
   /** Override the content directory (used by tests). */
   dir?: string;
   /** Include posts marked `draft: true`. Defaults to true outside production. */

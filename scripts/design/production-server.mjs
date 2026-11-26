@@ -3,7 +3,7 @@ import { spawn } from 'node:child_process';
 const DEFAULT_STARTUP_TIMEOUT_MS = 30000;
 
 /** Own the entire process group so timeouts do not leave a server behind. */
-export function stopServer(child) {
+function stopServer(child) {
   if (!child.pid) return;
   try {
     process.kill(-child.pid, 'SIGTERM');

@@ -16,9 +16,8 @@ import { cache } from 'react';
 import { loadPosts, toPlainText } from './load';
 import { tagToSlug } from './slug';
 import { publishedPosts as snapshot } from './snapshot.generated';
-import type { ArchiveYear, Post, PostMeta, SearchDoc, TagSummary } from './types';
-export { loadPosts, toPlainText, estimateReadingTime, POSTS_DIR } from './load';
-export type { LoadOptions } from './load';
+import type { Post, PostMeta, SearchDoc, TagSummary } from './types';
+export { loadPosts, toPlainText, estimateReadingTime } from './load';
 
 function toMeta({ body: _body, ...meta }: Post): PostMeta {
   return meta;
@@ -33,10 +32,6 @@ export function getPostBySlug(slug: string): Post | undefined {
   return getAllPosts().find((post) => post.slug === slug);
 }
 
-export function getPostMetaBySlug(slug: string): PostMeta | undefined {
-  return getAllPostMeta().find((post) => post.slug === slug);
-}
-
 export function getFeaturedPost(): PostMeta | undefined {
   const posts = getAllPostMeta();
   return posts.find((post) => post.featured) ?? posts[0];
@@ -45,8 +40,6 @@ export function getFeaturedPost(): PostMeta | undefined {
 export function getPostSlugs(): string[] {
   return getAllPosts().map((post) => post.slug);
 }
-
-export { tagToSlug };
 
 export function getAllTags(): TagSummary[] {
   const counts = new Map<string, number>();
@@ -100,19 +93,7 @@ export function getAdjacentPosts(slug: string): { newer?: PostMeta; older?: Post
   };
 }
 
-/** Posts grouped by year for the archive page. */
-export function getArchive(): ArchiveYear[] {
-  const byYear = new Map<string, PostMeta[]>();
-  for (const post of getAllPostMeta()) {
-    const year = post.date.slice(0, 4);
-    byYear.set(year, [...(byYear.get(year) ?? []), post]);
-  }
-  return [...byYear.entries()]
-    .sort((a, b) => b[0].localeCompare(a[0]))
-    .map(([year, posts]) => ({ year, posts }));
-}
-
-export interface SiteStats {
+interface SiteStats {
   posts: number;
   tags: number;
   words: number;

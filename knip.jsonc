@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  // Advisory inventory: npx --yes knip@5.85.0 --config knip.jsonc
+  // Findings require review. This is not an automatic deletion list.
+  "project": [
+    "*.{ts,mjs}",
+    "{app,components,lib,scripts,src,test,tokens}/**/*.{ts,tsx,mjs}",
+    "!src/generated/**",
+    "!tokens/generated/**",
+    "!lib/content/snapshot.generated.ts",
+    "!next-env.d.ts"
+  ],
+  "entry": [
+    // The OpenNext CLI loads this configuration by filename.
+    "open-next.config.ts",
+    // Both dynamic imports and string-based component registration are intentional.
+    "content/posts/**/*.mdx",
+    // Vitest resolves these through computed aliases, not import declarations.
+    "test/stubs/**/*.{ts,tsx}"
+  ],
+  "ignore": [".agents/**"],
+  // FlatCompat extends next/core-web-vitals and next/typescript at runtime.
+  "ignoreDependencies": ["eslint-config-next"],
+  // This is a JSDoc-only type on postcss.config.mjs, resolved by Next's toolchain.
+  "ignoreUnresolved": ["postcss-load-config"],
+  "ignoreIssues": {
+    "postcss.config.mjs": ["unlisted"]
+  }
+}

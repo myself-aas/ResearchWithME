@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { AUTHOR, SITE } from './site';
 
-export const SITE_NAME = SITE.name;
 export const SITE_URL = SITE.url;
 export const SITE_DESCRIPTION = SITE.description;
 

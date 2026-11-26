@@ -7,7 +7,7 @@ export function normalizeThemePreference(value: unknown): ThemePreference {
   return value === 'light' || value === 'dark' ? value : 'system';
 }
 
-export function resolveEffectiveTheme(pref: ThemePreference, prefersDark: boolean): 'light' | 'dark' {
+function resolveEffectiveTheme(pref: ThemePreference, prefersDark: boolean): 'light' | 'dark' {
   return pref === 'system' ? (prefersDark ? 'dark' : 'light') : pref;
 }
 

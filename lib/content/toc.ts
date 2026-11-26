@@ -16,9 +16,6 @@ export interface TocEntry {
   level: 2 | 3;
 }
 
-/** Heading ids use the shared slugger so anchors stay stable across the site. */
-export { slugify as slugifyHeading } from './slug';
-
 function stripInlineMarkdown(text: string): string {
   return text
     .replace(/`([^`]+)`/g, '$1')

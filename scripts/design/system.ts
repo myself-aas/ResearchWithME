@@ -3,7 +3,6 @@ import { z } from 'zod';
 import { design, type Design } from '../../src/design';
 
 export const tiers = ['xs', 'md', 'lg', 'xl', '2xl'] as const;
-export type Tier = typeof tiers[number];
 const positive = z.number().positive();
 const span = z.object({ xs: positive.int(), md: positive.int(), lg: positive.int(), xl: positive.int(), '2xl': positive.int() });
 const tierNumbers = z.object({ xs: positive, md: positive, lg: positive, xl: positive, '2xl': positive });
@@ -43,11 +42,11 @@ const schema = z.object({
   locales: z.record(z.string(), z.record(z.string(), z.string())),
 });
 
-export function luminance(hex: string): number {
+function luminance(hex: string): number {
   const c = hex.slice(1).match(/../g)!.map(v => parseInt(v, 16) / 255).map(v => v <= .04045 ? v / 12.92 : ((v + .055) / 1.055) ** 2.4);
   return c[0] * .2126 + c[1] * .7152 + c[2] * .0722;
 }
-export function contrast(a: string, b: string): number {
+function contrast(a: string, b: string): number {
   const x = luminance(a), y = luminance(b);
   return (Math.max(x, y) + .05) / (Math.min(x, y) + .05);
 }
@@ -61,12 +60,12 @@ export function geometry(d: Design = design, width?: number) {
   });
 }
 /** Encoded-sRGB mix, matching CSS color-mix(in srgb, ...). */
-export function mix(base: string, overlay: string, amount: number): string {
+function mix(base: string, overlay: string, amount: number): string {
   const rgb = (hex: string) => hex.slice(1).match(/../g)!.map(v => parseInt(v, 16));
   const a = rgb(base), b = rgb(overlay);
   return '#' + a.map((v, i) => Math.round(v * (1 - amount) + b[i] * amount).toString(16).padStart(2, '0')).join('');
 }
-export function derivedStates(d: Design, mode: 'light' | 'dark') {
+function derivedStates(d: Design, mode: 'light' | 'dark') {
   const r = d.color.roles, s = d.color.states;
   return {
     surfaceHover: mix(r['bg-surface'][mode], r['text-ink'][mode], s.surfaceHover),

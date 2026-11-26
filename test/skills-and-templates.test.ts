@@ -39,6 +39,7 @@ const lock = JSON.parse(read('skills-lock.json')) as {
       upstreamName?: string;
       upstreamComputedHash?: string;
       adaptation?: string;
+      supportingFiles?: Array<{ path: string; sourcePath: string; sha256: string }>;
     }
   >;
 };
@@ -130,6 +131,11 @@ describe('skills-lock.json', () => {
       expect(entry.computedHash, `${name} hash`).toMatch(/^[a-f0-9]{64}$/);
       expect(exists(`.agents/skills/${name}/SKILL.md`), `${name} installed`).toBe(true);
       expect(skillHash(join(skillsDir, name)), `${name} content drift`).toBe(entry.computedHash);
+      for (const support of entry.supportingFiles ?? []) {
+        expect(support.path).toMatch(/^\.agents\/guides\/[\w-]+\.md$/);
+        expect(support.sourcePath).toBe(`guides/${support.path.split('/').at(-1)}`);
+        expect(createHash('sha256').update(readFileSync(join(root, support.path))).digest('hex')).toBe(support.sha256);
+      }
       if (entry.upstreamName) {
         expect(entry.upstreamComputedHash).toMatch(/^[a-f0-9]{64}$/);
         expect(entry.adaptation).toBeTruthy();
@@ -137,6 +143,15 @@ describe('skills-lock.json', () => {
         expect(frontmatter).toContain(`name: ${name}\n`);
       }
     }
+  });
+
+  it('pins the requested clean-codebase skill and linked environment guide', () => {
+    const entry = lock.skills['clean-codebase'];
+    expect(entry.source).toBe('pjt222/agent-almanac');
+    expect(entry.skillPath).toBe('skills/clean-codebase/SKILL.md');
+    expect(entry.supportingFiles?.map(file => file.path)).toContain('.agents/guides/setting-up-your-environment.md');
+    expect(read('AGENTS.md')).toContain('`clean-codebase`');
+    expect(exists('.agents/skills/clean-codebase/LICENSE')).toBe(true);
   });
 
   it('preserves all colliding requested SEO and ai-ready sources', () => {

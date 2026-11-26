@@ -1,5 +1,5 @@
 // These are UI catalogs, not a claim that article translations/routes exist.
-export const en = {
+const en = {
   'writing.empty': 'No articles published yet.',
   'topics.empty': 'No topics defined yet.',
   'datasets.empty': 'No standalone datasets published yet.',
@@ -7,7 +7,7 @@ export const en = {
   'status.localLive': 'Local only',
   'status.verified': 'Verified', 'status.pending': 'Pending', 'status.unavailable': 'Unavailable',
 } as const;
-export const bn: Record<keyof typeof en, string> = {
+const bn: Record<keyof typeof en, string> = {
   'writing.empty': 'এখনও কোনো প্রবন্ধ প্রকাশিত হয়নি।',
   'topics.empty': 'এখনও কোনো বিষয় নির্ধারিত হয়নি।',
   'datasets.empty': 'এখনও কোনো স্বতন্ত্র ডেটাসেট প্রকাশিত হয়নি।',

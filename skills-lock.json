@@ -132,6 +132,21 @@
       "computedHash": "d6067bb87758243b6817ae021a0b72e409db8919cec22a4cdfc053cd5b269622",
       "installMode": "copy"
     },
+    "clean-codebase": {
+      "source": "pjt222/agent-almanac",
+      "commit": "5907366b93fcfae4988161a1ee16ed7018c4e2be",
+      "sourceType": "github",
+      "skillPath": "skills/clean-codebase/SKILL.md",
+      "computedHash": "0b4ea49a0b88990dee5b4445ff7b11b3ad3274e8f7bec159f8b710590042c849",
+      "installMode": "copy",
+      "supportingFiles": [
+        {
+          "path": ".agents/guides/setting-up-your-environment.md",
+          "sourcePath": "guides/setting-up-your-environment.md",
+          "sha256": "ec2b7314617608922065299ea88f2e7608004747cdfe10ac29f1e34f3164d471"
+        }
+      ]
+    },
     "cloudflare": {
       "source": "cloudflare/skills",
       "commit": "ff191de7d903788eceaf516a514ae7d3b56b924a",

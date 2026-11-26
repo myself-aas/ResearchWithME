@@ -251,3 +251,16 @@ private dashboard log needed to diagnose an external deployment failure.
 Production content is a validated build snapshot. After editing/publishing posts,
 run `npm run content:gen` and commit `lib/content/snapshot.generated.ts`;
 `content:verify` rejects stale snapshots before builds.
+
+
+### Codebase maintenance
+
+`AGENTS.md` routes hygiene work through the pinned `clean-codebase` skill.
+Start with a measured safe audit; review references, runtime registrations and
+history before deleting dead-code candidates. `npm run typecheck` also rejects
+unused locals and parameters. Do not hand-format generated or vendored files.
+
+The [cleanup report](CLEANUP_REPORT.md) records the current scope, measurements,
+retained extension contracts, and test results; [the deletion log](CLEANUP_LOG.md)
+records exactly what was removed. `knip.jsonc` provides a repeatable optional
+advisory inventory, not permission to delete everything it flags.
