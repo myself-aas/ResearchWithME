@@ -1,12 +1,33 @@
 ---
 title: "n8n review: what to check before you automate your workflows"
 description: "n8n repository review of execution routing, node retries and source-available licensing, with clear limits on reliability and production claims."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "n8n"]
-draft: true
+draft: false
+faq:
+  - question: "Are manual and queued n8n runs interchangeable tests?"
+    answer: "No. The inspected routing conditions distinguish execution paths. Exercise the configured production path, including cancellation and interruption, rather than assuming editor success establishes worker behavior."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Queue-path behavior is tested independently of editor success. Retry budgets and duplicate-prevention rules are recorded per external action."
+cover: "/images/covers/n8n-review-before-you-automate.webp"
+coverAlt: "Branching workflow nodes with a controlled gate and retry loop."
 ---
 
-### Key findings
+n8n combines a workflow canvas with executable integrations, but the canvas does not remove queue, retry, credential, or licensing decisions. This pinned source review follows execution routing and a node retry helper. Treat manual runs, queued production runs, and external side effects as separate acceptance tests before relying on an automation.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Workflow execution and connector side effects |
+| Inputs and boundaries | Manual versus queued routing, conditional node retries and cancellation |
+| Principal failure case | A remote action can complete even when its response is lost |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - The workflow runner distinguishes queued and main-process execution.
 - The inspected node retry helper contains eligibility rules and bounded defaults.
 - n8n is source-available under restricted terms, not interchangeable with MIT or Apache licensing.
@@ -38,6 +59,7 @@ That is useful implementation detail, but it must not become “all failed workf
 | Manual versus queued run | Explicit routing condition | Does the production path behave like the editor trial? |
 | Node failure | Conditional retry budget | Is the external operation safe to repeat? |
 | Cancellation | Wait helper checks cancellation | What happens to already-issued external requests? |
+
 The concerns as a sortable matrix — evidence against the question it cannot answer:
 
 <N8nConcernsMatrix />
@@ -97,19 +119,29 @@ Three checks before you cite or adopt from this review:
 
 <N8nQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Pin a packaged n8n version corresponding to the reviewed source, resolve its license/edition boundary, and build a synthetic workflow using a disposable external endpoint and least-privilege test credentials.
 
-1. Compare manual and production queue paths using a synthetic workflow, including cancellation and worker interruption.
-2. Simulate an ambiguous external response and verify duplicate prevention, retry eligibility and error reporting.
-3. Review the exact license and feature boundary for internal use, embedding, redistribution or a hosted offering before adoption.
+2. Compare the editor path with the actual queue/offload configuration. Record execution IDs, external operation IDs and response ownership while testing worker interruption and cancellation.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/n8n-review-before-you-automate/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Return an ambiguous timeout after the endpoint records an action. Re-run only under the documented retry rules, and reconcile duplicate actions and audit records before approving the workflow.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Queue-path behavior is tested independently of editor success.
+- [ ] Retry budgets and duplicate-prevention rules are recorded per external action.
+- [ ] Internal use, redistribution and enterprise features have a license decision.
+
+The [inspection record](/evidence/n8n-review-before-you-automate/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Evaluate n8n for internal automation when workflow changes, credentials and external operations have owners. Pause if the justification is that a visual canvas guarantees atomic actions or that source visibility permits unrestricted resale. Runtime and legal acceptance are separate from the source observations here.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

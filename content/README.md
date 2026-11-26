@@ -6,8 +6,40 @@ item, and the social card from that one file.
 
 ```bash
 npm run new -- "How I read a benchmark"     # creates a draft with today's date
-npm run new -- "How I read a benchmark" --publish
+npm run new -- "How I read a benchmark" --publish  # explicit author-approved publication only
+npm run new -- "A model or repository review" --deep-dive  # structured draft
 ```
+
+## Technical deep dives
+
+`--deep-dive` uses [`TECHNICAL_DEEP_DIVE_POST.mdx.tmpl`](../templates/TECHNICAL_DEEP_DIVE_POST.mdx.tmpl).
+It creates a schema-compatible draft with an answer-first lead, quick-spec and evidence tables,
+mechanism explanation, proposed reproduction playbook, audit checklist, verdict and references.
+The existing short scaffold is unchanged. Neither mode overwrites an existing file.
+
+Adapt the sections to the genre: a personal reflection needs bounded observations, not invented
+benchmarks; a repository review needs version and execution boundaries; a model review needs
+matched controls, input contracts and evaluation splits. Label evidence as **reported**, **source
+inspected**, **independently measured**, **illustrative**, or **unverified**. A proposed protocol is
+not an executed experiment. Remove every TODO, verify primary citations and add useful frontmatter
+FAQs before requesting publication approval.
+
+The scaffold deliberately does not invent figure components. Follow
+[`GENERATIVE_POST_LAYOUT.mdx.tmpl`](../templates/GENERATIVE_POST_LAYOUT.mdx.tmpl) and the figure
+constitution for registered bindings, required interaction archetypes and text equivalents. The MDX
+pipeline supports GFM and highlighted code, **not LaTeX or Mermaid**; use explained text equations
+and text flows unless a separately approved implementation adds support. The page owns the title,
+author/date block and FAQ rendering; do not duplicate them in the body or add unsupported metadata
+such as `keywords` or `readingTime`.
+
+After editing, run `npm run content:gen`, `npm run quality`, `npm run build` and
+`npm run check:site`, then inspect the rendered article and figures. Tests validate structure, not
+scientific truth or execution safety. Keep existing slugs/publication dates and draft states unless
+the author explicitly approves a change. **Only the author authorizes publishing, merging or deploying.**
+
+The November 2026 supplied manuscripts are retained verbatim in
+[`docs/writing/sources/`](../docs/writing/sources/); their editorial scope and evidence limits are
+recorded in [`docs/writing/README.md`](../docs/writing/README.md).
 
 ## Anatomy of a post
 

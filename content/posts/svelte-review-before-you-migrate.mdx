@@ -1,12 +1,33 @@
 ---
 title: "Svelte review: reactivity boundaries to learn before you migrate"
 description: "Svelte repository review of compilation, state proxies and browser-only effects, with adoption checks and limits from a pinned source snapshot."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "svelte"]
-draft: true
+draft: false
+faq:
+  - question: "Do browser effects validate server-rendered behavior?"
+    answer: "No. Test server HTML and hydration separately, and test effect dependencies and teardown in the browser. The reviewed documentation distinguishes their lifecycles."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Effects own and dispose subscriptions, timers and imperative instances. SSR and hydration are tested without assuming effects run on the server."
+cover: "/images/covers/svelte-review-before-you-migrate.webp"
+coverAlt: "Abstract source lines pass through a compiler arrow into a structured browser layout."
 ---
 
-### Key findings
+Svelte changes how UI work is compiled and how reactive state is tracked, but migration still requires explicit lifecycle boundaries. This pinned source review focuses on proxies, destructuring, and browser-only effects. Validate rendering, cleanup, accessibility, and production payload on a representative component before treating compiler-led development as an application performance advantage.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Compiler-led reactivity and effect lifecycle |
+| Inputs and boundaries | Proxy state, synchronous tracked reads, browser-only effects and teardown |
+| Principal failure case | A destructured value or asynchronous read can cross the intended reactive boundary |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - The compiler pipeline is visible in the public compile entry point.
 - State proxies are granular, but destructured values are not automatically live bindings.
 - Effects are browser-only and require dependency and cleanup discipline.
@@ -24,6 +45,7 @@ The source gives the compiler claim a concrete shape. `compile` validates compon
 The pipeline as a stack — each stage opens to the one fact the review verified about it:
 
 <SvelteLayerStack />
+
 (https://github.com/sveltejs/svelte/blob/04c5d8da6f0be322555e7e5897f7bb318c8a6876/packages/svelte/src/compiler/index.js#L17-L110)
 
 ## State feels ordinary until an object boundary matters
@@ -42,7 +64,6 @@ A second boundary is destructuring. The same document warns that destructured re
 The same four boundaries as a sortable matrix — choose the ordering that answers your question:
 
 <SvelteBoundaryMatrix />
-
 
 ## Effects need ownership, not enthusiasm
 
@@ -100,20 +121,29 @@ Before you cite this review's boundaries, check them:
 
 <SvelteQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+1. Pin the framework/compiler and select one production-representative component with nested state, an imperative dependency and server rendering. Record its current behavioral and accessibility expectations before rewriting it.
 
-For a next-stage evaluation:
+2. Exercise direct mutation, destructuring, asynchronous reads and component disposal. Assert visible output and teardown counts; compare server HTML and hydrated behavior instead of relying on an editor demonstration.
 
-1. Build a small component with nested object state, destructuring and a third-party library; verify intended updates.
-2. Test server rendering and hydration with browser-only effects, asynchronous reads and teardown.
-3. Compare production builds under the same interaction, accessibility and payload budget before claiming a framework advantage.
+3. Build both implementations in production mode under equivalent features. Measure route payload and interaction behavior, then estimate migration effort from actual integration failures rather than extrapolating from syntax brevity.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/svelte-review-before-you-migrate/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+## Pre-publication audit
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+- [ ] Effects own and dispose subscriptions, timers and imperative instances.
+- [ ] SSR and hydration are tested without assuming effects run on the server.
+- [ ] Any bundle or performance claim names a matched production build.
+
+The [inspection record](/evidence/svelte-review-before-you-migrate/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Consider Svelte when its reactivity model fits the team and the migration trial satisfies the existing interaction contract. Do not infer faster pages or cheaper maintenance from compilation alone. Keep the smallest useful migration boundary until the evidence supports expanding it.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

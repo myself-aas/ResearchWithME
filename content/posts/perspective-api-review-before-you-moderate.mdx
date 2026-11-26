@@ -1,12 +1,33 @@
 ---
-title: "Perspective API review: what to know before you moderate with it"
+title: "Perspective analytics review: execution placement and data boundaries"
 description: "Perspective repository review of browser and server analytics, replication and indexed updates, with data-boundary trade-offs instead of speed rankings."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "perspective"]
-draft: true
+draft: false
+faq:
+  - question: "Is this review about Google’s Perspective moderation API?"
+    answer: "No. It inspects perspective-dev/perspective, the analytics and visualization project. The existing URL is retained for stability, but no toxicity-model or moderation-quality claim is made."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "The review and integration identify the analytics project, not the moderation API. Client-visible data is authorized before transfer or replication."
+cover: "/images/covers/perspective-api-review-before-you-moderate.webp"
+coverAlt: "Two analytics chambers exchange data through a controlled bridge."
 ---
 
-### Key findings
+This review covers Perspective, the interactive analytics engine, not Google’s toxicity-scoring Perspective API. Its browser, server, and replicated modes create different data-access boundaries. At this pinned source snapshot, evaluate what reaches the client and how indexed updates behave before treating a responsive table as evidence of secure or efficient production analytics.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Interactive analytics placement, not text moderation |
+| Inputs and boundaries | Browser/server/replicated execution and indexed versus append-only updates |
+| Principal failure case | Data sent to a client remains accessible even if a visualization hides rows |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - Execution placement is an architecture and data-access decision, not just a UI choice.
 - Browser-only and replicated modes send datasets to the client.
 - Indexed update semantics matter when modeling changing entities rather than append-only events.
@@ -37,6 +58,7 @@ The server-only document instead describes a virtual client that pages the serve
 | --- | --- | --- |
 | Client-only | Entire dataset in the browser | Download authorization, memory and application persistence |
 | Replicated | Server table plus browser duplicate | Initial transfer, deltas and indexed deletion semantics |
+
 The modes as a sortable matrix:
 
 <PerspectiveModeMatrix />
@@ -104,19 +126,29 @@ Three placement readings worth checking:
 
 <PerspectiveQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Pin the analytics package and choose a deployment mode. Use a synthetic dataset containing an intentionally restricted field; document which rows and columns may reach the browser independently of what the viewer renders.
 
-1. Choose an execution mode using explicit data-access, concurrency, network and persistence requirements.
-2. Test indexed partial updates, deletions, nulls and grouped/filtered replication with synthetic changing entities.
-3. Measure initial transfer, browser memory, interaction latency and disconnect recovery on the actual client devices and packaged version.
+2. Trace network payloads and client-held data across initial load, subscriptions and replication. Verify the server authorization boundary before measuring responsiveness; a hidden column is not a server-side access decision.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/perspective-api-review-before-you-moderate/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Exercise insert, replacement, deletion and duplicate-key behavior for the chosen index. Compare resulting tables to a reference state, then measure update rate, memory and payload under the same workload and execution placement.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] The review and integration identify the analytics project, not the moderation API.
+- [ ] Client-visible data is authorized before transfer or replication.
+- [ ] Index/update semantics are validated against a reference result.
+
+The [inspection record](/evidence/perspective-api-review-before-you-moderate/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Evaluate Perspective when interactive analytics and its execution-placement trade-offs match the application. Do not use this review to select a toxicity moderation service. The first acceptance gate is the data boundary; speed and update behavior require a measured workload after that gate passes.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

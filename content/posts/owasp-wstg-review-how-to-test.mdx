@@ -1,12 +1,33 @@
 ---
 title: "OWASP WSTG review: how to test your web app with the standard"
 description: "OWASP WSTG repository review of testing scope, versioned scenario references and reporting, distinguishing a living guide from a security certification."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "owasp-wstg"]
-draft: true
+draft: false
+faq:
+  - question: "Does using WSTG certify that an application is secure?"
+    answer: "No. It structures testing and reporting. State the authorized scope, version, observed evidence and untested areas; any assessment remains bounded by those conditions."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Authorization, scope and stop conditions are explicit before hands-on work. Every reported scenario resolves to the chosen guide version."
+cover: "/images/covers/owasp-wstg-review-how-to-test.webp"
+coverAlt: "A lens and checklist accompany an application model with a bounded testing perimeter."
 ---
 
-### Key findings
+OWASP WSTG is a versioned testing guide, not a certification that a web application is secure. This source review focuses on scope, scenario identifiers, and reproducible reporting. Choose a stable release or pinned development snapshot deliberately, obtain written authorization, and distinguish tested findings from untested surfaces before drawing an assessment conclusion.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Authorized test scope and reproducible findings |
+| Inputs and boundaries | Guide version, scenario IDs, asset scope, evidence, remediation and retest |
+| Principal failure case | Checking a scenario box can hide excluded assets or an unreproduced finding |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - This default-branch snapshot is not the stable 4.2 release.
 - Versioned scenario identifiers make reports more auditable than moving latest links.
 - The guide is a testing method, not a scanner result or security certification.
@@ -38,6 +59,7 @@ The framework document is particularly useful: it describes adaptable activities
 | Versioned scenario naming | Pin report references | All releases describe the same test |
 | Passive/active methodology | Record discovery and validation separately | Reading the guide equals testing |
 | Adaptable framework | Assign recurring activity owners | Every team needs one identical sequence |
+
 The method as a pathway with forks — your choices accumulate their rigour cost:
 
 <WstgTestingPathway />
@@ -119,19 +141,29 @@ Three method readings worth checking yourself on:
 
 <WstgQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Obtain written authorization and record assets, accounts, allowed actions, time window, stop conditions and data-handling requirements. Choose either stable versioned scenarios or a pinned development snapshot; do not mix their identifiers silently.
 
-1. Choose stable release content or a pinned development commit deliberately; verify every scenario reference against that version.
-2. Within written authorization, map selected scenarios to assets, threat model, coverage and explicitly excluded areas.
-3. Have a second reviewer reproduce a sample finding and assess whether the report supports remediation and retesting.
+2. Map each selected scenario to the threat model and a specific authorized test. Record observed requests/responses and expected behavior with secrets redacted; use a local lab where possible and do not probe third parties by default.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/owasp-wstg-review-how-to-test/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Have a second reviewer reproduce a sample finding within scope. Tie impact to observed evidence and archive remediation/retest status, exclusions and report-access controls; absence of a finding is not proof that an untested surface is safe.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Authorization, scope and stop conditions are explicit before hands-on work.
+- [ ] Every reported scenario resolves to the chosen guide version.
+- [ ] Findings separate evidence, impact reasoning, limitations and retest status.
+
+The [inspection record](/evidence/owasp-wstg-review-how-to-test/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Use WSTG to make authorized assessments more traceable and repeatable. Reject an unqualified “WSTG reviewed means secure” badge. The useful deliverable is a scoped evidence record another reviewer can reproduce, not a claim that a living guide eliminates untested risk.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

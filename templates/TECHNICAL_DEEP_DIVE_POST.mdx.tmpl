@@ -1,0 +1,113 @@
+---
+title: __TITLE_JSON__
+description: "Draft technical review: replace this description with the bounded finding, subject, and evidence level before publication."
+date: "__DATE__"
+tags: []
+draft: __DRAFT__
+toc: true
+faq: []
+---
+
+{/* Replace this lead with a 40–60-word answer: what the system or method does,
+    who should consider it, the main trade-off, and what the evidence establishes.
+    Keep it before attribution, tables, punchlines and interactive figures. */}
+
+This draft needs an answer-first summary before publication. Identify the system or method, its intended use, the central trade-off, and the boundary of the available evidence. Distinguish reported results from independent measurements, and state what the reader must verify before applying the recommendation to a different workload or setting.
+
+<KeyTakeaways>
+
+- TODO: State the main mechanism and link the primary source that establishes it.
+- TODO: Identify the strongest matched comparison and its limitations.
+- TODO: Name the first concrete test that could overturn the recommendation.
+
+</KeyTakeaways>
+
+## Engineering quick-spec
+
+| Decision surface | Verified contract | Source and status |
+| --- | --- | --- |
+| Version and scope | TODO: Release/commit, paper version, or bounded personal account | TODO: Primary locator; not yet checked |
+| Inputs and outputs | TODO: Shape, ordering, units, state or side effects | TODO: Exact config/code/data locator |
+| Cost and constraints | TODO: Reported or measured requirements; distinguish them | TODO: Hardware/workload and uncertainty |
+| Rights and trust | TODO: Code, weights/data, edition and authorization boundaries | TODO: Check each artifact separately |
+
+## What changes in the architecture or method?
+
+TODO: Explain the input-to-output path before discussing advantages. Define every
+symbol and unit. Separate observed design from an inferred rationale; label
+reviewer decision records as interpretation, not verbatim author intent.
+
+{/* Paper/model: tokenization, conditioning, positional information and loss.
+    Repository: entry point, validation, execution, persistence and failure path.
+    Methodology: assumptions, estimand, decision rule and failure modes.
+    Reflection: personal observations and limits, not invented experiments. */}
+
+Use readable inline notation such as `N = T * (H / patch_h) * (W / patch_w)` or a
+fenced `text` equation with a prose explanation. The current site does not render
+LaTeX or Mermaid. Do not silently add client runtimes or third-party resources.
+
+## Which data, releases or configurations are compared?
+
+TODO: Link exact artifacts and describe exclusions. For a model, distinguish
+matched control pairs from a generational comparison. For software, distinguish
+a source snapshot from a packaged release and a hosted edition. For a methods
+essay, identify whether the example is observed, simulated or hypothetical.
+
+## What does the evidence actually establish?
+
+| Claim | Evidence and exact locator | Status | What could invalidate it? |
+| --- | --- | --- | --- |
+| TODO: One bounded claim | TODO: Paper table, pinned source path or raw run | Reported / inspected / independently measured / illustrative / unverified | TODO: Confounder or missing observation |
+
+TODO: Give denominators, units, splits and uncertainty for quantitative claims.
+Keep percentage-point differences distinct from relative gains. Do not infer
+significance from overlapping standard deviations or a static source tree.
+If no experiment exists, say so and provide a proposed protocol instead.
+
+{/* Add only figures that answer an actual question and have registered bindings.
+    Follow GENERATIVE_POST_LAYOUT.mdx.tmpl and the figure constitution. Each
+    adopted post needs its required distinct interaction archetypes, a prose
+    lead-in, a text equivalent and an interpretation of the default state.
+    No placeholder component tags or synthetic numbers presented as real data. */}
+
+## Reproduction playbook
+
+1. TODO: Freeze source/checkpoint/package versions, environment and input hashes.
+   Inspect installation and license boundaries before executing anything.
+2. TODO: Validate one small known case, its outputs and its failure path. Separate
+   a proposed smoke test from a test actually performed and archived.
+3. TODO: Compare the matched control under the same workload, splits, resource
+   limits, timing boundaries and tuning budget. Save raw repetitions and failures.
+4. TODO: Define acceptance and rollback criteria before inspecting test outcomes.
+   For models, keep validation selection separate from frozen OOD test evaluation.
+
+Do not call a command sequence complete or reproducible while required inputs,
+data modules or configuration keys are missing. Exact resolved pins are not
+version ranges. Never invent runtime, VRAM, throughput or completion-time claims.
+
+## Pre-publication audit
+
+- [ ] The lead answers the actual question in 40–60 words.
+- [ ] Sources support the mechanism, quoted wording and strongest conclusions.
+- [ ] All measured, reported, illustrative and unverified values are distinguished.
+- [ ] Commands/configs are tested with archived outputs or explicitly unexecuted.
+- [ ] Rights, authorization, secrets, data privacy and recovery boundaries are clear.
+- [ ] Registered figures and their prose/text equivalents agree.
+- [ ] The verdict names a use case, a rejection condition and remaining uncertainty.
+- [ ] Add 3–5 real FAQ entries in frontmatter only when useful; the page owns FAQ rendering.
+- [ ] Remove every TODO and inspect draft status before an author-approved publication.
+
+## Verdict
+
+TODO: Explain when to choose the approach, when not to, and the next piece of
+evidence needed. Do not turn a missing artifact into proof of misconduct or
+an upstream claim into independent certification.
+
+For context, read the [review method](/about), browse the [writing archive](/blog),
+or use [archive search](/search).
+
+## References
+
+TODO: Add at least three linked primary sources, with exact versions/locators
+where possible. Distinguish evidence for this review from further reading.
+Add a BibTeX citation for a paper only after checking its metadata.

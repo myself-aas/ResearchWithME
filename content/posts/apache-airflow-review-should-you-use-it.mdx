@@ -1,12 +1,33 @@
 ---
 title: "Should you use Apache Airflow? A source review of the orchestration trade-offs"
 description: "Apache Airflow coordinates workflow tasks; it is not the engine that must process all of their data. This source-based review of version 3.4.0 examines its scheduler, executor choices, retry-safe task design, and deployment and trust boundaries. No Airflow installation…"
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "apache-airflow"]
-draft: true
+draft: false
+faq:
+  - question: "Does Airflow make task side effects exactly once?"
+    answer: "No such conclusion follows from this inspection. Repeat execution and ambiguous external responses require application-level idempotency and reconciliation; scheduler state is not a transaction with an unrelated service."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "DAG authors and execution identities have an explicit trust boundary. External writes have a repeatable identity and a tested retry policy."
+cover: "/images/covers/apache-airflow-review-should-you-use-it.webp"
+coverAlt: "Interconnected task blocks, a scheduling wheel and separate worker lanes."
 ---
 
+Apache Airflow coordinates scheduled workflows; it does not replace the services that process their data. This source review separates scheduling, execution, retries, and deployment responsibilities at a pinned release. Evaluate retry-safe outputs and recovery behavior before adopting it, and do not treat a successful local DAG run as production evidence.
+
 **Inspected:** 20 November 2026 (UTC) · **Version:** 3.4.0 · **Commit:** `619a787ac81e8b7c8a9102fc78e3f0b00625d04e`
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Batch orchestration and retry-safe task boundaries |
+| Inputs and boundaries | DAG dependencies, task instances, executor capacity and persisted workflow state |
+| Principal failure case | A retried task can repeat a side effect even when scheduling is correct |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
 
 ## What is Apache Airflow good at?
 
@@ -17,17 +38,16 @@ A **DAG**, or directed acyclic graph, expresses task dependencies. The graph des
 > **Repository assessment**
 > The inspected project contains scheduler implementation, packaging metadata, deployment and security guidance, tests, and CI definitions. That is inspectable implementation evidence, not a measured reliability score or a guarantee that a particular deployment will meet its service objectives. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354) [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239) [9](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/pyproject.toml#L33-L75) [10](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/tests/unit/jobs/test_scheduler_job.py#L2225-L2266) [11](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/.github/workflows/run-unit-tests.yml#L142-L163)
 
-### Key findings
+## Key findings
 
 - **Scheduling and execution are distinct responsibilities.** The scheduler selects work; an executor determines how tasks are run. [2](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/overview.rst#L20-L99) [4](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/core-concepts/executor/index.rst#L20-L113)
 - **The metadata database participates in coordination.** The reviewed enqueue path accounts for parallelism and pool capacity before routing work to executors. [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354)
 - **Retries require retry-safe work.** The best-practices guide recommends repeatable outputs, partitioned inputs, and avoiding duplicate writes. [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116)
-- **A local demonstration is not a production design.** Database choice, executor topology, logs, DAG distribution, health checks, and trust boundaries require explicit decisions. [6]
+- **A local demonstration is not a production design.** Database choice, executor topology, logs, DAG distribution, health checks, and trust boundaries require explicit decisions. [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
 
-The findings sorted by what kind of evidence carries them — and, just as important, what this review did **not** measure:
+The findings sorted by evidence type, with runtime measurements explicitly absent:
 
 <AirflowEvidenceMatrix />
-(https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
 
 ## Which Airflow version does this review cover?
 
@@ -53,7 +73,6 @@ Sources: the pinned architecture overview and executor guide. These are architec
 The same components as a stack you can open layer by layer — each fact inside is one the review cites:
 
 <AirflowLayerStack />
-
 
 ## What does the scheduler code actually do?
 
@@ -108,7 +127,6 @@ The checklist as switches — flip each one your pilot has actually made, and wa
 
 <AirflowPilotSwitches />
 
-
 ## Is an Airflow deployment a sandbox for untrusted DAG authors?
 
 **Do not assume so. The reviewed security model treats DAG authors as code authors with substantial trust.** It says their code is not sandboxed by Airflow and can execute in workers, the DAG processor, and the triggerer. It also warns that the experimental multi-team feature does not yet guarantee full task-level isolation. [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
@@ -142,23 +160,29 @@ Three facts worth checking yourself on before quoting this review — every answ
 
 <AirflowQuiz />
 
-## What remains unverified?
+## Reproduction playbook
 
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-> **Review limits**
-> This is a selected source-and-documentation inspection of Airflow 3.4.0. No Airflow package was installed, no DAG was executed, no scheduler failover was induced, and no upstream tests or security probes were run. Throughput, latency, operating cost, recovery time, compatibility with a particular provider set, and production isolation remain unmeasured.
+1. Freeze the Airflow release, Python version, provider packages and executor configuration. Save a minimal DAG with explicit input partitions and output identifiers; a package constraint alone does not specify the environment.
 
-A useful next evaluation would run a representative DAG in a disposable environment, repeat a task after a partial external write, test remote data/log handoffs, observe queue and scheduler delays, and exercise a database-backed recovery procedure. Record the workload, executor, versions, configuration, and failure conditions before comparing results. Do not infer these results from the repository's popularity or the presence of CI files.
+2. Run the same synthetic DAG through the intended executor, not only a local demonstration. Interrupt a worker after its external write but before reported completion, then reconcile output identifiers after retry.
 
-## Bottom line
+3. Restore metadata and logs in an isolated environment. Record task-state recovery, duplicate outputs, scheduler delay and operator steps separately; establish your acceptance limits before running the trial.
 
-**Airflow is a plausible fit when a team needs inspectable workflow orchestration and accepts responsibility for task correctness and operating the control plane.** The reviewed code and guides support a concrete account of scheduling, executor selection, retry-safe task design, and deployment responsibilities. They do not make Airflow a streaming engine, an automatic exactly-once data-processing system, or a default sandbox for mutually untrusted authors. The adoption recommendation is a bounded interpretation of the inspected sources, not a benchmark-based ranking. [1](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/README.md#L45-L118) [3](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/src/airflow/jobs/scheduler_job_runner.py#L1302-L1354) [5](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/best-practices.rst#L44-L116) [6](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/administration-and-deployment/production-deployment.rst#L24-L118) [8](https://github.com/apache/airflow/blob/619a787ac81e8b7c8a9102fc78e3f0b00625d04e/airflow-core/docs/security/security_model.rst#L190-L239)
+## Pre-publication audit
 
----
+- [ ] DAG authors and execution identities have an explicit trust boundary.
+- [ ] External writes have a repeatable identity and a tested retry policy.
+- [ ] Metadata, DAG distribution, secrets and logs have an assigned recovery owner.
 
-**Preparation disclosure:** Prepared with AI assistance from primary-source inspection. Human source review and final article approval remain pending. No funding or conflict-of-interest declaration has been supplied. No professional credentials or Apache affiliation are inferred from the byline.
+The [inspection record](/evidence/apache-airflow-review-should-you-use-it/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
 
-**Author and contact:** [Ashif Ahmed Shuvo](/author/ashif-ahmed-shuvo) · [shuvo.1807016@bau.edu.bd](mailto:shuvo.1807016@bau.edu.bd). Browse the [GitHub Repo Teardowns category](/category/github-repo-teardowns) for published reviews. This review is not affiliated with or endorsed by the Apache Software Foundation.
+## Verdict
+
+Shortlist Airflow for scheduled dependency-driven work when an operator owns the executor and metadata lifecycle. Reconsider it when the primary need is continuous stream processing or when tasks cannot tolerate retries. The source establishes mechanisms; reliability, recovery time and operating cost remain measurements to collect.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

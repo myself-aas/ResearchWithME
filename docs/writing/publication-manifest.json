@@ -1,0 +1,166 @@
+{
+  "date": "2026-11-26",
+  "authorization": "Author requested images, publication of all 17 drafts, and commit/push on the active branch.",
+  "covers": [
+    {
+      "slug": "apache-airflow-review-should-you-use-it",
+      "cover": "/images/covers/apache-airflow-review-should-you-use-it.webp",
+      "alt": "Interconnected task blocks, a scheduling wheel and separate worker lanes.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 58152
+    },
+    {
+      "slug": "apache-superset-review-before-you-self-host",
+      "cover": "/images/covers/apache-superset-review-before-you-self-host.webp",
+      "alt": "An analytics observatory above database layers and an access gate.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 66806
+    },
+    {
+      "slug": "gta6-emulator-review-verify-the-claim",
+      "cover": "/images/covers/gta6-emulator-review-verify-the-claim.webp",
+      "alt": "A magnifying glass examines a hollow software package beside a disconnected controller.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 64310
+    },
+    {
+      "slug": "n8n-review-before-you-automate",
+      "cover": "/images/covers/n8n-review-before-you-automate.webp",
+      "alt": "Branching workflow nodes with a controlled gate and retry loop.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 30592
+    },
+    {
+      "slug": "nats-jetstream-review-before-you-ship",
+      "cover": "/images/covers/nats-jetstream-review-before-you-ship.webp",
+      "alt": "Message packets move along rails toward storage through an acknowledgment gate.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 40356
+    },
+    {
+      "slug": "notes-from-a-year-of-public-reading",
+      "cover": "/images/covers/notes-from-a-year-of-public-reading.webp",
+      "alt": "An open research notebook, books and connected note cards arranged on a quiet desk.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 85944
+    },
+    {
+      "slug": "owasp-wstg-review-how-to-test",
+      "cover": "/images/covers/owasp-wstg-review-how-to-test.webp",
+      "alt": "A lens and checklist accompany an application model with a bounded testing perimeter.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 83726
+    },
+    {
+      "slug": "perspective-api-review-before-you-moderate",
+      "cover": "/images/covers/perspective-api-review-before-you-moderate.webp",
+      "alt": "Two analytics chambers exchange data through a controlled bridge.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 57524
+    },
+    {
+      "slug": "plane-review-before-you-migrate",
+      "cover": "/images/covers/plane-review-before-you-migrate.webp",
+      "alt": "Work-item cards migrate across a bridge into a three-lane planning board.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 44592
+    },
+    {
+      "slug": "polars-review-before-you-switch",
+      "cover": "/images/covers/polars-review-before-you-switch.webp",
+      "alt": "A branching query plan filters data tiles into an ordered columnar stack.",
+      "method": "ai-generated",
+      "width": 1200,
+      "height": 675,
+      "bytes": 70568
+    },
+    {
+      "slug": "posthog-review-before-you-self-host",
+      "cover": "/images/covers/posthog-review-before-you-self-host.webp",
+      "alt": "A stylized hedgehog beside server layers and a gated data connection.",
+      "method": "custom-vector",
+      "source": "covers/posthog.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 8428
+    },
+    {
+      "slug": "read-a-repository-before-you-run-it",
+      "cover": "/images/covers/read-a-repository-before-you-run-it.webp",
+      "alt": "A magnifying lens examines a branching source tree beside an open code folio.",
+      "method": "custom-vector",
+      "source": "covers/readrepo.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 8710
+    },
+    {
+      "slug": "reproducing-a-benchmark-that-did-not-survive",
+      "cover": "/images/covers/reproducing-a-benchmark-that-did-not-survive.webp",
+      "alt": "Two contrasting stopwatches connected by an arrow represent different timing regimes.",
+      "method": "custom-vector",
+      "source": "covers/benchmark.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 8286
+    },
+    {
+      "slug": "rustdesk-review-before-you-deploy",
+      "cover": "/images/covers/rustdesk-review-before-you-deploy.webp",
+      "alt": "Two desktop displays connect through a central shield-shaped trust boundary.",
+      "method": "custom-vector",
+      "source": "covers/rustdesk.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 6200
+    },
+    {
+      "slug": "svelte-review-before-you-migrate",
+      "cover": "/images/covers/svelte-review-before-you-migrate.webp",
+      "alt": "Abstract source lines pass through a compiler arrow into a structured browser layout.",
+      "method": "custom-vector",
+      "source": "covers/svelte.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 6642
+    },
+    {
+      "slug": "tooling-notes-under-construction",
+      "cover": "/images/covers/tooling-notes-under-construction.webp",
+      "alt": "A notebook, terminal and evidence record form a connected research toolkit.",
+      "method": "custom-vector",
+      "source": "covers/tooling.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 6070
+    },
+    {
+      "slug": "what-a-p-value-does-not-tell-you",
+      "cover": "/images/covers/what-a-p-value-does-not-tell-you.webp",
+      "alt": "A conceptual bell curve highlights its right-hand tail beyond a vertical threshold.",
+      "method": "custom-vector",
+      "source": "covers/pvalue.svg",
+      "width": 1200,
+      "height": 675,
+      "bytes": 7090
+    }
+  ]
+}

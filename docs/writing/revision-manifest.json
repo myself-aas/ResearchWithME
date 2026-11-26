@@ -1,0 +1,296 @@
+{
+  "date": "2026-11-26",
+  "baseline": "939903c",
+  "sources": [
+    {
+      "file": "prithvi-deep-dive.supplied.md",
+      "sha256": "f9474830a24a6adbc8e5e84b5fdd65fa0f29b3df7538a56fa15b176d7e28800d"
+    },
+    {
+      "file": "technical-deep-dive-template.supplied.md",
+      "sha256": "04db0ddaf81d9e5e76f4d796e6ae88f9dd1145063423a8dec899e1ba28c9da47"
+    }
+  ],
+  "posts": [
+    {
+      "file": "apache-airflow-review-should-you-use-it.mdx",
+      "slug": "apache-airflow-review-should-you-use-it",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "d2a645b63cf412f6d409876c0aa6a00650df901b4bc521739ff321778bb63f07",
+      "components": [
+        "AirflowEvidenceMatrix",
+        "AirflowLayerStack",
+        "AirflowPilotSwitches",
+        "AirflowQuiz"
+      ]
+    },
+    {
+      "file": "apache-superset-review-before-you-self-host.mdx",
+      "slug": "apache-superset-review-before-you-self-host",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "a284d0b78b613785a38a37c2914cfe44e8105635e776052411766bb41c302333",
+      "components": [
+        "SupersetPlatformChart",
+        "SupersetAssetMatrix",
+        "SupersetAssumptionSwitches",
+        "SupersetQuiz"
+      ]
+    },
+    {
+      "file": "gta6-emulator-review-verify-the-claim.mdx",
+      "slug": "gta6-emulator-review-verify-the-claim",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "c37c69687fce6d56572248ff6a92def1c31b2cb241e257c074e7bc96593b38a4",
+      "components": [
+        "Gta6FilesMatrix",
+        "Gta6ClaimAtlas",
+        "Gta6VerifyPathway",
+        "Gta6Quiz"
+      ]
+    },
+    {
+      "file": "n8n-review-before-you-automate.mdx",
+      "slug": "n8n-review-before-you-automate",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "8c3a19bfe56ae3ae7fc53a3952f0f76e3fa502b4c73b378521dcec4c04360c94",
+      "components": [
+        "N8nConcernsMatrix",
+        "N8nRunAtlas",
+        "N8nAdoptionSwitches",
+        "N8nQuiz"
+      ]
+    },
+    {
+      "file": "nats-jetstream-review-before-you-ship.mdx",
+      "slug": "nats-jetstream-review-before-you-ship",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "e34ab71ce018c203c2b28bf50af5c4bb9171f5417e2ce05a79be3f19322d8041",
+      "components": [
+        "NatsLayerStack",
+        "NatsGuaranteeSwitches",
+        "NatsSourceMatrix",
+        "NatsQuiz"
+      ]
+    },
+    {
+      "file": "notes-from-a-year-of-public-reading.mdx",
+      "slug": "notes-from-a-year-of-public-reading",
+      "date": "2026-06-04",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "b1f29374d04f45b54af9ce1dc0aaa56009a6e6f2ec95b37a0e50b7d6f25511c3",
+      "components": [
+        "NotesPipelineFlow",
+        "Callout",
+        "Figure",
+        "NotesCostSwitches",
+        "Sidenote",
+        "NotesPracticePathway",
+        "NotesQuiz"
+      ]
+    },
+    {
+      "file": "owasp-wstg-review-how-to-test.mdx",
+      "slug": "owasp-wstg-review-how-to-test",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "89a480aa23f356e76fbad6350d8869072115d198d4352a72725ae83f08cee098",
+      "components": [
+        "WstgTestingPathway",
+        "WstgFeatureMatrix",
+        "WstgReportAtlas",
+        "WstgQuiz"
+      ]
+    },
+    {
+      "file": "perspective-api-review-before-you-moderate.mdx",
+      "slug": "perspective-api-review-before-you-moderate",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "06ebe44992a88c078a1dcd331998fc5a43e5ca399bce42972d145923008076bc",
+      "components": [
+        "PerspectiveModeMatrix",
+        "PerspectiveBoundaryPathway",
+        "PerspectiveAssumptionSwitches",
+        "PerspectiveQuiz"
+      ]
+    },
+    {
+      "file": "plane-review-before-you-migrate.mdx",
+      "slug": "plane-review-before-you-migrate",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "662ed63673de51a1c9604ff7a34ea165c2bc033bc88b7bdd8b6d009d9f25b3ef",
+      "components": [
+        "PlaneStackLayers",
+        "PlaneDecisionMatrix",
+        "PlaneMigrationSwitches",
+        "PlaneQuiz"
+      ]
+    },
+    {
+      "file": "polars-review-before-you-switch.mdx",
+      "slug": "polars-review-before-you-switch",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "8ddda993ee4a073154953969d6f37b444f205ec3dafe6d45fafafd7fc96e6c8c",
+      "components": [
+        "PolarsDecisionMatrix",
+        "PolarsQueryAtlas",
+        "PolarsAssumptionSwitches",
+        "PolarsQuiz"
+      ]
+    },
+    {
+      "file": "posthog-review-before-you-self-host.mdx",
+      "slug": "posthog-review-before-you-self-host",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "1144d3ad00c624821add490fdb71cb82636d60d5907d0e86ed4dec3f449f4ddc",
+      "components": [
+        "PosthogStackLayers",
+        "PosthogDecisionMatrix",
+        "PosthogAssumptionSwitches",
+        "PosthogQuiz"
+      ]
+    },
+    {
+      "file": "prithvi-eo-2-0-multi-temporal-foundation-model.mdx",
+      "slug": "prithvi-eo-2-0-multi-temporal-foundation-model",
+      "date": "2026-11-24",
+      "draft": false,
+      "changed": true,
+      "beforeSha256": "5a654b429a235fe7b3bee5b006c5659507d18a6101cfdc29be7efdd841a8386f",
+      "components": [
+        "KeyTakeaways",
+        "PrithviExplorer",
+        "MaskedPatchReconstructor",
+        "SeasonScrubber",
+        "CheckpointLadder",
+        "FloodResultsChart",
+        "PastisResultsChart"
+      ]
+    },
+    {
+      "file": "read-a-repository-before-you-run-it.mdx",
+      "slug": "read-a-repository-before-you-run-it",
+      "date": "2026-10-30",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "8a4ac3525adc061d2016e78b2449be7521c383f57feffa55f670e1b4a10f8eeb",
+      "components": [
+        "Callout",
+        "ReadRepoSignalsMatrix",
+        "Figure",
+        "ReadRepoRequestFlow",
+        "Sidenote",
+        "ReadRepoTree",
+        "ReadRepoQuiz"
+      ]
+    },
+    {
+      "file": "reproducing-a-benchmark-that-did-not-survive.mdx",
+      "slug": "reproducing-a-benchmark-that-did-not-survive",
+      "date": "2026-11-18",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "837fc737b55383b6d2d4514ef24add460a9cffe3f60bd40e943dfa8b318e5994",
+      "components": [
+        "KeyTakeaways",
+        "BenchResultsMatrix",
+        "Callout",
+        "BenchGapPathway",
+        "BenchChecklistSwitches",
+        "BenchQuiz"
+      ]
+    },
+    {
+      "file": "rustdesk-review-before-you-deploy.mdx",
+      "slug": "rustdesk-review-before-you-deploy",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "bd4cc4447f21a4a336b92748ad1447bd8fb5b333d988625d6e5ec4a32c4ff26c",
+      "components": [
+        "RustdeskConnectionFlow",
+        "RustdeskBoundaryMatrix",
+        "RustdeskAuditSwitches",
+        "RustdeskQuiz"
+      ]
+    },
+    {
+      "file": "svelte-review-before-you-migrate.mdx",
+      "slug": "svelte-review-before-you-migrate",
+      "date": "2026-11-20",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "c5a463ff40e2913a642938e0fbda0ca5c9b083329794ecfcd499e2d7830f37a4",
+      "components": [
+        "SvelteLayerStack",
+        "SvelteBoundaryMatrix",
+        "SvelteAdoptionSwitches",
+        "SvelteQuiz"
+      ]
+    },
+    {
+      "file": "tooling-notes-under-construction.mdx",
+      "slug": "tooling-notes-under-construction",
+      "date": "2026-11-22",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "7c731013c468c6608fe46c21a8d53e5f8feb27e28e7b7d14e9b0a8cb7ce7f7c8",
+      "components": [
+        "ToolsListStack",
+        "ToolsWorkflowFlow",
+        "ToolsDraftTree",
+        "ToolsQuiz"
+      ]
+    },
+    {
+      "file": "welcome-to-the-new-researchwithme.mdx",
+      "slug": "welcome-to-the-new-researchwithme",
+      "date": "2026-11-24",
+      "draft": false,
+      "changed": false,
+      "beforeSha256": "0123a7c73434e5b1a0c37fdc0893e37190c5e6effc43c3d1191df122e01b5348",
+      "components": [
+        "KeyTakeaways",
+        "WelcomeAnatomyAtlas",
+        "WelcomeGatesMatrix",
+        "WelcomeBudgetSplit",
+        "Callout",
+        "WelcomeQuiz"
+      ]
+    },
+    {
+      "file": "what-a-p-value-does-not-tell-you.mdx",
+      "slug": "what-a-p-value-does-not-tell-you",
+      "date": "2026-09-12",
+      "draft": true,
+      "changed": true,
+      "beforeSha256": "33557de605ce0d3526836c585e821c701a00d345d36199b35791765bd6a3e226",
+      "components": [
+        "PValueMisreadingMatrix",
+        "Callout",
+        "PValueAssumptionSwitches",
+        "PValueResultsAtlas",
+        "PValueQuiz"
+      ]
+    }
+  ]
+}

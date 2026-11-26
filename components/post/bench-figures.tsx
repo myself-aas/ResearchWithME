@@ -15,13 +15,13 @@ import { BENCH_QUIZ } from '@/lib/post/reproducing-a-benchmark-that-did-not-surv
 
 export function BenchResultsMatrix() {
   return (
-    <MetricMatrix title="The measurements, side by side" subtitle="Sort by ratio: warm reproduces, cold inverts — on the same hardware." columns={BENCH_RESULT_COLUMNS} rows={BENCH_RESULT_ROWS} caption="Measurement" />
+    <MetricMatrix title="Illustrative values, not measured results" subtitle="Unverified teaching fixture: sorting these ratios does not establish a real benchmark reproduction." columns={BENCH_RESULT_COLUMNS} rows={BENCH_RESULT_ROWS} caption="Illustrative scenario" />
   );
 }
 
 export function BenchGapPathway() {
   return (
-    <PathwayMap title="Where the gap comes from" subtitle="Each fork is one documented-versus-stated choice; the published configuration accumulates the debt." stages={BENCH_GAP_STAGES} costUnit="reproducibility debt" />
+    <PathwayMap title="Where the gap comes from" subtitle="Hypothetical measurement choices; the score is a teaching aid, not an observed risk probability." stages={BENCH_GAP_STAGES} costUnit="reproducibility debt" />
   );
 }
 
@@ -33,6 +33,6 @@ export function BenchChecklistSwitches() {
 
 export function BenchQuiz() {
   return (
-    <SelfCheckQuiz title="Check the reproduction reading" questions={BENCH_QUIZ} />
+    <SelfCheckQuiz title="Check the hypothetical benchmark reading" questions={BENCH_QUIZ} />
   );
 }

@@ -1,12 +1,33 @@
 ---
 title: "Polars review: what to measure before you switch your pipeline"
 description: "Polars repository review of lazy query plans, pushdown and streaming fallbacks, with workload checks rather than unmeasured speed claims."
+updated: "2026-11-26"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "polars"]
-draft: true
+draft: false
+faq:
+  - question: "Does requesting streaming guarantee bounded memory for every query?"
+    answer: "No such guarantee is established here. Inspect supported operators and the actual plan, include final materialization, and measure peak process memory on representative data."
+  - question: "What did this source review actually measure?"
+    answer: "No upstream runtime, load test or production deployment was performed. The review retains its pinned source observations; the proposed evaluation steps are recommendations, not completed experiments."
+  - question: "What should I verify before adopting this approach?"
+    answer: "Reference results include null, ordering and join-edge cases. Plans and execution-engine requests are archived with the package version."
+cover: "/images/covers/polars-review-before-you-switch.webp"
+coverAlt: "A branching query plan filters data tiles into an ordered columnar stack."
 ---
 
-### Key findings
+Polars is worth evaluating through the plans and result sets your workload actually produces, not a generic speed ranking. This pinned source review separates lazy planning, streaming execution, and final materialization. Verify correctness and operator support first, then measure time and peak memory under matched inputs before deciding whether to switch.
+
+## Engineering quick-spec
+
+| Decision surface | Contract to verify |
+| --- | --- |
+| Review focus | Lazy query plans and bounded-memory evaluation |
+| Inputs and boundaries | Scans, optimizer decisions, streaming-compatible operators and materialized results |
+| Principal failure case | Requesting streaming is not a bound on every query’s peak memory |
+| Evidence level | Pinned source inspection; no independently measured runtime result |
+
+## Key findings
 - LazyFrame records a logical plan rather than immediately materializing each step.
 - Predicate and projection pushdown are documented reasons to defer execution.
 - Streaming is not proof that every operator stays within a fixed memory budget.
@@ -40,6 +61,7 @@ There is a further source-quality caveat: this file contains a comment saying it
 | Lazy instead of eager | Deferred planning and documented pushdown | Actual I/O avoided on your files |
 | Streaming collection | Batch execution with operator qualifications | Peak RSS, spill volume and fallback impact |
 | SQL plus expressions | README describes a shared engine | Complete semantic equivalence for a migration |
+
 The decision table as a sortable matrix — then read the unmeasured column twice:
 
 <PolarsDecisionMatrix />
@@ -97,19 +119,29 @@ Three checks before you trust the adjectives:
 
 <PolarsQuiz />
 
-## What can a reader inspect or reproduce?
+## Reproduction playbook
 
-This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
+**Proposed evaluation, not a completed test.** The existing pinned references establish what was inspected. They do not establish that a current package, hosted edition or local deployment behaves identically.
 
-For a next-stage evaluation:
+1. Pin the Polars package and preserve an input manifest with data types, nulls, sort expectations and join cardinalities. Produce a small trusted reference result before timing a representative workload.
 
-1. Pin a packaged version and compare eager and lazy plans using explain on representative scans, filters and joins.
-2. Measure wall time, peak process memory, disk spill and final result materialization under the same resource limits.
-3. Verify result correctness and operator support before interpreting a streaming request as a memory guarantee.
+2. Save the explain output for eager/lazy alternatives and inspect blocking operators, joins and final collection. Separate scan, compute, spill and result-materialization costs; do not use selected source-file counts as a performance proxy.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/polars-review-before-you-switch/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+3. Run matched cold and warm trials under the same process limits. Compare result equivalence, elapsed time and peak process memory; retain a plan and counterexample whenever the expected streaming behavior does not occur.
 
-Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
+## Pre-publication audit
+
+- [ ] Reference results include null, ordering and join-edge cases.
+- [ ] Plans and execution-engine requests are archived with the package version.
+- [ ] Memory and timing measurements include result materialization and workload size.
+
+The [inspection record](/evidence/polars-review-before-you-switch/inspection-record.json) retains the earlier source identifiers and claim ledger; it is not a log of these proposed experiments. Keep the original source-inspection date distinct from this article’s editorial update. Human source review and final approval remain pending.
+
+## Verdict
+
+Try Polars where representative plans and correctness checks can settle the decision. Delay a rewrite justified only by synthetic headlines or the presence of a streaming engine in the tree. The next useful artifact is a reproducible workload and result comparison, not a larger adoption claim.
+
+For context, read the [review method](/about), browse the [writing archive](/blog), or use [archive search](/search). This post remains a draft; these links do not imply it is published.
 
 ## References
 

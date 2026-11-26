@@ -277,7 +277,7 @@ for (const page of pages) {
 
     if (route === '/blog/prithvi-eo-2-0-multi-temporal-foundation-model') {
       const tableCount = (body.match(/<table/gi) ?? []).length;
-      assert(tableCount >= 3 && tableCount <= 4, `${where}: contains 3–4 research tables (found ${tableCount})`);
+      assert(tableCount === 5, `${where}: contains the quick-spec, pretraining, checkpoint, Sen1Floods11 and PASTIS tables (found ${tableCount})`);
       const charts = [...body.matchAll(/<figure[^>]*data-chart="([^"]+)"/gi)].map((match) => match[1]);
       assert(charts.includes('sen1floods11') && charts.includes('pastis'), `${where}: includes interactive Sen1Floods11 and PASTIS charts`);
       assert(body.includes('Szwarcman et al.'), `${where}: quotes are attributed to the paper authors`);
