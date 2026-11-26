@@ -28,3 +28,4 @@ test-results/
 *.whl
 __pycache__/
 *.py[cod]
+image-search/
