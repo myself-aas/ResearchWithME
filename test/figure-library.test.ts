@@ -259,3 +259,67 @@ describe('matrix', () => {
     expect(sortRows(rows, columns, { key: 't', dir: 'asc' }).map((r) => r.label)).toEqual(['r2', 'r3', 'r1']);
   });
 });
+
+import { clampStep, tracePath, traversedEdges } from '@/lib/figures/flow';
+import { expandToDepth, leafCount, toggleExpanded, treeIds } from '@/lib/figures/tree';
+import { chosenOptions, clampChoice, initialChoices, routeCost } from '@/lib/figures/pathway';
+
+describe('flow', () => {
+  const nodes = [
+    { id: 'a', label: 'A', x: 0, y: 0 },
+    { id: 'b', label: 'B', x: 50, y: 50 },
+    { id: 'c', label: 'C', x: 100, y: 100 },
+  ];
+  const edges = [{ from: 'a', to: 'b' }, { from: 'b', to: 'c' }, { from: 'a', to: 'c' }];
+  it('clamps the trace to real nodes and steps to range', () => {
+    expect(tracePath(['a', 'ghost', 'c'], nodes)).toEqual(['a', 'c']);
+    expect(clampStep(9, 2)).toBe(1);
+    expect(clampStep(-3, 2)).toBe(0);
+  });
+  it('lights only edges actually traversed, in order', () => {
+    expect(traversedEdges(edges, ['a', 'c'], 1)).toContain('a->c');
+    expect(traversedEdges(edges, ['a', 'c'], 0).size).toBe(0);
+    // an edge not on the path stays dark
+    expect(traversedEdges(edges, ['a', 'b', 'c'], 2)).not.toContain('a->c');
+  });
+});
+
+describe('tree', () => {
+  const tree = [
+    { id: 'root', label: 'R', children: [
+      { id: 'l', label: 'L' },
+      { id: 'r', label: 'R2', children: [{ id: 'leaf', label: 'X' }] },
+    ] },
+  ];
+  it('toggles expansion symmetrically', () => {
+    expect(toggleExpanded(new Set(['root']), 'root').size).toBe(0);
+    expect(toggleExpanded(new Set(), 'root').size).toBe(1);
+  });
+  it('counts ids and leaves, expands to depth', () => {
+    expect(treeIds(tree)).toEqual(['root', 'l', 'r', 'leaf']);
+    expect(expandToDepth(tree, 1)).toEqual(new Set(['root']));
+    expect(expandToDepth(tree, 2)).toEqual(new Set(['root', 'r']));
+    expect(leafCount(tree[0])).toBe(2);
+    expect(leafCount(tree[0].children![0])).toBe(1);
+  });
+});
+
+describe('pathway', () => {
+  const stages = [
+    { id: 'a', label: 'A', options: [
+      { id: 'cheap', label: 'Cheap', detail: '', cost: 1 },
+      { id: 'heavy', label: 'Heavy', detail: '', cost: 4 },
+    ] },
+    { id: 'b', label: 'B', note: 'no fork' },
+  ];
+  it('defaults to the first option per fork', () => {
+    expect(initialChoices(stages)).toEqual({ a: 'cheap' });
+    expect(clampChoice(stages[0], 'heavy')).toBe('heavy');
+    expect(clampChoice(stages[0], 'ghost')).toBe('cheap');
+  });
+  it('accumulates the chosen route only', () => {
+    expect(routeCost(stages, { a: 'cheap' })).toBe(1);
+    expect(routeCost(stages, { a: 'heavy' })).toBe(4);
+    expect(chosenOptions(stages, { a: 'heavy' })[1].option).toBeNull();
+  });
+});

@@ -13,3 +13,6 @@ export { SELF_CHECK_QUIZ_FIXTURE } from './self-check-quiz';
 export { LAYER_STACK_FIXTURE } from './layer-stack';
 export { BUDGET_SPLIT_FIXTURE } from './budget-split';
 export { METRIC_MATRIX_FIXTURE } from './metric-matrix';
+export { FLOW_DIAGRAM_FIXTURE } from './flow-diagram';
+export { ORG_CHART_FIXTURE } from './org-chart';
+export { PATHWAY_MAP_FIXTURE } from './pathway-map';

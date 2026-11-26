@@ -2,7 +2,7 @@ import LayerStack from '@/components/library/LayerStack';
 import MetricMatrix from '@/components/library/MetricMatrix';
 import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
-import {PLANE_STACK_LAYERS, PLANE_DECISION_COLUMNS, PLANE_DECISION_ROWS, PLANE_MIGRATION_ASSUMPTIONS, PLANE_MIGRATION_OUTCOMES, PLANE_QUIZ} from '@/lib/post/plane-repo-teardown';
+import {PLANE_STACK_LAYERS, PLANE_DECISION_COLUMNS, PLANE_DECISION_ROWS, PLANE_MIGRATION_ASSUMPTIONS, PLANE_MIGRATION_OUTCOMES, PLANE_QUIZ} from '@/lib/post/plane-review-before-you-migrate';
 
 /**
  * Thin bindings for the Plane teardown: post data, library interaction.

@@ -1,5 +1,5 @@
 ---
-title: "Perspective review: where analytics should execute"
+title: "Perspective API review: what to know before you moderate with it"
 description: "Perspective repository review of browser and server analytics, replication and indexed updates, with data-boundary trade-offs instead of speed rankings."
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "perspective"]
@@ -37,7 +37,13 @@ The server-only document instead describes a virtual client that pages the serve
 | --- | --- | --- |
 | Client-only | Entire dataset in the browser | Download authorization, memory and application persistence |
 | Replicated | Server table plus browser duplicate | Initial transfer, deltas and indexed deletion semantics |
-| Server-only | Server dataset with virtual browser access | Connection lifecycle, server load and interaction latency |
+The modes as a sortable matrix:
+
+<PerspectiveModeMatrix />
+
+And the decision the review actually argues for — boundary first, chart last:
+
+<PerspectiveBoundaryPathway />
 
 This table summarizes documented designs, not a universal ranking. Dataset size, user concurrency, network conditions and allowed data exposure should determine which design to test.
 
@@ -46,6 +52,10 @@ This table summarizes documented designs, not a universal ranking. Dataset size,
 The update guide says an unindexed table appends data on `update`, whereas an index enables partial updates. Missing fields can be omitted rather than overwriting every column; indexed rows can be removed by their index values. A feed of changing entities and an append-only event log therefore need different modeling decisions. [5](https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/table/update_and_remove.md#L31-L79)
 
 My suggested acceptance test includes duplicate identifiers, partial records, null values and removals that change a filtered or grouped view. The replicated architecture document has explicit qualifications around grouped rollup modes; do not assume every visual transformation preserves the same update identity. [3](https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/architecture/client_server.md#L5-L52) [5](https://github.com/perspective-dev/perspective/blob/95535bcbfde42e8e8994534a96f7fdaa4ae3e371/docs/md/explanation/table/update_and_remove.md#L31-L79)
+
+The boundary checklist as switches:
+
+<PerspectiveAssumptionSwitches />
 
 ## Fit and boundaries
 
@@ -90,6 +100,10 @@ Grid plugin: 79
 **Decision checkpoint.** Start with the execution mode and table identity semantics, then inspect the relevant viewer/plugin path. More chart-plugin files do not imply better throughput or less memory than a server mode.
 {/* review-source-map:end */}
 
+Three placement readings worth checking:
+
+<PerspectiveQuiz />
+
 ## What can a reader inspect or reproduce?
 
 This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
@@ -100,7 +114,7 @@ For a next-stage evaluation:
 2. Test indexed partial updates, deletions, nulls and grouped/filtered replication with synthetic changing entities.
 3. Measure initial transfer, browser memory, interaction latency and disconnect recovery on the actual client devices and packaged version.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/perspective-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/perspective-api-review-before-you-moderate/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
 
 Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
 

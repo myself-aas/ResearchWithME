@@ -2,7 +2,7 @@ import LayerStack from '@/components/library/LayerStack';
 import MetricMatrix from '@/components/library/MetricMatrix';
 import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
-import {POSTHOG_STACK_LAYERS, POSTHOG_DECISION_COLUMNS, POSTHOG_DECISION_ROWS, POSTHOG_ASSUMPTIONS, POSTHOG_OUTCOMES, POSTHOG_QUIZ} from '@/lib/post/posthog-repo-teardown';
+import {POSTHOG_STACK_LAYERS, POSTHOG_DECISION_COLUMNS, POSTHOG_DECISION_ROWS, POSTHOG_ASSUMPTIONS, POSTHOG_OUTCOMES, POSTHOG_QUIZ} from '@/lib/post/posthog-review-before-you-self-host';
 
 /**
  * Thin bindings for the PostHog teardown: post data, library interaction.

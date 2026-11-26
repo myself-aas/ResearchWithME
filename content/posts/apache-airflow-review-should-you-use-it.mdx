@@ -1,5 +1,5 @@
 ---
-title: "Apache Airflow 3.4 review: orchestration trade-offs"
+title: "Should you use Apache Airflow? A source review of the orchestration trade-offs"
 description: "Apache Airflow coordinates workflow tasks; it is not the engine that must process all of their data. This source-based review of version 3.4.0 examines its scheduler, executor choices, retry-safe task design, and deployment and trust boundaries. No Airflow installation…"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "apache-airflow"]
@@ -119,7 +119,7 @@ For mutually untrusted code authors, a deployment owner should obtain a threat-m
 
 ## What can readers reproduce from this inspection?
 
-**Readers can inspect the same release commit and the cited source paths without installing Airflow.** A curated [inspection record](/evidence/apache-airflow-repo-teardown/inspection-record.json) preserves source identifiers, locators, release metadata, and the review's claim ledger. It records the original inspection time and separates documented behavior from source observations and review inferences.
+**Readers can inspect the same release commit and the cited source paths without installing Airflow.** A curated [inspection record](/evidence/apache-airflow-review-should-you-use-it/inspection-record.json) preserves source identifiers, locators, release metadata, and the review's claim ledger. It records the original inspection time and separates documented behavior from source observations and review inferences.
 
 The following commands are read-only source-inspection examples. Equivalent commit-resolution and file-content queries were run while preparing this review; these commands do not install Airflow or run its tests.
 

@@ -17,6 +17,22 @@ format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and a "How this site is made" colophon strip. All sections are server-rendered and crawlable.
 
 ### Added
+- The diagram family of generative-UI components: `FlowDiagram` (stepped block/flow-chart trace
+  over a typed node graph), `OrgChart` (expand/collapse hierarchical tree with live leaf counts), and
+  `PathwayMap` (sequential forks whose choices accumulate a route cost) — logic in
+  `lib/figures/{flow,tree,pathway}.ts`, fixtures for `/lab`, three registry archetypes
+  (`flow-diagram-trace`, `tree-expand-org`, `route-choice-pathway`), and the lab page budget still
+  green.
+- Second integration batch: five more posts at ≥4 distinct archetypes each, all data essay-derived —
+  Apache Superset (platform org chart, asset matrix, platform-owner switches, quiz), OWASP WSTG
+  (testing pathway, practice/inference matrix, report anatomy atlas, quiz), Perspective API (mode
+  matrix, boundary pathway, placement switches, quiz), RustDesk (connection flow diagram, boundary
+  matrix, audit switches, quiz), and the GTA VI emulator claim (inspected-file matrix, claim anatomy
+  atlas, verification pathway, quiz).
+- Every GitHub repo teardown retitled and re-slugged around call-to-action phrasing
+  (e.g. `apache-airflow-review-should-you-use-it`, `rustdesk-review-before-you-deploy`); MDX
+  frontmatter, evidence directories, post modules, figure bindings, and registry posts lists all
+  follow the new slugs.
 - The per-post figure contract: every adopting post carries **≥4 distinct interaction archetypes**,
   enforced by `test/post-figures.test.ts` (manifest ↔ registry ↔ MDX-body agreement, posts derived
   from the registry — no hand list). First batch integrated with real, essay-derived data: the Airflow

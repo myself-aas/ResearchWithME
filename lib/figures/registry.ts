@@ -13,10 +13,16 @@ import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
 import ThemeSwitch from '@/components/library/ThemeSwitch';
 import LayerStack from '@/components/library/LayerStack';
+import FlowDiagram from '@/components/library/FlowDiagram';
+import OrgChart from '@/components/library/OrgChart';
+import PathwayMap from '@/components/library/PathwayMap';
 import BudgetSplit from '@/components/library/BudgetSplit';
 import MetricMatrix from '@/components/library/MetricMatrix';
 import {
   ASSUMPTION_SWITCHES_FIXTURE,
+  FLOW_DIAGRAM_FIXTURE,
+  ORG_CHART_FIXTURE,
+  PATHWAY_MAP_FIXTURE,
   BUDGET_SPLIT_FIXTURE,
   LAYER_STACK_FIXTURE,
   METRIC_MATRIX_FIXTURE,
@@ -213,7 +219,7 @@ export const FIGURES = [
     archetype: 'pinned-hotspot-annotation',
     blurb: 'Numbered pins anchored to fixed positions on a scene; activating one opens its annotation card.',
     status: 'adopted',
-    posts: ['what-a-p-value-does-not-tell-you', 'welcome-to-the-new-researchwithme', 'n8n-repo-teardown', 'polars-repo-teardown'],
+    posts: ['owasp-wstg-review-how-to-test', 'gta6-emulator-review-verify-the-claim', 'what-a-p-value-does-not-tell-you', 'welcome-to-the-new-researchwithme', 'n8n-review-before-you-automate', 'polars-review-before-you-switch'],
     component: HotspotAtlas as FigureComponent,
     defaults: { ...HOTSPOT_ATLAS_FIXTURE },
     keywords: ['anatomy', 'labelled diagram', 'hotspot', 'annotat', 'read the figure'],
@@ -225,7 +231,7 @@ export const FIGURES = [
     archetype: 'toggle-assumption-inference',
     blurb: 'Boolean switches re-derive every outcome from base-plus-delta data — auditing which assumption is worth what.',
     status: 'adopted',
-    posts: ['apache-airflow-repo-teardown', 'svelte-repo-teardown', 'what-a-p-value-does-not-tell-you', 'n8n-repo-teardown', 'nats-server-repo-teardown', 'polars-repo-teardown', 'posthog-repo-teardown', 'plane-repo-teardown'],
+    posts: ['apache-superset-review-before-you-self-host', 'perspective-api-review-before-you-moderate', 'rustdesk-review-before-you-deploy', 'apache-airflow-review-should-you-use-it', 'svelte-review-before-you-migrate', 'what-a-p-value-does-not-tell-you', 'n8n-review-before-you-automate', 'nats-jetstream-review-before-you-ship', 'polars-review-before-you-switch', 'posthog-review-before-you-self-host', 'plane-review-before-you-migrate'],
     component: AssumptionSwitches as FigureComponent,
     defaults: { ...ASSUMPTION_SWITCHES_FIXTURE },
     keywords: ['assumption', 'sensitivity', 'what if', 'toggle', 'ablat'],
@@ -237,7 +243,7 @@ export const FIGURES = [
     archetype: 'answer-reveal-quiz',
     blurb: 'The reader commits to an answer; every option explains itself after the choice, and the score tallies.',
     status: 'adopted',
-    posts: ['apache-airflow-repo-teardown', 'svelte-repo-teardown', 'what-a-p-value-does-not-tell-you', 'welcome-to-the-new-researchwithme', 'n8n-repo-teardown', 'nats-server-repo-teardown', 'polars-repo-teardown', 'posthog-repo-teardown', 'plane-repo-teardown'],
+    posts: ['apache-superset-review-before-you-self-host', 'owasp-wstg-review-how-to-test', 'perspective-api-review-before-you-moderate', 'rustdesk-review-before-you-deploy', 'gta6-emulator-review-verify-the-claim', 'apache-airflow-review-should-you-use-it', 'svelte-review-before-you-migrate', 'what-a-p-value-does-not-tell-you', 'welcome-to-the-new-researchwithme', 'n8n-review-before-you-automate', 'nats-jetstream-review-before-you-ship', 'polars-review-before-you-switch', 'posthog-review-before-you-self-host', 'plane-review-before-you-migrate'],
     component: SelfCheckQuiz as FigureComponent,
     defaults: { ...SELF_CHECK_QUIZ_FIXTURE },
     keywords: ['quiz', 'test me', 'check yourself', 'question'],
@@ -262,7 +268,7 @@ export const FIGURES = [
     archetype: 'accordion-layer-stack',
     blurb: 'An expandable stack of architecture layers — one open at a time, verified facts inside.',
     status: 'adopted',
-    posts: ['apache-airflow-repo-teardown', 'svelte-repo-teardown', 'nats-server-repo-teardown', 'posthog-repo-teardown', 'plane-repo-teardown'],
+    posts: ['apache-airflow-review-should-you-use-it', 'svelte-review-before-you-migrate', 'nats-jetstream-review-before-you-ship', 'posthog-review-before-you-self-host', 'plane-review-before-you-migrate'],
     component: LayerStack as FigureComponent,
     defaults: { ...LAYER_STACK_FIXTURE },
     keywords: ['layer', 'architecture layers', 'component stack', 'anatomy of the system'],
@@ -286,10 +292,46 @@ export const FIGURES = [
     archetype: 'column-sort-matrix',
     blurb: 'A sortable evidence matrix — activate a column heading to choose the ordering.',
     status: 'adopted',
-    posts: ['apache-airflow-repo-teardown', 'svelte-repo-teardown', 'what-a-p-value-does-not-tell-you', 'welcome-to-the-new-researchwithme', 'n8n-repo-teardown', 'nats-server-repo-teardown', 'polars-repo-teardown', 'posthog-repo-teardown', 'plane-repo-teardown'],
+    posts: ['apache-superset-review-before-you-self-host', 'owasp-wstg-review-how-to-test', 'perspective-api-review-before-you-moderate', 'rustdesk-review-before-you-deploy', 'gta6-emulator-review-verify-the-claim', 'apache-airflow-review-should-you-use-it', 'svelte-review-before-you-migrate', 'what-a-p-value-does-not-tell-you', 'welcome-to-the-new-researchwithme', 'n8n-review-before-you-automate', 'nats-jetstream-review-before-you-ship', 'polars-review-before-you-switch', 'posthog-review-before-you-self-host', 'plane-review-before-you-migrate'],
     component: MetricMatrix as FigureComponent,
     defaults: { ...METRIC_MATRIX_FIXTURE },
     keywords: ['compare options', 'matrix', 'sortable', 'which one', 'evidence table'],
+  },
+  {
+    toolName: 'show_flow_diagram',
+    mdxName: 'FlowDiagram',
+    title: 'Flow diagram',
+    archetype: 'flow-diagram-trace',
+    blurb: 'A block/flow diagram walked step by step — active node and traversed arrows light up.',
+    status: 'adopted',
+    posts: ['rustdesk-review-before-you-deploy'],
+    component: FlowDiagram as FigureComponent,
+    defaults: { ...FLOW_DIAGRAM_FIXTURE },
+    keywords: ['flow', 'flowchart', 'block diagram', 'how it runs', 'request flow'],
+  },
+  {
+    toolName: 'show_org_chart',
+    mdxName: 'OrgChart',
+    title: 'Org chart',
+    archetype: 'tree-expand-org',
+    blurb: 'A hierarchical diagram expanded level by level — collapsed nodes keep their leaf counts.',
+    status: 'adopted',
+    posts: ['apache-superset-review-before-you-self-host'],
+    component: OrgChart as FigureComponent,
+    defaults: { ...ORG_CHART_FIXTURE },
+    keywords: ['org chart', 'hierarchy', 'structure', 'module tree', 'what is inside'],
+  },
+  {
+    toolName: 'show_pathway_map',
+    mdxName: 'PathwayMap',
+    title: 'Pathway map',
+    archetype: 'route-choice-pathway',
+    blurb: 'Sequential forks; the chosen route lights and its commitments accumulate.',
+    status: 'adopted',
+    posts: ['owasp-wstg-review-how-to-test', 'perspective-api-review-before-you-moderate', 'gta6-emulator-review-verify-the-claim'],
+    component: PathwayMap as FigureComponent,
+    defaults: { ...PATHWAY_MAP_FIXTURE },
+    keywords: ['pathway', 'route', 'path', 'decision map', 'adoption path'],
   },
 ] as const satisfies readonly FigureDefinition[];
 

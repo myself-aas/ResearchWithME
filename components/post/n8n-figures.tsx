@@ -2,7 +2,7 @@ import MetricMatrix from '@/components/library/MetricMatrix';
 import HotspotAtlas from '@/components/library/HotspotAtlas';
 import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
-import {N8N_CONCERNS_COLUMNS, N8N_CONCERNS_ROWS, N8N_RUN_PINS, N8N_ADOPTION_ASSUMPTIONS, N8N_ADOPTION_OUTCOMES, N8N_QUIZ} from '@/lib/post/n8n-repo-teardown';
+import {N8N_CONCERNS_COLUMNS, N8N_CONCERNS_ROWS, N8N_RUN_PINS, N8N_ADOPTION_ASSUMPTIONS, N8N_ADOPTION_OUTCOMES, N8N_QUIZ} from '@/lib/post/n8n-review-before-you-automate';
 
 /**
  * Thin bindings for the n8n teardown: post data, library interaction.

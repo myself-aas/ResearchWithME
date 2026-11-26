@@ -10,13 +10,13 @@ import {
   AirflowEvidenceMatrix,
   AirflowPilotSwitches,
   AirflowQuiz,
-} from '@/components/post/airflow-teardown-figures';
+} from '@/components/post/apache-airflow-figures';
 import {
   SvelteLayerStack,
   SvelteBoundaryMatrix,
   SvelteAdoptionSwitches,
   SvelteQuiz,
-} from '@/components/post/svelte-teardown-figures';
+} from '@/components/post/svelte-figures';
 import {
   PValueMisreadingMatrix,
   PValueAssumptionSwitches,
@@ -28,31 +28,61 @@ import {
   N8nRunAtlas,
   N8nAdoptionSwitches,
   N8nQuiz,
-} from '@/components/post/n8n-teardown-figures';
+} from '@/components/post/n8n-figures';
 import {
   NatsLayerStack,
   NatsSourceMatrix,
   NatsGuaranteeSwitches,
   NatsQuiz,
-} from '@/components/post/nats-teardown-figures';
+} from '@/components/post/nats-figures';
 import {
   PolarsDecisionMatrix,
   PolarsQueryAtlas,
   PolarsAssumptionSwitches,
   PolarsQuiz,
-} from '@/components/post/polars-teardown-figures';
+} from '@/components/post/polars-figures';
 import {
   PosthogStackLayers,
   PosthogDecisionMatrix,
   PosthogAssumptionSwitches,
   PosthogQuiz,
-} from '@/components/post/posthog-teardown-figures';
+} from '@/components/post/posthog-figures';
 import {
   PlaneStackLayers,
   PlaneDecisionMatrix,
   PlaneMigrationSwitches,
   PlaneQuiz,
-} from '@/components/post/plane-teardown-figures';
+} from '@/components/post/plane-figures';
+import {
+  SupersetPlatformChart,
+  SupersetAssetMatrix,
+  SupersetAssumptionSwitches,
+  SupersetQuiz,
+} from '@/components/post/superset-figures';
+import {
+  WstgTestingPathway,
+  WstgFeatureMatrix,
+  WstgReportAtlas,
+  WstgQuiz,
+} from '@/components/post/wstg-figures';
+import {
+  PerspectiveModeMatrix,
+  PerspectiveBoundaryPathway,
+  PerspectiveAssumptionSwitches,
+  PerspectiveQuiz,
+} from '@/components/post/perspective-figures';
+import {
+  RustdeskConnectionFlow,
+  RustdeskBoundaryMatrix,
+  RustdeskAuditSwitches,
+  RustdeskQuiz,
+} from '@/components/post/rustdesk-figures';
+import {
+  Gta6FilesMatrix,
+  Gta6ClaimAtlas,
+  Gta6VerifyPathway,
+  Gta6Quiz,
+} from '@/components/post/gta6-figures';
 import {
   WelcomeAnatomyAtlas,
   WelcomeGatesMatrix,
@@ -337,4 +367,24 @@ export const mdxComponents = {
   PlaneDecisionMatrix,
   PlaneMigrationSwitches,
   PlaneQuiz,
+  SupersetPlatformChart,
+  SupersetAssetMatrix,
+  SupersetAssumptionSwitches,
+  SupersetQuiz,
+  WstgTestingPathway,
+  WstgFeatureMatrix,
+  WstgReportAtlas,
+  WstgQuiz,
+  PerspectiveModeMatrix,
+  PerspectiveBoundaryPathway,
+  PerspectiveAssumptionSwitches,
+  PerspectiveQuiz,
+  RustdeskConnectionFlow,
+  RustdeskBoundaryMatrix,
+  RustdeskAuditSwitches,
+  RustdeskQuiz,
+  Gta6FilesMatrix,
+  Gta6ClaimAtlas,
+  Gta6VerifyPathway,
+  Gta6Quiz,
 };

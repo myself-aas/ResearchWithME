@@ -1,5 +1,5 @@
 ---
-title: "OWASP WSTG review: a method, not a security seal"
+title: "OWASP WSTG review: how to test your web app with the standard"
 description: "OWASP WSTG repository review of testing scope, versioned scenario references and reporting, distinguishing a living guide from a security certification."
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "owasp-wstg"]
@@ -38,7 +38,17 @@ The framework document is particularly useful: it describes adaptable activities
 | Versioned scenario naming | Pin report references | All releases describe the same test |
 | Passive/active methodology | Record discovery and validation separately | Reading the guide equals testing |
 | Adaptable framework | Assign recurring activity owners | Every team needs one identical sequence |
-| Reporting guidance | Preserve scope and reproducible evidence | A formatted report proves security |
+The method as a pathway with forks — your choices accumulate their rigour cost:
+
+<WstgTestingPathway />
+
+The practice/inference table as a sortable matrix:
+
+<WstgFeatureMatrix />
+
+A test report, pinned part by part in reading order:
+
+<WstgReportAtlas />
 
 ## Reporting is an engineering deliverable
 
@@ -105,6 +115,10 @@ WebAssembly: 2
 **Decision checkpoint.** Use chapter size to budget reading, never to allocate security effort mechanically. A small business-logic chapter may be more important to a particular threat model than a larger configuration chapter.
 {/* review-source-map:end */}
 
+Three method readings worth checking yourself on:
+
+<WstgQuiz />
+
 ## What can a reader inspect or reproduce?
 
 This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
@@ -115,7 +129,7 @@ For a next-stage evaluation:
 2. Within written authorization, map selected scenarios to assets, threat model, coverage and explicitly excluded areas.
 3. Have a second reviewer reproduce a sample finding and assess whether the report supports remediation and retesting.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/owasp-wstg-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/owasp-wstg-review-how-to-test/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
 
 Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
 

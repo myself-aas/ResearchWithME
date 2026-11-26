@@ -2,7 +2,7 @@ import MetricMatrix from '@/components/library/MetricMatrix';
 import HotspotAtlas from '@/components/library/HotspotAtlas';
 import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
-import {POLARS_DECISION_COLUMNS, POLARS_DECISION_ROWS, POLARS_QUERY_PINS, POLARS_ASSUMPTIONS, POLARS_OUTCOMES, POLARS_QUIZ} from '@/lib/post/polars-repo-teardown';
+import {POLARS_DECISION_COLUMNS, POLARS_DECISION_ROWS, POLARS_QUERY_PINS, POLARS_ASSUMPTIONS, POLARS_OUTCOMES, POLARS_QUIZ} from '@/lib/post/polars-review-before-you-switch';
 
 /**
  * Thin bindings for the Polars teardown: post data, library interaction.

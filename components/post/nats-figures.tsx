@@ -2,7 +2,7 @@ import LayerStack from '@/components/library/LayerStack';
 import MetricMatrix from '@/components/library/MetricMatrix';
 import AssumptionSwitches from '@/components/library/AssumptionSwitches';
 import SelfCheckQuiz from '@/components/library/SelfCheckQuiz';
-import {NATS_LAYERS, NATS_SOURCE_COLUMNS, NATS_SOURCE_ROWS, NATS_GUARANTEE_ASSUMPTIONS, NATS_GUARANTEE_OUTCOMES, NATS_QUIZ} from '@/lib/post/nats-server-repo-teardown';
+import {NATS_LAYERS, NATS_SOURCE_COLUMNS, NATS_SOURCE_ROWS, NATS_GUARANTEE_ASSUMPTIONS, NATS_GUARANTEE_OUTCOMES, NATS_QUIZ} from '@/lib/post/nats-jetstream-review-before-you-ship';
 
 /**
  * Thin bindings for the NATS Server teardown: post data, library interaction.

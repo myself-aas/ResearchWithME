@@ -23,26 +23,36 @@ function adoptedPosts(): string[] {
 
 describe('per-post figure contract', () => {
   it('gives every adopting post at least 4 distinct interaction archetypes', async () => {
-    const airflow = await import('@/lib/post/apache-airflow-repo-teardown');
-    const svelte = await import('@/lib/post/svelte-repo-teardown');
+    const airflow = await import('@/lib/post/apache-airflow-review-should-you-use-it');
+    const svelte = await import('@/lib/post/svelte-review-before-you-migrate');
     const pvalue = await import('@/lib/post/what-a-p-value-does-not-tell-you');
     const welcome = await import('@/lib/post/welcome-to-the-new-researchwithme');
-    const n8n = await import('@/lib/post/n8n-repo-teardown');
-    const nats = await import('@/lib/post/nats-server-repo-teardown');
-    const polars = await import('@/lib/post/polars-repo-teardown');
-    const posthog = await import('@/lib/post/posthog-repo-teardown');
-    const plane = await import('@/lib/post/plane-repo-teardown');
+    const n8n = await import('@/lib/post/n8n-review-before-you-automate');
+    const nats = await import('@/lib/post/nats-jetstream-review-before-you-ship');
+    const polars = await import('@/lib/post/polars-review-before-you-switch');
+    const posthog = await import('@/lib/post/posthog-review-before-you-self-host');
+    const plane = await import('@/lib/post/plane-review-before-you-migrate');
+    const superset = await import('@/lib/post/apache-superset-review-before-you-self-host');
+    const wstg = await import('@/lib/post/owasp-wstg-review-how-to-test');
+    const perspective = await import('@/lib/post/perspective-api-review-before-you-moderate');
+    const rustdesk = await import('@/lib/post/rustdesk-review-before-you-deploy');
+    const gta6 = await import('@/lib/post/gta6-emulator-review-verify-the-claim');
 
     const manifests: Record<string, ReadonlyArray<{ mdxName: string; archetype: string }>> = {
-      'apache-airflow-repo-teardown': airflow.AIRFLOW_FIGURES,
-      'svelte-repo-teardown': svelte.SVELTE_FIGURES,
+      'apache-airflow-review-should-you-use-it': airflow.AIRFLOW_FIGURES,
+      'svelte-review-before-you-migrate': svelte.SVELTE_FIGURES,
       'what-a-p-value-does-not-tell-you': pvalue.PVALUE_FIGURES,
       'welcome-to-the-new-researchwithme': welcome.WELCOME_FIGURES,
-      'n8n-repo-teardown': n8n.N8N_FIGURES,
-      'nats-server-repo-teardown': nats.NATS_FIGURES,
-      'polars-repo-teardown': polars.POLARS_FIGURES,
-      'posthog-repo-teardown': posthog.POSTHOG_FIGURES,
-      'plane-repo-teardown': plane.PLANE_FIGURES,
+      'n8n-review-before-you-automate': n8n.N8N_FIGURES,
+      'nats-jetstream-review-before-you-ship': nats.NATS_FIGURES,
+      'polars-review-before-you-switch': polars.POLARS_FIGURES,
+      'posthog-review-before-you-self-host': posthog.POSTHOG_FIGURES,
+      'plane-review-before-you-migrate': plane.PLANE_FIGURES,
+      'apache-superset-review-before-you-self-host': superset.SUPERSET_FIGURES,
+      'owasp-wstg-review-how-to-test': wstg.WSTG_FIGURES,
+      'perspective-api-review-before-you-moderate': perspective.PERSPECTIVE_FIGURES,
+      'rustdesk-review-before-you-deploy': rustdesk.RUSTDESK_FIGURES,
+      'gta6-emulator-review-verify-the-claim': gta6.GTA6_FIGURES,
     };
 
     for (const [slug, manifest] of Object.entries(manifests)) {

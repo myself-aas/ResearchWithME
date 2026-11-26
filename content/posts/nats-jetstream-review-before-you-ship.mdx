@@ -1,5 +1,5 @@
 ---
-title: "NATS Server review: retention and delivery controls"
+title: "NATS JetStream review: settle delivery guarantees before you ship"
 description: "NATS Server repository review of JetStream retention, acknowledgments and resource controls, separating source mechanisms from delivery guarantees."
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "nats-server"]
@@ -105,7 +105,7 @@ For a next-stage evaluation:
 2. Interrupt a worker before and after its business write and acknowledgment; verify redelivery and application idempotency.
 3. Measure recovery, slow-consumer behavior and resource usage with the intended clients and deployment topology.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/nats-server-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/nats-jetstream-review-before-you-ship/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
 
 Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
 

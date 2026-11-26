@@ -1,5 +1,5 @@
 ---
-title: "Apache Superset review: BI and operational boundaries"
+title: "Apache Superset review: what to verify before you self-host"
 description: "Apache Superset repository review of BI architecture, metadata, workers and access controls, separating dashboard features from production guarantees."
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "apache-superset"]
@@ -38,7 +38,13 @@ The cache description covers query results and message-broker responsibilities, 
 | Warehouse/data source | Executes analytical queries | What can the configured database identity read or change? |
 | Metadata database | Stores application definitions and users | Can the team restore a consistent application state? |
 | Cache/broker | Results reuse and worker messaging | What happens on expiry, loss or reconnect? |
-| Worker and beat | Asynchronous and scheduled tasks | Are failures visible and schedules recovered? |
+The platform as a structure — expand each service to the evaluation question it carries:
+
+<SupersetPlatformChart />
+
+The same assets as a sortable matrix:
+
+<SupersetAssetMatrix />
 
 ## Access controls need an explicit trust model
 
@@ -47,6 +53,10 @@ The security guide assigns authentication and authorization to Flask AppBuilder 
 The same guide describes Admin as fully trusted. It also explains row-level-security clauses as filters incorporated into generated SQL for assigned datasets and subjects. Neither passage proves that an arbitrary SQL connection, embedded integration or external data path enforces the intended business boundary. My recommendation is to combine application-role tests with deliberately scoped database credentials rather than assume a chart filter is a universal security perimeter. [3](https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/security/security.mdx#L6-L644)
 
 Configuration guidance requires a deployment-specific strong secret for session signing and sensitive-data encryption, and distinguishes the metadata database URI from data sources managed in the UI. This is a documented requirement, not evidence that any actual deployment has configured or rotated its secrets correctly. [4](https://github.com/apache/superset/blob/b44ea299259b3c71065ae2df940a4185da9e64da/docs/admin_docs/configuration/configuring-superset.mdx#L46-L68)
+
+The platform-owner checklist as switches — flip only what you have actually practiced:
+
+<SupersetAssumptionSwitches />
 
 ## Adoption verdict
 
@@ -89,6 +99,10 @@ Web UI: 2219
 **Decision checkpoint.** Assign owners for database privileges, application roles and background work before evaluating a dashboard rollout. The UI file count does not predict query cost, concurrency capacity or security quality.
 {/* review-source-map:end */}
 
+Three checks before you self-host:
+
+<SupersetQuiz />
+
 ## What can a reader inspect or reproduce?
 
 This is static source inspection, not a benchmark, production deployment, certification, or penetration test. No upstream package was installed, no upstream tests or security probes were run, and no runtime measurements were collected. Repository documentation reports intended behavior; code passages establish only the inspected mechanism. Adoption recommendations throughout are reviewer analysis, not measured outcomes.
@@ -99,7 +113,7 @@ For a next-stage evaluation:
 2. Test separate Admin, restricted analyst and viewer identities against charts, SQL access and intended row filters using least-privilege database credentials.
 3. Exercise cache loss, asynchronous failures and scheduled reports in the exact installation method and packaged version intended for production.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/apache-superset-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/apache-superset-review-before-you-self-host/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
 
 Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
 

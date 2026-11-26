@@ -1,5 +1,5 @@
 ---
-title: "Polars review: lazy plans and streaming limits"
+title: "Polars review: what to measure before you switch your pipeline"
 description: "Polars repository review of lazy query plans, pushdown and streaming fallbacks, with workload checks rather than unmeasured speed claims."
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "polars"]
@@ -107,7 +107,7 @@ For a next-stage evaluation:
 2. Measure wall time, peak process memory, disk spill and final result materialization under the same resource limits.
 3. Verify result correctness and operator support before interpreting a streaming request as a memory guarantee.
 
-Use the pinned references to repeat the source inspection. The [inspection record](/evidence/polars-repo-teardown/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
+Use the pinned references to repeat the source inspection. The [inspection record](/evidence/polars-review-before-you-switch/inspection-record.json) preserves source identifiers and a claim ledger; it is bundled locally and must be deployed and checked before publication. Human source review and final article approval remain pending. Attribution follows the requested byline; no new affiliation, credential, funding, or conflict-of-interest assertion is made.
 
 Explore the [Repo Teardown collection](/category/github-repo-teardowns) or [Ashif Ahmed Shuvo’s author profile](/author/ashif-ahmed-shuvo). These internal routes are publication handoffs, not a claim that this draft is live.
 

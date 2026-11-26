@@ -1,5 +1,5 @@
 ---
-title: "GTA6-KytyPS5-GTA-6 review: emulator source missing"
+title: "GTA6 emulator review: verify the claim before you trust the README"
 description: "GTA6-KytyPS5-GTA-6 supplies no emulator implementation or build configuration in the inspected public tree. At commit `e522fdcdd2fae2941d6b142b2578c3d8052ea7cf`, that tree contains four tracked files. Its README advertises GTA VI emulation on PC, while the inspected v1.0.0…"
 date: "2026-11-20"
 tags: ["repository-teardown", "source-review", "gta6-kytyps5"]
@@ -48,6 +48,10 @@ GTA6-KytyPS5-GTA-6/
 | `metadata/build_manifest_4670.log` | 152 bytes | A short text declaration of build success. |
 | `metadata/cache_blob_4670.tmp` | 1,592 bytes | Text lines labelled `CacheBlock-4670-…`; no inspected shader implementation. |
 
+The whole tree as a sortable table — four files, real sizes:
+
+<Gta6FilesMatrix />
+
 Source: the pinned tree and the four corresponding file contents. [1](https://api.github.com/repos/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/git/trees/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf?recursive=1) [2](https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/blob/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf/README.md) [4](https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/blob/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf/LICENSE) [5](https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/blob/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf/metadata/build_manifest_4670.log) [6](https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/blob/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf/metadata/cache_blob_4670.tmp)
 
 There are no tracked `core/`, `gpu/`, `render/`, `audio/`, `input/`, or `launcher/` directories, despite their appearance in the README's architecture table. There is also no tracked `config/games/gta6.toml`, build system, test suite, or `.github/workflows/` directory at this commit. The architecture diagram is explicitly preceded in the raw README by a sample-layout comment. Treating it as inspected implementation would overstate the evidence. [1](https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/tree/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf) [2](https://github.com/EnamelSlugAcclaim/GTA6-KytyPS5-GTA-6/blob/e522fdcdd2fae2941d6b142b2578c3d8052ea7cf/README.md#architecture)
@@ -80,6 +84,18 @@ Sources: README, tree, and GitHub's release API as retrieved on 20 November 2026
 
 This teardown does not establish code lineage or a source-to-binary relationship. Those would require inspectable implementation and build provenance, not merely shared names or links.
 
+The claim, pinned surface by surface:
+
+<Gta6ClaimAtlas />
+
+And the verification pathway the review models — every skipped step accumulates:
+
+<Gta6VerifyPathway />
+
+Three evidence readings worth checking yourself on:
+
+<Gta6Quiz />
+
 ## How can readers reproduce this inspection without running the download?
 
 Use read-only GitHub API queries to inspect the same commit and compare it with the release description. The following are inspection commands, not installation instructions:
@@ -107,7 +123,7 @@ Equivalent tree, file-content, release, and workflow queries were run for this r
 > **Scope and safety limits**
 > This is a public-source and release-metadata inspection, not a benchmark, malware investigation, legal assessment, or gameplay test. No ZIP was downloaded; no binary, game, firmware, key, or console connection was used. Missing source prevents implementation-level review of the claimed emulator. The findings do not establish malicious intent, and they do not certify safety.
 
-The analysis is bounded to the pinned commit and the release metadata retrieved on 20 November 2026. It is not an exhaustive audit of every historical branch, removed artifact, private repository, or external build service. Use the commit-pinned references rather than a moving default branch when checking these findings. The linked [inspection record](/evidence/gta6-kytyps5-repo-teardown/inspection-record.json) preserves the observed file inventory, release metadata, source URLs, and claim locators. It is a curated extract of the retained API responses, not a copy of the downloadable software. Its retrieval timestamp distinguishes the original observations from later changes to mutable endpoints.
+The analysis is bounded to the pinned commit and the release metadata retrieved on 20 November 2026. It is not an exhaustive audit of every historical branch, removed artifact, private repository, or external build service. Use the commit-pinned references rather than a moving default branch when checking these findings. The linked [inspection record](/evidence/gta6-emulator-review-verify-the-claim/inspection-record.json) preserves the observed file inventory, release metadata, source URLs, and claim locators. It is a curated extract of the retained API responses, not a copy of the downloadable software. Its retrieval timestamp distinguishes the original observations from later changes to mutable endpoints.
 
 For a reader considering the download, the actionable conclusion is **insufficient verification**, not a malware verdict. Before relying on the project, request a clear emulation-versus-streaming explanation, implementation source, and a source-linked build. An API-reported digest can identify an asset for later comparison; it cannot by itself establish that the asset is trustworthy.
 

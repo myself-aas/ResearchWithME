@@ -9,7 +9,7 @@ import {
   AIRFLOW_PILOT_ASSUMPTIONS,
   AIRFLOW_PILOT_OUTCOMES,
   AIRFLOW_QUIZ,
-} from '@/lib/post/apache-airflow-repo-teardown';
+} from '@/lib/post/apache-airflow-review-should-you-use-it';
 
 /**
  * Thin bindings for the Airflow teardown (Article 2): the library components

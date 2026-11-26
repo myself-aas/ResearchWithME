@@ -9,7 +9,7 @@ import {
   SVELTE_ADOPTION_ASSUMPTIONS,
   SVELTE_ADOPTION_OUTCOMES,
   SVELTE_QUIZ,
-} from '@/lib/post/svelte-repo-teardown';
+} from '@/lib/post/svelte-review-before-you-migrate';
 
 /** Thin bindings for the Svelte teardown: post data, library interaction. */
 
