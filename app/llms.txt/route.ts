@@ -38,6 +38,7 @@ export function GET() {
     `- [RSS](${absoluteUrl(SITE.feedPath)}): full archive, newest first.`,
     `- [JSON Feed](${absoluteUrl('/feed.json')}): the same items as JSON Feed 1.1.`,
     `- [robots.txt](${absoluteUrl('/robots.txt')}): crawl policy, including named AI crawlers.`,
+    `- [API Catalog](${absoluteUrl('/.well-known/api-catalog')}): RFC 9727 linkset of the machine-readable APIs, with OpenAPI specs.`,
     '',
     '## Representations',
     '',

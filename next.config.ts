@@ -19,7 +19,16 @@ const FEED_CACHE = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=
 const ASSET_CACHE = 'public, max-age=31536000, immutable';
 
 const htmlRoutes = ['/', '/blog', '/blog/:slug', '/about', '/contact', '/privacy', '/tags', '/tags/:tag'];
-const feedRoutes = ['/rss.xml', '/feed.json', '/llms.txt', '/sitemap.xml', '/robots.txt', '/.well-known/security.txt'];
+const feedRoutes = [
+  '/rss.xml',
+  '/feed.json',
+  '/llms.txt',
+  '/sitemap.xml',
+  '/robots.txt',
+  '/.well-known/security.txt',
+  '/.well-known/api-catalog',
+  '/.well-known/api-catalog/openapi/:path*',
+];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
