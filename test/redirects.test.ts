@@ -91,4 +91,26 @@ describe('redirect map integrity', () => {
       expect(entry.destination).not.toContain(':');
     }
   });
+
+  it('no redirect chain: no destination is itself a redirect source', async () => {
+    // A -> B -> C is a defect (§2.7). Every destination must be a final
+    // URL, never another redirect's source. This is the rule that the
+    // generic /post/:slug wildcard violated: /post/<old> -> /blog/<old>
+    // where /blog/<old> was itself a (404) redirect source.
+    const entries = await redirectEntries();
+    const sources = new Set(entries.map((e) => e.source));
+    for (const entry of entries) {
+      expect(sources.has(entry.destination), `redirect chain: ${entry.destination} is also a source`).toBe(false);
+    }
+  });
+
+  it('every static-route destination is a real, crawlable route', async () => {
+    // The destinations of the removed-static-route redirects must resolve
+    // to live pages, never to a 404. A redirect to a missing page is the
+    // same GSC rejection as a 404, just one hop later.
+    const liveStaticRoutes = new Set(['/', '/blog', '/tags', '/about', '/contact', '/privacy', '/assistant', '/lab']);
+    for (const [, destination] of REMOVED_STATIC_ROUTES) {
+      expect(liveStaticRoutes.has(destination), `${destination} is not a live route`).toBe(true);
+    }
+  });
 });

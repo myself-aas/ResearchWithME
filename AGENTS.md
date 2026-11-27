@@ -9,7 +9,8 @@ Two things make the contract enforceable rather than aspirational:
 1. Every rule states which layer it belongs to, so it is obvious what breaks when it is ignored.
 2. `npm run check:site` asserts most of them against the built HTML, feeds and assets, and `npm test`
    covers what never reaches the browser — the content schema, the assistant's retrieval rules in
-   §18, and the MCP wiring in §17. If either check fails, the change does not ship.
+   §18, the MCP wiring in §17, and the redirect map in §7.3 (`test/redirects.test.ts`). If either
+   check fails, the change does not ship.
 
 Read §1 and §13 first. They explain why the rest of the document exists.
 
@@ -98,7 +99,9 @@ These are never traded away for a design, a framework upgrade, or a deadline.
 5. **No layout shift on images.** Every `<img>` has `width`/`height` (or `fill` inside a sized parent).
 6. **No duplicate URLs without a canonical or a redirect.** Including `www`/apex, trailing slashes, and
    query variants of static pages.
-7. **No redirect chains.** `A → B → C` is a bug; entry points go straight to the final URL.
+7. **No redirect chains, and no redirect to a dead end.** `A → B → C` is a bug, and `A → 404` is
+   the same bug one hop later: entry points go straight to a live final URL. A renamed slug must get an
+  explicit redirect to its new address, never a wildcard that lands on the old slug's 404 (§3, §7.3).
 8. **Semantic HTML.** A `<div>` with an `onClick` is not a button, and a styled span is not a heading.
 9. **No hardcoded domain.** Read `SITE.url`; a domain in a component is a bug.
 10. **No `meta keywords`, no `noai`, no `noimageai`, no `X-Robots-Tag: noai`.** We opt in, and we say
@@ -120,8 +123,18 @@ These are never traded away for a design, a framework upgrade, or a deadline.
   code-split to the route (§9, §18, §20).
 - A slug change is a rename **plus** a permanent redirect in `next.config.ts`, in the same commit.
   Never delete a URL that has been public without leaving a redirect.
+- **A renamed slug needs an explicit redirect, not just a wildcard.** A generic `/post/:slug` →
+  `/blog/:slug` wildcard sends the old slug to `/blog/<old-slug>`, which 404s because the slug was
+  renamed — a redirect chain ending in a 404, which Google reports as a critical indexing issue.
+  Every renamed slug gets its own `source: /post/<old>` and `source: /blog/<old>` entry, mapped to
+  the new slug. Explicit entries are emitted **before** the wildcard so they win.
+- **Every redirect destination must resolve to a live page.** A redirect to a missing URL is the
+  same GSC rejection as a 404, just one hop later. `test/redirects.test.ts` asserts this for the
+  legacy map; extend it when you add a redirect.
 - Legacy maps already in place: `/posts` and `/posts/:slug` → `/blog`, `/post/:slug` → `/blog/:slug`,
-  `/feed` → `/blog`, `/category/:slug` → `/tags`, `/authors` → `/about`.
+  `/feed` → `/blog`, `/category/:slug` → `/tags`, `/authors` → `/about`. The full multi-author
+  migration map (12 renamed slugs + 4 removed static routes) lives in `lib/redirects.ts` and is
+  enforced by `test/redirects.test.ts`.
 - `assetsPrefix`, `metadataBase`, and every canonical come from `SITE.url`; previews set
   `NEXT_PUBLIC_SITE_URL` instead of editing code.
 
@@ -234,6 +247,21 @@ Generated from the content collection in `app/sitemap.ts`:
 
 Every legacy URL maps to its final destination in one hop (see §3). A redirect to a redirect is a
 defect, and `npm run check:site` fails if a sitemap URL has no built page behind it.
+
+The rules that keep Google from rejecting a page for indexing:
+
+1. **One hop, to a live 200.** `A → B → C` is a bug; `A → 404` is the same bug one hop later. A
+   redirect destination must be a page that returns 200, not another redirect and not a missing URL.
+2. **Explicit before wildcard.** A per-slug redirect must be listed before any `:slug` wildcard that
+   would swallow it. A wildcard that maps a renamed slug to `/blog/<old-slug>` produces a redirect
+   chain into a 404 — exactly the failure Google flags as "Not found (404)" after a slug rename.
+3. **A removed public URL gets a redirect, never a bare 404.** If a page was indexed, deleting it
+   without a redirect tells Google the content is gone. Redirect it to the closest live equivalent
+   (the archive, the about page) in the same commit that removes it.
+4. **The map is tested, not hand-verified.** `test/redirects.test.ts` asserts every legacy entry
+   maps to a real published post, every static destination is a live route, no destination is itself
+   a redirect source, and there are no duplicate sources. When you add a redirect, add the assertion
+   in the same commit — a redirect with no test is a redirect that will rot.
 
 ---
 
@@ -445,6 +473,9 @@ npm run check:site     # the contract in this file, asserted against ./next arti
 - a sitemap entry with no built page, a `noindex` page in the sitemap, an indexable page missing from it
 - an orphan: a sitemap URL not reachable from `/`
 - RSS/JSON Feed/`llms.txt` disagreeing with the article set
+- a redirect whose destination is not a live route, or a redirect chain (§7.3) — enforced by
+  `test/redirects.test.ts`, which fails on a missing destination, a destination that is itself a
+  redirect source, a duplicate source, or a renamed slug left to a wildcard
 - `robots.txt` missing a named crawler group, blocking `/search`, or omitting the sitemap
 - `security.txt` missing, without contact, or expired
 - missing markdown representation, or one without a canonical
@@ -498,13 +529,43 @@ Known tensions, resolved as follows:
 
 ## §16 Change protocol
 
-When adding a post:
+### When adding a post
 
-1. `npm run new -- "Title"` (add `--publish` when it is ready to be public).
+1. `npm run new -- \"Title\"` (add `--publish` when it is ready to be public).
 2. Write the answer paragraph first, then the questions.
 3. Add three primary-source links and three internal links.
 4. Add `faq:` if the topic has real questions.
 5. Run `npm test` (the draft compiles) and `npm run verify` before pushing.
+
+### The GSC indexing pre-publish gate
+
+A new article is indexable only if every layer in §1 holds *on the day it is published*. Google
+rejects a page for indexing when any of these fails, and the failure is silent until Search Console
+reports it weeks later. Before pushing a new article — and again before merging the PR — confirm:
+
+1. **The URL is new and stable.** A brand-new slug has no redirect history, so it cannot be the
+   subject of a stale-redirect 404. If you are *renaming* an existing post, see the slug rules in §3:
+   explicit redirect, same commit, tested.
+2. **The page returns a final 200 with no redirect hop.** The article URL itself must not redirect.
+   Only legacy/alias URLs redirect; the canonical article URL is served directly.
+3. **It is in the sitemap and reachable from `/`.** `check:site` fails on an indexable page missing
+   from the sitemap and on an orphan. Both are hard indexing rejections.
+4. **The head is complete and unique.** One `<title>`, one description, canonical, OG image,
+   JSON-LD `BlogPosting` with a real `datePublished`/`dateModified`/`wordCount`/author. A missing or
+   duplicated field is a parse failure, not just a quality issue.
+5. **The answer paragraph is 40–60 words and the citations are real.** These are the §1.3 citable
+   rules; they are what makes the page worth indexing, and `check:site` asserts them.
+6. **The markdown representation exists and carries its canonical.** `/blog/<slug>/markdown` must
+   resolve and be `noindex` with a canonical back to the HTML. A missing markdown route fails
+   `check:site`.
+7. **Feeds and `llms.txt` include it.** RSS, JSON Feed, and `llms.txt` must list the new post;
+   `check:site` fails when they disagree with the article set.
+8. **`npm run verify` is green** — `check:site` plus the test suite. If it is not green, the article
+   is not publishable, whatever the content looks like.
+
+If any of these fails, fix it before pushing. A page that builds and looks correct but fails one of
+these is exactly the page Google will reject, and the rejection will not surface until the next
+Search Console report.
 
 When changing the site:
 
