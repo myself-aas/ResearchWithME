@@ -31,6 +31,8 @@ const feedRoutes = [
   '/.well-known/api-catalog/openapi/:path*',
   '/auth.md',
   '/.well-known/agent-card.json',
+  '/.well-known/agent-skills/index.json',
+  '/.well-known/agent-skills/:path*',
 ];
 
 const nextConfig: NextConfig = {

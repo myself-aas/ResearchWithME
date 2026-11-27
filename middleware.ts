@@ -17,7 +17,10 @@ import { NextResponse, type NextRequest } from 'next/server';
  *
  * Non-HTML targets (the machine-readable routes llms.txt, feed.json,
  * rss.xml, sitemap, robots, security.txt, the per-essay `/markdown`
- * routes, static assets, and `/api/`) are left alone by the matcher.
+ * routes, static assets, `/api/`, and `.md` files — which are already
+ * Markdown and must be served byte-exact, e.g. the Agent Skills
+ * discovery artifacts under `/.well-known/agent-skills/`) are left alone
+ * by the matcher.
  */
 
 /** True when `text/markdown` is offered in the Accept header. */
@@ -60,6 +63,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/(?:static|image|data|chunks)|api/|.*\\.(?:png|jpe?g|gif|webp|avif|svg|ico|css|js|mjs|woff2?|ttf|eot|json|xml|txt|webmanifest)$).*)',
+    '/((?!_next/(?:static|image|data|chunks)|api/|.*\\.(?:png|jpe?g|gif|webp|avif|svg|ico|css|js|mjs|woff2?|ttf|eot|json|xml|txt|webmanifest|md)$).*)',
   ],
 };
