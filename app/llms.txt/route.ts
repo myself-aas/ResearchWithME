@@ -39,6 +39,7 @@ export function GET() {
     `- [JSON Feed](${absoluteUrl('/feed.json')}): the same items as JSON Feed 1.1.`,
     `- [robots.txt](${absoluteUrl('/robots.txt')}): crawl policy, including named AI crawlers.`,
     `- [API Catalog](${absoluteUrl('/.well-known/api-catalog')}): RFC 9727 linkset of the machine-readable APIs, with OpenAPI specs.`,
+    `- [auth.md](${absoluteUrl('/auth.md')}): the agent auth and registration contract — this site is public and read-only, so no credentials are involved.`,
     '',
     '## Representations',
     '',

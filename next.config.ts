@@ -29,6 +29,7 @@ const feedRoutes = [
   '/.well-known/security.txt',
   '/.well-known/api-catalog',
   '/.well-known/api-catalog/openapi/:path*',
+  '/auth.md',
 ];
 
 const nextConfig: NextConfig = {
