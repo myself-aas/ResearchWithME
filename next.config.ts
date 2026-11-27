@@ -1,5 +1,6 @@
 import { createSecurityHeaders } from './lib/security/headers';
 import { homepageLinkHeader } from './lib/api-catalog';
+import { buildLegacyRedirects } from './lib/redirects';
 import { withAui } from '@assistant-ui/next';
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
@@ -68,11 +69,16 @@ const nextConfig: NextConfig = {
     '/**': ['./content/**/*'],
   },
   async redirects() {
+    // Legacy URLs from the multi-author platform first: explicit per-slug
+    // entries must precede the `/post/:slug` wildcard, otherwise a renamed
+    // slug falls through to the wildcard and lands on a 404.
+    const legacy = await buildLegacyRedirects()();
     // One hop, permanent. `/blog` is the canonical article tree; the 1.0
     // refactor briefly used `/posts`, and the multi-author platform used
     // `/post`, so both collapse here. A slug change must add its own entry in
     // the same commit that renames the file.
     return [
+      ...legacy,
       { source: '/posts', destination: '/blog', permanent: true },
       { source: '/posts/:slug', destination: '/blog/:slug', permanent: true },
       { source: '/post/:slug', destination: '/blog/:slug', permanent: true },
