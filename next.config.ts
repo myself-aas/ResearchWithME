@@ -33,6 +33,7 @@ const feedRoutes = [
   '/.well-known/agent-card.json',
   '/.well-known/agent-skills/index.json',
   '/.well-known/agent-skills/:path*',
+  '/.well-known/mcp/server-card.json',
 ];
 
 const nextConfig: NextConfig = {
