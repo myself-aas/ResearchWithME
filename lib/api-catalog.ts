@@ -1,5 +1,5 @@
-import { SITE } from '@/lib/site';
-import { absoluteUrl } from '@/lib/seo';
+import { SITE } from './site';
+import { absoluteUrl } from './seo';
 
 /**
  * RFC 9727 api-catalog — the linkset document served at
@@ -351,3 +351,22 @@ export function getOpenApiSpec(name: string): OpenApiDocument | null {
   return SPEC_BUILDERS[name as OpenApiSpecName]();
 }
 
+
+/**
+ * RFC 8288 Link header for the homepage, advertising the machine-readable
+ * resources an agent can discover (RFC 9727 §3).
+ *
+ * The relations and targets mirror the catalog entry anchored at the
+ * homepage: `api-catalog` for the catalog document, `service-desc` for the
+ * OpenAPI spec of the API the homepage anchors, and `service-doc` /
+ * `describedby` for the human-readable documentation.
+ */
+export function homepageLinkHeader(): string {
+  const links = [
+    { href: API_CATALOG_PATH, rel: 'api-catalog' },
+    { href: `${OPENAPI_PATH_PREFIX}/markdown.json`, rel: 'service-desc' },
+    { href: '/llms.txt', rel: 'service-doc' },
+    { href: '/llms.txt', rel: 'describedby' },
+  ];
+  return links.map((link) => `<${link.href}>; rel="${link.rel}"`).join(', ');
+}

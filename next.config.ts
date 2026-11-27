@@ -1,4 +1,5 @@
 import { createSecurityHeaders } from './lib/security/headers';
+import { homepageLinkHeader } from './lib/api-catalog';
 import { withAui } from '@assistant-ui/next';
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
@@ -91,6 +92,12 @@ const nextConfig: NextConfig = {
         source,
         headers: [{ key: 'Cache-Control', value: FEED_CACHE }],
       })),
+      // RFC 8288 / RFC 9727 §3: advertise the machine-readable resources an
+      // agent can discover, right on the homepage response.
+      {
+        source: '/',
+        headers: [{ key: 'Link', value: homepageLinkHeader() }],
+      },
     ];
   },
 };

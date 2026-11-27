@@ -4,6 +4,7 @@ import {
   OPENAPI_SPECS,
   buildApiCatalog,
   getOpenApiSpec,
+  homepageLinkHeader,
 } from '@/lib/api-catalog';
 
 describe('RFC 9727 api-catalog', () => {
@@ -86,5 +87,45 @@ describe('OpenAPI specifications', () => {
 
   it('returns null for unknown spec names', () => {
     expect(getOpenApiSpec('nope.json')).toBeNull();
+  });
+});
+
+describe('homepage Link header (RFC 8288 / RFC 9727 §3)', () => {
+  it('advertises the api-catalog relation at the well-known URI', () => {
+    const header = homepageLinkHeader();
+    expect(header).toContain('</.well-known/api-catalog>; rel="api-catalog"');
+  });
+
+  it('uses only registered relation types', () => {
+    const header = homepageLinkHeader();
+    const relations = header.match(/rel="([^"]+)"/g)?.map((m) => m.slice(5, -1));
+    expect(relations).toEqual(
+      expect.arrayContaining(['api-catalog', 'service-desc', 'service-doc', 'describedby']),
+    );
+    for (const rel of relations ?? []) {
+      expect(['api-catalog', 'service-desc', 'service-doc', 'describedby']).toContain(rel);
+    }
+  });
+
+  it('links service-desc at the OpenAPI spec of the homepage-anchored API', () => {
+    const header = homepageLinkHeader();
+    expect(header).toContain(
+      `</.well-known/api-catalog/openapi/markdown.json>; rel="service-desc"`,
+    );
+  });
+
+  it('links service-doc and describedby at the human-readable documentation', () => {
+    const header = homepageLinkHeader();
+    expect(header).toContain('</llms.txt>; rel="service-doc"');
+    expect(header).toContain('</llms.txt>; rel="describedby"');
+  });
+
+  it('is a single comma-separated header value', () => {
+    const header = homepageLinkHeader();
+    // One Link header value, four links separated by commas.
+    expect(header.split(', ')).toHaveLength(4);
+    for (const link of header.split(', ')) {
+      expect(link).toMatch(/^<[^>]+>; rel="[^"]+"$/);
+    }
   });
 });
