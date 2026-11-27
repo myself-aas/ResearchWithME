@@ -51,6 +51,10 @@
       "env": {
         "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
       }
+    },
+    "graphify": {
+      "type": "http",
+      "url": "https://api.graphify.com/mcp"
     }
   }
 }

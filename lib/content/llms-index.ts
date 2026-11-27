@@ -1,0 +1,59 @@
+import { getAllPostMeta } from './posts';
+import { absoluteUrl } from '../seo';
+import { AUTHOR, SITE } from '../site';
+
+/**
+ * The `llms.txt` index text: an H1, a one-paragraph summary, then annotated
+ * links. Generated from the same content collection as the site, so it cannot
+ * list a post that does not exist.
+ *
+ * Single source for the index text: the `/llms.txt` route and the MCP
+ * `get_llms_index` tool both render through it.
+ */
+export function buildLlmsTxt(): string {
+  const posts = getAllPostMeta();
+
+  const lines = [
+    `# ${SITE.name}`,
+    '',
+    `> ${SITE.description}`,
+    '',
+    `${SITE.name} is a single-author blog by ${AUTHOR.name}. Every essay is an MDX file in a public`,
+    'git repository, rendered at build time. There is no paywall, no account wall, and no',
+    'client-only content: the full text is in the initial HTML of each URL.',
+    '',
+    '## Essays',
+    '',
+    ...posts.map(
+      (post) =>
+        `- [${post.title}](${absoluteUrl(post.href)}): ${post.description} (${post.date}${post.updated ? `, updated ${post.updated}` : ''})`,
+    ),
+    '',
+    '## Machine-readable',
+    '',
+    `- [Sitemap](${absoluteUrl('/sitemap.xml')}): every canonical, indexable URL.`,
+    `- [RSS](${absoluteUrl(SITE.feedPath)}): full archive, newest first.`,
+    `- [JSON Feed](${absoluteUrl('/feed.json')}): the same items as JSON Feed 1.1.`,
+    `- [robots.txt](${absoluteUrl('/robots.txt')}): crawl policy, including named AI crawlers.`,
+    `- [API Catalog](${absoluteUrl('/.well-known/api-catalog')}): RFC 9727 linkset of the machine-readable APIs, with OpenAPI specs.`,
+    `- [auth.md](${absoluteUrl('/auth.md')}): the agent auth and registration contract — this site is public and read-only, so no credentials are involved.`,
+    `- [Agent Card](${absoluteUrl('/.well-known/agent-card.json')}): the A2A Agent Card describing this service's interfaces and skills for agent-to-agent discovery.`,
+    `- [Agent Skills index](${absoluteUrl('/.well-known/agent-skills/index.json')}): RFC discovery index of the SKILL.md artifacts published here, each with a SHA-256 digest.`,
+    `- [MCP Server Card](${absoluteUrl('/.well-known/mcp/server-card.json')}): the MCP Server Card for the MCP server at /mcp, listing its tools for agent discovery.`,
+    '',
+    '## Representations',
+    '',
+    'Each essay is HTML at its canonical URL and markdown at `<canonical>/markdown`,',
+    'advertised with `<link rel="alternate" type="text/markdown">`. Both come from the same source.',
+    'Markdown responses carry `X-Markdown-Tokens` so agents can budget context before reading.',
+    '',
+    '## Use',
+    '',
+    `Text is licensed ${SITE.license}: quote, teach, and remix with attribution to ${AUTHOR.name}.`,
+    `- [Assistant](${absoluteUrl('/assistant')}): a browser-side retrieval assistant; answers quote the essays and link to them. No query leaves the reader's browser.`,
+    `Citation format: ${AUTHOR.name}. “Title.” ${SITE.name}, YYYY-MM-DD. URL.`,
+    '',
+  ];
+
+  return lines.join('\n');
+}

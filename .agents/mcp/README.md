@@ -170,6 +170,26 @@ docs server) — the variable is optional, so it has no credentials-table row.
 - Do not crawl this site with it to "check SEO" — `npm run check:site` and a
   production build are the authority.
 
+### `graphify` — the codebase knowledge graph
+
+`https://api.graphify.com/mcp`, a remote Streamable HTTP server. Authenticated
+by the host's browser OAuth flow (scope `graphify:query`, PKCE) — there is no
+API key and no credentials-table row. The first connection in a fresh session
+opens the browser sign-in; until it completes the tools report as
+unauthorized, which is configuration the author supplies, not a wiring defect.
+
+- **Use it** for code-structure questions against a repository indexed in
+  Graphify: `query_graph` for how something works, `graphify_find` for where a
+  symbol is defined, `graphify_callers` for who calls it, `graphify_impact` for
+  what a change could affect, `review_status` for Graphify's review of a pull
+  request. The `AGENTS.md` "Graphify" rule puts the graph ahead of `grep` for
+  structure, caller, and impact questions.
+- **Do not** treat an unauthenticated or unreachable server as a failure of the
+  wiring: `npm run check:mcp` reports SKIP when a host cannot be reached from
+  this machine. Re-run `setup_status` after the author finishes sign-in.
+- Answers are graph evidence: cite the source locations the tools return rather
+  than paraphrasing them.
+
 ## Deliberately not wired
 
 **Supabase.** The product has no database (`AGENTS.md` §15.7). Anything about

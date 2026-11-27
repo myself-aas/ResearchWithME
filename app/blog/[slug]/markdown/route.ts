@@ -1,6 +1,6 @@
+import { buildArticleMarkdown } from '@/lib/content/markdown';
 import { getPostBySlug, getPostSlugs } from '@/lib/content/posts';
 import { absoluteUrl } from '@/lib/seo';
-import { AUTHOR, SITE } from '@/lib/site';
 
 /**
  * The markdown representation of an essay.
@@ -34,21 +34,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
     });
   }
 
-  const frontmatter = [
-    '---',
-    `title: "${post.title.replace(/"/g, '\\"')}"`,
-    `description: "${post.description.replace(/"/g, '\\"')}"`,
-    `date: ${post.date}`,
-    ...(post.updated ? [`updated: ${post.updated}`] : []),
-    `author: ${AUTHOR.name}`,
-    `canonical: ${absoluteUrl(post.href)}`,
-    `license: ${SITE.licenseUrl}`,
-    ...(post.tags.length ? [`tags: [${post.tags.join(', ')}]`] : []),
-    '---',
-    '',
-  ].join('\n');
-
-  const body = `${frontmatter}${post.body}\n`;
+  const body = buildArticleMarkdown(post);
 
   return new Response(body, {
     headers: {

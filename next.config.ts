@@ -1,4 +1,6 @@
 import { createSecurityHeaders } from './lib/security/headers';
+import { homepageLinkHeader } from './lib/api-catalog';
+import { buildLegacyRedirects } from './lib/redirects';
 import { withAui } from '@assistant-ui/next';
 import type { NextConfig } from 'next';
 import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
@@ -19,7 +21,21 @@ const FEED_CACHE = 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=
 const ASSET_CACHE = 'public, max-age=31536000, immutable';
 
 const htmlRoutes = ['/', '/blog', '/blog/:slug', '/about', '/contact', '/privacy', '/tags', '/tags/:tag'];
-const feedRoutes = ['/rss.xml', '/feed.json', '/llms.txt', '/sitemap.xml', '/robots.txt', '/.well-known/security.txt'];
+const feedRoutes = [
+  '/rss.xml',
+  '/feed.json',
+  '/llms.txt',
+  '/sitemap.xml',
+  '/robots.txt',
+  '/.well-known/security.txt',
+  '/.well-known/api-catalog',
+  '/.well-known/api-catalog/openapi/:path*',
+  '/auth.md',
+  '/.well-known/agent-card.json',
+  '/.well-known/agent-skills/index.json',
+  '/.well-known/agent-skills/:path*',
+  '/.well-known/mcp/server-card.json',
+];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -53,11 +69,16 @@ const nextConfig: NextConfig = {
     '/**': ['./content/**/*'],
   },
   async redirects() {
+    // Legacy URLs from the multi-author platform first: explicit per-slug
+    // entries must precede the `/post/:slug` wildcard, otherwise a renamed
+    // slug falls through to the wildcard and lands on a 404.
+    const legacy = await buildLegacyRedirects()();
     // One hop, permanent. `/blog` is the canonical article tree; the 1.0
     // refactor briefly used `/posts`, and the multi-author platform used
     // `/post`, so both collapse here. A slug change must add its own entry in
     // the same commit that renames the file.
     return [
+      ...legacy,
       { source: '/posts', destination: '/blog', permanent: true },
       { source: '/posts/:slug', destination: '/blog/:slug', permanent: true },
       { source: '/post/:slug', destination: '/blog/:slug', permanent: true },
@@ -82,6 +103,12 @@ const nextConfig: NextConfig = {
         source,
         headers: [{ key: 'Cache-Control', value: FEED_CACHE }],
       })),
+      // RFC 8288 / RFC 9727 §3: advertise the machine-readable resources an
+      // agent can discover, right on the homepage response.
+      {
+        source: '/',
+        headers: [{ key: 'Link', value: homepageLinkHeader() }],
+      },
     ];
   },
 };

@@ -78,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
         <link rel="describedby" type="text/plain" title="llms.txt" href="/llms.txt" />
+        <link rel="api-catalog" type="application/linkset+json" title="API Catalog" href="/.well-known/api-catalog" />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased" suppressHydrationWarning>
         <a

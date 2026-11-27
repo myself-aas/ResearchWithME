@@ -17,91 +17,91 @@
     "primary-hover": "{v4.dark.bg-brand}",
     "primary-pressed": "{v4.dark.bg-brand}",
     "on-primary": "{v4.dark.text-on-primary}",
-    "destructive": "#F87171",
+    "destructive": "{primitive.color.tomato.500}",
     "link": "{v4.dark.text-ink}",
     "visited": "{v4.dark.text-ink-secondary}"
   },
   "brand": {
     "mark": "{v4.dark.text-ink}",
-    "mark-inverse": "#FFFFFF"
+    "mark-inverse": "{primitive.color.neutral.0}"
   },
   "knowledge": {
-    "source": "#A78BFA",
-    "evidence": "#10B981",
-    "insight": "#06B6D4",
-    "discussion": "#F59E0B",
-    "contradiction": "#F87171",
-    "publication": "#5EEAD4",
-    "archive": "#9496A1"
+    "source": "{primitive.color.tomato.500}",
+    "evidence": "{primitive.color.yellow.500}",
+    "insight": "{primitive.color.orange.500}",
+    "discussion": "{primitive.color.yellow.500}",
+    "contradiction": "{primitive.color.tomato.500}",
+    "publication": "{primitive.color.orange.500}",
+    "archive": "{primitive.color.neutral.0}"
   },
   "trust": {
-    "verified": "#A78BFA",
-    "replicated": "#10B981",
-    "peer-reviewed": "#A78BFA",
-    "emerging": "#06B6D4",
-    "uncertain": "#F59E0B",
-    "contested": "#F87171",
-    "unknown": "#9496A1"
+    "verified": "{primitive.color.yellow.500}",
+    "replicated": "{primitive.color.orange.500}",
+    "peer-reviewed": "{primitive.color.yellow.500}",
+    "emerging": "{primitive.color.orange.500}",
+    "uncertain": "{primitive.color.yellow.500}",
+    "contested": "{primitive.color.tomato.500}",
+    "unknown": "{primitive.color.neutral.0}"
   },
   "provenance": {
-    "direct-source": "#10B981",
-    "cited-source": "#A78BFA",
-    "derived": "#06B6D4",
-    "inferred": "#F59E0B",
-    "ai-assisted": "#5EEAD4",
-    "unresolved": "#9496A1"
+    "direct-source": "{primitive.color.orange.500}",
+    "cited-source": "{primitive.color.yellow.500}",
+    "derived": "{primitive.color.orange.500}",
+    "inferred": "{primitive.color.yellow.500}",
+    "ai-assisted": "{primitive.color.orange.500}",
+    "unresolved": "{primitive.color.neutral.0}"
   },
   "workflow": {
-    "discovered": "#06B6D4",
-    "extracted": "#14B8A6",
-    "validated": "#10B981",
-    "synthesized": "#A78BFA",
-    "reviewed": "#5EEAD4",
-    "published": "#A78BFA",
-    "archived": "#9496A1"
+    "discovered": "{primitive.color.orange.500}",
+    "extracted": "{primitive.color.orange.500}",
+    "validated": "{primitive.color.orange.500}",
+    "synthesized": "{primitive.color.yellow.500}",
+    "reviewed": "{primitive.color.orange.500}",
+    "published": "{primitive.color.yellow.500}",
+    "archived": "{primitive.color.neutral.0}"
   },
   "collaboration": {
-    "comment": "#06B6D4",
-    "suggestion": "#14B8A6",
-    "review": "#5EEAD4",
-    "consensus": "#10B981",
-    "disagreement": "#F87171"
+    "comment": "{primitive.color.orange.500}",
+    "suggestion": "{primitive.color.orange.500}",
+    "review": "{primitive.color.orange.500}",
+    "consensus": "{primitive.color.yellow.500}",
+    "disagreement": "{primitive.color.tomato.500}"
   },
   "citation": {
-    "article": "#A78BFA",
-    "dataset": "#06B6D4",
-    "book": "#10B981",
-    "preprint": "#F59E0B",
-    "software": "#A78BFA",
-    "protocol": "#14B8A6",
-    "webpage": "#9496A1"
+    "article": "{primitive.color.yellow.500}",
+    "dataset": "{primitive.color.orange.500}",
+    "book": "{primitive.color.orange.500}",
+    "preprint": "{primitive.color.yellow.500}",
+    "software": "{primitive.color.yellow.500}",
+    "protocol": "{primitive.color.orange.500}",
+    "webpage": "{primitive.color.neutral.0}"
   },
   "domainText": {
-    "emerging": "#67E8F9",
-    "uncertain": "#FCD34D"
+    "emerging": "{primitive.color.yellow.500}",
+    "uncertain": "{primitive.color.orange.500}"
   },
   "chart": {
-    "axis": "#AEB4BE",
-    "grid": "#414754",
-    "label": "#AEB4BE",
+    "axis": "{primitive.color.neutral.0}",
+    "grid": "{primitive.color.neutral.0}",
+    "label": "{primitive.color.neutral.0}",
     "series": {
-      "1": "#FF8A5C",
-      "2": "#67E8F9",
-      "3": "#34D399",
-      "4": "#FDE047",
-      "5": "#FDBA74",
-      "6": "#F87171",
-      "7": "#C4B5FD"
+      "1": "{primitive.color.tomato.500}",
+      "2": "{primitive.color.orange.500}",
+      "3": "{primitive.color.yellow.500}",
+      "4": "{primitive.color.neutral.0}",
+      "5": "{primitive.color.tomato.500}",
+      "6": "{primitive.color.orange.500}",
+      "7": "{primitive.color.yellow.500}"
     }
   },
-  "code-panel-bg": "#10141B",
-  "code-panel-text": "#ECEFF4",
-  "code-token-comment": "#9C958D",
-  "code-token-keyword": "#C792EA",
-  "code-token-string": "#A5D6A7",
-  "code-token-number": "#F78C6C",
-  "code-token-function": "#62D0C4",
-  "code-token-attr": "#FFCB6B",
-  "code-token-builtin": "#D8B4FE",
-  "code-token-deletion": "#FF7B72"
+  "code-panel-bg": "{primitive.color.neutral.900}",
+  "code-panel-text": "{primitive.color.neutral.0}",
+  "code-token-comment": "{primitive.color.neutral.0}",
+  "code-token-keyword": "{primitive.color.tomato.500}",
+  "code-token-string": "{primitive.color.yellow.500}",
+  "code-token-number": "{primitive.color.orange.500}",
+  "code-token-function": "{primitive.color.neutral.0}",
+  "code-token-attr": "{primitive.color.yellow.500}",
+  "code-token-builtin": "{primitive.color.orange.500}",
+  "code-token-deletion": "{primitive.color.tomato.500}"
 }

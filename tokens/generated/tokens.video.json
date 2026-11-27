@@ -1,28 +1,28 @@
 {
   "color": {
-    "canvas": "#F5F3EF",
-    "surface": "#FFFFFF",
-    "surface-subtle": "#F5F3EF",
-    "text-primary": "#111111",
-    "text-secondary": "#4F4F4F",
+    "canvas": "#F2F2F7",
+    "surface": "#F2F2F7",
+    "surface-subtle": "#F2F2F7",
+    "text-primary": "#1C1C1E",
+    "text-secondary": "#1C1C1E",
     "action": {
-      "primary": "#111111",
-      "primary-hover": "#111111",
-      "primary-pressed": "#111111",
-      "on-primary": "#FFFFFF",
-      "destructive": "#B91C1C",
-      "link": "#111111",
-      "visited": "#4F4F4F"
+      "primary": "#1C1C1E",
+      "primary-hover": "#1C1C1E",
+      "primary-pressed": "#1C1C1E",
+      "on-primary": "#F2F2F7",
+      "destructive": "#1C1C1E",
+      "link": "#1C1C1E",
+      "visited": "#1C1C1E"
     },
-    "focus": "#111111"
+    "focus": "#1C1C1E"
   },
   "surface": {
-    "background": "#FFFFFF",
-    "raised": "#FFFFFF"
+    "background": "#F2F2F7",
+    "raised": "#F2F2F7"
   },
   "text": {
-    "primary": "#111111",
-    "secondary": "#4F4F4F",
+    "primary": "#1C1C1E",
+    "secondary": "#1C1C1E",
     "onAction": "#FFFFFF"
   },
   "font": {
